@@ -1,0 +1,19 @@
+- Spell out combinations in symmetry table
+
++ 12 equations should be 2 columns of 6 equations for overconstrained
+
+- Equation numbers
+
+- Comma not colon on overconstrained matrix
+
++ At end of section show application of technique, include plot of 3
+  bar combinations and individual bars on same plot with two x axes (one
+  for individual, one for 3 bar)
+
++ Include normal, complementary, and combined analyses for one, maybe
+  two sets, one for large fluctuations, one for small fluctuations.
+
+NEEDS PDF GENERATED:- No database entry for mu metal graph
+
++ See if we can have a single flowchart for shipping procedures (PMT,
+  Scintillator, and mu metal shielding).

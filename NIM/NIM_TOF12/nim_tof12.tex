@@ -1,0 +1,134 @@
+
+\documentclass[preprint,12pt]{elsarticle}
+\usepackage{amsmath,fullpage,graphicx,caption,float}
+\usepackage{amssymb}
+\usepackage{array,ragged2e,pst-node,pst-dbicons}
+\usepackage{pstricks}
+\usepackage{pst-node}
+\usepackage{pst-blur}
+\usepackage{comment}
+\usepackage{color}
+\usepackage{subfigure}
+\usepackage{lscape}
+\usepackage{multirow}
+\usepackage{hyperref}
+\usepackage{mathtools}
+\usepackage{siunitx}
+\newcommand{\defeq}{\vcentcolon=}
+
+
+\usepackage{float}
+\restylefloat{table}
+\usepackage[margin=20mm]{geometry}
+
+\setlength{\parskip}{1.25ex}
+\renewcommand\baselinestretch{1.3}
+\renewcommand\arraystretch{1.5}
+
+% equation numbering:
+\numberwithin{equation}{section}
+
+\mathchardef\mhyphen="2D
+\definecolor{Pink}{rgb}{1.,0.75,0.8}
+\newcolumntype{C}[1]{>{\Centering}p{#1}}
+\def\Tab#1{\tabular{C{3cm}}\rule[-5mm]{0pt}{1cm}#1\\\hline
+                           ~\\\hline~\endtabular}
+\seticonparams{entity}{shadow,fillcolor=black!20,fillstyle=solid,framesep=0pt}
+
+\mathchardef\mhyphen="2D
+
+
+\journal{Nuclear Instruments and Methods}
+
+\begin{document}
+
+\begin{frontmatter}
+
+
+
+\title{Time Of Flight System for CLAS12}
+
+%% use optional labels to link authors explicitly to addresses:
+\author[USC]{R.~W.~Gothe}
+\author[USC]{G.~V.~Fedotov}
+\author[USC]{E.~Phelps}
+\author[USC]{Iu.~Skorodumina}
+\author[USC]{Y.~Tian}
+\author[USC]{A.~Trivedi}
+\author[USC]{N.~Tyler}
+
+\address[USC]{University of South Carolina, Columbia, South Carolina 29208}
+%% \address[label2]{<address>}
+
+\author{}
+
+\address{}
+
+\begin{abstract}
+In this paper the process of developing and testing of TOF system for CLAS12 is described. To speed up testing process new so-called ``6-bar'' method of time resolution determination using cosmic rays is developed. With new measuring procedure the world record time resolution for given scintilliator length is achived.  
+
+\end{abstract}
+
+\begin{keyword}
+TOF, Nuclear physics experiment
+%% keywords here, in the form: keyword \sep keyword
+
+%% MSC codes here, in the form: \MSC code \sep code
+%% or \MSC[2008] code \sep code (2000 is the default)
+
+\end{keyword}
+
+\end{frontmatter}
+
+
+\pagebreak
+
+
+
+
+
+\include{ralf/ralf_12gev_upgrade}
+\include{evan/evan_ftof_requirements}
+\include{gleb/gleb_source_method}
+\include{gleb/gleb_thin_scintillator}
+\include{gary/gary_three_bar}
+\include{gary/gary_six_bar_method}
+\include{gary/gary_six_bar_refinement}
+\include{evan/evan_electronics}
+\include{evan/evan_tdc_testing}
+\include{evan/evan_qdc_testing}
+\include{evan/evan_discriminator_testing}
+\include{gleb/gleb_time_walk}
+\include{arjun/arjun_pmt_resolution}
+\include{arjun/arjun_threshold}
+\include{arjun/arjun_magnetic_shielding}
+\include{arjun/arjun_design}
+\include{arjun/arjun_external_shielding}
+\include{arjun/arjun_shielding_implementation}
+\include{arjun/arjun_field_tolerance}
+\include{arjun/arjun_results}
+\include{ye/ye_geometry}
+\include{ye/ye_scintillator}
+\include{ye/ye_wrap}
+\include{ye/ye_cables}
+\include{ye/ye_construction}
+%%\include{ye/ye_pmt_test}
+\include{nick/nick_pmt_test}
+\include{gleb/gleb_quality_control}
+\include{gleb/gleb_time_resol}
+\include{gleb/gleb_att_length}
+\include{gleb/gleb_summary}
+
+
+
+\pagebreak
+\newpage
+
+\bibliographystyle{elsarticle-num}
+\bibliography{nim_tof12}
+
+
+
+
+\end{document}
+

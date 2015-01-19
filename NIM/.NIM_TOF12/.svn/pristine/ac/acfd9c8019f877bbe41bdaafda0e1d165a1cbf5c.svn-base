@@ -1,0 +1,33 @@
+\BOOKMARK [1][-]{section.1}{12-GeV upgrade and CLAS12 overview}{}% 1
+\BOOKMARK [1][-]{section.2}{FTOF12 requirements and high-level design}{}% 2
+\BOOKMARK [2][-]{subsubsection.2.0.1}{Source method}{section.2}% 3
+\BOOKMARK [3][-]{subsubsection.2.0.2}{Thin scintillator cosmic ray method}{subsubsection.2.0.1}% 4
+\BOOKMARK [1][-]{section.3}{Six Bar Cosmic-Ray Method}{}% 5
+\BOOKMARK [2][-]{subsection.3.1}{Three Bar Cosmic-Ray Method}{section.3}% 6
+\BOOKMARK [2][-]{subsection.3.2}{The Six Bar Cosmic-Ray Method}{section.3}% 7
+\BOOKMARK [2][-]{subsection.3.3}{Refinement of the Six Bar Method}{section.3}% 8
+\BOOKMARK [2][-]{subsection.3.4}{Electronics}{section.3}% 9
+\BOOKMARK [3][-]{subsubsection.3.4.1}{TDC testing}{subsection.3.4}% 10
+\BOOKMARK [3][-]{subsubsection.3.4.2}{QDC testing}{subsection.3.4}% 11
+\BOOKMARK [3][-]{subsubsection.3.4.3}{Discriminator testing}{subsection.3.4}% 12
+\BOOKMARK [2][-]{subsection.3.5}{Time-walk corrections}{section.3}% 13
+\BOOKMARK [1][-]{section.4}{III.E. Photomultiplier tubes \(PMTs\)}{}% 14
+\BOOKMARK [2][-]{subsection.4.1}{Different PMTs time resolutions}{section.4}% 15
+\BOOKMARK [2][-]{subsection.4.2}{... threshold dependence}{section.4}% 16
+\BOOKMARK [1][-]{section.5}{III.G. Magnetic shielding of the PMTs}{}% 17
+\BOOKMARK [2][-]{subsection.5.1}{Initial design considerations}{section.5}% 18
+\BOOKMARK [3][-]{subsubsection.5.1.1}{External shielding}{subsection.5.1}% 19
+\BOOKMARK [2][-]{subsection.5.2}{Final implementation of shielding with overhang}{section.5}% 20
+\BOOKMARK [1][-]{section.6}{Establishing an upper limit on the level of tolerable magnetic field}{}% 21
+\BOOKMARK [2][-]{subsection.6.1}{Results and Conclusions}{section.6}% 22
+\BOOKMARK [1][-]{section.7}{G Scintillator Geometry and Light guides }{}% 23
+\BOOKMARK [1][-]{section.8}{H Scintillator}{}% 24
+\BOOKMARK [1][-]{section.9}{I Reflective wrap }{}% 25
+\BOOKMARK [1][-]{section.10}{ J Cables}{}% 26
+\BOOKMARK [1][-]{section.11}{ F Counter construction and testing process}{}% 27
+\BOOKMARK [1][-]{section.12}{ PMT testing, counter assembly and testing technical detail}{}% 28
+\BOOKMARK [2][-]{subsection.12.1}{Quality control and tracking S/W \205 database and web tracking application}{section.12}% 29
+\BOOKMARK [2][-]{subsection.12.2}{Automated six-bar analysis software}{section.12}% 30
+\BOOKMARK [3][-]{subsubsection.12.2.1}{Time resolution}{subsection.12.2}% 31
+\BOOKMARK [3][-]{subsubsection.12.2.2}{Attenuation length and effective speed of light}{subsection.12.2}% 32
+\BOOKMARK [1][-]{section.13}{Results and Summary}{}% 33

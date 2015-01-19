@@ -1,0 +1,13 @@
+\subsubsection{Discriminator testing}
+
+{\it Note:
+constant fraction discriminator (cfd) delay optimization\\
+leading edge discriminator (led) threshold optimization\\
+cfd vs. led vs. tw-corrected led (*?)\\
+}
+
+Discriminators generate logic signals whenever incoming analog signals rise above a preset threshold voltage.  Two classes of discriminators are common:  constant fraction discriminators (CFD) and leading edge discriminators (LED).  CFDs are designed to correct for timewalk by triggering on the sum of the incoming signal and a delayed, attenuated, and inverted duplicate.  LEDs trigger directly on the incoming signal.  Properly tuned CFDs were sufficient for previous time-of-flight applications, but FTOF12 is sensitive to an additional QDC-based timewalk correction to CFD-triggered signals.  Since these additional timewalk corrections would be required in either case, the simpler and less expensive LEDs were used.
+
+In the case of LEDs, the threshold voltage must be optimized to minimize background, maximize good signal acceptance, and reduce time jitter introduced by fine-grained random volage fluctuations.
+
+[TODO: add LED threshold results and discussion!]

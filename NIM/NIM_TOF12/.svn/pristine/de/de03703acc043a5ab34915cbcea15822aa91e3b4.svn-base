@@ -1,0 +1,37 @@
+\begin{thebibliography}{1}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\expandafter\ifx\csname href\endcsname\relax
+  \def\href#1#2{#2} \def\path#1{#1}\fi
+
+\bibitem{clastof}
+E.~S. Smith, et~al., {The time-of-flight system for CLAS}, Nucl. Instrum. Meth.
+  A432 (1999) 265--298.
+\newblock \href {http://dx.doi.org/10.1016/S0168-9002(99)00484-2}
+  {\path{doi:10.1016/S0168-9002(99)00484-2}}.
+
+\bibitem{tdr}
+{CLAS12 Technical Design Report v5.0} (July 2008).
+
+\bibitem{knu-clasnote}
+V.~Batourine, W.~Kim, D.~Nekrasov, K.~Park, B.~Shin, E.~Smith, S.~Stepanyan,
+  {CLAS-NOTE-2004-016: Measurement of PMT Time Resolution at Kyungpook National
+  University} (2004).
+
+\bibitem{v1290n-man}
+Caen, {Mod. V1290-VX1290 A/N, 32/16 Ch. Multihit TDC} (June 2009).
+
+\bibitem{v792n-man}
+Caen, {Mod. V792/V792N 32/16 channel QDC} (May 2009).
+
+\bibitem{Leo:1987kd}
+W.~Leo, {Techniques for Nuclear and Particle Physics Experiments: A How to
+  Approach}, Berlin, Germany: Springer, 1987.
+
+\bibitem{FToF12}
+R.~S. Ralf~Gothe, Evan~Phelps, Y.~Tian, Ftof12 forward time-of-flight at usc: A
+  comprehensive update, ftof12 technical system review, jefferson lab, newport
+  news, va (2009).
+
+\end{thebibliography}
