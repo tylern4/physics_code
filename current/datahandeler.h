@@ -11,7 +11,7 @@
 #include "TChain.h"
 #include "TSystem.h"
 #include "TMath.h"
-#include <omp.h>
+//////////////////#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -75,7 +75,7 @@ void dataHandeler(char *fin="all.lis", char *RootFile="outFile.root", Int_t MaxE
 
 			if (current_event_number%10000 == 0)	cout<<current_event_number<<"/"<<num_of_events<<endl;
 
-			#pragma omp parallel for
+			///////#pragma omp parallel for
 			for(int j = 0; j < gpart; j++)
 			{
 
