@@ -2,11 +2,11 @@
 cd NIM_TOF12
 rm nim_tof12.dvi nim_tof12.dvi.ps  nim_tof12.dvi.pdf nim_tof12.spl nim_tof12.log nim_tof12.aux nim_tof12.pdf
 
-read -p "Do you wish to spell check? (y/n) " -n 1
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    aspell -t -c nick/nick_pmt_test.tex;  
-fi
+#read -p "Do you wish to spell check? (y/n) " -n 1
+#echo
+#if [[ $REPLY =~ ^[Yy]$ ]]; then
+#    aspell -t -c nick/nick_pmt_test.tex;  
+#fi
 
 
 pdflatex nim_tof12
