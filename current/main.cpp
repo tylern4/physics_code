@@ -24,7 +24,7 @@
 #include "histo.h"
 #include "datahandeler.h"
 //#include "golden_run.h"
-////////////////////////#include <omp.h>
+#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -33,7 +33,7 @@ using namespace std;
 
 int main(int argc, char **argv){
 
-	float time1 = clock();
+	//float time1 = clock();
 	gSystem->Load("libTree");
 
 	char  infilename[128];
@@ -44,6 +44,7 @@ int main(int argc, char **argv){
 	sprintf(outfilename,"%s",argv[2]);
 
 	dataHandeler(infilename,outfilename);
+	count_after_cut(infilename,outfilename);
 	//golden_run(infilename,outfilename);
 
 	//Timer(time1);

@@ -11,7 +11,7 @@
 #include "TChain.h"
 #include "TSystem.h"
 #include "TMath.h"
-//////////////////#include <omp.h>
+#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -26,7 +26,7 @@ using namespace std;
 void dataHandeler(char *fin="all.lis", char *RootFile="outFile.root", Int_t MaxEvents=0, Int_t dEvents=10000){
 	gROOT->Reset();
 	Int_t current_event_number;
-	Int_t num_of_events;	
+	Int_t num_of_events;
 	Int_t total_events = 0;
 
 	TLorentzVector *_e0, *_p0, *_e1;//, *_p1;
@@ -73,9 +73,9 @@ void dataHandeler(char *fin="all.lis", char *RootFile="outFile.root", Int_t MaxE
 
 			myTree->GetEntry(current_event_number);
 
-			if (current_event_number%10000 == 0)	cout<<current_event_number<<"/"<<num_of_events<<endl;
+			////////////if (current_event_number%10000 == 0)	cout<<current_event_number<<"/"<<num_of_events<<endl;
 
-			///////#pragma omp parallel for
+			#pragma omp parallel for
 			for(int j = 0; j < gpart; j++)
 			{
 
@@ -92,7 +92,6 @@ void dataHandeler(char *fin="all.lis", char *RootFile="outFile.root", Int_t MaxE
 
 				FillHist();
 
-				
 			}
 
 			current_event_number++; 		  	// increment event counter
@@ -102,7 +101,7 @@ void dataHandeler(char *fin="all.lis", char *RootFile="outFile.root", Int_t MaxE
 		myTree->Delete(); 						// delete Tree object
 		myFile->Close("R"); 					// close input ROOT file.  The R flag deletes TProcessIDs
 		number_files++; 						// increment file counter
-		
+
 	}
 	rootOutFile->cd();
 	WriteHists();
