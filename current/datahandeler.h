@@ -25,7 +25,7 @@ using namespace std;
 
 void dataHandeler(char *fin="all.lis", char *RootFile="outFile.root", Int_t MaxEvents=0, Int_t dEvents=10000){
 	gROOT->Reset();
-	Int_t current_event_number;
+	Int_t current_event;
 	Int_t num_of_events;
 	Int_t total_events = 0;
 
@@ -38,23 +38,23 @@ void dataHandeler(char *fin="all.lis", char *RootFile="outFile.root", Int_t MaxE
 	_p0->SetPxPyPzE(0,0,0,MASS_P);
 
 	TFile *myFile;
-	TFile *rootOutFile;
+	TFile *RootOutputFile;
 	TTree *myTree;
 	Int_t number_cols=0;
 	Int_t number_files = 0;
 	char rootFile[500];
 
-	rootOutFile = new TFile(RootFile,"RECREATE");
+	RootOutputFile = new TFile(RootFile,"RECREATE");
 
 	cout << "Analyzing file " << fin << endl;
 
 
-	FILE *in1 = fopen(fin,"r");
-	if (in1 == NULL) perror ("Error opening file");
+	FILE *input_file = fopen(fin,"r");
+	if (input_file == NULL) perror ("Error opening file");
 
 	while (1){
 
-		number_cols = fscanf(in1,"%s",rootFile); 
+		number_cols = fscanf(input_file,"%s",rootFile); 
 
 		if (number_cols<0) break;
 		myFile = new TFile(rootFile, "READ");
@@ -67,13 +67,13 @@ void dataHandeler(char *fin="all.lis", char *RootFile="outFile.root", Int_t MaxE
 		num_of_events = (Int_t)myTree->GetEntries();
 
 
-		current_event_number = 0; 
+		current_event = 0; 
 
-		while(current_event_number<num_of_events){
+		while(current_event<num_of_events){
 
-			myTree->GetEntry(current_event_number);
+			myTree->GetEntry(current_event);
 
-			////////////if (current_event_number%10000 == 0)	cout<<current_event_number<<"/"<<num_of_events<<endl;
+			////////////if (current_event%10000 == 0)	cout<<current_event<<"/"<<num_of_events<<endl;
 
 			#pragma omp parallel for
 			for(int j = 0; j < gpart; j++)
@@ -94,7 +94,7 @@ void dataHandeler(char *fin="all.lis", char *RootFile="outFile.root", Int_t MaxE
 
 			}
 
-			current_event_number++; 		  	// increment event counter
+			current_event++; 		  	// increment event counter
 			total_events++; 					// increment total event counter 
 		}
 
@@ -103,97 +103,76 @@ void dataHandeler(char *fin="all.lis", char *RootFile="outFile.root", Int_t MaxE
 		number_files++; 						// increment file counter
 
 	}
-	rootOutFile->cd();
+	RootOutputFile->cd();
 	WriteHists();
-	rootOutFile->Write();
-	rootOutFile->Close();
-	fclose(in1); 														// close file with input file list
+	RootOutputFile->Write();
+	RootOutputFile->Close();
+	fclose(input_file); 														// close file with input file list
 	cout<<total_events<<" events in "<<number_files<< " files."<<endl; // print out stats
 }
 
 void count_after_cut(char *fin="all.lis", char *RootFile="outFile.root"){
 	gROOT->Reset();
-	//Int_t current_event_number;
-	//Int_t num_of_events;
-	//Int_t total_events = 0;
+	Int_t current_event = 0, num_of_events = 0, total_events = 0, number_cols = 0;
 
-	//TLorentzVector *_e0, *_p0, *_e1;//, *_p1;
+	TFile *myFile;
+	TFile *RootOutputFile;
+	TTree *myTree;
+	Int_t number_cols=0;
+	Int_t number_files = 0;
+	char rootFile[500];
 
-	//_e0 = new TLorentzVector();
-	//_p0 = new TLorentzVector();
-	//_e1 = new TLorentzVector();
-	//_e0->SetPxPyPzE(0,0,E1F_E0,E1F_E0);
-	//_p0->SetPxPyPzE(0,0,0,MASS_P);
+	RootOutputFile = new TFile(RootFile,"RECREATE");
 
-	//TFile *myFile;
-	//TFile *rootOutFile;
-	//TTree *myTree;
-	//Int_t number_cols=0;
-	//Int_t number_files = 0;
-	//char rootFile[500];
+	FILE *input_file = fopen(fin,"r");
 
-	//rootOutFile = new TFile(RootFile,"RECREATE");
+	if (input_file == NULL) perror ("Error opening file");
 
-	//cout << "Analyzing file " << fin << endl;
+	while (1){
 
+		number_cols = fscanf(input_file,"%s",rootFile); 
 
-	//FILE *in1 = fopen(fin,"r");
-	//if (in1 == NULL) perror ("Error opening file");
+		if (number_cols<0) break;
+		myFile = new TFile(rootFile, "READ");
 
-	//while (1){
-
-		//number_cols = fscanf(in1,"%s",rootFile); 
-
-		//if (number_cols<0) break;
-		//myFile = new TFile(rootFile, "READ");
-
-		//myTree = (TTree *)myFile->Get("h10");
+		myTree = (TTree *)myFile->Get("h10");
 
 
-		//getBranches(myTree);
+		getBranches(myTree);
 
-		//num_of_events = (Int_t)myTree->GetEntries();
+		num_of_events = (Int_t)myTree->GetEntries();
 
+		current_event = 0; 
 
-		//current_event_number = 0; 
+		while(current_event<num_of_events){
 
-		//while(current_event_number<num_of_events){
+			myTree->GetEntry(current_event);
 
-			//myTree->GetEntry(current_event_number);
+			////////////if (current_event%10000 == 0)	cout<<current_event<<"/"<<num_of_events<<endl;
 
-			////////////if (current_event_number%10000 == 0)	cout<<current_event_number<<"/"<<num_of_events<<endl;
+			#pragma omp parallel for
+			for(int j = 0; j < gpart; j++){
 
-			//#pragma omp parallel for
-			//for(int j = 0; j < gpart; j++){
+				/*
+				Here is where I need to make some additions from Ye's code.
+				Copy over the calculaions from count_after_cut.C and add plots from plot_golden.C
+				*/
 
-				//Px = cx[j]*p[j];
-				//Py = cy[j]*p[j];
-				//Pz = cz[j]*p[j];
+			}
 
-				//x = vx[j];
-				//y = vy[j];
-				//z = vz[j];
+			current_event++; 		  	// increment event counter
+			total_events++; 			// increment total event counter 
+		}
 
-				//ID = id[j];
+		myTree->Delete(); 						// delete Tree object
+		myFile->Close("R"); 					// close input ROOT file.  The R flag deletes TProcessIDs
+		number_files++; 						// increment file counter
 
-
-				//FillHist();
-
-			//}
-
-			//current_event_number++; 		  	// increment event counter
-			//total_events++; 					// increment total event counter 
-		//}
-
-		//myTree->Delete(); 						// delete Tree object
-		//myFile->Close("R"); 					// close input ROOT file.  The R flag deletes TProcessIDs
-		//number_files++; 						// increment file counter
-
-	//}
-	//rootOutFile->cd();
-	//WriteHists();
-	//rootOutFile->Write();
-	//rootOutFile->Close();
-	//fclose(in1); 														// close file with input file list
-	//cout<<total_events<<" events in "<<number_files<< " files."<<endl; // print out stats
+	}
+	RootOutputFile->cd();
+	WriteHists();
+	RootOutputFile->Write();
+	RootOutputFile->Close();
+	fclose(input_file); 														// close file with input file list
+	cout<<total_events<<" events in "<<number_files<< " files."<<endl; // print out stats
 }
