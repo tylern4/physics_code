@@ -186,8 +186,7 @@ void count_after_cut() {
       str_filenum=s.substr(s.length()-11,2);
       cout<<str_runnum<<"    "<<str_filenum<<"    "<<n_event<<"totalQ="<<totalQ<<endl;
       if(n_event != 0 && totalQ != 0){ 
-        outfile<<setw(20)<<setiosflags(ios::left)<<str_runnum<<setw(20)<<setiosflags(ios::left)<<str_filenum
-        <<setw(20)<<setiosflags(ios::left)<<n_event<<setw(20)<<setiosflags(ios::left)<<totalQ<<setw(20)<<setiosflags(ios::left)<<n_event/totalQ<<endl;
+        outfile<<setw(20)<<setiosflags(ios::left)<<str_runnum<<setw(20)<<setiosflags(ios::left)<<str_filenum<<setw(20)<<setiosflags(ios::left)<<n_event<<setw(20)<<setiosflags(ios::left)<<totalQ<<setw(20)<<setiosflags(ios::left)<<n_event/totalQ<<endl;
       }    
     }
   outfile.close();

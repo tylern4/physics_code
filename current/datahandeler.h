@@ -11,7 +11,7 @@
 #include "TChain.h"
 #include "TSystem.h"
 #include "TMath.h"
-#include <omp.h>
+////#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -118,7 +118,6 @@ void count_after_cut(char *fin="all.lis", char *RootFile="outFile.root"){
 	TFile *myFile;
 	TFile *RootOutputFile;
 	TTree *myTree;
-	Int_t number_cols=0;
 	Int_t number_files = 0;
 	char rootFile[500];
 

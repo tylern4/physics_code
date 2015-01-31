@@ -24,7 +24,7 @@
 #include "histo.h"
 #include "datahandeler.h"
 //#include "golden_run.h"
-#include <omp.h>
+////#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
 
