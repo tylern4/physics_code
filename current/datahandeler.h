@@ -23,7 +23,7 @@ using namespace std;
 //	hopefully this works
 //
 
-void dataHandeler(char *fin="all.lis", char *RootFile="outFile.root", Int_t MaxEvents=0, Int_t dEvents=10000){
+void dataHandeler(char *fin="all.lis", char *RootFile_output="outFile.root", Int_t MaxEvents=0, Int_t dEvents=10000){
 	gROOT->Reset();
 	Int_t current_event;
 	Int_t num_of_events;
@@ -44,7 +44,7 @@ void dataHandeler(char *fin="all.lis", char *RootFile="outFile.root", Int_t MaxE
 	Int_t number_files = 0;
 	char rootFile[500];
 
-	RootOutputFile = new TFile(RootFile,"RECREATE");
+	RootOutputFile = new TFile(RootFile_output,"RECREATE");
 
 	cout << "Analyzing file " << fin << endl;
 
@@ -111,7 +111,7 @@ void dataHandeler(char *fin="all.lis", char *RootFile="outFile.root", Int_t MaxE
 	cout<<total_events<<" events in "<<number_files<< " files."<<endl; // print out stats
 }
 
-void count_after_cut(char *fin="all.lis", char *RootFile="outFile.root"){
+void count_after_cut(char *fin="all.lis", char *RootFile_output="outFile.root"){
 	gROOT->Reset();
 	Int_t current_event = 0, num_of_events = 0, total_events = 0, number_cols = 0;
 
@@ -121,21 +121,68 @@ void count_after_cut(char *fin="all.lis", char *RootFile="outFile.root"){
 	Int_t number_files = 0;
 	char rootFile[500];
 
-	RootOutputFile = new TFile(RootFile,"RECREATE");
+	//Define variables //change these for my channel
+	float totalQ=0, qcurr, qprev, deltaq, q_temp;
+	TLorentzVector ni_4vec(0, 0, 0, 0);
+	TVector3 ni_3vec(0, 0, 0);
+	TLorentzVector n_4vec(0,0,0,0);
+	TVector3 n_3vec(0,0,0);
+	TVector3 q_3vec(0,0,0);
+	ni_4vec.SetVectM(ni_3vec, 0.9396);
+	TLorentzVector ei_4vec(0, 0, 0, 0);
+	TVector3 ei_3vec(0, 0, 2.039);
+	ei_4vec.SetVectM(ei_3vec, 0.000511);
+	TVector3 ef_3vec(0, 0, 0);
+	TLorentzVector ef_4vec(0, 0, 0, 0);
+	TVector3 pionf_3vec(0, 0, 0);
+	TLorentzVector pionf_4vec(0, 0, 0, 0);
+	TVector3 pf_3vec(0, 0, 0);
+	TLorentzVector pf_4vec(0, 0, 0, 0);
+	TVector3 protonf_3vec(0, 0, 0);
+	TLorentzVector protonf_4vec(0, 0, 0, 0);
+	TLorentzVector w_4vec(0,0,0,0);
+	TLorentzVector w_n_q_4vec(0,0,0,0);
+	TLorentzVector ZERO_4vec(0,0,0,0);
+	TLorentzVector pionf_CM_4vec(0,0,0,0);
+	//TLorentzVector cmq_4vec(0,0,0,0);
+	//TLorentzVector cmPip_4vec;
+	TVector3 b_3vec(0,0,0);
+	TLorentzVector m_4vec(0,0,0,0);
 
-	FILE *input_file = fopen(fin,"r");
+	Float_t q_l, t_l, tr_time, rf_time1;
+	Int_t latch1, hlsc, intt, gpart;
+	Short_t id[20];   //[gpart]
+	Char_t  stat[20];   //[gpart]
+	UChar_t dc[20];   //[gpart]
+	UChar_t cc[20];   //[gpart]
+	UChar_t sc[20];   //[gpart]
+	UChar_t ec[20];   //[gpart]
+	UChar_t lec[20];   //[gpart]
+	Float_t p[20];   //[gpart]
+	Char_t  q[20];   //[gpart]
+	Float_t b[20];   //[gpart]
+	Float_t cx[20];   //[gpart]
+	Float_t cy[20];   //[gpart]
+	Float_t cz[20];   //[gpart]
+	Float_t vx[20];   //[gpart]
+	Float_t vy[20];   //[gpart]
+	Float_t vz[20];   //[gpart]
+	//end of varaible definitions
+
+	RootOutputFile = new TFile(RootFile_output,"RECREATE"); //Open rootfile for output if it's not there create it.
+
+	FILE *input_file = fopen(fin,"r"); //open the *.lis input file.
 
 	if (input_file == NULL) perror ("Error opening file");
 
 	while (1){
 
 		number_cols = fscanf(input_file,"%s",rootFile); 
-
 		if (number_cols<0) break;
+
 		myFile = new TFile(rootFile, "READ");
 
 		myTree = (TTree *)myFile->Get("h10");
-
 
 		getBranches(myTree);
 
