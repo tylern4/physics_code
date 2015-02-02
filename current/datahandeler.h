@@ -148,26 +148,7 @@ void count_after_cut(char *fin="all.lis", char *RootFile_output="outFile.root"){
 	//TLorentzVector cmPip_4vec;
 	TVector3 b_3vec(0,0,0);
 	TLorentzVector m_4vec(0,0,0,0);
-
-	Float_t q_l, t_l, tr_time, rf_time1;
-	Int_t latch1, hlsc, intt, gpart;
-	Short_t id[20];   //[gpart]
-	Char_t  stat[20];   //[gpart]
-	UChar_t dc[20];   //[gpart]
-	UChar_t cc[20];   //[gpart]
-	UChar_t sc[20];   //[gpart]
-	UChar_t ec[20];   //[gpart]
-	UChar_t lec[20];   //[gpart]
-	Float_t p[20];   //[gpart]
-	Char_t  q[20];   //[gpart]
-	Float_t b[20];   //[gpart]
-	Float_t cx[20];   //[gpart]
-	Float_t cy[20];   //[gpart]
-	Float_t cz[20];   //[gpart]
-	Float_t vx[20];   //[gpart]
-	Float_t vy[20];   //[gpart]
-	Float_t vz[20];   //[gpart]
-	//end of varaible definitions
+	//End of variables
 
 	RootOutputFile = new TFile(RootFile_output,"RECREATE"); //Open rootfile for output if it's not there create it.
 
@@ -194,7 +175,7 @@ void count_after_cut(char *fin="all.lis", char *RootFile_output="outFile.root"){
 
 			myTree->GetEntry(current_event);
 
-			////////////if (current_event%10000 == 0)	cout<<current_event<<"/"<<num_of_events<<endl;
+//if (current_event%10000 == 0)	cout<<current_event<<"/"<<num_of_events<<endl;
 
 			#pragma omp parallel for
 			for(int j = 0; j < gpart; j++){
@@ -203,6 +184,8 @@ void count_after_cut(char *fin="all.lis", char *RootFile_output="outFile.root"){
 				Here is where I need to make some additions from Ye's code.
 				Copy over the calculaions from count_after_cut.C and add plots from plot_golden.C
 				*/
+
+
 
 			}
 
