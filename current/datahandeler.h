@@ -184,13 +184,11 @@ void count_after_cut(char *fin="all.lis", char *RootFile_output="outFile.root"){
 			//Ye's line 131
 			myTree->GetEntry(current_event); //Should load all the variables properly
 			//Total Farday cup charge
-			
-			qcurr = q_l;
+			q_temp = q_l;
+			qcurr = q_temp;
 
-			if (q_l > 0.)
-			{
-				if (qcurr > qprev)
-				{
+			if (q_temp > 0.){
+				if (qcurr > qprev){
 					deltaq = qcurr - qprev;
 					totalQ += deltaq;
 					cout<<"qcurr="<<qcurr<<" qprev="<<qprev<<" deltaq="<<deltaq<<" totalQ="<<totalQ<<endl;
