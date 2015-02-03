@@ -180,11 +180,23 @@ void count_after_cut(char *fin="all.lis", char *RootFile_output="outFile.root"){
 		current_event = 0; 
 
 		while(current_event<num_of_events){
-
+			//if (current_event%10000 == 0)	cout<<current_event<<"/"<<num_of_events<<endl;
 			//Ye's line 131
-			myTree->GetEntry(current_event); //Should load all the values properly
+			myTree->GetEntry(current_event); //Should load all the variables properly
+			//Total Farday cup charge
+			
+			qcurr = q_l;
 
-//if (current_event%10000 == 0)	cout<<current_event<<"/"<<num_of_events<<endl;
+			if (q_l > 0.)
+			{
+				if (qcurr > qprev)
+				{
+					deltaq = qcurr - qprev;
+					totalQ += deltaq;
+					cout <<"current chrage:"<< qcurr << endl;
+				}
+				qprev = qcurr;
+			}
 
 			#pragma omp parallel for
 			for(int j = 0; j < gpart; j++){
