@@ -193,22 +193,22 @@ void count_after_cut(char *fin="all.lis", char *RootFile_output="outFile.root"){
 				{
 					deltaq = qcurr - qprev;
 					totalQ += deltaq;
-					cout <<"current chrage:"<< qcurr << endl;
+					cout<<"qcurr="<<qcurr<<"qprev="<<qprev<<"deltaq="<<deltaq<<endl;
 				}
 				qprev = qcurr;
 			}
 
-			#pragma omp parallel for
+/*			#pragma omp parallel for
 			for(int j = 0; j < gpart; j++){
 
 				/*
 				Here is where I need to make some additions from Ye's code.
 				Copy over the calculaions from count_after_cut.C and add plots from plot_golden.C
-				*/
+				
 
 
 
-			}
+			} */
 
 			current_event++; 		  	// increment event counter
 			total_events++; 			// increment total event counter 
