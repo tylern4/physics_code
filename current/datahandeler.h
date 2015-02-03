@@ -111,6 +111,14 @@ void dataHandeler(char *fin="all.lis", char *RootFile_output="outFile.root", Int
 	cout<<total_events<<" events in "<<number_files<< " files."<<endl; // print out stats
 }
 
+
+// Count_after_cut *probably should be renamed?
+//
+//	Look at my channel and find the files with the best events.
+//  Output of this should go to a function from Ye's goldenrun.C program to make
+//	the appropriate graphs.
+//
+
 void count_after_cut(char *fin="all.lis", char *RootFile_output="outFile.root"){
 	gROOT->Reset();
 	Int_t current_event = 0, num_of_events = 0, total_events = 0, number_cols = 0;
@@ -173,7 +181,8 @@ void count_after_cut(char *fin="all.lis", char *RootFile_output="outFile.root"){
 
 		while(current_event<num_of_events){
 
-			myTree->GetEntry(current_event);
+			//Ye's line 131
+			myTree->GetEntry(current_event); //Should load all the values properly
 
 //if (current_event%10000 == 0)	cout<<current_event<<"/"<<num_of_events<<endl;
 

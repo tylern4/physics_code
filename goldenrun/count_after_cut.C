@@ -128,7 +128,7 @@ void count_after_cut() {
     for(Long64_t i=0;i<nentries;i++){
 
       //Get the ith entry
-      tree->GetEntry(i);
+      tree->GetEntry(i); //This is my line 184 ****start from here
       //Get total farda cup charge
         q_temp=q_l;
         qcurr=q_temp;
