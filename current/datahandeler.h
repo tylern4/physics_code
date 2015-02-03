@@ -193,7 +193,7 @@ void count_after_cut(char *fin="all.lis", char *RootFile_output="outFile.root"){
 				{
 					deltaq = qcurr - qprev;
 					totalQ += deltaq;
-					cout<<"qcurr="<<qcurr<<"qprev="<<qprev<<"deltaq="<<deltaq<<endl;
+					cout<<"qcurr="<<qcurr<<" qprev="<<qprev<<" deltaq="<<deltaq<<" totalQ="<<totalQ<<endl;
 				}
 				qprev = qcurr;
 			}
