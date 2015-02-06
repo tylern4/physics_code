@@ -112,6 +112,80 @@ void dataHandeler(char *fin="all.lis", char *RootFile_output="outFile.root", Int
 }
 
 
+
+void WvsQ2(char *fin="all.lis", char *RootFile_output="outFile.root", Int_t MaxEvents=0, Int_t dEvents=10000){
+	gROOT->Reset();
+	Int_t current_event;
+	Int_t num_of_events;
+	Int_t total_events = 0;
+
+
+	Double_t W = 0, Q2 = 0;
+
+	TFile *myFile;
+	TFile *RootOutputFile;
+	TTree *myTree;
+	Int_t number_cols=0;
+	Int_t number_files = 0;
+	char rootFile[500];
+
+	RootOutputFile = new TFile(RootFile_output,"RECREATE");
+
+	cout << "Analyzing file " << fin << endl;
+
+
+	FILE *input_file = fopen(fin,"r");
+	if (input_file == NULL) perror ("Error opening file");
+
+	while (1){
+
+		number_cols = fscanf(input_file,"%s",rootFile); 
+
+		if (number_cols<0) break;
+		myFile = new TFile(rootFile, "READ");
+
+		myTree = (TTree *)myFile->Get("h10");
+
+
+		getBranches(myTree);
+
+		num_of_events = (Int_t)myTree->GetEntries();
+
+
+		current_event = 0; 
+
+		while(current_event<num_of_events){
+
+			myTree->GetEntry(current_event);
+
+			////////////if (current_event%10000 == 0)	cout<<current_event<<"/"<<num_of_events<<endl;
+
+			#pragma omp parallel for
+			for(int j = 0; j < gpart; j++)
+			{
+				W = sqrt(square(MASS_P) - 2 * E1D_E0 * MASS_P);
+				cout << W << endl;
+
+
+			}
+
+			current_event++; 		  	// increment event counter
+			total_events++; 					// increment total event counter 
+		}
+
+		myTree->Delete(); 						// delete Tree object
+		myFile->Close("R"); 					// close input ROOT file.  The R flag deletes TProcessIDs
+		number_files++; 						// increment file counter
+
+	}
+	RootOutputFile->cd();
+	WriteHists();
+	RootOutputFile->Write();
+	RootOutputFile->Close();
+	fclose(input_file); 														// close file with input file list
+	cout<<total_events<<" events in "<<number_files<< " files."<<endl; // print out stats
+}
+
 // Count_after_cut *probably should be renamed?
 //
 //	Look at my channel and find the files with the best events.
