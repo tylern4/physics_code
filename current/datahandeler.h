@@ -34,7 +34,7 @@ void dataHandeler(char *fin="all.lis", char *RootFile_output="outFile.root", Int
 	_e0 = new TLorentzVector();
 	_p0 = new TLorentzVector();
 	_e1 = new TLorentzVector();
-	_e0->SetPxPyPzE(0,0,E1F_E0,E1F_E0);
+	_e0->SetPxPyPzE(0,0,E1D_E0,E1D_E0);
 	_p0->SetPxPyPzE(0,0,0,MASS_P);
 
 	TFile *myFile;
@@ -163,7 +163,7 @@ void WvsQ2(char *fin="all.lis", char *RootFile_output="outFile.root", Int_t MaxE
 			#pragma omp parallel for
 			for(int j = 0; j < gpart; j++)
 			{
-				W = sqrt(square(MASS_P) - 2 * E1D_E0 * MASS_P);
+				W = sqrt(Square(MASS_P) - 2 * E1D_E0 * MASS_P);
 				cout << W << endl;
 
 
