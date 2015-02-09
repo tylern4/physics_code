@@ -125,7 +125,7 @@ void count_after_cut() {
 
     int n_event=0;
 
-    for(Long64_t i=0;i<nentries;i++){
+    for(Long64_t i=0;i<nentries;i++){ //My while loop
 
       //Get the ith entry
       tree->GetEntry(i); //This is my line 184 ****start from here
@@ -151,13 +151,11 @@ void count_after_cut() {
             ef_3vec.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);
             ef_4vec.SetVectM(ef_3vec, 0.000511);
             //cout<<"electron"<<endl;
-          }
-          else if(id[j]== 2212){
+          } else if(id[j]== 2212){
             pf_3vec.SetXYZ(p[j]*cx[j],p[j]*cy[j],p[j]*cz[j]);
             pf_4vec.SetVectM(pf_3vec,0.9383);
             // cout<<"proton"<<endl;
-          }
-          else if(id[j] == -211 ){
+          } else if(id[j] == -211 ){
             //if(dc[i]>0 && cc[i]>0 && sc[i]>0){
             pionf_3vec.SetXYZ(p[j]*cx[j],p[j]*cy[j],p[j]*cz[j]);
             pionf_4vec.SetVectM(pionf_3vec, 0.13957);
