@@ -120,7 +120,7 @@ void WvsQ2(char *fin="all.lis", char *RootFile_output="outFile.root", Int_t MaxE
 	Int_t total_events = 0;
 
 
-	Double_t W = 0, Q2 = 0;
+	Double_t W = 0, Q2 = 0, E_gamma = 0;
 
 	TFile *myFile;
 	TFile *RootOutputFile;
@@ -160,12 +160,9 @@ void WvsQ2(char *fin="all.lis", char *RootFile_output="outFile.root", Int_t MaxE
 
 			////////////if (current_event%10000 == 0)	cout<<current_event<<"/"<<num_of_events<<endl;
 
-			#pragma omp parallel for
+			//#pragma omp parallel for
 			for(int j = 0; j < gpart; j++)
 			{
-				W = sqrt(Square(MASS_P) - 2 * E1D_E0 * MASS_P);
-				cout << W << endl;
-
 
 			}
 
