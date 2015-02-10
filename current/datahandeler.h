@@ -1,4 +1,5 @@
 #include "TTree.h"
+#include <math.h>
 #include "TROOT.h"
 #include "TH2.h"
 #include <TLorentzVector.h>
@@ -128,6 +129,7 @@ void WvsQ2(char *fin="all.lis", char *RootFile_output="outFile.root", Int_t MaxE
 	Int_t number_cols=0;
 	Int_t number_files = 0;
 	char rootFile[500];
+	Double_t theta_2 = 0, sin_2_theta_2 = 0;
 
 	RootOutputFile = new TFile(RootFile_output,"RECREATE");
 
@@ -161,9 +163,11 @@ void WvsQ2(char *fin="all.lis", char *RootFile_output="outFile.root", Int_t MaxE
 			////////////if (current_event%10000 == 0)	cout<<current_event<<"/"<<num_of_events<<endl;
 
 			//#pragma omp parallel for
-			for(int j = 0; j < gpart; j++)
-			{
-
+			for(int j = 0; j < gpart; j++){
+				//Calulating Q^2 
+				//Q^2 = 4*E_beam*E_prime*Sin^2(theta/2)
+				theta_2 = acos(cz[j])/2.0;
+				sin_2_theta_2 = Square(sin(theta_2));
 			}
 
 			current_event++; 		  	// increment event counter
