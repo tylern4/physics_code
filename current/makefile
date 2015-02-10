@@ -1,7 +1,6 @@
 ROOTLIBS	= $(shell root-config --libs)
 INCLUDE		= $(shell root-config --incdir)
 ROOTSYS		= $(shell root-config --exec-prefix)
-C++ = g++
 CXX = g++
 CXXFLAGS =      -O2 -fPIC -w -g -fopenmp $(shell root-config --cflags) 
 INCS =          -I$(shell root-config --incdir)
