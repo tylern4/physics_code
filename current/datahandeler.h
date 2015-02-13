@@ -161,19 +161,21 @@ void WvsQ2(char *fin, char *RootFile_output){
 
 			myTree->GetEntry(current_event);
 
-			if (current_event%10000 == 0)	cout<<current_event<<"/"<<num_of_events<<endl;
+			///////////if (current_event%10000 == 0)	cout<<current_event<<"/"<<num_of_events<<endl;
 
 			//#pragma omp parallel for
 			for(int event_number = 0; event_number < gpart; event_number++){
-				//	Calulating Q^2 
-				//	Q^2 = 4*E_beam*E_prime*Sin^2(theta/2)
-				//
-				E_prime = etot[event_number];
-				theta_2 = acos(cz[event_number])/2.0;
-				sin_sqr_theta_ovr_2 = Square(sin(theta_2));
-				Q2 = 4*E1D_E0*E_prime*sin_sqr_theta_ovr_2;
-				W = sqrt(MASS_P*(MASS_P+2*(E1D_E0-etot[event_number])));
-				//cout << "W: " << W << " vs Q2: " << Q2 << endl;
+				if (id[event_number] == ELECTRON){
+					//	Calulating Q^2 
+					//	Q^2 = 4*E_beam*E_prime*Sin^2(theta/2)
+					//
+					E_prime = etot[event_number]; //Have to figure out the correct way to get electron energy
+					theta_2 = acos(cz[event_number])/2.0;
+					sin_sqr_theta_ovr_2 = Square(sin(theta_2));
+					Q2 = 4*E1D_E0*E_prime*sin_sqr_theta_ovr_2;
+					W = sqrt(MASS_P*(MASS_P+2*(E1D_E0-etot[event_number])));
+				}
+
 
 
 				WvsQ2_Fill();

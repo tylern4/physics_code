@@ -17,7 +17,7 @@ TH1F *ZHist = new TH1F("ZHist", "ZHist", 100, -10, 10);
 
 TH1I *PartID = new TH1I("PartID", "PartID",423,-211,211);
 
-TH2F *WvsQ2_hist = new TH2F("WvsQ2_hist","WvsQ2_hist", 1000, 0.0, 3.0, 1000, 2.5, 3.1);
+TH2F *WvsQ2_hist = new TH2F("WvsQ2_hist","WvsQ2_hist", 1000, 0.0, 3.0, 1000, 2.5, 4.0);
 
 Double_t Px, Py, Pz;
 Double_t x,y,z;
