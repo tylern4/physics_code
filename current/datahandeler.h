@@ -115,7 +115,7 @@ void dataHandeler(char *fin="all.lis", char *RootFile_output="outFile.root", Int
 //Function to go through data files and calculate W and Q2
 //Fill in W vs Q2 hist and save to output root file
 //
-void WvsQ2(char *fin, char *RootFile_output /*, Int_t MaxEvents=0, Int_t dEvents=10000*/){
+void WvsQ2(char *fin, char *RootFile_output){
 	gROOT->Reset();
 	Int_t current_event;
 	Int_t num_of_events;
@@ -205,7 +205,7 @@ void WvsQ2(char *fin, char *RootFile_output /*, Int_t MaxEvents=0, Int_t dEvents
 //	the appropriate graphs.
 //
 
-void count_after_cut(char *fin="all.lis", char *RootFile_output="outFile.root"){
+void count_after_cut(char *fin, char *RootFile_output){
 	gROOT->Reset();
 	Int_t current_event = 0, num_of_events = 0, total_events = 0, number_cols = 0;
 
@@ -282,7 +282,7 @@ void count_after_cut(char *fin="all.lis", char *RootFile_output="outFile.root"){
 				qprev = qcurr;
 			}
 
-/*			#pragma omp parallel for
+			/*#pragma omp parallel for
 			for(int event_number = 0; event_number < gpart; event_number++){
 
 				/*
