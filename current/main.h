@@ -13,12 +13,13 @@ static const int MAX_PARTS = 10000;
 
 //static const float PI = TMath::Pi();
 //static const float D2R = PI/180.0;
-static const float E1D_E0 = 5.499;//7;
+static const float E1D_E0 = 4.802; //GeV
 static const float SOL = 29.9792458;
 //misc. constants
 static const float FSC = 0.00729735253;
-static const float NA = 6.02214129E23;
-static const float QE = 1.60217646E-19;
+static const float NA = 6.02214129E23; //Avigadro's number
+static const float QE = 1.60217646E-19;  //Charge or electron
+
 //particle codes, usually PDG codes, but always those used in BOS
 static const int PROTON = 2212;
 static const int NEUTRON = 2112;
@@ -29,6 +30,7 @@ static const int KP = 321;
 static const int KM = -321;
 static const int PHOTON = 22;
 static const int ELECTRON = 11;
+
 //PDG particle masses in GeV/c2
 static const float MASS_P = 0.93827203;
 static const float MASS_N = 0.93956556;
@@ -118,7 +120,7 @@ Int_t   cc_part;
 UChar_t cc_sect[MAX_PARTS];   //[cc_part]
 UChar_t cc_hit[MAX_PARTS];   //[cc_part]
 Int_t   cc_segm[MAX_PARTS];   //[cc_part]
-UShort_t        nphe[MAX_PARTS];   //[cc_part]
+UShort_t	nphe[MAX_PARTS];   //[cc_part]
 Float_t cc_t[MAX_PARTS];   //[cc_part]
 Float_t cc_r[MAX_PARTS];   //[cc_part]
 Float_t cc_c2[MAX_PARTS];   //[cc_part]
@@ -176,7 +178,7 @@ void getBranches(TTree* myTree){
 	myTree->SetBranchAddress("p", &p);					//momentum of i'th particle p[i] (GeV/C)
 	myTree->SetBranchAddress("m", &m);					//mass of i'th particle m[i] (GeV/C)
 	myTree->SetBranchAddress("q", &q);					//charge of i'th particle q[i] (charge in e's 1,0,-1)
-	myTree->SetBranchAddress("b", &b);					//Velocity of i'th particle b[i] (in terms of c)
+	myTree->SetBranchAddress("b", &b);					//Velocity of i'th particle b[i] (in terms of c) ie. Beta
 	myTree->SetBranchAddress("cx", &cx);				//X direction cosine at origin
 	myTree->SetBranchAddress("cy", &cy);				//Y direction cosine at origin			
 	myTree->SetBranchAddress("cz", &cz);				//Z direction cosine at origin

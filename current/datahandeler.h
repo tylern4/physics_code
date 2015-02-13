@@ -77,18 +77,18 @@ void dataHandeler(char *fin="all.lis", char *RootFile_output="outFile.root", Int
 			////////////if (current_event%10000 == 0)	cout<<current_event<<"/"<<num_of_events<<endl;
 
 			#pragma omp parallel for
-			for(int j = 0; j < gpart; j++)
+			for(int event_number = 0; event_number < gpart; event_number++)
 			{
 
-				Px = cx[j]*p[j];
-				Py = cy[j]*p[j];
-				Pz = cz[j]*p[j];
+				Px = cx[event_number]*p[event_number];
+				Py = cy[event_number]*p[event_number];
+				Pz = cz[event_number]*p[event_number];
 
-				x = vx[j];
-				y = vy[j];
-				z = vz[j];
+				x = vx[event_number];
+				y = vy[event_number];
+				z = vz[event_number];
 
-				ID = id[j];
+				ID = id[event_number];
 
 
 				FillHist();
@@ -112,16 +112,17 @@ void dataHandeler(char *fin="all.lis", char *RootFile_output="outFile.root", Int
 	cout<<total_events<<" events in "<<number_files<< " files."<<endl; // print out stats
 }
 
-
-
-void WvsQ2(char *fin="all.lis", char *RootFile_output="outFile.root", Int_t MaxEvents=0, Int_t dEvents=10000){
+//Function to go through data files and calculate W and Q2
+//Fill in W vs Q2 hist and save to output root file
+//
+void WvsQ2(char *fin, char *RootFile_output /*, Int_t MaxEvents=0, Int_t dEvents=10000*/){
 	gROOT->Reset();
 	Int_t current_event;
 	Int_t num_of_events;
 	Int_t total_events = 0;
 
 
-	Double_t W = 0, Q2 = 0, E_gamma = 0;
+	Double_t E_prime = 0;
 
 	TFile *myFile;
 	TFile *RootOutputFile;
@@ -129,7 +130,7 @@ void WvsQ2(char *fin="all.lis", char *RootFile_output="outFile.root", Int_t MaxE
 	Int_t number_cols=0;
 	Int_t number_files = 0;
 	char rootFile[500];
-	Double_t theta_2 = 0, sin_2_theta_2 = 0;
+	Double_t theta_2 = 0, sin_sqr_theta_ovr_2 = 0;
 
 	RootOutputFile = new TFile(RootFile_output,"RECREATE");
 
@@ -160,14 +161,24 @@ void WvsQ2(char *fin="all.lis", char *RootFile_output="outFile.root", Int_t MaxE
 
 			myTree->GetEntry(current_event);
 
-			////////////if (current_event%10000 == 0)	cout<<current_event<<"/"<<num_of_events<<endl;
+			if (current_event%10000 == 0)	cout<<current_event<<"/"<<num_of_events<<endl;
 
 			//#pragma omp parallel for
-			for(int j = 0; j < gpart; j++){
-				//Calulating Q^2 
-				//Q^2 = 4*E_beam*E_prime*Sin^2(theta/2)
-				theta_2 = acos(cz[j])/2.0;
-				sin_2_theta_2 = Square(sin(theta_2));
+			for(int event_number = 0; event_number < gpart; event_number++){
+				//	Calulating Q^2 
+				//	Q^2 = 4*E_beam*E_prime*Sin^2(theta/2)
+				//
+				E_prime = etot[event_number];
+				theta_2 = acos(cz[event_number])/2.0;
+				sin_sqr_theta_ovr_2 = Square(sin(theta_2));
+				Q2 = 4*E1D_E0*E_prime*sin_sqr_theta_ovr_2;
+				W = sqrt(MASS_P*(MASS_P+2*(E1D_E0-etot[event_number])));
+				//cout << "W: " << W << " vs Q2: " << Q2 << endl;
+
+
+				WvsQ2_Fill();
+
+
 			}
 
 			current_event++; 		  	// increment event counter
@@ -180,7 +191,7 @@ void WvsQ2(char *fin="all.lis", char *RootFile_output="outFile.root", Int_t MaxE
 
 	}
 	RootOutputFile->cd();
-	WriteHists();
+	WvsQ2_Write();
 	RootOutputFile->Write();
 	RootOutputFile->Close();
 	fclose(input_file); 														// close file with input file list
@@ -272,7 +283,7 @@ void count_after_cut(char *fin="all.lis", char *RootFile_output="outFile.root"){
 			}
 
 /*			#pragma omp parallel for
-			for(int j = 0; j < gpart; j++){
+			for(int event_number = 0; event_number < gpart; event_number++){
 
 				/*
 				Here is where I need to make some additions from Ye's code.
