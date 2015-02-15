@@ -293,7 +293,8 @@ void AnaTwoPion(char *fin="TwoPion.lis", char *RootFile="AnaTwoPion.root", Int_t
 
 	myFile = new TFile(rootFile); 
 	// declare the tree
-	myTree = (TTree*)myFile->Get("PipPimTree");
+	//myTree = (TTree*)myFile->Get("PipPimTree");
+  myTree = (TTree*)myFile->Get("h10");
   
      myTree->SetBranchAddress("egam",&eGAM);
      myTree->SetBranchAddress("vTime",&vTIME);
@@ -398,7 +399,7 @@ void AnaTwoPion(char *fin="TwoPion.lis", char *RootFile="AnaTwoPion.root", Int_t
                 V4[ii].SetPxPyPzE(pX[ii],pY[ii],pZ[ii],pE[ii]);
              }
 
-      	   pairV4 = V4[0] + V4[1];                              // particle pair 4-vector
+      	   pairV4 = V4[0] + V4[1];                        // particle pair 4-vector
 	   pairM = pairV4.M();                                  // pair invariant mass
 
 
@@ -414,7 +415,7 @@ void AnaTwoPion(char *fin="TwoPion.lis", char *RootFile="AnaTwoPion.root", Int_t
       	   dz_cut = (fabs(dz)<=dzlim);                          // vertex z difference cut
       	   dt_cut = (fabs(scTIME[1]-scTIME[0])<=dtlim);         // vertex time difference cut
       	   r_cut = (r_pair<=rlim);                              // target radius cut 
-     	   isPim = (PID[0]==9);                                 // pi- GEANT id
+     	     isPim = (PID[0]==9);                                 // pi- GEANT id
       	   isPip = (PID[1]==8);                                 // pi+ GEANT id
 
       	   cuts=(dz_cut && r_cut && dt_cut && isPim && isPip);  // total cuts
@@ -1844,7 +1845,7 @@ void MomPolSubtraction(char *rootFile, char* yieldFile){
 	   SumLo = 0.486;
 	   SumHi = 0.507;			
 	   Xbins = MomhBgFit->GetNbinsX();
-x
+
 
 	   for(k=1; k<Xbins; k++){
 	      if (MomhBgFit->GetBinCenter(k)<=SumHi && MomhBgFit->GetBinCenter(k)>=SumLo){ 
