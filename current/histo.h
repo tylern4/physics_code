@@ -18,6 +18,8 @@ TH1F *ZHist = new TH1F("ZHist", "ZHist", 100, -10, 10);
 TH1I *PartID = new TH1I("PartID", "PartID",423,-211,211);
 
 TH2F *WvsQ2_hist = new TH2F("WvsQ2_hist","WvsQ2_hist", 1000, 0.0, 3.0, 1000, 2.5, 4.0);
+TH1F *W_hist = new TH1F("W","W",100, 0.0, 3.0);
+TH1F *Q2_hist = new TH1F("Q2","Q2",100, 0.0, 3.0);
 
 Double_t Px, Py, Pz;
 Double_t x,y,z;
@@ -28,14 +30,17 @@ Double_t W, Q2;
 
 void WvsQ2_Fill(){
 	WvsQ2_hist->Fill(Q2,W);
+	W_hist->Fill(W);
+	Q2_hist->Fill(Q2);
 }
 
 void WvsQ2_Write(){
 	WvsQ2_hist->Write();
+	W_hist->Write();
+	Q2_hist->Write();
 }
 
 void WriteHists(){
-
 	PxHist->Write();
 	PyHist->Write();
 	PzHist->Write();
@@ -45,8 +50,6 @@ void WriteHists(){
 	ZHist->Write();
 
 	PartID->Write();
-
-
 }
 
 void FillHist(){
@@ -59,5 +62,4 @@ void FillHist(){
 	ZHist->Fill(z);
 
 	PartID->Fill(ID);
-
 }

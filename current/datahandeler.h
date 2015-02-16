@@ -174,13 +174,9 @@ void WvsQ2(char *fin, char *RootFile_output){
 					sin_sqr_theta_ovr_2 = Square(sin(theta_2));
 					Q2 = 4*E1D_E0*E_prime*sin_sqr_theta_ovr_2;
 					W = sqrt(MASS_P*(MASS_P+2*(E1D_E0-etot[event_number])));
+
+					WvsQ2_Fill();
 				}
-
-
-
-				WvsQ2_Fill();
-
-
 			}
 
 			current_event++; 		  	// increment event counter
