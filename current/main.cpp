@@ -52,11 +52,11 @@ int main(int argc, char **argv){
 	sprintf(infilename,"%s",argv[1]);
 	sprintf(outfilename,"%s",argv[2]);
 
-	//dataHandeler(infilename,outfilename);
+	dataHandeler(infilename,outfilename);
 	//count_after_cut(infilename,outfilename);
 	//golden_run(infilename,outfilename);
 	//WvsQ2(infilename,outfilename);
-	PrintEverything(infilename,outfilename);
+	//PrintEverything(infilename,outfilename);
 
 
 	//Timer(time1);
