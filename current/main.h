@@ -56,6 +56,7 @@ Float_t t_l;
 Float_t tr_time;
 Float_t rf_time1;
 Float_t rf_time2;
+
 Int_t   gpart;
 Short_t id[MAX_PARTS];   //[gpart]
 Char_t  stat[MAX_PARTS];   //[gpart]
@@ -74,7 +75,11 @@ Float_t cz[MAX_PARTS];   //[gpart]
 Float_t vx[MAX_PARTS];   //[gpart]
 Float_t vy[MAX_PARTS];   //[gpart]
 Float_t vz[MAX_PARTS];   //[gpart]
-Int_t   dc_part;
+
+//Each of the folowing has 
+
+//dc_part = dc[gpart] 
+Int_t   dc_part;		
 UChar_t dc_sect[MAX_PARTS];   //[dc_part]
 UChar_t dc_trk[MAX_PARTS];   //[dc_part]
 Char_t  dc_stat[MAX_PARTS];   //[dc_part]
@@ -89,6 +94,7 @@ Float_t dc_yec[MAX_PARTS];   //[dc_part]
 Float_t dc_zec[MAX_PARTS];   //[dc_part]
 Float_t dc_thcc[MAX_PARTS];   //[dc_part]
 Float_t dc_c2[MAX_PARTS];   //[dc_part]
+
 Int_t   ec_part;
 UShort_t ec_stat[MAX_PARTS];   //[ec_part]
 UChar_t ec_sect[MAX_PARTS];   //[ec_part]
@@ -107,6 +113,7 @@ Float_t ec_m2[MAX_PARTS];   //[ec_part]
 Float_t ec_m3[MAX_PARTS];   //[ec_part]
 Float_t ec_m4[MAX_PARTS];   //[ec_part]
 Float_t ec_c2[MAX_PARTS];   //[ec_part]
+
 Int_t   sc_part;
 UChar_t sc_sect[MAX_PARTS];   //[sc_part]
 UChar_t sc_hit[MAX_PARTS];   //[sc_part]
@@ -116,6 +123,7 @@ Float_t edep[MAX_PARTS];   //[sc_part]
 Float_t sc_t[MAX_PARTS];   //[sc_part]
 Float_t sc_r[MAX_PARTS];   //[sc_part]
 Float_t sc_c2[MAX_PARTS];   //[sc_part]
+
 Int_t   cc_part;
 UChar_t cc_sect[MAX_PARTS];   //[cc_part]
 UChar_t cc_hit[MAX_PARTS];   //[cc_part]
@@ -124,6 +132,7 @@ UShort_t	nphe[MAX_PARTS];   //[cc_part]
 Float_t cc_t[MAX_PARTS];   //[cc_part]
 Float_t cc_r[MAX_PARTS];   //[cc_part]
 Float_t cc_c2[MAX_PARTS];   //[cc_part]
+
 Int_t   lac_part;
 Int_t   lec_sect[MAX_PARTS];   //[lac_part]
 Int_t   lec_hit[MAX_PARTS];   //[lac_part]
@@ -151,14 +160,12 @@ void Timer(float time1){
 	minutes = minutes-seconds;
 	seconds = seconds*60;
 
-
   	if (minutes==0) cout<<endl<<"Completed in "<<seconds<<" seconds."<<endl<<endl;
   	else cout<<endl<<"Completed in "<<minutes<<" minutes and "<<seconds<<" seconds."<<endl<<endl;
 
 }
 
 void getBranches(TTree* myTree){
-
 
 	myTree->SetBranchAddress("npart", &npart);			//number of final particles
 	myTree->SetBranchAddress("evstat", &evstat);
@@ -244,7 +251,5 @@ void getBranches(TTree* myTree){
 	myTree->SetBranchAddress("lec_c2", &lec_c2); 
 
 	myTree->SetBranchStatus("*",1);
-
-
 }
 #endif

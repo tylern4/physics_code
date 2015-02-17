@@ -1,0 +1,6 @@
+from build_system import environment
+ 
+TwoPionenv = environment.env(deps='root')
+TwoPionenv.load_dependency('root')
+
+TwoPionenv.program(target='AnaTwoPion',source=['AnaTwoPion.cc'])

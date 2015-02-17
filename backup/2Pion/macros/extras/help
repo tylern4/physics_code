@@ -1,0 +1,237 @@
+1://AnaTwoPion.C
+2://
+3:// 
+4:// M. H. Wood, Canisius College
+5://
+6:// Notes: macro to study pi+pi-
+7://
+8://--------------------------------------------------------------------
+35:Float_t AvoNum = 6.022137E23; // Avigadro's number [#/mol]
+67:Double_t zFoil_mean[8] = {-18.0,-12.3,-9.89,-7.42,-4.93,-2.46,0.02,2.44}; // foil peak mean
+68:Double_t zFoil_sigma[8] = {1.17,0.258,0.249,0.252,0.235,0.234,0.245,0.231}; // foil peak sigma
+108://
+109://	AnaTwoPion - main analysis routine. Read in filtered ROOT data, apply cuts, and plot invariant mass.
+110://
+111://               fin = text file with a list of filtered ROOT files
+112://				 RootFile = output ROOT file
+113://               MaxEvents = max. number of events to analyze
+114://               dEvents = event counter for print statements
+115://
+138:  TVector3 V3[nPart]; // vertex 3-vectors
+139:  TLorentzVector V4[nPart]; // particle 4-vectors
+140:  TLorentzVector pairV4; // particle pair 4-vector
+141:  TLorentzVector Beam; // beam 4-vector
+142:  TLorentzVector A; // beam-pair 4-vector
+144:  // declarations for branch addresses
+160:  // data files contain the trees
+163:  BookHist(); // declare histograms
+176:    // declare the tree
+249:	// loop over events
+252:	i = 0; // inititalize the event counter for each file
+254:      // Initialize cuts to false
+268:      myTree->GetEntry(i); // retrieve the event from the tree
+270:      // print statement for certain eevent intervals
+273:	  Beam.SetPxPyPzE(0,0,eGAM,eGAM); // beam 4-vector
+275:      // pair kinematics
+280:      pairV4 = V4[0] + V4[1]; // particle pair 4-vector
+281:	  pairM = pairV4.M(); // pair invariant mass
+283:	  A = Beam - pairV4; // beam minus pair 4-vector
+285:      dz = V3[0].Z() - V3[1].Z(); // z vertex difference
+286:      r_pair = sqrt(pairX*pairX + pairY*pairY); // radial vertex (x,y) for the particle pair
+288:      P_cut = (V4[0].P()>=Plim && V4[1].P()>=Plim); // momentum cut
+289:      vz_cut = (pairZ>=zcut[0] && pairZ>=zcut[nFoils]); // vertex z cut
+290:      dz_cut = (abs(dz)<=dzlim); // vertex z difference cut
+291:      dt_cut = (abs(scTIME[1]-scTIME[0])<=dtlim); // vertex time difference cut
+292:      r_cut = (r_pair<=rlim); // target radius cut 
+293:      isPim = (PID[0]==9); // pi- GEANT id
+294:      isPip = (PID[1]==8); // pi+ GEANT id
+296:      cuts=(dz_cut && r_cut && dt_cut && isPim && isPip);  // total cuts
+298:	  hEbeam->Fill(Beam.E(),0); // beam histogram
+299:	  ht->Fill(A.Mag2(),0); // histogram of t (mom. transfer)
+301:      if(isPim && isPip){ // cut histograms
+302:        hIM_cuts->Fill(pairM,1); // no cuts
+303:        if(dz_cut) hIM_cuts->Fill(pairM,2); // dz cut only
+304:        if(r_cut) hIM_cuts->Fill(pairM,3); // r cut only
+305:        if(dt_cut) hIM_cuts->Fill(pairM,4); // dt cut only
+306:        if(dz_cut && r_cut) hIM_cuts->Fill(pairM,5); // dz and r cuts
+307:        if(dz_cut && r_cut && dt_cut) hIM_cuts->Fill(pairM,6); // dz, r, and dt cuts
+310:      for(j=0;j<nType;j++){ // loop over vz type, [0,in target], [1,after target]
+311:        tgt[j] = FindTargetIndex(pairZ,j); // target index (1-4)
+312:        NoPbtgt[j] = FindNoPb(pairZ,j); // no Pb index (5)
+314:        Ftgt[j] = FindFoilIndex(pairZ); // foil index (6-13)
+317:        if(cuts && tgt[j]){ // histograms with std cuts parsed by target
+329:	  i++; // increment event counter
+330:	  TotEvents++; // increment total event counter
+333:	myTree->Delete(); // delete Tree object
+334:	myFile->Close("R"); // close input ROOT file.  The R flag deletes TProcessIDs
+335:    nfiles++; // increment file counter
+337:  fclose(in1); // close file with input file list
+338:  cout<<"Total "<<TotEvents<<" / "<<nfiles<<endl; // print out stats
+340:  WriteHist(RootFile); // write histograms to a file
+343:// 
+344:// BookHist - routine to set up histograms for the AnaTwoPion() routine
+345://
+383:// 
+384:// WriteHist - routine to write histograms to the output file
+385://             Called in the AnaTwoPion() routine
+386://
+405:// 
+406:// plotHist2D - plot 2D histogram with labels
+407://                  
+408://                  fAna = output from AnaTwoPion()
+409://                  hname = 2D histogram name
+410://                  xname = x-axis label
+411://                  yname = y-axis label
+412://
+417:  // Canvas to compare IM by each cut
+419:  c1->SetBorderMode(1);  //Bordermode (-1=down, 0 = no border, 1=up)
+424:  // data files contain the trees
+449:// 
+450:// projectX_1Dfrom2D - project 1D histogram along the x-axis froma 2D histogram
+451://                  
+452://                  fAna = output from AnaTwoPion()
+453://                  WhichAxis = axis to project upon (x or y)
+454://                  binLo = set lower bin of the range
+455://                  binHi = set higher bin of the range
+456://                  hname = 2D histogram name
+457://                  xname = x-axis label
+458://                  yname = y-axis label
+459://
+467:  // Canvas to compare IM by each cut
+469:  c1->SetBorderMode(1);  //Bordermode (-1=down, 0 = no border, 1=up)
+474:  // data files contain the trees
+512:// 
+513:// compIMvsTarget - compare the inv. mass by target.  Each histogram is plotted in its own pad
+514://                  
+515://                  fAna = output from AnaTwoPion()
+516://                  iType = target region [0], after target [1]
+517://
+531:  // Canvas to compare IM by each cut
+533:  c1->SetBorderMode(1);  //Bordermode (-1=down, 0 = no border, 1=up)
+539:  // data files contain the trees
+572:// 
+573:// overlayIMvsTarget - overlay the inv. mass for each target in a single pad
+574://                  
+575://                  fAna = output from AnaTwoPion()
+576://                  iType = target region [0], after target [1]
+577://
+586:  // Canvas to compare IM by each cut
+588:  c1->SetBorderMode(1);  //Bordermode (-1=down, 0 = no border, 1=up)
+593:  // data files contain the trees
+634:// 
+635:// overlayVz - overlay the Vz for each iType in a single pad
+636://                  
+637://                  fAna = output from AnaTwoPion()
+638://
+647:  // Canvas to compare IM by each cut
+649:  c1->SetBorderMode(1);  //Bordermode (-1=down, 0 = no border, 1=up)
+654:  // data files contain the trees
+672:    //    h1D[i]->Sumw2();
+696:// 
+697:// BgSubIM - background subtraction routine (under development)
+698://                  
+699://                  fAna = output from AnaTwoPion()
+700://                  suffix = output file suffix
+701://                  iType = target region [0], after target [1]
+702://
+715:  // data files contain the trees
+722:    //  for(i=0;i<tgtTot;i++){
+732:    can[i]->SetBorderMode(1);  //Bordermode (-1=down, 0 = no border, 1=up)
+751:    //    hIMsub[i]->Add(h1D[i],-1);
+770:// 
+771:// KsMeson_justBgd - background subtraction routine. The bins defining the Ks meson are removed
+772://               and the neighboring bins are fit to polynomial functions for a background
+773://               shape.  The background shape is subtracted from the original spectrum.
+774://               The output is a list of yields.
+775://                  
+776://                  fAna = output from AnaTwoPion()
+777://                  iTgt = target index
+778://                  suffix = output file suffix
+779://                  iType = target region [0], after target [1]
+780://
+811:  // data files contain the trees
+844:  // open canvas
+845:  // create canvas
+853:  can1->SetBorderMode(0);  //Bordermode (-1=down, 0 = no border, 1=up)
+861:  // fit the final spectrum
+876:    //    pol[i]->GetParameters(par);    
+877:    //    pol[i]->SetParameters(par);
+904:  can2->SetBorderMode(0);  //Bordermode (-1=down, 0 = no border, 1=up)
+979:// 
+980:// KsMeson_sbBgd - background subtraction routine. The sidebands around the Ks meson form the
+981://               background shape and are subtracted the yield under the peak.
+982://               The output is a list of yields.
+983://                  
+984://                  fAna = output from AnaTwoPion()
+985://                  iTgt = target index
+986://                  suffix = output file suffix
+987://                  iType = target region [0], after target [1]
+988://
+1016:  // create canvas
+1024:  can1->SetBorderMode(0);  //Bordermode (-1=down, 0 = no border, 1=up)
+1032:  // data files contain the trees
+1106:// 
+1107:// ListYields - read yields for all targets from text files, calculate errors, and print to new file 
+1108://                  
+1109://                  suffix = output file suffix
+1110://                  iType = target region [0], after target [1]
+1111://
+1151:// 
+1152:// plotYields - read yields for all targets from a single text file and plot vs target 
+1153://                  
+1154://                  fname = input text file with yields from ListYields()
+1155://                  RootFile = output ROOT file
+1156://
+1185:// 
+1186:// BookHists_Yields - create histograms for plotYields()
+1187://                  
+1188://
+1202:// 
+1203:// WriteHists_Yields - write histograms to ROOT file for plotYields()
+1204://                  
+1205://
+1351:// 
+1352:// PrintHistogramOptions - list histograms available for SelectHistogram()
+1353://                  
+1354://
+1367:// 
+1368:// PrintHists - print contents of histogram created by plotYields()
+1369://                  
+1370://				RootFile = output from plotYields() 
+1371://				hFlag = histogram selector
+1372://
+1398:// 
+1399:// PlotHists - plot histogram created by plotYields()
+1400://                  
+1401://				RootFile = output from plotYields() 
+1402://				hFlag = histogram selector
+1403://
+1420:  can->SetBorderMode(1);  //Bordermode (-1=down, 0 = no border, 1=up)
+1447:// 
+1448:// FindFoilIndex - return index number of target foils
+1449://                  
+1450://				vz = z vertex position
+1451://
+1463:// 
+1464:// FindVzBehindFoilIndex - return index number of target foil where vz is directly behind
+1465://                  
+1466://				vz = z vertex position
+1467://
+1477:    //    z1 = zFoil_mean[i] + 3.0*zFoil_sigma[i];    
+1484:// 
+1485:// FindTargetIndex - return index number of target
+1486://                  
+1487://				vz = z vertex position
+1488://				method = [0 = target],[1 = after target]
+1489://
+1514:// 
+1515:// FindNoPb - determine if target is not Pb
+1516://                  
+1517://				vz = z vertex position
+1518://				method = [0 = target],[1 = after target]
+1519://
+1528:// 
+1529:// TargetIndex2A - return target mass number from target index
+1530://                  
+1531://				index = target index
+1532://
