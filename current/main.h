@@ -76,9 +76,8 @@ Float_t vx[MAX_PARTS];   //[gpart]
 Float_t vy[MAX_PARTS];   //[gpart]
 Float_t vz[MAX_PARTS];   //[gpart]
 
-//Each of the folowing has 
-
-//dc_part = dc[gpart] 
+//Each of the folowing has multiple parts 
+ 
 Int_t   dc_part;		
 UChar_t dc_sect[MAX_PARTS];   //[dc_part]
 UChar_t dc_trk[MAX_PARTS];   //[dc_part]
