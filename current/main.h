@@ -148,6 +148,22 @@ double Square(double a){
 	return a*a;
 }
 
+double W_calc(double E_prime){
+	return sqrt(MASS_P*(MASS_P+2*(E1D_E0-E_prime)));
+}
+
+double Q2_calc(double CosZ, double E_prime){
+	double theta_2 = acos(CosZ)/2.0;
+	double sin_sqr_theta_ovr_2 = Square(sin(theta_2));
+	return 4*E1D_E0*E_prime*sin_sqr_theta_ovr_2;
+}
+
+double E_calc(double momentum/*, double CosX, double CosY, double CosZ*/){
+	double E2 = Square(momentum)+Square(MASS_E);
+
+	return sqrt(E2);
+}
+
 void Timer(float time1){
 	//time to complete function
  	float time2 = clock();

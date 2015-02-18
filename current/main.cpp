@@ -55,8 +55,8 @@ int main(int argc, char **argv){
 	//dataHandeler(infilename,outfilename);
 	//count_after_cut(infilename,outfilename);
 	//golden_run(infilename,outfilename);
-	//WvsQ2(infilename,outfilename);
-	PrintEverything(infilename,outfilename);
+	WvsQ2(infilename,outfilename);
+	//PrintEverything(infilename,outfilename);
 
 
 	//Timer(time1);

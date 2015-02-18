@@ -121,16 +121,13 @@ void WvsQ2(char *fin, char *RootFile_output){
 	Int_t num_of_events;
 	Int_t total_events = 0;
 
-
-	Double_t E_prime = 0;
-
 	TFile *myFile;
 	TFile *RootOutputFile;
 	TTree *myTree;
 	Int_t number_cols=0;
 	Int_t number_files = 0;
 	char rootFile[500];
-	Double_t theta_2 = 0, sin_sqr_theta_ovr_2 = 0;
+	//Double_t theta_2 = 0, sin_sqr_theta_ovr_2 = 0;
 
 	RootOutputFile = new TFile(RootFile_output,"RECREATE");
 
@@ -169,11 +166,15 @@ void WvsQ2(char *fin, char *RootFile_output){
 					//	Calulating Q^2 
 					//	Q^2 = 4*E_beam*E_prime*Sin^2(theta/2)
 					//
-					E_prime = etot[event_number]; //Have to figure out the correct way to get electron energy
-					theta_2 = acos(cz[event_number])/2.0;
-					sin_sqr_theta_ovr_2 = Square(sin(theta_2));
-					Q2 = 4*E1D_E0*E_prime*sin_sqr_theta_ovr_2;
-					W = sqrt(MASS_P*(MASS_P+2*(E1D_E0-etot[event_number])));
+					//E_prime = etot[event_number]; //Have to figure out the correct way to get electron energy 
+					//Get from momentum ie [E^2 = p^2 + m^2]
+					E_prime = E_calc(p[event_number]);
+					//theta_2 = acos(cz[event_number])/2.0;
+					//sin_sqr_theta_ovr_2 = Square(sin(theta_2));
+					//Q2 = 4*E1D_E0*E_prime*sin_sqr_theta_ovr_2;
+					//W = sqrt(MASS_P*(MASS_P+2*(E1D_E0-E_prime)));
+					Q2 = Q2_calc(cz[event_number],E_prime);
+					W = W_calc(E_prime);
 
 					WvsQ2_Fill();
 				}
