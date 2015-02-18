@@ -12,7 +12,7 @@
 #include "TChain.h"
 #include "TSystem.h"
 #include "TMath.h"
-#include <omp.h>
+////#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -79,7 +79,7 @@ void dataHandeler(char *fin="all.lis", char *RootFile_output="outFile.root", Int
 			#pragma omp parallel for
 			for(int event_number = 0; event_number < gpart; event_number++)
 			{
-				cout << event_number << endl;
+
 				Px = cx[event_number]*p[event_number];
 				Py = cy[event_number]*p[event_number];
 				Pz = cz[event_number]*p[event_number];
