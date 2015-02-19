@@ -12,7 +12,7 @@
 #include "TChain.h"
 #include "TSystem.h"
 #include "TMath.h"
-////#include <omp.h>
+#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -160,7 +160,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 
 			///////////if (current_event%10000 == 0)	cout<<current_event<<"/"<<num_of_events<<endl;
 
-			//#pragma omp parallel for
+			#pragma omp parallel for
 			for(int event_number = 0; event_number < gpart; event_number++){
 				if (id[event_number] == ELECTRON){
 					//	Calulating Q^2 
