@@ -144,6 +144,20 @@ Float_t lec_y[MAX_PARTS];   //[lac_part]
 Float_t lec_z[MAX_PARTS];   //[lac_part]
 Float_t lec_c2[MAX_PARTS];   //[lac_part]
 
+void loadbar(int x, int n)
+{
+	int w = 50;
+    if ( (x != n) && (x % (n/100+1) != 0) ) return;
+ 
+    float ratio  =  x/(float)n;
+    int   c      =  ratio * w;
+ 
+    cout << "[";
+    for (int x=0; x<c; x++) cout << "=";
+    for (int x=c; x<w; x++) cout << " ";
+    cout << (int)(ratio*100) << "%]\r" << flush;
+}
+
 double Square(double a){
 	return a*a;
 }

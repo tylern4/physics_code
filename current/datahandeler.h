@@ -25,11 +25,11 @@ using namespace std;
 //
 //	hopefully this works
 //
-void dataHandeler(char *fin="all.lis", char *RootFile_output="outFile.root", Int_t MaxEvents=0, Int_t dEvents=10000){
+void dataHandeler(char *fin="all.lis", char *RootFile_output="outFile.root", int MaxEvents=0, int dEvents=10000){
 	gROOT->Reset();
-	Int_t current_event;
-	Int_t num_of_events;
-	Int_t total_events = 0;
+	int current_event;
+	int num_of_events;
+	int total_events = 0;
 
 	TLorentzVector *_e0, *_p0, *_e1;//, *_p1;
 
@@ -42,8 +42,8 @@ void dataHandeler(char *fin="all.lis", char *RootFile_output="outFile.root", Int
 	TFile *myFile;
 	TFile *RootOutputFile;
 	TTree *myTree;
-	Int_t number_cols=0;
-	Int_t number_files = 0;
+	int number_cols=0;
+	int number_files = 0;
 	char rootFile[500];
 
 	RootOutputFile = new TFile(RootFile_output,"RECREATE");
@@ -57,7 +57,6 @@ void dataHandeler(char *fin="all.lis", char *RootFile_output="outFile.root", Int
 	while (1){
 
 		number_cols = fscanf(input_file,"%s",rootFile); 
-
 		if (number_cols<0) break;
 		myFile = new TFile(rootFile, "READ");
 
@@ -118,21 +117,21 @@ void dataHandeler(char *fin="all.lis", char *RootFile_output="outFile.root", Int
 //
 void WvsQ2(char *fin, char *RootFile_output){
 	gROOT->Reset();
-	Int_t current_event;
-	Int_t num_of_events;
-	Int_t total_events = 0;
+	int current_event;
+	int num_of_events;
+	int total_events = 0;
+	int files_in_lis = 2466;
 
 	TFile *myFile;
 	TFile *RootOutputFile;
 	TTree *myTree;
-	Int_t number_cols=0;
-	Int_t number_files = 0;
+	int number_cols = 0;
+	int number_files = 0;
 	char rootFile[500];
 
 	RootOutputFile = new TFile(RootFile_output,"RECREATE");
 
 	cout << "Analyzing file " << fin << endl;
-
 
 	FILE *input_file = fopen(fin,"r");
 	if (input_file == NULL) perror ("Error opening file");
@@ -142,15 +141,16 @@ void WvsQ2(char *fin, char *RootFile_output){
 		number_cols = fscanf(input_file,"%s",rootFile); 
 
 		if (number_cols<0) break;
+
+		loadbar(number_files,files_in_lis);
+
 		myFile = new TFile(rootFile, "READ");
 
 		myTree = (TTree *)myFile->Get("h10");
 
-
 		getBranches(myTree);
 
 		num_of_events = (Int_t)myTree->GetEntries();
-
 
 		current_event = 0; 
 
@@ -178,7 +178,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 			}
 
 			current_event++; 		  	// increment event counter
-			total_events++; 					// increment total event counter 
+			total_events++; 			// increment total event counter 
 		}
 
 		myTree->Delete(); 						// delete Tree object
