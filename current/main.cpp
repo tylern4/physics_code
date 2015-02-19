@@ -22,13 +22,13 @@
 #include "main.h"
 #include "TMath.h"
 #include "histo.h"
-#include "datahandeler.h"
-//#include "golden_run.h"
+#include "datahandeler.h" //dataHandeler() //WvsQ2()
+//#include "count_after_cut.h" //count_after_cut()
 ////#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string>
-#include "stupid.h"
+#include "stupid.h" //PrintEverything()
 
 using namespace std;
 
@@ -40,21 +40,11 @@ int main(int argc, char **argv){
 	char  infilename[128];
 	char  outfilename[128];
 	
-	/*system("uname");
-	string systemOut ("Linux");
-	cout << systemOut.compare("Darwin") << ":" << systemOut.compare("Linux") << endl;
-	if (systemOut.compare("Darwin") == 0) {
-		cout << "MAC" << endl;
-	} else if(systemOut.compare("Linux") == 0){
-		cout << "Linux" << endl;
-	}*/
-
 	sprintf(infilename,"%s",argv[1]);
 	sprintf(outfilename,"%s",argv[2]);
 
 	//dataHandeler(infilename,outfilename);
 	//count_after_cut(infilename,outfilename);
-	//golden_run(infilename,outfilename);
 	WvsQ2(infilename,outfilename);
 	//PrintEverything(infilename,outfilename);
 
