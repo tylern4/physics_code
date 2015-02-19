@@ -9,24 +9,24 @@
 //Histogram declarations and write
 //
 //
-TH1F *PxHist = new TH1F("PxHist", "PxHist", 100, -4, 4);
-TH1F *PyHist = new TH1F("PyHist", "PyHist", 100, -4, 4);
-TH1F *PzHist = new TH1F("PzHist", "PzHist", 100, -4, 4);
+TH1D *PxHist = new TH1D("PxHist", "PxHist", 100, -4, 4);
+TH1D *PyHist = new TH1D("PyHist", "PyHist", 100, -4, 4);
+TH1D *PzHist = new TH1D("PzHist", "PzHist", 100, -4, 4);
 
-TH1F *XHist = new TH1F("XHist", "XHist", 100, -10, 10);
-TH1F *YHist = new TH1F("YHist", "YHist", 100, -10, 10);
-TH1F *ZHist = new TH1F("ZHist", "ZHist", 100, -10, 10);
+TH1D *XHist = new TH1D("XHist", "XHist", 100, -10, 10);
+TH1D *YHist = new TH1D("YHist", "YHist", 100, -10, 10);
+TH1D *ZHist = new TH1D("ZHist", "ZHist", 100, -10, 10);
 
 TH1I *PartID = new TH1I("PartID", "PartID",423,-211,211);
 
-TH2F *WvsQ2_hist = new TH2F("WvsQ2_hist","WvsQ2_hist", 1000, 0.0, 3.25, 1000, 0, 3.25);
-TH2F *Q2vsW_hist = new TH2F("Q2vsW_hist","Q2vsW_hist", 1000, 0.0, 3.25, 1000, 0, 3.25);
-TH1F *W_hist = new TH1F("W","W",100, 0.0, 3.25);
-TH1F *Q2_hist = new TH1F("Q2","Q2",100, 0.0, 3.35);
-TH1F *E_prime_hist = new TH1F("E_prime","E_prime",100,0.0,5.0);
+TH2D *WvsQ2_hist = new TH2D("WvsQ2_hist","WvsQ2_hist", 1000, 0.0, 3.25, 1000, 0, 3.25);
+TH2D *Q2vsW_hist = new TH2D("Q2vsW_hist","Q2vsW_hist", 1000, 0.0, 3.25, 1000, 0, 3.25);
+TH1D *W_hist = new TH1D("W","W",100, 0.0, 3.25);
+TH1D *Q2_hist = new TH1D("Q2","Q2",100, 0.0, 3.35);
+TH1D *E_prime_hist = new TH1D("E_prime","E_prime",100,0.0,5.0);
 
-TH2F *MomVsBeta_hist = new TH2F("MomVsBeta","MomVsBeta", 100,0,5.0,100,0.0,2.0);
-TH1F *Mom = new TH1F("Momentum","Momentum",100,0,5.0);
+TH2D *MomVsBeta_hist = new TH2D("MomVsBeta","MomVsBeta", 1000,0,5.0,1000,0.0,2.0);
+TH1D *Mom = new TH1D("Momentum","Momentum",100,0,5.0);
 
 double Px, Py, Pz, P;
 double x,y,z;
