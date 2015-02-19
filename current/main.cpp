@@ -29,26 +29,35 @@
 #include <stdio.h>
 #include <string>
 #include "stupid.h" //PrintEverything()
+#include "time.h"
 
 using namespace std;
 
 int main(int argc, char **argv){
 	
-	//float time1 = clock();
 	gSystem->Load("libTree");
-
 	char  infilename[128];
 	char  outfilename[128];
 	
 	sprintf(infilename,"%s",argv[1]);
-	sprintf(outfilename,"%s",argv[2]);
+	
+	//Either name outputfile or use time to name output file
+	if(argc == 1) {
+		sprintf(outfilename,"%s",argv[2]);
+	} else {
+		time_t currentTime;
+		time(&currentTime); 
+  		struct tm *localTime = localtime(&currentTime);  // Convert the current time to the local time;
+
+  		string time = "outputFiles/release_" + to_string(localTime->tm_mon+1) + "-" + to_string(localTime->tm_mday) + "_" 
+	 	+ to_string(localTime->tm_hour) + ":" + to_string(localTime->tm_min) + ".root";
+		sprintf(outfilename,"%s",time.c_str());
+	}
 
 	//dataHandeler(infilename,outfilename);
 	//count_after_cut(infilename,outfilename);
 	WvsQ2(infilename,outfilename);
 	//PrintEverything(infilename,outfilename);
 
-
-	//Timer(time1);
 	return 0;
 }
