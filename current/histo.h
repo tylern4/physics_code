@@ -1,4 +1,6 @@
-////////////////////#include <omp.h>
+#ifndef HISTO_H_GUARD
+#define HISTO_H_GUARD
+////#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "main.h"
@@ -23,12 +25,14 @@ TH1F *W_hist = new TH1F("W","W",100, 0.0, 3.25);
 TH1F *Q2_hist = new TH1F("Q2","Q2",100, 0.0, 3.35);
 TH1F *E_prime_hist = new TH1F("E_prime","E_prime",100,0.0,5.0);
 
-Double_t Px, Py, Pz;
-Double_t x,y,z;
-Int_t ID;
-Double_t W, Q2, E_prime;
+TH2F *MomVsBeta_hist = new TH2F("MomVsBeta","MomVsBeta", 100,0,5.0,100,0.0,2.0);
+TH1F *Mom = new TH1F("Momentum","Momentum",100,0,5.0);
 
-
+double Px, Py, Pz, P;
+double x,y,z;
+int ID;
+double W, Q2, E_prime; 
+double Beta;
 
 void WvsQ2_Fill(){
 	E_prime_hist->Fill(E_prime);
@@ -37,13 +41,22 @@ void WvsQ2_Fill(){
 	W_hist->Fill(W);
 	Q2_hist->Fill(Q2);
 }
-
 void WvsQ2_Write(){
 	E_prime_hist->Write();
 	WvsQ2_hist->Write();
 	Q2vsW_hist->Write();
 	W_hist->Write();
 	Q2_hist->Write();
+}
+
+void MomVsBeta_Fill(){
+	MomVsBeta_hist->Fill(P,Beta);
+	Mom->Fill(P);
+}
+
+void MomVsBeta_Write(){
+	MomVsBeta_hist->Write();
+	Mom->Write();
 }
 
 void WriteHists(){
@@ -57,7 +70,6 @@ void WriteHists(){
 
 	PartID->Write();
 }
-
 void FillHist(){
 	PxHist->Fill(Px);
 	PyHist->Fill(Py);
@@ -69,3 +81,5 @@ void FillHist(){
 
 	PartID->Fill(ID);
 }
+
+#endif
