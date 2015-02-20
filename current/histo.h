@@ -25,7 +25,7 @@ TH1D *W_hist = new TH1D("W","W",100, 0.0, 3.25);
 TH1D *Q2_hist = new TH1D("Q2","Q2",100, 0.0, 3.35);
 TH1D *E_prime_hist = new TH1D("E_prime","E_prime",100,0.0,5.0);
 
-TH2D *MomVsBeta_hist = new TH2D("MomVsBeta","MomVsBeta", 1000,0,5.0,1000,0.0,2.0);
+TH2D *MomVsBeta_hist = new TH2D("MomVsBeta","MomVsBeta", 100,0,5.0,100,0.5,1.5);
 TH1D *Mom = new TH1D("Momentum","Momentum",100,0,5.0);
 
 double Px, Py, Pz, P;
@@ -53,7 +53,6 @@ void MomVsBeta_Fill(){
 	MomVsBeta_hist->Fill(P,Beta);
 	Mom->Fill(P);
 }
-
 void MomVsBeta_Write(){
 	MomVsBeta_hist->Write();
 	Mom->Write();

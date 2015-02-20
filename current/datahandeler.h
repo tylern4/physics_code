@@ -56,7 +56,7 @@ void dataHandeler(char *fin="all.lis", char *RootFile_output="outFile.root", int
 
 	while (1){
 
-		number_cols = fscanf(input_file,"%s",rootFile); 
+		number_cols = fscanf(input_file,"%s",rootFile);
 		if (number_cols<0) break;
 		myFile = new TFile(rootFile, "READ");
 
@@ -67,8 +67,7 @@ void dataHandeler(char *fin="all.lis", char *RootFile_output="outFile.root", int
 
 		num_of_events = (Int_t)myTree->GetEntries();
 
-
-		current_event = 0; 
+		current_event = 0;
 
 		while(current_event<num_of_events){
 
@@ -96,7 +95,7 @@ void dataHandeler(char *fin="all.lis", char *RootFile_output="outFile.root", int
 			}
 
 			current_event++; 		  	// increment event counter
-			total_events++; 					// increment total event counter 
+			total_events++; 					// increment total event counter
 		}
 
 		myTree->Delete(); 						// delete Tree object
@@ -120,7 +119,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 	int current_event;
 	int num_of_events;
 	int total_events = 0;
-	int files_in_lis = 2466;
+	int files_in_lis = 153;
 
 	TFile *myFile;
 	TFile *RootOutputFile;
@@ -138,7 +137,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 
 	while (1){
 
-		number_cols = fscanf(input_file,"%s",rootFile); 
+		number_cols = fscanf(input_file,"%s",rootFile);
 
 		if (number_cols<0) break;
 
@@ -152,7 +151,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 
 		num_of_events = (Int_t)myTree->GetEntries();
 
-		current_event = 0; 
+		current_event = 0;
 
 		while(current_event<num_of_events){
 
@@ -173,12 +172,13 @@ void WvsQ2(char *fin, char *RootFile_output){
 					W = W_calc(E_prime);
 
 					WvsQ2_Fill();
+					MomVsBeta_Fill();
 				}
-				MomVsBeta_Fill();
+				//MomVsBeta_Fill();
 			}
 
 			current_event++; 		  	// increment event counter
-			total_events++; 			// increment total event counter 
+			total_events++; 			// increment total event counter
 		}
 
 		myTree->Delete(); 						// delete Tree object
