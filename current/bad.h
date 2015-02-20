@@ -25,10 +25,10 @@ void golden_run(char *fin="all.lis", char *RootFile="outFile.root", Int_t MaxEve
 	gStyle->SetOptStat(10);
 	gStyle->SetPadTickX(1);
 	gStyle->SetPadTickY(1);
-	gStyle->SetStatY(0.90);                
-	gStyle->SetStatX(0.90);                
-	gStyle->SetStatW(0.35);                
-	gStyle->SetStatH(0.5);   
+	gStyle->SetStatY(0.90);
+	gStyle->SetStatX(0.90);
+	gStyle->SetStatW(0.35);
+	gStyle->SetStatH(0.5);
 	gStyle->SetLabelSize(0.04,"X");
 	gStyle->SetLabelFont(62,"X");
 	gStyle->SetTitleSize(0.05,"X");
@@ -44,7 +44,7 @@ void golden_run(char *fin="all.lis", char *RootFile="outFile.root", Int_t MaxEve
 	//gStyle->SetTitleTextColor(kRed);
 	//gStyle->SetFillColor(kYellow);
 	gStyle->SetHistFillColor(kYellow);
-
+	
 	ifstream infile("good_file_table");
 	int runnum,filenum,file;
 	double count_event,count_phot,ratio;
@@ -89,13 +89,13 @@ void golden_run(char *fin="all.lis", char *RootFile="outFile.root", Int_t MaxEve
 
 	TF1 *gaus1=new TF1("gaus1","gaus",10000,20000);
 	double mean1,sigma1;
-	int n_sigma=3;  
+	int n_sigma=3;
 
 	TCanvas *canv=new TCanvas("Ratio Vs Filenum","Ratio Vs Filenum after cut",1000,600);
 	gPad->SetLogz();
 	hist->Draw("colz");
 	canv->SaveAs("ratio vs filenum-----after cut.ps");
-	
+
 	TCanvas *canv_hist1=new TCanvas("Ratio dustribution","Ratio distribution",1000,600);
 	gPad->SetLogz();
 	hist1->Fit(gaus1,"R");
@@ -111,7 +111,7 @@ void golden_run(char *fin="all.lis", char *RootFile="outFile.root", Int_t MaxEve
 	line1_2->SetLineWidth(2);
 	line1_2->Draw();
 	canv_hist1->SaveAs("Ratio distribution after cut.png");
-	
+
 	TCanvas *canv1=new TCanvas("Ratio Vs Filenum --- graph","Ratio Vs Filenum after cut graph",1000,600);
 	gPad->SetLogz();
 	gr->Draw("ap");
@@ -123,13 +123,13 @@ void golden_run(char *fin="all.lis", char *RootFile="outFile.root", Int_t MaxEve
 		{
 			infile_again>>runnum>>filenum>>count_event>>count_phot>>ratio;
 		 // cout<<"filenum"<<filenum<<endl;
-		 
+
 		if(ratio>=mean1-n_sigma*sigma1 && ratio<=mean1+n_sigma*sigma1)
 		 outfile1<<setw(20)<<setiosflags(ios::left)<<runnum<<setw(20)<<setiosflags(ios::left)<<filenum<<setw(20)
 			 <<setiosflags(ios::left)<<count_event<<setw(20)<<setiosflags(ios::left)<<count_phot<<setw(20)<<setiosflags(ios::left)<<ratio<<endl;
 		/* if(filenum<10){
 			outfile1<<"a1ntp_"<<runnum<<"_pass1.a0"<<filenum<<".rzn.root"<<endl;
-		 } 
+		 }
 		 else outfile1<<"a1ntp_"<<runnum<<"_pass1.a"<<filenum<<".rzn.root"<<endl;
 
 		}
@@ -182,7 +182,7 @@ void count_after_cut(char *fin="all.lis", char *RootFile="outFile.root") {
 		Float_t         vx[20];   //[gpart]
 		Float_t         vy[20];   //[gpart]
 		Float_t         vz[20];   //[gpart]
-	 
+
 		tree->SetBranchAddress("q_l", &q_l);
 		tree->SetBranchAddress("t_l", &t_l);
 		tree->SetBranchAddress("tr_time", &tr_time);
@@ -239,7 +239,7 @@ void count_after_cut(char *fin="all.lis", char *RootFile="outFile.root") {
 		// TLorentzVector cmPip_4vec;
 		TVector3 b_3vec(0,0,0);
 		TLorentzVector m_4vec(0,0,0,0);
-					
+
 		Long64_t nentries=tree->GetEntries();
 
 		int n_event=0;
@@ -251,9 +251,9 @@ void count_after_cut(char *fin="all.lis", char *RootFile="outFile.root") {
 			q_temp=q_l;
 			qcurr=q_temp;
 			//cout<<"q_l="<<q_l<<endl;
-					 
+
 			if ((q_temp > 0.)){
-				// cout<<"q_l"<<q_temp<<"qcurr"<<qcurr<<endl;        
+				// cout<<"q_l"<<q_temp<<"qcurr"<<qcurr<<endl;
 				if(( qcurr>qprev)){
 
 					deltaq = qcurr-qprev;
@@ -262,9 +262,9 @@ void count_after_cut(char *fin="all.lis", char *RootFile="outFile.root") {
 					// cout<<"q_l"<<q_temp<<"qcurr"<<qcurr<<"qprev"<<qprev<<"deltaq"<<deltaq<<endl;
 					}
 
-				qprev = qcurr;                    
-					 
-				} 
+				qprev = qcurr;
+
+				}
 				//Cut through trip_flag
 
 				for(int j=0;j<gpart;j++){
@@ -292,24 +292,24 @@ void count_after_cut(char *fin="all.lis", char *RootFile="outFile.root") {
 					if(pionf_4vec != ZERO_4vec){
 						TLorentzVector n_4vec = q_4vec-pionf_4vec -pf_4vec ;
 						n_3vec = q_3vec-pionf_3vec -pf_3vec ;
-						TLorentzVector w_4vec = pf_4vec + pionf_4vec;  
-						TLorentzVector w_n_q_4vec = ni_4vec + q_4vec;	*/   
-						// cout<<"ef_E"<<ef_4vec.E()<<endl;  
+						TLorentzVector w_4vec = pf_4vec + pionf_4vec;
+						TLorentzVector w_n_q_4vec = ni_4vec + q_4vec;	*/
+						// cout<<"ef_E"<<ef_4vec.E()<<endl;
 					// if( (im_cor<1.116-3*0.001761) || (im_cor>1.116+3*0.001761) ) continue;
 					//if( (mm<0.9404-3*0.01231) || (mm>0.9404+3*0.01231) ) continue;
 
 				 n_event++;
-				} 
+				}
 			}
-		}	
+		}
 		tree->Delete();
 		rootfile->Close();
 		str_runnum=temp_filename.substr(temp_filename.length()-24,5);
 		str_filenum=temp_filename.substr(temp_filename.length()-11,2);
 		cout<<str_runnum<<"    "<<str_filenum<<"    "<<n_event<<"totalQ="<<totalQ<<endl;
-		if(n_event != 0 && totalQ != 0){ 
+		if(n_event != 0 && totalQ != 0){
 			outfile<<setw(20)<<setiosflags(ios::left)<<str_runnum<<setw(20)<<setiosflags(ios::left)<<str_filenum<<setw(20)<<setiosflags(ios::left)<<n_event<<setw(20)<<setiosflags(ios::left)<<totalQ<<setw(20)<<setiosflags(ios::left)<<n_event/totalQ<<endl;
-	 	}    
+	 	}
 	}
 	outfile.close();
 }

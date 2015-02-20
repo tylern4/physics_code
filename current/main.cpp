@@ -50,7 +50,7 @@ int main(int argc, char **argv){
   		struct tm *localTime = localtime(&currentTime);  // Convert the current time to the local time;
 
   		string time = "outputFiles/release_" + to_string(localTime->tm_mon+1) + "-" + to_string(localTime->tm_mday) + "_" 
-	 	+ to_string(localTime->tm_hour) + ":" + to_string(localTime->tm_min) + ".root";
+	 	+ to_string(localTime->tm_hour) + to_string(localTime->tm_min) + ".root";
 		sprintf(outfilename,"%s",time.c_str());
 	}
 
