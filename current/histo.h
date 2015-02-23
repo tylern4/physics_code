@@ -19,13 +19,13 @@ TH1D *ZHist = new TH1D("ZHist", "ZHist", 100, -10, 10);
 
 TH1I *PartID = new TH1I("PartID", "PartID",423,-211,211);
 
-TH2D *WvsQ2_hist = new TH2D("WvsQ2_hist","WvsQ2_hist", 1000, 0.0, 3.25, 1000, 0, 3.25);
-TH2D *Q2vsW_hist = new TH2D("Q2vsW_hist","Q2vsW_hist", 1000, 0.0, 3.25, 1000, 0, 3.25);
+TH2D *WvsQ2_hist = new TH2D("WvsQ2_hist","W vs Q^{2}", 1000, 0.0, 3.25, 1000, 0, 3.25);
+TH2D *Q2vsW_hist = new TH2D("Q2vsW_hist","Q^{2} vs W", 1000, 0.0, 3.25, 1000, 0, 3.25);
 TH1D *W_hist = new TH1D("W","W",100, 0.0, 3.25);
-TH1D *Q2_hist = new TH1D("Q2","Q2",100, 0.0, 3.35);
-TH1D *E_prime_hist = new TH1D("E_prime","E_prime",100,0.0,5.0);
+TH1D *Q2_hist = new TH1D("Q2","Q^{2}",100, 0.0, 3.35);
+TH1D *E_prime_hist = new TH1D("E_prime","E`",100,0.0,5.0);
 
-TH2D *MomVsBeta_hist = new TH2D("MomVsBeta","MomVsBeta", 1000,0,5.0,1000,0.0,2.0);
+TH2D *MomVsBeta_hist = new TH2D("MomVsBeta","Momentum Vs #beta", 100,0,5.0,100,0.5,1.5);
 TH1D *Mom = new TH1D("Momentum","Momentum",100,0,5.0);
 
 double Px, Py, Pz, P;
@@ -42,6 +42,16 @@ void WvsQ2_Fill(){
 	Q2_hist->Fill(Q2);
 }
 void WvsQ2_Write(){
+	WvsQ2_hist->SetXTitle("W (GeV/c)");
+	WvsQ2_hist->SetYTitle("Q^{2} (GeV/c^{2})");
+
+	Q2vsW_hist->SetXTitle("Q^{2} (GeV/c^{2})");
+	Q2vsW_hist->SetYTitle("W (GeV/c)");
+
+	W_hist->SetXTitle("W (GeV/c)");
+	Q2_hist->SetXTitle("Q^{2} (GeV/c^{2})");
+	E_prime_hist->SetXTitle("Energy (GeV)");
+
 	E_prime_hist->Write();
 	WvsQ2_hist->Write();
 	Q2vsW_hist->Write();
@@ -53,8 +63,11 @@ void MomVsBeta_Fill(){
 	MomVsBeta_hist->Fill(P,Beta);
 	Mom->Fill(P);
 }
-
 void MomVsBeta_Write(){
+	MomVsBeta_hist->SetXTitle("Momentum (GeV/c)");
+	MomVsBeta_hist->SetYTitle("#beta");
+	Mom->SetXTitle("Momentum (GeV/c)");
+
 	MomVsBeta_hist->Write();
 	Mom->Write();
 }
@@ -70,6 +83,7 @@ void WriteHists(){
 
 	PartID->Write();
 }
+
 void FillHist(){
 	PxHist->Fill(Px);
 	PyHist->Fill(Py);

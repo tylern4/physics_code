@@ -6,6 +6,7 @@
 #include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <TLorentzVector.h>
 
 using namespace std;
 
@@ -189,7 +190,7 @@ double P_calc(double momentum, double CosX, double CosY, double CosZ){
 //	Calcualting Energy from relativistic energy-momentum conservation
 //	[E^2 = p^2 + m^2]
 double E_calc(double momentum, double CosX, double CosY, double CosZ){
-	momentum = P_calc(momentum,CosX, CosY, CosZ);
+	momentum = P_calc(momentum,CosX,CosY,CosZ);
 	double E2 = Square(momentum)+Square(MASS_E);
 
 	return sqrt(E2);

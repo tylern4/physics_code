@@ -44,14 +44,14 @@ int main(int argc, char **argv){
 	sprintf(infilename,"%s",argv[1]);
 	
 	//Either name outputfile or use time to name output file
-	if(argc == 1) {
+	if(argc == 3 ) {
 		sprintf(outfilename,"%s",argv[2]);
 	} else {
 		time_t currentTime;
 		time(&currentTime); 
   		struct tm *localTime = localtime(&currentTime);  // Convert the current time to the local time;
 
-  		string time = "outputFiles/release_" + to_string(localTime->tm_mon+1) + "-" + to_string(localTime->tm_mday) + "_" 
+  		string time = "outputFiles/release_" + to_string(localTime->tm_mon+1) + "-" + to_string(localTime->tm_mday) + "_"
 	 	+ to_string(localTime->tm_hour) + "" + to_string(localTime->tm_min) + ".root";
 		sprintf(outfilename,"%s",time.c_str());
 	}
