@@ -32,7 +32,7 @@ TH1D *W_hist = new TH1D("W","W",100, 0.0, 3.25);
 TH1D *Q2_hist = new TH1D("Q2","Q^{2}",100, 0.0, 3.35);
 TH1D *E_prime_hist = new TH1D("E_prime","E`",100,0.0,5.0);
 
-TH2D *MomVsBeta_hist = new TH2D("MomVsBeta","Momentum Vs #beta", 100,0,5.0,100,0.5,1.5);
+TH2D *MomVsBeta_hist = new TH2D("MomVsBeta","Momentum Vs #beta", 100, 0, 5.0, 100, 0.0, 1.5);
 TH1D *Mom = new TH1D("Momentum","Momentum",100,0,5.0);
 
 double Px, Py, Pz, P;

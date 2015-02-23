@@ -182,11 +182,11 @@ void WvsQ2(char *fin, char *RootFile_output){
 						//
 					} else {
 						WvsQ2_Fill();
-						MomVsBeta_Fill();
+						//MomVsBeta_Fill();
 					}
 
 				}
-				//MomVsBeta_Fill();
+				MomVsBeta_Fill();
 			}
 
 			current_event++; 		  	// increment event counter
