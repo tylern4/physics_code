@@ -168,11 +168,16 @@ void WvsQ2(char *fin, char *RootFile_output){
 				//	histograms for those variables
 				if (id[event_number] == ELECTRON){
 					E_prime = E_calc(p[event_number],cx[event_number],cy[event_number],cz[event_number]);
+
 					Q2 = Q2_calc(cz[event_number],E_prime);
 					W = W_calc(E_prime);
+					if(W != W ) {
+						//
+					} else {
+						WvsQ2_Fill();
+						MomVsBeta_Fill();
+					}
 
-					WvsQ2_Fill();
-					MomVsBeta_Fill();
 				}
 				//MomVsBeta_Fill();
 			}
