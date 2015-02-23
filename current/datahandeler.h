@@ -1,3 +1,10 @@
+/************************************************************************/
+/*									
+/*									
+/*  Created by Nick Tyler					
+/*	University Of South Carolina			
+/************************************************************************/
+
 #ifndef DATAHANDELER_H_GUARD
 #define DATAHANDELER_H_GUARD
 #include "TTree.h"

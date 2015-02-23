@@ -1,3 +1,10 @@
+/************************************************************************/
+/*									
+/*									
+/*  Created by Nick Tyler					
+/*	University Of South Carolina			
+/************************************************************************/
+
 #ifndef HISTO_H_GUARD
 #define HISTO_H_GUARD
 //#include <omp.h>

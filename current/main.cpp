@@ -1,11 +1,11 @@
 /************************************************************************/
-/*									*/
-/*									*/
-/*  Created by Nick Tyler						*/
-/*	University Of South Carolina					*/
+/*									
+/*									
+/*  Created by Nick Tyler					
+/*	University Of South Carolina			
 /************************************************************************/
 
-#define PI 3.14159265;
+//#define PI 3.14159265;
 
 #include "TTree.h"
 #include "TROOT.h"
