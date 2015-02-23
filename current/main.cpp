@@ -44,7 +44,7 @@ int main(int argc, char **argv){
 	sprintf(infilename,"%s",argv[1]);
 	
 	//Either name outputfile or use time to name output file
-	if(argc == 1) {
+	if(argc == 3 ) {
 		sprintf(outfilename,"%s",argv[2]);
 	} else {
 		time_t currentTime;
