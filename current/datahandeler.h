@@ -14,6 +14,7 @@
 #include "TChain.h"
 #include "TSystem.h"
 #include "TMath.h"
+//#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -158,6 +159,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 
 			///////////if (current_event%10000 == 0)	cout<<current_event<<"/"<<num_of_events<<endl;
 
+			#pragma omp parallel for
 			for(int event_number = 0; event_number < gpart; event_number++){
 				P = P_calc(p[event_number],cx[event_number],cy[event_number],cz[event_number]);
 				Beta = b[event_number];

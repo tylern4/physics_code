@@ -24,6 +24,7 @@
 #include "histo.h"
 #include "datahandeler.h" //dataHandeler() //WvsQ2()
 //#include "count_after_cut.h" //count_after_cut()
+//#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string>
@@ -48,8 +49,6 @@ int main(int argc, char **argv){
 		time(&currentTime); 
   		struct tm *localTime = localtime(&currentTime);  // Convert the current time to the local time;
 
-  		string time = "outputFiles/release_" + to_string(localTime->tm_mon+1) + "-" + to_string(localTime->tm_mday) + "_" 
-	 	+ to_string(localTime->tm_hour) + to_string(localTime->tm_min) + ".root";
   		string time = "outputFiles/release_" + to_string(localTime->tm_mon+1) + "-" + to_string(localTime->tm_mday) + "_"
 	 	+ to_string(localTime->tm_hour) + "" + to_string(localTime->tm_min) + ".root";
 		sprintf(outfilename,"%s",time.c_str());
