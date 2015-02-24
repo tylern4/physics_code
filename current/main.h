@@ -170,22 +170,6 @@ double Square(double a){
 	return a*a;
 }
 
-void Timer(float time1){
-	//time to complete function
- 	float time2 = clock();
-  	float minutes = 0;
-	float seconds = 0;
-  	minutes = (time2 - time1)/1000000;
-  	minutes = (minutes)/60;
-  	seconds = fmod(minutes,1);
-	minutes = minutes-seconds;
-	seconds = seconds*60;
-
-  	if (minutes==0) cout<<endl<<"Completed in "<<seconds<<" seconds."<<endl<<endl;
-  	else cout<<endl<<"Completed in "<<minutes<<" minutes and "<<seconds<<" seconds."<<endl<<endl;
-
-}
-
 void getBranches(TTree* myTree){
 
 	myTree->SetBranchAddress("npart", &npart);			//number of final particles
