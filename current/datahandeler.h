@@ -24,6 +24,7 @@
 //#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "physics.hpp"
 
 using namespace std;
 
