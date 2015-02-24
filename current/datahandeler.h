@@ -1,3 +1,10 @@
+/************************************************************************/
+/*									
+/*									
+/*  Created by Nick Tyler					
+/*	University Of South Carolina			
+/************************************************************************/
+
 #ifndef DATAHANDELER_H_GUARD
 #define DATAHANDELER_H_GUARD
 #include "TTree.h"
@@ -14,7 +21,7 @@
 #include "TChain.h"
 #include "TSystem.h"
 #include "TMath.h"
-#include <omp.h>
+//#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -175,11 +182,11 @@ void WvsQ2(char *fin, char *RootFile_output){
 						//
 					} else {
 						WvsQ2_Fill();
-						MomVsBeta_Fill();
+						//MomVsBeta_Fill();
 					}
 
 				}
-				//MomVsBeta_Fill();
+				MomVsBeta_Fill();
 			}
 
 			current_event++; 		  	// increment event counter

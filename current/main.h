@@ -1,9 +1,16 @@
+/************************************************************************/
+/*									
+/*									
+/*  Created by Nick Tyler					
+/*	University Of South Carolina			
+/************************************************************************/
+
 #ifndef MAIN_H_GUARD
 #define MAIN_H_GUARD
 #include "TMath.h"
 #include "TTree.h"
 #include "TROOT.h"
-#include <omp.h>
+//#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <TLorentzVector.h>
@@ -167,7 +174,7 @@ double Square(double a){
 //	Gotten from s channel [(gamma - P)^2 == s == w^2]
 //	Sqrt[M_p^2 + 2 M_p gamma]
 double W_calc(double E_prime){
-	return sqrt(MASS_P*(MASS_P+2*(E1D_E0-E_prime)));
+	return sqrt( Square(MASS_P) + 2 * MASS_P * (E1D_E0-E_prime) );
 }
 
 //	Calulating Q^2 
