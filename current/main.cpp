@@ -1,11 +1,11 @@
 /************************************************************************/
-/*									*/
-/*									*/
-/*  Created by Nick Tyler						*/
-/*	University Of South Carolina					*/
+/*									
+/*									
+/*  Created by Nick Tyler					
+/*	University Of South Carolina			
 /************************************************************************/
 
-#define PI 3.14159265;
+//#define PI 3.14159265;
 
 #include "TTree.h"
 #include "TROOT.h"
@@ -22,11 +22,9 @@
 #include "main.h"
 #include "TMath.h"
 #include "histo.h"
-#include "datahandeler.h"
-#include <omp.h>
 #include "datahandeler.h" //dataHandeler() //WvsQ2()
 //#include "count_after_cut.h" //count_after_cut()
-#include <omp.h>
+//#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string>
