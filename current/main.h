@@ -174,6 +174,7 @@ double Square(double a){
 //	Gotten from s channel [(gamma - P)^2 == s == w^2]
 //	Sqrt[M_p^2 + 2 M_p gamma]
 double W_calc(double E_prime){
+	//return sqrt( Square(MASS_P) + 2 * MASS_P * (E1D_E0-E_prime) );
 	return sqrt( Square(MASS_P) + 2 * MASS_P * (E1D_E0-E_prime) );
 }
 
@@ -199,6 +200,56 @@ double P_calc(double momentum, double CosX, double CosY, double CosZ){
 double E_calc(double momentum, double CosX, double CosY, double CosZ){
 	momentum = P_calc(momentum,CosX,CosY,CosZ);
 	double E2 = Square(momentum)+Square(MASS_E);
+
+	return sqrt(E2);
+}
+
+//	Overloads of E_calc for different masses then electron
+//	Calcualting Energy from relativistic energy-momentum conservation
+//	[E^2 = p^2 + m^2]
+double E_calc(double momentum, double CosX, double CosY, double CosZ, double mass){
+	momentum = P_calc(momentum,CosX,CosY,CosZ);
+	double E2 = Square(momentum)+Square(mass);
+
+	return sqrt(E2);
+}
+//	Another overload with particle ID insead
+double E_calc(double momentum, double CosX, double CosY, double CosZ, int ID){
+	double mass;
+
+	switch (ID){
+		case 2212:
+			mass = MASS_P;
+			break;
+		case 2112:
+			mass = MASS_N;
+			break;
+		case 211:
+			mass = MASS_PIP;
+			break;
+		case -211:
+			mass = MASS_PIM;
+			break;
+		case 111:
+			mass = MASS_PI0;
+			break;
+		case 321:
+			mass = MASS_KP;
+			break;
+		case -321:
+			mass = MASS_KM;
+			break;
+		case 22:
+			mass = MASS_G;
+			break;
+		case 11:
+			mass = MASS_E;
+			break;
+		case 0:
+			mass = 0.0;
+	}
+	momentum = P_calc(momentum,CosX,CosY,CosZ);
+	double E2 = Square(momentum)+Square(mass);
 
 	return sqrt(E2);
 }

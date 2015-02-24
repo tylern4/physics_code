@@ -30,16 +30,17 @@ TH2D *WvsQ2_hist = new TH2D("WvsQ2_hist","W vs Q^{2}", 1000, 0.0, 3.25, 1000, 0,
 TH2D *Q2vsW_hist = new TH2D("Q2vsW_hist","Q^{2} vs W", 1000, 0.0, 3.25, 1000, 0, 3.25);
 TH1D *W_hist = new TH1D("W","W",100, 0.0, 3.25);
 TH1D *Q2_hist = new TH1D("Q2","Q^{2}",100, 0.0, 3.35);
-TH1D *E_prime_hist = new TH1D("E_prime","Scattered Electron Energy",100,0.0,5.0);
+TH1D *E_prime_hist = new TH1D("E_prime","Scattered Electron Energy",100,0.0,6.0);
 
 TH2D *MomVsBeta_hist = new TH2D("MomVsBeta","Momentum Vs #beta", 100, 0, 5.0, 100, 0.0, 1.5);
 TH1D *Mom = new TH1D("Momentum","Momentum",100,0,5.0);
+TH1D *Energy_hist = new TH1D("Energy_hist","Energy_hist",500,0.0,6.0);
 
 double Px, Py, Pz, P;
 double x,y,z;
 int ID;
 double W, Q2, E_prime; 
-double Beta;
+double Beta, Energy;
 
 void WvsQ2_Fill(){
 	E_prime_hist->Fill(E_prime);
@@ -67,6 +68,7 @@ void WvsQ2_Write(){
 }
 
 void MomVsBeta_Fill(){
+	Energy_hist->Fill(Energy);
 	MomVsBeta_hist->Fill(P,Beta);
 	Mom->Fill(P);
 }
@@ -75,6 +77,7 @@ void MomVsBeta_Write(){
 	MomVsBeta_hist->SetYTitle("#beta");
 	Mom->SetXTitle("Momentum (GeV/c)");
 
+	Energy_hist->Write();
 	MomVsBeta_hist->Write();
 	Mom->Write();
 }

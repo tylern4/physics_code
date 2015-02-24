@@ -170,9 +170,11 @@ void WvsQ2(char *fin, char *RootFile_output){
 			for(int event_number = 0; event_number < gpart; event_number++){
 				P = P_calc(p[event_number],cx[event_number],cy[event_number],cz[event_number]);
 				Beta = b[event_number];
+				Energy = E_calc(p[event_number],cx[event_number],cy[event_number],cz[event_number],id[event_number]);
 				//If event is a scattered electron find it's energy
 				//	and from it's energy find Q2 and W and then fill
 				//	histograms for those variables
+
 				if (id[event_number] == ELECTRON){
 					E_prime = E_calc(p[event_number],cx[event_number],cy[event_number],cz[event_number]);
 
@@ -186,6 +188,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 					}
 
 				}
+
 				MomVsBeta_Fill();
 			}
 
