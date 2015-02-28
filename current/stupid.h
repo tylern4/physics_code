@@ -1,6 +1,96 @@
 
 using namespace std;
 
+//  dataHandeler
+//
+//	hopefully this works
+//
+void dataHandeler(char *fin="all.lis", char *RootFile_output="outFile.root", int MaxEvents=0, int dEvents=10000){
+	gROOT->Reset();
+	int current_event;
+	int num_of_events;
+	int total_events = 0;
+
+	TLorentzVector *_e0, *_p0, *_e1;//, *_p1;
+
+	_e0 = new TLorentzVector();
+	_p0 = new TLorentzVector();
+	_e1 = new TLorentzVector();
+	_e0->SetPxPyPzE(0,0,E1D_E0,E1D_E0);
+	_p0->SetPxPyPzE(0,0,0,MASS_P);
+
+	TFile *myFile;
+	TFile *RootOutputFile;
+	TTree *myTree;
+	int number_cols=0;
+	int number_files = 0;
+	char rootFile[500];
+
+	RootOutputFile = new TFile(RootFile_output,"RECREATE");
+
+	cout << "Analyzing file " << fin << endl;
+
+
+	FILE *input_file = fopen(fin,"r");
+	if (input_file == NULL) perror ("Error opening file");
+
+	while (1){
+
+		number_cols = fscanf(input_file,"%s",rootFile);
+		if (number_cols<0) break;
+		myFile = new TFile(rootFile, "READ");
+
+		myTree = (TTree *)myFile->Get("h10");
+
+
+		getBranches(myTree);
+
+		num_of_events = (Int_t)myTree->GetEntries();
+
+		current_event = 0;
+
+		while(current_event<num_of_events){
+
+			myTree->GetEntry(current_event);
+
+			////////////if (current_event%10000 == 0)	cout<<current_event<<"/"<<num_of_events<<endl;
+
+			#pragma omp parallel for
+			for(int event_number = 0; event_number < gpart; event_number++)
+			{
+
+				Px = cx[event_number]*p[event_number];
+				Py = cy[event_number]*p[event_number];
+				Pz = cz[event_number]*p[event_number];
+
+				x = vx[event_number];
+				y = vy[event_number];
+				z = vz[event_number];
+
+				ID = id[event_number];
+
+
+				FillHist();
+
+			}
+
+			current_event++; 		  	// increment event counter
+			total_events++; 					// increment total event counter
+		}
+
+		myTree->Delete(); 						// delete Tree object
+		myFile->Close("R"); 					// close input ROOT file.  The R flag deletes TProcessIDs
+		number_files++; 						// increment file counter
+
+	}
+	RootOutputFile->cd();
+	WriteHists();
+	RootOutputFile->Write();
+	RootOutputFile->Close();
+	fclose(input_file); 														// close file with input file list
+	cout<<total_events<<" events in "<<number_files<< " files."<<endl; // print out stats
+}
+
 void PrintEverything(char *fin, char *RootFile_output){
 	gROOT->Reset();
 	Int_t current_event;
