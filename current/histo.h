@@ -13,7 +13,7 @@
 #include "main.h"
 
 //
-//Histogram declarations and write
+//Histogram declarations, fills, and write
 //
 //
 TH1D *PxHist = new TH1D("PxHist", "PxHist", 100, -4, 4);

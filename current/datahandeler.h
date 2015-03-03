@@ -75,7 +75,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 			myTree->GetEntry(current_event);
 
 			// Changed id to id[0] because scattered elctron should be first particle (i.e. id[0])
-			if (id[0] == ELECTRON && gpart > 1 && stat[0] > 0 && q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0){
+			if (id[0] == ELECTRON && gpart > 1 && stat[0] > 0 && q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0){
 				E_prime = E_calc(p[0],cx[0],cy[0],cz[0]);
 				Q2 = Q2_calc(cz[0],E_prime);
 				W = W_calc(E_prime);
