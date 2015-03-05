@@ -85,6 +85,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 
 			#pragma omp parallel for
 			for(int event_number = 0; event_number < gpart; event_number++){
+				ID = id[event_number];
 				P = P_calc(p[event_number],cx[event_number],cy[event_number],cz[event_number]);
 				Beta = b[event_number];
 				Energy = E_calc(p[event_number],cx[event_number],cy[event_number],cz[event_number],id[event_number]);
@@ -107,7 +108,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 					}
 
 				}*/
-
+				FillHist();
 				MomVsBeta_Fill();
 			}
 			current_event++; 		  	// increment event counter
@@ -121,6 +122,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 	RootOutputFile->cd();
 	WvsQ2_Write();
 	MomVsBeta_Write();
+	WriteHists();
 	RootOutputFile->Write();
 	RootOutputFile->Close();
 	fclose(input_file); 														// close file with input file list
