@@ -24,7 +24,8 @@ TH1D *XHist = new TH1D("XHist", "XHist", 100, -10, 10);
 TH1D *YHist = new TH1D("YHist", "YHist", 100, -10, 10);
 TH1D *ZHist = new TH1D("ZHist", "ZHist", 100, -10, 10);
 
-TH1I *PartID = new TH1I("PartID", "PartID",423,-211,211);
+//TH1I *PartID = new TH1I("PartID", "PartID",423,-211,211);
+TH1I *PartID = new TH1I("PartID", "PartID",10,0,10);
 
 TH2D *WvsQ2_hist = new TH2D("WvsQ2_hist","W vs Q^{2}", 1000, 0.0, 3.25, 1000, 0, 3.25);
 TH2D *Q2vsW_hist = new TH2D("Q2vsW_hist","Q^{2} vs W", 1000, 0.0, 3.25, 1000, 0, 3.25);
@@ -83,27 +84,60 @@ void MomVsBeta_Write(){
 }
 
 void WriteHists(){
-	PxHist->Write();
-	PyHist->Write();
-	PzHist->Write();
+	//PxHist->Write();
+	//PyHist->Write();
+	//PzHist->Write();
 
-	XHist->Write();
-	YHist->Write();
-	ZHist->Write();
-
+	//XHist->Write();
+	//YHist->Write();
+	//ZHist->Write();
+	PartID->GetXaxis()->SetBinLabel(2,"proton");
+	PartID->GetXaxis()->SetBinLabel(3,"nuetron");
+	PartID->GetXaxis()->SetBinLabel(4,"#pi^{+}");
+	PartID->GetXaxis()->SetBinLabel(5,"#pi^{-}");
+	PartID->GetXaxis()->SetBinLabel(6,"#pi^{0}");
+	PartID->GetXaxis()->SetBinLabel(7,"#gamma");
+	PartID->GetXaxis()->SetBinLabel(1,"Electron");
+	PartID->SetFillColor(kBlue);
 	PartID->Write();
 }
 
 void FillHist(){
-	PxHist->Fill(Px);
-	PyHist->Fill(Py);
-	PzHist->Fill(Pz);
+	//PxHist->Fill(Px);
+	//PyHist->Fill(Py);
+	//PzHist->Fill(Pz);
 
-	XHist->Fill(x);
-	YHist->Fill(y);
-	ZHist->Fill(z);
+	//XHist->Fill(x);
+	//YHist->Fill(y);
+	//ZHist->Fill(z);
+	switch (ID) {
+		case 2212:
+			PartID->Fill(1);
+			break;
+		case 2112:
+			PartID->Fill(2);
+			break;
+		case 211:
+			PartID->Fill(3);
+			break;
+		case -211:
+			PartID->Fill(4);
+			break;
+		case 111:
+			PartID->Fill(5);
+			break;
+		case 22:
+			PartID->Fill(6);
+			break;
+		case 11:
+			PartID->Fill(1);
+			break;
+		default:
+			PartID->Fill(10);
+			break;
+	}
 
-	PartID->Fill(ID);
+	
 }
 
 #endif
