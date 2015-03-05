@@ -50,14 +50,14 @@ void WvsQ2_Fill(){
 	Q2_hist->Fill(Q2);
 }
 void WvsQ2_Write(){
-	WvsQ2_hist->SetXTitle("W (GeV/c)");
-	WvsQ2_hist->SetYTitle("Q^{2} (GeV/c^{2})");
+	WvsQ2_hist->SetXTitle("W (GeV)");
+	WvsQ2_hist->SetYTitle("Q^{2} (GeV^{2})");
 
-	Q2vsW_hist->SetXTitle("Q^{2} (GeV/c^{2})");
-	Q2vsW_hist->SetYTitle("W (GeV/c)");
+	Q2vsW_hist->SetXTitle("Q^{2} (GeV^{2})");
+	Q2vsW_hist->SetYTitle("W (GeV)");
 
 	W_hist->SetXTitle("W (GeV/c)");
-	Q2_hist->SetXTitle("Q^{2} (GeV/c^{2})");
+	Q2_hist->SetXTitle("Q^{2} (GeV^{2})");
 	E_prime_hist->SetXTitle("Energy (GeV)");
 
 	E_prime_hist->Write();
@@ -73,9 +73,9 @@ void MomVsBeta_Fill(){
 	Mom->Fill(P);
 }
 void MomVsBeta_Write(){
-	MomVsBeta_hist->SetXTitle("Momentum (GeV/c)");
+	MomVsBeta_hist->SetXTitle("Momentum (GeV)");
 	MomVsBeta_hist->SetYTitle("#beta");
-	Mom->SetXTitle("Momentum (GeV/c)");
+	Mom->SetXTitle("Momentum (GeV)");
 
 	Energy_hist->Write();
 	MomVsBeta_hist->Write();
