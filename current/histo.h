@@ -66,6 +66,8 @@ void WvsQ2_Write(){
 	Q2vsW_hist->Write();
 	W_hist->Write();
 	Q2_hist->Write();
+
+	PartID->Write();
 }
 
 void MomVsBeta_Fill(){
