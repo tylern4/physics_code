@@ -33,7 +33,9 @@ using namespace std;
 //
 void WvsQ2(char *fin, char *RootFile_output){
 	gROOT->Reset();
-	int current_event, num_of_events, total_events = 0;
+	int current_event
+	int num_of_events
+	int total_events = 0;
 	int num_elec = 0, num_pip =0;
 	int files_in_lis = 153;
 
