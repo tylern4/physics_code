@@ -80,9 +80,10 @@ void WvsQ2(char *fin, char *RootFile_output){
 				Q2 = Q2_calc(cz[0],E_prime);
 				W = W_calc(E_prime);
 				WvsQ2_Fill();
-				FillHist();
+				//FillHist();
 			}
-
+			//
+			FillHist();
 
 			#pragma omp parallel for
 			for(int event_number = 0; event_number < gpart; event_number++){
