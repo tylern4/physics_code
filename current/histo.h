@@ -7,7 +7,7 @@
 
 #ifndef HISTO_H_GUARD
 #define HISTO_H_GUARD
-//#include <omp.h>
+#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "main.h"
