@@ -3,7 +3,6 @@ current/e1d
 current/main.o
 current/main.o
 current/MacE1d
-
 current/inputFiles
-
 current/outputFiles
+*.out
