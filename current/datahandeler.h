@@ -36,8 +36,10 @@ void WvsQ2(char *fin, char *RootFile_output){
 	int current_event
 	int num_of_events
 	int total_events = 0;
+
 	int num_elec = 0, num_pip =0;
 	int files_in_lis = 153;
+
 
 	TFile *myFile;
 	TFile *RootOutputFile;
