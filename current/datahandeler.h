@@ -33,10 +33,13 @@ using namespace std;
 //
 void WvsQ2(char *fin, char *RootFile_output){
 	gROOT->Reset();
-	int current_event;
-	int num_of_events;
+	int current_event
+	int num_of_events
 	int total_events = 0;
-	int files_in_lis = 2466;
+
+	int num_elec = 0, num_pip =0;
+	int files_in_lis = 153;
+
 
 	TFile *myFile;
 	TFile *RootOutputFile;
@@ -81,9 +84,8 @@ void WvsQ2(char *fin, char *RootFile_output){
 				W = W_calc(E_prime);
 				WvsQ2_Fill();
 				//FillHist();
+				num_elec++;
 			}
-			//
-			FillHist();
 
 			#pragma omp parallel for
 			for(int event_number = 0; event_number < gpart; event_number++){
@@ -110,6 +112,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 					}
 
 				}*/
+				if(ID == PIP) num_pip++;
 				FillHist();
 				MomVsBeta_Fill();
 			}
@@ -129,5 +132,6 @@ void WvsQ2(char *fin, char *RootFile_output){
 	RootOutputFile->Close();
 	fclose(input_file); 														// close file with input file list
 	cout<<total_events<<" events in "<<number_files<< " files."<<endl; // print out stats
+	cout << "Number of electrons " << num_elec <<  " Number PIP " << num_pip << " ratio:" << (double)num_pip/(double)num_elec << endl;
 }
 #endif
