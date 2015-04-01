@@ -32,6 +32,7 @@ TH2D *Q2vsW_hist = new TH2D("Q2vsW_hist","Q^{2} vs W", 1000, 0.0, 3.25, 1000, 0,
 TH1D *W_hist = new TH1D("W","W",100, 0.0, 3.25);
 TH1D *Q2_hist = new TH1D("Q2","Q^{2}",100, 0.0, 3.35);
 TH1D *E_prime_hist = new TH1D("E_prime","Scattered Electron Energy",100,0.0,6.0);
+TH2D *Q2_vs_xb = new TH2D("Q2_vs_xb","Q^{2} vs x_{b}",1000,0.0,3.25,1000,0.0,3.25);
 
 TH2D *MomVsBeta_hist = new TH2D("MomVsBeta","Momentum Vs #beta", 100, 0, 5.0, 100, 0.0, 1.5);
 TH1D *Mom = new TH1D("Momentum","Momentum",100,0,5.0);
@@ -40,7 +41,7 @@ TH1D *Energy_hist = new TH1D("Energy_hist","Energy_hist",500,0.0,6.0);
 double Px, Py, Pz, P;
 double x,y,z;
 int ID;
-double W, Q2, E_prime; 
+double W, Q2, E_prime, xb; 
 double Beta, Energy;
 
 void WvsQ2_Fill(){
@@ -49,6 +50,7 @@ void WvsQ2_Fill(){
 	Q2vsW_hist->Fill(Q2,W);
 	W_hist->Fill(W);
 	Q2_hist->Fill(Q2);
+	Q2_vs_xb->Fill(Q2,xb);
 }
 void WvsQ2_Write(){
 	WvsQ2_hist->SetXTitle("W (GeV)");
@@ -66,6 +68,7 @@ void WvsQ2_Write(){
 	Q2vsW_hist->Write();
 	W_hist->Write();
 	Q2_hist->Write();
+	Q2_vs_xb->Write();
 
 	PartID->Write();
 }

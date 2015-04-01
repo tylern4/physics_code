@@ -28,6 +28,11 @@ double Q2_calc(double CosZ, double E_prime){
 	return 4*E1D_E0*E_prime*sin_sqr_theta_ovr_2;
 }
 
+double xb_calc(double Q2, double E_prime){
+	double gamma = E1D_E0 - E_prime;
+	return (Q2/(2*MASS_P*gamma));
+}
+
 double P_calc(double momentum, double CosX, double CosY, double CosZ){
 	double Px = momentum*CosX;
 	double Py = momentum*CosY;
