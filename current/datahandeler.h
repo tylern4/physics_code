@@ -82,6 +82,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 				E_prime = E_calc(p[0],cx[0],cy[0],cz[0]);
 				Q2 = Q2_calc(cz[0],E_prime);
 				W = W_calc(E_prime);
+				xb = xb_calc(Q2,E_prime);
 				WvsQ2_Fill();
 				//FillHist();
 				num_elec++;
