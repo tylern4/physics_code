@@ -16,7 +16,7 @@ using namespace std;
 //	Sqrt[M_p^2 + 2 M_p gamma]
 double W_calc(double E_prime){
 	//return sqrt( Square(MASS_P) + 2 * MASS_P * (E1D_E0-E_prime) );
-	return sqrt( Square(MASS_P) + 2 * MASS_P * (E1D_E0-E_prime) );
+	return sqrt(Square(MASS_P) + 2 * MASS_P * (E1D_E0-E_prime));
 }
 
 //	Calulating Q^2 
@@ -29,8 +29,9 @@ double Q2_calc(double CosZ, double E_prime){
 }
 
 double xb_calc(double Q2, double E_prime){
-	double gamma = E1D_E0 - E_prime;
-	return (Q2/(2*MASS_P*gamma));
+	double gamma = E1D_E0-E_prime;
+	double xb = (Q2/(2*MASS_P*gamma));
+	return xb;
 }
 
 double P_calc(double momentum, double CosX, double CosY, double CosZ){
