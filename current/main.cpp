@@ -39,6 +39,7 @@ int main(int argc, char **argv){
 	gSystem->Load("libTree");
 	char  infilename[128];
 	char  outfilename[128];
+	string minutes, hour;
 	
 	sprintf(infilename,"%s",argv[1]);
 	
@@ -49,9 +50,21 @@ int main(int argc, char **argv){
 		time_t currentTime;
 		time(&currentTime); 
   		struct tm *localTime = localtime(&currentTime);  // Convert the current time to the local time;
+  		if(localTime->tm_min < 10) {
+  			minutes = "0" + to_string(localTime->tm_min);
+  		}
+  		else {
+  			minutes = to_string(localTime->tm_min);
+  		}
 
+  		if(localTime->tm_hour > 10) {
+  			hour = to_string(localTime->tm_hour - 12);
+  		}
+  		else {
+  			hour = to_string(localTime->tm_hour);
+  		}
   		string time = "outputFiles/release_" + to_string(localTime->tm_mon+1) + "-" + to_string(localTime->tm_mday) + "_"
-	 	+ to_string(localTime->tm_hour) + "" + to_string(localTime->tm_min) + ".root";
+	 	+ hour + "-" + minutes + ".root";
 		sprintf(outfilename,"%s",time.c_str());
 	}
 
