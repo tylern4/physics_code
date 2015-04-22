@@ -85,12 +85,11 @@ void WvsQ2(char *fin, char *RootFile_output){
 				W = W_calc(E_prime);
 				xb = xb_calc(Q2,E_prime);
 				WvsQ2_Fill();
-<<<<<<< HEAD
-=======
+
 				FillHist();
 				num_elec++;
 			}
->>>>>>> origin/test_mac
+
 
 			//}
 
