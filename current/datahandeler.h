@@ -76,7 +76,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 		while(current_event<num_of_events){
 
 			myTree->GetEntry(current_event);
-			/*
+			
 			// Changed id to id[0] because scattered elctron should be first particle (i.e. id[0])
 			if (id[0] == ELECTRON && gpart > 1 && stat[0] > 0 && q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0){
 				ID = 11;
@@ -85,21 +85,11 @@ void WvsQ2(char *fin, char *RootFile_output){
 				W = W_calc(E_prime);
 				xb = xb_calc(Q2,E_prime);
 				WvsQ2_Fill();
-			}*/
-
-
-			#pragma omp parallel for
-			for(int event_number = 0; event_number < gpart; event_number++){
-				// Changed id to id[0] because scattered elctron should be first particle (i.e. id[0])
-				if (id[0] == ELECTRON && gpart > 1 && stat[0] > 0 && q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0){
-					ID = 11;
-					E_prime = E_calc(p[0],cx[0],cy[0],cz[0]);
-					Q2 = Q2_calc(cz[0],E_prime);
-					W = W_calc(E_prime);
-					xb = xb_calc(Q2,E_prime);
-					WvsQ2_Fill();
-				} 
-				else if (kTRUE) {
+				FillHist();
+				MomVsBeta_Fill();
+			
+				#pragma omp parallel for
+				for(int event_number = 1; event_number < gpart; event_number++){
 					ID = id[event_number];
 					P = P_calc(p[event_number],cx[event_number],cy[event_number],cz[event_number]);
 					Beta = b[event_number];
