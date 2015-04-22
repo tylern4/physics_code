@@ -25,19 +25,19 @@ double W_calc(double E_prime){
 double Q2_calc(double CosZ, double E_prime){
 	double theta_2 = acos(CosZ)/2.0;
 	double sin_sqr_theta_ovr_2 = Square(sin(theta_2));
-	return 4*E1D_E0*E_prime*sin_sqr_theta_ovr_2;
+	return 4 * E1D_E0 * E_prime * sin_sqr_theta_ovr_2;
 }
 
 double xb_calc(double Q2, double E_prime){
 	double gamma = E1D_E0-E_prime;
-	double xb = (Q2/(2*MASS_P*gamma));
+	double xb = (Q2/(2 * MASS_P * gamma));
 	return xb;
 }
 
 double P_calc(double momentum, double CosX, double CosY, double CosZ){
-	double Px = momentum*CosX;
-	double Py = momentum*CosY;
-	double Pz = momentum*CosZ;
+	double Px = momentum * CosX;
+	double Py = momentum * CosY;
+	double Pz = momentum * CosZ;
 	momentum = sqrt(Square(Px)+Square(Pz)+Square(Pz));
 	return momentum;
 }
@@ -46,7 +46,7 @@ double P_calc(double momentum, double CosX, double CosY, double CosZ){
 //	[E^2 = p^2 + m^2]
 double E_calc(double momentum, double CosX, double CosY, double CosZ){
 	momentum = P_calc(momentum,CosX,CosY,CosZ);
-	double E2 = Square(momentum)+Square(MASS_E);
+	double E2 = Square(momentum) + Square(MASS_E);
 
 	return sqrt(E2);
 }

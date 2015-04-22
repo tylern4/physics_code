@@ -76,7 +76,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 		while(current_event<num_of_events){
 
 			myTree->GetEntry(current_event);
-
+			/*
 			// Changed id to id[0] because scattered elctron should be first particle (i.e. id[0])
 			if (id[0] == ELECTRON && gpart > 1 && stat[0] > 0 && q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0){
 				ID = 11;
@@ -85,38 +85,35 @@ void WvsQ2(char *fin, char *RootFile_output){
 				W = W_calc(E_prime);
 				xb = xb_calc(Q2,E_prime);
 				WvsQ2_Fill();
-				FillHist();
-				num_elec++;
-			}
+			}*/
+
 
 			#pragma omp parallel for
 			for(int event_number = 0; event_number < gpart; event_number++){
-				ID = id[event_number];
-				P = P_calc(p[event_number],cx[event_number],cy[event_number],cz[event_number]);
-				Beta = b[event_number];
-				Energy = E_calc(p[event_number],cx[event_number],cy[event_number],cz[event_number],id[event_number]);
-				//	If event is a scattered electron find it's energy
-				//	and from it's energy find Q2 and W and then fill
-				//	histograms for those variables
-
-				/*//if (id[event_number] == ELECTRON){
 				// Changed id to id[0] because scattered elctron should be first particle (i.e. id[0])
-				if (id[0] == ELECTRON && gpart > 1 && stat[0] > 0 && q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0){
-					E_prime = E_calc(p[event_number],cx[event_number],cy[event_number],cz[event_number]);
+				if (id[0] == ELECTRON && gpart > 1 && stat[0] > 0 && q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0){
+					ID = 11;
+					E_prime = E_calc(p[0],cx[0],cy[0],cz[0]);
+					Q2 = Q2_calc(cz[0],E_prime);
+					W = W_calc(E_prime);
+					xb = xb_calc(Q2,E_prime);
+					WvsQ2_Fill();
+				} 
+				else if (kTRUE) {
+					ID = id[event_number];
+					P = P_calc(p[event_number],cx[event_number],cy[event_number],cz[event_number]);
+					Beta = b[event_number];
+					Energy = E_calc(p[event_number],cx[event_number],cy[event_number],cz[event_number],id[event_number]);
 
+					E_prime = Energy;
 					Q2 = Q2_calc(cz[event_number],E_prime);
 					W = W_calc(E_prime);
-					if(W != W ) {
-						cout << "here" << endl;
-					} else {
-						WvsQ2_Fill();
-						//MomVsBeta_Fill();
-					}
+					xb = xb_calc(Q2,E_prime);
+					WvsQ2_Fill();
 
-				}*/
-				if(ID == PIP) num_pip++;
-				FillHist();
-				MomVsBeta_Fill();
+					FillHist();
+					MomVsBeta_Fill();
+				}
 			}
 			current_event++; 		  	// increment event counter
 			total_events++; 			// increment total event counter
@@ -134,6 +131,6 @@ void WvsQ2(char *fin, char *RootFile_output){
 	RootOutputFile->Close();
 	fclose(input_file); 														// close file with input file list
 	cout<<total_events<<" events in "<<number_files<< " files."<<endl; // print out stats
-	cout << "Number of electrons " << num_elec <<  " Number PIP " << num_pip << " ratio:" << (double)num_pip/(double)num_elec << endl;
+	//cout << "Number of electrons " << num_elec <<  " Number PIP " << num_pip << " ratio:" << (double)num_pip/(double)num_elec << endl;
 }
 #endif
