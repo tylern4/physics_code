@@ -84,25 +84,32 @@ void WvsQ2(char *fin, char *RootFile_output){
 				Q2 = Q2_calc(cz[0],E_prime);
 				W = W_calc(E_prime);
 				xb = xb_calc(Q2,E_prime);
-				WvsQ2_Fill();
-				FillHist();
-				MomVsBeta_Fill();
+
+				//WvsQ2_Fill();
+				//FillHist();
+				//MomVsBeta_Fill();
 			
 				#pragma omp parallel for
-				for(int event_number = 1; event_number < gpart; event_number++){
+				for(int event_number = 0; event_number < gpart; event_number++){
 					ID = id[event_number];
 					P = P_calc(p[event_number],cx[event_number],cy[event_number],cz[event_number]);
 					Beta = b[event_number];
 					Energy = E_calc(p[event_number],cx[event_number],cy[event_number],cz[event_number],id[event_number]);
 
-					E_prime = Energy;
-					Q2 = Q2_calc(cz[event_number],E_prime);
-					W = W_calc(E_prime);
-					xb = xb_calc(Q2,E_prime);
-					WvsQ2_Fill();
-
+					//E_prime = Energy;
+					//Q2 = Q2_calc(cz[event_number],E_prime);
+					//W = W_calc(E_prime);
+					//xb = xb_calc(Q2,E_prime);
 					FillHist();
 					MomVsBeta_Fill();
+
+					if(ID == PIP && q[event_number] == 1 /* && */) {
+						for (int event_number_1 = 0; event_number_1 < gpart; event_number_1++){
+							if(id[event_number_1] == PROTON) {
+								WvsQ2_Fill();
+							}
+						}						
+					}
 				}
 			}
 			current_event++; 		  	// increment event counter
