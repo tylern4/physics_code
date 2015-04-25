@@ -88,7 +88,7 @@ void MomVsBeta_Write(){
 	Mom->SetXTitle("Momentum (GeV)");
 
 	Energy_hist->Write();
-	//MomVsBeta_hist->Write();
+	MomVsBeta_hist->Write();
 	Mom->Write();
 }
 
