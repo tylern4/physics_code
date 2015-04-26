@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <TLorentzVector.h>
+#include "color.hpp"
 
 using namespace std;
 
@@ -152,18 +153,27 @@ Float_t lec_y[MAX_PARTS];   //[lac_part]
 Float_t lec_z[MAX_PARTS];   //[lac_part]
 Float_t lec_c2[MAX_PARTS];   //[lac_part]
 
-void loadbar(int x, int n)
-{
+
+//Color outputs
+Color::Modifier red(Color::FG_RED);
+Color::Modifier blue(Color::FG_BLUE);
+Color::Modifier def(Color::FG_DEFAULT);
+Color::Modifier green(Color::FG_GREEN);
+
+
+void loadbar(int x, int n){
+
 	int w = 50;
     if ( (x != n) && (x % (n/100+1) != 0) ) return;
  
     float ratio  =  x/(float)n;
     int   c      =  ratio * w;
  
-    cout << "[";
-    for (int x=0; x<c; x++) cout << "=";
+    cout << blue << " [";
+    for (int x=0; x<c; x++) cout << green << "=";
+    cout << green << ">" ;
     for (int x=c; x<w; x++) cout << " ";
-    cout << (int)(ratio*100) << "%]\r" << flush;
+    cout << blue << (int)(ratio*100) << "%]\r" << flush;
 }
 
 double Square(double a){

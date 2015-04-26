@@ -24,7 +24,6 @@ TH1D *XHist = new TH1D("XHist", "XHist", 100, -10, 10);
 TH1D *YHist = new TH1D("YHist", "YHist", 100, -10, 10);
 TH1D *ZHist = new TH1D("ZHist", "ZHist", 100, -10, 10);
 
-//TH1I *PartID = new TH1I("PartID", "PartID",423,-211,211);
 TH1I *PartID = new TH1I("PartID", "PartID",10,0,10);
 
 TH2D *WvsQ2_hist = new TH2D("WvsQ2_hist","W vs Q^{2}", 500, 0.0, 3.25, 500, 0, 3.25);
@@ -33,7 +32,6 @@ TH1D *W_hist = new TH1D("W","W",100, 0.0, 3.25);
 TH1D *Q2_hist = new TH1D("Q2","Q^{2}",100, 0.0, 3.35);
 TH1D *E_prime_hist = new TH1D("E_prime","Scattered Electron Energy",100,0.0,6.0);
 TH2D *Q2_vs_xb = new TH2D("Q2_vs_xb","Q^{2} vs x_{b}",500,0.1,0.6,500,1.0,3.5);
-//TH2D *Q2_vs_xb = new TH2D("Q2_vs_xb","Q^{2} vs x_{b}",1000,0.0,0.6,1000,0.0,3.25);
 
 TH2D *MomVsBeta_hist = new TH2D("MomVsBeta","Momentum Vs #beta", 100, 0, 5.0, 100, 0.0, 1.5);
 TH1D *Mom = new TH1D("Momentum","Momentum",100,0,5.0);
@@ -60,7 +58,7 @@ void WvsQ2_Write(){
 	Q2vsW_hist->SetXTitle("Q^{2} (GeV^{2})");
 	Q2vsW_hist->SetYTitle("W (GeV)");
 
-	W_hist->SetXTitle("W (GeV/c)");
+	W_hist->SetXTitle("W (GeV)");
 	Q2_hist->SetXTitle("Q^{2} (GeV^{2})");
 	E_prime_hist->SetXTitle("Energy (GeV)");
 
@@ -93,13 +91,14 @@ void MomVsBeta_Write(){
 }
 
 void WriteHists(){
-	//PxHist->Write();
-	//PyHist->Write();
-	//PzHist->Write();
+	PxHist->Write();
+	PyHist->Write();
+	PzHist->Write();
 
-	//XHist->Write();
-	//YHist->Write();
-	//ZHist->Write();
+	XHist->Write();
+	YHist->Write();
+	ZHist->Write();
+
 	PartID->GetXaxis()->SetBinLabel(2,"proton");
 	PartID->GetXaxis()->SetBinLabel(3,"nuetron");
 	PartID->GetXaxis()->SetBinLabel(4,"#pi^{+}");
@@ -112,13 +111,13 @@ void WriteHists(){
 }
 
 void FillHist(){
-	//PxHist->Fill(Px);
-	//PyHist->Fill(Py);
-	//PzHist->Fill(Pz);
+	PxHist->Fill(Px);
+	PyHist->Fill(Py);
+	PzHist->Fill(Pz);
 
-	//XHist->Fill(x);
-	//YHist->Fill(y);
-	//ZHist->Fill(z);
+	XHist->Fill(x);
+	YHist->Fill(y);
+	ZHist->Fill(z);
 	switch (ID) {
 		case 2212:
 			PartID->Fill(1);
