@@ -56,10 +56,11 @@ double E_calc(double momentum, double CosX, double CosY, double CosZ){
 //	[E^2 = p^2 + m^2]
 double E_calc(double momentum, double CosX, double CosY, double CosZ, double mass){
 	momentum = P_calc(momentum,CosX,CosY,CosZ);
-	double E2 = Square(momentum)+Square(mass);
+	double E2 = Square(momentum) + Square(mass);
 
 	return sqrt(E2);
 }
+
 //	Another overload with particle ID insead
 double E_calc(double momentum, double CosX, double CosY, double CosZ, int ID){
 	double mass;

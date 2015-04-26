@@ -50,7 +50,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 
 	RootOutputFile = new TFile(RootFile_output,"RECREATE");
 
-	cout << "Analyzing file " << fin << endl;
+	cout << green <<"Analyzing file " << blue << fin << def << endl;
 
 	FILE *input_file = fopen(fin,"r");
 	if (input_file == NULL) perror ("Error opening file");
@@ -80,13 +80,20 @@ void WvsQ2(char *fin, char *RootFile_output){
 			// Changed id to id[0] because scattered elctron should be first particle (i.e. id[0])
 			if (id[0] == ELECTRON && gpart > 1 && stat[0] > 0 && q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0){
 				ID = 11;
+				Px = p[0]*cx[0];
+				Py = p[0]*cy[0];
+				Pz = p[0]*cz[0];
+				x = vx[0];
+				y = vy[0];
+				z = vz[0];
+
 				E_prime = E_calc(p[0],cx[0],cy[0],cz[0]);
 				Q2 = Q2_calc(cz[0],E_prime);
 				W = W_calc(E_prime);
 				xb = xb_calc(Q2,E_prime);
 
 				//WvsQ2_Fill();
-				//FillHist();
+				FillHist();
 				//MomVsBeta_Fill();
 			
 				#pragma omp parallel for
@@ -100,13 +107,16 @@ void WvsQ2(char *fin, char *RootFile_output){
 					//Q2 = Q2_calc(cz[event_number],E_prime);
 					//W = W_calc(E_prime);
 					//xb = xb_calc(Q2,E_prime);
-					FillHist();
-					MomVsBeta_Fill();
+					//FillHist();
+					//MomVsBeta_Fill();
 
 					if(ID == PIP && q[event_number] == 1 /* && */) {
+						FillHist();
 						for (int event_number_1 = 0; event_number_1 < gpart; event_number_1++){
-							if(id[event_number_1] == PROTON) {
+							if(id[event_number_1] == PROTON, q[event_number_1] == 1 /* && */) {
 								WvsQ2_Fill();
+								FillHist();
+								MomVsBeta_Fill();
 							}
 						}						
 					}
