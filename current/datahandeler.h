@@ -50,7 +50,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 
 	RootOutputFile = new TFile(RootFile_output,"RECREATE");
 
-	cout << green <<"Analyzing file " << blue << fin << def << endl;
+	cout << blue <<"Analyzing file " << green << fin << def << bgdef << endl;
 
 	FILE *input_file = fopen(fin,"r");
 	if (input_file == NULL) perror ("Error opening file");
@@ -113,8 +113,10 @@ void WvsQ2(char *fin, char *RootFile_output){
 					if(ID == PIP && q[event_number] == 1 /* && */) {
 						FillHist();
 						for (int event_number_1 = 0; event_number_1 < gpart; event_number_1++){
-							if(id[event_number_1] == PROTON, q[event_number_1] == 1 /* && */) {
+							//if(id[event_number_1] == PROTON, q[event_number_1] == 1 /* && */) {
+							if(id[event_number_1] == NEUTRON, q[event_number_1] == 0 /* && */) {
 								WvsQ2_Fill();
+								ID = id[event_number_1];
 								FillHist();
 								MomVsBeta_Fill();
 							}
@@ -137,7 +139,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 	RootOutputFile->Write();
 	RootOutputFile->Close();
 	fclose(input_file); 														// close file with input file list
-	cout<<total_events<<" events in "<<number_files<< " files."<<endl; // print out stats
+	cout<<blue<<total_events<<" events in "<<number_files<< " files."<<def<<endl; // print out stats
 	//cout << "Number of electrons " << num_elec <<  " Number PIP " << num_pip << " ratio:" << (double)num_pip/(double)num_elec << endl;
 }
 #endif
