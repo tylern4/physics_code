@@ -31,6 +31,7 @@
 //#include "stupid.h" //PrintEverything()
 #include "time.h"
 #include "physics.hpp"
+#include "WvsQ2.hpp"
 
 using namespace std;
 
@@ -68,7 +69,7 @@ int main(int argc, char **argv){
 		sprintf(outfilename,"%s",time.c_str());
 	}
 
-	//dataHandeler(infilename,outfilename);
+	dataHandeler(infilename,outfilename);
 	//count_after_cut(infilename,outfilename);
 	WvsQ2(infilename,outfilename);
 	//PrintEverything(infilename,outfilename);
