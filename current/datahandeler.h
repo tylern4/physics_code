@@ -80,20 +80,14 @@ void WvsQ2(char *fin, char *RootFile_output){
 			// Changed id to id[0] because scattered elctron should be first particle (i.e. id[0])
 			if (id[0] == ELECTRON && gpart > 1 && stat[0] > 0 && q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0){
 				ID = 11;
-				Px = p[0]*cx[0];
-				Py = p[0]*cy[0];
-				Pz = p[0]*cz[0];
-				x = vx[0];
-				y = vy[0];
-				z = vz[0];
 
 				E_prime = E_calc(p[0],cx[0],cy[0],cz[0]);
 				Q2 = Q2_calc(cz[0],E_prime);
 				W = W_calc(E_prime);
 				xb = xb_calc(Q2,E_prime);
 
-				//WvsQ2_Fill();
-				FillHist();
+				WvsQ2_Fill();
+				//FillHist();
 				//MomVsBeta_Fill();
 			
 				#pragma omp parallel for
@@ -103,21 +97,25 @@ void WvsQ2(char *fin, char *RootFile_output){
 					Beta = b[event_number];
 					Energy = E_calc(p[event_number],cx[event_number],cy[event_number],cz[event_number],id[event_number]);
 
-					//E_prime = Energy;
-					//Q2 = Q2_calc(cz[event_number],E_prime);
-					//W = W_calc(E_prime);
-					//xb = xb_calc(Q2,E_prime);
+
+					E_prime = Energy;
+					Q2 = Q2_calc(cz[event_number],E_prime);
+					W = W_calc(E_prime);
+					xb = xb_calc(Q2,E_prime);
 					//FillHist();
 					//MomVsBeta_Fill();
 
 					if(ID == PIP && q[event_number] == 1 /* && */) {
-						FillHist();
+						WvsQ2_Fill();
+
 						for (int event_number_1 = 0; event_number_1 < gpart; event_number_1++){
 							//if(id[event_number_1] == PROTON, q[event_number_1] == 1 /* && */) {
 							if(id[event_number_1] == NEUTRON, q[event_number_1] == 0 /* && */) {
+								E_prime = E_calc(p[event_number_1],cx[event_number_1],cy[event_number_1],cz[event_number_1],id[event_number_1]);
+								Q2 = Q2_calc(cz[event_number_1],E_prime);
+								W = W_calc(E_prime);
+								xb = xb_calc(Q2,E_prime);
 								WvsQ2_Fill();
-								ID = id[event_number_1];
-								FillHist();
 								MomVsBeta_Fill();
 							}
 						}						
