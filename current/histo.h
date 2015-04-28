@@ -38,7 +38,7 @@ TH1D *Mom = new TH1D("Momentum","Momentum",100,0,5.0);
 TH1D *Energy_hist = new TH1D("Energy_hist","Energy_hist",500,0.0,6.0);
 
 double Px, Py, Pz, P;
-double x,y,z;
+//double x,y,z;
 int ID;
 double W, Q2, E_prime, xb; 
 double Beta, Energy;
@@ -91,13 +91,13 @@ void MomVsBeta_Write(){
 }
 
 void WriteHists(){
-	PxHist->Write();
-	PyHist->Write();
-	PzHist->Write();
+	//PxHist->Write();
+	//PyHist->Write();
+	//PzHist->Write();
 
-	XHist->Write();
-	YHist->Write();
-	ZHist->Write();
+	//XHist->Write();
+	//YHist->Write();
+	//ZHist->Write();
 
 	PartID->GetXaxis()->SetBinLabel(2,"proton");
 	PartID->GetXaxis()->SetBinLabel(3,"nuetron");
@@ -111,14 +111,53 @@ void WriteHists(){
 }
 
 void FillHist(){
-	PxHist->Fill(Px);
-	PyHist->Fill(Py);
-	PzHist->Fill(Pz);
+	//PxHist->Fill(Px);
+	//PyHist->Fill(Py);
+	//PzHist->Fill(Pz);
 
-	XHist->Fill(x);
-	YHist->Fill(y);
-	ZHist->Fill(z);
+	//XHist->Fill(x);
+	//YHist->Fill(y);
+	//ZHist->Fill(z);
 	switch (ID) {
+		case 2212:
+			PartID->Fill(1);
+			break;
+		case 2112:
+			PartID->Fill(2);
+			break;
+		case 211:
+			PartID->Fill(3);
+			break;
+		case -211:
+			PartID->Fill(4);
+			break;
+		case 111:
+			PartID->Fill(5);
+			break;
+		case 22:
+			PartID->Fill(6);
+			break;
+		case 11:
+			PartID->Fill(0);
+			break;
+		default:
+			PartID->Fill(10);
+			break;
+	}
+
+	
+}
+
+//Overload of above so that you can input which ID to fill
+void FillHist(int Particle_ID){
+	//PxHist->Fill(Px);
+	//PyHist->Fill(Py);
+	//PzHist->Fill(Pz);
+
+	//XHist->Fill(x);
+	//YHist->Fill(y);
+	//ZHist->Fill(z);
+	switch (Particle_ID) {
 		case 2212:
 			PartID->Fill(1);
 			break;

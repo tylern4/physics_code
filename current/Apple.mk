@@ -8,7 +8,7 @@ INCS =          -I$(shell root-config --incdir)
 LIBS =          $(shell root-config --glibs)
 TARGET =	MacE1d
 
-all:	E1D
+all:	clean E1D
 
 E1D:	main.o 
 	$(CXX) main.o -L. $(CXXFLAGS) $(LIBS) -o $(TARGET) 
