@@ -22,7 +22,7 @@
 #include "main.h"
 #include "TMath.h"
 #include "histo.h"
-#include "datahandeler.h" //dataHandeler() //WvsQ2()
+#include "datahandeler.h" //dataHandeler() 
 //#include "count_after_cut.h" //count_after_cut()
 #include <omp.h>
 #include <stdlib.h>
@@ -31,7 +31,7 @@
 //#include "stupid.h" //PrintEverything()
 #include "time.h"
 #include "physics.hpp"
-#include "WvsQ2.hpp"
+#include "WvsQ2.hpp" //WvsQ2()
 
 using namespace std;
 
@@ -69,10 +69,8 @@ int main(int argc, char **argv){
 		sprintf(outfilename,"%s",time.c_str());
 	}
 
-	dataHandeler(infilename,outfilename);
-	//count_after_cut(infilename,outfilename);
+	//dataHandeler(infilename,outfilename);
 	WvsQ2(infilename,outfilename);
-	//PrintEverything(infilename,outfilename);
 
 	return 0;
 }
