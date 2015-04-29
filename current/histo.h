@@ -72,7 +72,7 @@ void WvsQ2_Write(){
 	Q2_hist->Write();
 	Q2_vs_xb->Write();
 
-	PartID->Write();
+	//PartID->Write();
 }
 
 void MomVsBeta_Fill(){
