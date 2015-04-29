@@ -87,8 +87,8 @@ void WvsQ2(char *fin, char *RootFile_output){
 				xb = xb_calc(Q2,E_prime);
 
 				//FillHist(ELECTRON);
-				WvsQ2_Fill();
-				MomVsBeta_Fill();
+				//WvsQ2_Fill();
+				//MomVsBeta_Fill();
 			
 				#pragma omp parallel for
 				for(int event_number = 0; event_number < gpart; event_number++){
@@ -98,8 +98,8 @@ void WvsQ2(char *fin, char *RootFile_output){
 					Energy = E_calc(p[event_number],cx[event_number],cy[event_number],cz[event_number],id[event_number]);
 
 					if(id[event_number] == PIP && q[event_number] == 1 /* && */) {
-						//WvsQ2_Fill();
-						//MomVsBeta_Fill();
+						WvsQ2_Fill();
+						MomVsBeta_Fill();
 						//FillHist(PIP);
 
 						for (int event_number_1 = 0; event_number_1 < gpart; event_number_1++){
