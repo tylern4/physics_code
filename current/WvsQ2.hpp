@@ -86,7 +86,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 				W = W_calc(E_prime);
 				xb = xb_calc(Q2,E_prime);
 
-				//FillHist(ELECTRON);
+				FillHist(ELECTRON);
 				//WvsQ2_Fill();
 				//MomVsBeta_Fill();
 			
@@ -98,16 +98,16 @@ void WvsQ2(char *fin, char *RootFile_output){
 					Energy = E_calc(p[event_number],cx[event_number],cy[event_number],cz[event_number],id[event_number]);
 
 					if(id[event_number] == PIP && q[event_number] == 1 /* && */) {
-						WvsQ2_Fill();
-						MomVsBeta_Fill();
-						//FillHist(PIP);
+						//WvsQ2_Fill();
+						//MomVsBeta_Fill();
+						FillHist(PIP);
 
 						for (int event_number_1 = 0; event_number_1 < gpart; event_number_1++){
-							//if(id[event_number_1] == PROTON, q[event_number_1] == 1 /* && */) {
-							if(id[event_number_1] == NEUTRON, q[event_number_1] == 0 /* && */) {
-								FillHist(id[event_number_1]);
-								//WvsQ2_Fill();
-								//MomVsBeta_Fill();
+							if(id[event_number_1] == PROTON, q[event_number_1] == 1 /* && */) {
+							//if(id[event_number_1] == NEUTRON, q[event_number_1] == 0 /* && */) {
+								FillHist(PROTON);
+								WvsQ2_Fill();
+								MomVsBeta_Fill();
 							}
 						}						
 					}
