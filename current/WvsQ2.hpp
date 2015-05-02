@@ -24,6 +24,7 @@
 //#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "main.h"
 #include "physics.hpp"
 
 using namespace std;
@@ -47,6 +48,9 @@ void WvsQ2(char *fin, char *RootFile_output){
 	int number_cols = 0;
 	int number_files = 0;
 	char rootFile[500];
+
+	TLorentzVector e_mu_prime;
+	TLorentzVector e_mu(0.0,0.0, sqrt(Square(E1D_E0)-Square(MASS_E)), E1D_E0);
 
 	RootOutputFile = new TFile(RootFile_output,"RECREATE");
 
@@ -82,7 +86,10 @@ void WvsQ2(char *fin, char *RootFile_output){
 				ID = 11;
 
 				E_prime = E_calc(p[0],cx[0],cy[0],cz[0]);
-				Q2 = Q2_calc(cz[0],E_prime);
+				//Q2 = Q2_calc(cz[0],E_prime);
+				e_mu_prime.SetPxPyPzE(p[0]*cx[0],p[0]*cy[0],p[0]*cy[0],E_prime);
+				
+				Q2 = Q2_calc(e_mu,e_mu_prime);
 				W = W_calc(E_prime);
 				xb = xb_calc(Q2,E_prime);
 

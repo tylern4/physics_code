@@ -66,8 +66,8 @@ void WvsQ2_Write(){
 	Q2_vs_xb->SetYTitle("Q^{2}");
 
 	E_prime_hist->Write();
-	//WvsQ2_hist->Write();
-	Q2vsW_hist->Write();
+	WvsQ2_hist->Write();
+	//Q2vsW_hist->Write();
 	W_hist->Write();
 	Q2_hist->Write();
 	Q2_vs_xb->Write();
@@ -100,7 +100,7 @@ void WriteHists(){
 	//ZHist->Write();
 
 	PartID->GetXaxis()->SetBinLabel(2,"proton");
-	PartID->GetXaxis()->SetBinLabel(3,"nuetron");
+	PartID->GetXaxis()->SetBinLabel(3,"neutron");
 	PartID->GetXaxis()->SetBinLabel(4,"#pi^{+}");
 	PartID->GetXaxis()->SetBinLabel(5,"#pi^{-}");
 	PartID->GetXaxis()->SetBinLabel(6,"#pi^{0}");
