@@ -1,8 +1,8 @@
 /************************************************************************/
-/*									
-/*									
-/*  Created by Nick Tyler					
-/*	University Of South Carolina			
+/*																		*/
+/*																		*/
+/*  Created by Nick Tyler												*/
+/*	University Of South Carolina										*/
 /************************************************************************/
 
 #ifndef WVSQ2_H_GUARD
@@ -96,7 +96,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 				FillHist(ELECTRON);
 				//WvsQ2_Fill();
 				//MomVsBeta_Fill();
-			
+				
 				#pragma omp parallel for
 				for(int event_number = 0; event_number < gpart; event_number++){
 					//ID = id[event_number];

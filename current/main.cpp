@@ -1,8 +1,8 @@
 /************************************************************************/
-/*									
-/*									
-/*  Created by Nick Tyler					
-/*	University Of South Carolina			
+/*																		*/
+/*																		*/
+/*  Created by Nick Tyler												*/
+/*	University Of South Carolina										*/
 /************************************************************************/
 
 //#define PI 3.14159265;
@@ -27,7 +27,7 @@
 //#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <string>
+#include <string.h>
 //#include "stupid.h" //PrintEverything()
 #include "time.h"
 #include "physics.hpp"
@@ -41,6 +41,8 @@ int main(int argc, char **argv){
 	char  infilename[128];
 	char  outfilename[128];
 	string minutes, hour;
+	//char* minutes, hour;
+
 	
 	sprintf(infilename,"%s",argv[1]);
 	

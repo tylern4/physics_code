@@ -1,8 +1,8 @@
 /************************************************************************/
-/*									
-/*									
-/*  Created by Nick Tyler					
-/*	University Of South Carolina			
+/*																		*/
+/*																		*/
+/*  Created by Nick Tyler												*/
+/*	University Of South Carolina										*/
 /************************************************************************/
 
 #ifndef HISTO_H_GUARD
