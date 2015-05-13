@@ -39,7 +39,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 	int total_events = 0;
 
 	int num_elec = 0, num_pip =0;
-	int files_in_lis = 153;
+	int files_in_lis = 2466;
 
 
 	TFile *myFile;
@@ -80,7 +80,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 		while(current_event<num_of_events){
 
 			myTree->GetEntry(current_event);
-			
+
 			// Changed id to id[0] because scattered elctron should be first particle (i.e. id[0])
 			if (id[0] == ELECTRON && gpart > 1 && stat[0] > 0 && q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0){
 				ID = 11;
@@ -118,7 +118,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 								//WvsQ2_Fill();
 								MomVsBeta_Fill();
 							}
-						}						
+						}
 					}
 				} 
 			}
