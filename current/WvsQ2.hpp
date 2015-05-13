@@ -86,16 +86,18 @@ void WvsQ2(char *fin, char *RootFile_output){
 				ID = 11;
 
 				E_prime = E_calc(p[0],cx[0],cy[0],cz[0]);
+
 				//Q2 = Q2_calc(cz[0],E_prime);
-				e_mu_prime.SetPxPyPzE(p[0]*cx[0],p[0]*cy[0],p[0]*cy[0],E_prime);
-				
+
+				e_mu_prime.SetPxPyPzE(p[0]*cx[0],p[0]*cy[0],p[0]*cy[0],E_prime);				
 				Q2 = Q2_calc(e_mu,e_mu_prime);
+
 				W = W_calc(E_prime);
 				xb = xb_calc(Q2,E_prime);
 
-				FillHist(ELECTRON);
-				//WvsQ2_Fill();
-				//MomVsBeta_Fill();
+				//FillHist(ELECTRON);
+				WvsQ2_Fill();
+				MomVsBeta_Fill();
 				
 				#pragma omp parallel for
 				for(int event_number = 0; event_number < gpart; event_number++){
@@ -104,21 +106,21 @@ void WvsQ2(char *fin, char *RootFile_output){
 					Beta = b[event_number];
 					Energy = E_calc(p[event_number],cx[event_number],cy[event_number],cz[event_number],id[event_number]);
 
-					if(id[event_number] == PIP && q[event_number] == 1 /* && */) {
+					if(id[event_number] == PIP && q[event_number] == 1) {
 						//WvsQ2_Fill();
-						//MomVsBeta_Fill();
-						FillHist(PIP);
+						MomVsBeta_Fill();
+						//FillHist(PIP);
 
 						for (int event_number_1 = 0; event_number_1 < gpart; event_number_1++){
-							if(id[event_number_1] == PROTON, q[event_number_1] == 1 /* && */) {
-							//if(id[event_number_1] == NEUTRON, q[event_number_1] == 0 /* && */) {
-								FillHist(PROTON);
-								WvsQ2_Fill();
+							if(id[event_number_1] == PROTON, q[event_number_1] == 1) {
+							//if(id[event_number_1] == NEUTRON, q[event_number_1] == 0 ) {
+								//FillHist(PROTON);
+								//WvsQ2_Fill();
 								MomVsBeta_Fill();
 							}
 						}						
 					}
-				}
+				} 
 			}
 			current_event++; 		  	// increment event counter
 			total_events++; 			// increment total event counter
@@ -131,7 +133,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 	RootOutputFile->cd();
 	WvsQ2_Write();
 	MomVsBeta_Write();
-	WriteHists();
+	//WriteHists();
 	RootOutputFile->Write();
 	RootOutputFile->Close();
 	fclose(input_file); 														// close file with input file list

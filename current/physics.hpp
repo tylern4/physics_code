@@ -33,7 +33,7 @@ double Q2_calc(double CosZ, double E_prime){
 // q^mu^2 = (e^mu - e^mu')^2 = -Q^2
 double Q2_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime){
 	TLorentzVector q_mu = (e_mu - e_mu_prime);
-	return q_mu.Mag2();
+	return -q_mu.Mag2();
 }
 
 double xb_calc(double Q2, double E_prime){

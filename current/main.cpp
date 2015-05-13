@@ -28,6 +28,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <string>
+#include <cstring>
 //#include "stupid.h" //PrintEverything()
 #include "time.h"
 #include "physics.hpp"
