@@ -1,8 +1,8 @@
 /************************************************************************/
-/*									
-/*									
-/*  Created by Nick Tyler					
-/*	University Of South Carolina			
+/*																		*/
+/*																		*/
+/*  Created by Nick Tyler												*/
+/*	University Of South Carolina										*/
 /************************************************************************/
 
 #ifndef DATAHANDELER_H_GUARD
@@ -22,7 +22,7 @@
 #include "TChain.h"
 #include "TSystem.h"
 #include "TMath.h"
-#include <omp.h>
+//#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "physics.hpp"
@@ -39,7 +39,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 	int total_events = 0;
 
 	int num_elec = 0, num_pip =0;
-	int files_in_lis = 2486;
+	int files_in_lis = 153;
 
 
 	TFile *myFile;

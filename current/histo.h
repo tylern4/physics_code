@@ -1,13 +1,13 @@
 /************************************************************************/
-/*									
-/*									
-/*  Created by Nick Tyler					
-/*	University Of South Carolina			
+/*																		*/
+/*																		*/
+/*  Created by Nick Tyler												*/
+/*	University Of South Carolina										*/
 /************************************************************************/
 
 #ifndef HISTO_H_GUARD
 #define HISTO_H_GUARD
-#include <omp.h>
+//#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "main.h"
@@ -26,11 +26,17 @@ TH1D *ZHist = new TH1D("ZHist", "ZHist", 100, -10, 10);
 
 TH1I *PartID = new TH1I("PartID", "PartID",10,0,10);
 
-TH2D *WvsQ2_hist = new TH2D("WvsQ2_hist","W vs Q^{2}", 500, 0.0, 3.25, 500, 0, 3.25);
-TH2D *Q2vsW_hist = new TH2D("Q2vsW_hist","Q^{2} vs W", 500, 0.0, 3.25, 500, 0, 3.25);
-TH1D *W_hist = new TH1D("W","W",100, 0.0, 3.25);
-TH1D *Q2_hist = new TH1D("Q2","Q^{2}",100, 0.0, 3.35);
+//TH2D *WvsQ2_hist = new TH2D("WvsQ2_hist","W vs Q^{2}", 500, 0.0, 3.25, 500, 0, 3.25);
+TH2D *WvsQ2_hist = new TH2D("WvsQ2_hist","W vs Q^{2}", 500, 0, 4, 500, 0, 10);
+//TH2D *Q2vsW_hist = new TH2D("Q2vsW_hist","Q^{2} vs W", 500, 0.0, 3.25, 500, 0, 3.25);
+TH2D *Q2vsW_hist = new TH2D("Q2vsW_hist","Q^{2} vs W", 500, 0, 10, 500, 0, 4);
+//TH1D *W_hist = new TH1D("W","W",100, 0.0, 3.25);
+TH1D *W_hist = new TH1D("W","W",100, 0, 5);
+//TH1D *Q2_hist = new TH1D("Q2","Q^{2}",500, 0.0, 3.35);
+TH1D *Q2_hist = new TH1D("Q2","Q^{2}",500, -10.0,40.0);
+
 TH1D *E_prime_hist = new TH1D("E_prime","Scattered Electron Energy",100,0.0,6.0);
+//TH2D *Q2_vs_xb = new TH2D("Q2_vs_xb","Q^{2} vs x_{b}",500,0.1,0.6,500,1.0,3.5);
 TH2D *Q2_vs_xb = new TH2D("Q2_vs_xb","Q^{2} vs x_{b}",500,0.1,0.6,500,1.0,3.5);
 
 TH2D *MomVsBeta_hist = new TH2D("MomVsBeta","Momentum Vs #beta", 100, 0, 5.0, 100, 0.0, 1.5);
@@ -66,13 +72,12 @@ void WvsQ2_Write(){
 	Q2_vs_xb->SetYTitle("Q^{2}");
 
 	E_prime_hist->Write();
-	//WvsQ2_hist->Write();
+	WvsQ2_hist->Write();
 	Q2vsW_hist->Write();
 	W_hist->Write();
 	Q2_hist->Write();
 	Q2_vs_xb->Write();
 
-	//PartID->Write();
 }
 
 void MomVsBeta_Fill(){
@@ -100,7 +105,7 @@ void WriteHists(){
 	//ZHist->Write();
 
 	PartID->GetXaxis()->SetBinLabel(2,"proton");
-	PartID->GetXaxis()->SetBinLabel(3,"nuetron");
+	PartID->GetXaxis()->SetBinLabel(3,"neutron");
 	PartID->GetXaxis()->SetBinLabel(4,"#pi^{+}");
 	PartID->GetXaxis()->SetBinLabel(5,"#pi^{-}");
 	PartID->GetXaxis()->SetBinLabel(6,"#pi^{0}");

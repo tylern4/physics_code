@@ -1,8 +1,8 @@
 /************************************************************************/
-/*									
-/*									
-/*  Created by Nick Tyler					
-/*	University Of South Carolina			
+/*																		*/
+/*																		*/
+/*  Created by Nick Tyler												*/
+/*	University Of South Carolina										*/
 /************************************************************************/
 
 //#define PI 3.14159265;
@@ -24,10 +24,12 @@
 #include "histo.h"
 #include "datahandeler.h" //dataHandeler() 
 //#include "count_after_cut.h" //count_after_cut()
-#include <omp.h>
+//#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <string>
+#include <cstring>
 //#include "stupid.h" //PrintEverything()
 #include "time.h"
 #include "physics.hpp"
@@ -41,6 +43,8 @@ int main(int argc, char **argv){
 	char  infilename[128];
 	char  outfilename[128];
 	string minutes, hour;
+	//char* minutes, hour;
+
 	
 	sprintf(infilename,"%s",argv[1]);
 	
