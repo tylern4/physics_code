@@ -116,7 +116,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 							//if(id[event_number_1] == NEUTRON, q[event_number_1] == 0 ) {
 								//FillHist(PROTON);
 								WvsQ2_Fill();
-								//MomVsBeta_Fill();
+								MomVsBeta_Fill();
 							}
 						}
 					}
