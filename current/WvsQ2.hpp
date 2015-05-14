@@ -21,7 +21,7 @@
 #include "TChain.h"
 #include "TSystem.h"
 #include "TMath.h"
-//#include <omp.h>
+#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "main.h"
@@ -39,7 +39,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 	int total_events = 0;
 
 	int num_elec = 0, num_pip =0;
-	int files_in_lis = 154;
+	int files_in_lis = 2466;
 
 
 	TFile *myFile;
@@ -49,8 +49,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 	int number_files = 0;
 	char rootFile[500];
 
-	TVector3 e_mu_prime_3(0.0,0.0,0.0);
-	TLorentzVector e_mu_prime(0.0,0.0,0.0,0.0);
+	TLorentzVector e_mu_prime;
 	TLorentzVector e_mu(0.0,0.0, sqrt(Square(E1D_E0)-Square(MASS_E)), E1D_E0);
 
 	RootOutputFile = new TFile(RootFile_output,"RECREATE");
@@ -86,30 +85,20 @@ void WvsQ2(char *fin, char *RootFile_output){
 			if (id[0] == ELECTRON && gpart > 1 && stat[0] > 0 && q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0){
 				ID = 11;
 
-				e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cy[0]);	
-				e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
-				P = p[0];
-				P1 = e_mu_prime.P();
-				E_prime = e_mu_prime.E();		
+				E_prime = E_calc(p[0],cx[0],cy[0],cz[0]);
+
+				//Q2 = Q2_calc(cz[0],E_prime);
+
+				e_mu_prime.SetPxPyPzE(p[0]*cx[0],p[0]*cy[0],p[0]*cy[0],E_prime);				
 				Q2 = Q2_calc(e_mu,e_mu_prime);
 
-				W = W_calc(e_mu,e_mu_prime);
-				//cout << "my W:" << W << "     W from vectors: "<< W_calc(e_mu,e_mu_prime) << "     " << red << W -  W_calc(e_mu,e_mu_prime) << def << endl;
+				W = W_calc(E_prime);
 				xb = xb_calc(Q2,E_prime);
 
 				//FillHist(ELECTRON);
 				//WvsQ2_Fill();
 				//MomVsBeta_Fill();
 				
-/*
-check beta vs P for a few different cases
-	only E
-	only P
-	only pi+
-
-Check how P is calculated
-	fill Tlorentz and get P that way
-*/
 				#pragma omp parallel for
 				for(int event_number = 0; event_number < gpart; event_number++){
 					//ID = id[event_number];
