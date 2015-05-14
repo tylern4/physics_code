@@ -11,14 +11,6 @@
 
 using namespace std;
 
-//	Calcualting W
-//	Gotten from s channel [(gamma - P)^2 == s == w^2]
-//	Sqrt√[M_p^2 - Q^2 + 2 M_p gamma]
-double W_calc(double E_prime){
-	//return sqrt( Square(MASS_P) + 2 * MASS_P * (E1D_E0-E_prime) );
-	return sqrt(Square(MASS_P) - Q2 + 2 * MASS_P * (E1D_E0-E_prime));
-}
-
 //	Calulating Q^2 **Incorently
 //	Gotten from t channel [(E_e - E_ep)^2 == t == -Q^2]
 //	Q^2 = 4*E_beam*E_prime*Sin^2(theta/2)
@@ -34,6 +26,18 @@ double Q2_calc(double CosZ, double E_prime){
 double Q2_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime){
 	TLorentzVector q_mu = (e_mu - e_mu_prime);
 	return -q_mu.Mag2();
+}
+
+//	Calcualting W
+//	Gotten from s channel [(gamma - P)^2 == s == w^2]
+//	Sqrt√[M_p^2 - Q^2 + 2 M_p gamma]
+double W_calc(double E_prime){
+	//return sqrt( Square(MASS_P) + 2 * MASS_P * (E1D_E0-E_prime) );
+	return sqrt(Square(MASS_P) - Q2 + 2 * MASS_P * (E1D_E0-E_prime));
+}
+
+double W_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime){
+	return sqrt(Square(MASS_P) - Q2_calc(e_mu, e_mu_prime) + 2 * MASS_P * (e_mu.E() - e_mu_prime.E()));
 }
 
 double xb_calc(double Q2, double E_prime){
