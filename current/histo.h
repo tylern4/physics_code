@@ -42,8 +42,9 @@ TH2D *Q2_vs_xb = new TH2D("Q2_vs_xb","Q^{2} vs x_{b}",500,0.1,0.6,500,1.0,3.5);
 TH2D *MomVsBeta_hist = new TH2D("MomVsBeta","Momentum Vs #beta", 100, 0, 5.0, 100, 0.0, 1.5);
 TH1D *Mom = new TH1D("Momentum","Momentum",100,0,5.0);
 TH1D *Energy_hist = new TH1D("Energy_hist","Energy_hist",500,0.0,6.0);
+TH1D *PminusP = new TH1D("P - P","P - P",100,-2,2);
 
-double Px, Py, Pz, P;
+double Px, Py, Pz, P, P1;
 //double x,y,z;
 int ID;
 double W, Q2, E_prime, xb; 
@@ -56,6 +57,7 @@ void WvsQ2_Fill(){
 	W_hist->Fill(W);
 	Q2_hist->Fill(Q2);
 	Q2_vs_xb->Fill(xb,Q2);
+	PminusP->Fill(P-P1);
 }
 void WvsQ2_Write(){
 	WvsQ2_hist->SetXTitle("W (GeV)");
@@ -78,6 +80,7 @@ void WvsQ2_Write(){
 	Q2_hist->Write();
 	Q2_vs_xb->Write();
 
+	PminusP->Write();
 }
 
 void MomVsBeta_Fill(){

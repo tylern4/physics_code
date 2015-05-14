@@ -86,22 +86,30 @@ void WvsQ2(char *fin, char *RootFile_output){
 			if (id[0] == ELECTRON && gpart > 1 && stat[0] > 0 && q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0){
 				ID = 11;
 
-				//E_prime = E_calc(p[0],cx[0],cy[0],cz[0]);
-				//Q2 = Q2_calc(cz[0],E_prime);
-				e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cy[0]);
-				//e_mu_prime.SetPxPyPzE(p[0]*cx[0],p[0]*cy[0],p[0]*cy[0],0);	
+				e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cy[0]);	
 				e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
-				//cout << "myE:" << E_prime << "     realE?: "<< e_mu_prime.E() << endl;
+				P = p[0];
+				P1 = e_mu_prime.P();
 				E_prime = e_mu_prime.E();		
 				Q2 = Q2_calc(e_mu,e_mu_prime);
 
-				W = W_calc(E_prime);
+				W = W_calc(e_mu,e_mu_prime);
+				//cout << "my W:" << W << "     W from vectors: "<< W_calc(e_mu,e_mu_prime) << "     " << red << W -  W_calc(e_mu,e_mu_prime) << def << endl;
 				xb = xb_calc(Q2,E_prime);
 
 				//FillHist(ELECTRON);
 				//WvsQ2_Fill();
 				//MomVsBeta_Fill();
 				
+/*
+check beta vs P for a few different cases
+	only E
+	only P
+	only pi+
+
+Check how P is calculated
+	fill Tlorentz and get P that way
+*/
 				#pragma omp parallel for
 				for(int event_number = 0; event_number < gpart; event_number++){
 					//ID = id[event_number];
