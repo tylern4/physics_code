@@ -41,7 +41,6 @@ void WvsQ2(char *fin, char *RootFile_output){
 	int num_elec = 0, num_pip =0;
 	int files_in_lis = 154;
 
-
 	TFile *myFile;
 	TFile *RootOutputFile;
 	TTree *myTree;
