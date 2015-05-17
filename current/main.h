@@ -10,7 +10,7 @@
 #include "TMath.h"
 #include "TTree.h"
 #include "TROOT.h"
-//#include <omp.h>
+#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <TLorentzVector.h>
@@ -54,7 +54,7 @@ static const float MASS_OMEGA = 0.78265;
 
 
 UChar_t npart;
-UChar_t evstat;
+//makeUChar_t evstat;
 UInt_t  evntid;
 Char_t  evtype;
 Char_t  evntclas;
@@ -75,7 +75,7 @@ UChar_t sc[MAX_PARTS];   //[gpart]
 UChar_t ec[MAX_PARTS];   //[gpart]
 UChar_t lec[MAX_PARTS];   //[gpart]
 Float_t p[MAX_PARTS];   //[gpart]
-Float_t m[MAX_PARTS];   //[gpart]
+//Float_t m[MAX_PARTS];   //[gpart]
 Char_t  q[MAX_PARTS];   //[gpart]
 Float_t b[MAX_PARTS];   //[gpart]
 Float_t cx[MAX_PARTS];   //[gpart]
@@ -107,8 +107,8 @@ Int_t   ec_part;
 UShort_t ec_stat[MAX_PARTS];   //[ec_part]
 UChar_t ec_sect[MAX_PARTS];   //[ec_part]
 Int_t   ec_whol[MAX_PARTS];   //[ec_part]
-Int_t   ec_inst[MAX_PARTS];   //[ec_part]
-Int_t   ec_oust[MAX_PARTS];   //[ec_part]
+//Int_t   ec_inst[MAX_PARTS];   //[ec_part]
+//Int_t   ec_oust[MAX_PARTS];   //[ec_part]
 Float_t etot[MAX_PARTS];   //[ec_part]
 Float_t ec_ei[MAX_PARTS];   //[ec_part]
 Float_t ec_eo[MAX_PARTS];   //[ec_part]
@@ -117,9 +117,9 @@ Float_t ec_r[MAX_PARTS];   //[ec_part]
 Float_t ech_x[MAX_PARTS];   //[ec_part]
 Float_t ech_y[MAX_PARTS];   //[ec_part]
 Float_t ech_z[MAX_PARTS];   //[ec_part]
-Float_t ec_m2[MAX_PARTS];   //[ec_part]
-Float_t ec_m3[MAX_PARTS];   //[ec_part]
-Float_t ec_m4[MAX_PARTS];   //[ec_part]
+//Float_t ec_m2[MAX_PARTS];   //[ec_part]
+//Float_t ec_m3[MAX_PARTS];   //[ec_part]
+//Float_t ec_m4[MAX_PARTS];   //[ec_part]
 Float_t ec_c2[MAX_PARTS];   //[ec_part]
 
 Int_t   sc_part;
@@ -141,7 +141,7 @@ Float_t cc_t[MAX_PARTS];   //[cc_part]
 Float_t cc_r[MAX_PARTS];   //[cc_part]
 Float_t cc_c2[MAX_PARTS];   //[cc_part]
 
-Int_t   lac_part;
+/*Int_t   lac_part;
 Int_t   lec_sect[MAX_PARTS];   //[lac_part]
 Int_t   lec_hit[MAX_PARTS];   //[lac_part]
 Int_t   lec_stat[MAX_PARTS];   //[lac_part]
@@ -152,7 +152,7 @@ Float_t lec_x[MAX_PARTS];   //[lac_part]
 Float_t lec_y[MAX_PARTS];   //[lac_part]
 Float_t lec_z[MAX_PARTS];   //[lac_part]
 Float_t lec_c2[MAX_PARTS];   //[lac_part]
-
+*/
 
 //Color outputs
 Color::Modifier red(Color::FG_RED);
@@ -187,7 +187,7 @@ double Square(double a){
 void getBranches(TTree* myTree){
 
 	myTree->SetBranchAddress("npart", &npart);			//number of final particles
-	myTree->SetBranchAddress("evstat", &evstat);
+	//myTree->SetBranchAddress("evstat", &evstat);
 	myTree->SetBranchAddress("evntid", &evntid);		//event number
 	myTree->SetBranchAddress("evntclas", &evntclas);
 	myTree->SetBranchAddress("q_l", &q_l);
@@ -202,7 +202,7 @@ void getBranches(TTree* myTree){
 	myTree->SetBranchAddress("ec", &ec);
 	myTree->SetBranchAddress("lec", &lec);
 	myTree->SetBranchAddress("p", &p);					//momentum of i'th particle p[i] (GeV/C)
-	myTree->SetBranchAddress("m", &m);					//mass of i'th particle m[i] (GeV/C)
+	//myTree->SetBranchAddress("m", &m);					//mass of i'th particle m[i] (GeV/C)
 	myTree->SetBranchAddress("q", &q);					//charge of i'th particle q[i] (charge in e's 1,0,-1)
 	myTree->SetBranchAddress("b", &b);					//Velocity of i'th particle b[i] (in terms of c) ie. Beta
 	myTree->SetBranchAddress("cx", &cx);				//X direction cosine at origin
@@ -226,8 +226,8 @@ void getBranches(TTree* myTree){
 	myTree->SetBranchAddress("ec_stat", &ec_stat);
 	myTree->SetBranchAddress("ec_sect", &ec_sect);
 	myTree->SetBranchAddress("ec_whol", &ec_whol);
-	myTree->SetBranchAddress("ec_inst", &ec_inst);
-	myTree->SetBranchAddress("ec_oust", &ec_oust);
+	//myTree->SetBranchAddress("ec_inst", &ec_inst);
+	//myTree->SetBranchAddress("ec_oust", &ec_oust);
 	myTree->SetBranchAddress("etot", &etot);
 	myTree->SetBranchAddress("ec_ei", &ec_ei);
 	myTree->SetBranchAddress("ec_eo", &ec_eo);
@@ -236,9 +236,9 @@ void getBranches(TTree* myTree){
 	myTree->SetBranchAddress("ech_x", &ech_x);
 	myTree->SetBranchAddress("ech_y", &ech_y);
 	myTree->SetBranchAddress("ech_z", &ech_z);
-	myTree->SetBranchAddress("ec_m2", &ec_m2);
-	myTree->SetBranchAddress("ec_m3", &ec_m3);
-	myTree->SetBranchAddress("ec_m4", &ec_m4);
+	//myTree->SetBranchAddress("ec_m2", &ec_m2);
+	//myTree->SetBranchAddress("ec_m3", &ec_m3);
+	//myTree->SetBranchAddress("ec_m4", &ec_m4);
 	myTree->SetBranchAddress("ec_c2", &ec_c2);
 	myTree->SetBranchAddress("sc_part", &sc_part);
 	myTree->SetBranchAddress("sc_sect", &sc_sect);
@@ -257,7 +257,7 @@ void getBranches(TTree* myTree){
 	myTree->SetBranchAddress("cc_t", &cc_t);
 	myTree->SetBranchAddress("cc_r", &cc_r);
 	myTree->SetBranchAddress("cc_c2", &cc_c2);
-	myTree->SetBranchAddress("lac_part", &lac_part);
+	/*myTree->SetBranchAddress("lac_part", &lac_part);
 	myTree->SetBranchAddress("lec_sect", &lec_sect);
 	myTree->SetBranchAddress("lec_hit", &lec_hit);
 	myTree->SetBranchAddress("lec_stat", &lec_stat);
@@ -267,7 +267,7 @@ void getBranches(TTree* myTree){
 	myTree->SetBranchAddress("lec_x", &lec_x);
 	myTree->SetBranchAddress("lec_y", &lec_y);
 	myTree->SetBranchAddress("lec_z", &lec_z);
-	myTree->SetBranchAddress("lec_c2", &lec_c2); 
+	myTree->SetBranchAddress("lec_c2", &lec_c2); */
 
 	myTree->SetBranchStatus("*",1);
 }
