@@ -88,13 +88,14 @@ void WvsQ2(char *fin, char *RootFile_output){
 
 				e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cy[0]);	
 				e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
+
 				P = p[0];
 				P1 = e_mu_prime.P();
+
 				E_prime = e_mu_prime.E();		
 				Q2 = Q2_calc(e_mu,e_mu_prime);
 
 				W = W_calc(e_mu,e_mu_prime);
-				//cout << "my W:" << W << "     W from vectors: "<< W_calc(e_mu,e_mu_prime) << "     " << red << W -  W_calc(e_mu,e_mu_prime) << def << endl;
 				xb = xb_calc(Q2,E_prime);
 
 				//FillHist(ELECTRON);
