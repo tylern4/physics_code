@@ -7,7 +7,7 @@
 
 #ifndef HISTO_H_GUARD
 #define HISTO_H_GUARD
-#include <omp.h>
+//#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "main.h"
@@ -27,14 +27,10 @@ TH1D *ZHist = new TH1D("ZHist", "ZHist", 100, -10, 10);
 TH1I *PartID = new TH1I("PartID", "PartID",10,0,10);
 
 TH2D *WvsQ2_hist = new TH2D("WvsQ2_hist","W vs Q^{2}", 500, 0.0, 3.25, 500, 0, 3.25);
-//TH2D *WvsQ2_hist = new TH2D("WvsQ2_hist","W vs Q^{2}", 500, 0, 4, 500, 0, 10);
 TH1D *W_hist = new TH1D("W","W",100, 0.0, 3.25);
-//TH1D *W_hist = new TH1D("W","W",100, 0, 5);
 TH1D *Q2_hist = new TH1D("Q2","Q^{2}",500, 0.0, 3.35);
-//TH1D *Q2_hist = new TH1D("Q2","Q^{2}",500, -10.0,40.0);
 
 TH1D *E_prime_hist = new TH1D("E_prime","Scattered Electron Energy",100,0.0,6.0);
-//TH2D *Q2_vs_xb = new TH2D("Q2_vs_xb","Q^{2} vs x_{b}",500,0.1,0.6,500,1.0,3.5);
 TH2D *Q2_vs_xb = new TH2D("Q2_vs_xb","Q^{2} vs x_{b}",500,0.1,0.6,500,1.0,3.5);
 
 TH2D *MomVsBeta_hist = new TH2D("MomVsBeta","Momentum Vs #beta", 100, 0, 5.0, 100, 0.0, 1.5);
@@ -43,7 +39,6 @@ TH1D *Energy_hist = new TH1D("Energy_hist","Energy_hist",500,0.0,6.0);
 TH1D *PminusP = new TH1D("P - P","P - P",100,-2,2);
 
 double Px, Py, Pz, P, P1;
-//double x,y,z;
 int ID;
 double W, Q2, E_prime, xb; 
 double Beta, Energy;
@@ -92,13 +87,6 @@ void MomVsBeta_Write(){
 }
 
 void WriteHists(){
-	//PxHist->Write();
-	//PyHist->Write();
-	//PzHist->Write();
-
-	//XHist->Write();
-	//YHist->Write();
-	//ZHist->Write();
 
 	PartID->GetXaxis()->SetBinLabel(2,"proton");
 	PartID->GetXaxis()->SetBinLabel(3,"neutron");
@@ -112,13 +100,6 @@ void WriteHists(){
 }
 
 void FillHist(){
-	//PxHist->Fill(Px);
-	//PyHist->Fill(Py);
-	//PzHist->Fill(Pz);
-
-	//XHist->Fill(x);
-	//YHist->Fill(y);
-	//ZHist->Fill(z);
 	switch (ID) {
 		case 2212:
 			PartID->Fill(1);
@@ -151,13 +132,6 @@ void FillHist(){
 
 //Overload of above so that you can input which ID to fill
 void FillHist(int Particle_ID){
-	//PxHist->Fill(Px);
-	//PyHist->Fill(Py);
-	//PzHist->Fill(Pz);
-
-	//XHist->Fill(x);
-	//YHist->Fill(y);
-	//ZHist->Fill(z);
 	switch (Particle_ID) {
 		case 2212:
 			PartID->Fill(1);
