@@ -48,6 +48,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 	int number_files = 0;
 	char rootFile[500];
 
+	TVector3 e_mu_prime_3(0.0,0.0,0.0);
 	TLorentzVector e_mu_prime(0.0,0.0,0.0,0.0);
 	TLorentzVector e_mu(0.0,0.0, sqrt(Square(E1D_E0)-Square(MASS_E)), E1D_E0);
 
