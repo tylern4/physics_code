@@ -8,18 +8,10 @@
 #ifndef PHYSICS_H_GUARD
 #define PHYSICS_H_GUARD
 #include "main.h"
+#include <TLorentzVector.h>
+#include "TROOT.h"
 
 using namespace std;
-
-//	Calulating Q^2 **Incorently
-//	Gotten from t channel [(E_e - E_ep)^2 == t == -Q^2]
-//	Q^2 = 4*E_beam*E_prime*Sin^2(theta/2)
-double Q2_calc(double CosZ, double E_prime){
-	double theta_2 = acos(CosZ)/2.0;
-	double sin_sqr_theta_ovr_2 = Square(sin(theta_2));
-	return 4 * E1D_E0 * E_prime * sin_sqr_theta_ovr_2;
-}
-
 
 //Calcuating Q^2 
 // q^mu^2 = (e^mu - e^mu')^2 = -Q^2
@@ -31,13 +23,21 @@ double Q2_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime){
 //	Calcualting W
 //	Gotten from s channel [(gamma - P)^2 == s == w^2]
 //	Sqrt√[M_p^2 - Q^2 + 2 M_p gamma]
-double W_calc(double E_prime){
+/*double W_calc(double E_prime){
 	//return sqrt( Square(MASS_P) + 2 * MASS_P * (E1D_E0-E_prime) );
 	return sqrt(Square(MASS_P) - Q2 + 2 * MASS_P * (E1D_E0-E_prime));
-}
+}*/
+
+/*double W_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime){
+	return sqrt(Square(MASS_P) - Q2_calc(e_mu, e_mu_prime) + 2 * MASS_P * (e_mu.E() - e_mu_prime.E()));
+}*/
 
 double W_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime){
-	return sqrt(Square(MASS_P) - Q2_calc(e_mu, e_mu_prime) + 2 * MASS_P * (e_mu.E() - e_mu_prime.E()));
+	TLorentzVector q_mu = (e_mu - e_mu_prime);
+	TVector3 p_mu_3(0,0,0);
+	TLorentzVector p_mu;
+	p_mu.SetVectM(p_mu_3,MASS_P);
+	return (p_mu + q_mu).Mag();
 }
 
 double xb_calc(double Q2, double E_prime){
@@ -46,7 +46,7 @@ double xb_calc(double Q2, double E_prime){
 	return xb;
 }
 
-double P_calc(double momentum, double CosX, double CosY, double CosZ){
+/*double P_calc(double momentum, double CosX, double CosY, double CosZ){
 	double Px = momentum * CosX;
 	double Py = momentum * CosY;
 	double Pz = momentum * CosZ;
@@ -72,46 +72,43 @@ double E_calc(double momentum, double CosX, double CosY, double CosZ, double mas
 
 	return sqrt(E2);
 }
-
+*/
 //	Another overload with particle ID insead
-double E_calc(double momentum, double CosX, double CosY, double CosZ, int ID){
-	double mass;
+double Get_Mass(int ID){
 
 	switch (ID){
 		case 2212:
-			mass = MASS_P;
+			return MASS_P;
 			break;
 		case 2112:
-			mass = MASS_N;
+			return MASS_N;
 			break;
 		case 211:
-			mass = MASS_PIP;
+			return MASS_PIP;
 			break;
 		case -211:
-			mass = MASS_PIM;
+			return MASS_PIM;
 			break;
 		case 111:
-			mass = MASS_PI0;
+			return MASS_PI0;
 			break;
 		case 321:
-			mass = MASS_KP;
+			return MASS_KP;
 			break;
 		case -321:
-			mass = MASS_KM;
+			return MASS_KM;
 			break;
 		case 22:
-			mass = MASS_G;
+			return MASS_G;
 			break;
 		case 11:
-			mass = MASS_E;
+			return MASS_E;
 			break;
 		case 0:
-			mass = 0.0;
+			return 0.0;
 	}
-	momentum = P_calc(momentum,CosX,CosY,CosZ);
-	double E2 = Square(momentum)+Square(mass);
 
-	return sqrt(E2);
+
 }
 
 //	Print the readable name from particle ID
