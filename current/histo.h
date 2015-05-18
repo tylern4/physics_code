@@ -16,33 +16,26 @@
 //Histogram declarations, fills, and write
 //
 //
-TH1D *PxHist = new TH1D("PxHist", "PxHist", 100, -4, 4);
-TH1D *PyHist = new TH1D("PyHist", "PyHist", 100, -4, 4);
-TH1D *PzHist = new TH1D("PzHist", "PzHist", 100, -4, 4);
+int bins = 500;
+float w_min = 0;
+float w_max = 3.25;
+float q2_min = 0;
+float q2_max = 15;
 
-TH1D *XHist = new TH1D("XHist", "XHist", 100, -10, 10);
-TH1D *YHist = new TH1D("YHist", "YHist", 100, -10, 10);
-TH1D *ZHist = new TH1D("ZHist", "ZHist", 100, -10, 10);
-
-TH1I *PartID = new TH1I("PartID", "PartID",10,0,10);
-
-TH2D *WvsQ2_hist = new TH2D("WvsQ2_hist","W vs Q^{2}", 500, 0.0, 3.25, 500, 0, 3.25);
-
-TH1D *W_hist = new TH1D("W","W",100, 0.0, 3.25);
-TH1D *Q2_hist = new TH1D("Q2","Q^{2}",500, 0.0, 3.35);
+TH2D *WvsQ2_hist = new TH2D("WvsQ2_hist","W vs Q^{2}", bins, w_min, w_max, bins, q2_min, q2_max);
+TH1D *W_hist = new TH1D("W","W",bins,  w_min, w_max);
+TH1D *Q2_hist = new TH1D("Q2","Q^{2}",bins, q2_min, q2_max);
 
 
 TH1D *E_prime_hist = new TH1D("E_prime","Scattered Electron Energy",100,0.0,6.0);
-TH2D *Q2_vs_xb = new TH2D("Q2_vs_xb","Q^{2} vs x_{b}",500,0.1,0.6,500,1.0,3.5);
+TH2D *Q2_vs_xb = new TH2D("Q2_vs_xb","Q^{2} vs x_{b}",bins,0.1,0.6,bins,1.0,3.5);
 
 TH2D *MomVsBeta_hist = new TH2D("MomVsBeta","Momentum Vs #beta", 100, 0, 5.0, 100, 0.0, 1.5);
 TH1D *Mom = new TH1D("Momentum","Momentum",100,0,5.0);
-TH1D *Energy_hist = new TH1D("Energy_hist","Energy_hist",500,0.0,6.0);
-TH1D *PminusP = new TH1D("P - P","P - P",100,-2,2);
+TH1D *Energy_hist = new TH1D("Energy_hist","Energy_hist",bins,0.0,6.0);
+TH1D *PminusP = new TH1D("P - P","P - P",100,-0.5,0.5);
 
-double Px, Py, Pz, P, P1;
-int ID;
-double W, Q2, E_prime, xb; 
+double W, Q2, E_prime, xb, P, P1; 
 double Beta, Energy;
 
 void WvsQ2_Fill(){
@@ -86,82 +79,6 @@ void MomVsBeta_Write(){
 	Energy_hist->Write();
 	MomVsBeta_hist->Write();
 	Mom->Write();
-}
-
-void WriteHists(){
-
-	PartID->GetXaxis()->SetBinLabel(2,"proton");
-	PartID->GetXaxis()->SetBinLabel(3,"neutron");
-	PartID->GetXaxis()->SetBinLabel(4,"#pi^{+}");
-	PartID->GetXaxis()->SetBinLabel(5,"#pi^{-}");
-	PartID->GetXaxis()->SetBinLabel(6,"#pi^{0}");
-	PartID->GetXaxis()->SetBinLabel(7,"#gamma");
-	PartID->GetXaxis()->SetBinLabel(1,"Electron");
-	PartID->SetFillColor(kBlue);
-	PartID->Write();
-}
-
-void FillHist(){
-	switch (ID) {
-		case 2212:
-			PartID->Fill(1);
-			break;
-		case 2112:
-			PartID->Fill(2);
-			break;
-		case 211:
-			PartID->Fill(3);
-			break;
-		case -211:
-			PartID->Fill(4);
-			break;
-		case 111:
-			PartID->Fill(5);
-			break;
-		case 22:
-			PartID->Fill(6);
-			break;
-		case 11:
-			PartID->Fill(0);
-			break;
-		default:
-			PartID->Fill(10);
-			break;
-	}
-
-	
-}
-
-//Overload of above so that you can input which ID to fill
-void FillHist(int Particle_ID){
-	switch (Particle_ID) {
-		case 2212:
-			PartID->Fill(1);
-			break;
-		case 2112:
-			PartID->Fill(2);
-			break;
-		case 211:
-			PartID->Fill(3);
-			break;
-		case -211:
-			PartID->Fill(4);
-			break;
-		case 111:
-			PartID->Fill(5);
-			break;
-		case 22:
-			PartID->Fill(6);
-			break;
-		case 11:
-			PartID->Fill(0);
-			break;
-		default:
-			PartID->Fill(10);
-			break;
-	}
-
-	
 }
 
 #endif

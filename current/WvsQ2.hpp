@@ -39,7 +39,8 @@ void WvsQ2(char *fin, char *RootFile_output){
 	int total_events = 0;
 
 	int num_elec = 0, num_pip =0;
-	int files_in_lis = 2486;
+	//int files_in_lis = 2486;
+	int files_in_lis = 153;
 
 	TFile *myFile;
 	TFile *RootOutputFile;
@@ -48,9 +49,12 @@ void WvsQ2(char *fin, char *RootFile_output){
 	int number_files = 0;
 	char rootFile[500];
 
-	TVector3 e_mu_prime_3(0.0,0.0,0.0);
-	TLorentzVector e_mu_prime(0.0,0.0,0.0,0.0);
+	TVector3 e_mu_prime_3;
+	TLorentzVector e_mu_prime;
 	TLorentzVector e_mu(0.0,0.0, sqrt(Square(E1D_E0)-Square(MASS_E)), E1D_E0);
+
+	TVector3 Particle3(0.0,0.0,0.0);
+	TLorentzVector Particle4(0.0,0.0,0.0,0.0);
 
 	RootOutputFile = new TFile(RootFile_output,"RECREATE");
 
@@ -62,19 +66,14 @@ void WvsQ2(char *fin, char *RootFile_output){
 	while (1){
 
 		number_cols = fscanf(input_file,"%s",rootFile);
-
 		if (number_cols<0) break;
 
 		loadbar(number_files,files_in_lis);
 
 		myFile = new TFile(rootFile, "READ");
-
 		myTree = (TTree *)myFile->Get("h10");
-
 		getBranches(myTree);
-
 		num_of_events = (Int_t)myTree->GetEntries();
-
 		current_event = 0;
 
 		while(current_event<num_of_events){
@@ -83,23 +82,20 @@ void WvsQ2(char *fin, char *RootFile_output){
 
 			// Changed id to id[0] because scattered elctron should be first particle (i.e. id[0])
 			if (id[0] == ELECTRON && gpart > 1 && stat[0] > 0 && q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0){
-				ID = 11;
-
+				//Setup scattered electron 4 vector
 				e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cy[0]);	
 				e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
 
-				P = p[0];
-				P1 = e_mu_prime.P();
-
+				//Get energy of scattered elctron from 4 vector and calculate Q2 and W
 				E_prime = e_mu_prime.E();		
 				Q2 = Q2_calc(e_mu,e_mu_prime);
-
 				W = W_calc(e_mu,e_mu_prime);
+				P = e_mu_prime.P();
+				P1 = p[0];
+
 				xb = xb_calc(Q2,E_prime);
 
-				//FillHist(ELECTRON);
 				//WvsQ2_Fill();
-				//MomVsBeta_Fill();
 				
 /*
 check beta vs P for a few different cases
@@ -112,22 +108,20 @@ Check how P is calculated
 */
 				#pragma omp parallel for
 				for(int event_number = 0; event_number < gpart; event_number++){
-					//ID = id[event_number];
-					P = P_calc(p[event_number],cx[event_number],cy[event_number],cz[event_number]);
+					Particle3.SetXYZ(p[event_number]*cx[event_number], p[event_number]*cy[event_number], p[event_number]*cz[event_number]);
+					Particle4.SetVectM(Particle3,Get_Mass(id[event_number]));
+					Energy = Particle4.E();
 					Beta = b[event_number];
-					Energy = E_calc(p[event_number],cx[event_number],cy[event_number],cz[event_number],id[event_number]);
 
 					if(id[event_number] == PIP && q[event_number] == 1) {
-						//WvsQ2_Fill();
-						//MomVsBeta_Fill();
-						//FillHist(PIP);
+						WvsQ2_Fill();
+						MomVsBeta_Fill();
 
 						for (int event_number_1 = 0; event_number_1 < gpart; event_number_1++){
 							if(id[event_number_1] == PROTON, q[event_number_1] == 1) {
-							//if(id[event_number_1] == NEUTRON, q[event_number_1] == 0 ) {
 								//FillHist(PROTON);
-								WvsQ2_Fill();
-								MomVsBeta_Fill();
+								//WvsQ2_Fill();
+								//MomVsBeta_Fill();
 							}
 						}
 					}
@@ -148,7 +142,6 @@ Check how P is calculated
 	RootOutputFile->Write();
 	RootOutputFile->Close();
 	fclose(input_file); 														// close file with input file list
-	cout<<blue<<total_events<<" events in "<<number_files<< " files."<<def<<endl; // print out stats
-	//cout << "Number of electrons " << num_elec <<  " Number PIP " << num_pip << " ratio:" << (double)num_pip/(double)num_elec << endl;
+	cout<<blue<<endl<<total_events<<" events in "<<number_files<< " files."<<def<<endl; // print out stats
 }
 #endif
