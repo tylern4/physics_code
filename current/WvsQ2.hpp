@@ -90,12 +90,14 @@ void WvsQ2(char *fin, char *RootFile_output){
 				E_prime = e_mu_prime.E();
 				Q2 = Q2_calc(e_mu,e_mu_prime);
 				W = W_calc(e_mu,e_mu_prime);
+
+				//This is my testing to see if momentum calculations are equal
 				P = e_mu_prime.P();
 				P1 = p[0];
 
 				xb = xb_calc(Q2,E_prime);
 
-				//WvsQ2_Fill();
+				WvsQ2_Fill();
 				
 /*
 check beta vs P for a few different cases
@@ -112,19 +114,24 @@ Check how P is calculated
 					Particle4.SetVectM(Particle3,Get_Mass(id[event_number]));
 					Energy = Particle4.E();
 					Beta = b[event_number];
+					MomVsBeta_Fill();
 
 					if(id[event_number] == PIP && q[event_number] == 1) {
-						WvsQ2_Fill();
-						MomVsBeta_Fill();
+						//WvsQ2_Fill();
+						//MomVsBeta_Fill();
+						Fill_e_pi_found(W_calc(e_mu,e_mu_prime),Q2_calc(e_mu,e_mu_prime),Particle4.P(),b[event_number]);
 
 						for (int event_number_1 = 0; event_number_1 < gpart; event_number_1++){
-							if(id[event_number_1] == PROTON, q[event_number_1] == 1) {
-								//FillHist(PROTON);
+							if(id[event_number_1] == PROTON && q[event_number_1] == 1) {
 								//WvsQ2_Fill();
 								//MomVsBeta_Fill();
+								Fill_e_proton_pi_found(W_calc(e_mu,e_mu_prime),Q2_calc(e_mu,e_mu_prime),Particle4.P(),b[event_number]);
 							}
 						}
-					}
+					} else if (id[event_number] == PROTON && q[event_number] == 1){
+						Fill_e_proton_found(W_calc(e_mu,e_mu_prime),Q2_calc(e_mu,e_mu_prime),Particle4.P(),b[event_number]);
+					} 
+
 				} 
 			}
 			current_event++; 		  	// increment event counter
@@ -138,7 +145,7 @@ Check how P is calculated
 	RootOutputFile->cd();
 	WvsQ2_Write();
 	MomVsBeta_Write();
-	//WriteHists();
+	Write_found_hists();
 	RootOutputFile->Write();
 	RootOutputFile->Close();
 	fclose(input_file); 														// close file with input file list
