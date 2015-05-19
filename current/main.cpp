@@ -22,15 +22,13 @@
 #include "main.h"
 #include "TMath.h"
 #include "histo.h"
-//#include "datahandeler.h" //dataHandeler() 
-//#include "count_after_cut.h" //count_after_cut()
+#include "histo2.h"
 //#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <string>
 #include <cstring>
-//#include "stupid.h" //PrintEverything()
 #include "time.h"
 #include "physics.hpp"
 #include "WvsQ2.hpp" //WvsQ2()
