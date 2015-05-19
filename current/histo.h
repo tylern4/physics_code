@@ -26,13 +26,13 @@ TH2D *WvsQ2_hist = new TH2D("WvsQ2_hist","W vs Q^{2}", bins, w_min, w_max, bins,
 TH1D *W_hist = new TH1D("W","W",bins,  w_min, w_max);
 TH1D *Q2_hist = new TH1D("Q2","Q^{2}",bins, q2_min, q2_max);
 
+TH1D *E_prime_hist = new TH1D("E_prime","Scattered Electron Energy",bins,0.0,2.0);
 
-TH1D *E_prime_hist = new TH1D("E_prime","Scattered Electron Energy",100,0.0,6.0);
 TH2D *Q2_vs_xb = new TH2D("Q2_vs_xb","Q^{2} vs x_{b}",bins,0.1,0.6,bins,1.0,3.5);
 
 TH2D *MomVsBeta_hist = new TH2D("MomVsBeta","Momentum Vs #beta", 200, 0, 2.5, 200, 0.1, 1.5);
-TH1D *Mom = new TH1D("Momentum","Momentum",100,0,2.5);
-TH1D *Energy_hist = new TH1D("Energy_hist","Energy_hist",bins,0.0,6.0);
+TH1D *Mom = new TH1D("Momentum","Momentum",bins,0,2.0);
+TH1D *Energy_hist = new TH1D("Energy_hist","Energy_hist",bins,0.0,2.5);
 TH1D *PminusP = new TH1D("P - P","p[0] - e_mu_prime.P()",bins,-5.0,5.0);
 
 double W, Q2, E_prime, xb, P, P1; 
@@ -44,7 +44,10 @@ void WvsQ2_Fill(){
 	W_hist->Fill(W);
 	Q2_hist->Fill(Q2);
 	Q2_vs_xb->Fill(xb,Q2);
-	PminusP->Fill(P1 - P);
+}
+
+void PminusP_Fill(){
+	PminusP->Fill(P1-P);
 }
 
 void WvsQ2_Write(){
