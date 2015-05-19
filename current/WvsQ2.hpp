@@ -106,13 +106,13 @@ void WvsQ2(char *fin, char *RootFile_output){
 					Beta = b[event_number];
 					MomVsBeta_Fill();
 
-					if(id[event_number] == PIP && q[event_number] == 1) {
+					if(id[event_number] == PIP && q[event_number] == 1 && b[event_number] <= 1) {
 						//WvsQ2_Fill();
 						//MomVsBeta_Fill();
 						Fill_e_pi_found(W_calc(e_mu,e_mu_prime),Q2_calc(e_mu,e_mu_prime),Particle4.P(),b[event_number]);
 
 						for (int event_number_1 = 0; event_number_1 < gpart; event_number_1++){
-							if(id[event_number_1] == PROTON && q[event_number_1] == 1) {
+							if(id[event_number_1] == PROTON && q[event_number_1] == 1 && b[event_number] <= 1) {
 								//WvsQ2_Fill();
 								//MomVsBeta_Fill();
 								Fill_e_proton_pi_found(W_calc(e_mu,e_mu_prime),Q2_calc(e_mu,e_mu_prime),Particle4.P(),b[event_number]);
