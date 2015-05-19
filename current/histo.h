@@ -43,7 +43,7 @@ void WvsQ2_Fill(){
 	W_hist->Fill(W);
 	Q2_hist->Fill(Q2);
 	Q2_vs_xb->Fill(xb,Q2);
-	PminusP->Fill(P-P1);
+	PminusP->Fill(P1 - P);
 }
 
 void WvsQ2_Write(){

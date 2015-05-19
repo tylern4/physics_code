@@ -21,17 +21,17 @@ float w_max_2 = 3.25;
 float q2_min_2 = 0;
 float q2_max_2 = 10;
 
-TH2D *WvsQ2_e_proton_pi_found = new TH2D("WvsQ2_e_proton_pi_found","W vs Q^{2}", bins_2, w_min_2, w_max_2, bins_2, q2_min_2, q2_max_2);
-TH1D *W_e_proton_pi_found = new TH1D("W_e_proton_pi_found","W",bins_2,  w_min_2, w_max_2);
-TH1D *Q2_e_proton_pi_found = new TH1D("Q2_e_proton_pi_found","Q^{2}",bins_2, q2_min_2, q2_max_2);
+TH2D *WvsQ2_e_proton_pi_found = new TH2D("WvsQ2_e_proton_pi_found","W vs Q^{2} p #pi^{+}", bins_2, w_min_2, w_max_2, bins_2, q2_min_2, q2_max_2);
+TH1D *W_e_proton_pi_found = new TH1D("W_e_proton_pi_found","W p #pi^{+}",bins_2,  w_min_2, w_max_2);
+TH1D *Q2_e_proton_pi_found = new TH1D("Q2_e_proton_pi_found","Q^{2} p #pi^{+}",bins_2, q2_min_2, q2_max_2);
 
-TH2D *WvsQ2_e_proton_found = new TH2D("WvsQ2_e_proton_found","W vs Q^{2}", bins_2, w_min_2, w_max_2, bins_2, q2_min_2, q2_max_2);
-TH1D *W_e_proton_found = new TH1D("W_e_proton_found","W",bins_2,  w_min_2, w_max_2);
-TH1D *Q2_e_proton_found = new TH1D("Q2_e_proton_found","Q^{2}",bins_2, q2_min_2, q2_max_2);
+TH2D *WvsQ2_e_proton_found = new TH2D("WvsQ2_e_proton_found","W vs Q^{2} p", bins_2, w_min_2, w_max_2, bins_2, q2_min_2, q2_max_2);
+TH1D *W_e_proton_found = new TH1D("W_e_proton_found","W p",bins_2,  w_min_2, w_max_2);
+TH1D *Q2_e_proton_found = new TH1D("Q2_e_proton_found","Q^{2} p",bins_2, q2_min_2, q2_max_2);
 
-TH2D *WvsQ2_e_pi_found = new TH2D("WvsQ2_e_pi_found","W vs Q^{2}", bins_2, w_min_2, w_max_2, bins_2, q2_min_2, q2_max_2);
-TH1D *W_e_pi_found = new TH1D("W_e_pi_found","W",bins_2,  w_min_2, w_max_2);
-TH1D *Q2_e_pi_found = new TH1D("Q2_e_pi_found","Q^{2}",bins_2, q2_min_2, q2_max_2);
+TH2D *WvsQ2_e_pi_found = new TH2D("WvsQ2_e_pi_found","W vs Q^{2} #pi^{+}", bins_2, w_min_2, w_max_2, bins_2, q2_min_2, q2_max_2);
+TH1D *W_e_pi_found = new TH1D("W_e_pi_found","W #pi^{+}",bins_2,  w_min_2, w_max_2);
+TH1D *Q2_e_pi_found = new TH1D("Q2_e_pi_found","Q^{2} #pi^{+}",bins_2, q2_min_2, q2_max_2);
 
 int bins_pvb = 200;
 float p_min = 0;
@@ -39,9 +39,9 @@ float p_max = 2.5;
 float b_min = 0.1;
 float b_max = 1.5;
 
-TH2D *MomVsBeta_e_proton_pi_found = new TH2D("MomVsBetae_proton_pi_found","Momentum Vs #beta", bins_pvb, p_min, p_max, bins_pvb, b_min, b_max);
-TH2D *MomVsBeta_e_proton_found = new TH2D("MomVsBetae_proton_found","Momentum Vs #beta", bins_pvb, p_min, p_max, bins_pvb, b_min, b_max);
-TH2D *MomVsBeta_e_pi_found = new TH2D("MomVsBetae_pi_found","Momentum Vs #beta", bins_pvb, p_min, p_max, bins_pvb, b_min, b_max);
+TH2D *MomVsBeta_e_proton_pi_found = new TH2D("MomVsBetae_proton_pi_found","Momentum Vs #beta p #pi^{+}", bins_pvb, p_min, p_max, bins_pvb, b_min, b_max);
+TH2D *MomVsBeta_e_proton_found = new TH2D("MomVsBetae_proton_found","Momentum Vs #beta p", bins_pvb, p_min, p_max, bins_pvb, b_min, b_max);
+TH2D *MomVsBeta_e_pi_found = new TH2D("MomVsBetae_pi_found","Momentum Vs #beta #pi^{+}", bins_pvb, p_min, p_max, bins_pvb, b_min, b_max);
 
 
 
