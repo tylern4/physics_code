@@ -94,7 +94,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 
 				//This is my testing to see if momentum calculations are equal
 				P = e_mu_prime.P();
-				P1 = p[event_number];
+				P1 = p[0];
 				PminusP_Fill();
 
 				xb = xb_calc(Q2,E_prime);
