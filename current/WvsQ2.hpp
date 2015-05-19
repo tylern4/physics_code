@@ -92,8 +92,9 @@ void WvsQ2(char *fin, char *RootFile_output){
 				W = W_calc(e_mu,e_mu_prime);
 
 				//This is my testing to see if momentum calculations are equal
-				//P = e_mu_prime.P();
-				//P1 = p[0];
+				P = e_mu_prime.P();
+				P1 = p[event_number];
+				PminusP_Fill();
 
 				xb = xb_calc(Q2,E_prime);
 
@@ -121,10 +122,6 @@ void WvsQ2(char *fin, char *RootFile_output){
 						}
 					} else if (id[event_number] == PROTON && q[event_number] == 1 /*&& b[event_number] <= 1 */){
 						Fill_e_proton_found(W_calc(e_mu,e_mu_prime),Q2_calc(e_mu,e_mu_prime),Particle4.P(),b[event_number]);
-
-						P = e_mu_prime.P();
-						P1 = p[event_number];
-						PminusP_Fill();
 					} 
 
 				} 

@@ -50,18 +50,21 @@ void Fill_e_proton_pi_found(double W, double Q2,double p,double beta){
 	WvsQ2_e_proton_pi_found->Fill(W,Q2);
 	W_e_proton_pi_found->Fill(W);
 	MomVsBeta_e_proton_pi_found->Fill(p,beta);
+	Q2_e_proton_pi_found->Fill(Q2);
 }
 
 void Fill_e_proton_found(double W, double Q2,double p,double beta){
 	WvsQ2_e_proton_found->Fill(W,Q2);
 	W_e_proton_found->Fill(W);
 	MomVsBeta_e_proton_found->Fill(p,beta);
+	Q2_e_proton_found->Fill(Q2);
 }
 
 void Fill_e_pi_found(double W, double Q2,double p,double beta){
 	WvsQ2_e_pi_found->Fill(W,Q2);
 	W_e_pi_found->Fill(W);
 	MomVsBeta_e_pi_found->Fill(p,beta);
+	Q2_e_pi_found->Fill(Q2);
 }
 
 void Write_found_hists(){
@@ -75,6 +78,7 @@ void Write_found_hists(){
 	MomVsBeta_e_proton_pi_found->Write();
 	WvsQ2_e_proton_pi_found->Write();
 	W_e_proton_pi_found->Write();
+	Q2_e_proton_pi_found->Write();
 
 	WvsQ2_e_proton_found->SetXTitle("W (GeV)");
 	WvsQ2_e_proton_found->SetYTitle("Q^{2} (GeV^{2})");
@@ -86,6 +90,7 @@ void Write_found_hists(){
 	MomVsBeta_e_proton_found->Write();
 	WvsQ2_e_proton_found->Write();
 	W_e_proton_found->Write();
+	Q2_e_proton_found->Write();
 
 	WvsQ2_e_pi_found->SetXTitle("W (GeV)");
 	WvsQ2_e_pi_found->SetYTitle("Q^{2} (GeV^{2})");
@@ -97,7 +102,7 @@ void Write_found_hists(){
 	MomVsBeta_e_pi_found->Write();
 	WvsQ2_e_pi_found->Write();
 	W_e_pi_found->Write();
-
+	Q2_e_pi_found->Write();
 }
 
 #endif
