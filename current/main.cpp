@@ -37,13 +37,11 @@ using namespace std;
 
 int main(int argc, char **argv){
 	
-	gSystem->Load("libTree");
 	char  infilename[128];
 	char  outfilename[128];
 	string minutes, hour;
 	//char* minutes, hour;
 
-	
 	sprintf(infilename,"%s",argv[1]);
 	
 	//Either name outputfile or use time to name output file
