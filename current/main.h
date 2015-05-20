@@ -23,6 +23,8 @@ static const int MAX_PARTS = 10000;
 //static const float PI = TMath::Pi();
 //static const float D2R = PI/180.0;
 static const float E1D_E0 = 4.802; //GeV
+//static const float E1D_E0 = 2.03939; //GeV ///This is for Ye's data. Actually E1E_E0
+
 static const float SOL = 29.9792458;
 //misc. constants
 static const float FSC = 0.00729735253;
