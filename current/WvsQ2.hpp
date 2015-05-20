@@ -82,7 +82,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 
 			// Check to see whether the first particle is an Electron
 			// Changed id to id[0] because scattered elctron should be first particle (i.e. id[0])
-			if (id[0] == ELECTRON && gpart > 1 && stat[0] > 0 && q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0 /****/ && b[0] < 1 ){
+			if (id[0] == ELECTRON && gpart > 1 && stat[0] > 0 && q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0 /***/ && b[0] <= 1 /**/){
 				//Setup scattered electron 4 vector
 				e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cy[0]);	
 				e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
@@ -118,15 +118,15 @@ Check how P is calculated
 					Beta = b[event_number];
 					MomVsBeta_Fill();
 
-					if(id[event_number] == PIP && q[event_number] == 1 /***/ && b[event_number] < 1) {
+					if(id[event_number] == PIP && q[event_number] == 1 /***/ && b[event_number] <= 1 /**/) {
 						Fill_e_pi_found(W_calc(e_mu,e_mu_prime),Q2_calc(e_mu,e_mu_prime),Particle4.P(),b[event_number]);
 
 						for (int event_number_1 = 1; event_number_1 < gpart; event_number_1++){
-							if(id[event_number_1] == PROTON && q[event_number_1] == 1 /****/ && b[event_number_1] < 1) {
+							if(id[event_number_1] == PROTON && q[event_number_1] == 1 /***/ && b[event_number_1] <= 1 /**/) {
 								Fill_e_proton_pi_found(W_calc(e_mu,e_mu_prime),Q2_calc(e_mu,e_mu_prime),Particle4.P(),b[event_number]);
 							}
 						}
-					} else if (id[event_number] == PROTON && q[event_number] == 1 /***/ && b[event_number] < 1 ){
+					} else if (id[event_number] == PROTON && q[event_number] == 1 /***/ && b[event_number] <= 1 /**/){
 						Fill_e_proton_found(W_calc(e_mu,e_mu_prime),Q2_calc(e_mu,e_mu_prime),Particle4.P(),b[event_number]);
 					} 
 

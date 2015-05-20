@@ -37,7 +37,7 @@ int bins_pvb = 200;
 float p_min = 0;
 float p_max = 2.5;
 float b_min = 0.1;
-float b_max = 1.5;
+float b_max = 1.2;
 
 TH2D *MomVsBeta_e_proton_pi_found = new TH2D("MomVsBetae_proton_pi_found","Momentum Vs #beta p #pi^{+}", bins_pvb, p_min, p_max, bins_pvb, b_min, b_max);
 TH2D *MomVsBeta_e_proton_found = new TH2D("MomVsBetae_proton_found","Momentum Vs #beta p", bins_pvb, p_min, p_max, bins_pvb, b_min, b_max);
