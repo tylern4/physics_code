@@ -84,7 +84,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 			// Changed id to id[0] because scattered elctron should be first particle (i.e. id[0])
 			if (id[0] == ELECTRON && gpart > 1 && stat[0] > 0 && q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0 /*** && b[0] <= 1 /**/){
 				//Setup scattered electron 4 vector
-				e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cy[0]);	
+				e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);	
 				e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
 
 				//Get energy of scattered elctron from 4 vector and calculate Q2 and W
