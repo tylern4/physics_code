@@ -21,7 +21,7 @@
 #include "TChain.h"
 #include "TSystem.h"
 #include "TMath.h"
-//#include <omp.h>
+#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "main.h"
@@ -103,7 +103,7 @@ check beta vs P for a few different cases
 Check how P is calculated
 	fill Tlorentz and get P that way
 */
-				//#pragma omp parallel for
+				//#pragma omp parallel for num_threads(8)
 				for(int event_number = 0; event_number < gpart; event_number++){
 					//Get particles 3 and 4 vector for current event.
 					Particle3.SetXYZ(p[event_number]*cx[event_number], p[event_number]*cy[event_number], p[event_number]*cz[event_number]);
