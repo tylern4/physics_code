@@ -94,7 +94,6 @@ void WvsQ2(char *fin, char *RootFile_output){
 				xb = xb_calc(Q2,E_prime);
 
 				WvsQ2_Fill();
-				
 /*
 check beta vs P for a few different cases
 	only E
@@ -104,7 +103,7 @@ check beta vs P for a few different cases
 Check how P is calculated
 	fill Tlorentz and get P that way
 */
-				#pragma omp parallel for
+				//#pragma omp parallel for
 				for(int event_number = 0; event_number < gpart; event_number++){
 					//Get particles 3 and 4 vector for current event.
 					Particle3.SetXYZ(p[event_number]*cx[event_number], p[event_number]*cy[event_number], p[event_number]*cz[event_number]);
@@ -116,6 +115,7 @@ Check how P is calculated
 					if(id[event_number] == PIP && (int)q[event_number] == 1 && sc[event_number] > 0 && dc[event_number] > 0) {
 						Fill_e_pi_found(W_calc(e_mu,e_mu_prime),Q2_calc(e_mu,e_mu_prime),Particle4.P(),b[event_number]);
 						//If Pi+ and Proton
+						#pragma omp parallel for
 						for (int event_number_1 = 0; event_number_1 < gpart; event_number_1++){
 							if(id[event_number_1] == PROTON && (int)q[event_number_1] == 1 && sc[event_number_1] > 0 && dc[event_number_1] > 0) {
 								Fill_e_proton_pi_found(W_calc(e_mu,e_mu_prime),Q2_calc(e_mu,e_mu_prime),Particle4.P(),b[event_number]);
