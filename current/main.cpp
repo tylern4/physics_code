@@ -32,6 +32,7 @@
 #include "time.h"
 #include "physics.hpp"
 #include "WvsQ2.hpp" //WvsQ2()
+#include "datahandeler.h"
 
 using namespace std;
 
@@ -69,8 +70,8 @@ int main(int argc, char **argv){
 		sprintf(outfilename,"%s",time.c_str());
 	}
 
-	//dataHandeler(infilename,outfilename);
-	WvsQ2(infilename,outfilename);
+	dataHandeler(infilename,outfilename);
+	//WvsQ2(infilename,outfilename);
 
 	return 0;
 }
