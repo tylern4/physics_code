@@ -34,9 +34,9 @@ using namespace std;
 //
 void dataHandeler(char *fin, char *RootFile_output){
 
-	TFile *myFile;
+	//TFile *myFile;
 	TFile *RootOutputFile;
-	TTree *myTree;
+	//TTree *myTree;
 	int number_cols = 0;
 	int number_files = 0;
 	char rootFile[500];
@@ -101,7 +101,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 				if(id[event_number] == PIP && (int)q[event_number] == 1 && sc[event_number] > 0 && dc[event_number] > 0) {
 					Fill_e_pi_found(W_calc(e_mu,e_mu_prime),Q2_calc(e_mu,e_mu_prime),Particle4.P(),b[event_number]);
 					//If Pi+ and Proton
-					#pragma omp parallel for
+					//#pragma omp parallel for
 					for (int event_number_1 = 0; event_number_1 < gpart; event_number_1++){
 						if(id[event_number_1] == PROTON && (int)q[event_number_1] == 1 && sc[event_number_1] > 0 && dc[event_number_1] > 0) {
 							Fill_e_proton_pi_found(W_calc(e_mu,e_mu_prime),Q2_calc(e_mu,e_mu_prime),Particle4.P(),b[event_number]);
@@ -116,10 +116,10 @@ void dataHandeler(char *fin, char *RootFile_output){
 		}
 		current_event++; 		  	// increment event counter
 	}
-
-	chain.Delete(); 						// delete Tree object
-	myFile->Close("R"); 					// close input ROOT file.  The R flag deletes TProcessIDs
-
+//cout << "chain.Delete()" <<endl;
+	//chain.Delete(); 						// delete Tree object
+//cout << "myFile->Close(R)" << endl;
+	//myFile->Close("R"); 					// close input ROOT file.  The R flag deletes TProcessIDs
 	RootOutputFile->cd();
 	WvsQ2_Write();
 	MomVsBeta_Write();
