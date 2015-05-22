@@ -34,13 +34,16 @@ using namespace std;
 //
 void dataHandeler(char *fin, char *RootFile_output){
 
+<<<<<<< HEAD
 	//TFile *myFile;
 	TFile *RootOutputFile;
 	//TTree *myTree;
+=======
+	TFile *RootOutputFile;
+>>>>>>> test_mac
 	int number_cols = 0;
-	int number_files = 0;
 	char rootFile[500];
-	int num_of_events, current_event, total_events;
+	int num_of_events, total_events;
 
 	TVector3 e_mu_prime_3;
 	TLorentzVector e_mu_prime;
@@ -66,11 +69,9 @@ void dataHandeler(char *fin, char *RootFile_output){
 
 	getBranches(&chain);
 	num_of_events = (Int_t)chain.GetEntries();
-	current_event = 0;
 
-
-
-	while(current_event<num_of_events){
+	for (int current_event = 0; current_event <= num_of_events; current_event++) {
+	//while(current_event<num_of_events){
 		loadbar(current_event,num_of_events);
 		chain.GetEntry(current_event);
 
@@ -114,12 +115,10 @@ void dataHandeler(char *fin, char *RootFile_output){
 
 			} 
 		}
-		current_event++; 		  	// increment event counter
+		//current_event++; 		  	// increment event counter
 	}
-//cout << "chain.Delete()" <<endl;
-	//chain.Delete(); 						// delete Tree object
-//cout << "myFile->Close(R)" << endl;
-	//myFile->Close("R"); 					// close input ROOT file.  The R flag deletes TProcessIDs
+	chain.Reset();						// delete Tree object
+
 	RootOutputFile->cd();
 	WvsQ2_Write();
 	MomVsBeta_Write();
