@@ -34,13 +34,7 @@ using namespace std;
 //
 void dataHandeler(char *fin, char *RootFile_output){
 
-<<<<<<< HEAD
-	//TFile *myFile;
 	TFile *RootOutputFile;
-	//TTree *myTree;
-=======
-	TFile *RootOutputFile;
->>>>>>> test_mac
 	int number_cols = 0;
 	char rootFile[500];
 	int num_of_events, total_events;
