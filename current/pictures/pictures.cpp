@@ -10,21 +10,30 @@ use myFile->ls(); to find the hists in the file
 #include "TFile.h"
 #include "TCanvas.h"
 #include <iostream>
+#include "TStyle.h"
 
 using namespace std;
 int main(int argc, char **argv){
 
 	TFile *myFile;
+	char  outfilename[128];
 	TCanvas *c1 = new TCanvas("c1","c1",0,0,500,500);
 
-	myFile = new TFile("now.root","READ"); /***/
+	myFile = new TFile("../outputFiles/release_5-22_1-42.root","READ"); /***/
 
 	//myFile->ls();  /***/
 	TH2D *h1 = (TH2D*)myFile->Get("WvsQ2_hist"); /***/
 
 	c1->cd();
 	h1->Draw("color");
-	c1->Print("Q2.pdf"); /***/
+	for (int i = 0; i < 200; ++i)
+	{
+		gStyle->SetPalette(i);
+		sprintf(outfilename,"%s_%d.png","WvsQ2",i);
+		//cout << outfilename << endl;
+		c1->Print(outfilename); /***/	
+	}
+
 
 	myFile->Close();
 
