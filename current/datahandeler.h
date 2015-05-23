@@ -65,7 +65,6 @@ void dataHandeler(char *fin, char *RootFile_output){
 	num_of_events = (Int_t)chain.GetEntries();
 
 	for (int current_event = 0; current_event <= num_of_events; current_event++) {
-	//while(current_event<num_of_events){
 		loadbar(current_event,num_of_events);
 		chain.GetEntry(current_event);
 
