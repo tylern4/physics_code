@@ -40,40 +40,20 @@ using namespace std;
 int main(int argc, char **argv){
 	TStopwatch *Watch = new TStopwatch;
 	Watch->Start();
-	char  infilename[128];
-	char  outfilename[128];
-	string minutes, hour;
-	//char* minutes, hour;
 
-	sprintf(infilename,"%s",argv[1]);
+	//bad work around until I fix using strings in datahandeler/WvsQ2
+	char  infilename_bad[128];
+	char  outfilename_bad[128];
+
+	string infilename = (char*)argv[1];
+	string outfilename = outputFileName(argc,argv);
 	
-	//Either name outputfile or use time to name output file
-	if(argc == 3 ) {
-		sprintf(outfilename,"%s",argv[2]);
-	} else {
-		time_t currentTime;
-		time(&currentTime); 
-  		struct tm *localTime = localtime(&currentTime);  // Convert the current time to the local time;
-  		if(localTime->tm_min < 10) {
-  			minutes = "0" + to_string(localTime->tm_min);
-  		}
-  		else {
-  			minutes = to_string(localTime->tm_min);
-  		}
+	//bad work around until I fix using strings in datahandeler/WvsQ2
+	sprintf(infilename_bad,"%s",infilename.c_str());
+	sprintf(outfilename_bad,"%s",infilename.c_str());
+	//dataHandeler(infilename,outfilename);
+	WvsQ2(infilename_bad,outfilename_bad);
 
-  		if(localTime->tm_hour > 10) {
-  			hour = to_string(localTime->tm_hour - 12);
-  		}
-  		else {
-  			hour = to_string(localTime->tm_hour);
-  		}
-  		string time = "outputFiles/release_" + to_string(localTime->tm_mon+1) + "-" + to_string(localTime->tm_mday) + "_"
-	 	+ hour + "-" + minutes + ".root";
-		sprintf(outfilename,"%s",time.c_str());
-	}
-
-	dataHandeler(infilename,outfilename);
-	//WvsQ2(infilename,outfilename);
 	Watch->Stop();
 	cout << endl << red << Watch->RealTime() << "sec" << def << endl;
 
