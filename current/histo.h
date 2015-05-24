@@ -34,9 +34,7 @@ TH2D *MomVsBeta_hist = new TH2D("MomVsBeta","Momentum Vs #beta", 200, 0, 2.5, 20
 TH1D *Mom = new TH1D("Momentum","Momentum",bins,0,2.0);
 TH1D *Energy_hist = new TH1D("Energy_hist","Energy_hist",bins,0.0,2.5);
 
-double W, Q2, E_prime, xb; 
-
-void WvsQ2_Fill(){
+void WvsQ2_Fill(double E_prime, double W, double Q2, double xb){
 	E_prime_hist->Fill(E_prime);
 	WvsQ2_hist->Fill(W,Q2);
 	W_hist->Fill(W);
