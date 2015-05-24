@@ -33,11 +33,13 @@
 #include "physics.hpp"
 #include "WvsQ2.hpp" //WvsQ2()
 #include "datahandeler.h"
+#include "TStopwatch.h"
 
 using namespace std;
 
 int main(int argc, char **argv){
-	
+	TStopwatch *Watch = new TStopwatch;
+	Watch->Start();
 	char  infilename[128];
 	char  outfilename[128];
 	string minutes, hour;
@@ -72,6 +74,8 @@ int main(int argc, char **argv){
 
 	dataHandeler(infilename,outfilename);
 	//WvsQ2(infilename,outfilename);
+	Watch->Stop();
+	cout << endl << red << Watch->RealTime() << "sec" << def << endl;
 
 	return 0;
 }
