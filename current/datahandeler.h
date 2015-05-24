@@ -76,15 +76,10 @@ void dataHandeler(char *fin, char *RootFile_output){
 			e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
 
 			//Get energy of scattered elctron from 4 vector and calculate Q2 and W
-			E_prime = e_mu_prime.E();
-			Q2 = Q2_calc(e_mu,e_mu_prime);
-			W = W_calc(e_mu,e_mu_prime);
-			xb = xb_calc(Q2,E_prime);
-
-			WvsQ2_Fill();
+			WvsQ2_Fill(e_mu_prime.E(),W_calc(e_mu, e_mu_prime),Q2_calc(e_mu, e_mu_prime),xb_calc(Q2_calc(e_mu,e_mu_prime), e_mu_prime.E() ) );
 				
 			//#pragma omp parallel for
-			for(int event_number = 0; event_number < gpart; event_number++){
+			for(int event_number = 1; event_number < gpart; event_number++){
 				//Get particles 3 and 4 vector for current event.
 				Particle3.SetXYZ(p[event_number]*cx[event_number], p[event_number]*cy[event_number], p[event_number]*cz[event_number]);
 				Particle4.SetVectM(Particle3,Get_Mass(id[event_number]));
@@ -96,7 +91,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 					Fill_e_pi_found(W_calc(e_mu,e_mu_prime),Q2_calc(e_mu,e_mu_prime),Particle4.P(),b[event_number]);
 					//If Pi+ and Proton
 					//#pragma omp parallel for
-					for (int event_number_1 = 0; event_number_1 < gpart; event_number_1++){
+					for (int event_number_1 = 1; event_number_1 < gpart; event_number_1++){
 						if(id[event_number_1] == PROTON && (int)q[event_number_1] == 1 && sc[event_number_1] > 0 && dc[event_number_1] > 0) {
 							Fill_e_proton_pi_found(W_calc(e_mu,e_mu_prime),Q2_calc(e_mu,e_mu_prime),Particle4.P(),b[event_number]);
 						}

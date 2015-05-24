@@ -15,6 +15,10 @@
 #include <stdio.h>
 #include <TLorentzVector.h>
 #include "color.hpp"
+#include <string.h>
+#include <string>
+#include <cstring>
+#include "time.h"
 
 using namespace std;
 
@@ -273,5 +277,30 @@ void getBranches(TTree* myTree){
 
 	myTree->SetBranchStatus("*",1);
 } 
+
+string outputFileName(int argc, char **argv){
+	string minutes, hour;
+	if(argc == 3 ) {
+		return (char*)argv[2];
+	} else {
+		time_t currentTime;
+		time(&currentTime); 
+  		struct tm *localTime = localtime(&currentTime);  // Convert the current time to the local time;
+  		if(localTime->tm_min < 10) {
+  			minutes = "0" + to_string(localTime->tm_min);
+  		}
+  		else {
+  			minutes = to_string(localTime->tm_min);
+  		}
+  		if(localTime->tm_hour > 10) {
+  			hour = to_string(localTime->tm_hour - 12);
+  		}
+  		else {
+  			hour = to_string(localTime->tm_hour);
+  		}
+  		string time = "outputFiles/release_" + to_string(localTime->tm_mon+1) + "-" + to_string(localTime->tm_mday) + "_" + hour + "-" + minutes + ".root";
+		return time;
+	}
+}
 
 #endif

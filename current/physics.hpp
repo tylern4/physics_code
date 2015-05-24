@@ -19,19 +19,9 @@ double Q2_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime){
 	TLorentzVector q_mu = (e_mu - e_mu_prime);
 	return -q_mu.Mag2();
 }
-
 //	Calcualting W
 //	Gotten from s channel [(gamma - P)^2 == s == w^2]
 //	Sqrt√[M_p^2 - Q^2 + 2 M_p gamma]
-/*double W_calc(double E_prime){
-	//return sqrt( Square(MASS_P) + 2 * MASS_P * (E1D_E0-E_prime) );
-	return sqrt(Square(MASS_P) - Q2 + 2 * MASS_P * (E1D_E0-E_prime));
-}*/
-
-/*double W_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime){
-	return sqrt(Square(MASS_P) - Q2_calc(e_mu, e_mu_prime) + 2 * MASS_P * (e_mu.E() - e_mu_prime.E()));
-}*/
-
 double W_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime){
 	TLorentzVector q_mu = (e_mu - e_mu_prime);
 	TVector3 p_mu_3(0,0,0);
@@ -46,34 +36,6 @@ double xb_calc(double Q2, double E_prime){
 	return xb;
 }
 
-/*double P_calc(double momentum, double CosX, double CosY, double CosZ){
-	double Px = momentum * CosX;
-	double Py = momentum * CosY;
-	double Pz = momentum * CosZ;
-	momentum = sqrt(Square(Px)+Square(Pz)+Square(Pz));
-	return momentum;
-}
-
-//	Calcualting Energy from relativistic energy-momentum conservation
-//	[E^2 = p^2 + m^2]
-double E_calc(double momentum, double CosX, double CosY, double CosZ){
-	momentum = P_calc(momentum,CosX,CosY,CosZ);
-	double E2 = Square(momentum) + Square(MASS_E);
-
-	return sqrt(E2);
-}
-
-//	Overloads of E_calc for different masses then electron
-//	Calcualting Energy from relativistic energy-momentum conservation
-//	[E^2 = p^2 + m^2]
-double E_calc(double momentum, double CosX, double CosY, double CosZ, double mass){
-	momentum = P_calc(momentum,CosX,CosY,CosZ);
-	double E2 = Square(momentum) + Square(mass);
-
-	return sqrt(E2);
-}
-*/
-//	Another overload with particle ID insead
 double Get_Mass(int ID){
 
 	switch (ID){
@@ -107,8 +69,6 @@ double Get_Mass(int ID){
 		case 0:
 			return 0.0;
 	}
-
-
 }
 
 //	Print the readable name from particle ID
