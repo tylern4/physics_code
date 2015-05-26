@@ -47,7 +47,7 @@ int main(int argc, char **argv){
 
 	string infilename = (char*)argv[1];
 	string outfilename = outputFileName(argc,argv);
-	
+
 	//bad work around until I fix using strings in datahandeler/WvsQ2
 	sprintf(infilename_bad,"%s",infilename.c_str());
 	sprintf(outfilename_bad,"%s",outfilename.c_str());
@@ -55,7 +55,7 @@ int main(int argc, char **argv){
 	WvsQ2(infilename_bad,outfilename_bad);
 
 	Watch->Stop();
-	cout << endl << red << Watch->RealTime() << "sec" << def << endl;
+	cout << red << Watch->RealTime() << "sec" << def << endl;
 
 	return 0;
 }

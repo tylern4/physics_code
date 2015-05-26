@@ -62,7 +62,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 	}
 
 	getBranches(&chain);
-	num_of_events = (Int_t)chain.GetEntries();
+	num_of_events = (int)chain.GetEntries();
 
 	for (int current_event = 0; current_event <= num_of_events; current_event++) {
 		loadbar(current_event,num_of_events);

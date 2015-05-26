@@ -48,21 +48,20 @@ void WvsQ2(char *fin, char *RootFile_output){
 
 	RootOutputFile = new TFile(RootFile_output,"RECREATE"); 
 
-	TChain chain("h10");
 	cout << blue <<"Analyzing file " << green << fin << def << bgdef << endl;
 
 	FILE *input_file = fopen(fin,"r");
 	if (input_file == NULL) perror ("Error opening file");
 
+	TChain chain("h10");
 	while (1){
 		number_cols = fscanf(input_file,"%s",rootFile);
-
 		if (number_cols<0) break;
 		chain.Add(rootFile);
 	}
 
 	getBranches(&chain);
-	num_of_events = (Int_t)chain.GetEntries();
+	num_of_events = (int)chain.GetEntries();
 
 	for (int current_event = 0; current_event <= num_of_events; current_event++) {
 		loadbar(current_event,num_of_events);
@@ -100,7 +99,6 @@ void WvsQ2(char *fin, char *RootFile_output){
 				} else if (id[event_number] == PROTON && (int)q[event_number] == 1 && sc[event_number] > 0 && dc[event_number] > 0){
 					Fill_e_proton_found(W_calc(e_mu,e_mu_prime),Q2_calc(e_mu,e_mu_prime),Particle4.P(),b[event_number]);
 				} 
-
 			} 
 		}
 		//current_event++; 		  	// increment event counter
@@ -114,5 +112,6 @@ void WvsQ2(char *fin, char *RootFile_output){
 	RootOutputFile->Write();
 	RootOutputFile->Close();
 	fclose(input_file); 														// close file with input file list
+	cout << endl << blue << "Completed " << num_of_events << " in " << def;
 }
 #endif
