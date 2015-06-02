@@ -36,6 +36,15 @@ double xb_calc(double Q2, double E_prime){
 	return xb;
 }
 
+
+//overload with 4 vectors instaed of otehr calculations
+double xb_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime){
+	double Q2 = Q2_calc(e_mu,e_mu_prime);
+	TLorentzVector q = e_mu - e_mu_prime;
+	TLorentzVector target(0, 0, 0, MASS_P);
+	return (Q2/ (2 * (q.Dot(target))));
+}
+
 double Get_Mass(int ID){
 
 	switch (ID){
@@ -104,6 +113,42 @@ void PrintID_Readable(int ID){
 			break;
 		case 0:
 			cout << "***";
+	}
+}
+
+//	Print the readable name from particle ID
+//	
+string PrintID_String(int ID){
+	switch (ID){
+		case 2212:
+			return "PROTON";
+			break;
+		case 2112:
+			return "NEUTRON";
+			break;
+		case 211:
+			return "PIP";
+			break;
+		case -211:
+			return "PIM";
+			break;
+		case 111:
+			return "PI0";
+			break;
+		case 321:
+			return "KP";
+			break;
+		case -321:
+			return "KM";
+			break;
+		case 22:
+			return "PHOTON";
+			break;
+		case 11:
+			return "ELECTRON";
+			break;
+		case 0:
+			return "***";
 	}
 }
 

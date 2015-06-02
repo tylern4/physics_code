@@ -75,7 +75,6 @@ void WvsQ2(char *fin, char *RootFile_output){
 			//e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
 			e_mu_prime.SetVectM(e_mu_prime_3, m[0]);
 
-
 			//Get energy of scattered elctron from 4 vector and calculate Q2 and W
 			WvsQ2_Fill(e_mu_prime.E(),W_calc(e_mu, e_mu_prime),Q2_calc(e_mu, e_mu_prime),xb_calc(Q2_calc(e_mu,e_mu_prime), e_mu_prime.E() ) );
 				
