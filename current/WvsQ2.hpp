@@ -72,7 +72,9 @@ void WvsQ2(char *fin, char *RootFile_output){
 		if (id[0] == ELECTRON && gpart > 1 && stat[0] > 0 && (int)q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0 /*** && b[0] <= 1 /**/){
 			//Setup scattered electron 4 vector
 			e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);	
-			e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
+			//e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
+			e_mu_prime.SetVectM(e_mu_prime_3, m[0]);
+
 
 			//Get energy of scattered elctron from 4 vector and calculate Q2 and W
 			WvsQ2_Fill(e_mu_prime.E(),W_calc(e_mu, e_mu_prime),Q2_calc(e_mu, e_mu_prime),xb_calc(Q2_calc(e_mu,e_mu_prime), e_mu_prime.E() ) );
@@ -81,7 +83,8 @@ void WvsQ2(char *fin, char *RootFile_output){
 			for(int event_number = 1; event_number < gpart; event_number++){
 				//Get particles 3 and 4 vector for current event.
 				Particle3.SetXYZ(p[event_number]*cx[event_number], p[event_number]*cy[event_number], p[event_number]*cz[event_number]);
-				Particle4.SetVectM(Particle3,Get_Mass(id[event_number]));
+				//Particle4.SetVectM(Particle3,Get_Mass(id[event_number]));
+				Particle4.SetVectM(Particle3,m[event_number]);
 
 				MomVsBeta_Fill(Particle4.E(),Particle4.P(),b[event_number]);
 

@@ -60,7 +60,7 @@ static const float MASS_OMEGA = 0.78265;
 
 
 UChar_t npart;
-//makeUChar_t evstat;
+UChar_t evstat;
 UInt_t  evntid;
 Char_t  evtype;
 Char_t  evntclas;
@@ -81,7 +81,7 @@ UChar_t sc[MAX_PARTS];   //[gpart]
 UChar_t ec[MAX_PARTS];   //[gpart]
 UChar_t lec[MAX_PARTS];   //[gpart]
 Float_t p[MAX_PARTS];   //[gpart]
-//Float_t m[MAX_PARTS];   //[gpart]
+Float_t m[MAX_PARTS];   //[gpart]
 Char_t  q[MAX_PARTS];   //[gpart]
 Float_t b[MAX_PARTS];   //[gpart]
 Float_t cx[MAX_PARTS];   //[gpart]
@@ -193,7 +193,7 @@ double Square(double a){
 void getBranches(TTree* myTree){
 
 	myTree->SetBranchAddress("npart", &npart);			//number of final particles
-	//myTree->SetBranchAddress("evstat", &evstat);
+	myTree->SetBranchAddress("evstat", &evstat);
 	myTree->SetBranchAddress("evntid", &evntid);		//event number
 	myTree->SetBranchAddress("evntclas", &evntclas);
 	myTree->SetBranchAddress("q_l", &q_l);
@@ -208,7 +208,7 @@ void getBranches(TTree* myTree){
 	myTree->SetBranchAddress("ec", &ec);
 	myTree->SetBranchAddress("lec", &lec);
 	myTree->SetBranchAddress("p", &p);					//momentum of i'th particle p[i] (GeV/C)
-	//myTree->SetBranchAddress("m", &m);					//mass of i'th particle m[i] (GeV/C)
+	myTree->SetBranchAddress("m", &m);					//mass of i'th particle m[i] (GeV/C)
 	myTree->SetBranchAddress("q", &q);					//charge of i'th particle q[i] (charge in e's 1,0,-1)
 	myTree->SetBranchAddress("b", &b);					//Velocity of i'th particle b[i] (in terms of c) ie. Beta
 	myTree->SetBranchAddress("cx", &cx);				//X direction cosine at origin
