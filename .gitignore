@@ -7,4 +7,5 @@ current/e1d_rootfiles
 current/inputFiles
 current/outputFiles
 *.out
+current/multicore.sh
 current/pictures/pic
