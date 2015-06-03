@@ -26,6 +26,9 @@
 #include <stdio.h>
 #include "main.h"
 #include "physics.hpp"
+#include "THnSparse.h"
+#include "TRandom.h"
+#include "TH3.h"
 
 using namespace std;
 
@@ -49,7 +52,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 	RootOutputFile = new TFile(RootFile_output,"RECREATE"); 
 
 	TChain chain("h10");
-	cout << blue <<"Analyzing file " << green << fin << def << bgdef << endl;
+	//cout << blue <<"Analyzing file " << green << fin << def << bgdef << endl;
 
 	FILE *input_file = fopen(fin,"r");
 	if (input_file == NULL) perror ("Error opening file");
@@ -63,54 +66,59 @@ void dataHandeler(char *fin, char *RootFile_output){
 
 	getBranches(&chain);
 	num_of_events = (int)chain.GetEntries();
+//start stuff
+	const Int_t ndims = 8;
+   	Int_t bins[ndims] = {10, 10, 5, 30, 10, 4, 18, 12};
+   	Double_t xmin[ndims] = {-5., -10., -1000., -3., 0.,   0., 0., 0.};
+   	Double_t xmax[ndims] = {10., 70., 3000.,   3.,   5.,  2., 2., 5.};
+	THnSparse* hs = new THnSparseD("hs", "Sparse Histogram", ndims, bins, xmin, xmax);
+	//THnSparse* testNsparse = new THnSparseF("testNsparse", "Sparse Histogram", 5, 100000, 0, 100000);
 
-	for (int current_event = 0; current_event <= num_of_events; current_event++) {
-		loadbar(current_event,num_of_events);
-		chain.GetEntry(current_event);
+	/*
+	SOOOOOOOO i think what happens is that you make an nsparce with arrays as everything instead of the usual number except ndims which is the size of arrays
+	basically an of size ndims where each column is a th1d
+	fill it by filling a single row in an array
+	array_to_fill[colum1,colum2,colum3,....,ndims];
+	hs->Fill(array_to_fill);
+	get values back in same way but with give bin content, puts the output into another array
+	hs->GetBin(bin_number,output_array);
 
-		// Check to see whether the first particle is an Electron
-		// Changed id to id[0] because scattered elctron should be first particle (i.e. id[0])
-		if (id[0] == ELECTRON && gpart > 1 && stat[0] > 0 && (int)q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0 /*** && b[0] <= 1 /**/){
-			//Setup scattered electron 4 vector
-			e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);	
-			e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
 
-			//Get energy of scattered elctron from 4 vector and calculate Q2 and W
-			WvsQ2_Fill(e_mu_prime.E(),W_calc(e_mu, e_mu_prime),Q2_calc(e_mu, e_mu_prime),xb_calc(Q2_calc(e_mu,e_mu_prime), e_mu_prime.E() ) );
-				
-			//#pragma omp parallel for
-			for(int event_number = 1; event_number < gpart; event_number++){
-				//Get particles 3 and 4 vector for current event.
-				Particle3.SetXYZ(p[event_number]*cx[event_number], p[event_number]*cy[event_number], p[event_number]*cz[event_number]);
-				Particle4.SetVectM(Particle3,Get_Mass(id[event_number]));
 
-				MomVsBeta_Fill(Particle4.E(),Particle4.P(),b[event_number]);
+	make an arrary with array[ID,W,Q2,xb,E]
+	take for loop from WvsQ2 program and fill the array
 
-				//If Pi+
-				if(id[event_number] == PIP && (int)q[event_number] == 1 && sc[event_number] > 0 && dc[event_number] > 0) {
-					Fill_e_pi_found(W_calc(e_mu,e_mu_prime),Q2_calc(e_mu,e_mu_prime),Particle4.P(),b[event_number]);
-					//If Pi+ and Proton
-					//#pragma omp parallel for
-					for (int event_number_1 = 1; event_number_1 < gpart; event_number_1++){
-						if(id[event_number_1] == PROTON && (int)q[event_number_1] == 1 && sc[event_number_1] > 0 && dc[event_number_1] > 0) {
-							Fill_e_proton_pi_found(W_calc(e_mu,e_mu_prime),Q2_calc(e_mu,e_mu_prime),Particle4.P(),b[event_number]);
-						}
-					}
-				//If Proton	
-				} else if (id[event_number] == PROTON && (int)q[event_number] == 1 && sc[event_number] > 0 && dc[event_number] > 0){
-					Fill_e_proton_found(W_calc(e_mu,e_mu_prime),Q2_calc(e_mu,e_mu_prime),Particle4.P(),b[event_number]);
-				} 
+	do the writes and try a project(W,Q2) ie TH2D* WvsQ2 = hs->Projection(2,3);
+	*/
 
-			} 
-		}
-		//current_event++; 		  	// increment event counter
-	}
+
+	Double_t x[ndims];
+	for (Long_t i = 0; i < 100000000000000; ++i) {
+		for (Int_t d = 0; d < ndims; ++d) {
+        	switch (d) {
+         	case 0: x[d] = gRandom->Gaus()*2 + 3.; break;
+         	case 1:
+         	case 2: 
+         	case 3: x[d] = (x[d-1]*x[d-1] - 1.5)/1.5 + (0.5*gRandom->Rndm()); break;
+         	default: x[d] = sin(gRandom->Gaus()*i/1000.) + 1.;
+        	}
+        }
+        loadbar(i, 100000000000000);
+        hs->Fill(x);
+    }
+
+   TH2D* h2proj = hs->Projection(2, 6);
+
+   h2proj->Write();
+    
+
+
+//end stuff
 	chain.Reset();						// delete Tree object
 
 	RootOutputFile->cd();
-	WvsQ2_Write();
-	MomVsBeta_Write();
-	Write_found_hists();
+//write stuff
+	hs->Write();
 	RootOutputFile->Write();
 	RootOutputFile->Close();
 	fclose(input_file); 														// close file with input file list
