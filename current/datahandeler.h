@@ -68,7 +68,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 	num_of_events = (int)chain.GetEntries();
 //start stuff
 	const Int_t ndims = 8;
-   	Int_t bins[ndims] = {10, 10, 5, 30, 10, 4, 18, 12};
+   	Int_t bins[ndims] = {1000, 1000, 500, 3000, 1000, 400, 1800, 1200};
    	Double_t xmin[ndims] = {-5., -10., -1000., -3., 0.,   0., 0., 0.};
    	Double_t xmax[ndims] = {10., 70., 3000.,   3.,   5.,  2., 2., 5.};
 	THnSparse* hs = new THnSparseD("hs", "Sparse Histogram", ndims, bins, xmin, xmax);
@@ -91,9 +91,9 @@ void dataHandeler(char *fin, char *RootFile_output){
 	do the writes and try a project(W,Q2) ie TH2D* WvsQ2 = hs->Projection(2,3);
 	*/
 
-
 	Double_t x[ndims];
-	for (Long_t i = 0; i < 100000000000000; ++i) {
+	long stupid = 10000000;
+	for (long i = 0; i < stupid; ++i) {
 		for (Int_t d = 0; d < ndims; ++d) {
         	switch (d) {
          	case 0: x[d] = gRandom->Gaus()*2 + 3.; break;
@@ -103,13 +103,13 @@ void dataHandeler(char *fin, char *RootFile_output){
          	default: x[d] = sin(gRandom->Gaus()*i/1000.) + 1.;
         	}
         }
-        loadbar(i, 100000000000000);
+        loadbar(i, stupid);
         hs->Fill(x);
     }
 
-   TH2D* h2proj = hs->Projection(2, 6);
+   TH2D* h2proj = hs->Projection(1, 2);
 
-   h2proj->Write();
+   //h2proj->Write();
     
 
 
