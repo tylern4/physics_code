@@ -52,7 +52,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 	RootOutputFile = new TFile(RootFile_output,"RECREATE"); 
 
 	TChain chain("h10");
-	//cout << blue <<"Analyzing file " << green << fin << def << bgdef << endl;
+	cout << blue <<"Analyzing file " << green << fin << def << bgdef << endl;
 
 	FILE *input_file = fopen(fin,"r");
 	if (input_file == NULL) perror ("Error opening file");
@@ -67,10 +67,10 @@ void dataHandeler(char *fin, char *RootFile_output){
 	getBranches(&chain);
 	num_of_events = (int)chain.GetEntries();
 //start stuff
-	const Int_t ndims = 8;
-   	Int_t bins[ndims] = {1000, 1000, 500, 3000, 1000, 400, 1800, 1200};
-   	Double_t xmin[ndims] = {-5., -10., -1000., -3., 0.,   0., 0., 0.};
-   	Double_t xmax[ndims] = {10., 70., 3000.,   3.,   5.,  2., 2., 5.};
+	const Int_t ndims = 2;
+   	Int_t bins[ndims] = {500, 500};
+   	Double_t xmin[ndims] = {0., 0.};
+   	Double_t xmax[ndims] = {3.25, 10.};
 	THnSparse* hs = new THnSparseD("hs", "Sparse Histogram", ndims, bins, xmin, xmax);
 	//THnSparse* testNsparse = new THnSparseF("testNsparse", "Sparse Histogram", 5, 100000, 0, 100000);
 
@@ -92,7 +92,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 	*/
 
 	Double_t x[ndims];
-	long stupid = 10000000;
+	/*long stupid = 10000000;
 	for (long i = 0; i < stupid; ++i) {
 		for (Int_t d = 0; d < ndims; ++d) {
         	switch (d) {
@@ -105,10 +105,30 @@ void dataHandeler(char *fin, char *RootFile_output){
         }
         loadbar(i, stupid);
         hs->Fill(x);
-    }
+    }*/
+int stupid;
+cout << num_of_events << endl;
+	for (int current_event = 0; current_event <= num_of_events; current_event++) {
+		loadbar(current_event,num_of_events);
+		chain.GetEntry(current_event);
 
-   TH2D* h2proj = hs->Projection(1, 2);
+		// Check to see whether the first particle is an Electron
+		// Changed id to id[0] because scattered elctron should be first particle (i.e. id[0])
+		if (id[0] == ELECTRON && gpart > 1 && stat[0] > 0 && (int)q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0 /*** && b[0] <= 1 /**/){
+			//Setup scattered electron 4 vector
+			e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);	
+			//e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
+			e_mu_prime.SetVectM(e_mu_prime_3, m[0]);
 
+			//Get energy of scattered elctron from 4 vector and calculate Q2 and W
+			x[0] = W_calc(e_mu, e_mu_prime);
+			x[1] = Q2_calc(e_mu, e_mu_prime);
+			stupid++;
+		}
+		hs->Fill(x);
+	}
+   TH2D* h2proj = hs->Projection(1,0);
+cout << stupid << endl;
    //h2proj->Write();
     
 
