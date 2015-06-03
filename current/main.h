@@ -171,7 +171,7 @@ Color::Modifier bgdef(Color::BG_DEFAULT);
 Color::Modifier bggreen(Color::BG_GREEN);
 
 
-void loadbar(int x, int n){
+void loadbar(long x, long n){
 
 	int w = 50;
     if ( (x != n) && (x % (n/100+1) != 0) ) return;
