@@ -67,11 +67,12 @@ void dataHandeler(char *fin, char *RootFile_output){
 	getBranches(&chain);
 	num_of_events = (int)chain.GetEntries();
 //start stuff
-	const Int_t ndims = 2;
-   	Int_t bins[ndims] = {500, 500};
-   	Double_t xmin[ndims] = {0., 0.};
-   	Double_t xmax[ndims] = {3.25, 10.};
-	THnSparse* hs = new THnSparseD("hs", "Sparse Histogram", ndims, bins, xmin, xmax);
+	const Int_t ndims = 5;
+   	Int_t bins[ndims] = {500, 500, 500, 500, 500};
+   	Double_t xmin[ndims] = {0., 0., 0., 0, -1};
+   	Double_t xmax[ndims] = {3.25, 10., 4.4, M_PI/2.0, 1};
+   	Double_t x[ndims];
+	THnSparse* hs = new THnSparseD("hs", "Histogram", ndims, bins, xmin, xmax);
 	//THnSparse* testNsparse = new THnSparseF("testNsparse", "Sparse Histogram", 5, 100000, 0, 100000);
 
 	/*
@@ -91,7 +92,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 	do the writes and try a project(W,Q2) ie TH2D* WvsQ2 = hs->Projection(2,3);
 	*/
 
-	Double_t x[ndims];
+
 	/*long stupid = 10000000;
 	for (long i = 0; i < stupid; ++i) {
 		for (Int_t d = 0; d < ndims; ++d) {
@@ -106,8 +107,11 @@ void dataHandeler(char *fin, char *RootFile_output){
         loadbar(i, stupid);
         hs->Fill(x);
     }*/
-int stupid;
-cout << num_of_events << endl;
+	hs->GetAxis(0)->SetTitle(" W ");
+	hs->GetAxis(1)->SetTitle(" Q2 ");
+	hs->GetAxis(2)->SetTitle(" P ");
+	hs->GetAxis(3)->SetTitle(" #theta ");
+	hs->GetAxis(4)->SetTitle(" Cos(#theta) ");
 	for (int current_event = 0; current_event <= num_of_events; current_event++) {
 		loadbar(current_event,num_of_events);
 		chain.GetEntry(current_event);
@@ -123,13 +127,21 @@ cout << num_of_events << endl;
 			//Get energy of scattered elctron from 4 vector and calculate Q2 and W
 			x[0] = W_calc(e_mu, e_mu_prime);
 			x[1] = Q2_calc(e_mu, e_mu_prime);
-			stupid++;
+			x[2] = e_mu_prime.P();
+			x[3] = e_mu_prime.Theta();
+			x[4] = e_mu_prime.CosTheta();
 		}
 		hs->Fill(x);
 	}
-   TH2D* h2proj = hs->Projection(1,0);
-cout << stupid << endl;
-   //h2proj->Write();
+	//TH2D* h2proj_1 = hs->Projection(1,0);
+	for (int j = 0; j < ndims; ++j){
+		for (int jj = 0; jj < ndims; ++jj){
+			if(j != jj) TH2D* h2proj = hs->Projection(j,jj);
+		}
+	}
+	
+
+	//h2proj->Write();
     
 
 
