@@ -1,0 +1,16 @@
+#!/usr/bin/expect
+ 
+#Usage sshjlab <host> <ssh password>
+  
+set timeout 60
+spawn ssh -Y tylern@login.jlab.org
+expect "yes/no" { 
+                send "yes\r"
+                expect "*?assword" { send "[lindex $argv 1]\r" }
+                } "*?assword" { send "[lindex $argv 1]\r" }
+expect "% " { send "ssh -X [lindex $argv 0]\r" }
+expect "yes/no" {
+    send "yes\r"
+    expect "*?assword" { send "[lindex $argv 1]\r" }
+        } "*?assword" { send "[lindex $argv 1]\r" }
+interact

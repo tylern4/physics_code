@@ -91,38 +91,24 @@ void dataHandeler(char *fin, char *RootFile_output){
 
 	do the writes and try a project(W,Q2) ie TH2D* WvsQ2 = hs->Projection(2,3);
 	*/
-
-
-	/*long stupid = 10000000;
-	for (long i = 0; i < stupid; ++i) {
-		for (Int_t d = 0; d < ndims; ++d) {
-        	switch (d) {
-         	case 0: x[d] = gRandom->Gaus()*2 + 3.; break;
-         	case 1:
-         	case 2: 
-         	case 3: x[d] = (x[d-1]*x[d-1] - 1.5)/1.5 + (0.5*gRandom->Rndm()); break;
-         	default: x[d] = sin(gRandom->Gaus()*i/1000.) + 1.;
-        	}
-        }
-        loadbar(i, stupid);
-        hs->Fill(x);
-    }*/
+	
 	hs->GetAxis(0)->SetTitle(" W ");
 	hs->GetAxis(1)->SetTitle(" Q2 ");
 	hs->GetAxis(2)->SetTitle(" P ");
 	hs->GetAxis(3)->SetTitle(" #theta ");
 	hs->GetAxis(4)->SetTitle(" Cos(#theta) ");
+
 	for (int current_event = 0; current_event <= num_of_events; current_event++) {
 		loadbar(current_event,num_of_events);
 		chain.GetEntry(current_event);
 
 		// Check to see whether the first particle is an Electron
 		// Changed id to id[0] because scattered elctron should be first particle (i.e. id[0])
-		if (id[0] == ELECTRON && gpart > 1 && stat[0] > 0 && (int)q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0 /*** && b[0] <= 1 /**/){
+		if (id[0] == ELECTRON && gpart > 1 && stat[0] > 0 && (int)q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0){
 			//Setup scattered electron 4 vector
 			e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);	
-			//e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
-			e_mu_prime.SetVectM(e_mu_prime_3, m[0]);
+			e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
+			//e_mu_prime.SetVectM(e_mu_prime_3, m[0]);
 
 			//Get energy of scattered elctron from 4 vector and calculate Q2 and W
 			x[0] = W_calc(e_mu, e_mu_prime);
@@ -130,20 +116,18 @@ void dataHandeler(char *fin, char *RootFile_output){
 			x[2] = e_mu_prime.P();
 			x[3] = e_mu_prime.Theta();
 			x[4] = e_mu_prime.CosTheta();
+
+			hs->Fill(x);
 		}
-		hs->Fill(x);
+		//hs->Fill(x);
 	}
+
 	//TH2D* h2proj_1 = hs->Projection(1,0);
 	for (int j = 0; j < ndims; ++j){
 		for (int jj = 0; jj < ndims; ++jj){
 			if(j != jj) TH2D* h2proj = hs->Projection(j,jj);
 		}
 	}
-	
-
-	//h2proj->Write();
-    
-
 
 //end stuff
 	chain.Reset();						// delete Tree object
