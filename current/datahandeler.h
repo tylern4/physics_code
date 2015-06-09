@@ -69,8 +69,8 @@ void dataHandeler(char *fin, char *RootFile_output){
 //start stuff
 	const Int_t ndims = 5;
    	Int_t bins[ndims] = {500, 500, 500, 500, 500};
-   	Double_t xmin[ndims] = {0., 0., 0., 0, -1};
-   	Double_t xmax[ndims] = {3.25, 10., 4.4, M_PI/2.0, 1};
+   	Double_t xmin[ndims] = {0., 0., 0., 0, -M_PI};
+   	Double_t xmax[ndims] = {3.25, 10., 4.4, M_PI/2.0, M_PI};
    	Double_t x[ndims];
 	THnSparse* hs = new THnSparseD("hs", "Histogram", ndims, bins, xmin, xmax);
 	//THnSparse* testNsparse = new THnSparseF("testNsparse", "Sparse Histogram", 5, 100000, 0, 100000);
@@ -96,7 +96,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 	hs->GetAxis(1)->SetTitle(" Q2 ");
 	hs->GetAxis(2)->SetTitle(" P ");
 	hs->GetAxis(3)->SetTitle(" #theta ");
-	hs->GetAxis(4)->SetTitle(" Cos(#theta) ");
+	hs->GetAxis(4)->SetTitle(" #phi ");
 
 	for (int current_event = 0; current_event <= num_of_events; current_event++) {
 		loadbar(current_event,num_of_events);
@@ -115,7 +115,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 			x[1] = Q2_calc(e_mu, e_mu_prime);
 			x[2] = e_mu_prime.P();
 			x[3] = e_mu_prime.Theta();
-			x[4] = e_mu_prime.CosTheta();
+			x[4] = e_mu_prime.Phi();
 
 			hs->Fill(x);
 		}
