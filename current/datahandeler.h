@@ -72,7 +72,16 @@ void dataHandeler(char *fin, char *RootFile_output){
    	Double_t xmin[ndims] = {0., 0., 0., 0, -M_PI};
    	Double_t xmax[ndims] = {3.25, 10., 4.4, M_PI/2.0, M_PI};
    	Double_t x[ndims];
-	THnSparse* hs = new THnSparseD("hs", "Histogram", ndims, bins, xmin, xmax);
+
+	const Int_t ndims_N = 2;
+   	Int_t bins_N[ndims_N] = {500, 500};
+   	Double_t xmin_N[ndims_N] = {0, -M_PI};
+   	Double_t xmax_N[ndims_N] = {M_PI/2.0, M_PI};
+   	Double_t x_N[ndims_N];
+
+
+	THnSparse* Electron_NSparse = new THnSparseD("Electron_NSparse", "Histogram", ndims, bins, xmin, xmax);
+	THnSparse* Particle_NSparse = new THnSparseD("Particle_NSparse", "Histogram", ndims_N, bins_N, xmin_N, xmax_N);
 	//THnSparse* testNsparse = new THnSparseF("testNsparse", "Sparse Histogram", 5, 100000, 0, 100000);
 
 	/*
@@ -80,23 +89,26 @@ void dataHandeler(char *fin, char *RootFile_output){
 	basically an of size ndims where each column is a th1d
 	fill it by filling a single row in an array
 	array_to_fill[colum1,colum2,colum3,....,ndims];
-	hs->Fill(array_to_fill);
+	Electron_NSparse->Fill(array_to_fill);
 	get values back in same way but with give bin content, puts the output into another array
-	hs->GetBin(bin_number,output_array);
+	Electron_NSparse->GetBin(bin_number,output_array);
 
 
 
 	make an arrary with array[ID,W,Q2,xb,E]
 	take for loop from WvsQ2 program and fill the array
 
-	do the writes and try a project(W,Q2) ie TH2D* WvsQ2 = hs->Projection(2,3);
+	do the writes and try a project(W,Q2) ie TH2D* WvsQ2 = Electron_NSparse->Projection(2,3);
 	*/
 	
-	hs->GetAxis(0)->SetTitle(" W ");
-	hs->GetAxis(1)->SetTitle(" Q2 ");
-	hs->GetAxis(2)->SetTitle(" P ");
-	hs->GetAxis(3)->SetTitle(" #theta ");
-	hs->GetAxis(4)->SetTitle(" #phi ");
+	Electron_NSparse->GetAxis(0)->SetTitle(" W ");
+	Electron_NSparse->GetAxis(1)->SetTitle(" Q2 ");
+	Electron_NSparse->GetAxis(2)->SetTitle(" P ");
+	Electron_NSparse->GetAxis(3)->SetTitle(" #theta ");
+	Electron_NSparse->GetAxis(4)->SetTitle(" #phi ");
+
+	Particle_NSparse->GetAxis(0)->SetTitle(" #theta ");
+	Particle_NSparse->GetAxis(1)->SetTitle(" #phi ");
 
 	for (int current_event = 0; current_event <= num_of_events; current_event++) {
 		loadbar(current_event,num_of_events);
@@ -117,15 +129,32 @@ void dataHandeler(char *fin, char *RootFile_output){
 			x[3] = e_mu_prime.Theta();
 			x[4] = e_mu_prime.Phi();
 
-			hs->Fill(x);
+			//#pragma omp parallel for
+			for(int event_number = 1; event_number < gpart; event_number++){
+				//Get particles 3 and 4 vector for current event.
+				Particle3.SetXYZ(p[event_number]*cx[event_number], p[event_number]*cy[event_number], p[event_number]*cz[event_number]);
+				Particle4.SetVectM(Particle3,Get_Mass(id[event_number]));
+				//Particle4.SetVectM(Particle3,m[event_number]);
+
+				x_N[0] = Particle4.Theta();
+				x_N[1] = Particle4.Phi(); 
+				Particle_NSparse->Fill(x_N);
+			}
+
+			Electron_NSparse->Fill(x);
 		}
-		//hs->Fill(x);
+		//Electron_NSparse->Fill(x);
 	}
 
-	//TH2D* h2proj_1 = hs->Projection(1,0);
+	//TH2D* h2proj_1 = Electron_NSparse->Projection(1,0);
 	for (int j = 0; j < ndims; ++j){
 		for (int jj = 0; jj < ndims; ++jj){
-			if(j != jj) TH2D* h2proj = hs->Projection(j,jj);
+			if(j != jj) TH2D* h2proj = Electron_NSparse->Projection(j,jj);
+		}
+	}
+	for (int k = 0; k < ndims_N; ++k){
+		for (int kk = 0; kk < ndims_N; ++kk){
+			if(k != kk) TH2D* h2proj = Particle_NSparse->Projection(k,kk);
 		}
 	}
 
@@ -134,7 +163,8 @@ void dataHandeler(char *fin, char *RootFile_output){
 
 	RootOutputFile->cd();
 //write stuff
-	hs->Write();
+	Electron_NSparse->Write();
+	Particle_NSparse->Write();
 	RootOutputFile->Write();
 	RootOutputFile->Close();
 	fclose(input_file); 														// close file with input file list
