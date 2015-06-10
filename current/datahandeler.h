@@ -73,10 +73,10 @@ void dataHandeler(char *fin, char *RootFile_output){
    	Double_t xmax[ndims] = {3.25, 10., 4.4, M_PI/2.0, M_PI};
    	Double_t x[ndims];
 
-	const Int_t ndims_N = 2;
-   	Int_t bins_N[ndims_N] = {500, 500};
-   	Double_t xmin_N[ndims_N] = {0, -M_PI};
-   	Double_t xmax_N[ndims_N] = {M_PI/2.0, M_PI};
+	const Int_t ndims_N = 5;
+   	Int_t bins_N[ndims_N] = {500, 500, 500, 500, 500};
+   	Double_t xmin_N[ndims_N] = {0, -M_PI, 0, 0, 0};
+   	Double_t xmax_N[ndims_N] = {M_PI/2.0, M_PI, 1.2, 4.0, 2};
    	Double_t x_N[ndims_N];
 
 
@@ -109,6 +109,9 @@ void dataHandeler(char *fin, char *RootFile_output){
 
 	Particle_NSparse->GetAxis(0)->SetTitle(" #theta ");
 	Particle_NSparse->GetAxis(1)->SetTitle(" #phi ");
+	Particle_NSparse->GetAxis(2)->SetTitle(" #beta ");
+	Particle_NSparse->GetAxis(3)->SetTitle(" P ");
+	Particle_NSparse->GetAxis(4)->SetTitle(" Perp ");
 
 	for (int current_event = 0; current_event <= num_of_events; current_event++) {
 		loadbar(current_event,num_of_events);
@@ -138,6 +141,10 @@ void dataHandeler(char *fin, char *RootFile_output){
 
 				x_N[0] = Particle4.Theta();
 				x_N[1] = Particle4.Phi(); 
+				x_N[2] = b[event_number];
+				x_N[3] = Particle4.P();
+				x_N[4] = Particle4.Perp();
+
 				Particle_NSparse->Fill(x_N);
 			}
 
