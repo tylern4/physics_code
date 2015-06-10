@@ -1,6 +1,6 @@
 {
     TChain* c = new TChain("h10");
-    TFileCollection fc("fileList","","all.lis");
+    TFileCollection fc("fileList","","3.lis");
     c->AddFileInfoList((TCollection*)fc.GetList());
     TProof::Open("workers=3");
     c->SetProof();
