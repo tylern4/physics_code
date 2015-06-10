@@ -29,7 +29,6 @@
 #include "THnSparse.h"
 #include "TRandom.h"
 #include "TH3.h"
-#include <TProof.h>
 
 using namespace std;
 
@@ -65,8 +64,6 @@ void dataHandeler(char *fin, char *RootFile_output){
 		chain.Add(rootFile);
 	}
 
-	TProof::Open("");
-	chain.SetProof();
 	getBranches(&chain);
 	num_of_events = (int)chain.GetEntries();
 //start stuff
