@@ -292,7 +292,8 @@ void h10::Init(TTree *tree)
    fChain = tree;
    fChain->SetMakeClass(1);
 
-   if (fChain->GetBranch("evthel")) {
+   //if (fChain->GetBranch("evthel")) {
+   if (fChain->GetBranch("h10")) {
       fChain->SetBranchAddress("evstat", &evstat, &b_evstat);
       fChain->SetBranchAddress("evthel", &evthel, &b_evthel);
       fChain->SetBranchAddress("evntclas2", &evntclas2, &b_evntclas2);
