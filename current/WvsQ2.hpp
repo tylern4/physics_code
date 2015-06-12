@@ -63,6 +63,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 	getBranches(&chain);
 	num_of_events = (int)chain.GetEntries();
 
+	#pragma omp parallel for
 	for (int current_event = 0; current_event <= num_of_events; current_event++) {
 		loadbar(current_event,num_of_events);
 		chain.GetEntry(current_event);
