@@ -79,7 +79,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 			//Get energy of scattered elctron from 4 vector and calculate Q2 and W
 			WvsQ2_Fill(e_mu_prime.E(),W_calc(e_mu, e_mu_prime),Q2_calc(e_mu, e_mu_prime),xb_calc(Q2_calc(e_mu,e_mu_prime), e_mu_prime.E() ) );
 				
-			#pragma omp parallel for
+			//#pragma omp parallel for
 			for(int event_number = 1; event_number < gpart; event_number++){
 				//Get particles 3 and 4 vector for current event.
 				Particle3.SetXYZ(p[event_number]*cx[event_number], p[event_number]*cy[event_number], p[event_number]*cz[event_number]);
