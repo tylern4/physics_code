@@ -104,7 +104,6 @@ void WvsQ2(char *fin, char *RootFile_output){
 				} 
 			} 
 		}
-		//current_event++; 		  	// increment event counter
 	}
 	chain.Reset();						// delete Tree object
 
