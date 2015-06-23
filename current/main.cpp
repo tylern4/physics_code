@@ -35,6 +35,10 @@
 #include "datahandeler.h"
 #include "TStopwatch.h"
 
+//Testing
+//#include "physics_test.hpp"
+//#include "WvsQ2_test.hpp" //WvsQ2()
+
 using namespace std;
 
 int main(int argc, char **argv){
@@ -53,6 +57,7 @@ int main(int argc, char **argv){
 	sprintf(outfilename_bad,"%s",outfilename.c_str());
 	//dataHandeler(infilename_bad,outfilename_bad);
 	WvsQ2(infilename_bad,outfilename_bad);
+	//WvsQ2_test(infilename_bad,outfilename_bad);
 
 	Watch->Stop();
 	cout << red << Watch->RealTime() << "sec" << def << endl;
