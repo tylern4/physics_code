@@ -48,7 +48,7 @@ TH2D *MomVsBeta_e_proton_found = new TH2D("MomVsBeta_e_proton_found","Momentum V
 TH2D *MomVsBeta_e_neutron_found = new TH2D("MomVsBeta_e_neutron_found","Momentum Vs #beta p", bins_pvb, p_min, p_max, bins_pvb, b_min, b_max);
 TH2D *MomVsBeta_e_pi_found = new TH2D("MomVsBeta_e_pi_found","Momentum Vs #beta #pi^{+}", bins_pvb, p_min, p_max, bins_pvb, b_min, b_max);
 
-TH1D *Missing_Mass = new TH1D("Missing_Mass", "Missing Mass", 500,0,3.0);
+TH1D *Missing_Mass = new TH1D("Missing_Mass", "Missing Mass", 500,-5.0,5.0);
 
 void Fill_Missing_Mass(double mass){
 	Missing_Mass->Fill(mass);

@@ -103,6 +103,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 					for (int event_number_1 = 1; event_number_1 < gpart; event_number_1++){
 						if(id[event_number_1] == PROTON && (int)q[event_number_1] == 1 /*&& sc[event_number_1] > 0 && dc[event_number_1] > 0*/) {
 							Fill_e_proton_pi_found(W_calc(e_mu,e_mu_prime),Q2_calc(e_mu,e_mu_prime),Particle4.P(),b[event_number]);
+							//total += Particle4;
 						}
 					}
 				//If Proton	
@@ -112,7 +113,7 @@ void WvsQ2(char *fin, char *RootFile_output){
 					Fill_e_neutron_found(W_calc(e_mu,e_mu_prime),Q2_calc(e_mu,e_mu_prime),Particle4.P(),b[event_number]);
 				} 
 			} 
-			Fill_Missing_Mass(total.M()-e_mu.M());
+			Fill_Missing_Mass((total-e_mu).M());
 		}
 	}
 	chain.Reset();						// delete Tree object
