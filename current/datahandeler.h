@@ -65,6 +65,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 	}
 
 	getBranches(&chain);
+
 	num_of_events = (int)chain.GetEntries();
 //start stuff
 	const Int_t ndims = 5;
