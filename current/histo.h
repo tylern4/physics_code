@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "main.h"
+#include "histo2.h"
 
 //
 //Histogram declarations, fills, and write
@@ -30,7 +31,9 @@ TH1D *E_prime_hist = new TH1D("E_prime","Scattered Electron Energy",bins,0.0,2.0
 
 TH2D *Q2_vs_xb = new TH2D("Q2_vs_xb","Q^{2} vs x_{b}",bins,0.1,0.6,bins,1.0,3.5);
 
-TH2D *MomVsBeta_hist = new TH2D("MomVsBeta","Momentum Vs #beta", 200, 0, 2.5, 200, 0.1, 1.2);
+TH2D *MomVsBeta_hist = new TH2D("MomVsBeta","Momentum Vs #beta", bins_pvb, p_min, p_max, bins_pvb, b_min, b_max);
+TH2D *MomVsBeta_hist_pos = new TH2D("MomVsBeta_pos","Momentum Vs #beta Positive", bins_pvb, p_min, p_max, bins_pvb, b_min, b_max);
+TH2D *MomVsBeta_hist_neg = new TH2D("MomVsBeta_neg","Momentum Vs #beta Negative", bins_pvb, p_min, p_max, bins_pvb, b_min, b_max);
 TH1D *Mom = new TH1D("Momentum","Momentum",bins,0,2.0);
 TH1D *Energy_hist = new TH1D("Energy_hist","Energy_hist",bins,0.0,2.5);
 
@@ -61,6 +64,14 @@ void WvsQ2_Write(){
 
 }
 
+void MomVsBeta_Fill_pos(double P, double Beta){
+	MomVsBeta_hist_pos->Fill(P,Beta);
+}
+
+void MomVsBeta_Fill_neg(double P, double Beta){
+	MomVsBeta_hist_neg->Fill(P,Beta);
+}
+
 void MomVsBeta_Fill(double Energy, double P, double Beta){
 	Energy_hist->Fill(Energy);
 	MomVsBeta_hist->Fill(P,Beta);
@@ -69,10 +80,16 @@ void MomVsBeta_Fill(double Energy, double P, double Beta){
 void MomVsBeta_Write(){
 	MomVsBeta_hist->SetXTitle("Momentum (GeV)");
 	MomVsBeta_hist->SetYTitle("#beta");
+	MomVsBeta_hist_pos->SetXTitle("Momentum (GeV)");
+	MomVsBeta_hist_pos->SetYTitle("#beta");
+	MomVsBeta_hist_neg->SetXTitle("Momentum (GeV)");
+	MomVsBeta_hist_neg->SetYTitle("#beta");
 	Mom->SetXTitle("Momentum (GeV)");
 
 	Energy_hist->Write();
 	MomVsBeta_hist->Write();
+	MomVsBeta_hist_pos->Write();
+	MomVsBeta_hist_neg->Write();
 	Mom->Write();
 }
 
