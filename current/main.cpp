@@ -34,10 +34,8 @@
 #include "WvsQ2.hpp" //WvsQ2()
 #include "datahandeler.h"
 #include "TStopwatch.h"
+#include "delta_t_cut.hpp"
 
-//Testing
-//#include "physics_test.hpp"
-//#include "WvsQ2_test.hpp" //WvsQ2()
 
 using namespace std;
 
@@ -55,9 +53,10 @@ int main(int argc, char **argv){
 	//bad work around until I fix using strings in datahandeler/WvsQ2
 	sprintf(infilename_bad,"%s",infilename.c_str());
 	sprintf(outfilename_bad,"%s",outfilename.c_str());
-	dataHandeler(infilename_bad,outfilename_bad);
+	//dataHandeler(infilename_bad,outfilename_bad);
 	//WvsQ2(infilename_bad,outfilename_bad);
 	//WvsQ2_test(infilename_bad,outfilename_bad);
+	delta_t_cut(infilename_bad,outfilename_bad);
 
 	Watch->Stop();
 	cout << red << Watch->RealTime() << "sec" << def << endl;
