@@ -23,7 +23,7 @@
 #include "TMath.h"
 #include "histo.h"
 #include "histo2.h"
-#include <omp.h>
+//#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
