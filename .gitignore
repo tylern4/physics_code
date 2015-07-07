@@ -7,11 +7,10 @@ current/e1d_rootfiles
 current/inputFiles
 current/outputFiles
 *.out
-
+current/multicore.sh
+current/pictures/pic
 current/pic
-
 current/h10Test/h10_C.d
-
 current/h10Test/h10_C_ACLiC_dict_rdict.pcm
-
 current/h10Test/3.lis
+

@@ -21,7 +21,7 @@
 #include "TChain.h"
 #include "TSystem.h"
 #include "TMath.h"
-//#include <omp.h>
+#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "main.h"
