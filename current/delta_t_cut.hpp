@@ -28,6 +28,7 @@
 #include "physics.hpp"
 #include "delta_t.hpp"
 #include "delta_t_hist.hpp"
+#include "TProof.h"
 
 using namespace std;
 
@@ -57,6 +58,8 @@ void delta_t_cut(char *fin, char *RootFile_output){
 	if (input_file == NULL) perror ("Error opening file");
 
 	TChain chain("h10");
+	TProof *plite = TProof::Open("");
+	
 	while (1){
 		number_cols = fscanf(input_file,"%s",rootFile);
 		if (number_cols<0) break;
@@ -94,15 +97,15 @@ void delta_t_cut(char *fin, char *RootFile_output){
 				delta_t_PIP = delta_t(electron_vertex, MASS_PIP, p[event_number], sc_t[sc[event_number]-1], sc_r[sc[event_number]-1]);
 				if (Particle4.P() != 0)
 				{
-					delta_t_Fill(Particle4.P(),delta_t_P,1);
-					delta_t_Fill(Particle4.P(), delta_t_PIP, 2);
+					//delta_t_Fill(Particle4.P(),delta_t_P,3);
+					//delta_t_Fill(Particle4.P(), delta_t_PIP, 4);
 
 					//If Pi+
 					if(id[event_number] == PROTON && (int)q[event_number] == 1) {
-						delta_t_Fill(Particle4.P(), delta_t_P, 3);
+						delta_t_Fill(Particle4.P(), delta_t_P, 1);
 					//If Proton	
 					} else if (id[event_number] == PIP && (int)q[event_number] == 1){
-						delta_t_Fill(Particle4.P(), delta_t_PIP, 4);
+						delta_t_Fill(Particle4.P(), delta_t_PIP, 2);
 					} 
 				}
 			} 
