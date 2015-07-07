@@ -58,8 +58,8 @@ void delta_t_cut(char *fin, char *RootFile_output){
 	if (input_file == NULL) perror ("Error opening file");
 
 	TChain chain("h10");
-	TProof *plite = TProof::Open("");
-	
+	//TProof *plite = TProof::Open("");
+
 	while (1){
 		number_cols = fscanf(input_file,"%s",rootFile);
 		if (number_cols<0) break;
