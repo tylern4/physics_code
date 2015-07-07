@@ -49,7 +49,7 @@ void delta_t_cut(char *fin, char *RootFile_output){
 	//TVector3 Particle3(0.0,0.0,0.0);
 	//TLorentzVector Particle4(0.0,0.0,0.0,0.0);
 
-	RootOutputFile = new TFile(RootFile_output,"RECREATE"); 
+	RootOutputFile = new TFile(RootFile_output,"UPDATE"); 
 
 	cout << blue <<"Analyzing file " << green << fin << def << bgdef << endl;
 
@@ -92,22 +92,25 @@ void delta_t_cut(char *fin, char *RootFile_output){
 				Particle4.SetVectM(Particle3,Get_Mass(id[event_number]));
 				delta_t_P = delta_t(electron_vertex, MASS_P, p[event_number], sc_t[sc[event_number]-1], sc_r[sc[event_number]-1]);
 				delta_t_PIP = delta_t(electron_vertex, MASS_PIP, p[event_number], sc_t[sc[event_number]-1], sc_r[sc[event_number]-1]);
+				if (Particle4.P() != 0)
+				{
+					delta_t_Fill(Particle4.P(),delta_t_P,1);
+					delta_t_Fill(Particle4.P(), delta_t_PIP, 2);
 
-				delta_t_Fill(Particle4.P(),delta_t_P,1);
-				delta_t_Fill(Particle4.P(), delta_t_PIP, 2);
-
-				//If Pi+
-				if(id[event_number] == PROTON && (int)q[event_number] == 1) {
-					delta_t_Fill(Particle4.P(), delta_t_P, 3);
-				//If Proton	
-				} else if (id[event_number] == PIP && (int)q[event_number] == 1){
-					delta_t_Fill(Particle4.P(), delta_t_PIP, 4);
-				} 
+					//If Pi+
+					if(id[event_number] == PROTON && (int)q[event_number] == 1) {
+						delta_t_Fill(Particle4.P(), delta_t_P, 3);
+					//If Proton	
+					} else if (id[event_number] == PIP && (int)q[event_number] == 1){
+						delta_t_Fill(Particle4.P(), delta_t_PIP, 4);
+					} 
+				}
 			} 
 		}
 	}
 	chain.Reset();
-	RootOutputFile->cd();
+	TDirectory *delta_t_folder = RootOutputFile->mkdir("Delta_t");
+	delta_t_folder->cd();
 	delta_t_Write();
 	RootOutputFile->Write();
 	RootOutputFile->Close();
