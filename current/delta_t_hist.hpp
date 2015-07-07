@@ -23,9 +23,9 @@ float Dt_min = -10;
 float Dt_max = 10;
 
 TH2D *delta_t_mass_P = new TH2D("delta_t_mass_P","#Deltat assuming mass of proton", bins_dt, P_min, P_max, bins, Dt_min, Dt_max);
-TH2D *delta_t_mass_PIP = new TH2D("delta_t_mass_PIP","#Deltat assuming mass of #pi+", bins_dt, P_min, P_max, bins, Dt_min, Dt_max);
+TH2D *delta_t_mass_PIP = new TH2D("delta_t_mass_PIP","#Deltat assuming mass of #pi^{+}", bins_dt, P_min, P_max, bins, Dt_min, Dt_max);
 TH2D *delta_t_mass_P_PID = new TH2D("delta_t_mass_P_PID","#Deltat assuming mass of proton with PID proton", bins_dt, P_min, P_max, bins, Dt_min, Dt_max);
-TH2D *delta_t_mass_PIP_PID = new TH2D("delta_t_mass_PIP_PID","#Deltat assuming mass of #pi+ with PID #pi+", bins_dt, P_min, P_max, bins, Dt_min, Dt_max);
+TH2D *delta_t_mass_PIP_PID = new TH2D("delta_t_mass_PIP_PID","#Deltat assuming mass of #pi+ with PID #pi^{+}", bins_dt, P_min, P_max, bins, Dt_min, Dt_max);
 
 
 void delta_t_Fill(double momentum, double delta_t, int option){
