@@ -50,8 +50,8 @@ void delta_t_cut(char *fin, char *RootFile_output){
 	//TVector3 Particle3(0.0,0.0,0.0);
 	//TLorentzVector Particle4(0.0,0.0,0.0,0.0);
 
-	//RootOutputFile = new TFile(RootFile_output,"UPDATE"); 
-	RootOutputFile = new TFile(RootFile_output,"RECREATE");
+	RootOutputFile = new TFile(RootFile_output,"UPDATE"); 
+	//RootOutputFile = new TFile(RootFile_output,"RECREATE");
 
 	cout << blue <<"Analyzing file " << green << fin << def << bgdef << endl;
 
