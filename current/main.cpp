@@ -54,7 +54,7 @@ int main(int argc, char **argv){
 	sprintf(infilename_bad,"%s",infilename.c_str());
 	sprintf(outfilename_bad,"%s",outfilename.c_str());
 	//dataHandeler(infilename_bad,outfilename_bad);
-	//WvsQ2(infilename_bad,outfilename_bad);
+	WvsQ2(infilename_bad,outfilename_bad);
 	delta_t_cut(infilename_bad,outfilename_bad);
 
 	Watch->Stop();
