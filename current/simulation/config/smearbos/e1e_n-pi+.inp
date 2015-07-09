@@ -1,0 +1,8 @@
+! Make sure to keep the &args and the final /, this is parsed using
+! Fortran's namelist I/O
+&args
+ infilename = "aao_rad.evt" ! input file name
+ outfilename = "smeared_thrown.bos"   ! output file name
+ target_type = 1            ! target particle type, 0 for neutron, 1 for proton
+ beam = 2.6                 ! beam energy in GeV
+ spectator_p = 1/           ! 1 for spectator in output, 0 for no
