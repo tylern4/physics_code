@@ -80,9 +80,11 @@ void dataHandeler(char *fin, char *RootFile_output){
 			//Setup scattered electron 4 vector
 			e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);	
 			e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
-			WvsQ2(e_mu,e_mu_prime);
-			delta_t_cut();
+			std::thread thread_1 (WvsQ2,e_mu,e_mu_prime);
+			std::thread thread_2 (delta_t_cut);
 
+			thread_1.join();
+			thread_2.join();
 		}
 
 	}
@@ -107,10 +109,10 @@ void dataHandeler(char *fin, char *RootFile_output){
 	TDirectory *delta_t_folder = RootOutputFile->mkdir("Delta_t");
 	delta_t_folder->cd();
 
-/*	TProfile *deltaTProfileY = delta_t_mass_P_PID->ProfileY();
+	TProfile *deltaTProfileY = delta_t_mass_P_PID->ProfileY();
 	deltaTProfileY->Fit("gaus","WW","",-0.5,0.5);
 	deltaTProfileY->GetFunction("gaus")->SetLineColor(3);
-	deltaTProfileY->Fit("gaus","W","",-0.5,0.5); */
+	deltaTProfileY->Fit("gaus","W","",-0.5,0.5);
 
 	delta_t_Write();
 
