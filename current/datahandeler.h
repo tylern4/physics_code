@@ -86,13 +86,17 @@ void dataHandeler(char *fin, char *RootFile_output){
 			if(!cuts) cout << e_mu_prime.Beta() << "\t" << b[0] << endl;
 
 			if(cuts){
-				WvsQ2(e_mu,e_mu_prime);
-				delta_t_cut();
-				/*std::thread thread1(WvsQ2,e_mu,e_mu_prime);
+				#pragma omp parallel num_threads(4)
+				{
+				//WvsQ2(e_mu,e_mu_prime);
+				//delta_t_cut();
+					
+				std::thread thread1(WvsQ2,e_mu,e_mu_prime);
 				std::thread thread2(delta_t_cut);
 
 				thread1.detach();
-				thread2.detach();*/
+				thread2.detach();
+				}
 			}
 		}
 	}
