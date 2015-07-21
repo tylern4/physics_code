@@ -5,8 +5,8 @@
 /*	University Of South Carolina										*/
 /************************************************************************/
 
-#ifndef DATAHANDELER_H_GUARD
-#define DATAHANDELER_H_GUARD
+#ifndef DATAHANDELER2_H_GUARD
+#define DATAHANDELER2_H_GUARD
 #include "TTree.h"
 #include <math.h>
 #include "TROOT.h"
