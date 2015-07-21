@@ -45,6 +45,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 	int number_cols = 0;
 	char rootFile[500];
 	int num_of_events, total_events;
+	bool cuts;
 
 	TVector3 e_mu_prime_3;
 	TLorentzVector e_mu_prime;
@@ -80,11 +81,18 @@ void dataHandeler(char *fin, char *RootFile_output){
 			//Setup scattered electron 4 vector
 			e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);	
 			e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
-			WvsQ2(e_mu,e_mu_prime);
-			delta_t_cut();
+			cuts = (kTRUE);
 
+			if(cuts){
+				//WvsQ2(e_mu,e_mu_prime);
+				//delta_t_cut();
+				std::thread thread1(WvsQ2,e_mu,e_mu_prime);
+				std::thread thread2(delta_t_cut);
+
+				thread1.detach();
+				thread2.detach();
+			}
 		}
-
 	}
 
 //end stuff
