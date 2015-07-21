@@ -31,6 +31,7 @@
 #include "TH3.h"
 #include "delta_t.hpp"
 #include "delta_t_cut.hpp"
+#include <thread> 
 
 using namespace std;
 
@@ -71,7 +72,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 
 	num_of_events = (int)chain.GetEntries();
 
-	for (int current_event = 0; current_event <= num_of_events; current_event++) {
+	for (int current_event = 0; current_event < num_of_events; current_event++) {
 		loadbar(current_event,num_of_events);
 		chain.GetEntry(current_event);
 
@@ -79,8 +80,11 @@ void dataHandeler(char *fin, char *RootFile_output){
 			//Setup scattered electron 4 vector
 			e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);	
 			e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
-			WvsQ2(e_mu,e_mu_prime);
-			delta_t_cut();
+			std::thread one (WvsQ2,e_mu,e_mu_prime);
+			std::thread two (delta_t_cut);
+
+			one.join();
+			two.join();
 		}
 
 	}
