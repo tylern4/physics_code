@@ -16,10 +16,10 @@
 //
 //
 
-TH1D *Missing_Mass = new TH1D("Missing_Mass", "Missing Mass", 500,0.0,5.0);
+TH1D *Missing_Mass = new TH1D("Missing_Mass", "Missing Mass", 500,-5.0,5.0);
 
-void Fill_Missing_Mass(double mass){
-	Missing_Mass->Fill(mass);
+void Fill_Missing_Mass(double miss_mass){
+	Missing_Mass->Fill(miss_mass);
 }
 
 
