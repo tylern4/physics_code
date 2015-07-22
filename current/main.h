@@ -19,6 +19,22 @@
 #include <string>
 #include <cstring>
 #include "time.h"
+//#include <omp.h>
+#include <string.h>
+#include <string>
+#include <cstring>
+#include "TTree.h"
+#include "TROOT.h"
+#include "TH2.h"
+#include <TLorentzVector.h>
+#include <TFile.h>
+#include "TStyle.h"
+#include "TCanvas.h"
+#include <fstream>
+#include "TF1.h"
+#include "TLeaf.h"
+#include "TChain.h"
+#include "TSystem.h"
 
 using namespace std;
 
