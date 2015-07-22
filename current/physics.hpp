@@ -35,14 +35,20 @@ double xb_calc(double Q2, double E_prime){
 	double xb = (Q2/(2 * MASS_P * gamma));
 	return xb;
 }
-
-
 //overload with 4 vectors instaed of otehr calculations
 double xb_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime){
 	double Q2 = Q2_calc(e_mu,e_mu_prime);
 	TLorentzVector q = e_mu - e_mu_prime;
 	TLorentzVector target(0, 0, 0, MASS_P);
 	return (Q2/ (2 * (q.Dot(target))));
+}
+
+double missing_mass_calc(TLorentzVector gamma_mu, TLorentzVector p_mu, TLorentzVector pi_mu){
+	TLorentzVector reaction(0.0,0.0,0.0,0.0);
+
+	reaction = (gamma_mu + p_mu - pi_mu);
+
+	return sqrt(reaction.Mag2());
 }
 
 double Get_Mass(int ID){

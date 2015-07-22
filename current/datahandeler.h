@@ -84,19 +84,20 @@ void dataHandeler(char *fin, char *RootFile_output){
 			cuts = ( b[0] != 0 );
 
 			if(cuts){
-				WvsQ2(e_mu,e_mu_prime);
 				delta_t_cut();
-					
-				//std::thread thread1(WvsQ2,e_mu,e_mu_prime);
-				//std::thread thread2(delta_t_cut);
+				WvsQ2(e_mu,e_mu_prime);
+				missing_mass((e_mu - e_mu_prime));
 
-				//thread1.detach();
-				//thread2.detach();
+					
+				/*std::thread thread1(WvsQ2,e_mu,e_mu_prime);
+				std::thread thread2(delta_t_cut);
+				thread1.detach();
+				thread2.detach(); */
 			}
 		}
 	}
 
-//end stuff
+	//end stuff
 	chain.Reset();						// delete Tree object
 
 	RootOutputFile->cd();
@@ -116,6 +117,11 @@ void dataHandeler(char *fin, char *RootFile_output){
 	TDirectory *delta_t_folder = RootOutputFile->mkdir("Delta_t");
 	delta_t_folder->cd();
 	delta_t_Write();
+
+	//Extra Write
+	TDirectory *extras_folder = RootOutputFile->mkdir("Extras");
+	extras_folder->cd();
+	Write_found_hists();
 
 
 	RootOutputFile->Write();
