@@ -51,9 +51,11 @@ void WvsQ2(TLorentzVector e_mu, TLorentzVector e_mu_prime){
 			}
 
 			if(id[event_number] == PIP && (int)q[event_number] == 1 /*&& sc[event_number] > 0 && dc[event_number] > 0*/) {
-				Fill_e_pi_found(W_calc(e_mu,e_mu_prime),Q2_calc(e_mu,e_mu_prime),Particle4.P(),b[event_number]);
+				Fill_e_pi_found_WQ2(W_calc(e_mu,e_mu_prime),Q2_calc(e_mu,e_mu_prime));
+				Fill_e_pi_found_P(Particle4.P(),b[event_number]);
 			} else if (id[event_number] == PROTON && (int)q[event_number] == 1 /*&& sc[event_number] > 0 && dc[event_number] > 0*/){
-				Fill_e_proton_found(W_calc(e_mu,e_mu_prime),Q2_calc(e_mu,e_mu_prime),Particle4.P(),b[event_number]);
+				Fill_e_proton_found_WQ2(Particle4.P(),b[event_number]);
+				Fill_e_proton_found_P(Particle4.P(),b[event_number]);
 			} 
 		} 
 	}

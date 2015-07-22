@@ -83,11 +83,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 			e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
 			cuts = ( b[0] != 0 );
 
-			if(!cuts) cout << e_mu_prime.Beta() << "\t" << b[0] << endl;
-
 			if(cuts){
-				#pragma omp parallel num_threads(4)
-				{
 				WvsQ2(e_mu,e_mu_prime);
 				delta_t_cut();
 					
@@ -96,7 +92,6 @@ void dataHandeler(char *fin, char *RootFile_output){
 
 				//thread1.detach();
 				//thread2.detach();
-				}
 			}
 		}
 	}
@@ -120,12 +115,6 @@ void dataHandeler(char *fin, char *RootFile_output){
 	//Delta_t Write
 	TDirectory *delta_t_folder = RootOutputFile->mkdir("Delta_t");
 	delta_t_folder->cd();
-
-/*	TProfile *deltaTProfileY = delta_t_mass_P_PID->ProfileY();
-	deltaTProfileY->Fit("gaus","WW","",-0.5,0.5);
-	deltaTProfileY->GetFunction("gaus")->SetLineColor(3);
-	deltaTProfileY->Fit("gaus","W","",-0.5,0.5); */
-
 	delta_t_Write();
 
 
