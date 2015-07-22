@@ -21,8 +21,6 @@
 #include "TSystem.h"
 #include "main.h"
 #include "TMath.h"
-#include "histo.h"
-#include "histo2.h"
 //#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -30,12 +28,16 @@
 #include <string>
 #include <cstring>
 #include "time.h"
+//mine
+#include "WvsQ2_hists.hpp"
+#include "extra_hists.hpp"
+#include "momentum_hists.hpp"
+#include "delta_t_hist.hpp"
 #include "physics.hpp"
-#include "WvsQ2.hpp" //WvsQ2()
+#include "WvsQ2.hpp"
 #include "datahandeler.h"
 #include "TStopwatch.h"
 #include "delta_t_cut.hpp"
-
 
 using namespace std;
 
