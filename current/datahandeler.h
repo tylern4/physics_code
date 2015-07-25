@@ -86,7 +86,8 @@ void dataHandeler(char *fin, char *RootFile_output){
 			if(cuts){
 				delta_t_cut();
 				WvsQ2(e_mu,e_mu_prime);
-				missing_mass((e_mu - e_mu_prime));
+				TLorentzVector gamma_mu = (e_mu - e_mu_prime);
+				missing_mass(gamma_mu);
 
 					
 				/*std::thread thread1(WvsQ2,e_mu,e_mu_prime);
@@ -111,17 +112,16 @@ void dataHandeler(char *fin, char *RootFile_output){
 	TDirectory *MomVsBeta_folder = RootOutputFile->mkdir("Momentum vs beta");
 	MomVsBeta_folder->cd();
 	MomVsBeta_Write();
-	Write_found_hists();
 
 	//Delta_t Write
-	TDirectory *delta_t_folder = RootOutputFile->mkdir("Delta_t");
+	TDirectory *delta_t_folder = RootOutputFile->mkdir("Delta t");
 	delta_t_folder->cd();
 	delta_t_Write();
 
 	//Extra Write
-	TDirectory *extras_folder = RootOutputFile->mkdir("Extras");
+	TDirectory *extras_folder = RootOutputFile->mkdir("Missing Mass");
 	extras_folder->cd();
-	Write_found_hists();
+	Write_Missing_Mass();
 
 
 	RootOutputFile->Write();

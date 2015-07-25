@@ -23,7 +23,7 @@ void Fill_Missing_Mass(double miss_mass){
 }
 
 
-void Write_found_hists(){
+void Write_Missing_Mass(){
 	Missing_Mass->Write();
 }
 
