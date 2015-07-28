@@ -15,16 +15,27 @@
 //ogram declarations, fills, and write
 //
 //
-
-TH1D *Missing_Mass = new TH1D("Missing_Mass", "Missing Mass", 500,0.0,5.0);
+int bins_MM = 500;
+double MM_min = 0.0;
+double MM_max = 5.0;
+TH1D *Missing_Mass = new TH1D("Missing_Mass", "Missing Mass", bins_MM, MM_min, MM_max);
+TH1D *Missing_Mass_e_proton_pi_only_found = new TH1D("Missing_Mass_e_proton_pi_only_found", "Missing_Mass_e_proton_pi_only_found", bins_MM, MM_min, MM_max);
 
 void Fill_Missing_Mass(double miss_mass){
 	Missing_Mass->Fill(miss_mass);
 }
 
+void Fill_Missing_Mass_P_PI(double miss_mass){
+	Missing_Mass_e_proton_pi_only_found->Fill(miss_mass);
+}
+
 
 void Write_Missing_Mass(){
+	Missing_Mass->SetXTitle("Mass (GeV)");
 	Missing_Mass->Write();
+
+	Missing_Mass_e_proton_pi_only_found->SetXTitle("Mass (GeV)");
+	Missing_Mass_e_proton_pi_only_found->Write();
 }
 
 #endif
