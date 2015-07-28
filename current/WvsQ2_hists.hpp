@@ -34,6 +34,14 @@ TH2D *WvsQ2_e_proton_found = new TH2D("WvsQ2_e_proton_found","W vs Q^{2} p", bin
 TH1D *W_e_proton_found = new TH1D("W_e_proton_found","W p",bins,  w_min, w_max);
 TH1D *Q2_e_proton_found = new TH1D("Q2_e_proton_found","Q^{2} p",bins, q2_min, q2_max);
 
+TH2D *WvsQ2_e_proton_only_found = new TH2D("WvsQ2_e_proton_only_found","W vs Q^{2} p only", bins, w_min, w_max, bins, q2_min, q2_max);
+TH1D *W_e_proton_only_found = new TH1D("W_e_proton_only_found","W p only",bins,  w_min, w_max);
+TH1D *Q2_e_proton_only_found = new TH1D("Q2_e_proton_only_found","Q^{2} p only",bins, q2_min, q2_max);
+
+TH2D *WvsQ2_e_proton_pi_only_found = new TH2D("WvsQ2_e_proton_pi_only_found","W vs Q^{2} p #pi^{+} only", bins, w_min, w_max, bins, q2_min, q2_max);
+TH1D *W_e_proton_pi_only_found = new TH1D("W_e_proton_pi_only_found","W p #pi^{+} only",bins,  w_min, w_max);
+TH1D *Q2_e_proton_pi_only_found = new TH1D("Q2_e_proton_pi_only_found","Q^{2} p #pi^{+} only",bins, q2_min, q2_max);
+
 TH2D *WvsQ2_e_pi_found = new TH2D("WvsQ2_e_pi_found","W vs Q^{2} #pi^{+}", bins, w_min, w_max, bins, q2_min, q2_max);
 TH1D *W_e_pi_found = new TH1D("W_e_pi_found","W #pi^{+}",bins,  w_min, w_max);
 TH1D *Q2_e_pi_found = new TH1D("Q2_e_pi_found","Q^{2} #pi^{+}",bins, q2_min, q2_max);
@@ -58,33 +66,75 @@ void WvsQ2_Fill(double E_prime, double W, double Q2, double xb){
 	Q2_vs_xb->Fill(xb,Q2);
 }
 
+void Fill_e_proton_only_WQ2(double W, double Q2){
+	WvsQ2_e_proton_only_found->Fill(W,Q2);
+	W_e_proton_only_found->Fill(W);
+	Q2_e_proton_only_found->Fill(Q2);
+}
+
+void Fill_e_proton_pi_only_WQ2(double W, double Q2){
+	WvsQ2_e_proton_pi_only_found->Fill(W,Q2);
+	W_e_proton_pi_only_found->Fill(W);
+	Q2_e_proton_pi_only_found->Fill(Q2);
+}
+
 void WvsQ2_Write(){
 	WvsQ2_hist->SetXTitle("W (GeV)");
 	WvsQ2_hist->SetYTitle("Q^{2} (GeV^{2})");
+	WvsQ2_hist->Write();
 
 	W_hist->SetXTitle("W (GeV)");
+	W_hist->Write();
+
 	Q2_hist->SetXTitle("Q^{2} (GeV^{2})");
+	Q2_hist->Write();
+
 	E_prime_hist->SetXTitle("Energy (GeV)");
+	E_prime_hist->Write();
 
 	Q2_vs_xb->SetXTitle("x_{b}");
 	Q2_vs_xb->SetYTitle("Q^{2}");
+	Q2_vs_xb->Write();
 
 	WvsQ2_e_proton_found->SetXTitle("W (GeV)");
 	WvsQ2_e_proton_found->SetYTitle("Q^{2} (GeV^{2})");
+	WvsQ2_e_proton_found->Write();
+
 	W_e_proton_found->SetXTitle("W (GeV)");
+	W_e_proton_found->Write();
+
 	Q2_e_proton_found->SetXTitle("Q^{2} (GeV^{2})");
+	Q2_e_proton_found->Write();
+
+	WvsQ2_e_proton_only_found->SetXTitle("W (GeV)");
+	WvsQ2_e_proton_only_found->SetYTitle("Q^{2} (GeV^{2})");
+	WvsQ2_e_proton_only_found->Write();
+
+	W_e_proton_only_found->SetXTitle("W (GeV)");
+	W_e_proton_only_found->Write();
+
+	Q2_e_proton_only_found->SetXTitle("Q^{2} (GeV^{2})");
+	Q2_e_proton_only_found->Write();
+
+	WvsQ2_e_proton_pi_only_found->SetXTitle("W (GeV)");
+	WvsQ2_e_proton_pi_only_found->SetYTitle("Q^{2} (GeV^{2})");
+	WvsQ2_e_proton_pi_only_found->Write();
+
+	W_e_proton_pi_only_found->SetXTitle("W (GeV)");
+	W_e_proton_pi_only_found->Write();
+
+	Q2_e_proton_pi_only_found->SetXTitle("Q^{2} (GeV^{2})");
+	Q2_e_proton_pi_only_found->Write();
 
 
 	WvsQ2_e_pi_found->SetXTitle("W (GeV)");
 	WvsQ2_e_pi_found->SetYTitle("Q^{2} (GeV^{2})");
+	WvsQ2_e_pi_found->Write();
+
 	W_e_pi_found->SetXTitle("W (GeV)");
+	W_e_pi_found->Write();
+
 	Q2_e_pi_found->SetXTitle("Q^{2} (GeV^{2})");
-
-	E_prime_hist->Write();
-	WvsQ2_hist->Write();
-	W_hist->Write();
-	Q2_hist->Write();
-	Q2_vs_xb->Write();
-
+	Q2_e_pi_found->Write();
 }
 #endif
