@@ -45,11 +45,8 @@ double xb_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime){
 
 double missing_mass_calc(TLorentzVector gamma_mu, TLorentzVector p_mu, TLorentzVector pi_mu){
 	TLorentzVector reaction(0.0,0.0,0.0,0.0);
-	double mm = 0;
 	reaction = (gamma_mu + p_mu - pi_mu);
 
-	//mm = sqrt(fabs(- Square(reaction.Px()) - Square(reaction.Py()) - Square(reaction.Pz()) + Square(reaction.E()) ));
-	//return mm;
 	return reaction.M();
 }
 
