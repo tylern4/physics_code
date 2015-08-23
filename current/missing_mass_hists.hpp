@@ -15,9 +15,9 @@
 //ogram declarations, fills, and write
 //
 //
-int bins_MM = 500;
+int bins_MM = 1000;
 double MM_min = 0.0;
-double MM_max = 5.0;
+double MM_max = 3.0;
 TH1D *Missing_Mass = new TH1D("Missing_Mass", "Missing Mass", bins_MM, MM_min, MM_max);
 TH1D *Missing_Mass_e_proton_pi_only_found = new TH1D("Missing_Mass_e_proton_pi_only_found", "Missing_Mass_e_proton_pi_only_found", bins_MM, MM_min, MM_max);
 
