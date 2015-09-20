@@ -11,8 +11,6 @@
 #include <TLorentzVector.h>
 #include "TROOT.h"
 
-using namespace std;
-
 //Calcuating Q^2 
 // q^mu^2 = (e^mu - e^mu')^2 = -Q^2
 double Q2_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime){
