@@ -33,8 +33,6 @@
 #include "delta_t_cut.hpp"
 #include <thread> 
 
-using namespace std;
-
 // Mashing together W vs Q2 and Delta T cuts into one file
 // Saving the old files in a new folder to refer back to.
 //
@@ -88,7 +86,6 @@ void dataHandeler(char *fin, char *RootFile_output){
 				WvsQ2(e_mu,e_mu_prime);
 				TLorentzVector gamma_mu = (e_mu - e_mu_prime);
 				missing_mass(gamma_mu);
-
 					
 				/*std::thread thread1(WvsQ2,e_mu,e_mu_prime);
 				std::thread thread2(delta_t_cut);

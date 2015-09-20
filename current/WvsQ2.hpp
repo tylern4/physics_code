@@ -27,8 +27,6 @@
 #include "main.h"
 #include "physics.hpp"
 
-using namespace std;
-
 //Function to go through data files and calculate W and Q2
 //Fill in W vs Q2 hist and save to output root file
 //

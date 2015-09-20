@@ -15,7 +15,7 @@ double vertex_time(double sc_time, double sc_pathlength, double cut_beta) {
 }
 
 double delta_t(double electron_vertex_time, double mass, double momentum, double sc_t, double sc_r){
-	double cut_beta = 1.0/sqrt(1.0 + pow(mass/momentum,2.0));
+	double cut_beta = 1.0/sqrt(1.0 + Square(mass/momentum));
 	return electron_vertex_time - vertex_time(sc_t,sc_r,cut_beta);
 }
 #endif
