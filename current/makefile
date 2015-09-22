@@ -6,15 +6,13 @@ CXXFLAGS =      -O2 -fPIC -w -g -fopenmp $(shell root-config --cflags)
 INCS =          -I$(shell root-config --incdir)
 LIBS =          $(shell root-config --glibs)
 TARGET =	    e1d
-FILENAME=		main
+SRC =		$(wildcard *.cpp)
+FILENAME=	$(SRC:.cpp=.o)
 
 all:	clean E1D
 
-E1D:	$(FILENAME).o 
-	$(CXX) $(FILENAME).o -L. $(CXXFLAGS) $(LIBS) -o $(TARGET) 
+E1D:	$(FILENAME) 
+	$(CXX) $(FILENAME) -L. $(CXXFLAGS) $(LIBS) -o $(TARGET) 
 
 clean:
-	-rm -f $(OBJS) $(LIBOUT) $(TARGET) $(FILENAME).o 
-
-lib:	$(OBJS)
-	$(CXX) $(CXXFLAGS) -shared $(OBJS) $(LIBS) 
+	-rm -f $(OBJS) $(LIBOUT) $(TARGET) $(FILENAME)
