@@ -1,5 +1,8 @@
 #include "delta_t.hpp"
 
+delta_t::delta_t(){}
+delta_t::~delta_t(){}
+
 inline double delta_t::vertex_time(double sc_time, double sc_pathlength, double cut_beta) {
 	return sc_time - sc_pathlength/(cut_beta * c_special_units);
 }
