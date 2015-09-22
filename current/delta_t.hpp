@@ -7,7 +7,7 @@
 
 #ifndef DELTA_T_H_GUARD
 #define DELTA_T_H_GUARD
-
+#include "main.h"
 const double c_special_units = 29.9792458;
 
 class delta_t

@@ -1,4 +1,3 @@
-#include "main.h"
 #include "delta_t.hpp"
 
 inline double delta_t::vertex_time(double sc_time, double sc_pathlength, double cut_beta) {
