@@ -32,6 +32,7 @@
 #include "delta_t.hpp"
 #include "delta_t_cut.hpp"
 #include <thread> 
+#include <fstream>
 
 // Mashing together W vs Q2 and Delta T cuts into one file
 // Saving the old files in a new folder to refer back to.
@@ -58,6 +59,9 @@ void dataHandeler(char *fin, char *RootFile_output){
 	cout << blue <<"Analyzing file " << green << fin << def << bgdef << endl;
 
 	FILE *input_file = fopen(fin,"r");
+	ofstream text_output;
+	text_output.open("outputFiles/output.txt");
+
 	if (input_file == NULL) perror ("Error opening file");
 
 	while (1){
@@ -86,7 +90,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 				WvsQ2(e_mu,e_mu_prime);
 				TLorentzVector gamma_mu = (e_mu - e_mu_prime);
 				missing_mass(gamma_mu);
-					
+				text_output << current_event <<"\t"<< W_calc(e_mu, e_mu_prime) <<"\t"<< Q2_calc(e_mu, e_mu_prime) << endl;
 				/*std::thread thread1(WvsQ2,e_mu,e_mu_prime);
 				std::thread thread2(delta_t_cut);
 				thread1.detach();
@@ -124,5 +128,6 @@ void dataHandeler(char *fin, char *RootFile_output){
 	RootOutputFile->Write();
 	RootOutputFile->Close();
 	fclose(input_file); 														// close file with input file list
+	text_output.close();
 }
 #endif
