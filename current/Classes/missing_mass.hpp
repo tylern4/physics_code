@@ -7,9 +7,6 @@
 
 #ifndef MISSING_H_GUARD
 #define MISSING_H_GUARD
-#include <stdlib.h>
-#include <stdio.h>
-#include "main.h"
 
 void missing_mass(TLorentzVector gamma_mu){
 	TVector3 Temp_vec_3_PIP(0.0,0.0,0.0);
