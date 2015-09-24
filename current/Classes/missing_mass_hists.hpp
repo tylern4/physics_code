@@ -7,12 +7,8 @@
 
 #ifndef MISSING_MASS_HISTS_H_GUARD
 #define MISSING_MASS_HISTS_H_GUARD
-#include <stdlib.h>
-#include <stdio.h>
-#include "main.h"
-
 //
-//ogram declarations, fills, and write
+//histogram declarations, fills, and write
 //
 //
 int bins_MM = 1000;

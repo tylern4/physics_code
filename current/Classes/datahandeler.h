@@ -7,33 +7,6 @@
 
 #ifndef DATAHANDELER_H_GUARD
 #define DATAHANDELER_H_GUARD
-#include "TTree.h"
-#include <math.h>
-#include "TROOT.h"
-#include "TH2.h"
-#include <TLorentzVector.h>
-#include <TFile.h>
-#include "TStyle.h"
-#include "TCanvas.h"
-#include <fstream>
-#include "TF1.h"
-#include "TLeaf.h"
-#include "TChain.h"
-#include "TSystem.h"
-#include "TMath.h"
-//#include <omp.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include "main.h"
-#include "physics.hpp"
-#include "THnSparse.h"
-#include "TRandom.h"
-#include "TH3.h"
-#include "delta_t.hpp"
-#include "delta_t_cut.hpp"
-#include <thread> 
-#include <fstream>
-
 // Mashing together W vs Q2 and Delta T cuts into one file
 // Saving the old files in a new folder to refer back to.
 //
@@ -91,10 +64,6 @@ void dataHandeler(char *fin, char *RootFile_output){
 				TLorentzVector gamma_mu = (e_mu - e_mu_prime);
 				missing_mass(gamma_mu);
 				text_output << current_event <<"\t"<< W_calc(e_mu, e_mu_prime) <<"\t"<< Q2_calc(e_mu, e_mu_prime) << endl;
-				/*std::thread thread1(WvsQ2,e_mu,e_mu_prime);
-				std::thread thread2(delta_t_cut);
-				thread1.detach();
-				thread2.detach(); */
 			}
 		}
 	}

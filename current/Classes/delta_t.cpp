@@ -5,18 +5,14 @@
 /*	University Of South Carolina										*/
 /************************************************************************/
 
-#ifndef DELTA_T_H_GUARD
-#define DELTA_T_H_GUARD
+#ifndef DELTA_T_CPP_GUARD
+#define DELTA_T_CPP_GUARD
 #include "TMath.h"
 
-class D_T
+class Delta_T
 {
 	const double c_special_units = 29.9792458;
-
 public:
-	//Delta_T();
-	//~Delta_T();
-
 	inline double vertex_time(double sc_time, double sc_pathlength, double cut_beta) {
 		return sc_time - sc_pathlength/(cut_beta * c_special_units); }
 
