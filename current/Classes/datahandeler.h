@@ -10,7 +10,6 @@
 // Mashing together W vs Q2 and Delta T cuts into one file
 // Saving the old files in a new folder to refer back to.
 //
-
 void dataHandeler(char *fin, char *RootFile_output){
 
 	TFile *RootOutputFile;
@@ -75,21 +74,21 @@ void dataHandeler(char *fin, char *RootFile_output){
 	//write stuff
 	//Can probble make this into a single write function in main.h or write functions in histo.h
 	//WvsQ2
-	TDirectory *WvsQ2_folder = RootOutputFile->mkdir("W vs Q2");
+	TDirectory *WvsQ2_folder = RootOutputFile->mkdir("W_vs_Q2");
 	WvsQ2_folder->cd();
 	WvsQ2_Write();
 
-	TDirectory *MomVsBeta_folder = RootOutputFile->mkdir("Momentum vs beta");
+	TDirectory *MomVsBeta_folder = RootOutputFile->mkdir("Momentum_vs_beta");
 	MomVsBeta_folder->cd();
 	MomVsBeta_Write();
 
 	//Delta_t Write
-	TDirectory *delta_t_folder = RootOutputFile->mkdir("Delta t");
+	TDirectory *delta_t_folder = RootOutputFile->mkdir("Delta_t");
 	delta_t_folder->cd();
 	delta_t_Write();
 
 	//Extra Write
-	TDirectory *extras_folder = RootOutputFile->mkdir("Missing Mass");
+	TDirectory *extras_folder = RootOutputFile->mkdir("Missing_Mass");
 	extras_folder->cd();
 	Write_Missing_Mass();
 
