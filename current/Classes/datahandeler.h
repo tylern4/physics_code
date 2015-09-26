@@ -18,6 +18,9 @@ void dataHandeler(char *fin, char *RootFile_output){
 	int num_of_events, total_events;
 	bool cuts;
 
+	Delta_T dt;
+	D_time dt_cuts;
+
 	TVector3 e_mu_prime_3;
 	TLorentzVector e_mu_prime;
 	TLorentzVector e_mu(0.0,0.0, sqrt(Square(E1D_E0)-Square(MASS_E)), E1D_E0);
@@ -36,6 +39,49 @@ void dataHandeler(char *fin, char *RootFile_output){
 
 	if (input_file == NULL) perror ("Error opening file");
 
+	while (1){
+		number_cols = fscanf(input_file,"%s",rootFile);
+
+		if (number_cols<0) break;
+		chain.Add(rootFile);
+	}
+
+	getBranches(&chain);
+
+	num_of_events = (int)chain.GetEntries();
+///rewite from here down:
+	///two loops:
+	/// 1) calc and fill original hists
+	/// 2) use calc from first loop and cuts to fill cut hists
+		///Look at making std::vec for W, Q2, mm_cuts, delta_t_cuts
+	for (int current_event = 0; current_event < num_of_events; current_event++) {
+		loadbar(current_event,num_of_events);
+		chain.GetEntry(current_event);
+
+		if (id[0] == ELECTRON && gpart > 0 && stat[0] > 0 && (int)q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0){
+			//Setup scattered electron 4 vector
+			e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);	
+			e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
+			cuts = ( b[0] != 0 );
+
+			if(cuts){
+				dt_cuts = delta_t_calc();
+				WvsQ2(e_mu,e_mu_prime);
+				TLorentzVector gamma_mu = (e_mu - e_mu_prime);
+				missing_mass(gamma_mu);
+				//text_output << current_event <<"\t"<< W_calc(e_mu, e_mu_prime) <<"\t"<< Q2_calc(e_mu, e_mu_prime) << endl;
+			}
+		}
+	}
+
+	// Start of cuts
+	Cuts mm_cut;
+	double *par;
+	//par[0] = MASS_N;
+	mm_cut.CutFit(Missing_Mass,0.9,0.98, par);
+	cout << "Mean: " << mm_cut.mean << "\tSigma: " << mm_cut.sigma << endl; 
+	cout << blue << mm_cut.mean + 3 * mm_cut.sigma <<"\t" << mm_cut.mean - 3 * mm_cut.sigma << def << endl;
+/*
 	while (1){
 		number_cols = fscanf(input_file,"%s",rootFile);
 
@@ -66,7 +112,9 @@ void dataHandeler(char *fin, char *RootFile_output){
 			}
 		}
 	}
+*/
 
+	//
 	//end stuff
 	chain.Reset();						// delete Tree object
 
