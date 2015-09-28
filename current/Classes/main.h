@@ -34,9 +34,10 @@
 #include "TLeaf.h"
 #include "TChain.h"
 #include "TSystem.h"
-#include "delta_t.hpp" //I don't think this is the right way to do this
-#include "cuts.hpp" //I don't think this is the right way to do this
+#include "delta_t.hpp" 
+#include "cuts.hpp" 
 #include "delta_t_hist.hpp"
+#include "delta_time.hpp"
 
 using namespace std;
 

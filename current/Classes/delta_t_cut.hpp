@@ -5,14 +5,16 @@
 /*	University Of South Carolina										*/
 /************************************************************************/
 
-#ifndef DELTA_T_CUT_H_GUARD
-#define DELTA_T_CUT_H_GUARD
+#ifndef DELTA_T_CUT_HPP_GUARD
+#define DELTA_T_CUT_HPP_GUARD
 
 //Function to go through data files and calculate W and Q2
 //Fill in W vs Q2 hist and save to output root file
 //
-void delta_t_cut(){
+/*inline D_time delta_t_calc(){
+
 	Delta_T dt;
+	D_time delta_time;
 	TVector3 Particle3(0.0,0.0,0.0);
 	TLorentzVector Particle4(0.0,0.0,0.0,0.0);
 	double delta_t_P, delta_t_PIP, delta_t_ELECTRON;
@@ -26,6 +28,11 @@ void delta_t_cut(){
 		delta_t_P = dt.delta_t(electron_vertex, MASS_P, p[event_number], sc_t[sc[event_number]-1], sc_r[sc[event_number]-1]);
 		delta_t_PIP = dt.delta_t(electron_vertex, MASS_PIP, p[event_number], sc_t[sc[event_number]-1], sc_r[sc[event_number]-1]);
 		delta_t_ELECTRON = dt.delta_t(electron_vertex, MASS_E, p[event_number], sc_t[sc[event_number]-1], sc_r[sc[event_number]-1]);
+
+		delta_time.proton_time = delta_t_P;
+		delta_time.pip_time = delta_t_PIP;
+		delta_time.electron_time = delta_t_ELECTRON;
+		delta_time.vertex_time = electron_vertex;
 
 		if (event_number == 0 && id[0] == ELECTRON && gpart > 0 && stat[0] > 0 && (int)q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0) {
 			delta_t_Fill(Particle4.P(), delta_t_PIP, 8);
@@ -49,6 +56,6 @@ void delta_t_cut(){
 			} 
 		}
 	} 
-
-}
+return delta_time;
+} */
 #endif
