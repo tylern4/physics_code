@@ -20,6 +20,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 
 	Delta_T dt;
 	D_time dt_cuts;
+	MissingMass MM;
 
 	TVector3 e_mu_prime_3;
 	TLorentzVector e_mu_prime;
@@ -65,10 +66,49 @@ void dataHandeler(char *fin, char *RootFile_output){
 			cuts = ( b[0] != 0 );
 
 			if(cuts){
-				dt_cuts = delta_t_calc();
+				//dt_cuts = delta_t_calc();
+				dt_cuts.SetVertexTimes(sc_t[sc[0]-1],sc_r[sc[0]-1]);
 				WvsQ2(e_mu,e_mu_prime);
-				TLorentzVector gamma_mu = (e_mu - e_mu_prime);
-				missing_mass(gamma_mu);
+				for(int part_num = 1; part_num < gpart; part_num++){
+					dt_cuts.SetTandP(sc_t[sc[part_num]-1],sc_r[sc[part_num]-1],p[part_num]);
+					dt_cuts = dt_cuts.delta_t_calc();
+
+
+					//if (event_number == 0 && id[0] == ELECTRON && gpart > 0 && stat[0] > 0 && (int)q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0) {
+					//	delta_t_Fill(Particle4.P(), delta_t_PIP, 8);
+					//}
+					//Fill delta T hists here now
+					/*
+
+						delta_t_Fill(Particle4.P(), delta_t_PIP, 8);
+				
+						if (Particle4.P() != 0 && (int)q[event_number] == 1) {
+							delta_t_Fill(Particle4.P(),delta_t_P,3);
+				
+							delta_t_Fill(Particle4.P(), delta_t_PIP,4);
+				
+							delta_t_Fill(Particle4.P(), delta_t_ELECTRON, 5); 
+				
+							//If Pi+
+							if(id[event_number] == PROTON && (int)q[event_number] == 1) {
+								delta_t_Fill(Particle4.P(), delta_t_P, 1);
+								delta_t_Fill(Particle4.P(), delta_t_ELECTRON, 7);
+							//If Proton	
+							} else if (id[event_number] == PIP && (int)q[event_number] == 1){
+								delta_t_Fill(Particle4.P(), delta_t_PIP, 2);
+								delta_t_Fill(Particle4.P(), delta_t_ELECTRON, 6);
+							} 
+						}
+
+					*/
+					if(id[part_num] == PIP){
+						TLorentzVector gamma_mu = (e_mu - e_mu_prime);
+						MissingMass MM;
+						MM.MissingMassPxPyPz(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[0]*cz[part_num]);
+						MM = MM.missing_mass(gamma_mu);
+						Fill_Missing_Mass(MM.mass);
+					}
+				}
 				//text_output << current_event <<"\t"<< W_calc(e_mu, e_mu_prime) <<"\t"<< Q2_calc(e_mu, e_mu_prime) << endl;
 			}
 		}

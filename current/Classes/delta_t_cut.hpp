@@ -5,13 +5,14 @@
 /*	University Of South Carolina										*/
 /************************************************************************/
 
-#ifndef DELTA_T_CUT_H_GUARD
-#define DELTA_T_CUT_H_GUARD
+#ifndef DELTA_T_CUT_HPP_GUARD
+#define DELTA_T_CUT_HPP_GUARD
 
 //Function to go through data files and calculate W and Q2
 //Fill in W vs Q2 hist and save to output root file
 //
-inline D_time delta_t_calc(){
+/*inline D_time delta_t_calc(){
+
 	Delta_T dt;
 	D_time delta_time;
 	TVector3 Particle3(0.0,0.0,0.0);
@@ -56,5 +57,5 @@ inline D_time delta_t_calc(){
 		}
 	} 
 return delta_time;
-}
+} */
 #endif
