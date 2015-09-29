@@ -9,6 +9,7 @@
 #define CUTS_HPP_GUARD
 #include "TH1D.h"
 #include "TF1.h"
+#include "TCanvas.h"
 // The idea for this class would be to:
 // 1) Take in the histograms I have made in pervious routines
 // 2) Perform fits on the histograms
@@ -34,12 +35,16 @@ public:
 	double mean;
 	double sigma;
 
-	inline void CutFit(TH1D *hist,double min_value, double max_value, double *parGuess){
+	inline void CutFit(TH1D *hist, double min_value, double max_value, double *parGuess){
+		//TF1 *fitFunc = new TF1("fitFunc","gaus", min_value-5, max_value+5);
+		TCanvas c1;
+		c1.cd();
 		TF1 *fitFunc = new TF1("fitFunc","gaus", min_value, max_value);
-		hist->Fit("fitFunc","M","", min_value, max_value);
-		fitFunc->Draw();
+		hist->Fit("fitFunc","","", min_value, max_value);
+
 		mean = fitFunc->GetParameter(1);
 		sigma = fitFunc->GetParameter(2); 
+
 	} //
 
 	
