@@ -21,6 +21,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 	Delta_T dt;
 	D_time dt_cuts;
 	MissingMass MM;
+	int num_of_pis;
 
 	TVector3 e_mu_prime_3;
 	TLorentzVector e_mu_prime;
@@ -37,7 +38,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 	FILE *input_file = fopen(fin,"r");
 	ofstream text_output;
 	text_output.open("outputFiles/output.txt");
-
+	
 	if (input_file == NULL) perror ("Error opening file");
 
 	while (1){
@@ -64,51 +65,43 @@ void dataHandeler(char *fin, char *RootFile_output){
 			e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);	
 			e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
 			cuts = ( b[0] != 0 );
+			dt_cuts.SetVertexTimes(sc_t[sc[0]-1],sc_r[sc[0]-1]);
 
 			if(cuts){
-				//dt_cuts = delta_t_calc();
-				dt_cuts.SetVertexTimes(sc_t[sc[0]-1],sc_r[sc[0]-1]);
 				WvsQ2(e_mu,e_mu_prime);
 				for(int part_num = 1; part_num < gpart; part_num++){
+
 					dt_cuts.SetTandP(sc_t[sc[part_num]-1],sc_r[sc[part_num]-1],p[part_num]);
 					dt_cuts = dt_cuts.delta_t_calc();
+					Particle3.SetXYZ(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
+					Particle4.SetVectM(Particle3, Get_Mass(id[part_num]));
 
+					if (Particle4.P() != 0 && (int)q[part_num] == 1) {
+						delta_t_Fill(Particle4.P(), dt_cuts.proton_time,3);
+						delta_t_Fill(Particle4.P(), dt_cuts.pip_time,4);
+						delta_t_Fill(Particle4.P(), dt_cuts.electron_time, 5); 
+			
+						//If Pi+
+						if(id[part_num] == PROTON && (int)q[part_num] == 1) {
+							delta_t_Fill(Particle4.P(), dt_cuts.proton_time, 1);
+							delta_t_Fill(Particle4.P(), dt_cuts.electron_time, 7);
+						//If Proton	
+						} else if (id[part_num] == PIP && (int)q[part_num] == 1){
+							delta_t_Fill(Particle4.P(), dt_cuts.pip_time, 2);
+							delta_t_Fill(Particle4.P(), dt_cuts.electron_time, 6);
+						} 
+					}
 
-					//if (event_number == 0 && id[0] == ELECTRON && gpart > 0 && stat[0] > 0 && (int)q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0) {
-					//	delta_t_Fill(Particle4.P(), delta_t_PIP, 8);
-					//}
-					//Fill delta T hists here now
-					/*
-
-						delta_t_Fill(Particle4.P(), delta_t_PIP, 8);
-				
-						if (Particle4.P() != 0 && (int)q[event_number] == 1) {
-							delta_t_Fill(Particle4.P(),delta_t_P,3);
-				
-							delta_t_Fill(Particle4.P(), delta_t_PIP,4);
-				
-							delta_t_Fill(Particle4.P(), delta_t_ELECTRON, 5); 
-				
-							//If Pi+
-							if(id[event_number] == PROTON && (int)q[event_number] == 1) {
-								delta_t_Fill(Particle4.P(), delta_t_P, 1);
-								delta_t_Fill(Particle4.P(), delta_t_ELECTRON, 7);
-							//If Proton	
-							} else if (id[event_number] == PIP && (int)q[event_number] == 1){
-								delta_t_Fill(Particle4.P(), delta_t_PIP, 2);
-								delta_t_Fill(Particle4.P(), delta_t_ELECTRON, 6);
-							} 
-						}
-
-					*/
+					num_of_pis = 0;
 					if(id[part_num] == PIP){
+						num_of_pis++;
 						TLorentzVector gamma_mu = (e_mu - e_mu_prime);
-						MissingMass MM;
-						MM.MissingMassPxPyPz(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[0]*cz[part_num]);
+						MM.MissingMassPxPyPz(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
 						MM = MM.missing_mass(gamma_mu);
-						Fill_Missing_Mass(MM.mass);
 					}
 				}
+				if(num_of_pis == 1) Fill_Missing_Mass(MM.mass);
+
 				//text_output << current_event <<"\t"<< W_calc(e_mu, e_mu_prime) <<"\t"<< Q2_calc(e_mu, e_mu_prime) << endl;
 			}
 		}
@@ -119,8 +112,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 	double *par;
 	//par[0] = MASS_N;
 	mm_cut.CutFit(Missing_Mass,0.9,0.98, par);
-	cout << "Mean: " << mm_cut.mean << "\tSigma: " << mm_cut.sigma << endl; 
-	cout << blue << mm_cut.mean + 3 * mm_cut.sigma <<"\t" << mm_cut.mean - 3 * mm_cut.sigma << def << endl;
+
 /*
 	while (1){
 		number_cols = fscanf(input_file,"%s",rootFile);

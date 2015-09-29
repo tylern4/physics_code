@@ -90,7 +90,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 				WvsQ2(e_mu,e_mu_prime);
 				TLorentzVector gamma_mu = (e_mu - e_mu_prime);
 				missing_mass(gamma_mu);
-				text_output << current_event <<"\t"<< W_calc(e_mu, e_mu_prime) <<"\t"<< Q2_calc(e_mu, e_mu_prime) << endl;
+				//text_output << current_event <<"\t"<< W_calc(e_mu, e_mu_prime) <<"\t"<< Q2_calc(e_mu, e_mu_prime) << endl;
 				/*std::thread thread1(WvsQ2,e_mu,e_mu_prime);
 				std::thread thread2(delta_t_cut);
 				thread1.detach();
