@@ -10,6 +10,7 @@
 #include "TMath.h"
 #include "TTree.h"
 #include "TROOT.h"
+//#include <omp.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <TLorentzVector.h>
@@ -34,11 +35,6 @@
 #include "TLeaf.h"
 #include "TChain.h"
 #include "TSystem.h"
-#include "delta_t.hpp"
-#include "delta_t_hist.hpp" 
-#include "cuts.hpp" 
-#include "delta_t_hist.hpp"
-#include "delta_time.hpp"
 
 using namespace std;
 
@@ -318,8 +314,7 @@ string outputFileName(int argc, char **argv){
   		else {
   			hour = to_string(localTime->tm_hour);
   		}
-  		string time = "outputFiles/release_" + to_string(localTime->tm_mon+1) 
-  						+ "-" + to_string(localTime->tm_mday) + "_" + hour + "-" + minutes + ".root";
+  		string time = "outputFiles/release_" + to_string(localTime->tm_mon+1) + "-" + to_string(localTime->tm_mday) + "_" + hour + "-" + minutes + ".root";
 		return time;
 	}
 }
