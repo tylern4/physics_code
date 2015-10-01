@@ -36,10 +36,11 @@ public:
 	double sigma;
 
 	inline void CutFit(TH1D *hist, double min_value, double max_value, double *parGuess){
-		//TF1 *fitFunc = new TF1("fitFunc","gaus", min_value-5, max_value+5);
-		TCanvas c1;
-		c1.cd();
-		TF1 *fitFunc = new TF1("fitFunc","gaus", min_value, max_value);
+		TF1 *fitFunc = new TF1("fitFunc","[0]*TMath::Gaus(x,[1],[2],1)", min_value, max_value);
+		fitFunc->SetParameter(0, hist->GetMaximum());
+		fitFunc->SetParameter(1, hist->GetMean());
+		fitFunc->SetParameter(2, 1);
+		//TF1 *fitFunc = new TF1("fitFunc","gaus", min_value, max_value);
 		hist->Fit("fitFunc","","", min_value, max_value);
 
 		mean = fitFunc->GetParameter(1);
