@@ -7,26 +7,47 @@
 
 #ifndef MISSING_H_GUARD
 #define MISSING_H_GUARD
-#include <stdlib.h>
-#include <stdio.h>
-#include "main.h"
+#include "TLorentzVector.h"
 
-void missing_mass(TLorentzVector gamma_mu){
-	TVector3 Temp_vec_3_PIP(0.0,0.0,0.0);
-	TLorentzVector Temp_vec_4_PIP(0.0,0.0,0.0,0.0);
+class MissingMass
+{
+	double MASS_P = 0.93827203;
+	double MASS_PIP = 0.13957018;
+	double MASS_E = 0.000511;
 
-	TVector3 Temp_vec_3_PROTON(0.0,0.0,0.0);
-	TLorentzVector Temp_vec_4_PROTON(0.0,0.0,0.0,MASS_P);
-	int numOfPis = 0, numOfProtons = 0;
+	double missing_mass_calc(TLorentzVector gamma_mu, TLorentzVector p_mu, TLorentzVector pi_mu){
+		TLorentzVector reaction(0.0,0.0,0.0,0.0);
+		reaction = (gamma_mu + p_mu - pi_mu);
 
-	for(int event_number = 0; event_number < gpart; event_number++) {
-		if (id[event_number] == PIP && (int)q[event_number] == 1) {
-			numOfPis++;
-			Temp_vec_3_PIP.SetXYZ(p[event_number]*cx[event_number], p[event_number]*cy[event_number], p[event_number]*cz[event_number]);
-			Temp_vec_4_PIP.SetVectM(Temp_vec_3_PIP, MASS_PIP);
-		} 
+		return reaction.M();
+	} //
+
+public:
+	double mass = -1;
+	double PX;
+	double PY;
+	double PZ;
+
+	inline void MissingMassPxPyPz(double px, double py, double pz){
+		PX = px;
+		PY = py;
+		PZ = pz;
 	}
-	if (numOfPis == 1 ) Fill_Missing_Mass(missing_mass_calc(gamma_mu,Temp_vec_4_PROTON,Temp_vec_4_PIP));
-}
 
+ 	MissingMass missing_mass(TLorentzVector gamma_mu){
+ 		MissingMass MM;
+		TVector3 Temp_vec_3_PIP(0.0,0.0,0.0);
+		TLorentzVector Temp_vec_4_PIP(0.0,0.0,0.0,0.0);
+
+		TLorentzVector Rest_PROTON(0.0,0.0,0.0,MASS_P);
+
+		Temp_vec_3_PIP.SetXYZ(PX,PY,PZ);
+		Temp_vec_4_PIP.SetVectM(Temp_vec_3_PIP, MASS_PIP);
+		
+		MM.mass = missing_mass_calc(gamma_mu,Rest_PROTON,Temp_vec_4_PIP);
+
+		return MM;
+	}
+
+};
 #endif

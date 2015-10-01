@@ -41,12 +41,12 @@ double xb_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime){
 	return (Q2/ (2 * (q.Dot(target))));
 }
 
-double missing_mass_calc(TLorentzVector gamma_mu, TLorentzVector p_mu, TLorentzVector pi_mu){
-	TLorentzVector reaction(0.0,0.0,0.0,0.0);
-	reaction = (gamma_mu + p_mu - pi_mu);
-
-	return reaction.M();
-}
+//double missing_mass_calc(TLorentzVector gamma_mu, TLorentzVector p_mu, TLorentzVector pi_mu){
+//	TLorentzVector reaction(0.0,0.0,0.0,0.0);
+//	reaction = (gamma_mu + p_mu - pi_mu);
+//
+//	return reaction.M();
+//}
 
 double Get_Mass(int ID){
 

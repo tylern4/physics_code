@@ -7,11 +7,6 @@
 
 #ifndef MOMENTUM_HISTS_H_GUARD
 #define MOMENTUM_HISTS_H_GUARD
-//#include <omp.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include "main.h"
-
 //
 //Histogram declarations, fills, and write
 //
