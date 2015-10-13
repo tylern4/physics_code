@@ -36,8 +36,8 @@ void dataHandeler(char *fin, char *RootFile_output){
 	cout << blue <<"Analyzing file " << green << fin << def << bgdef << endl;
 
 	FILE *input_file = fopen(fin,"r");
-	ofstream text_output;
-	text_output.open("outputFiles/output.txt");
+	//ofstream text_output;
+	//text_output.open("outputFiles/output.txt");
 	
 	if (input_file == NULL) perror ("Error opening file");
 
@@ -176,6 +176,6 @@ void dataHandeler(char *fin, char *RootFile_output){
 	RootOutputFile->Write();
 	RootOutputFile->Close();
 	fclose(input_file); 														// close file with input file list
-	text_output.close();
+	//text_output.close();
 }
 #endif

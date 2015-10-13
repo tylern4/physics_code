@@ -10,6 +10,7 @@
 #include "TH1D.h"
 #include "TF1.h"
 #include "TCanvas.h"
+#include "TStyle.h"
 // The idea for this class would be to:
 // 1) Take in the histograms I have made in pervious routines
 // 2) Perform fits on the histograms
@@ -40,9 +41,10 @@ public:
 		fitFunc->SetParameter(0, hist->GetMaximum());
 		fitFunc->SetParameter(1, hist->GetMean());
 		fitFunc->SetParameter(2, 1);
+		fitFunc->SetParNames("mass","width","const");
 		//TF1 *fitFunc = new TF1("fitFunc","gaus", min_value, max_value);
-		hist->Fit("fitFunc","","", min_value, max_value);
-
+		hist->Fit("fitFunc","V+","", min_value, max_value);
+		gStyle->SetOptFit(1111);
 		mean = fitFunc->GetParameter(1);
 		sigma = fitFunc->GetParameter(2); 
 

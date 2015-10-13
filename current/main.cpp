@@ -23,7 +23,7 @@ using namespace std;
 int main(int argc, char **argv){
 	TStopwatch *Watch = new TStopwatch;
 	Watch->Start();
-
+	gStyle->SetOptFit(1111);
 	//bad work around until I fix using strings in datahandeler/WvsQ2
 	char  infilename_bad[128];
 	char  outfilename_bad[128];
