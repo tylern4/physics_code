@@ -7,6 +7,7 @@
 
 #ifndef MISSING_MASS_HISTS_H_GUARD
 #define MISSING_MASS_HISTS_H_GUARD
+#include "main.h"
 //
 //histogram declarations, fills, and write
 //
