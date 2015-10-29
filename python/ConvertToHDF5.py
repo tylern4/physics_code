@@ -49,7 +49,5 @@ for line in lines:
 #energy = np.hstack(np.array(df['energy'])) ###Flattens array or arrays to a single array
 #Q2 = np.hstack(np.array(df['Q2']))
 #W = np.hstack(np.array(df['W']))
-#Q2[Q2 >= 0]
-#W[W >= 0]
 #plt.hist2d(W, Q2,bins=500,range=[[0,3.14],[0,4]])
 #plt.show()
