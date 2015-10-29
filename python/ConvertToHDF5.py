@@ -37,11 +37,12 @@ for line in lines:
 			Q2.append(Q2_calc(e_mu, e_mu_prime))
 			W.append(W_calc(e_mu,e_mu_prime))
 		else:
-			Q2.append(-100)
-			W.append(-100)
+			Q2.append(np.NaN)
+			W.append(np.NaN)
 	df['Q2'] = pd.Series(Q2, index=df.index)
 	df['W'] = pd.Series(W, index=df.index)
 
+	df = df[df.Q2 != df.Q2]
 
 	fileNames = line.replace('root', 'h5')
 	os.remove(fileNames) if os.path.isfile(fileNames) else None
