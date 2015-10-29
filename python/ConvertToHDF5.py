@@ -1,4 +1,5 @@
 #!/usr/local/bin/ipython
+import sys
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -6,15 +7,14 @@ from root_numpy import root2rec
 from StringIO import StringIO
 from ROOT import TLorentzVector
 from ROOT import TVector3
-from physics import Q2_calc, W_calc, branches
+from physics import Q2_calc, W_calc, branches, masses, getM2
 
-masses = {11:0.000511, 211:0.13957, -211:0.13957, 2212:0.93827, 2112:0.939565, 0:0, 22:0, 321:0.493667, -321:0.493667, 45:0, 47:0, 49:0}
-getM2 = lambda x: [masses[pid]**2 for pid in x]
-
-lines = [line.rstrip('\n') for line in open('test.lis')]
+lines = [line.rstrip('\n') for line in open(str(sys.argv[1]))]
 e_mu = TLorentzVector(0.0,0.0,4.802,4.802) #(0.0,0.0, sqrt(Square(E1D_E0)-Square(MASS_E)), E1D_E0)
 for line in lines:
 	fileNames = [line]
+	print fileNames
+	
 	df = pd.DataFrame(root2rec(fileNames, treename='h10', branches=branches)) #magic line to create a dataframe
 	#These lines add a column to the data frame with 'name' = value, should be able to find W, Q2 for an event and add it like this
 	df['pz'] = df.p*df.cz 
@@ -49,5 +49,7 @@ for line in lines:
 #energy = np.hstack(np.array(df['energy'])) ###Flattens array or arrays to a single array
 #Q2 = np.hstack(np.array(df['Q2']))
 #W = np.hstack(np.array(df['W']))
+#Q2[Q2 >= 0]
+#W[W >= 0]
 #plt.hist2d(W, Q2,bins=500,range=[[0,3.14],[0,4]])
 #plt.show()
