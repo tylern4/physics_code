@@ -1,5 +1,6 @@
 #!/usr/local/bin/ipython
 import sys
+import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -10,7 +11,7 @@ from ROOT import TVector3
 from physics import Q2_calc, W_calc, branches, masses, getM2
 
 lines = [line.rstrip('\n') for line in open(str(sys.argv[1]))]
-e_mu = TLorentzVector(0.0,0.0,4.802,4.802) #(0.0,0.0, sqrt(Square(E1D_E0)-Square(MASS_E)), E1D_E0)
+e_mu = TLorentzVector(0.0,0.0,np.sqrt(4.802**2.0 - 0.000511**2.0),4.802) #(0.0,0.0, sqrt(Square(E1D_E0)-Square(MASS_E)), E1D_E0)
 for line in lines:
 	fileNames = [line]
 	print fileNames
@@ -22,7 +23,7 @@ for line in lines:
 	df['px'] = df.p*df.cx
 	df['energy'] = (df.p*df.p + df.id.apply(getM2)).apply(lambda x: np.sqrt(x)) #This is some master python
 	
-
+	#more complicated calcs and if statement ones can be added like this
 	Q2 = []
 	W = []
 	np.array(Q2)
@@ -36,21 +37,14 @@ for line in lines:
 			Q2.append(Q2_calc(e_mu, e_mu_prime))
 			W.append(W_calc(e_mu,e_mu_prime))
 		else:
-			Q2.append(-1)
-			W.append(-1)
+			Q2.append(-100)
+			W.append(-100)
 	df['Q2'] = pd.Series(Q2, index=df.index)
 	df['W'] = pd.Series(W, index=df.index)
 
 
 	fileNames = line.replace('root', 'h5')
+	os.remove(fileNames) if os.path.isfile(fileNames) else None
 	store = pd.HDFStore(fileNames)
 	store.put('df',df)
 	store.close()
-
-#energy = np.hstack(np.array(df['energy'])) ###Flattens array or arrays to a single array
-#Q2 = np.hstack(np.array(df['Q2']))
-#W = np.hstack(np.array(df['W']))
-#Q2[Q2 >= 0]
-#W[W >= 0]
-#plt.hist2d(W, Q2,bins=500,range=[[0,3.14],[0,4]])
-#plt.show()
