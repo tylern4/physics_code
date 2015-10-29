@@ -42,7 +42,7 @@ for line in lines:
 	df['Q2'] = pd.Series(Q2, index=df.index)
 	df['W'] = pd.Series(W, index=df.index)
 
-	df = df[df.Q2 != df.Q2]
+	df = df[~(df.Q2 != df.Q2)]
 
 	fileNames = line.replace('root', 'h5')
 	os.remove(fileNames) if os.path.isfile(fileNames) else None
