@@ -2,6 +2,8 @@ from ROOT import TLorentzVector
 from ROOT import TVector3
 
 mass = {'ELECTRON':0.000511, 'PIP':0.13957, 'PIM':0.13957, 'PROTON':0.93827, 'NEUTRON':0.939565, 0:0, 22:0, 321:0.493667, -321:0.493667, 45:0, 47:0, 49:0}
+masses = {11:0.000511, 211:0.13957, -211:0.13957, 2212:0.93827, 2112:0.939565, 0:0, 22:0, 321:0.493667, -321:0.493667, 45:0, 47:0, 49:0}
+getM2 = lambda x: [masses[pid]**2 for pid in x]
 
 branches = ['npart',
 			'gpart', 
