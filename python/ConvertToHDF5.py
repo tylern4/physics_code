@@ -45,6 +45,7 @@ for line in lines:
 	fileNames = line.replace('root', 'h5')
 	store = pd.HDFStore(fileNames)
 	store.put('df',df)
+	store.close()
 
 #energy = np.hstack(np.array(df['energy'])) ###Flattens array or arrays to a single array
 #Q2 = np.hstack(np.array(df['Q2']))
