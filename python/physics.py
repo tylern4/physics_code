@@ -84,6 +84,7 @@ branches = ['npart',
 			#'cc_r',   
 			#'cc_c2'
 			] #This sets the branch names, should be able to add all of them to load everything or just use the ones I need for now
+
 #Calcuating Q^2 
 # q^mu^2 = (e^mu - e^mu')^2 = -Q^2
 def Q2_calc(e_mu, e_mu_prime):
@@ -114,9 +115,3 @@ def xb_calc(e_mu, e_mu_prime):
 	q = e_mu - e_mu_prime
 	target = TLorentzVector(0, 0, 0, mass['PROTON'])
 	return (Q2/ (2 * (q.Dot(target))))
-
-def missing_mass_calc(gamma_mu, pi_mu):
-	reaction = TLorentzVector(0.0,0.0,0.0,0.0)
-	p_mu = TLorentzVector(0.0,0.0,0.0,mass['PROTON'])
-	reaction = (gamma_mu + p_mu - pi_mu)
-	return reaction.M()

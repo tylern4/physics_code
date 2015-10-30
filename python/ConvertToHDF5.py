@@ -8,7 +8,8 @@ from root_numpy import root2rec
 from StringIO import StringIO
 from ROOT import TLorentzVector
 from ROOT import TVector3
-from physics import Q2_calc, W_calc, branches, masses, mass, getM2, missing_mass_calc
+from physics import Q2_calc, W_calc, branches, masses, mass, getM2
+from missingmass import missing_mass_calc
 
 lines = [line.rstrip('\n') for line in open(str(sys.argv[1]))]
 e_mu = TLorentzVector(0.0,0.0,np.sqrt(4.802**2.0 - 0.000511**2.0),4.802) #(0.0,0.0, sqrt(Square(E1D_E0)-Square(MASS_E)), E1D_E0)
