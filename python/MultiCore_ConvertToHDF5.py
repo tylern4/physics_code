@@ -12,6 +12,12 @@ from ROOT import TVector3
 from physics import Q2_calc, W_calc, branches, masses, mass, getM2
 from missingmass import missing_mass_calc
 
+#found this on stack overflow
+def split_list(alist, wanted_parts=1):
+    length = len(alist)
+    return [ alist[i*length // wanted_parts: (i+1)*length // wanted_parts] 
+             for i in range(wanted_parts) ]
+
 def convert(lines):
 	e_mu = TLorentzVector(0.0,0.0,np.sqrt(4.802**2.0 - 0.000511**2.0),4.802) #(0.0,0.0, sqrt(Square(E1D_E0)-Square(MASS_E)), E1D_E0)
 	for line in lines:
@@ -75,16 +81,10 @@ def convert(lines):
 lines = [line.rstrip('\n') for line in open(str(sys.argv[1]))]
 num_cores = 8
 pool = Pool(processes=num_cores)
-iteration = len(lines)/num_cores
 
-lines1 = lines[:iteration]
-lines2 = lines[1*iteration+1:2*iteration]
-lines3 = lines[2*iteration+1:3*iteration]
-lines4 = lines[3*iteration+1:4*iteration]
-lines5 = lines[4*iteration+1:5*iteration]
-lines6 = lines[5*iteration+1:6*iteration]
-lines7 = lines[6*iteration+1:7*iteration]
-lines8 = lines[7*iteration+1:]
+lines1,lines2,lines3,lines4,lines5,lines6,lines7,lines8 = split_list(lines,wanted_parts=num_cores)
+
+
 length = len(lines1) + len(lines2) + len(lines3) + len(lines4) + len(lines5) + len(lines6) + len(lines7) + len(lines8)
 if length == len(lines):
 	pool.map(convert, (lines1,lines2,lines3,lines4,lines5,lines6,lines7,lines8))
