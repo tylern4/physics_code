@@ -63,7 +63,7 @@ def convert(lines):
 		df['W'] = pd.Series(W, index=df.index)
 		df['MM'] = pd.Series(MM, index=df.index)
 		
-		df = df[~(df.Q2 != df.Q2)]
+		#df = df[~(df.Q2 != df.Q2)]
 		
 		
 		
