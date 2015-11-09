@@ -7,6 +7,7 @@ from ROOT import TLorentzVector
 from ROOT import TVector3
 from physics import Q2_calc, W_calc, branches, masses, mass, getM2
 from missingmass import missing_mass_calc
+import xray
 
 #found this on stack overflow
 def split_list(alist, wanted_parts=1):
@@ -21,7 +22,7 @@ def convert(lines):
 
 		print fileNames
 		df = pd.DataFrame(root2rec(fileNames, treename='h10', branches=branches)) #magic line to create a dataframe
-		
+
 		#These lines add a column to the data frame with 'name' = value, should be able to find W, Q2 for an event and add it like this
 		df['px'] = df.p*df.cx
 		df['py'] = df.p*df.cy
@@ -64,11 +65,12 @@ def convert(lines):
 		df['MM'] = pd.Series(MM, index=df.index)
 		
 		#df = df[~(df.Q2 != df.Q2)]
-		
-		
+		xr = xray.Dataset.from_dataframe(df)
+		#xr.to_netcdf('test.nc')
 		
 		fileNames = line.replace('root', 'h5')
+		#print xr
 		os.remove(fileNames) if os.path.isfile(fileNames) else None
-		store = pd.HDFStore(fileNames)
+		store = pd.HDFStore(fileNames,format='table')
 		store.put('df',df)
 		store.close()
