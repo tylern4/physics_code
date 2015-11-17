@@ -22,6 +22,7 @@ void skim(char *fin, char *RootFile_output){
 	Delta_T dt;
 	D_time dt_cuts;
 	MissingMass MM;
+	double MissMass, W, Q2;
 	int num_of_pis;
 
 	TVector3 e_mu_prime_3;
@@ -52,16 +53,19 @@ void skim(char *fin, char *RootFile_output){
 	getBranches(&chain);
 
 	num_of_events = (int)chain.GetEntries();
-///rewite from here down:
-	///two loops:
-	/// 1) calc and fill original hists
-	/// 2) use calc from first loop and cuts to fill cut hists
-		///Look at making std::vec for W, Q2, mm_cuts, delta_t_cuts
+
+	TTree *skim = chain.CloneTree(0);
+	TBranch *MissMass_branch = skim->Branch("MissingMass",&MissMass);
+	TBranch *W_branch = skim->Branch("W",&W);
+	TBranch *Q2_branch = skim->Branch("Q2",&Q2);
+
 	for (int current_event = 0; current_event < num_of_events; current_event++) {
 		loadbar(current_event,num_of_events);
 		chain.GetEntry(current_event);
 
 		if (id[0] == ELECTRON && gpart > 0 && stat[0] > 0 && (int)q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0){
+			//skim->Fill();
+
 			//Setup scattered electron 4 vector
 			e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);	
 			e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
@@ -69,9 +73,11 @@ void skim(char *fin, char *RootFile_output){
 			dt_cuts.SetVertexTimes(sc_t[sc[0]-1],sc_r[sc[0]-1]);
 
 			if(cuts){
-				WvsQ2(e_mu,e_mu_prime);
+				W = W_calc(e_mu,e_mu_prime);
+				Q2 = Q2_calc(e_mu,e_mu_prime);
+				//WvsQ2(e_mu,e_mu_prime);
 				for(int part_num = 1; part_num < gpart; part_num++){
-
+					/*
 					dt_cuts.SetTandP(sc_t[sc[part_num]-1],sc_r[sc[part_num]-1],p[part_num]);
 					dt_cuts = dt_cuts.delta_t_calc();
 					Particle3.SetXYZ(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
@@ -92,7 +98,7 @@ void skim(char *fin, char *RootFile_output){
 							delta_t_Fill(Particle4.P(), dt_cuts.electron_time, 6);
 						} 
 					}
-
+					*/
 					num_of_pis = 0;
 					if(id[part_num] == PIP){
 						num_of_pis++;
@@ -101,18 +107,21 @@ void skim(char *fin, char *RootFile_output){
 						MM = MM.missing_mass(gamma_mu);
 					}
 				}
-				if(num_of_pis == 1) Fill_Missing_Mass(MM.mass);
-
+				if(num_of_pis == 1){
+					Fill_Missing_Mass(MM.mass);
+					MissMass = MM.mass;
+				}
+				skim->Fill();
 				//text_output << current_event <<"\t"<< W_calc(e_mu, e_mu_prime) <<"\t"<< Q2_calc(e_mu, e_mu_prime) << endl;
 			}
 		}
 	}
 
 	// Start of cuts
-	Cuts mm_cut;
-	double *par;
+	//Cuts mm_cut;
+	//double *par;
 	//par[0] = MASS_N;
-	mm_cut.CutFit(Missing_Mass,0.9,1.0, par);
+	//mm_cut.CutFit(Missing_Mass,0.9,1.0, par);
 
 /*
 	while (1){
@@ -152,6 +161,7 @@ void skim(char *fin, char *RootFile_output){
 	chain.Reset();						// delete Tree object
 
 	RootOutputFile->cd();
+	/*
 	//write stuff
 	//Can probble make this into a single write function in main.h or write functions in histo.h
 	//WvsQ2
@@ -172,7 +182,7 @@ void skim(char *fin, char *RootFile_output){
 	TDirectory *extras_folder = RootOutputFile->mkdir("Missing_Mass");
 	extras_folder->cd();
 	Write_Missing_Mass();
-
+	*/
 
 	RootOutputFile->Write();
 	RootOutputFile->Close();
