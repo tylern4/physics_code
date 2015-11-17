@@ -31,3 +31,7 @@ current/Classes/e1d
 *.lis
 
 *.pyc
+
+*.root
+
+skim/Skim
