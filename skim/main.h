@@ -34,11 +34,6 @@
 #include "TLeaf.h"
 #include "TChain.h"
 #include "TSystem.h"
-/*#include "delta_t.hpp"
-#include "delta_t_hist.hpp" 
-#include "cuts.hpp" 
-#include "delta_t_hist.hpp"
-#include "delta_time.hpp" */
 
 using namespace std;
 
@@ -78,6 +73,8 @@ static const float MASS_KM = 0.493677;
 static const float MASS_G = 0.0;
 static const float MASS_OMEGA = 0.78265;
 
+//static const double NaN = (0.0/0.0);
+static const double NaN = std::nan("1");
 
 UChar_t npart;
 //UChar_t evstat;

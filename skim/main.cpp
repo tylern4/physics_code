@@ -10,14 +10,9 @@
 #include "main.h"
 #include "classes.hpp"
 #include "TStopwatch.h"
-#include "WvsQ2_hists.hpp"
-#include "missing_mass_hists.hpp"
-#include "momentum_hists.hpp"
 #include "physics.hpp"
-#include "WvsQ2.hpp"
 #include "delta_t_cut.hpp"
 #include "missing_mass.hpp"
-#include "datahandeler.h"
 #include "skim.hpp"
 
 using namespace std;
