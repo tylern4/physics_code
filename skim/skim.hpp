@@ -104,7 +104,7 @@ void skim(char *fin, char *RootFile_output){
 					MissMass = -10000;
 				}
 				*/
-				cout << dt_proton[1] << endl;
+
 				MissMass = (num_of_pis == 1) ? MM.mass : NaN;
 
 				skim->Fill();
