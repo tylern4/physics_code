@@ -1,10 +1,12 @@
 #!/usr/local/bin/ipython
-from convert import convert, split_list
+from skim import skim, split_list
 # from StringIO import StringIO
 from multiprocessing import Pool
 import multiprocessing
 import sys
-# import os
+import os
+
+os.system("make")
 
 lines = [line.rstrip('\n') for line in open(str(sys.argv[1]))]
 
@@ -13,6 +15,6 @@ pool = Pool(processes=num_cores)
 
 lines_split = split_list(lines, wanted_parts=num_cores)
 
-pool.map(convert, (lines_split))
+pool.map(skim, (lines_split))
 
 print "done"
