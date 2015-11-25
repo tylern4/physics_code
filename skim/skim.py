@@ -9,7 +9,6 @@ def split_list(alist, wanted_parts=1):
 def skim(lines):
 	for line in lines:
 		infile = [line]
-		outfile = line.replace('.root', '_skim.root').replace('inputFiles','outputFiles')
+		outfile = line.replace('.root', '_skim.root').replace('/root','/skim')
 		command = "./Skim "+infile[0]+" "+outfile
 		os.system(command)
-		
