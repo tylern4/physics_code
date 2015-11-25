@@ -10,7 +10,7 @@
 
 class Delta_T
 {
-	const double c_special_units = 29.9792458;
+	
 public:
 	inline double vertex_time(double sc_time, double sc_pathlength, double cut_beta) {
 		return sc_time - sc_pathlength/(cut_beta * c_special_units); 
@@ -20,7 +20,8 @@ public:
 		double cut_beta = 1.0/sqrt(1.0 + (mass/momentum)*(mass/momentum));
 		return electron_vertex_time - vertex_time(sc_t,sc_r,cut_beta); 
 	} //
-
+private:
+	const double c_special_units = 29.9792458;
 
 };
 #endif

@@ -35,7 +35,7 @@ int main(int argc, char **argv){
 	//dataHandeler(infilename_bad,outfilename_bad);
 
 	Watch->Stop();
-	cout << red << Watch->RealTime() << "sec" << def << endl;
+	//cout << red << Watch->RealTime() << "sec" << def << endl;
 
 	return 0;
 }

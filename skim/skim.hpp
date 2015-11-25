@@ -37,17 +37,17 @@ void skim(char *fin, char *RootFile_output){
 
 	TChain chain("h10");
 	cout << blue <<"Analyzing file " << green << fin << def << bgdef << endl;
-
-	FILE *input_file = fopen(fin,"r");
+	chain.AddFile(fin);
+	//FILE *input_file = fopen(fin,"r");
 	
-	if (input_file == NULL) perror ("Error opening file");
+	//if (input_file == NULL) perror ("Error opening file");
 
-	while (1){
-		number_cols = fscanf(input_file,"%s",rootFile);
+	//while (1){
+	//	number_cols = fscanf(input_file,"%s",rootFile);
 
-		if (number_cols<0) break;
-		chain.Add(rootFile);
-	}
+	//	if (number_cols<0) break;
+	//	chain.Add(rootFile);
+	//}
 
 	getBranches(&chain);
 
@@ -61,7 +61,7 @@ void skim(char *fin, char *RootFile_output){
 	TBranch *Delta_t_pip_branch = skim->Branch("dt_pip",dt_pip);
 
 	for (int current_event = 0; current_event < num_of_events; current_event++) {
-		loadbar(current_event,num_of_events);
+		//loadbar(current_event,num_of_events);
 		chain.GetEntry(current_event);
 
 		if (id[0] == ELECTRON && gpart > 0 && stat[0] > 0 && (int)q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0){
@@ -120,7 +120,7 @@ void skim(char *fin, char *RootFile_output){
 
 	RootOutputFile->Write();
 	RootOutputFile->Close();
-	fclose(input_file); 														// close file with input file list
+	//fclose(input_file); 														// close file with input file list
 
 }
 #endif
