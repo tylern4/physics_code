@@ -68,7 +68,7 @@ def convert(lines):
 		xr = xray.Dataset.from_dataframe(df)
 		#xr.to_netcdf('test.nc')
 		
-		fileNames = line.replace('root', 'h5')
+		fileNames = line.replace('root', 'h5').replace('/skim','/h5')
 		#print xr
 		os.remove(fileNames) if os.path.isfile(fileNames) else None
 		store = pd.HDFStore(fileNames,format='table')
