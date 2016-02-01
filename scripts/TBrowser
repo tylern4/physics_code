@@ -1,5 +1,5 @@
 #!/usr/bin/expect -f
 spawn -noecho root -l
-send "gStyle->SetPalette(55);\r"
+#send "gStyle->SetPalette(55);\r"
 send "TBrowser a;\r"
 interact
