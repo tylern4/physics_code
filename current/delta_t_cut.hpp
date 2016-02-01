@@ -11,7 +11,7 @@
 //Function to go through data files and calculate W and Q2
 //Fill in W vs Q2 hist and save to output root file
 //
-/*inline D_time delta_t_calc(){
+inline D_time delta_t_calc(){
 
 	Delta_T dt;
 	D_time delta_time;
@@ -57,5 +57,5 @@
 		}
 	} 
 return delta_time;
-} */
+} /**/
 #endif

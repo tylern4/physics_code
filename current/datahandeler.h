@@ -13,14 +13,20 @@
 //
 void dataHandeler(char *fin, char *RootFile_output){
 
+	std::vector<double> W_vec;
+	std::vector<double> Q2_vec;
+
 	TFile *RootOutputFile;
 	int number_cols = 0;
 	char rootFile[500];
 	int num_of_events, total_events;
-	bool cuts;
+	bool cuts, electron_cuts;
 
+	//From delta_t.hpp :: vertex_time() delta_t()
 	Delta_T dt;
+	//From delta_t_cut.hpp :: delta_t_calc()
 	D_time dt_cuts;
+	//From missing_mass.hpp :: missing_mass_calc()
 	MissingMass MM;
 	int num_of_pis;
 
@@ -30,25 +36,27 @@ void dataHandeler(char *fin, char *RootFile_output){
 
 	TVector3 Particle3(0.0,0.0,0.0);
 	TLorentzVector Particle4(0.0,0.0,0.0,0.0);
+	//End declrare variables
 
+	//Open outputfile
 	RootOutputFile = new TFile(RootFile_output,"RECREATE"); 
 
+	//Load chain from branch h10
 	TChain chain("h10");
 	cout << blue <<"Analyzing file " << green << fin << def << bgdef << endl;
 
+	//Try to open lis file throw an error if it won't open
 	FILE *input_file = fopen(fin,"r");
-	//ofstream text_output;
-	//text_output.open("outputFiles/output.txt");
-	
 	if (input_file == NULL) perror ("Error opening file");
 
+	//Go through lis file adding each files h10 branch to the chain
 	while (1){
 		number_cols = fscanf(input_file,"%s",rootFile);
 
 		if (number_cols<0) break;
 		chain.Add(rootFile);
 	}
-
+	//get branches from the chain
 	getBranches(&chain);
 
 	num_of_events = (int)chain.GetEntries();
@@ -58,17 +66,37 @@ void dataHandeler(char *fin, char *RootFile_output){
 	/// 2) use calc from first loop and cuts to fill cut hists
 		///Look at making std::vec for W, Q2, mm_cuts, delta_t_cuts
 	for (int current_event = 0; current_event < num_of_events; current_event++) {
+		//update loadbar and get current event
 		loadbar(current_event,num_of_events);
 		chain.GetEntry(current_event);
+		//reset electron cut bool
+		electron_cuts = true;
 
-		if (id[0] == ELECTRON && gpart > 0 && stat[0] > 0 && (int)q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0){
+		//electron cuts
+		electron_cuts &= (id[0] == ELECTRON); //First particle is electron
+		electron_cuts &= (gpart > 0); //Number of good particles is greater than 0
+		electron_cuts &= (stat[0] > 0); //First Particle hit stat
+		electron_cuts &= ((int)q[0] == -1); //First particle is negative Q
+		electron_cuts &= (sc[0] > 0); //First Particle hit sc
+		electron_cuts &= (dc[0] > 0); // ``` ``` ``` dc
+		electron_cuts &= (ec[0] > 0); // ``` ``` ``` ec
+		electron_cuts &= (dc_stat[dc[0]-1] > 0);
+
+		if (electron_cuts){
 			//Setup scattered electron 4 vector
 			e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);	
 			e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
-			cuts = ( b[0] != 0 );
+
+			cuts = ( b[0] != 0 ); //beta doesn't equal zero (speed doesn't equal c)
+
+			//Set the vertex time (time of electron hit) 
 			dt_cuts.SetVertexTimes(sc_t[sc[0]-1],sc_r[sc[0]-1]);
 
 			if(cuts){
+				W_vec.push_back(W_calc(e_mu, e_mu_prime));
+				Q2_vec.push_back(Q2_calc(e_mu, e_mu_prime));
+
+				//Part of WvsQ2.hpp 
 				WvsQ2(e_mu,e_mu_prime);
 				for(int part_num = 1; part_num < gpart; part_num++){
 
@@ -78,8 +106,8 @@ void dataHandeler(char *fin, char *RootFile_output){
 					Particle4.SetVectM(Particle3, Get_Mass(id[part_num]));
 
 					if (Particle4.P() != 0 && (int)q[part_num] == 1) {
-						delta_t_Fill(Particle4.P(), dt_cuts.proton_time,3);
-						delta_t_Fill(Particle4.P(), dt_cuts.pip_time,4);
+						delta_t_Fill(Particle4.P(), dt_cuts.proton_time, 3);
+						delta_t_Fill(Particle4.P(), dt_cuts.pip_time, 4);
 						delta_t_Fill(Particle4.P(), dt_cuts.electron_time, 5); 
 			
 						//If Pi+
@@ -102,8 +130,6 @@ void dataHandeler(char *fin, char *RootFile_output){
 					}
 				}
 				if(num_of_pis == 1) Fill_Missing_Mass(MM.mass);
-
-				//text_output << current_event <<"\t"<< W_calc(e_mu, e_mu_prime) <<"\t"<< Q2_calc(e_mu, e_mu_prime) << endl;
 			}
 		}
 	}
@@ -112,7 +138,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 	Cuts mm_cut;
 	double *par;
 	//par[0] = MASS_N;
-	mm_cut.CutFit(Missing_Mass,0.9,1.0, par);
+	//mm_cut.CutFit(Missing_Mass,0.9,1.0, par);
 
 /*
 	while (1){
