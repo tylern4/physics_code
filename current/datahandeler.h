@@ -13,8 +13,7 @@
 //
 void dataHandeler(char *fin, char *RootFile_output){
 
-	std::vector<double> W_vec;
-	std::vector<double> Q2_vec;
+	std::vector<double> W_vec, Q2_vec, MM_vec;
 
 	TFile *RootOutputFile;
 	int number_cols = 0;
@@ -129,7 +128,10 @@ void dataHandeler(char *fin, char *RootFile_output){
 						MM = MM.missing_mass(gamma_mu);
 					}
 				}
-				if(num_of_pis == 1) Fill_Missing_Mass(MM.mass);
+				if(num_of_pis == 1) {
+					Fill_Missing_Mass(MM.mass);
+					MM_vec.push_back(MM.mass);
+				}
 			}
 		}
 	}
@@ -203,6 +205,6 @@ void dataHandeler(char *fin, char *RootFile_output){
 	RootOutputFile->Write();
 	RootOutputFile->Close();
 	fclose(input_file); 														// close file with input file list
-	//text_output.close();
+
 }
 #endif
