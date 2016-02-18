@@ -8,6 +8,9 @@
 //#define PI 3.14159265;
 //Only My Includes. All others in main.h
 #include "main.h"
+#include "TStopwatch.h"
+#include "add_db.hpp"
+#include "make_db.hpp"
 
 using namespace std;
 
