@@ -34,6 +34,7 @@
 #include "TLeaf.h"
 #include "TChain.h"
 #include "TSystem.h"
+#include "make_db.hpp"
 #include "add_db.hpp"
 
 using namespace std;
