@@ -17,7 +17,7 @@ void skim(char *fin, char *RootFile_output){
 	int number_cols = 0;
 	char rootFile[500];
 	int num_of_events, total_events;
-	bool cuts;
+	bool electron_cuts, strict_cuts;
 
 	Delta_T dt;
 	D_time dt_cuts;
@@ -63,15 +63,31 @@ void skim(char *fin, char *RootFile_output){
 	for (int current_event = 0; current_event < num_of_events; current_event++) {
 		//loadbar(current_event,num_of_events);
 		chain.GetEntry(current_event);
+		electron_cuts = true;
+		//electron cuts
+		electron_cuts &= (id[0] == ELECTRON); //First particle is electron
+		electron_cuts &= (gpart > 0); //Number of good particles is greater than 0
+		electron_cuts &= (stat[0] > 0); //First Particle hit stat
+		electron_cuts &= ((int)q[0] == -1); //First particle is negative Q
+		electron_cuts &= (sc[0] > 0); //First Particle hit sc
+		electron_cuts &= (dc[0] > 0); // ``` ``` ``` dc
+		electron_cuts &= (ec[0] > 0); // ``` ``` ``` ec
+		electron_cuts &= (dc_stat[dc[0]-1] > 0);
 
-		if (id[0] == ELECTRON && gpart > 0 && stat[0] > 0 && (int)q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0){
+		//Extra cuts
+		strict_cuts = true;
+		strict_cuts &= (gpart == 2);
+
+		if (electron_cuts && strict_cuts){
 			//Setup scattered electron 4 vector
 			e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);	
 			e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
-			cuts = ( b[0] != 0 );
 			dt_cuts.SetVertexTimes(sc_t[sc[0]-1],sc_r[sc[0]-1]);
 
-			if(cuts){
+			strict_cuts = (b[0] != 0);
+			strict_cuts &= (id[1] == PIP);
+
+			if(strict_cuts){
 				W = W_calc(e_mu,e_mu_prime);
 				Q2 = Q2_calc(e_mu,e_mu_prime);
 				for(int part_num = 1; part_num < gpart; part_num++){
@@ -97,14 +113,6 @@ void skim(char *fin, char *RootFile_output){
 						MM = MM.missing_mass(gamma_mu);
 					}
 				}
-				/*
-				if(num_of_pis == 1){
-					MissMass = MM.mass;
-				} else {
-					MissMass = -10000;
-				}
-				*/
-
 				MissMass = (num_of_pis == 1) ? MM.mass : NaN;
 
 				skim->Fill();

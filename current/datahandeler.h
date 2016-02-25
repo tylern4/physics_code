@@ -96,7 +96,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 				Q2_vec.push_back(Q2_calc(e_mu, e_mu_prime));
 
 				//Part of WvsQ2.hpp 
-				WvsQ2(e_mu,e_mu_prime);
+				//WvsQ2(e_mu,e_mu_prime);
 				for(int part_num = 1; part_num < gpart; part_num++){
 
 					dt_cuts.SetTandP(sc_t[sc[part_num]-1],sc_r[sc[part_num]-1],p[part_num]);
@@ -140,8 +140,8 @@ void dataHandeler(char *fin, char *RootFile_output){
 	Cuts mm_cut;
 	double *par;
 	//par[0] = MASS_N;
-	//mm_cut.CutFit(Missing_Mass,0.9,1.0, par);
-
+	mm_cut.CutFit(Missing_Mass,0.9,1.0, par);
+	cout << mm_cut.mean << "\t" << mm_cut.sigma << endl;
 /*
 	while (1){
 		number_cols = fscanf(input_file,"%s",rootFile);
@@ -153,27 +153,45 @@ void dataHandeler(char *fin, char *RootFile_output){
 	getBranches(&chain);
 
 	num_of_events = (int)chain.GetEntries();
-
+*/
 	for (int current_event = 0; current_event < num_of_events; current_event++) {
 		loadbar(current_event,num_of_events);
 		chain.GetEntry(current_event);
+		electron_cuts = true;
 
-		if (id[0] == ELECTRON && gpart > 0 && stat[0] > 0 && (int)q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0){
+		//electron cuts
+		electron_cuts &= (id[0] == ELECTRON); //First particle is electron
+		electron_cuts &= (gpart > 0); //Number of good particles is greater than 0
+		electron_cuts &= (stat[0] > 0); //First Particle hit stat
+		electron_cuts &= ((int)q[0] == -1); //First particle is negative Q
+		electron_cuts &= (sc[0] > 0); //First Particle hit sc
+		electron_cuts &= (dc[0] > 0); // ``` ``` ``` dc
+		electron_cuts &= (ec[0] > 0); // ``` ``` ``` ec
+		electron_cuts &= (dc_stat[dc[0]-1] > 0);
+
+		if (electron_cuts){
 			//Setup scattered electron 4 vector
 			e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);	
 			e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
-			cuts = ( b[0] != 0 );
+
+			if(id[1] == PIP){
+				num_of_pis++;
+				TLorentzVector gamma_mu = (e_mu - e_mu_prime);
+				MM.MissingMassPxPyPz(p[1]*cx[1],p[1]*cy[1],p[1]*cz[1]);
+				MM = MM.missing_mass(gamma_mu);
+			}
+
+			cuts = true;
+			cuts &= MM.mass <= mm_cut.mean + (mm_cut.sigma/2.35482004503);
+			cuts &= MM.mass >= mm_cut.mean - (mm_cut.sigma/2.35482004503);
+
 
 			if(cuts){
-				delta_t_cut();
 				WvsQ2(e_mu,e_mu_prime);
-				TLorentzVector gamma_mu = (e_mu - e_mu_prime);
-				missing_mass(gamma_mu);
-				text_output << current_event <<"\t"<< W_calc(e_mu, e_mu_prime) <<"\t"<< Q2_calc(e_mu, e_mu_prime) << endl;
 			}
 		}
 	}
-*/
+
 
 	//
 	//end stuff

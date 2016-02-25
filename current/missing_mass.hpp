@@ -34,7 +34,7 @@ public:
 		PZ = pz;
 	}
 
- 	MissingMass missing_mass(TLorentzVector gamma_mu){
+ 	inline MissingMass missing_mass(TLorentzVector gamma_mu){
  		MissingMass MM;
 		TVector3 Temp_vec_3_PIP(0.0,0.0,0.0);
 		TLorentzVector Temp_vec_4_PIP(0.0,0.0,0.0,0.0);
