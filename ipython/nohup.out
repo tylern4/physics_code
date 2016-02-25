@@ -1,9 +1,0 @@
-2015-02-24 21:45:45.611 [NotebookApp] Using existing profile dir: u'/home/tylern/.ipython/profile_nbserver'
-2015-02-24 21:45:45.616 [NotebookApp] Using MathJax from CDN: https://cdn.mathjax.org/mathjax/latest/MathJax.js
-2015-02-24 21:45:45.626 [NotebookApp] The port 9999 is already in use, trying another random port.
-2015-02-24 21:45:45.626 [NotebookApp] Serving notebooks from local directory: /home/tylern/physics_code/ipython
-2015-02-24 21:45:45.626 [NotebookApp] 0 active kernels 
-2015-02-24 21:45:45.626 [NotebookApp] The IPython Notebook is running at: https://[all ip addresses on your system]:10000/
-2015-02-24 21:45:45.626 [NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
-2015-02-26 12:23:43.267 [NotebookApp] CRITICAL | received signal 15, stopping
-2015-02-26 12:23:43.272 [NotebookApp] Shutting down kernels
