@@ -188,6 +188,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 
 			if(cuts){
 				WvsQ2(e_mu,e_mu_prime);
+				Fill_Missing_Mass_cut(MM.mass);
 			}
 		}
 	}
