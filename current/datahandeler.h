@@ -140,8 +140,9 @@ void dataHandeler(char *fin, char *RootFile_output){
 	Cuts mm_cut;
 	double *par;
 	//par[0] = MASS_N;
+	//mm_cut.CutFit(Missing_Mass,0.9,1.0, par);
 	mm_cut.CutFit(Missing_Mass,0.9,1.0, par);
-	cout << mm_cut.mean << "\t" << mm_cut.sigma << endl;
+	//cout << mm_cut.mean << "\t" << mm_cut.sigma << endl;
 /*
 	while (1){
 		number_cols = fscanf(input_file,"%s",rootFile);

@@ -39,3 +39,4 @@ skim/Skim
 *.root
 
 .DS_Store
+*.pyc
