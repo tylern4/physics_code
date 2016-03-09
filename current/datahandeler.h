@@ -13,7 +13,7 @@
 //
 void dataHandeler(char *fin, char *RootFile_output){
 
-	std::vector<double> W_vec, Q2_vec, MM_vec;
+	//std::vector<double> W_vec, Q2_vec, MM_vec;
 
 	TFile *RootOutputFile;
 	int number_cols = 0;
@@ -81,7 +81,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 		electron_cuts &= (ec[0] > 0); // ``` ``` ``` ec
 		electron_cuts &= (dc_stat[dc[0]-1] > 0);
 
-		if (electron_cuts){
+		if(electron_cuts){
 			//Setup scattered electron 4 vector
 			e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);	
 			e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
@@ -92,8 +92,8 @@ void dataHandeler(char *fin, char *RootFile_output){
 			dt_cuts.SetVertexTimes(sc_t[sc[0]-1],sc_r[sc[0]-1]);
 
 			if(cuts){
-				W_vec.push_back(W_calc(e_mu, e_mu_prime));
-				Q2_vec.push_back(Q2_calc(e_mu, e_mu_prime));
+				//W_vec.push_back(W_calc(e_mu, e_mu_prime));
+				//Q2_vec.push_back(Q2_calc(e_mu, e_mu_prime));
 
 				//Part of WvsQ2.hpp 
 				//WvsQ2(e_mu,e_mu_prime);
@@ -130,7 +130,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 				}
 				if(num_of_pis == 1) {
 					Fill_Missing_Mass(MM.mass);
-					MM_vec.push_back(MM.mass);
+					//MM_vec.push_back(MM.mass);
 				}
 			}
 		}
@@ -183,8 +183,8 @@ void dataHandeler(char *fin, char *RootFile_output){
 			}
 
 			cuts = true;
-			cuts &= MM.mass <= mm_cut.mean + (mm_cut.sigma/2.35482004503);
-			cuts &= MM.mass >= mm_cut.mean - (mm_cut.sigma/2.35482004503);
+			cuts &= MM.mass <= mm_cut.mean + 3 * (mm_cut.sigma / 2.35482004503);
+			cuts &= MM.mass >= mm_cut.mean - 3 * (mm_cut.sigma  / 2.35482004503);
 
 
 			if(cuts){

@@ -41,12 +41,15 @@ public:
 		fitFunc->SetParameter(0, hist->GetMaximum());
 		fitFunc->SetParameter(1, hist->GetMean());
 		fitFunc->SetParameter(2, 1);
-		fitFunc->SetParNames("mass","width","const");
+		fitFunc->SetParNames("height","mass","width");
 		//TF1 *fitFunc = new TF1("fitFunc","gaus", min_value, max_value);
-		hist->Fit("fitFunc","V+","", min_value, max_value);
+		hist->Fit("fitFunc","q","", min_value, max_value);
+		//hist->Fit("fitFunc","","", min_value, max_value);
 		gStyle->SetOptFit(1111);
-		mean = fitFunc->GetParameter(1);
-		sigma = fitFunc->GetParameter(2); 
+		//mean = fitFunc->GetParameter(1);
+		//sigma = fitFunc->GetParameter(2);
+		mean = fitFunc->GetParameter("mass");
+		sigma = fitFunc->GetParameter("width"); 
 
 	} //
 

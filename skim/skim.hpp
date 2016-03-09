@@ -38,16 +38,6 @@ void skim(char *fin, char *RootFile_output){
 	TChain chain("h10");
 	cout << blue <<"Analyzing file " << green << fin << def << bgdef << endl;
 	chain.AddFile(fin);
-	//FILE *input_file = fopen(fin,"r");
-	
-	//if (input_file == NULL) perror ("Error opening file");
-
-	//while (1){
-	//	number_cols = fscanf(input_file,"%s",rootFile);
-
-	//	if (number_cols<0) break;
-	//	chain.Add(rootFile);
-	//}
 
 	getBranches(&chain);
 
@@ -61,7 +51,6 @@ void skim(char *fin, char *RootFile_output){
 	TBranch *Delta_t_pip_branch = skim->Branch("dt_pip",dt_pip);
 
 	for (int current_event = 0; current_event < num_of_events; current_event++) {
-		//loadbar(current_event,num_of_events);
 		chain.GetEntry(current_event);
 		electron_cuts = true;
 		//electron cuts
@@ -72,7 +61,7 @@ void skim(char *fin, char *RootFile_output){
 		electron_cuts &= (sc[0] > 0); //First Particle hit sc
 		electron_cuts &= (dc[0] > 0); // ``` ``` ``` dc
 		electron_cuts &= (ec[0] > 0); // ``` ``` ``` ec
-		electron_cuts &= (dc_stat[dc[0]-1] > 0);
+		electron_cuts &= (dc_stat[dc[0]-1] > 0); //??
 
 		//Extra cuts
 		strict_cuts = true;
@@ -113,9 +102,10 @@ void skim(char *fin, char *RootFile_output){
 						MM = MM.missing_mass(gamma_mu);
 					}
 				}
+				//If the number of pions is 1 MissMass = calcualted mass : else NaNs
 				MissMass = (num_of_pis == 1) ? MM.mass : NaN;
 
-				skim->Fill();
+				skim->Fill(); //Fill the banks after the skim
 			}
 		}
 	}
@@ -128,7 +118,6 @@ void skim(char *fin, char *RootFile_output){
 
 	RootOutputFile->Write();
 	RootOutputFile->Close();
-	//fclose(input_file); 														// close file with input file list
 
 }
 #endif
