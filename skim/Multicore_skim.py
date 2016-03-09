@@ -1,6 +1,5 @@
 #!/usr/local/bin/ipython
 from skim import skim, split_list
-# from StringIO import StringIO
 from multiprocessing import Pool
 import multiprocessing
 import sys
