@@ -65,7 +65,7 @@ void skim(char *fin, char *RootFile_output){
 
 		//Extra cuts
 		strict_cuts = true;
-		strict_cuts &= (gpart == 2);
+		//strict_cuts &= (gpart == 2);
 
 		if (electron_cuts && strict_cuts){
 			//Setup scattered electron 4 vector
@@ -73,8 +73,8 @@ void skim(char *fin, char *RootFile_output){
 			e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
 			dt_cuts.SetVertexTimes(sc_t[sc[0]-1],sc_r[sc[0]-1]);
 
-			strict_cuts = (b[0] != 0);
-			strict_cuts &= (id[1] == PIP);
+			//strict_cuts = (b[0] != 0);
+			//strict_cuts &= (id[1] == PIP);
 
 			if(strict_cuts){
 				W = W_calc(e_mu,e_mu_prime);

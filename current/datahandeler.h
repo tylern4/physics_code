@@ -183,6 +183,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 			}
 
 			cuts = true;
+			cuts &= MM.mass == MM.mass;
 			cuts &= MM.mass <= mm_cut.mean + 3 * (mm_cut.sigma / 2.35482004503);
 			cuts &= MM.mass >= mm_cut.mean - 3 * (mm_cut.sigma  / 2.35482004503);
 
