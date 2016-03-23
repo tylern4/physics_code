@@ -26,7 +26,7 @@ TH2D *WvsQ2_hist = new TH2D("WvsQ2_hist","W vs Q^{2}", bins, w_min, w_max, bins,
 TH1D *W_hist = new TH1D("W","W",bins,  w_min, w_max);
 TH1D *Q2_hist = new TH1D("Q2","Q^{2}",bins, q2_min, q2_max);
 
-TH1D *E_prime_hist = new TH1D("E_prime","Scattered Electron Energy",bins,0.0,2.0);
+TH1D *E_prime_hist = new TH1D("E_prime","Scattered Electron Energy",bins,0.0,5.0);
 
 TH2D *Q2_vs_xb = new TH2D("Q2_vs_xb","Q^{2} vs x_{b}",bins,0.1,0.6,bins,1.0,3.5);
 
