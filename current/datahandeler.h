@@ -59,7 +59,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 		//reset electron cut bool
 		electron_cuts = true;
 
-{	//electron cuts
+	//electron cuts
 		electron_cuts &= (id[0] == ELECTRON); //First particle is electron
 		electron_cuts &= (gpart > 0); //Number of good particles is greater than 0
 		electron_cuts &= (stat[0] > 0); //First Particle hit stat
@@ -68,7 +68,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 		electron_cuts &= (dc[0] > 0); // ``` ``` ``` dc
 		electron_cuts &= (ec[0] > 0); // ``` ``` ``` ec
 		electron_cuts &= (dc_stat[dc[0]-1] > 0);
-}
+
 
 		if(electron_cuts){
 			//Setup scattered electron 4 vector
@@ -102,7 +102,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 	MissMass->cd();
 	Write_Missing_Mass();
 
-	
+
 
 	RootOutputFile->Write();
 	RootOutputFile->Close();
