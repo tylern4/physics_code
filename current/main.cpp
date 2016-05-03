@@ -14,9 +14,6 @@
 #include "missing_mass_hists.hpp"
 #include "physics.hpp"
 
-#include "json.hpp"
-using json = nlohmann::json;
-
 #include "datahandeler.h"
 
 using namespace std;
