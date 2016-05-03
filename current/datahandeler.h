@@ -18,6 +18,9 @@ void dataHandeler(char *fin, char *RootFile_output){
 	char rootFile[500];
 	int num_of_events, total_events;
 	bool cuts, electron_cuts;
+	ofstream cut_outputs;
+	cut_outputs.open ("outputFiles/cut_outputs.csv");
+	cut_outputs << "Cut,Mean,Sigma" << endl;
 
 	//From delta_t.hpp :: vertex_time() delta_t()
 	Delta_T delta_t;
@@ -131,16 +134,18 @@ void dataHandeler(char *fin, char *RootFile_output){
 	double fit_range_max = 1.0;
 	MissingMassNeutron_cut.FitGaus(Missing_Mass,fit_range_min,fit_range_max);
 
-	cout << "mean: " << MissingMassNeutron_cut.mean << endl;
-	cout << "sigma: " << MissingMassNeutron_cut.sigma << endl;
+	cut_outputs << "MM_N";
+	cut_outputs << "," << MissingMassNeutron_cut.mean;
+	cut_outputs << "," << MissingMassNeutron_cut.sigma << endl;
 
 	Cuts MissingMassSquare_cut;
 	fit_range_min = 0.5;
 	fit_range_max = 1.1;
 	MissingMassSquare_cut.FitGaus(Missing_Mass_square,fit_range_min,fit_range_max);
 
-	cout << "mean: " << MissingMassSquare_cut.mean << endl;
-	cout << "sigma: " << MissingMassSquare_cut.sigma << endl;
+	cut_outputs << "MM_N_2";
+	cut_outputs << "," << MissingMassSquare_cut.mean;
+	cut_outputs << "," << MissingMassSquare_cut.sigma << endl;
 
 
 
@@ -164,6 +169,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 	RootOutputFile->Write();
 	RootOutputFile->Close();
 	fclose(input_file); 														// close file with input file list
+	cut_outputs.close();
 
 }
 #endif
