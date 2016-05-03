@@ -11,14 +11,14 @@
 //Function to go through data files and calculate W and Q2
 //Fill in W vs Q2 hist and save to output root file
 //
-inline D_time delta_t_calc(){
-
+inline D_time delta_t_cut(){
 	Delta_T dt;
 	D_time delta_time;
 	TVector3 Particle3(0.0,0.0,0.0);
 	TLorentzVector Particle4(0.0,0.0,0.0,0.0);
 	double delta_t_P, delta_t_PIP, delta_t_ELECTRON;
 	double electron_vertex = dt.vertex_time(sc_t[sc[0]-1], sc_r[sc[0]-1], 1.0);
+	bool electron_cuts;
 
 	for(int event_number = 0; event_number < gpart; event_number++){
 		//Get particles 3 and 4 vector for current event.
@@ -34,17 +34,27 @@ inline D_time delta_t_calc(){
 		delta_time.electron_time = delta_t_ELECTRON;
 		delta_time.vertex_time = electron_vertex;
 
-		if (event_number == 0 && id[0] == ELECTRON && gpart > 0 && stat[0] > 0 && (int)q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0) {
+		electron_cuts = true;
+
+	//electron cuts
+		electron_cuts &= (id[0] == ELECTRON); //First particle is electron
+		electron_cuts &= (gpart > 0); //Number of good particles is greater than 0
+		electron_cuts &= (stat[0] > 0); //First Particle hit stat
+		electron_cuts &= ((int)q[0] == -1); //First particle is negative Q
+		electron_cuts &= (sc[0] > 0); //First Particle hit sc
+		electron_cuts &= (dc[0] > 0); // ``` ``` ``` dc
+		electron_cuts &= (ec[0] > 0); // ``` ``` ``` ec
+		electron_cuts &= (dc_stat[dc[0]-1] > 0);
+
+		if (electron_cuts) {
 			delta_t_Fill(Particle4.P(), delta_t_PIP, 8);
 		}
 
 		if (Particle4.P() != 0 && (int)q[event_number] == 1) {
 			delta_t_Fill(Particle4.P(),delta_t_P,3);
-
 			delta_t_Fill(Particle4.P(), delta_t_PIP,4);
-
 			delta_t_Fill(Particle4.P(), delta_t_ELECTRON, 5); 
-
+			
 			//If Pi+
 			if(id[event_number] == PROTON && (int)q[event_number] == 1) {
 				delta_t_Fill(Particle4.P(), delta_t_P, 1);
