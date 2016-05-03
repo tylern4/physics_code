@@ -63,6 +63,29 @@ void dataHandeler(char *fin, char *RootFile_output){
 		//update loadbar and get current event
 		loadbar(current_event,num_of_events);
 		chain.GetEntry(current_event);
+
+			for(int part_num = 1; part_num < gpart; part_num++){
+				delta_time.SetTandP(sc_t[sc[part_num]-1],sc_r[sc[part_num]-1],p[part_num]);
+				delta_time = delta_time.delta_t_calc();
+				Particle3.SetXYZ(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
+				Particle4.SetVectM(Particle3, Get_Mass(id[part_num]));
+				if (Particle4.P() != 0 && (int)q[part_num] == 1) {
+					delta_t_Fill(Particle4.P(), delta_time.proton_time, 3);
+					delta_t_Fill(Particle4.P(), delta_time.pip_time, 4);
+					delta_t_Fill(Particle4.P(), delta_time.electron_time, 5); 
+		
+					//If Pi+
+					if(id[part_num] == PROTON && (int)q[part_num] == 1) {
+						delta_t_Fill(Particle4.P(), delta_time.proton_time, 1);
+						delta_t_Fill(Particle4.P(), delta_time.electron_time, 7);
+					//If Proton	
+					} else if (id[part_num] == PIP && (int)q[part_num] == 1){
+						delta_t_Fill(Particle4.P(), delta_time.pip_time, 2);
+						delta_t_Fill(Particle4.P(), delta_time.electron_time, 6);
+					} 
+				}
+			}
+
 		//reset electron cut bool
 		electron_cuts = true;
 
@@ -85,7 +108,6 @@ void dataHandeler(char *fin, char *RootFile_output){
 			//Set the vertex time (time of electron hit) 
 			delta_time.SetVertexTimes(sc_t[sc[0]-1],sc_r[sc[0]-1]);
 
-
 			for(int part_num = 1; part_num < gpart; part_num++){
 				num_of_pis = 0;
 				if(id[part_num] == PIP){
@@ -93,26 +115,6 @@ void dataHandeler(char *fin, char *RootFile_output){
 					TLorentzVector gamma_mu = (e_mu - e_mu_prime);
 					MissingMassNeutron.MissingMassPxPyPz(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
 					MissingMassNeutron = MissingMassNeutron.missing_mass(gamma_mu);
-				}
-
-				delta_time.SetTandP(sc_t[sc[part_num]-1],sc_r[sc[part_num]-1],p[part_num]);
-				delta_time = delta_time.delta_t_calc();
-				Particle3.SetXYZ(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
-				Particle4.SetVectM(Particle3, Get_Mass(id[part_num]));
-				if (Particle4.P() != 0 && (int)q[part_num] == 1) {
-					delta_t_Fill(Particle4.P(), delta_time.proton_time, 3);
-					delta_t_Fill(Particle4.P(), delta_time.pip_time, 4);
-					delta_t_Fill(Particle4.P(), delta_time.electron_time, 5); 
-		
-					//If Pi+
-					if(id[part_num] == PROTON && (int)q[part_num] == 1) {
-						delta_t_Fill(Particle4.P(), delta_time.proton_time, 1);
-						delta_t_Fill(Particle4.P(), delta_time.electron_time, 7);
-					//If Proton	
-					} else if (id[part_num] == PIP && (int)q[part_num] == 1){
-						delta_t_Fill(Particle4.P(), delta_time.pip_time, 2);
-						delta_t_Fill(Particle4.P(), delta_time.electron_time, 6);
-					} 
 				}
 			}
 
