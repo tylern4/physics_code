@@ -11,6 +11,7 @@
 #include "TF1.h"
 #include "TCanvas.h"
 #include "TStyle.h"
+#include <math.h>
 // The idea for this class would be to:
 // 1) Take in the histograms I have made in pervious routines
 // 2) Perform fits on the histograms
@@ -31,25 +32,24 @@ class Cuts
 {
 
 public:
-	//Cuts();
-	//~Cuts();
 	double mean;
 	double sigma;
+	double width;
 
-	inline void CutFit(TH1D *hist, double min_value, double max_value, double *parGuess){
+	inline void FitGaus(TH1D *hist, double min_value, double max_value){
 		TF1 *fitFunc = new TF1("fitFunc","[0]*TMath::Gaus(x,[1],[2],1)", min_value, max_value);
 		fitFunc->SetParameter(0, hist->GetMaximum());
 		fitFunc->SetParameter(1, hist->GetMean());
 		fitFunc->SetParameter(2, 1);
 		fitFunc->SetParNames("height","mass","width");
-		//TF1 *fitFunc = new TF1("fitFunc","gaus", min_value, max_value);
-		hist->Fit("fitFunc","q","", min_value, max_value);
-		//hist->Fit("fitFunc","","", min_value, max_value);
+
+		hist->Fit("fitFunc","qM+","", min_value, max_value);
+
 		gStyle->SetOptFit(1111);
-		//mean = fitFunc->GetParameter(1);
-		//sigma = fitFunc->GetParameter(2);
+
 		mean = fitFunc->GetParameter("mass");
-		sigma = fitFunc->GetParameter("width"); 
+		width = fitFunc->GetParameter("width");
+		sigma = fitFunc->GetParameter("width") / (2 * sqrt(2 * log(2))); // 2.35482004503; 
 
 	} //
 

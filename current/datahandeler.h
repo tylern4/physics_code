@@ -125,6 +125,25 @@ void dataHandeler(char *fin, char *RootFile_output){
 		}
 	}
 
+	// Start of cuts
+	Cuts MissingMassNeutron_cut;
+	double fit_range_min = 0.88;
+	double fit_range_max = 1.0;
+	MissingMassNeutron_cut.FitGaus(Missing_Mass,fit_range_min,fit_range_max);
+
+	cout << "mean: " << MissingMassNeutron_cut.mean << endl;
+	cout << "sigma: " << MissingMassNeutron_cut.sigma << endl;
+
+	Cuts MissingMassSquare_cut;
+	fit_range_min = 0.5;
+	fit_range_max = 1.1;
+	MissingMassSquare_cut.FitGaus(Missing_Mass_square,fit_range_min,fit_range_max);
+
+	cout << "mean: " << MissingMassSquare_cut.mean << endl;
+	cout << "sigma: " << MissingMassSquare_cut.sigma << endl;
+
+
+
 	//
 	//end stuff
 	chain.Reset();						// delete Tree object
