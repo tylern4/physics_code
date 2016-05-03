@@ -12,7 +12,7 @@
 //histogram declarations, fills, and write
 //
 //
-int bins_MM = 500;
+int bins_MM = 200;
 double MM_min = 0.0;
 double MM_max = 3.0;
 TH1D *Missing_Mass = new TH1D("Missing_Mass", "Missing Mass", bins_MM, MM_min, MM_max);
