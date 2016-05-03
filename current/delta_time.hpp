@@ -36,7 +36,6 @@ class D_time
 	}
 
 	inline D_time delta_t_calc(){
-	
 		Delta_T dt;
 		D_time delta_time;
 

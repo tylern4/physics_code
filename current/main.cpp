@@ -12,6 +12,8 @@
 #include "classes.hpp"
 #include "missing_mass.hpp"
 #include "missing_mass_hists.hpp"
+#include "physics.hpp"
+
 #include "datahandeler.h"
 
 using namespace std;

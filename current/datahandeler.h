@@ -19,7 +19,14 @@ void dataHandeler(char *fin, char *RootFile_output){
 	int num_of_events, total_events;
 	bool cuts, electron_cuts;
 
+	//From delta_t.hpp :: vertex_time() delta_t()
+	Delta_T delta_t;
+	//From delta_t_cut.hpp :: delta_t_calc()
+	D_time delta_time;
+	double delta_t_P, delta_t_PIP, delta_t_ELECTRON;
+	//From missing_mass.hpp :: missing_mass_calc()
 	MissingMass MissingMassNeutron;
+
 	int num_of_pis;
 
 	TVector3 e_mu_prime_3;
@@ -59,7 +66,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 		//reset electron cut bool
 		electron_cuts = true;
 
-	//electron cuts
+		//electron cuts
 		electron_cuts &= (id[0] == ELECTRON); //First particle is electron
 		electron_cuts &= (gpart > 0); //Number of good particles is greater than 0
 		electron_cuts &= (stat[0] > 0); //First Particle hit stat
@@ -75,6 +82,10 @@ void dataHandeler(char *fin, char *RootFile_output){
 			e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);	
 			e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
 
+			//Set the vertex time (time of electron hit) 
+			delta_time.SetVertexTimes(sc_t[sc[0]-1],sc_r[sc[0]-1]);
+
+
 			for(int part_num = 1; part_num < gpart; part_num++){
 				num_of_pis = 0;
 				if(id[part_num] == PIP){
@@ -83,7 +94,28 @@ void dataHandeler(char *fin, char *RootFile_output){
 					MissingMassNeutron.MissingMassPxPyPz(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
 					MissingMassNeutron = MissingMassNeutron.missing_mass(gamma_mu);
 				}
+
+				delta_time.SetTandP(sc_t[sc[part_num]-1],sc_r[sc[part_num]-1],p[part_num]);
+				delta_time = delta_time.delta_t_calc();
+				Particle3.SetXYZ(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
+				Particle4.SetVectM(Particle3, Get_Mass(id[part_num]));
+				if (Particle4.P() != 0 && (int)q[part_num] == 1) {
+					delta_t_Fill(Particle4.P(), delta_time.proton_time, 3);
+					delta_t_Fill(Particle4.P(), delta_time.pip_time, 4);
+					delta_t_Fill(Particle4.P(), delta_time.electron_time, 5); 
+		
+					//If Pi+
+					if(id[part_num] == PROTON && (int)q[part_num] == 1) {
+						delta_t_Fill(Particle4.P(), delta_time.proton_time, 1);
+						delta_t_Fill(Particle4.P(), delta_time.electron_time, 7);
+					//If Proton	
+					} else if (id[part_num] == PIP && (int)q[part_num] == 1){
+						delta_t_Fill(Particle4.P(), delta_time.pip_time, 2);
+						delta_t_Fill(Particle4.P(), delta_time.electron_time, 6);
+					} 
+				}
 			}
+
 			if(num_of_pis == 1) {
 				Fill_Missing_Mass(MissingMassNeutron.mass);
 				Fill_Missing_Mass_square(Square(MissingMassNeutron.mass));
@@ -102,6 +134,10 @@ void dataHandeler(char *fin, char *RootFile_output){
 	MissMass->cd();
 	Write_Missing_Mass();
 
+	//Missing Mass Write
+	TDirectory *DeltaT = RootOutputFile->mkdir("Delta_T");
+	DeltaT->cd();
+	delta_t_Write();
 
 
 	RootOutputFile->Write();
