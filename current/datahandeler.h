@@ -72,17 +72,17 @@ void dataHandeler(char *fin, char *RootFile_output){
 				delta_time = delta_time.delta_t_calc();
 				Particle3.SetXYZ(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
 				Particle4.SetVectM(Particle3, Get_Mass(id[part_num]));
-				if (Particle4.P() != 0 && (int)q[part_num] == 1) {
+				if (Particle4.P() != 0) {  //&& (int)q[part_num] == 1
 					delta_t_Fill(Particle4.P(), delta_time.proton_time, 3);
 					delta_t_Fill(Particle4.P(), delta_time.pip_time, 4);
 					delta_t_Fill(Particle4.P(), delta_time.electron_time, 5); 
 		
 					//If Pi+
-					if(id[part_num] == PROTON && (int)q[part_num] == 1) {
+					if(id[part_num] == PROTON) { //&& (int)q[part_num] == 1
 						delta_t_Fill(Particle4.P(), delta_time.proton_time, 1);
 						delta_t_Fill(Particle4.P(), delta_time.electron_time, 7);
 					//If Proton	
-					} else if (id[part_num] == PIP && (int)q[part_num] == 1){
+					} else if (id[part_num] == PIP){ //&& (int)q[part_num] == 1
 						delta_t_Fill(Particle4.P(), delta_time.pip_time, 2);
 						delta_t_Fill(Particle4.P(), delta_time.electron_time, 6);
 					} 
