@@ -43,13 +43,17 @@ public:
 		fitFunc->SetParameter(2, 1);
 		fitFunc->SetParNames("height","mass","width");
 
-		hist->Fit("fitFunc","qM+","", min_value, max_value);
+		hist->Fit("fitFunc","qM0+","", min_value, max_value);
 
-		gStyle->SetOptFit(1111);
+		fitFunc->SetParameter(0, hist->GetMaximum());
+		fitFunc->SetParameter(1, fitFunc->GetParameter("mass"));
+		fitFunc->SetParameter(2, fitFunc->GetParameter("width"));
+		hist->Fit("fitFunc","qM+","", min_value, max_value);
 
 		mean = fitFunc->GetParameter("mass");
 		width = fitFunc->GetParameter("width");
 		sigma = fitFunc->GetParameter("width") / (2 * sqrt(2 * log(2))); // 2.35482004503; 
+		gStyle->SetOptFit(1111);
 
 	} //
 
