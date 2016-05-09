@@ -96,45 +96,45 @@ void WvsQ2_Write(){
 	Q2_vs_xb->SetYTitle("Q^{2}");
 	Q2_vs_xb->Write();
 
-	WvsQ2_e_proton_found->SetXTitle("W (GeV)");
-	WvsQ2_e_proton_found->SetYTitle("Q^{2} (GeV^{2})");
-	WvsQ2_e_proton_found->Write();
+	//WvsQ2_e_proton_found->SetXTitle("W (GeV)");
+	//WvsQ2_e_proton_found->SetYTitle("Q^{2} (GeV^{2})");
+	//WvsQ2_e_proton_found->Write();
 
-	W_e_proton_found->SetXTitle("W (GeV)");
-	W_e_proton_found->Write();
+	//W_e_proton_found->SetXTitle("W (GeV)");
+	//W_e_proton_found->Write();
 
-	Q2_e_proton_found->SetXTitle("Q^{2} (GeV^{2})");
-	Q2_e_proton_found->Write();
+	//Q2_e_proton_found->SetXTitle("Q^{2} (GeV^{2})");
+	//Q2_e_proton_found->Write();
 
-	WvsQ2_e_proton_only_found->SetXTitle("W (GeV)");
-	WvsQ2_e_proton_only_found->SetYTitle("Q^{2} (GeV^{2})");
-	WvsQ2_e_proton_only_found->Write();
+	//WvsQ2_e_proton_only_found->SetXTitle("W (GeV)");
+	//WvsQ2_e_proton_only_found->SetYTitle("Q^{2} (GeV^{2})");
+	//WvsQ2_e_proton_only_found->Write();
 
-	W_e_proton_only_found->SetXTitle("W (GeV)");
-	W_e_proton_only_found->Write();
+	//W_e_proton_only_found->SetXTitle("W (GeV)");
+	//W_e_proton_only_found->Write();
 
-	Q2_e_proton_only_found->SetXTitle("Q^{2} (GeV^{2})");
-	Q2_e_proton_only_found->Write();
+	//Q2_e_proton_only_found->SetXTitle("Q^{2} (GeV^{2})");
+	//Q2_e_proton_only_found->Write();
 
-	WvsQ2_e_proton_pi_only_found->SetXTitle("W (GeV)");
-	WvsQ2_e_proton_pi_only_found->SetYTitle("Q^{2} (GeV^{2})");
-	WvsQ2_e_proton_pi_only_found->Write();
+	//WvsQ2_e_proton_pi_only_found->SetXTitle("W (GeV)");
+	//WvsQ2_e_proton_pi_only_found->SetYTitle("Q^{2} (GeV^{2})");
+	//WvsQ2_e_proton_pi_only_found->Write();
 
-	W_e_proton_pi_only_found->SetXTitle("W (GeV)");
-	W_e_proton_pi_only_found->Write();
+	//W_e_proton_pi_only_found->SetXTitle("W (GeV)");
+	//W_e_proton_pi_only_found->Write();
 
-	Q2_e_proton_pi_only_found->SetXTitle("Q^{2} (GeV^{2})");
-	Q2_e_proton_pi_only_found->Write();
+	//Q2_e_proton_pi_only_found->SetXTitle("Q^{2} (GeV^{2})");
+	//Q2_e_proton_pi_only_found->Write();
 
 
-	WvsQ2_e_pi_found->SetXTitle("W (GeV)");
-	WvsQ2_e_pi_found->SetYTitle("Q^{2} (GeV^{2})");
-	WvsQ2_e_pi_found->Write();
+	//WvsQ2_e_pi_found->SetXTitle("W (GeV)");
+	//WvsQ2_e_pi_found->SetYTitle("Q^{2} (GeV^{2})");
+	//WvsQ2_e_pi_found->Write();
 
-	W_e_pi_found->SetXTitle("W (GeV)");
-	W_e_pi_found->Write();
+	//W_e_pi_found->SetXTitle("W (GeV)");
+	//W_e_pi_found->Write();
 
-	Q2_e_pi_found->SetXTitle("Q^{2} (GeV^{2})");
-	Q2_e_pi_found->Write();
+	//Q2_e_pi_found->SetXTitle("Q^{2} (GeV^{2})");
+	//Q2_e_pi_found->Write();
 }
 #endif

@@ -42,3 +42,15 @@ skim/Skim
 *.pyc
 
 skim/data
+
+second_run/outputFiles
+
+second_run/inputFiles
+
+second_run/e1d
+
+first_run/e1d
+
+first_run/inputFiles
+
+first_run/outputFiles

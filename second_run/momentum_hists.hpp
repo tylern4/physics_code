@@ -35,7 +35,7 @@ void MomVsBeta_Fill_neg(double P, double Beta){
 	MomVsBeta_hist_neg->Fill(P,Beta);
 }
 
-void Fill_e_proton_found_P(double p,double beta){
+void Fill_e_proton_found_P(double p, double beta){
 	MomVsBeta_e_proton_found->Fill(p,beta);
 }
 
@@ -56,13 +56,13 @@ void MomVsBeta_Write(){
 	MomVsBeta_hist_neg->SetYTitle("#beta");
 	Mom->SetXTitle("Momentum (GeV)");
 
-	MomVsBeta_e_proton_found->SetXTitle("Momentum (GeV)");
-	MomVsBeta_e_proton_found->SetYTitle("#beta");
-	MomVsBeta_e_proton_found->Write();
-
-	MomVsBeta_e_pi_found->SetXTitle("Momentum (GeV)");
-	MomVsBeta_e_pi_found->SetYTitle("#beta");
-	MomVsBeta_e_pi_found->Write();
+	//MomVsBeta_e_proton_found->SetXTitle("Momentum (GeV)");
+	//MomVsBeta_e_proton_found->SetYTitle("#beta");
+	//MomVsBeta_e_proton_found->Write();
+//
+	//MomVsBeta_e_pi_found->SetXTitle("Momentum (GeV)");
+	//MomVsBeta_e_pi_found->SetYTitle("#beta");
+	//MomVsBeta_e_pi_found->Write();
 
 	Energy_hist->Write();
 	MomVsBeta_hist->Write();

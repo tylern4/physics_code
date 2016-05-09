@@ -17,7 +17,7 @@ void skim(char *fin, char *RootFile_output){
 	int num_of_events, total_events;
 	bool electron_cuts;
 
-	double W, Q2;
+	Double_t W, Q2;
 
 	TVector3 e_mu_prime_3;
 	TLorentzVector e_mu_prime;
@@ -80,7 +80,7 @@ void skim(char* fin, char* RootFile_output, double mean, double sigma){
 	//From missing_mass.hpp :: missing_mass_calc()
 	MissingMass MissingMassNeutron;
 
-	double W, Q2, MM;
+	Float_t W, Q2, MM;
 	double dt_proton[MAX_PARTS], dt_pip[MAX_PARTS];
 	int num_of_pis;
 
@@ -119,6 +119,9 @@ void skim(char* fin, char* RootFile_output, double mean, double sigma){
 		electron_cuts &= (ec[0] > 0); // ``` ``` ``` ec
 		electron_cuts &= (dc_stat[dc[0]-1] > 0); //??
 
+		e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);	
+		e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
+
 
 		for(int part_num = 1; part_num < gpart; part_num++){
 			num_of_pis = 0;
@@ -134,11 +137,11 @@ void skim(char* fin, char* RootFile_output, double mean, double sigma){
 
 		MM_cut = true;
 		MM_cut &= (MM == MM); //removes NaN
-		sigma = 0.5/3;
+
 		MM_cut &= (MM <= mean + 3 * sigma);
 		MM_cut &= (MM >= mean - 3 * sigma);
 
-		if (electron_cuts && MM_cut){
+		if (electron_cuts){ //&& MM_cut
 			W = W_calc(e_mu,e_mu_prime);
 			Q2 = Q2_calc(e_mu,e_mu_prime);
 			skim->Fill(); //Fill the banks after the skim
