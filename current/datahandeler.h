@@ -67,6 +67,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 		loadbar(current_event,num_of_events);
 		chain.GetEntry(current_event);
 
+
 		//reset electron cut bool
 		electron_cuts = true;
 
@@ -88,6 +89,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 			//Set the vertex time (time of electron hit) 
 			delta_time.SetVertexTimes(sc_t[sc[0]-1],sc_r[sc[0]-1]);
 			for(int part_num = 1; part_num < gpart; part_num++){
+				Fill_Mass(m[part_num]);
 				delta_time.SetTandP(sc_t[sc[part_num]-1],sc_r[sc[part_num]-1],p[part_num]);
 				delta_time = delta_time.delta_t_calc();
 				Particle3.SetXYZ(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
