@@ -10,6 +10,7 @@ os.system("make")
 lines = [line.rstrip('\n') for line in open(str(sys.argv[1]))]
 
 num_cores = multiprocessing.cpu_count()
+num_cores = 1
 pool = Pool(processes=num_cores)
 
 lines_split = split_list(lines, wanted_parts=num_cores)
