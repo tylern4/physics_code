@@ -11,6 +11,7 @@
 #include "classes.hpp"
 #include "TStopwatch.h"
 #include "physics.hpp"
+#include "missing_mass.hpp"
 #include "skim.hpp"
 
 using namespace std;
@@ -19,18 +20,20 @@ int main(int argc, char **argv){
 	TStopwatch *Watch = new TStopwatch;
 	Watch->Start();
 	gStyle->SetOptFit(1111);
-	//bad work around until I fix using strings in datahandeler/WvsQ2
-	char  infilename_bad[128];
-	char  outfilename_bad[128];
 
-	string infilename = (char*)argv[1];
-	string outfilename = outputFileName(argc,argv);
+	/*if (argc == 3) {
+		char* infilename = argv[1];
+		char*  outfilename = argv[2];
+		skim(infilename,outfilename);
+	}*/
 
-	//bad work around until I fix using strings in datahandeler/WvsQ2
-	sprintf(infilename_bad,"%s",infilename.c_str());
-	sprintf(outfilename_bad,"%s",outfilename.c_str());
-	
-	skim(infilename_bad,outfilename_bad);
+	if (argc == 3) {
+		char* infilename = argv[1];
+		char*  outfilename = argv[2];
+		double mean = 0.94827;
+		double sigma = 0.01;
+		skim(infilename,outfilename,mean,sigma);
+	}
 
 	Watch->Stop();
 	//cout << red << Watch->RealTime() << "sec" << def << endl;

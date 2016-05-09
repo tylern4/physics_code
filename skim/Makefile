@@ -9,7 +9,7 @@ TARGET =	    Skim
 SRC =		$(wildcard *.cpp)
 FILENAME=	$(SRC:.cpp=.o)
 
-all:	SKIM
+all:	clean SKIM
 
 SKIM:	$(FILENAME) 
 	$(CXX) $(FILENAME) -L. $(CXXFLAGS) $(LIBS) -o $(TARGET) 

@@ -19,7 +19,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 	int num_of_events, total_events;
 	bool cuts, electron_cuts;
 	ofstream cut_outputs;
-	cut_outputs.open ("outputFiles/cut_outputs.csv");
+	cut_outputs.open("outputFiles/cut_outputs.csv");
 	cut_outputs << "Cut,Mean,Sigma" << endl;
 
 	//From delta_t.hpp :: vertex_time() delta_t()

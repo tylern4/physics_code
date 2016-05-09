@@ -40,3 +40,5 @@ skim/Skim
 
 .DS_Store
 *.pyc
+
+skim/data
