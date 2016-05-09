@@ -5,7 +5,7 @@ CXX = g++
 CXXFLAGS =      -O2 -fPIC -w -g $(shell root-config --cflags) 
 INCS =          -I$(shell root-config --incdir)
 LIBS =          $(shell root-config --glibs)
-TARGET =	    MacE1D
+TARGET =	    e1d
 SRC =		$(wildcard *.cpp)
 FILENAME=	$(SRC:.cpp=.o)
 
