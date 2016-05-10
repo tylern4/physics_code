@@ -54,3 +54,5 @@ first_run/e1d
 first_run/inputFiles
 
 first_run/outputFiles
+
+*.pyc
