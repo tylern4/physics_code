@@ -141,7 +141,7 @@ void skim(char* fin, char* RootFile_output, double mean, double sigma){
 		MM_cut &= (MM <= mean + 3 * sigma);
 		MM_cut &= (MM >= mean - 3 * sigma);
 
-		if (electron_cuts){ //&& MM_cut
+		if (electron_cuts && MM_cut){ //&& MM_cut
 			W = W_calc(e_mu,e_mu_prime);
 			Q2 = Q2_calc(e_mu,e_mu_prime);
 			skim->Fill(); //Fill the banks after the skim
