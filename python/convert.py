@@ -22,7 +22,7 @@ def convert(lines):
 		print fileName
 		df = pd.DataFrame(root2rec(fileName, treename='h10', branches=branches)) #magic line to create a dataframe
 
-		fileName = line.replace('root', 'h5').replace('/root','/h5')
+		fileName = line.replace('root', 'h5').replace('/skim','/h5')
 		os.remove(fileName) if os.path.isfile(fileName) else None
 		store = pd.HDFStore(fileName,format='table')
 		store.put('df', df)
