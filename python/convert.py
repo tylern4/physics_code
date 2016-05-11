@@ -21,6 +21,7 @@ def convert(lines):
 		fileName = [line]
 		print fileName
 		df = pd.DataFrame(root2rec(fileName, treename='h10', branches=branches)) #magic line to create a dataframe
+		df = df[df.W >= 0]
 
 		fileName = line.replace('root', 'h5').replace('/skim','/h5')
 		os.remove(fileName) if os.path.isfile(fileName) else None
