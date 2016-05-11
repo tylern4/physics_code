@@ -38,6 +38,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 
 	TVector3 Particle3(0.0,0.0,0.0);
 	TLorentzVector Particle4(0.0,0.0,0.0,0.0);
+	double W,Q2;
 	//End declrare variables
 
 	//Open outputfile
@@ -88,13 +89,25 @@ void dataHandeler(char *fin, char *RootFile_output){
 			e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
 			//Set the vertex time (time of electron hit) 
 			delta_time.SetVertexTimes(sc_t[sc[0]-1],sc_r[sc[0]-1]);
+
+			W = W_calc(e_mu, e_mu_prime);
+			Q2 = Q2_calc(e_mu, e_mu_prime);
+			WvsQ2_Fill(e_mu_prime.E(),W,Q2,xb_calc(Q2, e_mu_prime.E()));
+
 			for(int part_num = 1; part_num < gpart; part_num++){
 				Fill_Mass(m[part_num]);
 				delta_time.SetTandP(sc_t[sc[part_num]-1],sc_r[sc[part_num]-1],p[part_num]);
 				delta_time = delta_time.delta_t_calc();
 				Particle3.SetXYZ(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
 				Particle4.SetVectM(Particle3, Get_Mass(id[part_num]));
-	
+				
+				MomVsBeta_Fill(Particle4.E(),Particle4.P(),Particle4.Beta());
+				if ((int)q[part_num] > 0) {
+					MomVsBeta_Fill_pos(Particle4.P(),Particle4.Beta());
+				} else if((int)q[part_num] < 0){
+					MomVsBeta_Fill_neg(Particle4.P(),Particle4.Beta());
+				}
+					
 				if (Particle4.P() != 0) {  // && (int)q[part_num] == 1
 					delta_t_Fill(Particle4.P(), delta_time.proton_time, 3);
 					delta_t_Fill(Particle4.P(), delta_time.pip_time, 4);
@@ -155,6 +168,8 @@ void dataHandeler(char *fin, char *RootFile_output){
 	chain.Reset();						// delete Tree object
 
 	RootOutputFile->cd();
+	WvsQ2_Write();
+	MomVsBeta_Write();
 
 	//Missing Mass Write
 	TDirectory *MissMass = RootOutputFile->mkdir("Missing_Mass");
