@@ -10,6 +10,8 @@
 #include "main.h"
 #include "TStopwatch.h"
 #include "classes.hpp"
+#include "WvsQ2_hists.hpp"
+#include "momentum_hists.hpp"
 #include "missing_mass.hpp"
 #include "missing_mass_hists.hpp"
 #include "physics.hpp"
