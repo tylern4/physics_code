@@ -87,25 +87,23 @@ void dataHandeler(char *fin, char *RootFile_output){
 			e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);	
 			e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
 			//Set the vertex time (time of electron hit) 
+			delta_t_cut();
 			
-
 			WvsQ2_Fill(e_mu_prime.E(),W,Q2,xb_calc(Q2, e_mu_prime.E()));
+			num_of_pis = 0;
 
 			for(int part_num = 1; part_num < gpart; part_num++){
 				Fill_Mass(m[part_num]);
 				Particle3.SetXYZ(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
 				Particle4.SetVectM(Particle3, Get_Mass(id[part_num]));
-				delta_t_cut();
 				MomVsBeta_Fill(Particle4.E(),p[part_num],b[part_num]);
 
-				num_of_pis = 0;
 				if(id[part_num] == PIP){
 					num_of_pis++;
 					TLorentzVector gamma_mu = (e_mu - e_mu_prime);
 					MissingMassNeutron.MissingMassPxPyPz(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
 					MissingMassNeutron = MissingMassNeutron.missing_mass(gamma_mu);
 				}
-
 			}
 
 			if(num_of_pis == 1) {
