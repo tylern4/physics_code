@@ -15,7 +15,7 @@
 #include "WvsQ2_hists.hpp"
 #include "momentum_hists.hpp"
 #include "physics.hpp"
-
+#include "delta_t_cut.hpp"
 #include "datahandeler.h"
 
 using namespace std;
