@@ -101,11 +101,11 @@ void dataHandeler(char *fin, char *RootFile_output){
 				Particle3.SetXYZ(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
 				Particle4.SetVectM(Particle3, Get_Mass(id[part_num]));
 				
-				MomVsBeta_Fill(Particle4.E(),Particle4.P(),Particle4.Beta());
+				MomVsBeta_Fill(Particle4.E(),p[part_num],b[part_num]);
 				if ((int)q[part_num] > 0) {
-					MomVsBeta_Fill_pos(Particle4.P(),Particle4.Beta());
+					MomVsBeta_Fill_pos(Particle4.P(),b[part_num]);
 				} else if((int)q[part_num] < 0){
-					MomVsBeta_Fill_neg(Particle4.P(),Particle4.Beta());
+					MomVsBeta_Fill_neg(Particle4.P(),b[part_num]);
 				}
 					
 				if (Particle4.P() != 0) {  // && (int)q[part_num] == 1
