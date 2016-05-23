@@ -11,7 +11,7 @@
 // Mashing together W vs Q2 and Delta T cuts into one file
 // Saving the old files in a new folder to refer back to.
 //
-void dataHandeler(char *fin, char *RootFile_output){
+void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 
 	TFile *RootOutputFile;
 	int number_cols = 0;
@@ -38,6 +38,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 
 	TVector3 Particle3(0.0,0.0,0.0);
 	TLorentzVector Particle4(0.0,0.0,0.0,0.0);
+	//double W,Q2;
 	//End declrare variables
 
 	//Open outputfile
@@ -59,6 +60,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 	}
 	//get branches from the chain
 	getBranches(&chain);
+	if(!first_run) getWQ2branch(&chain);
 
 	num_of_events = (int)chain.GetEntries();
 
@@ -88,7 +90,11 @@ void dataHandeler(char *fin, char *RootFile_output){
 			e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
 			//Set the vertex time (time of electron hit) 
 			delta_t_cut();
-			
+
+			if(first_run){	
+				W = W_calc(e_mu, e_mu_prime);
+				Q2 = Q2_calc(e_mu, e_mu_prime);
+			}
 			WvsQ2_Fill(e_mu_prime.E(),W,Q2,xb_calc(Q2, e_mu_prime.E()));
 			num_of_pis = 0;
 
@@ -110,7 +116,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 					MissingMassNeutron = MissingMassNeutron.missing_mass(gamma_mu);
 				}
 			}
-
+	
 			if(num_of_pis == 1) {
 				Fill_Missing_Mass(MissingMassNeutron.mass);
 				Fill_Missing_Mass_square(Square(MissingMassNeutron.mass));
@@ -161,6 +167,7 @@ void dataHandeler(char *fin, char *RootFile_output){
 	TDirectory *DeltaT = RootOutputFile->mkdir("Delta_T");
 	DeltaT->cd();
 	delta_t_Write();
+
 
 	RootOutputFile->Write();
 	RootOutputFile->Close();

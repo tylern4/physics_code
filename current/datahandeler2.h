@@ -11,7 +11,7 @@
 // Mashing together W vs Q2 and Delta T cuts into one file
 // Saving the old files in a new folder to refer back to.
 //
-void dataHandeler(char *fin, char *RootFile_output){
+void dataHandeler2(char *fin, char *RootFile_output){
 
 	TFile *RootOutputFile;
 	int number_cols = 0;
