@@ -5,7 +5,6 @@
 /*	University Of South Carolina										*/
 /************************************************************************/
 
-//#define PI 3.14159265;
 //Only My Includes. All others in main.h
 #include "main.h"
 #include "TStopwatch.h"

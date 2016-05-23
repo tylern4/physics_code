@@ -97,6 +97,11 @@ void dataHandeler(char *fin, char *RootFile_output){
 				Particle3.SetXYZ(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
 				Particle4.SetVectM(Particle3, Get_Mass(id[part_num]));
 				MomVsBeta_Fill(Particle4.E(),p[part_num],b[part_num]);
+				if (q[part_num] == 1){
+					MomVsBeta_Fill_pos(p[part_num],b[part_num]);
+				} else if(q[part_num] == -1) {
+					MomVsBeta_Fill_neg(p[part_num],b[part_num]);
+				}
 
 				if(id[part_num] == PIP){
 					num_of_pis++;
@@ -139,7 +144,12 @@ void dataHandeler(char *fin, char *RootFile_output){
 	chain.Reset();						// delete Tree object
 
 	RootOutputFile->cd();
+	TDirectory *WvsQ2_folder = RootOutputFile->mkdir("W vs Q2");
+	WvsQ2_folder->cd();
 	WvsQ2_Write();
+
+	TDirectory *MomVsBeta_folder = RootOutputFile->mkdir("Momentum vs beta");
+	MomVsBeta_folder->cd();
 	MomVsBeta_Write();
 
 	//Missing Mass Write

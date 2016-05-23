@@ -20,6 +20,7 @@ double delta_t(double electron_vertex_time, double mass, double momentum, double
 }
 
 void delta_t_cut(){
+	bool electron_cuts;
 	TVector3 Particle3(0.0,0.0,0.0);
 	TLorentzVector Particle4(0.0,0.0,0.0,0.0);
 	double delta_t_P, delta_t_PIP, delta_t_ELECTRON;
@@ -34,7 +35,19 @@ void delta_t_cut(){
 		delta_t_PIP = delta_t(electron_vertex, MASS_PIP, p[event_number], sc_t[sc[event_number]-1], sc_r[sc[event_number]-1]);
 		delta_t_ELECTRON = delta_t(electron_vertex, MASS_E, p[event_number], sc_t[sc[event_number]-1], sc_r[sc[event_number]-1]);
 
-		if (event_number == 0 && id[0] == ELECTRON && gpart > 0 && stat[0] > 0 && (int)q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0) {
+		electron_cuts = true;
+
+		//electron cuts
+		electron_cuts &= (id[0] == ELECTRON); //First particle is electron
+		electron_cuts &= (gpart > 0); //Number of good particles is greater than 0
+		electron_cuts &= (stat[0] > 0); //First Particle hit stat
+		electron_cuts &= ((int)q[0] == -1); //First particle is negative Q
+		electron_cuts &= (sc[0] > 0); //First Particle hit sc
+		electron_cuts &= (dc[0] > 0); // ``` ``` ``` dc
+		electron_cuts &= (ec[0] > 0); // ``` ``` ``` ec
+		electron_cuts &= (dc_stat[dc[0]-1] > 0);
+
+		if (electron_cuts) {
 			delta_t_Fill(p[event_number], delta_t_PIP, 8);
 		}
 

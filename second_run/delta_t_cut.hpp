@@ -35,24 +35,24 @@ void delta_t_cut(){
 		delta_t_ELECTRON = delta_t(electron_vertex, MASS_E, p[event_number], sc_t[sc[event_number]-1], sc_r[sc[event_number]-1]);
 
 		if (event_number == 0 && id[0] == ELECTRON && gpart > 0 && stat[0] > 0 && (int)q[0] == -1 && sc[0] > 0 && dc[0] > 0 && ec[0] > 0 && dc_stat[dc[0]-1] > 0) {
-			delta_t_Fill(Particle4.P(), delta_t_PIP, 8);
+			delta_t_Fill(p[event_number], delta_t_PIP, 8);
 		}
 
-		if (Particle4.P() != 0 && (int)q[event_number] == 1) {
-			delta_t_Fill(Particle4.P(),delta_t_P,3);
+		if (p[event_number] != 0 && (int)q[event_number] == 1) {
+			delta_t_Fill(p[event_number],delta_t_P,3);
 
-			delta_t_Fill(Particle4.P(), delta_t_PIP,4);
+			delta_t_Fill(p[event_number], delta_t_PIP,4);
 
-			delta_t_Fill(Particle4.P(), delta_t_ELECTRON, 5); 
+			delta_t_Fill(p[event_number], delta_t_ELECTRON, 5); 
 
 			//If Pi+
 			if(id[event_number] == PROTON && (int)q[event_number] == 1) {
-				delta_t_Fill(Particle4.P(), delta_t_P, 1);
-				delta_t_Fill(Particle4.P(), delta_t_ELECTRON, 7);
+				delta_t_Fill(p[event_number], delta_t_P, 1);
+				delta_t_Fill(p[event_number], delta_t_ELECTRON, 7);
 			//If Proton	
 			} else if (id[event_number] == PIP && (int)q[event_number] == 1){
-				delta_t_Fill(Particle4.P(), delta_t_PIP, 2);
-				delta_t_Fill(Particle4.P(), delta_t_ELECTRON, 6);
+				delta_t_Fill(p[event_number], delta_t_PIP, 2);
+				delta_t_Fill(p[event_number], delta_t_ELECTRON, 6);
 			} 
 		}
 	} 
