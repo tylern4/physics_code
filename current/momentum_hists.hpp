@@ -24,8 +24,8 @@ TH2D *MomVsBeta_hist_neg = new TH2D("MomVsBeta_neg","Momentum Vs #beta Negative"
 TH1D *Mom = new TH1D("Momentum","Momentum",bins,0,2.0);
 TH1D *Energy_hist = new TH1D("Energy_hist","Energy_hist",bins,0.0,2.5);
 
-TH2D *MomVsBeta_e_proton_found = new TH2D("MomVsBeta_e_proton_found","Momentum Vs #beta p", bins_pvb, p_min, p_max, bins_pvb, b_min, b_max);
-TH2D *MomVsBeta_e_pi_found = new TH2D("MomVsBeta_e_pi_found","Momentum Vs #beta #pi^{+}", bins_pvb, p_min, p_max, bins_pvb, b_min, b_max);
+TH2D *MomVsBeta_proton_ID = new TH2D("MomVsBeta_proton_ID","Momentum Vs #beta p", bins_pvb, p_min, p_max, bins_pvb, b_min, b_max);
+TH2D *MomVsBeta_Pi_ID = new TH2D("MomVsBeta_Pi_ID","Momentum Vs #beta #pi^{+}", bins_pvb, p_min, p_max, bins_pvb, b_min, b_max);
 
 void MomVsBeta_Fill_pos(double P, double Beta){
 	MomVsBeta_hist_pos->Fill(P,Beta);
@@ -35,12 +35,12 @@ void MomVsBeta_Fill_neg(double P, double Beta){
 	MomVsBeta_hist_neg->Fill(P,Beta);
 }
 
-void Fill_e_proton_found_P(double p, double beta){
-	MomVsBeta_e_proton_found->Fill(p,beta);
+void Fill_proton_ID_P(double p, double beta){
+	MomVsBeta_proton_ID->Fill(p,beta);
 }
 
-void Fill_e_pi_found_P(double p,double beta){
-	MomVsBeta_e_pi_found->Fill(p,beta);
+void Fill_Pi_ID_P(double p,double beta){
+	MomVsBeta_Pi_ID->Fill(p,beta);
 }
 void MomVsBeta_Fill(double Energy, double P, double Beta){
 	Energy_hist->Fill(Energy);
@@ -56,13 +56,13 @@ void MomVsBeta_Write(){
 	MomVsBeta_hist_neg->SetYTitle("#beta");
 	Mom->SetXTitle("Momentum (GeV)");
 
-//MomVsBeta_e_proton_found->SetXTitle("Momentum (GeV)");
-//MomVsBeta_e_proton_found->SetYTitle("#beta");
-//MomVsBeta_e_proton_found->Write();
+	MomVsBeta_proton_ID->SetXTitle("Momentum (GeV)");
+	MomVsBeta_proton_ID->SetYTitle("#beta");
+	MomVsBeta_proton_ID->Write();
 
-//MomVsBeta_e_pi_found->SetXTitle("Momentum (GeV)");
-//MomVsBeta_e_pi_found->SetYTitle("#beta");
-//MomVsBeta_e_pi_found->Write();
+	MomVsBeta_Pi_ID->SetXTitle("Momentum (GeV)");
+	MomVsBeta_Pi_ID->SetYTitle("#beta");
+	MomVsBeta_Pi_ID->Write();
 
 	Energy_hist->Write();
 	MomVsBeta_hist->Write();

@@ -99,6 +99,12 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 			num_of_pis = 0;
 
 			for(int part_num = 1; part_num < gpart; part_num++){
+				if (id[part_num] == PIP || id[part_num] == PIM) Fill_pion_WQ2(W,Q2);
+				if (id[part_num] == PROTON) Fill_proton_WQ2(W,Q2);
+
+				if (id[part_num] == PIP || id[part_num] == PIM) Fill_Pi_ID_P(p[part_num],b[part_num]);
+				if (id[part_num] == PROTON) Fill_proton_ID_P(p[part_num],b[part_num]);
+
 				Fill_Mass(m[part_num]);
 				Particle3.SetXYZ(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
 				Particle4.SetVectM(Particle3, Get_Mass(id[part_num]));
@@ -120,6 +126,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 			if(num_of_pis == 1) {
 				Fill_Missing_Mass(MissingMassNeutron.mass);
 				Fill_Missing_Mass_square(Square(MissingMassNeutron.mass));
+				Fill_single_pi_WQ2(W,Q2);
 			}
 		}
 	}
