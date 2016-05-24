@@ -22,11 +22,6 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 	cut_outputs.open("outputFiles/cut_outputs.csv");
 	cut_outputs << "Cut,Mean,Sigma" << endl;
 
-	//From delta_t.hpp :: vertex_time() delta_t()
-	Delta_T delta_t;
-	//From delta_t_cut.hpp :: delta_t_calc()
-	D_time delta_time;
-	double delta_t_P, delta_t_PIP, delta_t_ELECTRON;
 	//From missing_mass.hpp :: missing_mass_calc()
 	MissingMass MissingMassNeutron;
 
@@ -83,7 +78,6 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 		electron_cuts &= (ec[0] > 0); // ``` ``` ``` ec
 		electron_cuts &= (dc_stat[dc[0]-1] > 0);
 
-
 		if(electron_cuts){
 			//Setup scattered electron 4 vector
 			e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);	
@@ -99,15 +93,17 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 			num_of_pis = 0;
 
 			for(int part_num = 1; part_num < gpart; part_num++){
-				if (id[part_num] == PIP || id[part_num] == PIM) Fill_pion_WQ2(W,Q2);
+				if (p[part_num] == 0) continue;
+				if (id[part_num] == PIP) Fill_pion_WQ2(W,Q2);
 				if (id[part_num] == PROTON) Fill_proton_WQ2(W,Q2);
 
-				if (id[part_num] == PIP || id[part_num] == PIM) Fill_Pi_ID_P(p[part_num],b[part_num]);
+				if (id[part_num] == PIP) Fill_Pi_ID_P(p[part_num],b[part_num]);
 				if (id[part_num] == PROTON) Fill_proton_ID_P(p[part_num],b[part_num]);
 
 				Fill_Mass(m[part_num]);
 				Particle3.SetXYZ(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
-				Particle4.SetVectM(Particle3, Get_Mass(id[part_num]));
+				/////Particle4.SetVectM(Particle3, Get_Mass(id[part_num]));
+				Particle4.SetVectM(Particle3, m[part_num]);
 				MomVsBeta_Fill(Particle4.E(),p[part_num],b[part_num]);
 				if (q[part_num] == 1){
 					MomVsBeta_Fill_pos(p[part_num],b[part_num]);
