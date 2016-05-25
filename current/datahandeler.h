@@ -25,7 +25,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 	//From missing_mass.hpp :: missing_mass_calc()
 	MissingMass MissingMassNeutron;
 
-	int num_of_pis;
+	int num_of_pis,num_of_proton;
 
 	TVector3 e_mu_prime_3;
 	TLorentzVector e_mu_prime;
@@ -90,7 +90,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 				Q2 = Q2_calc(e_mu, e_mu_prime);
 			}
 			WvsQ2_Fill(e_mu_prime.E(),W,Q2,xb_calc(Q2, e_mu_prime.E()));
-			num_of_pis = 0;
+			num_of_proton = num_of_pis = 0;
 
 			for(int part_num = 1; part_num < gpart; part_num++){
 				if (p[part_num] == 0) continue;
@@ -110,7 +110,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 				} else if(q[part_num] == -1) {
 					MomVsBeta_Fill_neg(p[part_num],b[part_num]);
 				}
-
+				if(id[part_num] == PROTON) num_of_proton++;
 				if(id[part_num] == PIP){
 					num_of_pis++;
 					TLorentzVector gamma_mu = (e_mu - e_mu_prime);
@@ -124,6 +124,8 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 				Fill_Missing_Mass_square(Square(MissingMassNeutron.mass));
 				Fill_single_pi_WQ2(W,Q2);
 			}
+			if(num_of_proton == 1) Fill_single_proton_WQ2(W,Q2);
+			//if(num_of_proton == 1 && num_of_pis == 1) Fill_single_proton_pion_WQ2(W,Q2);
 		}
 	}
 

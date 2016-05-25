@@ -30,17 +30,25 @@ TH1D *E_prime_hist = new TH1D("E_prime","Scattered Electron Energy",bins,0.0,5.0
 
 TH2D *Q2_vs_xb = new TH2D("Q2_vs_xb","Q^{2} vs x_{b}",bins,0.1,0.6,bins,1.0,3.5);
 
-TH2D *WvsQ2_proton = new TH2D("WvsQ2_proton","W vs Q^{2} p", bins, w_min, w_max, bins, q2_min, q2_max);
-TH1D *W_proton = new TH1D("W_proton","W p",bins,  w_min, w_max);
-TH1D *Q2_proton = new TH1D("Q2_proton","Q^{2} p",bins, q2_min, q2_max);
+TH2D *WvsQ2_proton = new TH2D("WvsQ2_proton","W vs Q^{2} P", bins, w_min, w_max, bins, q2_min, q2_max);
+TH1D *W_proton = new TH1D("W_proton","W P",bins,  w_min, w_max);
+TH1D *Q2_proton = new TH1D("Q2_proton","Q^{2} P",bins, q2_min, q2_max);
 
-TH2D *WvsQ2_pion = new TH2D("WvsQ2_pion","W vs Q^{2} p #pi^{+} only", bins, w_min, w_max, bins, q2_min, q2_max);
-TH1D *W_pion = new TH1D("W_pion","W p #pi^{+} only",bins,  w_min, w_max);
-TH1D *Q2_pion = new TH1D("Q2_pion","Q^{2} p #pi^{+} only",bins, q2_min, q2_max);
+TH2D *WvsQ2_pion = new TH2D("WvsQ2_pion","W vs Q^{2} #pi^{+} only", bins, w_min, w_max, bins, q2_min, q2_max);
+TH1D *W_pion = new TH1D("W_pion","W #pi^{+} only",bins,  w_min, w_max);
+TH1D *Q2_pion = new TH1D("Q2_pion","Q^{2} #pi^{+} only",bins, q2_min, q2_max);
 
 TH2D *WvsQ2_single_pi = new TH2D("WvsQ2_single_pi","W vs Q^{2} #pi^{+}", bins, w_min, w_max, bins, q2_min, q2_max);
 TH1D *W_single_pi = new TH1D("W_single_pi","W #pi^{+}",bins,  w_min, w_max);
 TH1D *Q2_single_pi = new TH1D("Q2_single_pi","Q^{2} #pi^{+}",bins, q2_min, q2_max);
+
+TH2D *WvsQ2_single_proton = new TH2D("WvsQ2_single_proton","W vs Q^{2} P", bins, w_min, w_max, bins, q2_min, q2_max);
+TH1D *W_single_proton = new TH1D("W_single_proton","W P",bins,  w_min, w_max);
+TH1D *Q2_single_proton = new TH1D("Q2_single_proton","Q^{2} P",bins, q2_min, q2_max);
+
+//TH2D *WvsQ2_single_proton_pion = new TH2D("WvsQ2_single_proton_pion","W vs Q^{2} P #pi^{+}", bins, w_min, w_max, bins, q2_min, q2_max);
+//TH1D *W_single_proton_pion = new TH1D("W_single_proton_pion","W P #pi^{+}",bins,  w_min, w_max);
+//TH1D *Q2_single_proton_pion = new TH1D("Q2_single_proton_pion","Q^{2} P #pi^{+}",bins, q2_min, q2_max);
 
 void Fill_proton_WQ2(double W, double Q2){
 	WvsQ2_proton->Fill(W,Q2);
@@ -53,6 +61,18 @@ void Fill_single_pi_WQ2(double W, double Q2){
 	W_single_pi->Fill(W);
 	Q2_single_pi->Fill(Q2);
 }
+
+void Fill_single_proton_WQ2(double W, double Q2){
+	WvsQ2_single_proton->Fill(W,Q2);
+	W_single_proton->Fill(W);
+	Q2_single_proton->Fill(Q2);
+}
+
+//void Fill_single_proton_pion_WQ2(double W, double Q2){
+//	WvsQ2_single_proton_pion->Fill(W,Q2);
+//	W_single_proton_pion->Fill(W);
+//	Q2_single_proton_pion->Fill(Q2);
+//}
 
 void WvsQ2_Fill(double E_prime, double W, double Q2, double xb){
 	E_prime_hist->Fill(E_prime);
@@ -117,5 +137,25 @@ void WvsQ2_Write(){
 
 	Q2_single_pi->SetXTitle("Q^{2} (GeV^{2})");
 	Q2_single_pi->Write();
+
+	WvsQ2_single_proton->SetXTitle("W (GeV)");
+	WvsQ2_single_proton->SetYTitle("Q^{2} (GeV^{2})");
+	WvsQ2_single_proton->Write();
+
+	W_single_proton->SetXTitle("W (GeV)");
+	W_single_proton->Write();
+
+	Q2_single_proton->SetXTitle("Q^{2} (GeV^{2})");
+	Q2_single_proton->Write();
+
+	//WvsQ2_single_proton_pion->SetXTitle("W (GeV)");
+	//WvsQ2_single_proton_pion->SetYTitle("Q^{2} (GeV^{2})");
+	//WvsQ2_single_proton_pion->Write();
+
+	//W_single_proton_pion->SetXTitle("W (GeV)");
+	//W_single_proton_pion->Write();
+
+	//Q2_single_proton_pion->SetXTitle("Q^{2} (GeV^{2})");
+	//Q2_single_proton_pion->Write();
 }
 #endif
