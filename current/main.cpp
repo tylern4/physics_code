@@ -9,6 +9,7 @@
 #include "main.h"
 #include "TStopwatch.h"
 #include "classes.hpp"
+#include "delta_t_hist.hpp" 
 #include "WvsQ2_hists.hpp"
 #include "momentum_hists.hpp"
 #include "missing_mass.hpp"
