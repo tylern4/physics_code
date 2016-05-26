@@ -128,12 +128,14 @@ void makeHists(){
 		delta_t_hist[2][jj] = new TH1D(hname,htitle, bins_dt, Dt_min, Dt_max);
 	}
 }
-void delta_t_Fill(double momentum,double delta_t_proton,double delta_t_pip,double delta_t_electron){
+void delta_t_Fill(double momentum, int ID, int charge, double delta_t_proton,double delta_t_pip,double delta_t_electron){
 	for (int jj = 0; jj < num_points; jj++) {
 		if(momentum > jj * bin_width && momentum <= (jj+1) * bin_width){
-			delta_t_hist[0][jj]->Fill(delta_t_proton);
-			delta_t_hist[1][jj]->Fill(delta_t_pip);
-			delta_t_hist[2][jj]->Fill(delta_t_electron);
+			if(charge == 1) {
+				delta_t_hist[0][jj]->Fill(delta_t_proton);
+				delta_t_hist[1][jj]->Fill(delta_t_pip);
+			}
+			if(charge == -1) delta_t_hist[2][jj]->Fill(delta_t_electron);
 		}
 	}
 }
