@@ -100,6 +100,8 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 				if (id[part_num] == PIP) Fill_Pi_ID_P(p[part_num],b[part_num]);
 				if (id[part_num] == PROTON) Fill_proton_ID_P(p[part_num],b[part_num]);
 
+				if (id[part_num] == PIP || id[part_num] == PROTON) Fill_proton_Pi_ID_P(p[part_num],b[part_num]);
+
 				Fill_Mass(m[part_num]);
 				Particle3.SetXYZ(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
 				/////Particle4.SetVectM(Particle3, Get_Mass(id[part_num]));
@@ -125,7 +127,6 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 				Fill_single_pi_WQ2(W,Q2);
 			}
 			if(num_of_proton == 1) Fill_single_proton_WQ2(W,Q2);
-			//if(num_of_proton == 1 && num_of_pis == 1) Fill_single_proton_pion_WQ2(W,Q2);
 		}
 	}
 

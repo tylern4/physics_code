@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <TLorentzVector.h>
-#include "color.hpp"
+#include "color.cpp"
 #include <string.h>
 #include <string>
 #include <cstring>
