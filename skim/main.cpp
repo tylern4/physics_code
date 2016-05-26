@@ -21,19 +21,19 @@ int main(int argc, char **argv){
 	Watch->Start();
 	gStyle->SetOptFit(1111);
 
-	/*if (argc == 3) {
+	if (argc == 3) {
 		char* infilename = argv[1];
 		char*  outfilename = argv[2];
 		skim(infilename,outfilename);
-	}*/
+	}
 
-	if (argc == 3) {
+	/*if (argc == 3) {
 		char* infilename = argv[1];
 		char*  outfilename = argv[2];
 		double mean = 0.947655;
 		double sigma = 0.00983651;
 		skim(infilename,outfilename,mean,sigma);
-	}
+	}*/
 
 	Watch->Stop();
 	//cout << red << Watch->RealTime() << "sec" << def << endl;
