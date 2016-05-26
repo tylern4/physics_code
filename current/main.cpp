@@ -24,6 +24,7 @@ int main(int argc, char **argv){
 	TStopwatch *Watch = new TStopwatch;
 	Watch->Start();
 	gStyle->SetOptFit(1111);
+	makeHists();
 
 	if (argc == 3) {
 		char* infilename = argv[1];

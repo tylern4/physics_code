@@ -12,7 +12,6 @@
 // Saving the old files in a new folder to refer back to.
 //
 void dataHandeler(char *fin, char *RootFile_output, bool first_run){
-
 	TFile *RootOutputFile;
 	int number_cols = 0;
 	char rootFile[500];
@@ -173,6 +172,10 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 	TDirectory *DeltaT = RootOutputFile->mkdir("Delta_T");
 	DeltaT->cd();
 	delta_t_Write();
+
+	TDirectory *DeltaT_slices = RootOutputFile->mkdir("Delta_T_slices");
+	DeltaT_slices->cd();
+	delta_t_slices_Write();
 
 
 	RootOutputFile->Write();
