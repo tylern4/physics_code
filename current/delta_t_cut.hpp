@@ -29,7 +29,7 @@ void delta_t_cut(){
 		delta_t_PIP = delta_t(electron_vertex, MASS_PIP, p[event_number], sc_t[sc[event_number]-1], sc_r[sc[event_number]-1]);
 		delta_t_ELECTRON = delta_t(electron_vertex, MASS_E, p[event_number], sc_t[sc[event_number]-1], sc_r[sc[event_number]-1]);
 
-		delta_t_Fill(p[event_number], delta_t_P, delta_t_PIP, delta_t_ELECTRON);
+		delta_t_Fill(p[event_number], id[event_number],(int)q[event_number], delta_t_P, delta_t_PIP, delta_t_ELECTRON);
 
 		if((int)q[event_number] == 1) {
 			Fill_deltat_P(p[event_number],delta_t_P);
