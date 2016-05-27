@@ -40,7 +40,7 @@ TH2D *delta_t_mass_positron_PID = new TH2D("delta_t_mass_postitron_PID","#Deltat
 
 char hname[50];
 char htitle[500];
-const int num_points = 15;
+const int num_points = 20;
 TH1D *delta_t_hist[3][num_points];
 const double bin_width = (P_max - P_min)/num_points;
 
@@ -104,6 +104,26 @@ void delta_t_Write(){
 	delta_t_mass_positron_PID->Write();
 }
 
+/*void delta_t_slices_Write(TFile RootOutputFile){
+	for (int j = 0; j < 3; j++) {
+		switch(j){
+			case 1: TDirectory *DeltaT_slices_P = RootOutputFile.mkdir("Delta_T_slices_P");
+					DeltaT_slices_P->cd();
+					break;
+			case 2: TDirectory *DeltaT_slices_PIP = RootOutputFile.mkdir("Delta_T_slices_PIP");
+					DeltaT_slices_PIP->cd();
+					break;
+			case 3: TDirectory *DeltaT_slices_Electron = RootOutputFile.mkdir("Delta_T_slices_Electron");
+					DeltaT_slices_Electron->cd();
+					break;
+		}
+		for (int jj = 0; jj < num_points; jj++) {
+			delta_t_hist[j][jj]->SetYTitle("#Deltat");
+			delta_t_hist[j][jj]->Write();
+		}
+	}
+}*/
+
 void delta_t_slices_Write(){
 	for (int j = 0; j < 3; j++) {
 		for (int jj = 0; jj < num_points; jj++) {
@@ -112,9 +132,9 @@ void delta_t_slices_Write(){
 		}
 	}
 }
+
 void makeHists(){
 	for (int jj = 0; jj < num_points; jj++) {
-
 		sprintf(hname,"delta_t_p_%d",jj);
 		sprintf(htitle,"#Deltat P %d",jj);
 		delta_t_hist[0][jj] = new TH1D(hname,htitle, bins_dt, Dt_min, Dt_max);
