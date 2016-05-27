@@ -66,15 +66,16 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 
 		//reset electron cut bool
 		electron_cuts = true;
-
 		//electron cuts
+		electron_cuts &= (ec[0] > 0); // ``` ``` ``` ec
+		if (electron_cuts) EC_fill(etot[ec[0]-1],p[0]);
+
 		electron_cuts &= (id[0] == ELECTRON); //First particle is electron
 		electron_cuts &= (gpart > 0); //Number of good particles is greater than 0
 		electron_cuts &= (stat[0] > 0); //First Particle hit stat
 		electron_cuts &= ((int)q[0] == -1); //First particle is negative Q
 		electron_cuts &= (sc[0] > 0); //First Particle hit sc
 		electron_cuts &= (dc[0] > 0); // ``` ``` ``` dc
-		electron_cuts &= (ec[0] > 0); // ``` ``` ``` ec
 		electron_cuts &= (dc_stat[dc[0]-1] > 0);
 
 		if(electron_cuts){
@@ -83,6 +84,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 			e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
 			//Set the vertex time (time of electron hit) 
 			delta_t_cut();
+
 
 			if(first_run){	
 				W = W_calc(e_mu, e_mu_prime);
@@ -155,6 +157,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 	chain.Reset();						// delete Tree object
 
 	RootOutputFile->cd();
+	EC_Write();
 	TDirectory *WvsQ2_folder = RootOutputFile->mkdir("W vs Q2");
 	WvsQ2_folder->cd();
 	WvsQ2_Write();

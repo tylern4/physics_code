@@ -16,6 +16,7 @@
 #include "missing_mass_hists.hpp"
 #include "physics.hpp"
 #include "delta_t_cut.hpp"
+#include "ec_cut.hpp"
 #include "datahandeler.h"
 
 using namespace std;
