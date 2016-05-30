@@ -31,6 +31,16 @@ fit hists and place values in mean and sigma
 class Cuts
 {
 
+// background function is polynomial
+/*Double_t polFit(Double_t *x, Double_t *par){
+	Int_t nmax = PolNum-1;
+	Double_t bck = 0.0;
+	for (Int_t i = 0; i<=nmax; i++){
+		bck += par[i]*pow(x[0],i);
+	}
+	return bck;
+}*/
+
 public:
 	double mean;
 	double sigma;

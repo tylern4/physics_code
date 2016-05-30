@@ -91,8 +91,8 @@ using namespace std;
 
   //declarations of functions
   Double_t polFit(Double_t *x, Double_t *par);
-  void PolSubtractionAngle(char *rootFile, char* yieldFile);
-  void MomPolSubtraction(char *rootFile, char* yieldFile);
+  void PolSubtractionAngle(char* rootFile, char* yieldFile);
+  void MomPolSubtraction(char* rootFile, char* yieldFile);
 
   Int_t FindFoilIndex(Float_t vz);
   Int_t FindVzBehindFoilIndex(Float_t vz);
@@ -1480,19 +1480,19 @@ void PolSubtractionAngle(char *rootFile, char* yieldFile){
 
 	   switch (meth_c){ //switch for naming histograms with differnt target methods
 	      case 0: sprintf(hname, "AngleCutAroundTgt_%s_range_%d", tar,i);
-		      sprintf(name, "AngleCutAroundTgt_%s_", tar);
+		            sprintf(name, "AngleCutAroundTgt_%s_", tar);
 	              sprintf(AAA,"Angle"); 
 	              break;
 	      case 1: sprintf(hname, "MassCutAroundTgt_%s_range_%d",tar,i);
-		      sprintf(name, "MassCutAroundTgt_%s",tar);
+		            sprintf(name, "MassCutAroundTgt_%s",tar);
 	              sprintf(AAA,"Around"); 
 	              break;
 	      case 2: sprintf(hname, "MassCutAfterTgt_%s_range_%d",tar,i);
-		      sprintf(name, "MassCutAfterTgt_%s",tar);
+		            sprintf(name, "MassCutAfterTgt_%s",tar);
 	              sprintf(AAA,"After"); 
 	              break;
 	      case 3: sprintf(hname, "Carbon%d_AngleCutAround_range_%d",tar_c+1,i);
-		      sprintf(name, "Carbon%d_AngleCutAround",tar_c+1);
+		            sprintf(name, "Carbon%d_AngleCutAround",tar_c+1);
 	              sprintf(AAA,"Carbon");
 	              break;}
 
@@ -1934,7 +1934,7 @@ void MomPolSubtraction(char *rootFile, char* yieldFile){
 
            //sprintf(hname,"YieldHist_%s_%s",tar,AAA);
 	   sprintf(hname2,"Yield_mom_%s",name,tar_c,AAA);
-           sprintf(title,"Yield around %s %s for different momentum ranges",tar,AAA);
+     sprintf(title,"Yield around %s %s for different momentum ranges",tar,AAA);
 	   MomYieldHist[tar_c] = new TH1F(hname2,title, 30, 0, 15 );
 	   MomYieldHist[tar_c]->GetYaxis()->SetTitle("counts");
 	   MomYieldHist[tar_c]->GetYaxis()->CenterTitle();
@@ -1944,7 +1944,7 @@ void MomPolSubtraction(char *rootFile, char* yieldFile){
 
            //sprintf(hname,"ChiHist_%s_%s",tar,AAA);
 	   sprintf(hname2,"Chi_mom_%s",name,tar_c);
-           sprintf(title,"Chi-Square for target %s, %s",tar,AAA);
+     sprintf(title,"Chi-Square for target %s, %s",tar,AAA);
 	   MomChiHist[tar_c] = new TH1F(hname2,title, 30, 0, 15 );
 	   MomChiHist[tar_c]->GetYaxis()->SetTitle("Chi-Square Value");
 	   MomChiHist[tar_c]->GetYaxis()->CenterTitle();
@@ -1972,18 +1972,17 @@ void MomPolSubtraction(char *rootFile, char* yieldFile){
 	   MomRatioHist[tar_c]->GetXaxis()->CenterTitle();
 
 
-	   for(i=0;i<=count;i++){
-	      MomRatioHist[tar_c]->SetBinContent((i*4)+1, ratio[i]);}
+	   for(i=0;i<=count;i++) MomRatioHist[tar_c]->SetBinContent((i*4)+1, ratio[i]); 
 
 	   MomRatioHist[tar_c]->Scale((A[0]*d[0]*Aw[tar_c])/(A[tar_c]*d[tar_c]*Aw[0]));	
 	   MomRatioHist[tar_c]->Write();
-           MomYieldHist[tar_c]->Write();
+     MomYieldHist[tar_c]->Write();
 	   MomChiHist[tar_c]->Write();
 
 	}//end for tar_c targets
 
 	sprintf(hname2,"%s_Ratio",AAA);
-        sprintf(title,"Ratio %s",AAA);
+  sprintf(title,"Ratio %s",AAA);
 	MomRatio[meth_c] = new TH1F(hname2,title, 420, 0, 210 );
 	MomRatio[meth_c]->GetYaxis()->SetTitle("Ratio");
 	MomRatio[meth_c]->GetYaxis()->CenterTitle();
@@ -1991,7 +1990,7 @@ void MomPolSubtraction(char *rootFile, char* yieldFile){
 	MomRatio[meth_c]->GetXaxis()->CenterTitle();
 
 	sprintf(hname2,"%s_Yield",AAA);
-        sprintf(title,"Yield %s",AAA);
+  sprintf(title,"Yield %s",AAA);
 	MomStuff[meth_c] = new TH1F(hname2,title, 420, 0, 210 );
 	MomStuff[meth_c]->GetYaxis()->SetTitle("Counts");
 	MomStuff[meth_c]->GetYaxis()->CenterTitle();
@@ -2013,21 +2012,21 @@ void MomPolSubtraction(char *rootFile, char* yieldFile){
 	   MomYieldHist[0]->GetXaxis()->SetTitle("angle in degrees");
 	   MomYieldHist[0]->GetXaxis()->CenterTitle();
 	   MomYieldHist[0]->SetTitle("Ratio of Yeilds to 2H");  	   
-  	   MomYieldHist[3]->SetMarkerSize(1.25);
-  	   MomYieldHist[3]->SetMarkerStyle(22);
+  	 MomYieldHist[3]->SetMarkerSize(1.25);
+  	 MomYieldHist[3]->SetMarkerStyle(22);
 	   MomYieldHist[3]->SetMarkerColor(5);
 	   MomYieldHist[3]->Draw("p");
-  	   MomYieldHist[2]->SetMarkerSize(1.25);
-  	   MomYieldHist[2]->SetMarkerStyle(22);
+  	 MomYieldHist[2]->SetMarkerSize(1.25);
+  	 MomYieldHist[2]->SetMarkerStyle(22);
 	   MomYieldHist[2]->SetMarkerColor(4);  	   
 	   MomYieldHist[2]->Draw("p""same");
-  	   MomYieldHist[1]->SetMarkerSize(1.25);
-  	   MomYieldHist[1]->SetMarkerStyle(22);
+  	 MomYieldHist[1]->SetMarkerSize(1.25);
+  	 MomYieldHist[1]->SetMarkerStyle(22);
 	   MomYieldHist[1]->SetMarkerColor(3);  	   
 	   MomYieldHist[1]->Draw("p""same");
-  	   MomYieldHist[0]->SetMarkerSize(1.25);
-  	   MomYieldHist[0]->SetMarkerStyle(22);
-  	   MomYieldHist[0]->SetMarkerColor(2);
+  	 MomYieldHist[0]->SetMarkerSize(1.25);
+  	 MomYieldHist[0]->SetMarkerStyle(22);
+  	 MomYieldHist[0]->SetMarkerColor(2);
 	   MomYieldHist[0]->Draw("p""same");
 
 	   char OutCan[100];
@@ -2040,21 +2039,21 @@ void MomPolSubtraction(char *rootFile, char* yieldFile){
 	   MomRatioHist[0]->GetXaxis()->SetTitle("angle in degrees");
 	   MomRatioHist[0]->GetXaxis()->CenterTitle();
 	   MomRatioHist[0]->SetTitle("Ratio of Yeilds to 2H");  	   
-  	   MomRatioHist[3]->SetMarkerSize(1.25);
-  	   MomRatioHist[3]->SetMarkerStyle(22);
+  	 MomRatioHist[3]->SetMarkerSize(1.25);
+  	 MomRatioHist[3]->SetMarkerStyle(22);
 	   MomRatioHist[3]->SetMarkerColor(5);
 	   MomRatioHist[3]->Draw("p");
-  	   MomRatioHist[2]->SetMarkerSize(1.25);
-  	   MomRatioHist[2]->SetMarkerStyle(22);
+  	 MomRatioHist[2]->SetMarkerSize(1.25);
+  	 MomRatioHist[2]->SetMarkerStyle(22);
 	   MomRatioHist[2]->SetMarkerColor(4);  	   
 	   MomRatioHist[2]->Draw("p""same");
-  	   MomRatioHist[1]->SetMarkerSize(1.25);
-  	   MomRatioHist[1]->SetMarkerStyle(22);
+  	 MomRatioHist[1]->SetMarkerSize(1.25);
+  	 MomRatioHist[1]->SetMarkerStyle(22);
 	   MomRatioHist[1]->SetMarkerColor(3);  	   
 	   MomRatioHist[1]->Draw("p""same");
-  	   MomRatioHist[0]->SetMarkerSize(1.25);
-  	   MomRatioHist[0]->SetMarkerStyle(22);
-  	   MomRatioHist[0]->SetMarkerColor(2);
+  	 MomRatioHist[0]->SetMarkerSize(1.25);
+  	 MomRatioHist[0]->SetMarkerStyle(22);
+  	 MomRatioHist[0]->SetMarkerColor(2);
 	   MomRatioHist[0]->Draw("p""same");
 
 	   //char OutCan[100];
