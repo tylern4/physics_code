@@ -17,6 +17,7 @@
 #include "physics.hpp"
 #include "delta_t_cut.hpp"
 #include "ec_cut.hpp"
+#include "cc_cut.hpp"
 #include "datahandeler.h"
 
 using namespace std;
@@ -25,7 +26,8 @@ int main(int argc, char **argv){
 	TStopwatch *Watch = new TStopwatch;
 	Watch->Start();
 	gStyle->SetOptFit(1111);
-	makeHists();
+	makeHists_delta_t();
+	makeHists_CC();
 
 	if (argc == 3) {
 		char* infilename = argv[1];
