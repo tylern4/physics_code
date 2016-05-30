@@ -133,7 +133,7 @@ void delta_t_slices_Write(){
 	}
 }
 
-void makeHists(){
+void makeHists_delta_t(){
 	for (int jj = 0; jj < num_points; jj++) {
 		sprintf(hname,"delta_t_p_%d",jj);
 		sprintf(htitle,"#Deltat P %d",jj);

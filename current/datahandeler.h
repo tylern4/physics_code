@@ -62,7 +62,13 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 		//update loadbar and get current event
 		loadbar(current_event,num_of_events);
 		chain.GetEntry(current_event);
-
+		if(cc[0] > 0) {
+			int cc_sector = cc_sect[cc[0]-1];
+			int cc_segment = (cc_segm[0] % 1000)/10;
+			int cc_pmt = cc_segm[0]/1000-1;
+			int cc_nphe = nphe[cc[0]-1];
+			CC_fill(cc_sector,cc_segment,cc_pmt,cc_nphe);
+		}
 
 		//reset electron cut bool
 		electron_cuts = true;
@@ -179,6 +185,10 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 	TDirectory *DeltaT_slices = RootOutputFile->mkdir("Delta_T_slices");
 	DeltaT_slices->cd();
 	delta_t_slices_Write();
+
+	TDirectory *CC_hists = RootOutputFile->mkdir("CC_hists");
+	CC_hists->cd();
+	CC_Write();
 
 
 	RootOutputFile->Write();
