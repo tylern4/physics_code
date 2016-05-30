@@ -13,7 +13,7 @@
 //
 //
 
-int bins_CC = 500;
+int bins_CC = 100;
 float CC_min = 0;
 float CC_max = 200;
 char* L_R_C;
