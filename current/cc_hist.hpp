@@ -99,8 +99,7 @@ void CC_canvas(){
 			can[sec_i][pmt_i] = new TCanvas(can_name,can_name,1200,800);
 			can[sec_i][pmt_i]->Divide(6, 3);
 			for (int seg_i = 0; seg_i < segment; seg_i++) {
-				if(seg_i == 0) can[sec_i][pmt_i]->cd(0);
-				else can[sec_i][pmt_i]->cd((int)seg_i);
+				can[sec_i][pmt_i]->cd((int)seg_i+1);
 				cc_hist[sec_i][seg_i][pmt_i]->Draw("same");
 			}
 			can[sec_i][pmt_i]->Write();
