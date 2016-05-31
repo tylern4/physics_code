@@ -27,9 +27,9 @@ TH1D *cc_hist_allSeg[6][3];
 
 
 const Int_t ndims_cc_sparse = 4;
-Int_t bins_cc_sparse[ndims_cc_sparse] = {sector, segment, PMT, bins_CC};
-Double_t xmin_cc_sparse[ndims_cc_sparse] = {0.0,		0.0,			-2.0,	CC_min};
-Double_t xmax_cc_sparse[ndims_cc_sparse] = {sector+1.0,	segment+1.0,	1.0,	CC_max};
+Int_t bins_cc_sparse[ndims_cc_sparse] = 	{sector, 		segment, 		PMT, 	bins_CC};
+Double_t xmin_cc_sparse[ndims_cc_sparse] = 	{0.0,			0.0,			-2.0,	CC_min};
+Double_t xmax_cc_sparse[ndims_cc_sparse] = 	{sector+1.0,	segment+1.0,	1.0,	CC_max};
 Double_t x_cc_sparse[ndims_cc_sparse];
 
 //THnSparse* cc_sparse = new THnSparseD("cc_sparse", "Histogram", ndims_cc_sparse, bins_cc_sparse, xmin_cc_sparse, xmax_cc_sparse); //
