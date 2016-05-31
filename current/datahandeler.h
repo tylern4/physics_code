@@ -62,20 +62,12 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 		//update loadbar and get current event
 		loadbar(current_event,num_of_events);
 		chain.GetEntry(current_event);
-		if(cc[0] > 0) {
-			int cc_sector = cc_sect[cc[0]-1];
-			int cc_segment = (cc_segm[0] % 1000)/10;
-			int cc_pmt = cc_segm[0]/1000-1;
-			int cc_nphe = nphe[cc[0]-1];
-			CC_fill(cc_sector,cc_segment,cc_pmt,cc_nphe);
-		}
 
 		//reset electron cut bool
 		electron_cuts = true;
 		//electron cuts
 		electron_cuts &= (ec[0] > 0); // ``` ``` ``` ec
 		if (electron_cuts) EC_fill(etot[ec[0]-1],p[0]);
-
 		electron_cuts &= (id[0] == ELECTRON); //First particle is electron
 		electron_cuts &= (gpart > 0); //Number of good particles is greater than 0
 		electron_cuts &= (stat[0] > 0); //First Particle hit stat
@@ -83,6 +75,14 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 		electron_cuts &= (sc[0] > 0); //First Particle hit sc
 		electron_cuts &= (dc[0] > 0); // ``` ``` ``` dc
 		electron_cuts &= (dc_stat[dc[0]-1] > 0);
+
+		if(electron_cuts && cc[0] > 0) {
+			int cc_sector = cc_sect[cc[0]-1];
+			int cc_segment = (cc_segm[0] % 1000)/10;
+			int cc_pmt = cc_segm[0]/1000-1;
+			int cc_nphe = nphe[cc[0]-1];
+			CC_fill(cc_sector,cc_segment,cc_pmt,cc_nphe);
+		}
 
 		if(electron_cuts){
 			//Setup scattered electron 4 vector
@@ -189,6 +189,10 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 	TDirectory *CC_hists = RootOutputFile->mkdir("CC_hists");
 	CC_hists->cd();
 	CC_Write();
+
+	TDirectory *CC_canvases = RootOutputFile->mkdir("CC_canvases");
+	CC_canvases->cd();
+	CC_canvas();
 
 
 	RootOutputFile->Write();

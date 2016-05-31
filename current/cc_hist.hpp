@@ -53,18 +53,18 @@ void makeHists_CC(){
 	cc_sparse->GetAxis(2)->SetTitle(" cc_pmt ");
 	cc_sparse->GetAxis(3)->SetTitle(" cc_nphe ");
 
-	for (int j = 0; j < sector; j++) {
-		for (int jjj = 0; jjj < PMT; jjj++) {
-			if(jjj == 0) L_R_C = "both";
-			if(jjj == 1) L_R_C = "right";
-			if(jjj == 2) L_R_C = "left";
-			sprintf(hname,"CC_sec%d_%s",j+1,L_R_C);
-			sprintf(htitle,"CC sector %d %s",j+1,L_R_C);
-			cc_hist_allSeg[j][jjj] = new TH1D(hname,htitle, bins_CC, CC_min, CC_max);
-			for (int jj = 0; jj < segment; jj++) {
-				sprintf(hname,"CC_sec%d_seg%d_%s",j+1,jj+1,L_R_C);
-				sprintf(htitle,"CC sector %d segment %d %s",j+1,jj+1,L_R_C);
-				cc_hist[j][jj][jjj] = new TH1D(hname,htitle, bins_CC, CC_min, CC_max);
+	for (int sec_i = 0; sec_i < sector; sec_i++) {
+		for (int pmt_i = 0; pmt_i < PMT; pmt_i++) {
+			if(pmt_i == 0) L_R_C = "both";
+			if(pmt_i == 1) L_R_C = "right";
+			if(pmt_i == 2) L_R_C = "left";
+			sprintf(hname,"CC_sec%d_%s",sec_i+1,L_R_C);
+			sprintf(htitle,"CC sector %d %s",sec_i+1,L_R_C);
+			cc_hist_allSeg[sec_i][pmt_i] = new TH1D(hname,htitle, bins_CC, CC_min, CC_max);
+			for (int seg_i = 0; seg_i < segment; seg_i++) {
+				sprintf(hname,"CC_sec%d_seg%d_%s",sec_i+1,seg_i+1,L_R_C);
+				sprintf(htitle,"CC sector %d segment %d %s",sec_i+1,seg_i+1,L_R_C);
+				cc_hist[sec_i][seg_i][pmt_i] = new TH1D(hname,htitle, bins_CC, CC_min, CC_max);
 			}
 		}
 	}
@@ -73,14 +73,13 @@ void makeHists_CC(){
 
 void CC_Write(){
 	cc_sparse->Write();
-
-	for (int j = 0; j < sector; j++) {
-		for (int jjj = 0; jjj < PMT; jjj++) {
-			cc_hist_allSeg[j][jjj]->SetYTitle("number photoelectrons");
-			cc_hist_allSeg[j][jjj]->Write();
-			for (int jj = 0; jj < segment; jj++){
-				cc_hist[j][jj][jjj]->SetYTitle("number photoelectrons");
-				cc_hist[j][jj][jjj]->Write();
+	for (int sec_i = 0; sec_i < sector; sec_i++) {
+		for (int pmt_i = 0; pmt_i < PMT; pmt_i++) {
+			cc_hist_allSeg[sec_i][pmt_i]->SetYTitle("number photoelectrons");
+			cc_hist_allSeg[sec_i][pmt_i]->Write();
+			for (int seg_i = 0; seg_i < segment; seg_i++){
+				cc_hist[sec_i][seg_i][pmt_i]->SetYTitle("number photoelectrons");
+				cc_hist[sec_i][seg_i][pmt_i]->Write();
 			}
 		}
 	}
@@ -88,12 +87,23 @@ void CC_Write(){
 }
 
 void CC_canvas(){
-	TCanvas* c1 = new TCanvas("c1");
-	for (int j = 0; j < sector; j++) {
-		for (int jj = 0; jj < 1; jj++) {
-			for (int jjj = 0; jjj < 1; jjj++) {
-				cc_hist[j][jj][jjj]->Draw();
+	TCanvas* can[sector][PMT];
+	char can_name[50];
+	for (int pmt_i = 0; pmt_i < PMT; pmt_i++) {
+		for (int sec_i = 0; sec_i < sector; sec_i++) {
+			if(pmt_i == 0) L_R_C = "both";
+			if(pmt_i == 1) L_R_C = "right";
+			if(pmt_i == 2) L_R_C = "left";
+
+			sprintf(can_name, "Sector %d %s",sec_i+1,L_R_C);
+			can[sec_i][pmt_i] = new TCanvas(can_name,can_name,1200,800);
+			can[sec_i][pmt_i]->Divide(6, 3);
+			for (int seg_i = 0; seg_i < segment; seg_i++) {
+				if(seg_i == 0) can[sec_i][pmt_i]->cd(0);
+				else can[sec_i][pmt_i]->cd((int)seg_i);
+				cc_hist[sec_i][seg_i][pmt_i]->Draw("same");
 			}
+			can[sec_i][pmt_i]->Write();
 		}
 	}
 }
