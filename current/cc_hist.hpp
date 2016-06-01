@@ -14,9 +14,9 @@
 //
 //
 
-int bins_CC = 100;
+int bins_CC = 50;
 float CC_min = 0;
-float CC_max = 200;
+float CC_max = 250;
 char* L_R_C;
 int sector = 6;
 int segment = 18;
