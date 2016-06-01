@@ -132,14 +132,14 @@ void skim(char* fin, char* RootFile_output, double mean, double sigma){
 				MissingMassNeutron = MissingMassNeutron.missing_mass(gamma_mu);
 			}
 		}
-		//MM = (MissingMassNeutron.mass >=0 ) ? MissingMassNeutron.mass : NaN;
+		MM = (MissingMassNeutron.mass >=0 ) ? MissingMassNeutron.mass : NaN;
 		MM = (num_of_pis == 1) ? MissingMassNeutron.mass : NaN;
 
 		MM_cut = true;
-		//MM_cut &= (MM == MM); //removes NaN
+		MM_cut &= (MM == MM); //removes NaN
 
-		//MM_cut &= (MM <= mean + 10 * sigma);
-		//MM_cut &= (MM >= mean - 10 * sigma);
+		MM_cut &= (MM <= mean + 10 * sigma);
+		MM_cut &= (MM >= mean - 10 * sigma);
 
 		if (electron_cuts && MM_cut){ //&& MM_cut
 			W = W_calc(e_mu,e_mu_prime);
