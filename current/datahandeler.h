@@ -76,7 +76,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 		electron_cuts &= (dc[0] > 0); // ``` ``` ``` dc
 		electron_cuts &= (dc_stat[dc[0]-1] > 0);
 
-		if(electron_cuts && cc[0] > 0) {
+		if(cc[0] > 0) { //electron_cuts && 
 			int cc_sector = cc_sect[cc[0]-1];
 			int cc_segment = (cc_segm[0] % 1000)/10;
 			int cc_pmt = cc_segm[0]/1000-1;
