@@ -23,24 +23,35 @@ double delta_t(double electron_vertex_time, double mass, double momentum, double
 void delta_t_cut(){
 	double delta_t_P, delta_t_PIP, delta_t_ELECTRON;
 	double electron_vertex = vertex_time(sc_t[sc[0]-1], sc_r[sc[0]-1], 1.0);
+	double sct,scr,mom;
+	int ID,charge,sc_paddle,sc_sector;
 
 	for(int event_number = 0; event_number < gpart; event_number++){
-		delta_t_P = delta_t(electron_vertex, MASS_P, p[event_number], sc_t[sc[event_number]-1], sc_r[sc[event_number]-1]);
-		delta_t_PIP = delta_t(electron_vertex, MASS_PIP, p[event_number], sc_t[sc[event_number]-1], sc_r[sc[event_number]-1]);
-		delta_t_ELECTRON = delta_t(electron_vertex, MASS_E, p[event_number], sc_t[sc[event_number]-1], sc_r[sc[event_number]-1]);
+		sct = (double)sc_t[sc[event_number]-1];
+		scr = (double)sc_r[sc[event_number]-1];
+		mom = (double)p[event_number];
+		ID = (int)id[event_number];
+		charge = (int)q[event_number];
+		sc_paddle = (int)sc_pd[sc[event_number]-1];
+		sc_sector = (int)sc_sect[sc[event_number]-1];
 
-		delta_t_Fill(p[event_number], id[event_number],(int)q[event_number], delta_t_P, delta_t_PIP, delta_t_ELECTRON);
+		delta_t_P = delta_t(electron_vertex, MASS_P, mom, sct, scr);
+		delta_t_PIP = delta_t(electron_vertex, MASS_PIP, mom, sct, scr);
+		delta_t_ELECTRON = delta_t(electron_vertex, MASS_E, mom, sct, scr);
 
-		if((int)q[event_number] == 1) {
-			Fill_deltat_P(p[event_number],delta_t_P);
-			Fill_deltat_PIP(p[event_number],delta_t_PIP);
-			Fill_deltat_positron(p[event_number], delta_t_ELECTRON);
-			if(id[event_number] == PROTON) Fill_deltat_P_PID(p[event_number],delta_t_P);
-			if(id[event_number] == PIP)    Fill_deltat_PIP_PID(p[event_number],delta_t_PIP);
-			if(id[event_number] == -11)    Fill_deltat_positron_PID(p[event_number], delta_t_ELECTRON);
-		} else if((int)q[event_number] == -1) {
-			Fill_deltat_electron(p[event_number], delta_t_ELECTRON);
-			if(id[event_number] == ELECTRON) Fill_deltat_electron_PID(p[event_number], delta_t_ELECTRON);
+		delta_t_Fill(mom, ID, charge, delta_t_P, delta_t_PIP, delta_t_ELECTRON);
+		delta_t_sec_pad(mom, ID, charge, delta_t_P, delta_t_PIP, delta_t_ELECTRON,sc_sector,sc_paddle);
+
+		if(charge == 1) {
+			Fill_deltat_P(mom, delta_t_P);
+			Fill_deltat_PIP(mom, delta_t_PIP);
+			Fill_deltat_positron(mom,  delta_t_ELECTRON);
+			if(ID == PROTON) Fill_deltat_P_PID(mom, delta_t_P);
+			if(ID == PIP)    Fill_deltat_PIP_PID(mom, delta_t_PIP);
+			if(ID == -11)    Fill_deltat_positron_PID(mom, delta_t_ELECTRON);
+		} else if(charge == -1) {
+			Fill_deltat_electron(mom, delta_t_ELECTRON);
+			if(ID == ELECTRON) Fill_deltat_electron_PID(mom, delta_t_ELECTRON);
 		}
 	}
 }

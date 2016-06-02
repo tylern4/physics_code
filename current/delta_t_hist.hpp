@@ -18,6 +18,16 @@ float P_max = 3.5;
 float Dt_min = -10;
 float Dt_max = 10;
 
+char hname[50];
+char htitle[500];
+const int num_points = 20;
+TH1D *delta_t_hist[3][num_points];
+const double bin_width = (P_max - P_min)/num_points;
+
+const int sc_sector_num = 6;
+const int sc_paddle_num = 48;
+TH2D *delta_t_sec_pad_hist[3][sc_sector_num][sc_paddle_num];
+
 TH2D *delta_t_mass_P = new TH2D("delta_t_mass_P","#Deltat assuming mass of proton", 
 	bins_p, P_min, P_max, bins_dt, Dt_min, Dt_max);
 TH2D *delta_t_mass_P_PID = new TH2D("delta_t_mass_P_PID","#Deltat assuming mass of proton with PID proton", 
@@ -38,11 +48,42 @@ TH2D *delta_t_mass_positron = new TH2D("delta_t_mass_postitron","#Deltat assumin
 TH2D *delta_t_mass_positron_PID = new TH2D("delta_t_mass_postitron_PID","#Deltat assuming mass of e^{+} with PID e^{+}", 
 	bins_p, P_min, P_max, bins_dt, Dt_min, Dt_max);
 
-char hname[50];
-char htitle[500];
-const int num_points = 20;
-TH1D *delta_t_hist[3][num_points];
-const double bin_width = (P_max - P_min)/num_points;
+void makeHists_delta_t(){
+	for (int jj = 0; jj < num_points; jj++) {
+		sprintf(hname,"delta_t_p_%d",jj);
+		sprintf(htitle,"#Deltat P %d",jj);
+		delta_t_hist[0][jj] = new TH1D(hname,htitle, bins_dt, Dt_min, Dt_max);
+
+		sprintf(hname,"delta_t_pip_%d",jj);
+		sprintf(htitle,"#Deltat #pi^{+} %d",jj);
+		delta_t_hist[1][jj] = new TH1D(hname,htitle, bins_dt, Dt_min, Dt_max);
+
+		sprintf(hname,"delta_t_electron_%d",jj);
+		sprintf(htitle,"#Deltat electron %d",jj);
+		delta_t_hist[2][jj] = new TH1D(hname,htitle, bins_dt, Dt_min, Dt_max);
+	}
+
+	for (int jj = 0; jj < sc_sector_num; jj++) {
+		for (int jjj = 0; jjj < sc_paddle_num; jjj++) {
+			sprintf(hname,"delta_t_p_sec%d_pad%d",jj+1,jjj+1);
+			sprintf(htitle,"#Deltat P Sector %d Paddle %d",jj+1,jjj+1);
+			delta_t_sec_pad_hist[0][jj][jjj] = new TH2D(hname, htitle,
+				bins_p/4, P_min, P_max, bins_dt/4, Dt_min, Dt_max);
+	
+			sprintf(hname,"delta_t_pip_sec%d_pad%d",jj+1,jjj+1);
+			sprintf(htitle,"#Deltat #pi^{+} Sector %d Paddle %d",jj+1,jjj+1);
+			delta_t_sec_pad_hist[1][jj][jjj] = new TH2D(hname, htitle,
+				bins_p/4, P_min, P_max, bins_dt/4, Dt_min, Dt_max);
+	
+			sprintf(hname,"delta_t_electron_sec%d_pad%d",jj+1,jjj+1);
+			sprintf(htitle,"#Deltat electron Sector %d Paddle %d",jj+1,jjj+1);
+			delta_t_sec_pad_hist[2][jj][jjj] = new TH2D(hname, htitle,
+				bins_p/4, P_min, P_max, bins_dt/4, Dt_min, Dt_max);
+			
+		}
+	}
+
+}
 
 void Fill_deltat_P(double momentum, double delta_t){
 	delta_t_mass_P->Fill(momentum,delta_t);
@@ -104,26 +145,6 @@ void delta_t_Write(){
 	delta_t_mass_positron_PID->Write();
 }
 
-/*void delta_t_slices_Write(TFile RootOutputFile){
-	for (int j = 0; j < 3; j++) {
-		switch(j){
-			case 1: TDirectory *DeltaT_slices_P = RootOutputFile.mkdir("Delta_T_slices_P");
-					DeltaT_slices_P->cd();
-					break;
-			case 2: TDirectory *DeltaT_slices_PIP = RootOutputFile.mkdir("Delta_T_slices_PIP");
-					DeltaT_slices_PIP->cd();
-					break;
-			case 3: TDirectory *DeltaT_slices_Electron = RootOutputFile.mkdir("Delta_T_slices_Electron");
-					DeltaT_slices_Electron->cd();
-					break;
-		}
-		for (int jj = 0; jj < num_points; jj++) {
-			delta_t_hist[j][jj]->SetYTitle("#Deltat");
-			delta_t_hist[j][jj]->Write();
-		}
-	}
-}*/
-
 void delta_t_slices_Write(){
 	for (int j = 0; j < 3; j++) {
 		for (int jj = 0; jj < num_points; jj++) {
@@ -133,22 +154,18 @@ void delta_t_slices_Write(){
 	}
 }
 
-void makeHists_delta_t(){
-	for (int jj = 0; jj < num_points; jj++) {
-		sprintf(hname,"delta_t_p_%d",jj);
-		sprintf(htitle,"#Deltat P %d",jj);
-		delta_t_hist[0][jj] = new TH1D(hname,htitle, bins_dt, Dt_min, Dt_max);
-
-		sprintf(hname,"delta_t_pip_%d",jj);
-		sprintf(htitle,"#Deltat #pi^{+} %d",jj);
-		delta_t_hist[1][jj] = new TH1D(hname,htitle, bins_dt, Dt_min, Dt_max);
-
-		sprintf(hname,"delta_t_electron_%d",jj);
-		sprintf(htitle,"#Deltat electron %d",jj);
-		delta_t_hist[2][jj] = new TH1D(hname,htitle, bins_dt, Dt_min, Dt_max);
+void delta_t_sec_pad_Write(){
+	for (int j = 0; j < 3; j++) {
+		for (int jj = 0; jj < sc_sector_num; jj++) {
+			for (int jjj = 0; jjj < sc_paddle_num; jjj++) {
+				delta_t_sec_pad_hist[j][jj][jjj]->SetYTitle("#Deltat");
+				delta_t_sec_pad_hist[j][jj][jjj]->Write();
+			}
+		}
 	}
 }
-void delta_t_Fill(double momentum, int ID, int charge, double delta_t_proton,double delta_t_pip,double delta_t_electron){
+
+void delta_t_Fill(double momentum, int ID, int charge, double delta_t_proton, double delta_t_pip,double delta_t_electron){
 	for (int jj = 0; jj < num_points; jj++) {
 		if(momentum > jj * bin_width && momentum <= (jj+1) * bin_width){
 			if(charge == 1) {
@@ -159,5 +176,18 @@ void delta_t_Fill(double momentum, int ID, int charge, double delta_t_proton,dou
 		}
 	}
 }
+
+void delta_t_sec_pad(double momentum, int ID, int charge,
+			double delta_t_proton, double delta_t_pip,double delta_t_electron,
+			int sc_sector, int sc_paddle){
+
+	if(charge == 1) {
+		delta_t_sec_pad_hist[0][sc_sector-1][sc_paddle-1]->Fill(momentum,delta_t_proton);
+		delta_t_sec_pad_hist[1][sc_sector-1][sc_paddle-1]->Fill(momentum,delta_t_pip);
+	}
+	if(charge == -1) delta_t_sec_pad_hist[2][sc_sector-1][sc_paddle-1]->Fill(momentum,delta_t_electron);
+
+}
+
 
 #endif

@@ -52,6 +52,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 		if (number_cols<0) break;
 		chain.Add(rootFile);
 	}
+	fclose(input_file); // close file with input file list
 	//get branches from the chain
 	getBranches(&chain);
 	if(!first_run) getWQ2branch(&chain);
@@ -68,15 +69,15 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 		//electron cuts
 		electron_cuts &= (ec[0] > 0); // ``` ``` ``` ec
 		if (electron_cuts) EC_fill(etot[ec[0]-1],p[0]);
-		electron_cuts &= (id[0] == ELECTRON); //First particle is electron
-		electron_cuts &= (gpart > 0); //Number of good particles is greater than 0
-		electron_cuts &= (stat[0] > 0); //First Particle hit stat
+		electron_cuts &= ((int)id[0] == ELECTRON); //First particle is electron
+		electron_cuts &= ((int)gpart > 0); //Number of good particles is greater than 0
+		electron_cuts &= ((int)stat[0] > 0); //First Particle hit stat
 		electron_cuts &= ((int)q[0] == -1); //First particle is negative Q
-		electron_cuts &= (sc[0] > 0); //First Particle hit sc
-		electron_cuts &= (dc[0] > 0); // ``` ``` ``` dc
-		electron_cuts &= (dc_stat[dc[0]-1] > 0);
+		electron_cuts &= ((int)sc[0] > 0); //First Particle hit sc
+		electron_cuts &= ((int)dc[0] > 0); // ``` ``` ``` dc
+		electron_cuts &= ((int)dc_stat[dc[0]-1] > 0);
 
-		if(cc[0] > 0) { //electron_cuts && 
+		if(electron_cuts && cc[0] > 0) { 
 			int cc_sector = cc_sect[cc[0]-1];
 			int cc_segment = (cc_segm[0] % 1000)/10;
 			int cc_pmt = cc_segm[0]/1000-1;
@@ -186,6 +187,10 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 	DeltaT_slices->cd();
 	delta_t_slices_Write();
 
+	TDirectory *DeltaT_sec_pad = RootOutputFile->mkdir("Delta_T_sec_pad");
+	DeltaT_sec_pad->cd();
+	delta_t_sec_pad_Write();
+
 	TDirectory *CC_hists = RootOutputFile->mkdir("CC_hists");
 	CC_hists->cd();
 	CC_Write();
@@ -197,7 +202,6 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 
 	RootOutputFile->Write();
 	RootOutputFile->Close();
-	fclose(input_file); 														// close file with input file list
 	cut_outputs.close();
 
 }
