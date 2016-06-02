@@ -68,17 +68,17 @@ void makeHists_delta_t(){
 			sprintf(hname,"delta_t_p_sec%d_pad%d",jj+1,jjj+1);
 			sprintf(htitle,"#Deltat P Sector %d Paddle %d",jj+1,jjj+1);
 			delta_t_sec_pad_hist[0][jj][jjj] = new TH2D(hname, htitle,
-				bins_p/4, P_min, P_max, bins_dt/4, Dt_min, Dt_max);
+				bins_p/2, P_min, P_max, bins_dt/2, Dt_min, Dt_max);
 	
 			sprintf(hname,"delta_t_pip_sec%d_pad%d",jj+1,jjj+1);
 			sprintf(htitle,"#Deltat #pi^{+} Sector %d Paddle %d",jj+1,jjj+1);
 			delta_t_sec_pad_hist[1][jj][jjj] = new TH2D(hname, htitle,
-				bins_p/4, P_min, P_max, bins_dt/4, Dt_min, Dt_max);
+				bins_p/2, P_min, P_max, bins_dt/2, Dt_min, Dt_max);
 	
 			sprintf(hname,"delta_t_electron_sec%d_pad%d",jj+1,jjj+1);
 			sprintf(htitle,"#Deltat electron Sector %d Paddle %d",jj+1,jjj+1);
 			delta_t_sec_pad_hist[2][jj][jjj] = new TH2D(hname, htitle,
-				bins_p/4, P_min, P_max, bins_dt/4, Dt_min, Dt_max);
+				bins_p/2, P_min, P_max, bins_dt/2, Dt_min, Dt_max);
 			
 		}
 	}
@@ -189,5 +189,26 @@ void delta_t_sec_pad(double momentum, int ID, int charge,
 
 }
 
+void delta_T_canvas(){
+	TCanvas* can_dt[sc_sector_num][3];
+	char can_name[50];
+	char * P_PIP_E;
+	for (int particle_i = 0; particle_i < 3; particle_i++) {
+		for (int sec_i = 0; sec_i < sc_sector_num; sec_i++) {
+			if(particle_i == 0) P_PIP_E = "Proton";
+			if(particle_i == 1) P_PIP_E = "Pip";
+			if(particle_i == 2) P_PIP_E = "Electron";
+
+			sprintf(can_name, "Sector %d %s",sec_i+1,P_PIP_E);
+			can_dt[sec_i][particle_i] = new TCanvas(can_name,can_name,1200,800);
+			can_dt[sec_i][particle_i]->Divide(6, 8);
+			for (int pad_i = 0; pad_i < sc_paddle_num; pad_i++) {
+				can_dt[sec_i][particle_i]->cd((int)pad_i+1);
+				delta_t_sec_pad_hist[particle_i][sec_i][pad_i]->Draw("same""colz");
+			}
+			can_dt[sec_i][particle_i]->Write();
+		}
+	}
+}
 
 #endif
