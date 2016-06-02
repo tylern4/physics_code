@@ -191,6 +191,10 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 	DeltaT_sec_pad->cd();
 	delta_t_sec_pad_Write();
 
+	TDirectory *Delta_T_canvases = RootOutputFile->mkdir("Delta_T_canvases");
+	Delta_T_canvases->cd();
+	delta_T_canvas();
+
 	TDirectory *CC_hists = RootOutputFile->mkdir("CC_hists");
 	CC_hists->cd();
 	CC_Write();
