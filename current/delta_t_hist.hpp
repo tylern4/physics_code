@@ -146,8 +146,12 @@ void delta_t_Write(){
 }
 
 void delta_t_slices_Write(){
+	Cuts delta_t_cut[3][num_points];
+	double fit_dt_min = -1.0;
+	double fit_dt_max = 1.0;
 	for (int j = 0; j < 3; j++) {
 		for (int jj = 0; jj < num_points; jj++) {
+			if(j != 2) delta_t_cut[j][num_points].FitGaus(delta_t_hist[j][jj],fit_dt_min,fit_dt_max);
 			delta_t_hist[j][jj]->SetYTitle("#Deltat");
 			delta_t_hist[j][jj]->Write();
 		}
