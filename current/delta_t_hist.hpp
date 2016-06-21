@@ -145,6 +145,18 @@ void delta_t_Write(){
 	delta_t_mass_positron_PID->Write();
 }
 
+void delta_t_Fill(double momentum, int ID, int charge, double delta_t_proton, double delta_t_pip,double delta_t_electron){
+	for (int jj = 0; jj < num_points; jj++) {
+		if(momentum > jj * bin_width && momentum <= (jj+1) * bin_width){
+			if(charge == 1) {
+				delta_t_hist[0][jj]->Fill(delta_t_proton);
+				delta_t_hist[1][jj]->Fill(delta_t_pip);
+			}
+			if(charge == -1) delta_t_hist[2][jj]->Fill(delta_t_electron);
+		}
+	}
+}
+
 void delta_t_slices_Write(){
 	Cuts delta_t_cut[3][num_points];
 	double fit_dt_min = -1.0;
@@ -154,29 +166,6 @@ void delta_t_slices_Write(){
 			if(j != 2) delta_t_cut[j][num_points].FitGaus(delta_t_hist[j][jj],fit_dt_min,fit_dt_max);
 			delta_t_hist[j][jj]->SetYTitle("#Deltat");
 			delta_t_hist[j][jj]->Write();
-		}
-	}
-}
-
-void delta_t_sec_pad_Write(){
-	for (int j = 0; j < 3; j++) {
-		for (int jj = 0; jj < sc_sector_num; jj++) {
-			for (int jjj = 0; jjj < sc_paddle_num; jjj++) {
-				delta_t_sec_pad_hist[j][jj][jjj]->SetYTitle("#Deltat");
-				delta_t_sec_pad_hist[j][jj][jjj]->Write();
-			}
-		}
-	}
-}
-
-void delta_t_Fill(double momentum, int ID, int charge, double delta_t_proton, double delta_t_pip,double delta_t_electron){
-	for (int jj = 0; jj < num_points; jj++) {
-		if(momentum > jj * bin_width && momentum <= (jj+1) * bin_width){
-			if(charge == 1) {
-				delta_t_hist[0][jj]->Fill(delta_t_proton);
-				delta_t_hist[1][jj]->Fill(delta_t_pip);
-			}
-			if(charge == -1) delta_t_hist[2][jj]->Fill(delta_t_electron);
 		}
 	}
 }
@@ -191,6 +180,17 @@ void delta_t_sec_pad(double momentum, int ID, int charge,
 	}
 	if(charge == -1) delta_t_sec_pad_hist[2][sc_sector-1][sc_paddle-1]->Fill(momentum,delta_t_electron);
 
+}
+
+void delta_t_sec_pad_Write(){
+	for (int j = 0; j < 3; j++) {
+		for (int jj = 0; jj < sc_sector_num; jj++) {
+			for (int jjj = 0; jjj < sc_paddle_num; jjj++) {
+				delta_t_sec_pad_hist[j][jj][jjj]->SetYTitle("#Deltat");
+				delta_t_sec_pad_hist[j][jj][jjj]->Write();
+			}
+		}
+	}
 }
 
 void delta_T_canvas(){
