@@ -28,24 +28,24 @@ const int sc_sector_num = 6;
 const int sc_paddle_num = 48;
 TH2D *delta_t_sec_pad_hist[3][sc_sector_num][sc_paddle_num];
 
-TH2D *delta_t_mass_P = new TH2D("delta_t_mass_P","#Deltat assuming mass of proton", 
+TH2D *delta_t_mass_P = new TH2D("delta_t_mass_P","#Deltat assuming mass of proton",
 	bins_p, P_min, P_max, bins_dt, Dt_min, Dt_max);
-TH2D *delta_t_mass_P_PID = new TH2D("delta_t_mass_P_PID","#Deltat assuming mass of proton with PID proton", 
-	bins_p, P_min, P_max, bins_dt, Dt_min, Dt_max);
-
-TH2D *delta_t_mass_PIP = new TH2D("delta_t_mass_PIP","#Deltat assuming mass of #pi^{+}", 
-	bins_p, P_min, P_max, bins_dt, Dt_min, Dt_max);
-TH2D *delta_t_mass_PIP_PID = new TH2D("delta_t_mass_PIP_PID","#Deltat assuming mass of #pi^{+} with PID #pi^{+}", 
+TH2D *delta_t_mass_P_PID = new TH2D("delta_t_mass_P_PID","#Deltat assuming mass of proton with PID proton",
 	bins_p, P_min, P_max, bins_dt, Dt_min, Dt_max);
 
-TH2D *delta_t_mass_electron = new TH2D("delta_t_mass_electron","#Deltat assuming mass of e^{-}", 
+TH2D *delta_t_mass_PIP = new TH2D("delta_t_mass_PIP","#Deltat assuming mass of #pi^{+}",
 	bins_p, P_min, P_max, bins_dt, Dt_min, Dt_max);
-TH2D *delta_t_mass_electron_PID = new TH2D("delta_t_mass_electron_PID","#Deltat assuming mass of e^{-} with PID e^{-}", 
+TH2D *delta_t_mass_PIP_PID = new TH2D("delta_t_mass_PIP_PID","#Deltat assuming mass of #pi^{+} with PID #pi^{+}",
 	bins_p, P_min, P_max, bins_dt, Dt_min, Dt_max);
 
-TH2D *delta_t_mass_positron = new TH2D("delta_t_mass_postitron","#Deltat assuming mass of e^{+}", 
+TH2D *delta_t_mass_electron = new TH2D("delta_t_mass_electron","#Deltat assuming mass of e^{-}",
 	bins_p, P_min, P_max, bins_dt, Dt_min, Dt_max);
-TH2D *delta_t_mass_positron_PID = new TH2D("delta_t_mass_postitron_PID","#Deltat assuming mass of e^{+} with PID e^{+}", 
+TH2D *delta_t_mass_electron_PID = new TH2D("delta_t_mass_electron_PID","#Deltat assuming mass of e^{-} with PID e^{-}",
+	bins_p, P_min, P_max, bins_dt, Dt_min, Dt_max);
+
+TH2D *delta_t_mass_positron = new TH2D("delta_t_mass_postitron","#Deltat assuming mass of e^{+}",
+	bins_p, P_min, P_max, bins_dt, Dt_min, Dt_max);
+TH2D *delta_t_mass_positron_PID = new TH2D("delta_t_mass_postitron_PID","#Deltat assuming mass of e^{+} with PID e^{+}",
 	bins_p, P_min, P_max, bins_dt, Dt_min, Dt_max);
 
 void makeHists_delta_t(){
@@ -69,17 +69,17 @@ void makeHists_delta_t(){
 			sprintf(htitle,"#Deltat P Sector %d Paddle %d",jj+1,jjj+1);
 			delta_t_sec_pad_hist[0][jj][jjj] = new TH2D(hname, htitle,
 				bins_p/2, P_min, P_max, bins_dt/2, Dt_min, Dt_max);
-	
+
 			sprintf(hname,"delta_t_pip_sec%d_pad%d",jj+1,jjj+1);
 			sprintf(htitle,"#Deltat #pi^{+} Sector %d Paddle %d",jj+1,jjj+1);
 			delta_t_sec_pad_hist[1][jj][jjj] = new TH2D(hname, htitle,
 				bins_p/2, P_min, P_max, bins_dt/2, Dt_min, Dt_max);
-	
+
 			sprintf(hname,"delta_t_electron_sec%d_pad%d",jj+1,jjj+1);
 			sprintf(htitle,"#Deltat electron Sector %d Paddle %d",jj+1,jjj+1);
 			delta_t_sec_pad_hist[2][jj][jjj] = new TH2D(hname, htitle,
 				bins_p/2, P_min, P_max, bins_dt/2, Dt_min, Dt_max);
-			
+
 		}
 	}
 
@@ -148,7 +148,7 @@ void delta_t_Write(){
 void delta_t_Fill(double momentum, int ID, int charge, double delta_t_proton, double delta_t_pip,double delta_t_electron){
 	for (int jj = 0; jj < num_points; jj++) {
 		if(momentum > jj * bin_width && momentum <= (jj+1) * bin_width){
-			if(charge == 1) {
+			if(charge == 1 && !isnan(delta_t_proton) && !isnan(delta_t_pip)) {
 				delta_t_hist[0][jj]->Fill(delta_t_proton);
 				delta_t_hist[1][jj]->Fill(delta_t_pip);
 			}
