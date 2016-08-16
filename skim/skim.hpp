@@ -18,6 +18,7 @@ void skim(char *fin, char *RootFile_output){
 	bool electron_cuts;
 
 	Double_t W, Q2;
+	Int_t MyID[MAX_PARTS];
 
 	TVector3 e_mu_prime_3;
 	TLorentzVector e_mu_prime;
@@ -39,6 +40,8 @@ void skim(char *fin, char *RootFile_output){
 	TTree *skim = chain.CloneTree(0);
 	TBranch *W_branch = skim->Branch("W",&W);
 	TBranch *Q2_branch = skim->Branch("Q2",&Q2);
+	TBranch *ID_branch = skim->Branch("MyID",&MyID);
+
 
 	for (int current_event = 0; current_event < num_of_events; current_event++) {
 		chain.GetEntry(current_event);
@@ -56,6 +59,7 @@ void skim(char *fin, char *RootFile_output){
 		if (electron_cuts){
 			W = W_calc(e_mu,e_mu_prime);
 			Q2 = Q2_calc(e_mu,e_mu_prime);
+			MyID[0] = ELECTRON;
 			skim->Fill(); //Fill the banks after the skim
 		}
 	}
@@ -81,8 +85,9 @@ void skim(char* fin, char* RootFile_output, double mean, double sigma){
 	MissingMass MissingMassNeutron;
 
 	Float_t W, Q2, MM;
-	double dt_proton[MAX_PARTS], dt_pip[MAX_PARTS];
-	int num_of_pis;
+	Int_t MyID[MAX_PARTS];
+	Double_t dt_proton[MAX_PARTS], dt_pip[MAX_PARTS];
+	Int_t num_of_pis;
 
 	TVector3 e_mu_prime_3;
 	TLorentzVector e_mu_prime;
@@ -105,6 +110,11 @@ void skim(char* fin, char* RootFile_output, double mean, double sigma){
 	TBranch *W_branch = skim->Branch("W",&W);
 	TBranch *Q2_branch = skim->Branch("Q2",&Q2);
 	TBranch *MM_branch = skim->Branch("MM",&MM);
+	TBranch *ID_branch = skim->Branch("MyID",MyID);
+	TBranch *DeltaT_P_branch = skim->Branch("DeltaT_P",dt_proton);
+	TBranch *DeltaT_Pip_branch = skim->Branch("DeltaT_Pip",dt_pip);
+	TBranch *NumPI_branch = skim->Branch("NumPI",&num_of_pis);
+
 
 	for (int current_event = 0; current_event < num_of_events; current_event++) {
 		chain.GetEntry(current_event);
@@ -121,6 +131,9 @@ void skim(char* fin, char* RootFile_output, double mean, double sigma){
 
 		e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);	
 		e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
+
+		delta_t_array(dt_proton,MASS_P);
+		delta_t_array(dt_pip,MASS_PIP);
 
 
 		for(int part_num = 1; part_num < gpart; part_num++){
@@ -144,6 +157,7 @@ void skim(char* fin, char* RootFile_output, double mean, double sigma){
 		if (electron_cuts && MM_cut){ //&& MM_cut
 			W = W_calc(e_mu,e_mu_prime);
 			Q2 = Q2_calc(e_mu,e_mu_prime);
+			MyID[0] = ELECTRON;
 			skim->Fill(); //Fill the banks after the skim
 		}
 	}
