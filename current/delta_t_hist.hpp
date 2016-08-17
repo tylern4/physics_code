@@ -148,7 +148,7 @@ void delta_t_Write(){
 void delta_t_Fill(double momentum, int ID, int charge, double delta_t_proton, double delta_t_pip,double delta_t_electron){
 	for (int jj = 0; jj < num_points; jj++) {
 		if(momentum > jj * bin_width && momentum <= (jj+1) * bin_width){
-			if(charge == 1 && !isnan(delta_t_proton) && !isnan(delta_t_pip)) {
+			if(charge == 1 && !std::isnan(delta_t_proton) && !std::isnan(delta_t_pip)) {
 				delta_t_hist[0][jj]->Fill(delta_t_proton);
 				delta_t_hist[1][jj]->Fill(delta_t_pip);
 			}
