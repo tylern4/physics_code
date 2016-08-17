@@ -8,7 +8,7 @@
 #ifndef MAIN_H_GUARD
 #define MAIN_H_GUARD
 //#include "TMath.h"
-#include "math.h"
+#include <cmath>
 #include "TTree.h"
 #include "TROOT.h"
 #include <stdlib.h>
