@@ -41,6 +41,15 @@ double xb_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime){
 	return (Q2/ (2 * (q.Dot(target))));
 }
 
+double theta_calc(double cosz){
+	return acos(cosz)/D2R;
+}
+
+double phi_calc(double cosx, double cosy){
+	//double phi = atan2(cosx, cosy)*D2R;
+	return atan2(cosx, cosy)/D2R;
+}
+
 //double missing_mass_calc(TLorentzVector gamma_mu, TLorentzVector p_mu, TLorentzVector pi_mu){
 //	TLorentzVector reaction(0.0,0.0,0.0,0.0);
 //	reaction = (gamma_mu + p_mu - pi_mu);

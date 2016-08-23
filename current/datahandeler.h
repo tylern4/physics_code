@@ -32,6 +32,8 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 
 	TVector3 Particle3(0.0,0.0,0.0);
 	TLorentzVector Particle4(0.0,0.0,0.0,0.0);
+	double theta,phi;
+
 	//double W,Q2;
 	//End declrare variables
 
@@ -55,7 +57,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 	fclose(input_file); // close file with input file list
 	//get branches from the chain
 	getBranches(&chain);
-	if(!first_run) getWQ2branch(&chain);
+	if(!first_run) getMorebranchs(&chain);
 
 	num_of_events = (int)chain.GetEntries();
 
@@ -92,6 +94,10 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 			//Set the vertex time (time of electron hit) 
 			delta_t_cut();
 
+			theta = theta_calc(cz[0]);
+			phi = phi_calc(cx[0],cy[0]);
+
+			Fill_fid(theta,phi,0);
 
 			if(first_run){	
 				W = W_calc(e_mu, e_mu_prime);
@@ -202,6 +208,10 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 	TDirectory *CC_canvases = RootOutputFile->mkdir("CC_canvases");
 	CC_canvases->cd();
 	CC_canvas();
+
+	TDirectory *Fid_cuts = RootOutputFile->mkdir("Fid_cuts");
+	Fid_cuts->cd();
+	Fid_Write();
 
 
 	RootOutputFile->Write();
