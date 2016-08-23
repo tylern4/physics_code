@@ -39,8 +39,8 @@ using namespace std;
 
 static const int MAX_PARTS = 10000;
 
-//static const float PI = TMath::Pi();
-//static const float D2R = PI/180.0;
+static const float PI = TMath::Pi();
+static const float D2R = PI/180.0;
 static const float E1D_E0 = 4.802; //GeV
 //static const float E1D_E0 = 2.03939; //GeV ///This is for Ye's data. Actually E1E_E0
 
@@ -73,9 +73,14 @@ static const float MASS_KM = 0.493677;
 static const float MASS_G = 0.0;
 static const float MASS_OMEGA = 0.78265;
 
+/* My Branches */
 Float_t W;
 Float_t Q2;
 Float_t MM;
+Int_t MyID[MAX_PARTS];
+Double_t dt_proton[MAX_PARTS], dt_pip[MAX_PARTS];
+Int_t num_of_pis;
+//////
 
 UChar_t npart;
 //UChar_t evstat;
@@ -208,10 +213,14 @@ double Square(double a){
 	return a*a;
 }
 
-void getWQ2branch(TTree* myTree){
+void getMorebranchs(TTree* myTree){
 	myTree->SetBranchAddress("W", &W);
 	myTree->SetBranchAddress("Q2", &Q2);
 	myTree->SetBranchAddress("MM", &MM);
+	myTree->SetBranchAddress("MyID",MyID);
+	myTree->SetBranchAddress("DeltaT_P",dt_proton);
+	myTree->SetBranchAddress("DeltaT_Pip",dt_pip);
+	myTree->SetBranchAddress("NumPI",&num_of_pis);
 	myTree->SetBranchStatus("*",1);
 }
 

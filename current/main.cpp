@@ -18,6 +18,7 @@
 #include "delta_t_cut.hpp"
 #include "ec_cut.hpp"
 #include "cc_cut.hpp"
+#include "fid_hists.hpp"
 #include "datahandeler.h"
 
 using namespace std;
@@ -28,6 +29,7 @@ int main(int argc, char **argv){
 	gStyle->SetOptFit(1111);
 	makeHists_delta_t();
 	makeHists_CC();
+	makeHists_fid();
 
 	if (argc == 3) {
 		char* infilename = argv[1];
