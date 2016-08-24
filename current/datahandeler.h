@@ -96,7 +96,8 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 			delta_t_cut();
 
 			theta = theta_calc(cz[0]);
-			phi = center_phi_calc(cx[0],cy[0]);
+			//phi = center_phi_calc(cx[0],cy[0]);
+			phi = phi_calc(cx[0],cy[0]);
 			sector = get_sector(phi);
 
 			Fill_fid(theta,phi,get_sector(phi_calc(cx[0],cy[0])));
