@@ -59,22 +59,22 @@ double center_phi_calc(double cosx, double cosy){
 }
 
 int get_sector(double phi) {
-	/*if(phi>=0 && phi <60) {
+	if(phi>=0 && phi <60) {
 		return 0;
 	} else if(phi>=60 && phi<120) {
 		return 1;
-	} else if(phi>=120 && phi <180) {
+	} else if(phi>=120 && phi <=180) {
 		return 2;
-	} else if(phi>=180 && phi<240) {
+	} else if(phi>=-180 && phi<-120) {
 		return 3;
-	} else if(phi>=240 && phi<300) {
+	} else if(phi>=-120 && phi<-60) {
 		return 4;
-	} else if(phi>=300 && phi<=360) {
+	} else if(phi>=-60 && phi<0) {
 		return 5;
 	} else {
 		return (int)std::nan("0");
-	} */
-	if(phi>=-30 && phi <30) {
+	} 
+	/*if(phi>=-30 && phi <30) {
 		return 0;
 	} else if(phi>=30 && phi<90) {
 		return 1;
@@ -88,7 +88,7 @@ int get_sector(double phi) {
 		return 5;
 	} else {
 		return (int)std::nan("0");
-	} 
+	} */
 }
 
 //double missing_mass_calc(TLorentzVector gamma_mu, TLorentzVector p_mu, TLorentzVector pi_mu){
