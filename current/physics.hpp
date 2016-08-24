@@ -50,6 +50,47 @@ double phi_calc(double cosx, double cosy){
 	return atan2(cosx, cosy)/D2R;
 }
 
+double center_phi_calc(double cosx, double cosy){
+	double phi0 = (atan2(cosx, cosy)/D2R);
+	phi0 += 30;
+ 	if (phi0 < 0.0) phi0 += 360.0;
+	if (phi0 > 360.0) phi0 -= 360.0;
+	return phi0;
+}
+
+int get_sector(double phi) {
+	/*if(phi>=0 && phi <60) {
+		return 0;
+	} else if(phi>=60 && phi<120) {
+		return 1;
+	} else if(phi>=120 && phi <180) {
+		return 2;
+	} else if(phi>=180 && phi<240) {
+		return 3;
+	} else if(phi>=240 && phi<300) {
+		return 4;
+	} else if(phi>=300 && phi<=360) {
+		return 5;
+	} else {
+		return (int)std::nan("0");
+	} */
+	if(phi>=-30 && phi <30) {
+		return 0;
+	} else if(phi>=30 && phi<90) {
+		return 1;
+	} else if(phi>=90 && phi <150) {
+		return 2;
+	} else if(phi>=150 || phi<-150) {
+		return 3;
+	} else if(phi>=-150 && phi<-90) {
+		return 4;
+	} else if(phi>=-90 && phi<-30) {
+		return 5;
+	} else {
+		return (int)std::nan("0");
+	} 
+}
+
 //double missing_mass_calc(TLorentzVector gamma_mu, TLorentzVector p_mu, TLorentzVector pi_mu){
 //	TLorentzVector reaction(0.0,0.0,0.0,0.0);
 //	reaction = (gamma_mu + p_mu - pi_mu);

@@ -5,8 +5,8 @@ int bins_theta = 500;
 int bins_phi = 500;
 float theta_min = 0;
 float theta_max = 90;
-float phi_min = -360/2;
-float phi_max = 360/2;
+float phi_min = 0;
+float phi_max = 360;
 
 char hname_fid[50];
 char htitle_fid[500];
