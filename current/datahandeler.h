@@ -97,7 +97,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 			theta = theta_calc(cz[0]);
 			phi = phi_calc(cx[0],cy[0]);
 
-			Fill_fid(theta,phi,0);
+			Fill_fid(theta,phi,(int)ec_sect[0]-1);
 
 			if(first_run){	
 				W = W_calc(e_mu, e_mu_prime);

@@ -3,10 +3,10 @@
 
 int bins_theta = 500;
 int bins_phi = 500;
-float Theta_min = -360;
-float Theta_max = 360;
-float Phi_min = -360;
-float Phi_max = 360;
+float theta_min = 0;
+float theta_max = 90;
+float phi_min = -360/2;
+float phi_max = 360/2;
 
 char hname_fid[50];
 char htitle_fid[500];
@@ -14,31 +14,32 @@ const int sector_num = 6;
 TH2D *fid_sec_hist[sector_num];
 
 TH2D *fid_hist = new TH2D("fid","fid",
-	bins_phi, Theta_min, Theta_max, bins_theta, Phi_min, Phi_max);
+	bins_phi, phi_min, phi_max, bins_theta, theta_min, theta_max);
 
 void makeHists_fid(){
 	for (int jj = 0; jj < sector_num; jj++) {
 		sprintf(hname_fid,"fid_sec%d",jj+1);
 		sprintf(htitle_fid,"fid_sec%d",jj+1);
 		fid_sec_hist[jj] = new TH2D(hname_fid, htitle_fid,
-			bins_phi/2, Theta_min, Theta_max, bins_theta/2, Phi_min, Phi_max);
+			bins_phi, phi_min, phi_max, bins_theta, theta_min, theta_max);
 	}
 
 }
 
 void Fill_fid(double theta, double phi, int sector){
-	fid_hist->Fill(theta,phi);
-	fid_sec_hist[sector]->Fill(theta,phi);
+	fid_hist->Fill(phi,theta);
+	fid_sec_hist[sector]->Fill(phi,theta);
 }
 
 void Fid_Write(){
-	fid_hist->SetXTitle("#theta");
-	fid_hist->SetYTitle("#phi");
+	fid_hist->SetYTitle("#theta");
+	fid_hist->SetXTitle("#phi");
 
 	fid_hist->Write();
 
 	for (int jj = 0; jj < sector_num; jj++) {
-		fid_sec_hist[jj]->SetYTitle("#Deltat");
+		fid_sec_hist[jj]->SetYTitle("#theta");
+		fid_sec_hist[jj]->SetXTitle("#phi");
 		fid_sec_hist[jj]->Write();
 	}
 }
