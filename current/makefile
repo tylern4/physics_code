@@ -11,7 +11,7 @@ FILENAME=	$(SRC:.cpp=.o)
 
 all:	clean E1D
 
-E1D:	$(FILENAME) 
+E1D: $(FILENAME) 
 	$(CXX) $(FILENAME) -L. $(CXXFLAGS) $(LIBS) -o $(TARGET) 
 
 clean:
