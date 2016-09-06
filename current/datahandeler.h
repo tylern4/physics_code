@@ -43,19 +43,24 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 
 	//Load chain from branch h10
 	TChain chain("h10");
+///////
+	TString fins=fin;
+	TFileCollection fc("fileList", "", fins.Data());
+	chain.AddFileInfoList((TCollection*) fc.GetList());
+//////
 	cout << blue <<"Analyzing file " << green << fin << def << bgdef << endl;
 
 	//Try to open lis file throw an error if it won't open
-	FILE *input_file = fopen(fin,"r");
-	if (input_file == NULL) perror ("Error opening file");
+	//FILE *input_file = fopen(fin,"r");
+	//if (input_file == NULL) perror ("Error opening file");
 
 	//Go through lis file adding each files h10 branch to the chain
-	while (1){
-		number_cols = fscanf(input_file,"%s",rootFile);
-		if (number_cols<0) break;
-		chain.Add(rootFile);
-	}
-	fclose(input_file); // close file with input file list
+	//while (1){
+	//	number_cols = fscanf(input_file,"%s",rootFile);
+	//	if (number_cols<0) break;
+	//	chain.Add(rootFile);
+	//}
+	//fclose(input_file); // close file with input file list
 	//get branches from the chain
 	getBranches(&chain);
 	if(!first_run) getMorebranchs(&chain);

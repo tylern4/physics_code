@@ -13,6 +13,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <TLorentzVector.h>
+#include <TFileCollection.h>
+#include <TFile.h>
 #include "color.cpp"
 #include <string.h>
 #include <string>
