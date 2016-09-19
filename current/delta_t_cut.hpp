@@ -20,7 +20,7 @@ double delta_t(double electron_vertex_time, double mass, double momentum, double
 	return electron_vertex_time - vertex_time(sc_t,sc_r,cut_beta); 
 }
 
-void delta_t_cut(){
+void delta_t_cut(bool first_run){
 	double delta_t_P, delta_t_PIP, delta_t_ELECTRON;
 	double electron_vertex = vertex_time(sc_t[sc[0]-1], sc_r[sc[0]-1], 1.0);
 	double sct,scr,mom;
@@ -35,9 +35,17 @@ void delta_t_cut(){
 		sc_paddle = (int)sc_pd[sc[event_number]-1];
 		sc_sector = (int)sc_sect[sc[event_number]-1];
 
-		delta_t_P = delta_t(electron_vertex, MASS_P, mom, sct, scr);
-		delta_t_PIP = delta_t(electron_vertex, MASS_PIP, mom, sct, scr);
-		delta_t_ELECTRON = delta_t(electron_vertex, MASS_E, mom, sct, scr);
+		if(first_run){
+			delta_t_P = delta_t(electron_vertex, MASS_P, mom, sct, scr);
+			delta_t_PIP = delta_t(electron_vertex, MASS_PIP, mom, sct, scr);
+			delta_t_ELECTRON = delta_t(electron_vertex, MASS_E, mom, sct, scr);
+		} else {
+			//delta_t_P = dt_proton[event_number];
+			//delta_t_PIP = dt_pip[event_number];
+			delta_t_P = delta_t(electron_vertex, MASS_P, mom, sct, scr);
+			delta_t_PIP = delta_t(electron_vertex, MASS_PIP, mom, sct, scr);
+			delta_t_ELECTRON = delta_t(electron_vertex, MASS_E, mom, sct, scr);
+		}
 
 		delta_t_Fill(mom, ID, charge, delta_t_P, delta_t_PIP, delta_t_ELECTRON);
 		delta_t_sec_pad(mom, ID, charge, delta_t_P, delta_t_PIP, delta_t_ELECTRON,sc_sector,sc_paddle);

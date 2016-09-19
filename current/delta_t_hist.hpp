@@ -7,10 +7,11 @@
 
 #ifndef DELTA_T_HIST_H_GUARD
 #define DELTA_T_HIST_H_GUARD
+#include <TGraph.h>
 //
 //Histogram declarations, fills, and write
-//
-//
+// j -> type: 0=>Proton,1=>Pip,2=>Electron
+// jj -> Fit point
 int bins_dt = 500;
 int bins_p = 500;
 float P_min = 0;
@@ -135,8 +136,41 @@ void delta_t_Write(){
 	delta_t_mass_positron_PID->SetXTitle("Momentum (GeV)");
 	delta_t_mass_positron_PID->SetYTitle("#Deltat");
 
+TF1 *g = new TF1("g","gaus", -1, 1);
+//delta_t_mass_P->FitSlicesY(g,0,-1,10,"QNRG5");
+delta_t_mass_P->FitSlicesY(g,0,-1,0,"QNRG5");
+TH1D *delta_t_mass_P_0 = (TH1D*)gDirectory->Get("delta_t_mass_P_0");
+TH1D *delta_t_mass_P_1 = (TH1D*)gDirectory->Get("delta_t_mass_P_1");
+TH1D *delta_t_mass_P_2 = (TH1D*)gDirectory->Get("delta_t_mass_P_2");
+double x[500];
+double y_plus[500];
+double y_minus[500];
+int num = 0;
+for (int i = 0; i < 500; i++){
+	if(delta_t_mass_P_1->GetBinContent(i) != 0){
+		//Get momentum from bin center
+		x[num] = (double)delta_t_mass_P_1->GetBinCenter(i);
+		//mean + 3sigma
+		y_plus[num] = (double)delta_t_mass_P_1->GetBinContent(i) + 3 * (double)delta_t_mass_P_2->GetBinContent(i);
+		//mean - 3simga
+		y_minus[num] = (double)delta_t_mass_P_1->GetBinContent(i) - 3 * (double)delta_t_mass_P_2->GetBinContent(i);
+		num++;
+	}
+}
+
+TGraph *P = new TGraph(num,x,y_plus);
+TGraph *M = new TGraph(num,x,y_minus);
+P->Write();
+M->Write();
+//delta_t_mass_P->Draw();
+P->Draw("Same");
+M->Draw("Same");
 	delta_t_mass_P->Write();
 	delta_t_mass_P_PID->Write();
+
+
+
+delta_t_mass_PIP->FitSlicesY(g,0,-1,10,"QNRG5",0);
 	delta_t_mass_PIP->Write();
 	delta_t_mass_PIP_PID->Write();
 	delta_t_mass_electron->Write();
@@ -163,7 +197,11 @@ void delta_t_slices_Write(){
 	double fit_dt_max = 1.0;
 	for (int j = 0; j < 3; j++) {
 		for (int jj = 0; jj < num_points; jj++) {
-			if(j != 2) delta_t_cut[j][num_points].FitGaus(delta_t_hist[j][jj],fit_dt_min,fit_dt_max);
+			if(j != 2) {
+				delta_t_cut[j][num_points].FitGaus(delta_t_hist[j][jj],fit_dt_min,fit_dt_max);
+				//cout << j << ',' << jj << ',' << delta_t_cut[j][num_points].mean << ',' << delta_t_cut[j][num_points].sigma << endl;
+			}
+
 			delta_t_hist[j][jj]->SetYTitle("#Deltat");
 			delta_t_hist[j][jj]->Write();
 		}
