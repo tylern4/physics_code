@@ -135,7 +135,6 @@ void skim(char* fin, char* RootFile_output, double mean, double sigma){
 		delta_t_array(dt_proton,MASS_P);
 		delta_t_array(dt_pip,MASS_PIP);
 
-
 		for(int part_num = 1; part_num < gpart; part_num++){
 			num_of_pis = 0;
 			if(id[part_num] == PIP){
