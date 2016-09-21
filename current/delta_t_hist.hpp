@@ -118,6 +118,100 @@ void Fill_deltat_positron_PID(double momentum, double delta_t){
 	delta_t_mass_positron_PID->Fill(momentum,delta_t);
 }
 
+void delta_t_slice_fit(){
+	TF1 *g = new TF1("g","gaus", -1, 1);
+	//delta_t_mass_P->FitSlicesY(g,0,-1,10,"QNRG5");
+	delta_t_mass_P->FitSlicesY(g,0,-1,0,"QNRG5");
+	TH1D *delta_t_mass_P_0 = (TH1D*)gDirectory->Get("delta_t_mass_P_0");
+	TH1D *delta_t_mass_P_1 = (TH1D*)gDirectory->Get("delta_t_mass_P_1");
+	TH1D *delta_t_mass_P_2 = (TH1D*)gDirectory->Get("delta_t_mass_P_2");
+	double x[500];
+	double y_plus[500];
+	double y_minus[500];
+	int num = 0;
+	for (int i = 0; i < 500; i++){
+		if(delta_t_mass_P_1->GetBinContent(i) != 0){
+			//Get momentum from bin center
+			x[num] = (double)delta_t_mass_P_1->GetBinCenter(i);
+			//mean + 3sigma
+			y_plus[num] = (double)delta_t_mass_P_1->GetBinContent(i) + 3 * (double)delta_t_mass_P_2->GetBinContent(i);
+			//mean - 3simga
+			y_minus[num] = (double)delta_t_mass_P_1->GetBinContent(i) - 3 * (double)delta_t_mass_P_2->GetBinContent(i);
+			num++;
+		}
+	}
+	
+	TGraph *P = new TGraph(num,x,y_plus);
+	TGraph *M = new TGraph(num,x,y_minus);
+	P->Write();
+	M->Write();
+	//delta_t_mass_P->Draw();
+	P->Draw("Same");
+	M->Draw("Same");
+
+	delta_t_mass_PIP->FitSlicesY(g,0,-1,0,"QNRG5");
+	TH1D *delta_t_mass_PIP_0 = (TH1D*)gDirectory->Get("delta_t_mass_PIP_0");
+	TH1D *delta_t_mass_PIP_1 = (TH1D*)gDirectory->Get("delta_t_mass_PIP_1");
+	TH1D *delta_t_mass_PIP_2 = (TH1D*)gDirectory->Get("delta_t_mass_PIP_2");
+	double x_pip[500];
+	double y_plus_pip[500];
+	double y_minus_pip[500];
+	num = 0;
+	for (int i = 0; i < 500; i++){
+		if(delta_t_mass_PIP_1->GetBinContent(i) != 0){
+			//Get momentum from bin center
+			x_pip[num] = (double)delta_t_mass_PIP_1->GetBinCenter(i);
+			//mean + 3sigma
+			y_plus_pip[num] = (double)delta_t_mass_PIP_1->GetBinContent(i) + 3 * (double)delta_t_mass_PIP_2->GetBinContent(i);
+			//mean - 3simga
+			y_minus_pip[num] = (double)delta_t_mass_PIP_1->GetBinContent(i) - 3 * (double)delta_t_mass_PIP_2->GetBinContent(i);
+			num++;
+		}
+	}
+	
+	TGraph *P_pip = new TGraph(num,x_pip,y_plus_pip);
+	TGraph *M_pip = new TGraph(num,x_pip,y_minus_pip);
+	P_pip->Write();
+	M_pip->Write();
+	//delta_t_mass_P->Draw();
+	P_pip->Draw("Same");
+	M_pip->Draw("Same");
+
+}
+
+//inline TH2D slice(TH2D slice_hist){
+//	TF1 *g = new TF1("g","gaus", -1, 1);
+//	//slice_hist->FitSlicesY(g,0,-1,10,"QNRG5");
+//	slice_hist->FitSlicesY(g,0,-1,0,"QNRG5");
+//	TH1D *slice_hist_0 = (TH1D*)gDirectory->Get("slice_hist_0");
+//	TH1D *slice_hist_1 = (TH1D*)gDirectory->Get("slice_hist_1");
+//	TH1D *slice_hist_2 = (TH1D*)gDirectory->Get("slice_hist_2");
+//	double x[500];
+//	double y_plus[500];
+//	double y_minus[500];
+//	int num = 0;
+//	for (int i = 0; i < 500; i++){
+//		if(slice_hist_1->GetBinContent(i) != 0){
+//			//Get momentum from bin center
+//			x[num] = (double)slice_hist_1->GetBinCenter(i);
+//			//mean + 3sigma
+//			y_plus[num] = (double)slice_hist_1->GetBinContent(i) + 3 * (double)slice_hist_2->GetBinContent(i);
+//			//mean - 3simga
+//			y_minus[num] = (double)slice_hist_1->GetBinContent(i) - 3 * (double)slice_hist_2->GetBinContent(i);
+//			num++;
+//		}
+//	}
+//	
+//	TGraph *P = new TGraph(num,x,y_plus);
+//	TGraph *M = new TGraph(num,x,y_minus);
+//	P->Write();
+//	M->Write();
+//	//slice_hist->Draw();
+//	P->Draw("Same");
+//	M->Draw("Same");
+//}
+
+
 void delta_t_Write(){
 	delta_t_mass_P->SetXTitle("Momentum (GeV)");
 	delta_t_mass_P->SetYTitle("#Deltat");
@@ -136,41 +230,71 @@ void delta_t_Write(){
 	delta_t_mass_positron_PID->SetXTitle("Momentum (GeV)");
 	delta_t_mass_positron_PID->SetYTitle("#Deltat");
 
-TF1 *g = new TF1("g","gaus", -1, 1);
-//delta_t_mass_P->FitSlicesY(g,0,-1,10,"QNRG5");
-delta_t_mass_P->FitSlicesY(g,0,-1,0,"QNRG5");
-TH1D *delta_t_mass_P_0 = (TH1D*)gDirectory->Get("delta_t_mass_P_0");
-TH1D *delta_t_mass_P_1 = (TH1D*)gDirectory->Get("delta_t_mass_P_1");
-TH1D *delta_t_mass_P_2 = (TH1D*)gDirectory->Get("delta_t_mass_P_2");
-double x[500];
-double y_plus[500];
-double y_minus[500];
-int num = 0;
-for (int i = 0; i < 500; i++){
-	if(delta_t_mass_P_1->GetBinContent(i) != 0){
-		//Get momentum from bin center
-		x[num] = (double)delta_t_mass_P_1->GetBinCenter(i);
-		//mean + 3sigma
-		y_plus[num] = (double)delta_t_mass_P_1->GetBinContent(i) + 3 * (double)delta_t_mass_P_2->GetBinContent(i);
-		//mean - 3simga
-		y_minus[num] = (double)delta_t_mass_P_1->GetBinContent(i) - 3 * (double)delta_t_mass_P_2->GetBinContent(i);
-		num++;
+//delta_t_slice_fit();
+////////////////
+	TF1 *g = new TF1("g","gaus", -1, 1);
+	//delta_t_mass_P->FitSlicesY(g,0,-1,10,"QNRG5");
+	delta_t_mass_P->FitSlicesY(g,0,-1,100,"QNRG5");
+	TH1D *delta_t_mass_P_0 = (TH1D*)gDirectory->Get("delta_t_mass_P_0");
+	TH1D *delta_t_mass_P_1 = (TH1D*)gDirectory->Get("delta_t_mass_P_1");
+	TH1D *delta_t_mass_P_2 = (TH1D*)gDirectory->Get("delta_t_mass_P_2");
+	double x[500];
+	double y_plus[500];
+	double y_minus[500];
+	int num = 0;
+	for (int i = 0; i < 500; i++){
+		if(delta_t_mass_P_1->GetBinContent(i) != 0){
+			//Get momentum from bin center
+			x[num] = (double)delta_t_mass_P_1->GetBinCenter(i);
+			//mean + 3sigma
+			y_plus[num] = (double)delta_t_mass_P_1->GetBinContent(i) + 3 * (double)delta_t_mass_P_2->GetBinContent(i);
+			//mean - 3simga
+			y_minus[num] = (double)delta_t_mass_P_1->GetBinContent(i) - 3 * (double)delta_t_mass_P_2->GetBinContent(i);
+			num++;
+		}
 	}
-}
+	
+	TGraph *P = new TGraph(num,x,y_plus);
+	TGraph *M = new TGraph(num,x,y_minus);
+	P->Write();
+	M->Write();
+	//delta_t_mass_P->Draw();
+	P->Draw("Same");
+	M->Draw("Same");
 
-TGraph *P = new TGraph(num,x,y_plus);
-TGraph *M = new TGraph(num,x,y_minus);
-P->Write();
-M->Write();
-//delta_t_mass_P->Draw();
-P->Draw("Same");
-M->Draw("Same");
+	delta_t_mass_PIP->FitSlicesY(g,0,-1,100,"QNRG5");
+	TH1D *delta_t_mass_PIP_0 = (TH1D*)gDirectory->Get("delta_t_mass_PIP_0");
+	TH1D *delta_t_mass_PIP_1 = (TH1D*)gDirectory->Get("delta_t_mass_PIP_1");
+	TH1D *delta_t_mass_PIP_2 = (TH1D*)gDirectory->Get("delta_t_mass_PIP_2");
+	double x_pip[500];
+	double y_plus_pip[500];
+	double y_minus_pip[500];
+	num = 0;
+	for (int i = 0; i < 500; i++){
+		if(delta_t_mass_PIP_1->GetBinContent(i) != 0){
+			//Get momentum from bin center
+			x_pip[num] = (double)delta_t_mass_PIP_1->GetBinCenter(i);
+			//mean + 3sigma
+			y_plus_pip[num] = (double)delta_t_mass_PIP_1->GetBinContent(i) + 3 * (double)delta_t_mass_PIP_2->GetBinContent(i);
+			//mean - 3simga
+			y_minus_pip[num] = (double)delta_t_mass_PIP_1->GetBinContent(i) - 3 * (double)delta_t_mass_PIP_2->GetBinContent(i);
+			num++;
+		}
+	}
+	
+	TGraph *P_pip = new TGraph(num,x_pip,y_plus_pip);
+	TGraph *M_pip = new TGraph(num,x_pip,y_minus_pip);
+	P_pip->Write();
+	M_pip->Write();
+	//delta_t_mass_P->Draw();
+	P_pip->Draw("Same");
+	M_pip->Draw("Same");
+/////////////////////
 	delta_t_mass_P->Write();
 	delta_t_mass_P_PID->Write();
 
 
 
-delta_t_mass_PIP->FitSlicesY(g,0,-1,10,"QNRG5",0);
 	delta_t_mass_PIP->Write();
 	delta_t_mass_PIP_PID->Write();
 	delta_t_mass_electron->Write();
