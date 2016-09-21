@@ -12,6 +12,7 @@
 // Saving the old files in a new folder to refer back to.
 //
 void dataHandeler(char *fin, char *RootFile_output, bool first_run){
+	TCanvas * c1 = new TCanvas("c1", "c1", 100, 100);
 	TFile *RootOutputFile;
 	int number_cols = 0;
 	char rootFile[500];

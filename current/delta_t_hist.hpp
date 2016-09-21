@@ -234,7 +234,7 @@ void delta_t_Write(){
 ////////////////
 	TF1 *g = new TF1("g","gaus", -1, 1);
 	//delta_t_mass_P->FitSlicesY(g,0,-1,10,"QNRG5");
-	delta_t_mass_P->FitSlicesY(g,0,-1,100,"QNRG5");
+	delta_t_mass_P->FitSlicesY(g,0,-1,10,"QNRG5");
 	TH1D *delta_t_mass_P_0 = (TH1D*)gDirectory->Get("delta_t_mass_P_0");
 	TH1D *delta_t_mass_P_1 = (TH1D*)gDirectory->Get("delta_t_mass_P_1");
 	TH1D *delta_t_mass_P_2 = (TH1D*)gDirectory->Get("delta_t_mass_P_2");
@@ -262,7 +262,7 @@ void delta_t_Write(){
 	P->Draw("Same");
 	M->Draw("Same");
 
-	delta_t_mass_PIP->FitSlicesY(g,0,-1,100,"QNRG5");
+	delta_t_mass_PIP->FitSlicesY(g,0,-1,10,"QNRG5");
 	TH1D *delta_t_mass_PIP_0 = (TH1D*)gDirectory->Get("delta_t_mass_PIP_0");
 	TH1D *delta_t_mass_PIP_1 = (TH1D*)gDirectory->Get("delta_t_mass_PIP_1");
 	TH1D *delta_t_mass_PIP_2 = (TH1D*)gDirectory->Get("delta_t_mass_PIP_2");
