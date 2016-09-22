@@ -197,9 +197,9 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 	DeltaT->cd();
 	delta_t_Write();
 
-	TDirectory *DeltaT_slices = RootOutputFile->mkdir("Delta_T_slices");
-	DeltaT_slices->cd();
-	delta_t_slices_Write();
+	//TDirectory *DeltaT_slices = RootOutputFile->mkdir("Delta_T_slices");
+	//DeltaT_slices->cd();
+	//delta_t_slices_Write();
 
 	TDirectory *DeltaT_sec_pad = RootOutputFile->mkdir("Delta_T_sec_pad");
 	DeltaT_sec_pad->cd();
