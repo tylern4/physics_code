@@ -261,9 +261,9 @@ void delta_t_Write(){
 	TGraph *M_pip = new TGraph(num,x_pip,y_minus_pip);
 	TF1 *Pip_Pos_fit = new TF1("Pip_Pos_fit","[7]*exp(-[6]*x) + x*x*x*x*x*[5] + x*x*x*x*[4] + x*x*x*[3] + x*x*[2] + x*[1] + [0]");
 	TF1 *Pip_Neg_fit = new TF1("Pip_Neg_fit","[7]*exp(-[6]*x) + x*x*x*x*x*[5] + x*x*x*x*[4] + x*x*x*[3] + x*x*[2] + x*[1] + [0]");
-	P_pip->Fit(Pip_Pos_fit,"Q","",0.2,3.5);
+	P_pip->Fit(Pip_Pos_fit,"Q","",0.1,1.75);
 	P_pip->Write();
-	M_pip->Fit(Pip_Neg_fit,"Q","",0.2,3.5);
+	M_pip->Fit(Pip_Neg_fit,"Q","",0.1,1.75);
 	M_pip->Write();
 	Pip_Pos_fit->Write();
 	Pip_Neg_fit->Write();
