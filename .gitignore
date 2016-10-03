@@ -58,3 +58,7 @@ first_run/outputFiles
 *.pyc
 
 *.pyc
+
+*.pdf
+
+backup/Gagik_Gavalian_thesis.pdf

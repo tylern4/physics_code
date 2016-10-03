@@ -201,7 +201,7 @@ void delta_t_Write(){
 /////////////////////////////////////////////////////////////////////////////////
 	TF1 *g = new TF1("g","gaus", -2, 2);
 	//delta_t_mass_P->FitSlicesY(g,0,-1,10,"QNRG5");
-	delta_t_mass_P_PID->FitSlicesY(g,0,-1,10,"QNRG5");
+	delta_t_mass_P_PID->FitSlicesY(g,0,-1,10,"QRG5");
 	TH1D *delta_t_mass_P_PID_0 = (TH1D*)gDirectory->Get("delta_t_mass_P_PID_0");
 	TH1D *delta_t_mass_P_PID_1 = (TH1D*)gDirectory->Get("delta_t_mass_P_PID_1");
 	TH1D *delta_t_mass_P_PID_2 = (TH1D*)gDirectory->Get("delta_t_mass_P_PID_2");
@@ -223,13 +223,21 @@ void delta_t_Write(){
 	
 	TGraph *P = new TGraph(num,x,y_plus);
 	TGraph *M = new TGraph(num,x,y_minus);
+	//TF1 *f = new TF1("f","[7]*exp(-[6]*x) + x*x*x*x*x*[5] + x*x*x*x*[4] + x*x*x*[3] + x*x*[2] + x*[1] + [0]");
+	TF1 *Proton_Pos_fit = new TF1("Proton_Pos_fit","[7]*exp(-[6]*x) + x*x*x*[3] + x*x*[2] + x*[1] + [0]");
+	TF1 *Proton_Neg_fit = new TF1("Proton_Neg_fit","[7]*exp(-[6]*x) + x*x*x*[3] + x*x*[2] + x*[1] + [0]");
+	P->Fit(Proton_Pos_fit,"Q","",0.2,3.5);
 	P->Write();
+	M->Fit(Proton_Neg_fit,"Q","",0.2,3.5);
 	M->Write();
-	//delta_t_mass_P->Draw();
+	Proton_Pos_fit->Write();
+	Proton_Neg_fit->Write();
 	P->Draw("Same");
 	M->Draw("Same");
+	Proton_Pos_fit->Draw("Same");
+	Proton_Neg_fit->Draw("Same");
 
-	delta_t_mass_PIP->FitSlicesY(g,0,-1,10,"QNRG5");
+	delta_t_mass_PIP->FitSlicesY(g,0,-1,10,"QRG5");
 	TH1D *delta_t_mass_PIP_0 = (TH1D*)gDirectory->Get("delta_t_mass_PIP_0");
 	TH1D *delta_t_mass_PIP_1 = (TH1D*)gDirectory->Get("delta_t_mass_PIP_1");
 	TH1D *delta_t_mass_PIP_2 = (TH1D*)gDirectory->Get("delta_t_mass_PIP_2");
@@ -251,11 +259,18 @@ void delta_t_Write(){
 	
 	TGraph *P_pip = new TGraph(num,x_pip,y_plus_pip);
 	TGraph *M_pip = new TGraph(num,x_pip,y_minus_pip);
+	TF1 *Pip_Pos_fit = new TF1("Pip_Pos_fit","[7]*exp(-[6]*x) + x*x*x*x*x*[5] + x*x*x*x*[4] + x*x*x*[3] + x*x*[2] + x*[1] + [0]");
+	TF1 *Pip_Neg_fit = new TF1("Pip_Neg_fit","[7]*exp(-[6]*x) + x*x*x*x*x*[5] + x*x*x*x*[4] + x*x*x*[3] + x*x*[2] + x*[1] + [0]");
+	P_pip->Fit(Pip_Pos_fit,"Q","",0.2,3.5);
 	P_pip->Write();
+	M_pip->Fit(Pip_Neg_fit,"Q","",0.2,3.5);
 	M_pip->Write();
-	//delta_t_mass_P->Draw();
+	Pip_Pos_fit->Write();
+	Pip_Neg_fit->Write();
 	P_pip->Draw("Same");
 	M_pip->Draw("Same");
+	Pip_Pos_fit->Draw("Same");
+	Pip_Neg_fit->Draw("Same");
 /////////////////////////////////////////////////////////////////////////////////
 	delta_t_mass_P->Write();
 	delta_t_mass_P_PID->Write();
