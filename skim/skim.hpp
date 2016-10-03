@@ -143,6 +143,15 @@ void skim(char* fin, char* RootFile_output, double mean, double sigma){
 				MissingMassNeutron.MissingMassPxPyPz(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
 				MissingMassNeutron = MissingMassNeutron.missing_mass(gamma_mu);
 			}
+//Proton Pos:0.768508
+//Proton Neg:-0.966229
+//Pip Pos:1.24726
+//Pip Neg:-1.21934
+			if(dt_proton[part_num] >= -0.966229 && dt_proton[part_num] <= 0.768508) MyID[part_num] = PROTON;
+			if(dt_pip[part_num] >= -1.21934 && dt_pip[part_num] <= 1.24726 && q[part_num] > 0) MyID[part_num] = PIP;
+			if(dt_pip[part_num] >= -1.21934 && dt_pip[part_num] <= 1.24726 && q[part_num] < 0) MyID[part_num] = PIM;
+
+
 		}
 		MM = (MissingMassNeutron.mass >=0 ) ? MissingMassNeutron.mass : NaN;
 		MM = (num_of_pis == 1) ? MissingMassNeutron.mass : NaN;

@@ -8,6 +8,7 @@
 #ifndef DELTA_T_HIST_H_GUARD
 #define DELTA_T_HIST_H_GUARD
 #include <TGraph.h>
+const int N_SIGMA = 2;
 //
 //Histogram declarations, fills, and write
 // j -> type: 0=>Proton,1=>Pip,2=>Electron
@@ -117,7 +118,7 @@ void Fill_deltat_positron(double momentum, double delta_t){
 void Fill_deltat_positron_PID(double momentum, double delta_t){
 	delta_t_mass_positron_PID->Fill(momentum,delta_t);
 }
-
+/*
 void delta_t_slice_fit(){
 	TF1 *g = new TF1("g","gaus", -1, 1);
 	//delta_t_mass_P->FitSlicesY(g,0,-1,10,"QNRG5");
@@ -177,7 +178,7 @@ void delta_t_slice_fit(){
 	P_pip->Draw("Same");
 	M_pip->Draw("Same");
 
-}
+}*/
 
 void delta_t_Write(){
 	delta_t_mass_P->SetXTitle("Momentum (GeV)");
@@ -214,9 +215,9 @@ void delta_t_Write(){
 			//Get momentum from bin center
 			x[num] = (double)delta_t_mass_P_PID_1->GetBinCenter(i);
 			//mean + 3sigma
-			y_plus[num] = (double)delta_t_mass_P_PID_1->GetBinContent(i) + 2 * (double)delta_t_mass_P_PID_2->GetBinContent(i);
+			y_plus[num] = (double)delta_t_mass_P_PID_1->GetBinContent(i) + N_SIGMA * (double)delta_t_mass_P_PID_2->GetBinContent(i);
 			//mean - 3simga
-			y_minus[num] = (double)delta_t_mass_P_PID_1->GetBinContent(i) - 2 * (double)delta_t_mass_P_PID_2->GetBinContent(i);
+			y_minus[num] = (double)delta_t_mass_P_PID_1->GetBinContent(i) - N_SIGMA * (double)delta_t_mass_P_PID_2->GetBinContent(i);
 			num++;
 		}
 	}
@@ -224,8 +225,8 @@ void delta_t_Write(){
 	TGraph *P = new TGraph(num,x,y_plus);
 	TGraph *M = new TGraph(num,x,y_minus);
 	//TF1 *f = new TF1("f","[7]*exp(-[6]*x) + x*x*x*x*x*[5] + x*x*x*x*[4] + x*x*x*[3] + x*x*[2] + x*[1] + [0]");
-	TF1 *Proton_Pos_fit = new TF1("Proton_Pos_fit","[7]*exp(-[6]*x) + x*x*x*[3] + x*x*[2] + x*[1] + [0]");
-	TF1 *Proton_Neg_fit = new TF1("Proton_Neg_fit","[7]*exp(-[6]*x) + x*x*x*[3] + x*x*[2] + x*[1] + [0]");
+	TF1 *Proton_Pos_fit = new TF1("Proton_Pos_fit","[0]");
+	TF1 *Proton_Neg_fit = new TF1("Proton_Neg_fit","[0]");
 	P->Fit(Proton_Pos_fit,"Q","",0.2,3.5);
 	P->Write();
 	M->Fit(Proton_Neg_fit,"Q","",0.2,3.5);
@@ -236,6 +237,9 @@ void delta_t_Write(){
 	M->Draw("Same");
 	Proton_Pos_fit->Draw("Same");
 	Proton_Neg_fit->Draw("Same");
+
+	cout << "Proton Pos:" << Proton_Pos_fit->GetParameter(0) << endl;
+	cout << "Proton Neg:" << Proton_Neg_fit->GetParameter(0) << endl;
 
 	delta_t_mass_PIP->FitSlicesY(g,0,-1,10,"QRG5");
 	TH1D *delta_t_mass_PIP_0 = (TH1D*)gDirectory->Get("delta_t_mass_PIP_0");
@@ -250,17 +254,18 @@ void delta_t_Write(){
 			//Get momentum from bin center
 			x_pip[num] = (double)delta_t_mass_PIP_1->GetBinCenter(i);
 			//mean + 3sigma
-			y_plus_pip[num] = (double)delta_t_mass_PIP_1->GetBinContent(i) + 3 * (double)delta_t_mass_PIP_2->GetBinContent(i);
+			y_plus_pip[num] = (double)delta_t_mass_PIP_1->GetBinContent(i) + N_SIGMA * (double)delta_t_mass_PIP_2->GetBinContent(i);
 			//mean - 3simga
-			y_minus_pip[num] = (double)delta_t_mass_PIP_1->GetBinContent(i) - 3 * (double)delta_t_mass_PIP_2->GetBinContent(i);
+			y_minus_pip[num] = (double)delta_t_mass_PIP_1->GetBinContent(i) - N_SIGMA * (double)delta_t_mass_PIP_2->GetBinContent(i);
 			num++;
 		}
 	}
 	
 	TGraph *P_pip = new TGraph(num,x_pip,y_plus_pip);
 	TGraph *M_pip = new TGraph(num,x_pip,y_minus_pip);
-	TF1 *Pip_Pos_fit = new TF1("Pip_Pos_fit","[7]*exp(-[6]*x) + x*x*x*x*x*[5] + x*x*x*x*[4] + x*x*x*[3] + x*x*[2] + x*[1] + [0]");
-	TF1 *Pip_Neg_fit = new TF1("Pip_Neg_fit","[7]*exp(-[6]*x) + x*x*x*x*x*[5] + x*x*x*x*[4] + x*x*x*[3] + x*x*[2] + x*[1] + [0]");
+//	TF1 *Pip_Pos_fit = new TF1("Pip_Pos_fit","[7]*exp(-[6]*x) + x*x*x*x*x*[5] + x*x*x*x*[4] + x*x*x*[3] + x*x*[2] + x*[1] + [0]");
+	TF1 *Pip_Pos_fit = new TF1("Pip_Pos_fit","[0]");
+	TF1 *Pip_Neg_fit = new TF1("Pip_Neg_fit","[0]");
 	P_pip->Fit(Pip_Pos_fit,"Q","",0.1,1.75);
 	P_pip->Write();
 	M_pip->Fit(Pip_Neg_fit,"Q","",0.1,1.75);
@@ -271,6 +276,9 @@ void delta_t_Write(){
 	M_pip->Draw("Same");
 	Pip_Pos_fit->Draw("Same");
 	Pip_Neg_fit->Draw("Same");
+
+	cout << "Pip Pos:" << Pip_Pos_fit->GetParameter(0) << endl;
+	cout << "Pip Neg:" << Pip_Neg_fit->GetParameter(0) << endl;
 /////////////////////////////////////////////////////////////////////////////////
 	delta_t_mass_P->Write();
 	delta_t_mass_P_PID->Write();
