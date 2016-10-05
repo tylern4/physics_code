@@ -9,7 +9,7 @@
 #define SKIM_H_GUARD
 #include "main.h"
 
-void skim(char *fin, char *RootFile_output){
+/*void skim(char *fin, char *RootFile_output){
 
 	TFile *RootOutputFile;
 	int number_cols = 0;
@@ -72,7 +72,7 @@ void skim(char *fin, char *RootFile_output){
 	RootOutputFile->Write();
 	RootOutputFile->Close();
 
-}
+}*/
 
 void skim(char* fin, char* RootFile_output, double mean, double sigma){
 
@@ -85,8 +85,10 @@ void skim(char* fin, char* RootFile_output, double mean, double sigma){
 	MissingMass MissingMassNeutron;
 
 	Float_t W, Q2, MM;
-	Int_t MyID[MAX_PARTS];
-	Double_t dt_proton[MAX_PARTS], dt_pip[MAX_PARTS];
+	std::vector<bool> is_proton, is_pip, is_electron, is_pim;
+	//Int_t MyID[MAX_PARTS];
+	//Double_t dt_proton[MAX_PARTS], dt_pip[MAX_PARTS];
+	std::vector<double> dt_proton, dt_pip;
 	Int_t num_of_pis;
 
 	TVector3 e_mu_prime_3;
@@ -110,14 +112,30 @@ void skim(char* fin, char* RootFile_output, double mean, double sigma){
 	TBranch *W_branch = skim->Branch("W",&W);
 	TBranch *Q2_branch = skim->Branch("Q2",&Q2);
 	TBranch *MM_branch = skim->Branch("MM",&MM);
-	TBranch *ID_branch = skim->Branch("MyID",MyID);
-	TBranch *DeltaT_P_branch = skim->Branch("DeltaT_P",dt_proton);
-	TBranch *DeltaT_Pip_branch = skim->Branch("DeltaT_Pip",dt_pip);
+
+	//TBranch *ID_branch = skim->Branch("MyID",MyID);
+	//TBranch *is_Electron = skim->Branch("is_electron",&is_electron,"is_electron/O");
+	//TBranch *is_Proton = skim->Branch("is_proton",&is_proton,"is_proton/O");
+	//TBranch *is_Pip = skim->Branch("is_pip",&is_pip,"is_pip/O");
+	//TBranch *is_Pim = skim->Branch("is_pim",&is_pim,"is_pim/O");
+
+	TBranch *is_Electron = skim->Branch("is_electron",&is_electron);
+	TBranch *is_Proton = skim->Branch("is_proton",&is_proton);
+	TBranch *is_Pip = skim->Branch("is_pip",&is_pip);
+	TBranch *is_Pim = skim->Branch("is_pim",&is_pim);
+
+	TBranch *DeltaT_P_branch = skim->Branch("DeltaT_P","vector<double>",&dt_proton);
+	TBranch *DeltaT_Pip_branch = skim->Branch("DeltaT_Pip","vector<double>",&dt_pip);
 	TBranch *NumPI_branch = skim->Branch("NumPI",&num_of_pis);
 
 
 	for (int current_event = 0; current_event < num_of_events; current_event++) {
 		chain.GetEntry(current_event);
+		is_proton = std::vector<bool>(gpart,false);
+		is_electron = std::vector<bool>(gpart,false);
+		is_pip = std::vector<bool>(gpart,false);
+		is_pim = std::vector<bool>(gpart,false);
+
 		electron_cuts = true;
 		//electron cuts
 		electron_cuts &= (id[0] == ELECTRON); //First particle is electron
@@ -132,8 +150,8 @@ void skim(char* fin, char* RootFile_output, double mean, double sigma){
 		e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);	
 		e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
 
-		delta_t_array(dt_proton,MASS_P);
-		delta_t_array(dt_pip,MASS_PIP);
+		dt_proton = delta_t_array(MASS_P, gpart);
+		dt_pip = delta_t_array(MASS_PIP, gpart);
 
 		for(int part_num = 1; part_num < gpart; part_num++){
 			num_of_pis = 0;
@@ -143,14 +161,14 @@ void skim(char* fin, char* RootFile_output, double mean, double sigma){
 				MissingMassNeutron.MissingMassPxPyPz(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
 				MissingMassNeutron = MissingMassNeutron.missing_mass(gamma_mu);
 			}
-//Proton Pos:0.768508
-//Proton Neg:-0.966229
-//Pip Pos:1.24726
-//Pip Neg:-1.21934
-			if(dt_proton[part_num] >= -0.966229 && dt_proton[part_num] <= 0.768508) MyID[part_num] = PROTON;
-			if(dt_pip[part_num] >= -1.21934 && dt_pip[part_num] <= 1.24726 && q[part_num] > 0) MyID[part_num] = PIP;
-			if(dt_pip[part_num] >= -1.21934 && dt_pip[part_num] <= 1.24726 && q[part_num] < 0) MyID[part_num] = PIM;
 
+			if(dt_proton.at(part_num) >= -0.966229 && dt_proton.at(part_num) <= 0.768508){ 
+				is_proton.at(part_num) = true;
+			} else if(dt_pip.at(part_num) >= -1.21934 && dt_pip.at(part_num) <= 1.24726 && q[part_num] > 0){
+				is_pip.at(part_num) = true;
+			} else if(dt_pip.at(part_num) >= -1.21934 && dt_pip.at(part_num) <= 1.24726 && q[part_num] < 0){
+				is_pim.at(part_num) = true;
+			}
 
 		}
 		MM = (MissingMassNeutron.mass >=0 ) ? MissingMassNeutron.mass : NaN;
@@ -165,7 +183,9 @@ void skim(char* fin, char* RootFile_output, double mean, double sigma){
 		if (electron_cuts){ //&& MM_cut
 			W = W_calc(e_mu,e_mu_prime);
 			Q2 = Q2_calc(e_mu,e_mu_prime);
-			MyID[0] = ELECTRON;
+			//MyID[0] = ELECTRON;
+			//cout << "\t" << is_pip << "\t" << is_proton << "\t" << is_pim << endl;
+			is_electron.at(0) = true;
 			skim->Fill(); //Fill the banks after the skim
 		}
 	}

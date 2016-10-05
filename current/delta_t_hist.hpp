@@ -238,8 +238,8 @@ void delta_t_Write(){
 	Proton_Pos_fit->Draw("Same");
 	Proton_Neg_fit->Draw("Same");
 
-	cout << "Proton Pos:" << Proton_Pos_fit->GetParameter(0) << endl;
-	cout << "Proton Neg:" << Proton_Neg_fit->GetParameter(0) << endl;
+	//cout << "Proton Pos:" << Proton_Pos_fit->GetParameter(0) << endl;
+	//cout << "Proton Neg:" << Proton_Neg_fit->GetParameter(0) << endl;
 
 	delta_t_mass_PIP->FitSlicesY(g,0,-1,10,"QRG5");
 	TH1D *delta_t_mass_PIP_0 = (TH1D*)gDirectory->Get("delta_t_mass_PIP_0");
@@ -277,8 +277,8 @@ void delta_t_Write(){
 	Pip_Pos_fit->Draw("Same");
 	Pip_Neg_fit->Draw("Same");
 
-	cout << "Pip Pos:" << Pip_Pos_fit->GetParameter(0) << endl;
-	cout << "Pip Neg:" << Pip_Neg_fit->GetParameter(0) << endl;
+	//cout << "Pip Pos:" << Pip_Pos_fit->GetParameter(0) << endl;
+	//cout << "Pip Neg:" << Pip_Neg_fit->GetParameter(0) << endl;
 /////////////////////////////////////////////////////////////////////////////////
 	delta_t_mass_P->Write();
 	delta_t_mass_P_PID->Write();
