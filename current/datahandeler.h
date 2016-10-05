@@ -35,8 +35,6 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 	TLorentzVector Particle4(0.0,0.0,0.0,0.0);
 	double theta,phi;
 	int sector;
-
-	//double W,Q2;
 	//End declrare variables
 
 	//Open outputfile
@@ -44,25 +42,11 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 
 	//Load chain from branch h10
 	TChain chain("h10");
-///////
 	TString fins=fin;
 	TFileCollection fc("fileList", "", fins.Data());
 	chain.AddFileInfoList((TCollection*) fc.GetList());
-//////
 	cout << blue <<"Analyzing file " << green << fin << def << bgdef << endl;
 
-	//Try to open lis file throw an error if it won't open
-	//FILE *input_file = fopen(fin,"r");
-	//if (input_file == NULL) perror ("Error opening file");
-
-	//Go through lis file adding each files h10 branch to the chain
-	//while (1){
-	//	number_cols = fscanf(input_file,"%s",rootFile);
-	//	if (number_cols<0) break;
-	//	chain.Add(rootFile);
-	//}
-	//fclose(input_file); // close file with input file list
-	//get branches from the chain
 	getBranches(&chain);
 	if(!first_run) getMorebranchs(&chain);
 
@@ -95,6 +79,14 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 		}
 
 		if(electron_cuts){
+			if(first_run){
+				for(int part_num = 1; part_num < gpart; part_num++){
+					is_pip->push_back(id[part_num] == PIP);	
+					is_proton->push_back(id[part_num] == PROTON);
+					is_pim->push_back(id[part_num] == PIM);
+				}
+			}
+
 			//Setup scattered electron 4 vector
 			e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);	
 			e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
@@ -117,13 +109,15 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 
 			for(int part_num = 1; part_num < gpart; part_num++){
 				if (p[part_num] == 0) continue;
-				if (id[part_num] == PIP) Fill_pion_WQ2(W,Q2);
-				if (id[part_num] == PROTON) Fill_proton_WQ2(W,Q2);
 
-				if (id[part_num] == PIP) Fill_Pi_ID_P(p[part_num],b[part_num]);
-				if (id[part_num] == PROTON) Fill_proton_ID_P(p[part_num],b[part_num]);
+				if(is_proton->at(part_num) == is_pip->at(part_num)) continue;
+				if (is_pip->at(part_num)) Fill_pion_WQ2(W,Q2);
+				if (is_proton->at(part_num)) Fill_proton_WQ2(W,Q2);
 
-				if (id[part_num] == PIP || id[part_num] == PROTON) Fill_proton_Pi_ID_P(p[part_num],b[part_num]);
+				if (is_pip->at(part_num)) Fill_Pi_ID_P(p[part_num],b[part_num]);
+				if (is_proton->at(part_num)) Fill_proton_ID_P(p[part_num],b[part_num]);
+
+				if (is_pip->at(part_num) || is_proton->at(part_num)) Fill_proton_Pi_ID_P(p[part_num],b[part_num]);
 
 				Fill_Mass(m[part_num]);
 				Particle3.SetXYZ(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
@@ -135,8 +129,8 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 				} else if(q[part_num] == -1) {
 					MomVsBeta_Fill_neg(p[part_num],b[part_num]);
 				}
-				if(id[part_num] == PROTON) num_of_proton++;
-				if(id[part_num] == PIP){
+				if(is_proton->at(part_num)) num_of_proton++;
+				if(is_pip->at(part_num)){
 					num_of_pis++;
 					TLorentzVector gamma_mu = (e_mu - e_mu_prime);
 					MissingMassNeutron.MissingMassPxPyPz(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
@@ -152,7 +146,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 			if(num_of_proton == 1) Fill_single_proton_WQ2(W,Q2);
 		}
 	}
-
+	
 	// Start of cuts
 	Cuts MissingMassNeutron_cut;
 	double fit_range_min = 0.88;
