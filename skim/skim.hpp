@@ -113,12 +113,6 @@ void skim(char* fin, char* RootFile_output, double mean, double sigma){
 	TBranch *Q2_branch = skim->Branch("Q2",&Q2);
 	TBranch *MM_branch = skim->Branch("MM",&MM);
 
-	//TBranch *ID_branch = skim->Branch("MyID",MyID);
-	//TBranch *is_Electron = skim->Branch("is_electron",&is_electron,"is_electron/O");
-	//TBranch *is_Proton = skim->Branch("is_proton",&is_proton,"is_proton/O");
-	//TBranch *is_Pip = skim->Branch("is_pip",&is_pip,"is_pip/O");
-	//TBranch *is_Pim = skim->Branch("is_pim",&is_pim,"is_pim/O");
-
 	TBranch *is_Electron = skim->Branch("is_electron",&is_electron);
 	TBranch *is_Proton = skim->Branch("is_proton",&is_proton);
 	TBranch *is_Pip = skim->Branch("is_pip",&is_pip);
@@ -162,11 +156,11 @@ void skim(char* fin, char* RootFile_output, double mean, double sigma){
 				MissingMassNeutron = MissingMassNeutron.missing_mass(gamma_mu);
 			}
 
-			if(dt_proton.at(part_num) >= -0.966229 && dt_proton.at(part_num) <= 0.768508){ 
+			if(dt_proton.at(part_num) >= Proton_Neg_fit(p[part_num]) && dt_proton.at(part_num) <= Proton_Pos_fit(p[part_num])){ 
 				is_proton.at(part_num) = true;
-			} else if(dt_pip.at(part_num) >= -1.21934 && dt_pip.at(part_num) <= 1.24726 && q[part_num] > 0){
+			} else if(dt_pip.at(part_num) >= Pip_Neg_fit(p[part_num]) && dt_pip.at(part_num) <= Pip_Pos_fit(p[part_num]) && q[part_num] > 0){
 				is_pip.at(part_num) = true;
-			} else if(dt_pip.at(part_num) >= -1.21934 && dt_pip.at(part_num) <= 1.24726 && q[part_num] < 0){
+			} else if(dt_pip.at(part_num) >= Pip_Neg_fit(p[part_num]) && dt_pip.at(part_num) <= Pip_Pos_fit(p[part_num]) && q[part_num] < 0){
 				is_pim.at(part_num) = true;
 			}
 
@@ -177,14 +171,12 @@ void skim(char* fin, char* RootFile_output, double mean, double sigma){
 		MM_cut = true;
 		MM_cut &= (MM == MM); //removes NaN
 
-		MM_cut &= (MM <= mean + 10 * sigma);
-		MM_cut &= (MM >= mean - 10 * sigma);
+		MM_cut &= (MM <= mean + 100 * sigma);
+		MM_cut &= (MM >= mean - 100 * sigma);
 
-		if (electron_cuts){ //&& MM_cut
+		if (electron_cuts && MM_cut){ //&& MM_cut
 			W = W_calc(e_mu,e_mu_prime);
 			Q2 = Q2_calc(e_mu,e_mu_prime);
-			//MyID[0] = ELECTRON;
-			//cout << "\t" << is_pip << "\t" << is_proton << "\t" << is_pim << endl;
 			is_electron.at(0) = true;
 			skim->Fill(); //Fill the banks after the skim
 		}

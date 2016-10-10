@@ -18,13 +18,14 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 	char rootFile[500];
 	int num_of_events, total_events;
 	bool cuts, electron_cuts;
-	ofstream cut_outputs;
 
 	std::vector<bool> pip_vec (MAX_PARTS,false);
 	std::vector<bool> pim_vec (MAX_PARTS,false);
 	std::vector<bool> proton_vec (MAX_PARTS,false);
 	std::vector<bool> elec_vec (MAX_PARTS,false);
-
+	
+	//in main.h now
+	//ofstream cut_outputs;
 	cut_outputs.open("outputFiles/cut_outputs.csv");
 	cut_outputs << "Cut,Mean,Sigma" << endl;
 
@@ -177,7 +178,6 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 	cut_outputs << "MM_N_2";
 	cut_outputs << "," << MissingMassSquare_cut.mean;
 	cut_outputs << "," << MissingMassSquare_cut.sigma << endl;
-
 
 	//
 	//end stuff

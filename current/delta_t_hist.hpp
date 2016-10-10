@@ -200,9 +200,10 @@ void delta_t_Write(){
 
 //delta_t_slice_fit();
 /////////////////////////////////////////////////////////////////////////////////
-	TF1 *g = new TF1("g","gaus", -2, 2);
-	char * func = "[7]*exp(-[6]*x) + x*x*x*x*x*[5] + x*x*x*x*[4] + x*x*x*[3] + x*x*[2] + x*[1] + [0]";
-	delta_t_mass_P->FitSlicesY(g,0,-1,10,"QRG5");
+	TF1 *peak = new TF1("peak","gaus", -2, 2);
+	//+ x*x*[4] + x*[3]
+	char * func = "[0]*exp(-[1]*x) + [2]*x + [3]";
+	delta_t_mass_P->FitSlicesY(peak,0,-1,10,"QRG5");
 	TH1D *delta_t_mass_P_0 = (TH1D*)gDirectory->Get("delta_t_mass_P_0");
 	TH1D *delta_t_mass_P_1 = (TH1D*)gDirectory->Get("delta_t_mass_P_1");
 	TH1D *delta_t_mass_P_2 = (TH1D*)gDirectory->Get("delta_t_mass_P_2");
@@ -237,10 +238,10 @@ void delta_t_Write(){
 	Proton_Pos_fit->Draw("Same");
 	Proton_Neg_fit->Draw("Same");
 
-	//cout << "Proton Pos:" << Proton_Pos_fit->GetParameter(0) << endl;
-	//cout << "Proton Neg:" << Proton_Neg_fit->GetParameter(0) << endl;
+	cut_outputs << "Proton_Pos_fit:" << Proton_Pos_fit->GetExpFormula("P") << endl;
+	cut_outputs << "Proton_Neg_fit:" << Proton_Neg_fit->GetExpFormula("P") << endl;
 
-	delta_t_mass_PIP->FitSlicesY(g,0,-1,10,"QRG5");
+	delta_t_mass_PIP->FitSlicesY(peak,0,-1,10,"QRG5");
 	TH1D *delta_t_mass_PIP_0 = (TH1D*)gDirectory->Get("delta_t_mass_PIP_0");
 	TH1D *delta_t_mass_PIP_1 = (TH1D*)gDirectory->Get("delta_t_mass_PIP_1");
 	TH1D *delta_t_mass_PIP_2 = (TH1D*)gDirectory->Get("delta_t_mass_PIP_2");
@@ -275,8 +276,8 @@ void delta_t_Write(){
 	Pip_Pos_fit->Draw("Same");
 	Pip_Neg_fit->Draw("Same");
 
-	//cout << "Pip Pos:" << Pip_Pos_fit->GetParameter(0) << endl;
-	//cout << "Pip Neg:" << Pip_Neg_fit->GetParameter(0) << endl;
+	cut_outputs << "Pip_Pos_fit:" << Pip_Pos_fit->GetExpFormula("P") << endl;
+	cut_outputs << "Pip_Neg_fit:" << Pip_Neg_fit->GetExpFormula("P") << endl;
 /////////////////////////////////////////////////////////////////////////////////
 	delta_t_mass_P->Write();
 	delta_t_mass_P_PID->Write();

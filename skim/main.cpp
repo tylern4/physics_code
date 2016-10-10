@@ -13,6 +13,7 @@
 #include "physics.hpp"
 #include "delta_t.hpp"
 #include "missing_mass.hpp"
+#include "fit_functions.hpp"
 #include "skim.hpp"
 
 using namespace std;
