@@ -21,7 +21,7 @@ float b_max = 1.2;
 TH2D *MomVsBeta_hist = new TH2D("MomVsBeta","Momentum versus #beta", bins_pvb, p_min, p_max, bins_pvb, b_min, b_max);
 TH2D *MomVsBeta_hist_pos = new TH2D("MomVsBeta_pos","Momentum versus #beta Positive", bins_pvb, p_min, p_max, bins_pvb, b_min, b_max);
 TH2D *MomVsBeta_hist_neg = new TH2D("MomVsBeta_neg","Momentum versus #beta Negative", bins_pvb, p_min, p_max, bins_pvb, b_min, b_max);
-TH1D *Mom = new TH1D("Momentum","Momentum",bins,0,2.0);
+TH1D *Mom = new TH1D("Momentum","Momentum",bins,0,2.5);
 TH1D *Energy_hist = new TH1D("Energy_hist","Energy_hist",bins,0.0,2.5);
 
 TH2D *MomVsBeta_proton_ID = new TH2D("MomVsBeta_proton_ID","Momentum versus #beta p", bins_pvb, p_min, p_max, bins_pvb, b_min, b_max);
