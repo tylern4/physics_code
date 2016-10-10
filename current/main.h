@@ -39,7 +39,7 @@
 
 using namespace std;
 
-static const int MAX_PARTS = 10000;
+static const int MAX_PARTS = 100;
 
 static const float PI = TMath::Pi();
 static const float D2R = PI/180.0;
@@ -225,7 +225,7 @@ void getMorebranchs(TTree* myTree){
 	myTree->SetBranchAddress("W", &W);
 	myTree->SetBranchAddress("Q2", &Q2);
 	myTree->SetBranchAddress("MM", &MM);
-	//myTree->SetBranchAddress("MyID",MyID);
+
 	myTree->SetBranchAddress("is_electron",&is_electron);
 	myTree->SetBranchAddress("is_proton",&is_proton);
 	myTree->SetBranchAddress("is_pip",&is_pip);

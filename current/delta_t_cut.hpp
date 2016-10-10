@@ -39,41 +39,26 @@ void delta_t_cut(bool first_run){
 			delta_t_P = delta_t(electron_vertex, MASS_P, mom, sct, scr);
 			delta_t_PIP = delta_t(electron_vertex, MASS_PIP, mom, sct, scr);
 			delta_t_ELECTRON = delta_t(electron_vertex, MASS_E, mom, sct, scr);
-
-			if(charge == 1) {
-				Fill_deltat_P(mom, delta_t_P);
-				Fill_deltat_PIP(mom, delta_t_PIP);
-				Fill_deltat_positron(mom,  delta_t_ELECTRON);
-				if(ID == PROTON) Fill_deltat_P_PID(mom, delta_t_P);
-				if(ID == PIP)    Fill_deltat_PIP_PID(mom, delta_t_PIP);
-				if(ID == -11)    Fill_deltat_positron_PID(mom, delta_t_ELECTRON);
-			} else if(charge == -1) {
-				Fill_deltat_electron(mom, delta_t_ELECTRON);
-				if(ID == ELECTRON) Fill_deltat_electron_PID(mom, delta_t_ELECTRON);
-			}
-
 		} else {
 			delta_t_P = dt_proton->at(event_number);
 			delta_t_PIP = dt_pip->at(event_number);
-			//delta_t_P = delta_t(electron_vertex, MASS_P, mom, sct, scr);
-			//delta_t_PIP = delta_t(electron_vertex, MASS_PIP, mom, sct, scr);
 			delta_t_ELECTRON = delta_t(electron_vertex, MASS_E, mom, sct, scr);
-
-			if(charge == 1) {
-				Fill_deltat_P(mom, delta_t_P);
-				Fill_deltat_PIP(mom, delta_t_PIP);
-				Fill_deltat_positron(mom,  delta_t_ELECTRON);
-				if(is_proton->at(event_number) && ID == PROTON) Fill_deltat_P_PID(mom, delta_t_P);
-				if(is_pip->at(event_number) && ID == PIP)    Fill_deltat_PIP_PID(mom, delta_t_PIP);
-				if(ID == -11)    Fill_deltat_positron_PID(mom, delta_t_ELECTRON);
-			} else if(charge == -1) {
-				Fill_deltat_electron(mom, delta_t_ELECTRON);
-				if(is_electron->at(event_number) && ID == ELECTRON) Fill_deltat_electron_PID(mom, delta_t_ELECTRON);
-			}
 		}
 
-		delta_t_Fill(mom, ID, charge, delta_t_P, delta_t_PIP, delta_t_ELECTRON);
-		delta_t_sec_pad(mom, ID, charge, delta_t_P, delta_t_PIP, delta_t_ELECTRON,sc_sector,sc_paddle);
+		if(charge == 1) {
+			Fill_deltat_P(mom, delta_t_P);
+			Fill_deltat_PIP(mom, delta_t_PIP);
+			Fill_deltat_positron(mom,  delta_t_ELECTRON);
+			if(is_proton->at(event_number) && ID == PROTON) Fill_deltat_P_PID(mom, delta_t_P);
+			if(is_pip->at(event_number) && ID == PIP)    Fill_deltat_PIP_PID(mom, delta_t_PIP);
+			if(ID == -11)    Fill_deltat_positron_PID(mom, delta_t_ELECTRON);
+		} else if(charge == -1) {
+			Fill_deltat_electron(mom, delta_t_ELECTRON);
+			if(is_electron->at(event_number) && ID == ELECTRON) Fill_deltat_electron_PID(mom, delta_t_ELECTRON);
+		}
+
+		delta_t_Fill(mom, charge, delta_t_P, delta_t_PIP, delta_t_ELECTRON);
+		delta_t_sec_pad(mom, charge, delta_t_P, delta_t_PIP, delta_t_ELECTRON,sc_sector,sc_paddle);
 	}
 }
 #endif

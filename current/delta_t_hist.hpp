@@ -201,32 +201,31 @@ void delta_t_Write(){
 //delta_t_slice_fit();
 /////////////////////////////////////////////////////////////////////////////////
 	TF1 *g = new TF1("g","gaus", -2, 2);
-	//delta_t_mass_P->FitSlicesY(g,0,-1,10,"QNRG5");
-	delta_t_mass_P_PID->FitSlicesY(g,0,-1,10,"QRG5");
-	TH1D *delta_t_mass_P_PID_0 = (TH1D*)gDirectory->Get("delta_t_mass_P_PID_0");
-	TH1D *delta_t_mass_P_PID_1 = (TH1D*)gDirectory->Get("delta_t_mass_P_PID_1");
-	TH1D *delta_t_mass_P_PID_2 = (TH1D*)gDirectory->Get("delta_t_mass_P_PID_2");
+	char * func = "[7]*exp(-[6]*x) + x*x*x*x*x*[5] + x*x*x*x*[4] + x*x*x*[3] + x*x*[2] + x*[1] + [0]";
+	delta_t_mass_P->FitSlicesY(g,0,-1,10,"QRG5");
+	TH1D *delta_t_mass_P_0 = (TH1D*)gDirectory->Get("delta_t_mass_P_0");
+	TH1D *delta_t_mass_P_1 = (TH1D*)gDirectory->Get("delta_t_mass_P_1");
+	TH1D *delta_t_mass_P_2 = (TH1D*)gDirectory->Get("delta_t_mass_P_2");
 	double x[500];
 	double y_plus[500];
 	double y_minus[500];
 	int num = 0;
 	for (int i = 0; i < 500; i++){
-		if(delta_t_mass_P_PID_1->GetBinContent(i) != 0){
+		if(delta_t_mass_P_1->GetBinContent(i) != 0){
 			//Get momentum from bin center
-			x[num] = (double)delta_t_mass_P_PID_1->GetBinCenter(i);
+			x[num] = (double)delta_t_mass_P_1->GetBinCenter(i);
 			//mean + 3sigma
-			y_plus[num] = (double)delta_t_mass_P_PID_1->GetBinContent(i) + N_SIGMA * (double)delta_t_mass_P_PID_2->GetBinContent(i);
+			y_plus[num] = (double)delta_t_mass_P_1->GetBinContent(i) + N_SIGMA * (double)delta_t_mass_P_2->GetBinContent(i);
 			//mean - 3simga
-			y_minus[num] = (double)delta_t_mass_P_PID_1->GetBinContent(i) - N_SIGMA * (double)delta_t_mass_P_PID_2->GetBinContent(i);
+			y_minus[num] = (double)delta_t_mass_P_1->GetBinContent(i) - N_SIGMA * (double)delta_t_mass_P_2->GetBinContent(i);
 			num++;
 		}
 	}
 	
 	TGraph *P = new TGraph(num,x,y_plus);
 	TGraph *M = new TGraph(num,x,y_minus);
-	//TF1 *f = new TF1("f","[7]*exp(-[6]*x) + x*x*x*x*x*[5] + x*x*x*x*[4] + x*x*x*[3] + x*x*[2] + x*[1] + [0]");
-	TF1 *Proton_Pos_fit = new TF1("Proton_Pos_fit","[0]");
-	TF1 *Proton_Neg_fit = new TF1("Proton_Neg_fit","[0]");
+	TF1 *Proton_Pos_fit = new TF1("Proton_Pos_fit",func);
+	TF1 *Proton_Neg_fit = new TF1("Proton_Neg_fit",func);
 	P->Fit(Proton_Pos_fit,"Q","",0.2,3.5);
 	P->Write();
 	M->Fit(Proton_Neg_fit,"Q","",0.2,3.5);
@@ -263,9 +262,8 @@ void delta_t_Write(){
 	
 	TGraph *P_pip = new TGraph(num,x_pip,y_plus_pip);
 	TGraph *M_pip = new TGraph(num,x_pip,y_minus_pip);
-//	TF1 *Pip_Pos_fit = new TF1("Pip_Pos_fit","[7]*exp(-[6]*x) + x*x*x*x*x*[5] + x*x*x*x*[4] + x*x*x*[3] + x*x*[2] + x*[1] + [0]");
-	TF1 *Pip_Pos_fit = new TF1("Pip_Pos_fit","[0]");
-	TF1 *Pip_Neg_fit = new TF1("Pip_Neg_fit","[0]");
+	TF1 *Pip_Pos_fit = new TF1("Pip_Pos_fit",func);
+	TF1 *Pip_Neg_fit = new TF1("Pip_Neg_fit",func);
 	P_pip->Fit(Pip_Pos_fit,"Q","",0.1,1.75);
 	P_pip->Write();
 	M_pip->Fit(Pip_Neg_fit,"Q","",0.1,1.75);
@@ -293,7 +291,7 @@ void delta_t_Write(){
 	delta_t_mass_positron_PID->Write();
 }
 
-void delta_t_Fill(double momentum, int ID, int charge, double delta_t_proton, double delta_t_pip,double delta_t_electron){
+void delta_t_Fill(double momentum, int charge, double delta_t_proton, double delta_t_pip,double delta_t_electron){
 	for (int jj = 0; jj < num_points; jj++) {
 		if(momentum > jj * bin_width && momentum <= (jj+1) * bin_width){
 			if(charge == 1 && !std::isnan(delta_t_proton) && !std::isnan(delta_t_pip)) {
@@ -322,7 +320,7 @@ void delta_t_slices_Write(){
 	}
 }
 
-void delta_t_sec_pad(double momentum, int ID, int charge,
+void delta_t_sec_pad(double momentum, int charge,
 			double delta_t_proton, double delta_t_pip,double delta_t_electron,
 			int sc_sector, int sc_paddle){
 
