@@ -38,6 +38,7 @@
 #include <fstream>
 
 using namespace std;
+ofstream cut_outputs;
 
 static const int MAX_PARTS = 100;
 
