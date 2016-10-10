@@ -19,6 +19,12 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 	int num_of_events, total_events;
 	bool cuts, electron_cuts;
 	ofstream cut_outputs;
+
+	std::vector<bool> pip_vec (MAX_PARTS,false);
+	std::vector<bool> pim_vec (MAX_PARTS,false);
+	std::vector<bool> proton_vec (MAX_PARTS,false);
+	std::vector<bool> elec_vec (MAX_PARTS,false);
+
 	cut_outputs.open("outputFiles/cut_outputs.csv");
 	cut_outputs << "Cut,Mean,Sigma" << endl;
 
@@ -80,10 +86,15 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 
 		if(electron_cuts){
 			if(first_run){
+				is_electron = &elec_vec;
+				is_electron->at(0) = true;
 				for(int part_num = 1; part_num < gpart; part_num++){
-					is_pip->push_back(id[part_num] == PIP);	
-					is_proton->push_back(id[part_num] == PROTON);
-					is_pim->push_back(id[part_num] == PIM);
+					is_pip = &pip_vec;
+					is_pim = &pim_vec;
+					is_proton = &proton_vec;
+					is_pip->at(part_num) = (id[part_num] == PIP);	
+					is_proton->at(part_num) = (id[part_num] == PROTON);
+					is_pim->at(part_num) = (id[part_num] == PIM);
 				}
 			}
 
@@ -91,6 +102,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 			e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);	
 			e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
 			//Set the vertex time (time of electron hit) 
+
 			delta_t_cut(first_run);
 
 			theta = theta_calc(cz[0]);
@@ -121,8 +133,8 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 
 				Fill_Mass(m[part_num]);
 				Particle3.SetXYZ(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
-				/////Particle4.SetVectM(Particle3, Get_Mass(id[part_num]));
-				Particle4.SetVectM(Particle3, m[part_num]);
+				Particle4.SetVectM(Particle3, Get_Mass(id[part_num]));
+				//Particle4.SetVectM(Particle3, m[part_num]);
 				MomVsBeta_Fill(Particle4.E(),p[part_num],b[part_num]);
 				if (q[part_num] == 1){
 					MomVsBeta_Fill_pos(p[part_num],b[part_num]);
