@@ -124,13 +124,13 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 				if (p[part_num] == 0) continue;
 
 				if(is_proton->at(part_num) == is_pip->at(part_num)) continue;
-				if (is_pip->at(part_num)) Fill_pion_WQ2(W,Q2);
-				if (is_proton->at(part_num)) Fill_proton_WQ2(W,Q2);
+				if (is_pip->at(part_num) && id[part_num] == PIP) Fill_pion_WQ2(W,Q2);
+				if (is_proton->at(part_num) && id[part_num] == PROTON) Fill_proton_WQ2(W,Q2);
 
-				if (is_pip->at(part_num)) Fill_Pi_ID_P(p[part_num],b[part_num]);
-				if (is_proton->at(part_num)) Fill_proton_ID_P(p[part_num],b[part_num]);
+				if (is_pip->at(part_num) && id[part_num] == PIP) Fill_Pi_ID_P(p[part_num],b[part_num]);
+				if (is_proton->at(part_num) && id[part_num] == PROTON) Fill_proton_ID_P(p[part_num],b[part_num]);
 
-				if (is_pip->at(part_num) || is_proton->at(part_num)) Fill_proton_Pi_ID_P(p[part_num],b[part_num]);
+				if ((is_pip->at(part_num) && id[part_num] == PIP) || (is_proton->at(part_num) && id[part_num] == PROTON)) Fill_proton_Pi_ID_P(p[part_num],b[part_num]);
 
 				Fill_Mass(m[part_num]);
 				Particle3.SetXYZ(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
@@ -142,8 +142,8 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 				} else if(q[part_num] == -1) {
 					MomVsBeta_Fill_neg(p[part_num],b[part_num]);
 				}
-				if(is_proton->at(part_num)) num_of_proton++;
-				if(is_pip->at(part_num)){
+				if(is_proton->at(part_num) && id[part_num] == PROTON ) num_of_proton++;
+				if(is_pip->at(part_num) && id[part_num] == PIP){
 					num_of_pis++;
 					TLorentzVector gamma_mu = (e_mu - e_mu_prime);
 					MissingMassNeutron.MissingMassPxPyPz(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
