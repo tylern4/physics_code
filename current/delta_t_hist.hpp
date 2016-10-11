@@ -8,7 +8,7 @@
 #ifndef DELTA_T_HIST_H_GUARD
 #define DELTA_T_HIST_H_GUARD
 #include <TGraph.h>
-const int N_SIGMA = 2;
+const int N_SIGMA = 3;
 //
 //Histogram declarations, fills, and write
 // j -> type: 0=>Proton,1=>Pip,2=>Electron
