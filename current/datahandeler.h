@@ -111,7 +111,8 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 			phi = phi_calc(cx[0],cy[0]);
 			sector = get_sector(phi);
 
-			Fill_fid(theta,phi,get_sector(phi_calc(cx[0],cy[0])));
+			//Fill_fid(theta,phi,get_sector(phi_calc(cx[0],cy[0])));
+			Fill_fid(theta,phi,sector);
 
 			if(first_run){	
 				W = W_calc(e_mu, e_mu_prime);
@@ -124,13 +125,13 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 				if (p[part_num] == 0) continue;
 
 				if(is_proton->at(part_num) == is_pip->at(part_num)) continue;
-				if (is_pip->at(part_num) && id[part_num] == PIP) Fill_pion_WQ2(W,Q2);
-				if (is_proton->at(part_num) && id[part_num] == PROTON) Fill_proton_WQ2(W,Q2);
+				//if (is_pip->at(part_num) && id[part_num] == PIP) {Fill_pion_WQ2(W,Q2);}
+				//else if (is_proton->at(part_num) && id[part_num] == PROTON) {Fill_proton_WQ2(W,Q2);}
 
-				if (is_pip->at(part_num) && id[part_num] == PIP) Fill_Pi_ID_P(p[part_num],b[part_num]);
-				if (is_proton->at(part_num) && id[part_num] == PROTON) Fill_proton_ID_P(p[part_num],b[part_num]);
+				//if (is_pip->at(part_num) && id[part_num] == PIP) Fill_Pi_ID_P(p[part_num],b[part_num]);
+				//if (is_proton->at(part_num) && id[part_num] == PROTON) Fill_proton_ID_P(p[part_num],b[part_num]);
 
-				if ((is_pip->at(part_num) && id[part_num] == PIP) || (is_proton->at(part_num) && id[part_num] == PROTON)) Fill_proton_Pi_ID_P(p[part_num],b[part_num]);
+				//if ((is_pip->at(part_num) && id[part_num] == PIP) || (is_proton->at(part_num) && id[part_num] == PROTON)) Fill_proton_Pi_ID_P(p[part_num],b[part_num]);
 
 				Fill_Mass(m[part_num]);
 				Particle3.SetXYZ(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
@@ -139,15 +140,23 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 				MomVsBeta_Fill(Particle4.E(),p[part_num],b[part_num]);
 				if (q[part_num] == 1){
 					MomVsBeta_Fill_pos(p[part_num],b[part_num]);
+					if(is_proton->at(part_num) && id[part_num] == PROTON ) {
+						num_of_proton++;
+						Fill_proton_WQ2(W,Q2);
+						Fill_proton_ID_P(p[part_num],b[part_num]);
+					} else if(is_pip->at(part_num) && id[part_num] == PIP){
+						Fill_pion_WQ2(W,Q2);
+						Fill_Pi_ID_P(p[part_num],b[part_num]);
+						num_of_pis++;
+						TLorentzVector gamma_mu = (e_mu - e_mu_prime);
+						MissingMassNeutron.MissingMassPxPyPz(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
+						MissingMassNeutron = MissingMassNeutron.missing_mass(gamma_mu);
+					}
+				if ((is_pip->at(part_num) && id[part_num] == PIP) || (is_proton->at(part_num) && id[part_num] == PROTON)) {
+					Fill_proton_Pi_ID_P(p[part_num],b[part_num]);
+				}
 				} else if(q[part_num] == -1) {
 					MomVsBeta_Fill_neg(p[part_num],b[part_num]);
-				}
-				if(is_proton->at(part_num) && id[part_num] == PROTON ) num_of_proton++;
-				if(is_pip->at(part_num) && id[part_num] == PIP){
-					num_of_pis++;
-					TLorentzVector gamma_mu = (e_mu - e_mu_prime);
-					MissingMassNeutron.MissingMassPxPyPz(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
-					MissingMassNeutron = MissingMassNeutron.missing_mass(gamma_mu);
 				}
 			}
 	
