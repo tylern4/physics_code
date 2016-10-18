@@ -200,6 +200,9 @@ void delta_t_Write(){
 
 //delta_t_slice_fit();
 /////////////////////////////////////////////////////////////////////////////////
+	fit_functions.open("../skim/fit_functions.hpp");
+	fit_functions << "//Auto Generated fit code from e1d" << endl;
+	fit_functions << "#ifndef FIT_FUNCTIONS_H_GUARD\n#define FIT_FUNCTIONS_H_GUARD\n#include \"main.h\"\n" << endl;
 	TF1 *peak = new TF1("peak","gaus", -2, 2);
 	//+ x*x*[4] + x*[3]
 	char * func = "[0]*exp(-[1]*x) + [2]*x + [3]";
@@ -238,8 +241,8 @@ void delta_t_Write(){
 	Proton_Pos_fit->Draw("Same");
 	Proton_Neg_fit->Draw("Same");
 
-	cut_outputs << "Proton_Pos_fit:" << Proton_Pos_fit->GetExpFormula("P") << endl;
-	cut_outputs << "Proton_Neg_fit:" << Proton_Neg_fit->GetExpFormula("P") << endl;
+	fit_functions << "double Proton_Pos_fit(double x){\n\treturn " << Proton_Pos_fit->GetExpFormula("P") << ";\n}"<< endl;
+	fit_functions << "double Proton_Neg_fit(double x){\n\treturn " << Proton_Neg_fit->GetExpFormula("P") << ";\n}"<< endl;
 
 	delta_t_mass_PIP->FitSlicesY(peak,0,-1,10,"QRG5");
 	TH1D *delta_t_mass_PIP_0 = (TH1D*)gDirectory->Get("delta_t_mass_PIP_0");
@@ -276,8 +279,9 @@ void delta_t_Write(){
 	Pip_Pos_fit->Draw("Same");
 	Pip_Neg_fit->Draw("Same");
 
-	cut_outputs << "Pip_Pos_fit:" << Pip_Pos_fit->GetExpFormula("P") << endl;
-	cut_outputs << "Pip_Neg_fit:" << Pip_Neg_fit->GetExpFormula("P") << endl;
+	fit_functions << "double Pip_Pos_fit(double x){\n\treturn " << Pip_Pos_fit->GetExpFormula("P") << ";\n}"<< endl;
+	fit_functions << "double Pip_Neg_fit(double x){\n\treturn " << Pip_Neg_fit->GetExpFormula("P") << ";\n}"<< endl;
+	fit_functions << "#endif\n" << endl;
 /////////////////////////////////////////////////////////////////////////////////
 	delta_t_mass_P->Write();
 	delta_t_mass_P_PID->Write();
