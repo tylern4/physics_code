@@ -39,6 +39,7 @@
 
 using namespace std;
 ofstream cut_outputs;
+ofstream fit_functions;
 
 static const int MAX_PARTS = 100;
 
