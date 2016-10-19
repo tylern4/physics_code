@@ -118,11 +118,15 @@ void Fill_deltat_positron(double momentum, double delta_t){
 void Fill_deltat_positron_PID(double momentum, double delta_t){
 	delta_t_mass_positron_PID->Fill(momentum,delta_t);
 }
-/*
+
 void delta_t_slice_fit(){
-	TF1 *g = new TF1("g","gaus", -1, 1);
-	//delta_t_mass_P->FitSlicesY(g,0,-1,10,"QNRG5");
-	delta_t_mass_P->FitSlicesY(g,0,-1,0,"QNRG5");
+	fit_functions.open("../skim/fit_functions.hpp");
+	fit_functions << "//Auto Generated fit code from e1d" << endl;
+	fit_functions << "#ifndef FIT_FUNCTIONS_H_GUARD\n#define FIT_FUNCTIONS_H_GUARD\n#include \"main.h\"\n" << endl;
+	TF1 *peak = new TF1("peak","gaus", -1.5, 1.5);
+	//[0]*exp(-[1]*x) + 
+	char * func = "[2]*x + [3]";
+	delta_t_mass_P->FitSlicesY(peak,0,-1,10,"QRG5");
 	TH1D *delta_t_mass_P_0 = (TH1D*)gDirectory->Get("delta_t_mass_P_0");
 	TH1D *delta_t_mass_P_1 = (TH1D*)gDirectory->Get("delta_t_mass_P_1");
 	TH1D *delta_t_mass_P_2 = (TH1D*)gDirectory->Get("delta_t_mass_P_2");
@@ -135,22 +139,32 @@ void delta_t_slice_fit(){
 			//Get momentum from bin center
 			x[num] = (double)delta_t_mass_P_1->GetBinCenter(i);
 			//mean + 3sigma
-			y_plus[num] = (double)delta_t_mass_P_1->GetBinContent(i) + 3 * (double)delta_t_mass_P_2->GetBinContent(i);
+			y_plus[num] = (double)delta_t_mass_P_1->GetBinContent(i) + N_SIGMA * (double)delta_t_mass_P_2->GetBinContent(i);
 			//mean - 3simga
-			y_minus[num] = (double)delta_t_mass_P_1->GetBinContent(i) - 3 * (double)delta_t_mass_P_2->GetBinContent(i);
+			y_minus[num] = (double)delta_t_mass_P_1->GetBinContent(i) - N_SIGMA * (double)delta_t_mass_P_2->GetBinContent(i);
 			num++;
 		}
 	}
 	
 	TGraph *P = new TGraph(num,x,y_plus);
 	TGraph *M = new TGraph(num,x,y_minus);
+	TF1 *Proton_Pos_fit = new TF1("Proton_Pos_fit",func);
+	TF1 *Proton_Neg_fit = new TF1("Proton_Neg_fit",func);
+	P->Fit(Proton_Pos_fit,"Q","",0.2,2);
 	P->Write();
+	M->Fit(Proton_Neg_fit,"Q","",0.2,2);
 	M->Write();
-	//delta_t_mass_P->Draw();
+	Proton_Pos_fit->Write();
+	Proton_Neg_fit->Write();
 	P->Draw("Same");
 	M->Draw("Same");
+	Proton_Pos_fit->Draw("Same");
+	Proton_Neg_fit->Draw("Same");
 
-	delta_t_mass_PIP->FitSlicesY(g,0,-1,0,"QNRG5");
+	fit_functions << "double Proton_Pos_fit(double x){\n\treturn " << Proton_Pos_fit->GetExpFormula("P") << ";\n}"<< endl;
+	fit_functions << "double Proton_Neg_fit(double x){\n\treturn " << Proton_Neg_fit->GetExpFormula("P") << ";\n}"<< endl;
+
+	delta_t_mass_PIP->FitSlicesY(peak,0,-1,10,"QRG5");
 	TH1D *delta_t_mass_PIP_0 = (TH1D*)gDirectory->Get("delta_t_mass_PIP_0");
 	TH1D *delta_t_mass_PIP_1 = (TH1D*)gDirectory->Get("delta_t_mass_PIP_1");
 	TH1D *delta_t_mass_PIP_2 = (TH1D*)gDirectory->Get("delta_t_mass_PIP_2");
@@ -163,22 +177,32 @@ void delta_t_slice_fit(){
 			//Get momentum from bin center
 			x_pip[num] = (double)delta_t_mass_PIP_1->GetBinCenter(i);
 			//mean + 3sigma
-			y_plus_pip[num] = (double)delta_t_mass_PIP_1->GetBinContent(i) + 3 * (double)delta_t_mass_PIP_2->GetBinContent(i);
+			y_plus_pip[num] = (double)delta_t_mass_PIP_1->GetBinContent(i) + N_SIGMA * (double)delta_t_mass_PIP_2->GetBinContent(i);
 			//mean - 3simga
-			y_minus_pip[num] = (double)delta_t_mass_PIP_1->GetBinContent(i) - 3 * (double)delta_t_mass_PIP_2->GetBinContent(i);
+			y_minus_pip[num] = (double)delta_t_mass_PIP_1->GetBinContent(i) - N_SIGMA * (double)delta_t_mass_PIP_2->GetBinContent(i);
 			num++;
 		}
 	}
 	
 	TGraph *P_pip = new TGraph(num,x_pip,y_plus_pip);
 	TGraph *M_pip = new TGraph(num,x_pip,y_minus_pip);
+	TF1 *Pip_Pos_fit = new TF1("Pip_Pos_fit",func);
+	TF1 *Pip_Neg_fit = new TF1("Pip_Neg_fit",func);
+	P_pip->Fit(Pip_Pos_fit,"Q","",0.1,1.75);
 	P_pip->Write();
+	M_pip->Fit(Pip_Neg_fit,"Q","",0.1,1.75);
 	M_pip->Write();
-	//delta_t_mass_P->Draw();
+	Pip_Pos_fit->Write();
+	Pip_Neg_fit->Write();
 	P_pip->Draw("Same");
 	M_pip->Draw("Same");
+	Pip_Pos_fit->Draw("Same");
+	Pip_Neg_fit->Draw("Same");
 
-}*/
+	fit_functions << "double Pip_Pos_fit(double x){\n\treturn " << Pip_Pos_fit->GetExpFormula("P") << ";\n}"<< endl;
+	fit_functions << "double Pip_Neg_fit(double x){\n\treturn " << Pip_Neg_fit->GetExpFormula("P") << ";\n}"<< endl;
+	fit_functions << "#endif\n" << endl;
+}
 
 void delta_t_Write(){
 	delta_t_mass_P->SetXTitle("Momentum (GeV)");
@@ -198,9 +222,9 @@ void delta_t_Write(){
 	delta_t_mass_positron_PID->SetXTitle("Momentum (GeV)");
 	delta_t_mass_positron_PID->SetYTitle("#Deltat");
 
-//delta_t_slice_fit();
+delta_t_slice_fit();
 /////////////////////////////////////////////////////////////////////////////////
-	fit_functions.open("../skim/fit_functions.hpp");
+/*	fit_functions.open("../skim/fit_functions.hpp");
 	fit_functions << "//Auto Generated fit code from e1d" << endl;
 	fit_functions << "#ifndef FIT_FUNCTIONS_H_GUARD\n#define FIT_FUNCTIONS_H_GUARD\n#include \"main.h\"\n" << endl;
 	TF1 *peak = new TF1("peak","gaus", -2, 2);
@@ -281,7 +305,7 @@ void delta_t_Write(){
 
 	fit_functions << "double Pip_Pos_fit(double x){\n\treturn " << Pip_Pos_fit->GetExpFormula("P") << ";\n}"<< endl;
 	fit_functions << "double Pip_Neg_fit(double x){\n\treturn " << Pip_Neg_fit->GetExpFormula("P") << ";\n}"<< endl;
-	fit_functions << "#endif\n" << endl;
+	fit_functions << "#endif\n" << endl; */
 /////////////////////////////////////////////////////////////////////////////////
 	delta_t_mass_P->Write();
 	delta_t_mass_P_PID->Write();
