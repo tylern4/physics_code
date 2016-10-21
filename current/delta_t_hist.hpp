@@ -222,91 +222,8 @@ void delta_t_Write(){
 	delta_t_mass_positron_PID->SetXTitle("Momentum (GeV)");
 	delta_t_mass_positron_PID->SetYTitle("#Deltat");
 
-delta_t_slice_fit();
-/////////////////////////////////////////////////////////////////////////////////
-/*	fit_functions.open("../skim/fit_functions.hpp");
-	fit_functions << "//Auto Generated fit code from e1d" << endl;
-	fit_functions << "#ifndef FIT_FUNCTIONS_H_GUARD\n#define FIT_FUNCTIONS_H_GUARD\n#include \"main.h\"\n" << endl;
-	TF1 *peak = new TF1("peak","gaus", -2, 2);
-	//+ x*x*[4] + x*[3]
-	char * func = "[0]*exp(-[1]*x) + [2]*x + [3]";
-	delta_t_mass_P->FitSlicesY(peak,0,-1,10,"QRG5");
-	TH1D *delta_t_mass_P_0 = (TH1D*)gDirectory->Get("delta_t_mass_P_0");
-	TH1D *delta_t_mass_P_1 = (TH1D*)gDirectory->Get("delta_t_mass_P_1");
-	TH1D *delta_t_mass_P_2 = (TH1D*)gDirectory->Get("delta_t_mass_P_2");
-	double x[500];
-	double y_plus[500];
-	double y_minus[500];
-	int num = 0;
-	for (int i = 0; i < 500; i++){
-		if(delta_t_mass_P_1->GetBinContent(i) != 0){
-			//Get momentum from bin center
-			x[num] = (double)delta_t_mass_P_1->GetBinCenter(i);
-			//mean + 3sigma
-			y_plus[num] = (double)delta_t_mass_P_1->GetBinContent(i) + N_SIGMA * (double)delta_t_mass_P_2->GetBinContent(i);
-			//mean - 3simga
-			y_minus[num] = (double)delta_t_mass_P_1->GetBinContent(i) - N_SIGMA * (double)delta_t_mass_P_2->GetBinContent(i);
-			num++;
-		}
-	}
-	
-	TGraph *P = new TGraph(num,x,y_plus);
-	TGraph *M = new TGraph(num,x,y_minus);
-	TF1 *Proton_Pos_fit = new TF1("Proton_Pos_fit",func);
-	TF1 *Proton_Neg_fit = new TF1("Proton_Neg_fit",func);
-	P->Fit(Proton_Pos_fit,"Q","",0.2,3.5);
-	P->Write();
-	M->Fit(Proton_Neg_fit,"Q","",0.2,3.5);
-	M->Write();
-	Proton_Pos_fit->Write();
-	Proton_Neg_fit->Write();
-	P->Draw("Same");
-	M->Draw("Same");
-	Proton_Pos_fit->Draw("Same");
-	Proton_Neg_fit->Draw("Same");
+	delta_t_slice_fit();
 
-	fit_functions << "double Proton_Pos_fit(double x){\n\treturn " << Proton_Pos_fit->GetExpFormula("P") << ";\n}"<< endl;
-	fit_functions << "double Proton_Neg_fit(double x){\n\treturn " << Proton_Neg_fit->GetExpFormula("P") << ";\n}"<< endl;
-
-	delta_t_mass_PIP->FitSlicesY(peak,0,-1,10,"QRG5");
-	TH1D *delta_t_mass_PIP_0 = (TH1D*)gDirectory->Get("delta_t_mass_PIP_0");
-	TH1D *delta_t_mass_PIP_1 = (TH1D*)gDirectory->Get("delta_t_mass_PIP_1");
-	TH1D *delta_t_mass_PIP_2 = (TH1D*)gDirectory->Get("delta_t_mass_PIP_2");
-	double x_pip[500];
-	double y_plus_pip[500];
-	double y_minus_pip[500];
-	num = 0;
-	for (int i = 0; i < 500; i++){
-		if(delta_t_mass_PIP_1->GetBinContent(i) != 0){
-			//Get momentum from bin center
-			x_pip[num] = (double)delta_t_mass_PIP_1->GetBinCenter(i);
-			//mean + 3sigma
-			y_plus_pip[num] = (double)delta_t_mass_PIP_1->GetBinContent(i) + N_SIGMA * (double)delta_t_mass_PIP_2->GetBinContent(i);
-			//mean - 3simga
-			y_minus_pip[num] = (double)delta_t_mass_PIP_1->GetBinContent(i) - N_SIGMA * (double)delta_t_mass_PIP_2->GetBinContent(i);
-			num++;
-		}
-	}
-	
-	TGraph *P_pip = new TGraph(num,x_pip,y_plus_pip);
-	TGraph *M_pip = new TGraph(num,x_pip,y_minus_pip);
-	TF1 *Pip_Pos_fit = new TF1("Pip_Pos_fit",func);
-	TF1 *Pip_Neg_fit = new TF1("Pip_Neg_fit",func);
-	P_pip->Fit(Pip_Pos_fit,"Q","",0.1,1.75);
-	P_pip->Write();
-	M_pip->Fit(Pip_Neg_fit,"Q","",0.1,1.75);
-	M_pip->Write();
-	Pip_Pos_fit->Write();
-	Pip_Neg_fit->Write();
-	P_pip->Draw("Same");
-	M_pip->Draw("Same");
-	Pip_Pos_fit->Draw("Same");
-	Pip_Neg_fit->Draw("Same");
-
-	fit_functions << "double Pip_Pos_fit(double x){\n\treturn " << Pip_Pos_fit->GetExpFormula("P") << ";\n}"<< endl;
-	fit_functions << "double Pip_Neg_fit(double x){\n\treturn " << Pip_Neg_fit->GetExpFormula("P") << ";\n}"<< endl;
-	fit_functions << "#endif\n" << endl; */
-/////////////////////////////////////////////////////////////////////////////////
 	delta_t_mass_P->Write();
 	delta_t_mass_P_PID->Write();
 
@@ -379,8 +296,8 @@ void delta_T_canvas(){
 	for (int particle_i = 0; particle_i < 3; particle_i++) {
 		for (int sec_i = 0; sec_i < sc_sector_num; sec_i++) {
 			if(particle_i == 0) P_PIP_E = "Proton";
-			if(particle_i == 1) P_PIP_E = "Pip";
-			if(particle_i == 2) P_PIP_E = "Electron";
+			else if(particle_i == 1) P_PIP_E = "Pip";
+			else if(particle_i == 2) P_PIP_E = "Electron";
 
 			sprintf(can_name, "Sector %d %s",sec_i+1,P_PIP_E);
 			can_dt[sec_i][particle_i] = new TCanvas(can_name,can_name,1200,800);
