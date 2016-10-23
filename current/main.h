@@ -82,14 +82,15 @@ Float_t W;
 Float_t Q2;
 Float_t MM;
 
-std::vector<bool> * is_proton;
-std::vector<bool> * is_pip;
-std::vector<bool> * is_electron;
-std::vector<bool> * is_pim;
+std::vector<bool> *is_proton;
+std::vector<bool> *is_pip;
+std::vector<bool> *is_electron;
+std::vector<bool> *is_pim;
 
-std::vector<double> * dt_proton = 0;
-std::vector<double> * dt_pip = 0;
+std::vector<double> *dt_proton = 0;
+std::vector<double> *dt_pip = 0;
 Int_t num_of_pis;
+bool has_neutron;
 //////
 
 UChar_t npart;
