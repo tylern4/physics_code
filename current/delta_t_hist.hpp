@@ -125,7 +125,7 @@ void delta_t_slice_fit(){
 	fit_functions << "#ifndef FIT_FUNCTIONS_H_GUARD\n#define FIT_FUNCTIONS_H_GUARD\n#include \"main.h\"\n" << endl;
 	TF1 *peak = new TF1("peak","gaus", -1.5, 1.5);
 	//[0]*exp(-[1]*x) + 
-	char * func = "[2]*x + [3]";
+	char *func = "[2]*x + [3]";
 	delta_t_mass_P->FitSlicesY(peak,0,-1,10,"QRG5");
 	TH1D *delta_t_mass_P_0 = (TH1D*)gDirectory->Get("delta_t_mass_P_0");
 	TH1D *delta_t_mass_P_1 = (TH1D*)gDirectory->Get("delta_t_mass_P_1");
@@ -290,9 +290,9 @@ void delta_t_sec_pad_Write(){
 }
 
 void delta_T_canvas(){
-	TCanvas* can_dt[sc_sector_num][3];
+	TCanvas *can_dt[sc_sector_num][3];
 	char can_name[50];
-	char * P_PIP_E;
+	char *P_PIP_E;
 	for (int particle_i = 0; particle_i < 3; particle_i++) {
 		for (int sec_i = 0; sec_i < sc_sector_num; sec_i++) {
 			if(particle_i == 0) P_PIP_E = "Proton";

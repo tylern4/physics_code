@@ -86,10 +86,9 @@ void skim(char* fin, char* RootFile_output, double mean, double sigma){
 
 	Float_t W, Q2, MM;
 	std::vector<bool> is_proton, is_pip, is_electron, is_pim;
-	//Int_t MyID[MAX_PARTS];
-	//Double_t dt_proton[MAX_PARTS], dt_pip[MAX_PARTS];
 	std::vector<double> dt_proton, dt_pip;
 	Int_t num_of_pis;
+	bool has_neutron;
 
 	TVector3 e_mu_prime_3;
 	TLorentzVector e_mu_prime;
@@ -121,6 +120,7 @@ void skim(char* fin, char* RootFile_output, double mean, double sigma){
 	TBranch *DeltaT_P_branch = skim->Branch("DeltaT_P","vector<double>",&dt_proton);
 	TBranch *DeltaT_Pip_branch = skim->Branch("DeltaT_Pip","vector<double>",&dt_pip);
 	TBranch *NumPI_branch = skim->Branch("NumPI",&num_of_pis);
+	TBranch *Neutron_branch = skim->Branch("has_neutron",&has_neutron);
 
 
 	for (int current_event = 0; current_event < num_of_events; current_event++) {
@@ -173,6 +173,7 @@ void skim(char* fin, char* RootFile_output, double mean, double sigma){
 
 		MM_cut &= (MM <= mean + 100 * sigma);
 		MM_cut &= (MM >= mean - 100 * sigma);
+		has_neutron = MM_cut;
 
 		if (electron_cuts){ //&& MM_cut
 			W = W_calc(e_mu,e_mu_prime);

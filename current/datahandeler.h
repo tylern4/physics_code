@@ -136,7 +136,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 				Fill_Mass(m[part_num]);
 				Particle3.SetXYZ(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
 				Particle4.SetVectM(Particle3, Get_Mass(id[part_num]));
-				//Particle4.SetVectM(Particle3, m[part_num]);
+
 				MomVsBeta_Fill(Particle4.E(),p[part_num],b[part_num]);
 				if (q[part_num] == 1){
 					MomVsBeta_Fill_pos(p[part_num],b[part_num]);
@@ -212,9 +212,9 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 	DeltaT->cd();
 	delta_t_Write();
 
-	//TDirectory *DeltaT_slices = RootOutputFile->mkdir("Delta_T_slices");
-	//DeltaT_slices->cd();
-	//delta_t_slices_Write();
+	TDirectory *DeltaT_slices = RootOutputFile->mkdir("Delta_T_slices");
+	DeltaT_slices->cd();
+	delta_t_slices_Write();
 
 	TDirectory *DeltaT_sec_pad = RootOutputFile->mkdir("Delta_T_sec_pad");
 	DeltaT_sec_pad->cd();
