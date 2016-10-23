@@ -58,8 +58,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 	if(!first_run) getMorebranchs(&chain);
 
 	num_of_events = (int)chain.GetEntries();
-	
-	#pragma omp parallel for
+
 	for (int current_event = 0; current_event < num_of_events; current_event++) {
 		//update loadbar and get current event
 		loadbar(current_event+1,num_of_events);
@@ -121,7 +120,8 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 			}
 			WvsQ2_Fill(e_mu_prime.E(),W,Q2,xb_calc(Q2, e_mu_prime.E()));
 			num_of_proton = num_of_pis = 0;
-
+	
+			#pragma omp parallel for
 			for(int part_num = 1; part_num < gpart; part_num++){
 				if (p[part_num] == 0) continue;
 
