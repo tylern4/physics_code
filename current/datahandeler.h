@@ -59,7 +59,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 
 	num_of_events = (int)chain.GetEntries();
 	
-	//#pragma omp parallel for
+	#pragma omp parallel for
 	for (int current_event = 0; current_event < num_of_events; current_event++) {
 		//update loadbar and get current event
 		loadbar(current_event+1,num_of_events);

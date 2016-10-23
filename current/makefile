@@ -21,7 +21,7 @@ FILENAME=	$(SRC:.cpp=.o)
 all:	clean E1D
 
 E1D: $(FILENAME) 
-	$(CXX) $(FILENAME) -L. $(CXXFLAGS) $(FOPENMP) $(ROOTLIBS) -o $(TARGET) 
+	$(CXX) $(FILENAME) -L. $(FOPENMP) $(CXXFLAGS) $(ROOTLIBS) -o $(TARGET) 
 
 clean:
 	-rm -f $(OBJS) $(LIBOUT) $(TARGET) $(FILENAME)
