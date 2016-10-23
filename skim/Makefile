@@ -4,7 +4,7 @@ ROOTSYS		= $(shell root-config --exec-prefix)
 CXX = g++
 CXXFLAGS =      -O2 -fPIC -w -g $(shell root-config --cflags) 
 INCS =          -I$(shell root-config --incdir)
-LIBS =          $(shell root-config --glibs)
+LIBS =          $(shell root-config --libs)
 TARGET =	    Skim
 SRC =		$(wildcard *.cpp)
 FILENAME=	$(SRC:.cpp=.o)
