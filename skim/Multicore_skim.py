@@ -16,4 +16,4 @@ lines_split = split_list(lines, wanted_parts=num_cores)
 
 pool.map(skim, (lines_split))
 
-print "done"
+print("done")
