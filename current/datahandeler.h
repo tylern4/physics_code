@@ -173,8 +173,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 			}
 			if(num_of_proton == 1) Fill_single_proton_WQ2(W,Q2);
 		}
-	}
-}
+	} 
 	// Start of cuts
 	Cuts MissingMassNeutron_cut;
 	double fit_range_min = 0.88;
