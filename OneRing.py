@@ -21,6 +21,7 @@ def skim(lines):
 		command = "skim/Skim "+infile[0]+" "+outfile
 		os.system(command)
 
+os.system("cd current && make && cd ..")
 input_file = str(sys.argv[1])
 outfile_file = input_file[:-4]
 e1d_command = "current/e1d " + input_file + " " + outfile_file.replace('/inputFiles','/outputFiles') + "_test.root"
