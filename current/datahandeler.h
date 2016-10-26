@@ -58,7 +58,8 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 	if(!first_run) getMorebranchs(&chain);
 
 	num_of_events = (int)chain.GetEntries();
-#pragma omp parallel {
+#pragma omp parallel
+	{
 	#pragma omp single
 	for (int current_event = 0; current_event < num_of_events; current_event++) {
 		//update loadbar and get current event
@@ -173,7 +174,8 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 			}
 			if(num_of_proton == 1) Fill_single_proton_WQ2(W,Q2);
 		}
-	} 
+	}
+}
 	// Start of cuts
 	Cuts MissingMassNeutron_cut;
 	double fit_range_min = 0.88;
