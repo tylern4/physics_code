@@ -1,18 +1,23 @@
+UNAME := $(shell uname)
+ifeq ($(UNAME), Linux)
+FOPENMP = -fopenmp
+endif
+
 ROOTLIBS	= $(shell root-config --libs)
-INCLUDE		= $(shell root-config --incdir)
-ROOTSYS		= $(shell root-config --exec-prefix)
+
 CXX = g++
-CXXFLAGS =      -O2 -fPIC -w -g $(shell root-config --cflags) 
-INCS =          -I$(shell root-config --incdir)
-LIBS =          $(shell root-config --libs)
+CXXFLAGS =      -O2 -fPIC -w -g $(FOPENMP) $(shell root-config --cflags) 
 TARGET =	    Skim
 SRC =		$(wildcard *.cpp)
-FILENAME=	$(SRC:.cpp=.o)
+OBJ=	$(SRC:.cpp=.o)
 
-all:	clean SKIM
+.PHONY: all clean
 
-SKIM:	$(FILENAME) 
-	$(CXX) $(FILENAME) -L. $(CXXFLAGS) $(LIBS) -o $(TARGET) 
+all:	clean $(TARGET)
+
+$(TARGET): $(OBJ) 
+	$(CXX) $(OBJ) -L. $(CXXFLAGS) $(ROOTLIBS) -o $(TARGET) 
 
 clean:
-	-rm -f $(OBJS) $(LIBOUT) $(TARGET) $(FILENAME)
+	-rm -f $(TARGET) $(OBJ)
+
