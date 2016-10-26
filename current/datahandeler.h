@@ -58,7 +58,8 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 	if(!first_run) getMorebranchs(&chain);
 
 	num_of_events = (int)chain.GetEntries();
-
+#pragma omp parallel {
+	#pragma omp single
 	for (int current_event = 0; current_event < num_of_events; current_event++) {
 		//update loadbar and get current event
 		loadbar(current_event+1,num_of_events);
@@ -82,6 +83,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 			int cc_segment = (cc_segm[0] % 1000)/10;
 			int cc_pmt = cc_segm[0]/1000-1;
 			int cc_nphe = nphe[cc[0]-1];
+			#pragma omp task
 			CC_fill(cc_sector,cc_segment,cc_pmt,cc_nphe);
 		}
 
@@ -104,6 +106,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 			e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
 			//Set the vertex time (time of electron hit) 
 
+			#pragma omp task
 			delta_t_cut(first_run);
 
 			theta = theta_calc(cz[0]);
@@ -112,16 +115,18 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 			sector = get_sector(phi);
 
 			//Fill_fid(theta,phi,get_sector(phi_calc(cx[0],cy[0])));
+			#pragma omp task
 			Fill_fid(theta,phi,sector);
 
 			if(first_run){	
 				W = W_calc(e_mu, e_mu_prime);
 				Q2 = Q2_calc(e_mu, e_mu_prime);
 			}
+			#pragma omp task
 			WvsQ2_Fill(e_mu_prime.E(),W,Q2,xb_calc(Q2, e_mu_prime.E()));
 			num_of_proton = num_of_pis = 0;
-	
-			#pragma omp parallel for
+			
+			#pragma omp single
 			for(int part_num = 1; part_num < gpart; part_num++){
 				if (p[part_num] == 0) continue;
 
@@ -133,11 +138,11 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 				//if (is_proton->at(part_num) && id[part_num] == PROTON) Fill_proton_ID_P(p[part_num],b[part_num]);
 
 				//if ((is_pip->at(part_num) && id[part_num] == PIP) || (is_proton->at(part_num) && id[part_num] == PROTON)) Fill_proton_Pi_ID_P(p[part_num],b[part_num]);
-
+				#pragma omp task
 				Fill_Mass(m[part_num]);
 				Particle3.SetXYZ(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
 				Particle4.SetVectM(Particle3, Get_Mass(id[part_num]));
-
+				#pragma omp task
 				MomVsBeta_Fill(Particle4.E(),p[part_num],b[part_num]);
 				if (q[part_num] == 1){
 					MomVsBeta_Fill_pos(p[part_num],b[part_num]);
@@ -169,7 +174,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 			if(num_of_proton == 1) Fill_single_proton_WQ2(W,Q2);
 		}
 	}
-	
+}
 	// Start of cuts
 	Cuts MissingMassNeutron_cut;
 	double fit_range_min = 0.88;
