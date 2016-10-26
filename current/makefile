@@ -1,27 +1,22 @@
-ROOTLIBS	= $(shell root-config --libs)
-#INCLUDE		= $(shell root-config --incdir)
-#ROOTSYS		= $(shell root-config --exec-prefix)
-
 UNAME := $(shell uname)
 ifeq ($(UNAME), Linux)
 FOPENMP = -fopenmp
 endif
-ifeq ($(UNAME), Darwin)
-FOPENMP = ''
-endif
+
+ROOTLIBS	= $(shell root-config --libs)
 
 CXX = g++
 CXXFLAGS =      -O2 -fPIC -w -g $(FOPENMP) $(shell root-config --cflags) 
-#INCS =          -I$(shell root-config --incdir)
-#LIBS =          $(shell root-config --libs)
 TARGET =	    e1d
 SRC =		$(wildcard *.cpp)
-FILENAME=	$(SRC:.cpp=.o)
+OBJ=	$(SRC:.cpp=.o)
 
-all:	clean E1D
+.PHONY: all clean
 
-E1D: $(FILENAME) 
-	$(CXX) $(FILENAME) -L. $(CXXFLAGS) $(ROOTLIBS) -o $(TARGET) 
+all:	clean $(TARGET)
+
+$(TARGET): $(OBJ) 
+	$(CXX) $(OBJ) -L. $(CXXFLAGS) $(ROOTLIBS) -o $(TARGET) 
 
 clean:
-	-rm -f $(OBJS) $(LIBOUT) $(TARGET) $(FILENAME)
+	-rm -f $(TARGET) $(OBJ)
