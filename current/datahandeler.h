@@ -18,6 +18,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 	char rootFile[500];
 	int num_of_events, total_events;
 	bool cuts, electron_cuts;
+	double e_E;
 
 	std::vector<bool> pip_vec (MAX_PARTS,false);
 	std::vector<bool> pim_vec (MAX_PARTS,false);
@@ -120,9 +121,10 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 			if(first_run){	
 				W = W_calc(e_mu, e_mu_prime);
 				Q2 = Q2_calc(e_mu, e_mu_prime);
+				e_E = e_mu_prime.E();
 			}
 			
-			WvsQ2_Fill(e_mu_prime.E(),W,Q2,xb_calc(Q2, e_mu_prime.E()));
+			WvsQ2_Fill(e_E, W, Q2, xb_calc(Q2, e_E));
 			num_of_proton = num_of_pis = 0;
 			
 		
@@ -130,14 +132,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 				if (p[part_num] == 0) continue;
 
 				if(is_proton->at(part_num) == is_pip->at(part_num)) continue;
-				//if (is_pip->at(part_num) && id[part_num] == PIP) {Fill_pion_WQ2(W,Q2);}
-				//else if (is_proton->at(part_num) && id[part_num] == PROTON) {Fill_proton_WQ2(W,Q2);}
 
-				//if (is_pip->at(part_num) && id[part_num] == PIP) Fill_Pi_ID_P(p[part_num],b[part_num]);
-				//if (is_proton->at(part_num) && id[part_num] == PROTON) Fill_proton_ID_P(p[part_num],b[part_num]);
-
-				//if ((is_pip->at(part_num) && id[part_num] == PIP) || (is_proton->at(part_num) && id[part_num] == PROTON)) Fill_proton_Pi_ID_P(p[part_num],b[part_num]);
-				
 				Fill_Mass(m[part_num]);
 				Particle3.SetXYZ(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
 				Particle4.SetVectM(Particle3, Get_Mass(id[part_num]));

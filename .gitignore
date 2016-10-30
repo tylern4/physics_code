@@ -64,3 +64,5 @@ first_run/outputFiles
 backup/Gagik_Gavalian_thesis.pdf
 
 skim/fit_functions.hpp
+
+*.so
