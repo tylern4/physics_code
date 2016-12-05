@@ -8,4 +8,4 @@ lines = [line.rstrip('\n') for line in open(str(sys.argv[1]))]
 
 convert(lines)
 
-print "done"
+print("done")

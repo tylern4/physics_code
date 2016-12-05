@@ -19,7 +19,7 @@ def convert(lines):
 	for line in lines:
 
 		fileName = [line]
-		print fileName
+		print(fileName)
 		df = pd.DataFrame(root2rec(fileName, treename='h10', branches=branches)) #magic line to create a dataframe
 		df = df[df.W >= 0]
 
