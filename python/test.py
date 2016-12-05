@@ -21,7 +21,7 @@ for line in tqdm(lines):
         store = pd.HDFStore(line)
     except:
         bad.append(line.replace('h5','root'))
-print bad
+print(bad)
 df = store['df']
 xr = xray.Dataset.from_dataframe(df)
 
