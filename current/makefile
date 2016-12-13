@@ -1,6 +1,6 @@
 UNAME := $(shell uname)
 ifeq ($(UNAME), Linux)
-FOPENMP = -fopenmp -std=c++11
+    FOPENMP = -fopenmp -std=c++11
 endif
 
 ROOTLIBS	= $(shell root-config --libs)
