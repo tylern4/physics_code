@@ -6,6 +6,7 @@ import scipy
 import matplotlib.pyplot as plt
 from tqdm import *
 from scipy.optimize import curve_fit
+import sys
 
 np.set_printoptions(precision=4, suppress=True)
 plt.rc('text', usetex=True)
