@@ -17,7 +17,7 @@ lines = [line.rstrip('\n') for line in open(str(sys.argv[1]))]
 bad = []
 for line in tqdm(lines):
     try:
-        line = line.replace('root','h5')
+        line = line.replace('root','h5').replace('/skim','/h5')
         store = pd.HDFStore(line)
     except:
         bad.append(line.replace('h5','root'))
@@ -41,10 +41,10 @@ def pi_momentum_B(dataset):
 
 
 
-fig = plt.figure(num=None, figsize=fig_size, dpi=200, facecolor='w', edgecolor='k')
-plt.hist2d(pip_p, pip_b, bins=num_bins,cmap='viridis',range=[[0,1.2],[0.1,1.2]])
-plt.colorbar()
-plt.show()
+#fig = plt.figure(num=None, figsize=fig_size, dpi=200, facecolor='w', edgecolor='k')
+#plt.hist2d(pip_p, pip_b, bins=num_bins,cmap='viridis',range=[[0,1.2],[0.1,1.2]])
+#plt.colorbar()
+#plt.show()
 
 def charge_momentum_B(dataset):
     pos_p , pos_b = [],[]
@@ -63,14 +63,14 @@ def charge_momentum_B(dataset):
                 neg_b.append(B[i][j])
     return np.array(pos_p),np.array(pos_b),np.array(neg_p),np.array(neg_b)
 
-p_pos,b_pos,p_neg,b_neg = charge_momentum_B(xr)
-fig = plt.figure(num=None, figsize=fig_size, dpi=200, facecolor='w', edgecolor='k')
-plt.hist2d(p_pos, b_pos, bins=num_bins,cmap='viridis',range=[[0,1.2],[0.1,1.2]])
-plt.colorbar()
-plt.show()
-fig2 = plt.figure(num=None, figsize=fig_size, dpi=200, facecolor='w', edgecolor='k')
-plt.hist2d(p_neg, b_neg, bins=num_bins,cmap='viridis',range=[[0,1.2],[0.1,1.2]])
-plt.colorbar()
+#p_pos,b_pos,p_neg,b_neg = charge_momentum_B(xr)
+#fig = plt.figure(num=None, figsize=fig_size, dpi=200, facecolor='w', edgecolor='k')
+#plt.hist2d(p_pos, b_pos, bins=num_bins,cmap='viridis',range=[[0,1.2],[0.1,1.2]])
+#plt.colorbar()
+#plt.show()
+#fig2 = plt.figure(num=None, figsize=fig_size, dpi=200, facecolor='w', edgecolor='k')
+#plt.hist2d(p_neg, b_neg, bins=num_bins,cmap='viridis',range=[[0,1.2],[0.1,1.2]])
+#plt.colorbar()
 
 MM = xr['MM'].to_series()
 
