@@ -21,8 +21,8 @@ def convert(lines):
 		fileName = [line]
 		print(fileName)
 		#magic line to create a dataframe from ROOT file
-		df = pd.DataFrame(root2array(fileName, treename='h10', branches=branches).view(np.recarray))
-		#df = pd.DataFrame(root2rec(fileName, treename='h10', branches=branches)) 
+		#df = pd.DataFrame(root2array(fileName, treename='h10', branches=branches).view(np.recarray))
+		df = pd.DataFrame(root2rec(fileName, treename='h10', branches=branches)) 
 		df = df[df.W >= 0]
 
 		fileName = line.replace('root', 'h5').replace('/skim','/h5')
