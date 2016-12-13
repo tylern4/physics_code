@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 import xray
 import scipy
-from netCDF4 import num2date
 import matplotlib.pyplot as plt
 from tqdm import *
 from scipy.optimize import curve_fit
@@ -13,7 +12,7 @@ plt.rc('text', usetex=True)
 num_bins = 500
 fig_size = (16, 9)
 
-lines = [line.rstrip('\n') for line in open('/home/tylern/physics_code/python/v2_all.lis')]
+lines = [line.rstrip('\n') for line in open(str(sys.argv[1]))]
 bad = []
 for line in tqdm(lines):
     try:

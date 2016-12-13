@@ -1,10 +1,8 @@
 #!/usr/local/bin/ipython
 from convert import convert, split_list
-# from StringIO import StringIO
 from multiprocessing import Pool
 import multiprocessing
 import sys
-# import os
 
 lines = [line.rstrip('\n') for line in open(str(sys.argv[1]))]
 
