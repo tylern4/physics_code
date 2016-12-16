@@ -1,7 +1,13 @@
 #!/usr/bin/env python
 from convert import convert, split_list
-from multiprocessing import Pool
-import multiprocessing
+try:
+	from multiprocessing_on_dill import Pool
+	import multiprocessing_on_dill as multiprocessing
+except ImportError:
+	print("Using old multiprocessing")
+	from multiprocessing import Pool
+	import multiprocessing
+
 import sys
 
 lines = [line.rstrip('\n') for line in open(str(sys.argv[1]))]

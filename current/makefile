@@ -1,6 +1,6 @@
 UNAME := $(shell uname)
 ifeq ($(UNAME), Linux)
-    FOPENMP = -fopenmp -std=c++11
+    FOPENMP = -fopenmp -lgfortran
 endif
 
 ROOTLIBS	= $(shell root-config --libs)
@@ -15,7 +15,7 @@ LIBOUT =        sobj/lib.so
 
 .PHONY: all clean
 
-all:	clean $(TARGET)
+all:	$(TARGET)
 
 obj/%.o: %.cpp
 	$(CXX) $(CXXFLAGS)  -c $< -o $@
