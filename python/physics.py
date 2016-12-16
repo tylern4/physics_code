@@ -12,6 +12,25 @@ branches = ['npart',
 			'W',
 			'Q2',
 			'MM',
+			'm',  
+			'p',   
+			'q',   
+			'b',   
+			'cx',   
+			'cy',   
+			'cz',   
+			'vx',   
+			'vy',   
+			'vz'
+			] #This sets the branch names, should be able to add all of them to load everything or just use the ones I need for now
+
+branches_full = ['npart',
+			'gpart', 
+			'id',
+			'evntid',
+			'W',
+			'Q2',
+			'MM',
 			'm',
 			'evtype',
 			'evntclas',
@@ -86,8 +105,7 @@ branches = ['npart',
 			'nphe',   
 			'cc_t',   
 			'cc_r',   
-			'cc_c2'
-			] #This sets the branch names, should be able to add all of them to load everything or just use the ones I need for now
+			'cc_c2' ] 
 
 #Calcuating Q^2 
 # q^mu^2 = (e^mu - e^mu')^2 = -Q^2

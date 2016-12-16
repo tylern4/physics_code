@@ -1,19 +1,22 @@
-DEPTRACKING=-MD -MF $(@:.o=.d)
-CXXFLAGS:=-g -std=c++14 -Wall -Wextra -Isrc
-BUILDEXE=g++ -o$@ $(CXXFLAGS) $(LDFLAGS) $^
+UNAME := $(shell uname)
+ifeq ($(UNAME), Linux)
+    FOPENMP = -fopenmp -std=c++11
+endif
 
-CHECKDIR=@mkdir -p $(dir $@)
+ROOTLIBS	= $(shell root-config --libs)
+CXXFLAGS =      -O2 -fPIC -w -g $(FOPENMP) $(shell root-config --cflags)
+LDFLAGS = $(shell root-config --libs)
+CXX = g++
+SOURCES = $(wildcard *.cpp)
+OBJECTS = $(SOURCES:.cpp=.o)
 
-all: bin/%.o
+TARGET  = e1d
 
+.PHONY: all
+all: $(TARGET)
 
-bin/%.o: src/%.cpp
-	$(CHECKDIR)
-	g++ -o$@ -c $(CXXFLAGS) $(DEPTRACKING) $<
+$(TARGET): $(OBJECTS)
+	$(CXX) $(LDFLAGS) $^ -o $@
 
-bin/examples/%.o: examples/%.cpp
-	$(CHECKDIR)
-	g++ -o$@ -c $(CXXFLAGS) $(DEPTRACKING) $<
-
-clean:
-	#find bin -name '*.d' -delete -o -name '*.o' -delete -o '(' -perm -u=x '!' -type d ')' -delete
+%.o: %.c
+	$(CXX) $(CXXFLAGS) $< -c -o $@
