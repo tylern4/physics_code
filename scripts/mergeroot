@@ -9,7 +9,6 @@ def rootpy(files):
 	for f in files:
 		outfile = args.output+f[-6:]
 		command = "rootpy merge h10"+" -o "+outfile+".root " + f +"*" 
-		print(command)
 		os.system(command)
 
 def split_list(alist, wanted_parts=1):
@@ -45,10 +44,13 @@ try:
 
 	pool = Pool(processes=args.num)
 
-	lines_split = split_list(allFiles, wanted_parts=num_cores)
+	lines_split = split_list(allFiles, wanted_parts=args.num)
 	pool.map(rootpy, lines_split)
 
+except KeyboardInterrupt:
+	pool.terminate()
+	pool.join()
 
 except:
-	e = sys.exc_info()[0]
+	e = sys.exc_info()#[0]
 	print(e)
