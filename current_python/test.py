@@ -1,22 +1,28 @@
 from rootpy.tree import Tree
 from rootpy.io import root_open
-from random import gauss
+from ROOT import TChain, TTree, TBranch
+import argparse
 
-f = root_open("test.root", "recreate")
+def getCurrentValue(event, branchName):
+     return getattr(event,branchName)
 
-tree = Tree("test")
-tree.create_branches(
-    {'x': 'F',
-     'y': 'F',
-     'z': 'F',
-     'i': 'I'})
+#f = root_open(args.inList, "read")
+parser = argparse.ArgumentParser(description='Test Root Funtionality')
+parser.add_argument('inList', type=str, nargs='?')
 
-for i in range(10000):
-    tree.x = gauss(.5, 1.)
-    tree.y = gauss(.3, 2.)
-    tree.z = gauss(13., 42.)
-    tree.i = i
-    tree.fill()
-tree.write()
+args = parser.parse_args()
 
-f.close()
+if args.inList is None:
+	args.inList = "/Users/tylern/data/inputFiles/v3_skim.lis"
+
+chain = TChain("h10") 
+
+for line in open(args.inList,'r'): 
+	chain.AddFile(line[:-1]) 
+
+
+for event in range(chain.GetEntries()):
+	chain.GetEntry(event)
+	p = getCurrentValue(chain, "p")
+	for i in range(len(p)):
+		print(p[i])

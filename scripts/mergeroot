@@ -1,0 +1,54 @@
+#!/usr/bin/env python
+from __future__ import print_function
+import argparse
+from multiprocessing import Pool
+import multiprocessing
+import os, sys, glob
+
+def rootpy(files):
+	for f in files:
+		outfile = args.output+f[-6:]
+		command = "rootpy merge h10"+" -o "+outfile+".root " + f +"*" 
+		print(command)
+		os.system(command)
+
+def split_list(alist, wanted_parts=1):
+    length = len(alist)
+    return [ alist[i*length // wanted_parts: (i+1)*length // wanted_parts] 
+             for i in range(wanted_parts) ]
+
+try:
+	parser = argparse.ArgumentParser(description='merge rootfiles')
+	parser.add_argument('input', help="Input Directory", nargs='?',type=str)
+	parser.add_argument('output', help="Output Directory", nargs='?',type=str)
+	parser.add_argument('-n','--num', help="Number of cores to use", nargs='?',type=int)
+	
+	args = parser.parse_args()
+	
+	if args.input is None:
+		args.input = '.'
+
+	if args.input[-1] is not '/':
+		args.input = args.input+'/'
+
+	if args.output is None:
+		args.output = '.'
+
+	if args.output[-1] is not '/':
+		args.output = args.output+'/'
+
+	if args.num is None:
+		args.num = multiprocessing.cpu_count()
+
+	allFiles = glob.glob(args.input + "/*.root")
+	allFiles = list(set([f[:-8] for f in allFiles]))
+
+	pool = Pool(processes=args.num)
+
+	lines_split = split_list(allFiles, wanted_parts=num_cores)
+	pool.map(rootpy, lines_split)
+
+
+except:
+	e = sys.exc_info()[0]
+	print(e)

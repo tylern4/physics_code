@@ -1,7 +1,7 @@
 #!/bin/sh
 #SBATCH --job-name=e1d_python
-#SBATCH --output e1dpy_%j.out
-#SBATCH --error e1dpy_%j.err
+#SBATCH --output /home/tylerns/job_sub/logfiles/e1dpy_%j.out
+#SBATCH --error /home/tylerns/job_sub/logfiles/e1dpy_%j.err
 #SBATCH -p all
 ###Number of Cores Max 20
 #SBATCH -n 1
