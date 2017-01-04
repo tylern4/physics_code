@@ -19,7 +19,7 @@ def h2root(lines):
 		command = "h2root "+infile[0]+" "+outfile
 		os.system(command)
 try:
-	parser = argparse.ArgumentParser(description='DnD Dice Roller')
+	parser = argparse.ArgumentParser(description='Multicore h2root')
 	parser.add_argument('input', help="Input Directory", nargs='?',type=str)
 	
 	args = parser.parse_args()
@@ -30,7 +30,7 @@ try:
 	files = [f for f in os.listdir(args.input) if os.path.isfile(args.input+f)]
 	lines = [args.input+f for f in files if "hbook" in f]
 	
-	num_cores = 1 #multiprocessing.cpu_count()
+	num_cores = multiprocessing.cpu_count()
 	pool = Pool(processes=num_cores)
 	lines_split = split_list(lines, wanted_parts=num_cores)
 	pool.map(h2root, (lines_split))
