@@ -24,7 +24,7 @@ def fourvec(_p,_cx,_cy,_cz,_mass):
     _px,_py,_pz = all_mom(_p,_cx,_cy,_cz)
     return fvec(_px,_py,_pz,_mass)
 
-if platform.system() is 'Linux':
+if platform.system() == 'Linux':
     my_cmap = cm.get_cmap('Spectral')
 else:
     my_cmap = cm.get_cmap('viridis')
