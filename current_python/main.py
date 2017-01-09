@@ -1,6 +1,8 @@
 import ROOT
 import numpy as np
 from ROOT import TLorentzVector,TVector3
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 
 Square = lambda x: x**2
 append = lambda _arr,_val: np.append(_arr,_val)
@@ -20,3 +22,11 @@ def fvec(_px,_py,_pz,_mass):
 def fourvec(_p,_cx,_cy,_cz,_mass):
     _px,_py,_pz = all_mom(_p,_cx,_cy,_cz)
     return fvec(_px,_py,_pz,_mass)
+
+my_cmap = cm.get_cmap('viridis')
+my_cmap.set_over('w')
+color_map = my_cmap
+plt.rc('text', usetex=True)
+
+num_bins = 300
+fig_size = (16, 9)

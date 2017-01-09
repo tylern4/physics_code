@@ -1,28 +1,48 @@
 #!/usr/bin/env python
 import ROOT
 import sys
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+import numpy as np
+import pandas as pd
+import argparse
 from main import *
 from constants import *
 from physics import *
 
-file_name = '/Users/tylern/data/inputFiles/v3/skim/r22855_00_skim.root'
-file_h10 = ROOT.TFile.Open(file_name, 'read')
 
-#W = array
-#Q2 = array
+parser = argparse.ArgumentParser(description='Test Root Funtionality')
+parser.add_argument('input', type=str, nargs='?')
+parser.add_argument('output', type=str, nargs='?')
 
-for _e in file_h10.h10:
+args = parser.parse_args()
 
-	#append(W,_e.W)
-	#append(Q2,_e.Q2)
+if args.input is None:
+	args.input = '.'
+
+if args.output is None:
+	args.output = '.'
+
+directory = args.input + '/*.root'
+chain_h10 = ROOT.TChain('h10')
+chain_h10.Add(directory)
+
+Q2 = np.array([])
+W = np.array([])
+
+for _e in chain_h10:
 	if _e.id[0] is ID['ELECTRON']:
 		e_mu_p = fourvec(_e.p[0],_e.cx[0],_e.cy[0],_e.cz[0],mass['ELECTRON'])
-		#Q2 = Q2_calc(e_mu,e_mu_p)
-		print(_e.Q2 - Q2_calc(e_mu,e_mu_p))
-	#for _i in xrange(len(_e.p)):
-	#	px,py,pz = all_mom(_e.p[_i],_e.cx[_i],_e.cy[_i],_e.cz[_i])
-	#	e_mu_p = fvec(px,py,pz,MASS_E)
-	#	print((e_mu - e_mu_p).M())
+		Q2 = append(Q2,Q2_calc(e_mu,e_mu_p))
+		W = append(W,W_calc(e_mu,e_mu_p))
+
+fig = plt.figure(num=None, figsize=fig_size, dpi=200, facecolor='w', edgecolor='k')
+plt.hist2d(W,Q2,bins=500,range=[[0,4],[0,10]],cmap=color_map)
+plt.ylabel(r'$Q^{2}$ $(GeV^{2})$', fontsize=18)
+plt.xlabel(r'$W (GeV)$', fontsize=20)
+plt.colorbar()
+plt.savefig(args.output + '/' + 'WvsQ2.pdf')
+
 		
 
 

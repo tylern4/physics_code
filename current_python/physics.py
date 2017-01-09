@@ -2,8 +2,8 @@ import ROOT
 import numpy as np
 from ROOT import TLorentzVector,TVector3
 from main import *
-from physics import *
 from constants import *
+
 #Beam 4 vector
 e_mu = TLorentzVector(0.0,0.0, np.sqrt(Square(E1D_E0)-Square(mass['ELECTRON'])), E1D_E0)
 _p_target = TLorentzVector(0, 0, 0, mass['PROTON'])
