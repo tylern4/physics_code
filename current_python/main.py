@@ -3,6 +3,7 @@ import numpy as np
 from ROOT import TLorentzVector,TVector3
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+import platform
 
 Square = lambda x: x**2
 append = lambda _arr,_val: np.append(_arr,_val)
@@ -23,7 +24,11 @@ def fourvec(_p,_cx,_cy,_cz,_mass):
     _px,_py,_pz = all_mom(_p,_cx,_cy,_cz)
     return fvec(_px,_py,_pz,_mass)
 
-my_cmap = cm.get_cmap('viridis')
+if platform.system() is 'Linux':
+    my_cmap = cm.get_cmap('Spectral')
+else:
+    my_cmap = cm.get_cmap('viridis')
+
 my_cmap.set_over('w')
 color_map = my_cmap
 plt.rc('text', usetex=True)
