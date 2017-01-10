@@ -1,48 +1,29 @@
-#!/usr/bin/env python
 import ROOT
-import sys
-import matplotlib.pyplot as plt
-import matplotlib.cm as cm
-import numpy as np
-import pandas as pd
-import argparse
-from main import *
+import numpy as np 
 from constants import *
+from ROOT import TLorentzVector,TVector3
 from physics import *
+import plots
 
+class datahandeler(object):
+	"""Datahandeler class"""
+	def __init__(self, args):
+		self.args = args
+		self.Q2 = np.array([])
+		self.W = np.array([])
 
-parser = argparse.ArgumentParser(description='Test Root Funtionality')
-parser.add_argument('input', type=str, nargs='?')
-parser.add_argument('output', type=str, nargs='?')
+	def run(self):
+		directory = self.args.input + '/*.root'
+		chain_h10 = ROOT.TChain('h10')
+		chain_h10.Add(directory)
 
-args = parser.parse_args()
-
-if args.input is None:
-	args.input = '.'
-
-if args.output is None:
-	args.output = '.'
-
-directory = args.input + '/*.root'
-chain_h10 = ROOT.TChain('h10')
-chain_h10.Add(directory)
-
-Q2 = np.array([])
-W = np.array([])
-
-for _e in chain_h10:
-	if _e.id[0] is ID['ELECTRON']:
-		e_mu_p = fourvec(_e.p[0],_e.cx[0],_e.cy[0],_e.cz[0],mass['ELECTRON'])
-		Q2 = append(Q2,Q2_calc(e_mu,e_mu_p))
-		W = append(W,W_calc(e_mu,e_mu_p))
-
-fig = plt.figure(num=None, figsize=fig_size, dpi=200, facecolor='w', edgecolor='k')
-plt.hist2d(W,Q2,bins=500,range=[[0,4],[0,10]],cmap=color_map)
-plt.ylabel(r'$Q^{2}$ $(GeV^{2})$', fontsize=18)
-plt.xlabel(r'$W (GeV)$', fontsize=20)
-plt.colorbar()
-plt.savefig(args.output + '/' + 'WvsQ2.pdf')
+		for _e in chain_h10:
+			if _e.id[0] is ID['ELECTRON']:
+				e_mu_p = fourvec(_e.p[0],_e.cx[0],_e.cy[0],_e.cz[0],mass['ELECTRON'])
+				self.Q2 = append(self.Q2,Q2_calc(e_mu,e_mu_p))
+				self.W = append(self.W,W_calc(e_mu,e_mu_p))
 
 		
-
-
+	def plot(self):
+		pl = plots.plotting()
+		pl.WvsQ2(self.W,self.Q2, output=self.args.output)
