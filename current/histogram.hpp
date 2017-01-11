@@ -8,34 +8,11 @@
 #ifndef HISTOGRAM_H_GUARD
 #define HISTOGRAM_H_GUARD
 #include "fid_hists.hpp"
-#include "missing_mass_hists.hpp"
 #include "delta_t_hist.hpp" 
-//#include "WvsQ2_hists.hpp"
-//#include "momentum_hists.hpp"
 #include "cc_hist.hpp"
 #include "ec_hist.hpp"
 
 class Histogram {
-	public:
-		Histogram ();
-		~Histogram();
-		// W and Q^2
-		void Fill_proton_WQ2(double W, double Q2);
-		void Fill_single_pi_WQ2(double W, double Q2);
-		void Fill_single_proton_WQ2(double W, double Q2);
-		void WvsQ2_Fill(double E_prime, double W, double Q2, double xb);
-		void Fill_pion_WQ2(double W, double Q2);
-		void WvsQ2_Write();
-
-		// P and E
-		void MomVsBeta_Fill_pos(double P, double Beta);
-		void MomVsBeta_Fill_neg(double P, double Beta);
-		void Fill_proton_ID_P(double p, double beta);
-		void Fill_Pi_ID_P(double p,double beta);
-		void Fill_proton_Pi_ID_P(double p,double beta);
-		void MomVsBeta_Fill(double Energy, double P, double Beta);
-		void MomVsBeta_Write();
-
 	private:
 		// W and Q^2
 		int bins = 500;
@@ -88,8 +65,40 @@ class Histogram {
 		TH2D *MomVsBeta_proton_Pi_ID = new TH2D("MomVsBeta_proton_Pi_ID","Momentum versus #beta P #pi^{+}", bins_pvb, p_min, p_max, bins_pvb, b_min, b_max);
 		// P and E
 
+		// Missing Mass
+		int bins_MM = 200;
+		double MM_min = 0.0;
+		double MM_max = 3.0;
+		TH1D *Mass = new TH1D("Mass", "Mass", 600, 0, 6);
+		// Missing Mass
 
+	public:
+		Histogram ();
+		~Histogram();
+		TH1D *Missing_Mass = new TH1D("Missing_Mass", "Missing Mass", bins_MM, MM_min, MM_max);
+		TH1D *Missing_Mass_square = new TH1D("Missing_Mass_square", "Missing Mass square", bins_MM, MM_min, Square(MM_max));
+		// W and Q^2
+		void Fill_proton_WQ2(double W, double Q2);
+		void Fill_single_pi_WQ2(double W, double Q2);
+		void Fill_single_proton_WQ2(double W, double Q2);
+		void WvsQ2_Fill(double E_prime, double W, double Q2, double xb);
+		void Fill_pion_WQ2(double W, double Q2);
+		void WvsQ2_Write();
 
+		// P and E
+		void MomVsBeta_Fill_pos(double P, double Beta);
+		void MomVsBeta_Fill_neg(double P, double Beta);
+		void Fill_proton_ID_P(double p, double beta);
+		void Fill_Pi_ID_P(double p,double beta);
+		void Fill_proton_Pi_ID_P(double p,double beta);
+		void MomVsBeta_Fill(double Energy, double P, double Beta);
+		void MomVsBeta_Write();
+
+		// Missing Mass
+		void Fill_Missing_Mass(double miss_mass);
+		void Fill_Mass(double mass);
+		void Fill_Missing_Mass_square(double miss_mass_2);
+		void Write_Missing_Mass();
 
 };
 
@@ -249,6 +258,30 @@ void Histogram::MomVsBeta_Write(){
 	MomVsBeta_hist_pos->Write();
 	MomVsBeta_hist_neg->Write();
 	Mom->Write();
+}
+
+// Missing Mass
+void Histogram::Fill_Missing_Mass(double miss_mass){
+	Missing_Mass->Fill(miss_mass);
+}
+
+void Histogram::Fill_Mass(double mass){
+	Mass->Fill(mass);
+}
+
+void Histogram::Fill_Missing_Mass_square(double miss_mass_2){
+	Missing_Mass_square->Fill(miss_mass_2);
+}
+
+void Histogram::Write_Missing_Mass(){
+	Missing_Mass->SetXTitle("Mass (GeV)");
+	Missing_Mass->Write();
+
+	Mass->SetXTitle("Mass (GeV)");
+	Mass->Write();
+
+	Missing_Mass_square->SetXTitle("Mass (GeV)");
+	Missing_Mass_square->Write();
 }
 
 

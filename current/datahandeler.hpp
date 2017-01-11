@@ -128,13 +128,13 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 			hists->WvsQ2_Fill(e_E, W, Q2, xb_calc(Q2, e_E));
 			num_of_proton = num_of_pis = 0;
 			
-		
+			#pragma omp parallel for
 			for(int part_num = 1; part_num < gpart; part_num++){
 				if (p[part_num] == 0) continue;
 
 				if(is_proton->at(part_num) == is_pip->at(part_num)) continue;
 
-				Fill_Mass(m[part_num]);
+				hists->Fill_Mass(m[part_num]);
 				Particle3.SetXYZ(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
 				Particle4.SetVectM(Particle3, Get_Mass(id[part_num]));
 				
@@ -162,8 +162,8 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 			}
 	
 			if(num_of_pis == 1) {
-				Fill_Missing_Mass(MissingMassNeutron.mass);
-				Fill_Missing_Mass_square(Square(MissingMassNeutron.mass));
+				hists->Fill_Missing_Mass(MissingMassNeutron.mass);
+				hists->Fill_Missing_Mass_square(Square(MissingMassNeutron.mass));
 				hists->Fill_single_pi_WQ2(W,Q2);
 			}
 			if(num_of_proton == 1) hists->Fill_single_proton_WQ2(W,Q2);
@@ -174,7 +174,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 	Cuts MissingMassNeutron_cut;
 	double fit_range_min = 0.88;
 	double fit_range_max = 1.0;
-	MissingMassNeutron_cut.FitGaus(Missing_Mass,fit_range_min,fit_range_max);
+	MissingMassNeutron_cut.FitGaus(hists->Missing_Mass,fit_range_min,fit_range_max);
 
 	cut_outputs << "MM_N";
 	cut_outputs << "," << MissingMassNeutron_cut.mean;
@@ -183,7 +183,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 	Cuts MissingMassSquare_cut;
 	fit_range_min = 0.5;
 	fit_range_max = 1.1;
-	MissingMassSquare_cut.FitGaus(Missing_Mass_square,fit_range_min,fit_range_max);
+	MissingMassSquare_cut.FitGaus(hists->Missing_Mass_square,fit_range_min,fit_range_max);
 
 	cut_outputs << "MM_N_2";
 	cut_outputs << "," << MissingMassSquare_cut.mean;
@@ -207,9 +207,9 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 	//Missing Mass Write
 	TDirectory *MissMass = RootOutputFile->mkdir("Missing_Mass");
 	MissMass->cd();
-	Write_Missing_Mass();
+	hists->Write_Missing_Mass();
 
-	//Missing Mass Write
+	//Delta T Write
 	TDirectory *DeltaT = RootOutputFile->mkdir("Delta_T");
 	DeltaT->cd();
 	delta_t_Write();
