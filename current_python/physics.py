@@ -21,7 +21,7 @@ append = lambda _arr,_val: np.append(_arr,_val)
 array = lambda _:np.array([])
 
 #Beam 4 vector
-e_mu = TLorentzVector(0.0,0.0, np.sqrt(Square(E1D_E0)-Square(mass['ELECTRON'])), E1D_E0)
+e_mu = TLorentzVector(0.0,0.0, np.sqrt(np.square(E1D_E0)-np.square(mass['ELECTRON'])), E1D_E0)
 _p_target = TLorentzVector(0, 0, 0, mass['PROTON'])
 
 #Calcuating Q^2 

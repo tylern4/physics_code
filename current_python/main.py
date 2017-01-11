@@ -14,6 +14,7 @@ def main():
 
 	args = parser.parse_args()
 
+	#dh = datahandeler(args, num_cores=1)
 	dh = datahandeler(args)
 	dh.run()
 	dh.plot()

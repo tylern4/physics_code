@@ -12,8 +12,9 @@
 // Saving the old files in a new folder to refer back to.
 //
 void dataHandeler(char *fin, char *RootFile_output, bool first_run){
-	TCanvas * c1 = new TCanvas("c1", "c1", 100, 100);
 	TFile *RootOutputFile;
+	Histogram *hists = new Histogram();
+	TCanvas * c1 = new TCanvas("c1", "c1", 100, 100);
 	int number_cols = 0;
 	char rootFile[500];
 	int num_of_events, total_events;
@@ -124,7 +125,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 				e_E = e_mu_prime.E();
 			}
 			
-			WvsQ2_Fill(e_E, W, Q2, xb_calc(Q2, e_E));
+			hists->WvsQ2_Fill(e_E, W, Q2, xb_calc(Q2, e_E));
 			num_of_proton = num_of_pis = 0;
 			
 		
@@ -137,35 +138,35 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 				Particle3.SetXYZ(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
 				Particle4.SetVectM(Particle3, Get_Mass(id[part_num]));
 				
-				MomVsBeta_Fill(Particle4.E(),p[part_num],b[part_num]);
+				hists->MomVsBeta_Fill(Particle4.E(),p[part_num],b[part_num]);
 				if (q[part_num] == 1){
-					MomVsBeta_Fill_pos(p[part_num],b[part_num]);
+					hists->MomVsBeta_Fill_pos(p[part_num],b[part_num]);
 					if(is_proton->at(part_num) && id[part_num] == PROTON ) {
 						num_of_proton++;
-						Fill_proton_WQ2(W,Q2);
-						Fill_proton_ID_P(p[part_num],b[part_num]);
+						hists->Fill_proton_WQ2(W,Q2);
+						hists->Fill_proton_ID_P(p[part_num],b[part_num]);
 					} else if(is_pip->at(part_num) && id[part_num] == PIP){
-						Fill_pion_WQ2(W,Q2);
-						Fill_Pi_ID_P(p[part_num],b[part_num]);
+						hists->Fill_pion_WQ2(W,Q2);
+						hists->Fill_Pi_ID_P(p[part_num],b[part_num]);
 						num_of_pis++;
 						TLorentzVector gamma_mu = (e_mu - e_mu_prime);
 						MissingMassNeutron.MissingMassPxPyPz(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
 						MissingMassNeutron = MissingMassNeutron.missing_mass(gamma_mu);
 					}
 				if ((is_pip->at(part_num) && id[part_num] == PIP) || (is_proton->at(part_num) && id[part_num] == PROTON)) {
-					Fill_proton_Pi_ID_P(p[part_num],b[part_num]);
+					hists->Fill_proton_Pi_ID_P(p[part_num],b[part_num]);
 				}
 				} else if(q[part_num] == -1) {
-					MomVsBeta_Fill_neg(p[part_num],b[part_num]);
+					hists->MomVsBeta_Fill_neg(p[part_num],b[part_num]);
 				}
 			}
 	
 			if(num_of_pis == 1) {
 				Fill_Missing_Mass(MissingMassNeutron.mass);
 				Fill_Missing_Mass_square(Square(MissingMassNeutron.mass));
-				Fill_single_pi_WQ2(W,Q2);
+				hists->Fill_single_pi_WQ2(W,Q2);
 			}
-			if(num_of_proton == 1) Fill_single_proton_WQ2(W,Q2);
+			if(num_of_proton == 1) hists->Fill_single_proton_WQ2(W,Q2);
 		}
 	}
 
@@ -194,13 +195,14 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 
 	RootOutputFile->cd();
 	EC_Write();
+
 	TDirectory *WvsQ2_folder = RootOutputFile->mkdir("W vs Q2");
 	WvsQ2_folder->cd();
-	WvsQ2_Write();
+	hists->WvsQ2_Write();
 
 	TDirectory *MomVsBeta_folder = RootOutputFile->mkdir("Momentum vs beta");
 	MomVsBeta_folder->cd();
-	MomVsBeta_Write();
+	hists->MomVsBeta_Write();
 
 	//Missing Mass Write
 	TDirectory *MissMass = RootOutputFile->mkdir("Missing_Mass");
@@ -236,7 +238,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 	Fid_cuts->cd();
 	Fid_Write();
 
-
+	delete hists;
 	RootOutputFile->Write();
 	RootOutputFile->Close();
 	cut_outputs.close();

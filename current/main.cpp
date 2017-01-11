@@ -9,17 +9,12 @@
 #include "main.h"
 #include "TStopwatch.h"
 #include "classes.hpp"
-#include "delta_t_hist.hpp" 
-#include "WvsQ2_hists.hpp"
-#include "momentum_hists.hpp"
+#include "histogram.hpp"
 #include "missing_mass.hpp"
-#include "missing_mass_hists.hpp"
 #include "physics.hpp"
 #include "delta_t_cut.hpp"
-#include "ec_cut.hpp"
-#include "cc_cut.hpp"
-#include "fid_hists.hpp"
 #include "datahandeler.hpp"
+
 
 using namespace std;
 
@@ -27,9 +22,6 @@ int main(int argc, char **argv){
 	TStopwatch *Watch = new TStopwatch;
 	Watch->Start();
 	gStyle->SetOptFit(1111);
-	makeHists_delta_t();
-	makeHists_CC();
-	makeHists_fid();
 
 	if (argc == 3) {
 		char* infilename = argv[1];
