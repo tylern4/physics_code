@@ -1,22 +1,36 @@
 UNAME := $(shell uname)
 ifeq ($(UNAME), Linux)
-    FOPENMP = -fopenmp -std=c++11
+    FOPENMP = -fopenmp -lgfortran
 endif
 
 ROOTLIBS	= $(shell root-config --libs)
-CXXFLAGS =      -O2 -fPIC -w -g $(FOPENMP) $(shell root-config --cflags)
-LDFLAGS = $(shell root-config --libs)
-CXX = g++
-SOURCES = $(wildcard *.cpp)
-OBJECTS = $(SOURCES:.cpp=.o)
+CXX = llvm-g++
+CXXFLAGS =      -O2 -fPIC -w -g $(FOPENMP) $(shell root-config --cflags) 
+TARGET =	    e1d
+SRC =		$(wildcard *.cpp)
+OBJ=	$(patsubst %.cpp,obj/%.o,$(SRC))  
+#-lgfortran
+LIBOUT =        sobj/lib.so
 
-TARGET  = e1d
 
-.PHONY: all
-all: $(TARGET)
+.PHONY: all clean
 
-$(TARGET): $(OBJECTS)
-	$(CXX) $(LDFLAGS) $^ -o $@
+all:	$(TARGET)
 
-%.o: %.c
-	$(CXX) $(CXXFLAGS) $< -c -o $@
+obj/%.o: %.cpp
+	$(CXX) $(CXXFLAGS)  -c $< -o $@
+
+$(TARGET): obj $(OBJ) 
+	$(CXX) $(OBJ) -L. $(CXXFLAGS) $(ROOTLIBS) -o $(TARGET) 
+
+sobj:
+	@mkdir -p $@
+
+obj:
+	@mkdir -p $@
+
+lib:	sobj $(OBJ)
+	$(CXX) $(CXXFLAGS) -shared $(OBJ) $(ROOTLIBS) -o $(LIBOUT)
+
+clean:
+	-rm -f $(TARGET) $(OBJ) obj/
