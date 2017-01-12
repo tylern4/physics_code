@@ -61,6 +61,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 
 	num_of_events = (int)chain.GetEntries();
 
+	#pragma omp parallel for
 	for (int current_event = 0; current_event < num_of_events; current_event++) {
 		//update loadbar and get current event
 		loadbar(current_event+1,num_of_events);
@@ -128,7 +129,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 			hists->WvsQ2_Fill(e_E, W, Q2, xb_calc(Q2, e_E));
 			num_of_proton = num_of_pis = 0;
 			
-			#pragma omp parallel for
+			//#pragma omp parallel for
 			for(int part_num = 1; part_num < gpart; part_num++){
 				if (p[part_num] == 0) continue;
 
@@ -153,9 +154,10 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 						MissingMassNeutron.MissingMassPxPyPz(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
 						MissingMassNeutron = MissingMassNeutron.missing_mass(gamma_mu);
 					}
-				if ((is_pip->at(part_num) && id[part_num] == PIP) || (is_proton->at(part_num) && id[part_num] == PROTON)) {
-					hists->Fill_proton_Pi_ID_P(p[part_num],b[part_num]);
-				}
+
+					if ((is_pip->at(part_num) && id[part_num] == PIP) || (is_proton->at(part_num) && id[part_num] == PROTON)) {
+						hists->Fill_proton_Pi_ID_P(p[part_num],b[part_num]);
+					}
 				} else if(q[part_num] == -1) {
 					hists->MomVsBeta_Fill_neg(p[part_num],b[part_num]);
 				}
