@@ -8,7 +8,7 @@
 #ifndef DELTA_T_CUT_H_GUARD
 #define DELTA_T_CUT_H_GUARD
 #include "main.h"
-#include "delta_t_hist.hpp"
+#include "histogram.hpp"
 
 const double c_special_units = 29.9792458;
 double vertex_time(double sc_time, double sc_pathlength, double cut_beta) {
@@ -20,7 +20,7 @@ double delta_t(double electron_vertex_time, double mass, double momentum, double
 	return electron_vertex_time - vertex_time(sc_t,sc_r,cut_beta); 
 }
 
-void delta_t_cut(bool first_run){
+void delta_t_cut(Histogram *hists, bool first_run){
 	double delta_t_P, delta_t_PIP, delta_t_ELECTRON;
 	double electron_vertex = vertex_time(sc_t[sc[0]-1], sc_r[sc[0]-1], 1.0);
 	double sct,scr,mom;
@@ -46,19 +46,19 @@ void delta_t_cut(bool first_run){
 		}
 
 		if(charge == 1) {
-			Fill_deltat_P(mom, delta_t_P);
-			Fill_deltat_PIP(mom, delta_t_PIP);
-			Fill_deltat_positron(mom,  delta_t_ELECTRON);
-			if(is_proton->at(event_number) && ID == PROTON) Fill_deltat_P_PID(mom, delta_t_P);
-			if(is_pip->at(event_number) && ID == PIP)    Fill_deltat_PIP_PID(mom, delta_t_PIP);
-			if(ID == -11)    Fill_deltat_positron_PID(mom, delta_t_ELECTRON);
+			hists->Fill_deltat_P(mom, delta_t_P);
+			hists->Fill_deltat_PIP(mom, delta_t_PIP);
+			hists->Fill_deltat_positron(mom,  delta_t_ELECTRON);
+			if(is_proton->at(event_number) && ID == PROTON) hists->Fill_deltat_P_PID(mom, delta_t_P);
+			if(is_pip->at(event_number) && ID == PIP)    hists->Fill_deltat_PIP_PID(mom, delta_t_PIP);
+			if(ID == -11)    hists->Fill_deltat_positron_PID(mom, delta_t_ELECTRON);
 		} else if(charge == -1) {
-			Fill_deltat_electron(mom, delta_t_ELECTRON);
-			if(is_electron->at(event_number) && ID == ELECTRON) Fill_deltat_electron_PID(mom, delta_t_ELECTRON);
+			hists->Fill_deltat_electron(mom, delta_t_ELECTRON);
+			if(is_electron->at(event_number) && ID == ELECTRON) hists->Fill_deltat_electron_PID(mom, delta_t_ELECTRON);
 		}
 
-		delta_t_Fill(mom, charge, delta_t_P, delta_t_PIP, delta_t_ELECTRON);
-		delta_t_sec_pad(mom, charge, delta_t_P, delta_t_PIP, delta_t_ELECTRON,sc_sector,sc_paddle);
+		hists->delta_t_Fill(mom, charge, delta_t_P, delta_t_PIP, delta_t_ELECTRON);
+		hists->delta_t_sec_pad(mom, charge, delta_t_P, delta_t_PIP, delta_t_ELECTRON,sc_sector,sc_paddle);
 	}
 }
 #endif

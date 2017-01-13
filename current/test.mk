@@ -4,7 +4,7 @@ ifeq ($(UNAME), Linux)
 endif
 
 ROOTLIBS	= $(shell root-config --libs)
-CXX = llvm-g++
+CXX = clang++-3.7 -stdlib=libc++
 CXXFLAGS =      -O2 -fPIC -w -g $(FOPENMP) $(shell root-config --cflags) 
 TARGET =	    e1d
 SRC =		$(wildcard *.cpp)

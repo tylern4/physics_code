@@ -86,7 +86,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 			int cc_pmt = cc_segm[0]/1000-1;
 			int cc_nphe = nphe[cc[0]-1];
 			
-			CC_fill(cc_sector,cc_segment,cc_pmt,cc_nphe);
+			hists->CC_fill(cc_sector,cc_segment,cc_pmt,cc_nphe);
 		}
 
 		if(electron_cuts){
@@ -109,7 +109,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 			//Set the vertex time (time of electron hit) 
 
 			
-			delta_t_cut(first_run);
+			delta_t_cut(hists,first_run);
 
 			theta = theta_calc(cz[0]);
 			//phi = center_phi_calc(cx[0],cy[0]);
@@ -214,27 +214,27 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 	//Delta T Write
 	TDirectory *DeltaT = RootOutputFile->mkdir("Delta_T");
 	DeltaT->cd();
-	delta_t_Write();
+	hists->delta_t_Write();
 
 	TDirectory *DeltaT_slices = RootOutputFile->mkdir("Delta_T_slices");
 	DeltaT_slices->cd();
-	delta_t_slices_Write();
+	hists->delta_t_slices_Write();
 
 	TDirectory *DeltaT_sec_pad = RootOutputFile->mkdir("Delta_T_sec_pad");
 	DeltaT_sec_pad->cd();
-	delta_t_sec_pad_Write();
+	hists->delta_t_sec_pad_Write();
 
 	TDirectory *Delta_T_canvases = RootOutputFile->mkdir("Delta_T_canvases");
 	Delta_T_canvases->cd();
-	delta_T_canvas();
+	hists->delta_T_canvas();
 
 	TDirectory *CC_hists = RootOutputFile->mkdir("CC_hists");
 	CC_hists->cd();
-	CC_Write();
+	hists->CC_Write();
 
 	TDirectory *CC_canvases = RootOutputFile->mkdir("CC_canvases");
 	CC_canvases->cd();
-	CC_canvas();
+	hists->CC_canvas();
 
 	TDirectory *Fid_cuts = RootOutputFile->mkdir("Fid_cuts");
 	Fid_cuts->cd();
