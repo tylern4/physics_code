@@ -7,15 +7,21 @@
 
 #ifndef HISTOGRAM_H_GUARD
 #define HISTOGRAM_H_GUARD
-#include "fid_hists.hpp"
+//#include "fid_hists.hpp"
 //#include "delta_t_hist.hpp" 
 //#include "cc_hist.hpp"
-#include "ec_hist.hpp"
+//#include "ec_hist.hpp"
 
 class Histogram {
-	private:		
-		// W and Q^2
+	private:
+		void makeHists_fid();
+		void makeHists_delta_t();
+		void makeHists_CC();
 		int bins = 500;
+		float p_min = 0;
+		float p_max = 5;
+
+		// W and Q^2
 		float w_min = 0;
 		float w_max = 3.25;
 		float q2_min = 0;
@@ -47,22 +53,19 @@ class Histogram {
 		// W and Q^2
 
 		// P and E
-		int bins_pvb = 500;
-		float p_min = 0;
-		float p_max = 2.5;
 		float b_min = 0.1;
 		float b_max = 1.2;
 		
-		TH2D *MomVsBeta_hist = new TH2D("MomVsBeta","Momentum versus #beta", bins_pvb, p_min, p_max, bins_pvb, b_min, b_max);
-		TH2D *MomVsBeta_hist_pos = new TH2D("MomVsBeta_pos","Momentum versus #beta Positive", bins_pvb, p_min, p_max, bins_pvb, b_min, b_max);
-		TH2D *MomVsBeta_hist_neg = new TH2D("MomVsBeta_neg","Momentum versus #beta Negative", bins_pvb, p_min, p_max, bins_pvb, b_min, b_max);
+		TH2D *MomVsBeta_hist = new TH2D("MomVsBeta","Momentum versus #beta", bins, p_min, p_max, bins, b_min, b_max);
+		TH2D *MomVsBeta_hist_pos = new TH2D("MomVsBeta_pos","Momentum versus #beta Positive", bins, p_min, p_max, bins, b_min, b_max);
+		TH2D *MomVsBeta_hist_neg = new TH2D("MomVsBeta_neg","Momentum versus #beta Negative", bins, p_min, p_max, bins, b_min, b_max);
 		TH1D *Mom = new TH1D("Momentum","Momentum",bins,0,2.5);
 		TH1D *Energy_hist = new TH1D("Energy_hist","Energy_hist",bins,0.0,2.5);
 		
-		TH2D *MomVsBeta_proton_ID = new TH2D("MomVsBeta_proton_ID","Momentum versus #beta p", bins_pvb, p_min, p_max, bins_pvb, b_min, b_max);
-		TH2D *MomVsBeta_Pi_ID = new TH2D("MomVsBeta_Pi_ID","Momentum versus #beta #pi^{+}", bins_pvb, p_min, p_max, bins_pvb, b_min, b_max);
+		TH2D *MomVsBeta_proton_ID = new TH2D("MomVsBeta_proton_ID","Momentum versus #beta p", bins, p_min, p_max, bins, b_min, b_max);
+		TH2D *MomVsBeta_Pi_ID = new TH2D("MomVsBeta_Pi_ID","Momentum versus #beta #pi^{+}", bins, p_min, p_max, bins, b_min, b_max);
 		
-		TH2D *MomVsBeta_proton_Pi_ID = new TH2D("MomVsBeta_proton_Pi_ID","Momentum versus #beta P #pi^{+}", bins_pvb, p_min, p_max, bins_pvb, b_min, b_max);
+		TH2D *MomVsBeta_proton_Pi_ID = new TH2D("MomVsBeta_proton_Pi_ID","Momentum versus #beta P #pi^{+}", bins, p_min, p_max, bins, b_min, b_max);
 		// P and E
 
 		// Missing Mass
@@ -77,10 +80,6 @@ class Histogram {
 		// j -> type: 0=>Proton,1=>Pip,2=>Electron
 		// jj -> Fit point
 		static const int N_SIGMA = 3;
-		int bins_dt = 500;
-		int bins_p = 500;
-		float P_min = 0;
-		float P_max = 3.5;
 		float Dt_min = -10;
 		float Dt_max = 10;
 		
@@ -88,30 +87,30 @@ class Histogram {
 		char htitle[500];
 		static const int num_points = 20;
 		TH1D *delta_t_hist[3][num_points];
-		const double bin_width = (P_max - P_min)/num_points;
+		const double bin_width = (p_max - p_min)/num_points;
 		
 		static const int sc_sector_num = 6;
 		static const int sc_paddle_num = 48;
 		TH2D *delta_t_sec_pad_hist[3][sc_sector_num][sc_paddle_num];
 		TH2D *delta_t_mass_P = new TH2D("delta_t_mass_P","#Deltat assuming mass of proton",
-			bins_p, P_min, P_max, bins_dt, Dt_min, Dt_max);
+			bins, p_min, p_max, bins, Dt_min, Dt_max);
 		TH2D *delta_t_mass_P_PID = new TH2D("delta_t_mass_P_PID","#Deltat assuming mass of proton with PID proton",
-			bins_p, P_min, P_max, bins_dt, Dt_min, Dt_max);
+			bins, p_min, p_max, bins, Dt_min, Dt_max);
 		
 		TH2D *delta_t_mass_PIP = new TH2D("delta_t_mass_PIP","#Deltat assuming mass of #pi^{+}",
-			bins_p, P_min, P_max, bins_dt, Dt_min, Dt_max);
+			bins, p_min, p_max, bins, Dt_min, Dt_max);
 		TH2D *delta_t_mass_PIP_PID = new TH2D("delta_t_mass_PIP_PID","#Deltat assuming mass of #pi^{+} with PID #pi^{+}",
-			bins_p, P_min, P_max, bins_dt, Dt_min, Dt_max);
+			bins, p_min, p_max, bins, Dt_min, Dt_max);
 		
 		TH2D *delta_t_mass_electron = new TH2D("delta_t_mass_electron","#Deltat assuming mass of e^{-}",
-			bins_p, P_min, P_max, bins_dt, Dt_min, Dt_max);
+			bins, p_min, p_max, bins, Dt_min, Dt_max);
 		TH2D *delta_t_mass_electron_PID = new TH2D("delta_t_mass_electron_PID","#Deltat assuming mass of e^{-} with PID e^{-}",
-			bins_p, P_min, P_max, bins_dt, Dt_min, Dt_max);
+			bins, p_min, p_max, bins, Dt_min, Dt_max);
 		
 		TH2D *delta_t_mass_positron = new TH2D("delta_t_mass_postitron","#Deltat assuming mass of e^{+}",
-			bins_p, P_min, P_max, bins_dt, Dt_min, Dt_max);
+			bins, p_min, p_max, bins, Dt_min, Dt_max);
 		TH2D *delta_t_mass_positron_PID = new TH2D("delta_t_mass_postitron_PID","#Deltat assuming mass of e^{+} with PID e^{+}",
-			bins_p, P_min, P_max, bins_dt, Dt_min, Dt_max);
+			bins, p_min, p_max, bins, Dt_min, Dt_max);
 		// Delta T
 
 		// cc hist
@@ -129,7 +128,31 @@ class Histogram {
 		Double_t xmin_cc_sparse[ndims_cc_sparse] = 	{0.0,			0.0,			-2.0,	CC_min};
 		Double_t xmax_cc_sparse[ndims_cc_sparse] = 	{sector+1.0,	segment+1.0,	1.0,	CC_max};
 		Double_t x_cc_sparse[ndims_cc_sparse];
-		THnSparse* cc_sparse = new THnSparseD("cc_sparse", "Histogram", ndims_cc_sparse, bins_cc_sparse, xmin_cc_sparse, xmax_cc_sparse); //
+		THnSparse* cc_sparse = new THnSparseD("cc_sparse", "Histogram", ndims_cc_sparse, bins_cc_sparse, xmin_cc_sparse, xmax_cc_sparse);
+		// cc hist
+
+		// fiducial 
+		float theta_min = 0;
+		float theta_max = 90;
+		float phi_min = -360/2.0;
+		float phi_max = 360/2.0;
+		
+		char hname_fid[50];
+		char htitle_fid[500];
+		static const int sector_num = 6;
+		TH2D *fid_sec_hist[sector_num];
+		
+		TH2D *fid_hist = new TH2D("fid","fid",
+			bins, phi_min, phi_max, bins, theta_min, theta_max);
+		// fiducial
+
+		// EC hists
+		float EC_min = 0;
+		float EC_max = 1;
+
+		TH2D *EC_sampling_fraction = new TH2D("EC_sampling_fraction","EC_sampling_fraction", 
+			bins, p_min, p_max, bins, EC_min, EC_max);
+		// EC hists
 
 	public:
 		Histogram ();
@@ -160,7 +183,6 @@ class Histogram {
 		void Write_Missing_Mass();
 
 		// Delta T
-		void makeHists_delta_t();
 		void Fill_deltat_P(double momentum, double delta_t);
 		void Fill_deltat_P_PID(double momentum, double delta_t);
 		void Fill_deltat_PIP(double momentum, double delta_t);
@@ -181,9 +203,16 @@ class Histogram {
 
 		// cc hist
 		void CC_fill(int cc_sector,int cc_segment,int cc_pmt,int cc_nphe);
-		void makeHists_CC();
 		void CC_Write();
 		void CC_canvas();
+
+		// fiducial hist
+		void Fill_fid(double theta, double phi, int sector);
+		void Fid_Write();
+
+		// EC hists
+		void EC_fill(double etot, double momentum);
+		void EC_Write();
 
 };
 
@@ -373,15 +402,15 @@ void Histogram::makeHists_delta_t(){
 	for (int jj = 0; jj < num_points; jj++) {
 		sprintf(hname,"delta_t_p_%d",jj);
 		sprintf(htitle,"#Deltat P %d",jj);
-		delta_t_hist[0][jj] = new TH1D(hname,htitle, bins_dt, Dt_min, Dt_max);
+		delta_t_hist[0][jj] = new TH1D(hname,htitle, bins, Dt_min, Dt_max);
 
 		sprintf(hname,"delta_t_pip_%d",jj);
 		sprintf(htitle,"#Deltat #pi^{+} %d",jj);
-		delta_t_hist[1][jj] = new TH1D(hname,htitle, bins_dt, Dt_min, Dt_max);
+		delta_t_hist[1][jj] = new TH1D(hname,htitle, bins, Dt_min, Dt_max);
 
 		sprintf(hname,"delta_t_electron_%d",jj);
 		sprintf(htitle,"#Deltat electron %d",jj);
-		delta_t_hist[2][jj] = new TH1D(hname,htitle, bins_dt, Dt_min, Dt_max);
+		delta_t_hist[2][jj] = new TH1D(hname,htitle, bins, Dt_min, Dt_max);
 	}
 
 	for (int jj = 0; jj < sc_sector_num; jj++) {
@@ -389,17 +418,17 @@ void Histogram::makeHists_delta_t(){
 			sprintf(hname,"delta_t_p_sec%d_pad%d",jj+1,jjj+1);
 			sprintf(htitle,"#Deltat P Sector %d Paddle %d",jj+1,jjj+1);
 			delta_t_sec_pad_hist[0][jj][jjj] = new TH2D(hname, htitle,
-				bins_p/2, P_min, P_max, bins_dt/2, Dt_min, Dt_max);
+				bins/2, p_min, p_max, bins/2, Dt_min, Dt_max);
 
 			sprintf(hname,"delta_t_pip_sec%d_pad%d",jj+1,jjj+1);
 			sprintf(htitle,"#Deltat #pi^{+} Sector %d Paddle %d",jj+1,jjj+1);
 			delta_t_sec_pad_hist[1][jj][jjj] = new TH2D(hname, htitle,
-				bins_p/2, P_min, P_max, bins_dt/2, Dt_min, Dt_max);
+				bins/2, p_min, p_max, bins/2, Dt_min, Dt_max);
 
 			sprintf(hname,"delta_t_electron_sec%d_pad%d",jj+1,jjj+1);
 			sprintf(htitle,"#Deltat electron Sector %d Paddle %d",jj+1,jjj+1);
 			delta_t_sec_pad_hist[2][jj][jjj] = new TH2D(hname, htitle,
-				bins_p/2, P_min, P_max, bins_dt/2, Dt_min, Dt_max);
+				bins/2, p_min, p_max, bins/2, Dt_min, Dt_max);
 
 		}
 	}
@@ -700,6 +729,49 @@ void Histogram::CC_canvas(){
 			can[sec_i][pmt_i]->Write();
 		}
 	}
+}
+
+void Histogram::makeHists_fid(){
+	float min_phi[6] = {0,60,120,-180,-120,-60};
+	float max_phi[6] = {60,120,180,-120,-60,0};
+	for (int sec = 0; sec < sector_num; sec++) {
+		sprintf(hname_fid,"fid_sec%d",sec+1);
+		sprintf(htitle_fid,"fid_sec%d",sec+1);
+		fid_sec_hist[sec] = new TH2D(hname_fid, htitle_fid,
+			bins, min_phi[sec], max_phi[sec], bins, theta_min, theta_max);
+	}
+
+}
+
+void Histogram::Fill_fid(double theta, double phi, int sector){
+	fid_hist->Fill(phi,theta);
+	fid_sec_hist[sector]->Fill(phi,theta);
+}
+
+void Histogram::Fid_Write(){
+	fid_hist->SetYTitle("#theta");
+	fid_hist->SetXTitle("#phi");
+
+	fid_hist->Write();
+
+	for (int sec = 0; sec < sector_num; sec++) {
+		fid_sec_hist[sec]->SetYTitle("#theta");
+		fid_sec_hist[sec]->SetXTitle("#phi");
+		fid_sec_hist[sec]->Write();
+	}
+}
+
+void Histogram::EC_fill(double etot, double momentum){
+	double sampling_frac = etot/momentum;
+	EC_sampling_fraction->Fill(momentum,sampling_frac);
+}
+
+void Histogram::EC_Write(){
+	EC_sampling_fraction->SetXTitle("Momentum (GeV)");
+	EC_sampling_fraction->SetYTitle("Sampling Fraction");
+
+	EC_sampling_fraction->Write();
+
 }
 
 #endif

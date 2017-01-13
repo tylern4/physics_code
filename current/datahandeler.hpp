@@ -71,7 +71,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 		electron_cuts = true;
 		//electron cuts
 		electron_cuts &= (ec[0] > 0); // ``` ``` ``` ec
-		if (electron_cuts) EC_fill(etot[ec[0]-1],p[0]);
+		if (electron_cuts) hists->EC_fill(etot[ec[0]-1],p[0]);
 		electron_cuts &= ((int)id[0] == ELECTRON); //First particle is electron
 		electron_cuts &= ((int)gpart > 0); //Number of good particles is greater than 0
 		electron_cuts &= ((int)stat[0] > 0); //First Particle hit stat
@@ -118,7 +118,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 
 			//Fill_fid(theta,phi,get_sector(phi_calc(cx[0],cy[0])));
 			
-			Fill_fid(theta,phi,sector);
+			hists->Fill_fid(theta,phi,sector);
 
 			if(first_run){	
 				W = W_calc(e_mu, e_mu_prime);
@@ -196,7 +196,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 	chain.Reset();						// delete Tree object
 
 	RootOutputFile->cd();
-	EC_Write();
+	hists->EC_Write();
 
 	TDirectory *WvsQ2_folder = RootOutputFile->mkdir("W vs Q2");
 	WvsQ2_folder->cd();
@@ -238,7 +238,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 
 	TDirectory *Fid_cuts = RootOutputFile->mkdir("Fid_cuts");
 	Fid_cuts->cd();
-	Fid_Write();
+	hists->Fid_Write();
 
 	delete hists;
 	RootOutputFile->Write();
