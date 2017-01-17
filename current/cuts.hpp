@@ -45,8 +45,8 @@ public:
 	inline void FitGaus(TH1D *hist, double min_value, double max_value){
 		TF1 *fitFunc = new TF1("fitFunc",gaus.c_str(), min_value, max_value);
 		fitFunc->SetLineColor(38);
-		par_max = isnan(hist->GetMaximum()) ? 0 : hist->GetMaximum();
-		par_mean = isnan(hist->GetMean()) ? 0 : hist->GetMean();
+		par_max = std::isnan(hist->GetMaximum()) ? 0 : hist->GetMaximum();
+		par_mean = std::isnan(hist->GetMean()) ? 0 : hist->GetMean();
 		fitFunc->SetParameter(0, par_max);
 		fitFunc->SetParameter(1, par_mean);
 		fitFunc->SetParameter(2, 1);
@@ -54,8 +54,8 @@ public:
 
 		hist->Fit("fitFunc","qM0+","", min_value, max_value);
 		
-		par_mean = isnan(fitFunc->GetParameter("mean")) ? 0 : fitFunc->GetParameter("mean");
-		par_FWHM = isnan(fitFunc->GetParameter("FWHM")) ? 0 : fitFunc->GetParameter("FWHM");
+		par_mean = std::isnan(fitFunc->GetParameter("mean")) ? 0 : fitFunc->GetParameter("mean");
+		par_FWHM = std::isnan(fitFunc->GetParameter("FWHM")) ? 0 : fitFunc->GetParameter("FWHM");
 
 		fitFunc->SetParameter(0, par_max);
 		fitFunc->SetParameter(1, par_mean);
