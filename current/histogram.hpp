@@ -458,12 +458,12 @@ void Histogram::Fill_deltat_positron(double momentum, double delta_t){ delta_t_m
 void Histogram::Fill_deltat_positron_PID(double momentum, double delta_t){ delta_t_mass_positron_PID->Fill(momentum,delta_t); }
 
 void Histogram::delta_t_slice_fit(){
-	fit_functions.open("../skim/fit_functions.hpp");
+	fit_functions.open("fit_functions.hpp");
 	fit_functions << "//Auto Generated fit code from e1d" << endl;
 	fit_functions << "#ifndef FIT_FUNCTIONS_H_GUARD\n#define FIT_FUNCTIONS_H_GUARD\n#include \"main.h\"\n" << endl;
 	TF1 *peak = new TF1("peak","gaus", -1.5, 1.5);
 	//[0]*exp(-[1]*x) + 
-	char *func = "[2]*x + [3]";
+	char *func = "[0]*exp(-[1]*x) + [2]*x + [3]";
 	delta_t_mass_P->FitSlicesY(peak,0,-1,10,"QRG5");
 	TH1D *delta_t_mass_P_0 = (TH1D*)gDirectory->Get("delta_t_mass_P_0");
 	TH1D *delta_t_mass_P_1 = (TH1D*)gDirectory->Get("delta_t_mass_P_1");

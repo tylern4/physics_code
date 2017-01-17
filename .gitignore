@@ -70,3 +70,5 @@ skim/fit_functions.hpp
 *.pyc
 
 current_python/.ipynb_checkpoints/datahandler-checkpoint.ipynb
+
+current/fit_functions.hpp
