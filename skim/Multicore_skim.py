@@ -16,8 +16,6 @@ try:
     lines_split = split_list(lines, wanted_parts=num_cores)
 
     pool.map(skim, (lines_split))
-except Exception, e:
-    raise e
 except KeyboardInterrupt:
     print("Why do you want to kill me??")
     pool.terminate()
