@@ -4,7 +4,7 @@ ifeq ($(UNAME), Linux)
 endif
 
 ROOTLIBS	= $(shell root-config --libs)
-CXX = clang++-3.7 -stdlib=libc++
+CXX = g++ -stdlib=libc++
 CXXFLAGS =      -O2 -fPIC -w -g $(FOPENMP) $(shell root-config --cflags) 
 TARGET =	    e1d
 SRC =		$(wildcard *.cpp)
@@ -33,4 +33,4 @@ lib:	sobj $(OBJ)
 	$(CXX) $(CXXFLAGS) -shared $(OBJ) $(ROOTLIBS) -o $(LIBOUT)
 
 clean:
-	-rm -f $(TARGET) $(OBJ) obj/
+	-rm -rf $(TARGET) $(OBJ) obj/

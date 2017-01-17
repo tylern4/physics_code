@@ -7,22 +7,20 @@
 
 #ifndef MAIN_H_GUARD
 #define MAIN_H_GUARD
+#include <stdlib.h>
+#include <stdio.h>
+#include <TFileCollection.h>
+#include <TFile.h>
 #include "TMath.h"
 #include <TGraph.h>
 #include "THnSparse.h"
 #include "TTree.h"
 #include "TROOT.h"
-#include <stdlib.h>
-#include <stdio.h>
 #include <TLorentzVector.h>
-#include <TFileCollection.h>
-#include <TFile.h>
-#include "color.cpp"
 #include <string.h>
 #include <string>
 #include <cstring>
 #include "time.h"
-#include <string.h>
 #include <string>
 #include <cstring>
 #include "TTree.h"
@@ -38,8 +36,11 @@
 #include "TSystem.h"
 #include <vector>
 #include <fstream>
+#include "color.cpp"
 
 using namespace std;
+
+
 ofstream cut_outputs;
 ofstream fit_functions;
 

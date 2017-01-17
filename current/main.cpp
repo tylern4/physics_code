@@ -15,7 +15,6 @@
 #include "delta_t_cut.hpp"
 #include "datahandeler.hpp"
 
-
 using namespace std;
 
 int main(int argc, char **argv){
