@@ -30,5 +30,9 @@ def main():
 
 
 
-if __name__ == "__main__": 
-	main()
+if __name__ == "__main__":
+	try:
+		main()
+	except KeyboardInterrupt:
+		print("Exiting")
+		sys.exit()

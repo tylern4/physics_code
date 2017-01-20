@@ -6,6 +6,7 @@ from physics import *
 import plots
 from multiprocessing import Pool, cpu_count
 import glob
+from ROOT import gBenchmark
 
 class datahandeler(object):
 	"""Datahandeler class"""
@@ -18,8 +19,8 @@ class datahandeler(object):
 
 	def run(self):
 		chain = ROOT.TChain('h10')
-		chain.Add(self.args.input + '/*.root')
-
+		fnum = chain.Add(self.args.input + '/*.root')
+		print("Processing "+ str(chain.GetEntries())+ " events in "+ str(fnum) + " files")
 		for _e in chain:
 			if _e.id[0] is ID['ELECTRON']:
 				e_mu_p = fourvec(_e.p[0],_e.cx[0],_e.cy[0],_e.cz[0],mass['ELECTRON'])
