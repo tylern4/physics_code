@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import platform
+import pickle as pl
 
 class plotting(object):
 	"""Plotting class"""
@@ -30,6 +31,7 @@ class plotting(object):
 		self.plot_name = kwargs.get('plot_name', 'hist2d.pdf')
 
 		fig = plt.figure(num=None, figsize=self.fig_size, dpi=200, facecolor='w', edgecolor='k')
+		ax = fig.gca()
 		if 'range' in kwargs:
 			plt.hist2d(x_val,y_val,bins=self.num_bins,range=kwargs['range'],cmap=self.my_cmap)
 		else:
@@ -41,6 +43,8 @@ class plotting(object):
 
 		if self.output[-1] != '/':
 			self.output = self.output + '/'
+
+		pl.dump(ax, file(self.output + self.plot_name + '.pkl','wb'))
 		plt.savefig(self.output + self.plot_name)
 
 
@@ -70,6 +74,8 @@ class plotting(object):
 
 		if self.output[-1] != '/':
 			self.output = self.output + '/'
+
+		pl.dump(fig, file(self.output + self.plot_name + '.pkl','wb'))
 		plt.savefig(self.output + self.plot_name)
 
 
