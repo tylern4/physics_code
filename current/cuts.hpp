@@ -44,7 +44,7 @@ public:
 
 	inline void FitGaus(TH1D *hist, double min_value, double max_value){
 		TF1 *fitFunc = new TF1("fitFunc",gaus.c_str(), min_value, max_value);
-		fitFunc->SetLineColor(38);
+		fitFunc->SetLineColor(2);
 		par_max = std::isnan(hist->GetMaximum()) ? 0 : hist->GetMaximum();
 		par_mean = std::isnan(hist->GetMean()) ? 0 : hist->GetMean();
 		fitFunc->SetParameter(0, par_max);
@@ -66,7 +66,6 @@ public:
 		FWHM = fitFunc->GetParameter("FWHM");
 		sigma = fitFunc->GetParameter("FWHM") / (2 * sqrt(2 * log(2))); // 2.35482004503; 
 		gStyle->SetOptFit(1111);
-
 	} 
 
 	inline void FitPoly_1D(TH1D *hist, double min_value, double max_value){

@@ -15,7 +15,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 	TFile *RootOutputFile;
 	Histogram *hists = new Histogram();
 	TCanvas * c1 = new TCanvas("c1", "c1", 100, 100);
-	int number_cols = 0;
+	auto number_cols = 0;
 	char rootFile[500];
 	int num_of_events, total_events;
 	bool cuts, electron_cuts;

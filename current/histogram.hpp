@@ -127,8 +127,7 @@ class Histogram {
 		float theta_max = 90;
 		float phi_min = -360/2.0;
 		float phi_max = 360/2.0;
-		char hname_fid[50];
-		char htitle_fid[500];
+
 		static const int sector_num = 6;
 		TH2D *fid_sec_hist[sector_num];
 		TH2D *fid_hist = new TH2D("fid","fid", bins, phi_min, phi_max, bins, theta_min, theta_max);
@@ -723,9 +722,9 @@ void Histogram::makeHists_fid(){
 	float min_phi[6] = {0,60,120,-180,-120,-60};
 	float max_phi[6] = {60,120,180,-120,-60,0};
 	for (int sec = 0; sec < sector_num; sec++) {
-		sprintf(hname_fid,"fid_sec%d",sec+1);
-		sprintf(htitle_fid,"fid_sec%d",sec+1);
-		fid_sec_hist[sec] = new TH2D(hname_fid, htitle_fid,
+		sprintf(hname,"fid_sec%d",sec+1);
+		sprintf(htitle,"fid_sec%d",sec+1);
+		fid_sec_hist[sec] = new TH2D(hname, htitle,
 			bins, min_phi[sec], max_phi[sec], bins, theta_min, theta_max);
 	}
 }
