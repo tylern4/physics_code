@@ -20,6 +20,7 @@ class plotting(object):
 			self.my_cmap = cm.get_cmap('viridis')
 
 		self.my_cmap.set_over('w')
+		plt.ioff()
 		plt.rc('text', usetex=True)
 		
 	def hist2D(self, x_val, y_val, **kwargs):
