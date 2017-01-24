@@ -44,8 +44,8 @@ class datahandeler(object):
 				self.Q2 = append(self.Q2,Q2_calc(e_mu,e_mu_p))
 				self.W = append(self.W,W_calc(e_mu,e_mu_p))
 
-		pl.dump(self.W, file(self.args.output+'W_'+str(mp.current_process().pid)+'.pkl', "w"))
-		pl.dump(self.Q2, file(self.args.output+'Q2_'+str(mp.current_process().pid)+'.pkl', "w"))
+		pl.dump(self.W, open(self.args.output+'W_'+str(mp.current_process().pid)+'.pkl', "w"))
+		pl.dump(self.Q2, open(self.args.output+'Q2_'+str(mp.current_process().pid)+'.pkl', "w"))
 
 
 	def run_mp(self):

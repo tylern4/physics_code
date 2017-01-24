@@ -51,7 +51,7 @@ class plotting(object):
 		if self.output[-1] != '/':
 			self.output = self.output + '/'
 
-		pl.dump(ax, file(self.output + self.plot_name + '.pkl','wb'))
+		pl.dump(ax, open(self.output + self.plot_name + '.pkl','wb'))
 		plt.savefig(self.output + self.plot_name)
 
 
@@ -82,7 +82,7 @@ class plotting(object):
 		if self.output[-1] != '/':
 			self.output = self.output + '/'
 
-		pl.dump(fig, file(self.output + self.plot_name + '.pkl','wb'))
+		pl.dump(fig, open(self.output + self.plot_name + '.pkl','wb'))
 		plt.savefig(self.output + self.plot_name)
 
 
