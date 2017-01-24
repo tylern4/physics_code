@@ -26,7 +26,7 @@ class datahandeler(object):
 
 	def run(self):
 		chain = ROOT.TChain('h10')
-		fnum = chain.Add(self.args.input + '/*.root')
+		fnum = chain.Add(self.args.input + '*.root')
 		print("Processing "+ str(chain.GetEntries())+ " events in "+ str(fnum) + " files")
 		for _e in chain:
 			if _e.id[0] is ID['ELECTRON']:
@@ -44,8 +44,8 @@ class datahandeler(object):
 				self.Q2 = append(self.Q2,Q2_calc(e_mu,e_mu_p))
 				self.W = append(self.W,W_calc(e_mu,e_mu_p))
 
-		pl.dump(self.W, file(self.args.input+'/W_'+str(mp.current_process().pid)+'.pkl', "w"))
-		pl.dump(self.Q2, file(self.args.input+'/Q2_'+str(mp.current_process().pid)+'.pkl', "w"))
+		pl.dump(self.W, file(self.args.output+'W_'+str(mp.current_process().pid)+'.pkl', "w"))
+		pl.dump(self.Q2, file(self.args.output+'Q2_'+str(mp.current_process().pid)+'.pkl', "w"))
 
 
 	def run_mp(self):
@@ -62,7 +62,7 @@ class datahandeler(object):
 
 	def split_list(self):
 		wanted_parts = self.num_cores
-		alist = glob.glob(self.args.input + '/*.root')
+		alist = glob.glob(self.args.input + '*.root')
 		length = len(alist)
 		return [ alist[i*length // wanted_parts: (i+1)*length // wanted_parts]
 				for i in range(wanted_parts) ]
