@@ -1,7 +1,13 @@
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import platform
-import pickle as pl
+
+try:
+	import dill as pl
+except:
+	import cPickle as pl
+else:
+	import pickle as pl
 
 class plotting(object):
 	"""Plotting class"""

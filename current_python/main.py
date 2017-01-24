@@ -13,20 +13,18 @@ def main():
 		parser.print_help()
 		parser.exit()
 	
-	gBenchmark.Start('Args')
 	args = parser.parse_args()
 
 	#dh = datahandeler(args, num_cores=1)
 	dh = datahandeler(args)
-	gBenchmark.Show('Args')
 
 	gBenchmark.Start('Run')
-	dh.run()
+	dh.run_mp()
 	gBenchmark.Show('Run')
 
-	gBenchmark.Start('Plot')
-	dh.plot()
-	gBenchmark.Show('Plot')
+	#gBenchmark.Start('Plot')
+	#dh.plot()
+	#gBenchmark.Show('Plot')
 
 
 
