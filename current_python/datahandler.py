@@ -43,9 +43,10 @@ class datahandeler(object):
 				e_mu_p = fourvec(_e.p[0],_e.cx[0],_e.cy[0],_e.cz[0],mass['ELECTRON'])
 				self.Q2 = append(self.Q2,Q2_calc(e_mu,e_mu_p))
 				self.W = append(self.W,W_calc(e_mu,e_mu_p))
-
-		pl.dump(self.W, open(self.args.output+'W_'+str(mp.current_process().pid)+'.pkl', "w"))
-		pl.dump(self.Q2, open(self.args.output+'Q2_'+str(mp.current_process().pid)+'.pkl', "w"))
+		name = str(self.args.output+'W_'+str(mp.current_process().pid)+'.pkl')
+		pl.dump(self.W, open(name, "wb"))
+		name = str(self.args.output+'Q2_'+str(mp.current_process().pid)+'.pkl')
+		pl.dump(self.Q2, open(name, "wb"))
 
 
 	def run_mp(self):
