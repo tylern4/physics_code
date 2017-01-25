@@ -46,16 +46,16 @@ ofstream fit_functions;
 
 static const int MAX_PARTS = 100;
 
-static const float PI = TMath::Pi();
-static const float D2R = PI/180.0;
-static const float E1D_E0 = 4.802; //GeV
-//static const float E1D_E0 = 2.03939; //GeV ///This is for Ye's data. Actually E1E_E0
+static const double PI = TMath::Pi();
+static const double D2R = PI/180.0;
+static const double E1D_E0 = 4.802; //GeV
+//static const double E1D_E0 = 2.03939; //GeV ///This is for Ye's data. Actually E1E_E0
 
-static const float SOL = 29.9792458;
+static const double SOL = 29.9792458;
 //misc. constants
-static const float FSC = 0.00729735253;
-static const float NA = 6.02214129E23; //Avigadro's number
-static const float QE = 1.60217646E-19;  //Charge or electron
+static const double FSC = 0.00729735253;
+static const double NA = 6.02214129E23; //Avigadro's number
+static const double QE = 1.60217646E-19;  //Charge or electron
 
 //particle codes, usually PDG codes, but always those used in BOS
 static const int PROTON = 2212;
@@ -69,16 +69,16 @@ static const int PHOTON = 22;
 static const int ELECTRON = 11;
 
 //PDG particle masses in GeV/c2
-static const float MASS_P = 0.93827203;
-static const float MASS_N = 0.93956556;
-static const float MASS_E = 0.000511;
-static const float MASS_PIP = 0.13957018;
-static const float MASS_PIM = 0.13957018;
-static const float MASS_PI0 = 0.1349766;
-static const float MASS_KP = 0.493677;
-static const float MASS_KM = 0.493677;
-static const float MASS_G = 0.0;
-static const float MASS_OMEGA = 0.78265;
+static const double MASS_P = 0.93827203;
+static const double MASS_N = 0.93956556;
+static const double MASS_E = 0.000511;
+static const double MASS_PIP = 0.13957018;
+static const double MASS_PIM = 0.13957018;
+static const double MASS_PI0 = 0.1349766;
+static const double MASS_KP = 0.493677;
+static const double MASS_KM = 0.493677;
+static const double MASS_G = 0.0;
+static const double MASS_OMEGA = 0.78265;
 
 /* My Branches */
 Float_t W;
@@ -213,7 +213,7 @@ void loadbar(long x, long n){
 	int w = 50;
     if ( (x != n) && (x % (n/100+1) != 0) ) return;
  
-    float ratio  =  x/(float)n;
+    double ratio  =  x/(double)n;
     int   c      =  ratio * w;
  
     cout << blue << " [";
@@ -240,6 +240,7 @@ void getMorebranchs(TTree* myTree){
 	myTree->SetBranchAddress("DeltaT_P",&dt_proton);
 	myTree->SetBranchAddress("DeltaT_Pip",&dt_pip);
 	myTree->SetBranchAddress("NumPI",&num_of_pis);
+	myTree->SetBranchAddress("m", &m);
 	myTree->SetBranchStatus("*",1);
 }
 
@@ -261,7 +262,7 @@ void getBranches(TTree* myTree){
 	myTree->SetBranchAddress("ec", &ec);
 	myTree->SetBranchAddress("lec", &lec);
 	myTree->SetBranchAddress("p", &p);					//momentum of i'th particle p[i] (GeV/C)
-	myTree->SetBranchAddress("m", &m);					//mass of i'th particle m[i] (GeV/C)
+	//myTree->SetBranchAddress("m", &m);					//mass of i'th particle m[i] (GeV/C)
 	myTree->SetBranchAddress("q", &q);					//charge of i'th particle q[i] (charge in e's 1,0,-1)
 	myTree->SetBranchAddress("b", &b);					//Velocity of i'th particle b[i] (in terms of c) ie. Beta
 	myTree->SetBranchAddress("cx", &cx);				//X direction cosine at origin

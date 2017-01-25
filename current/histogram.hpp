@@ -19,16 +19,16 @@ class Histogram {
 		void makeHists_delta_t();
 		void makeHists_CC();
 		const int bins = 500;
-		const float p_min = 0.0;
-		const float p_max = 5.0;
+		const double p_min = 0.0;
+		const double p_max = 5.0;
 		char hname[50];
 		char htitle[500];
 
 		// W and Q^2
-		float w_min = 0;
-		float w_max = 3.25;
-		float q2_min = 0;
-		float q2_max = 10;
+		double w_min = 0;
+		double w_max = 3.25;
+		double q2_min = 0;
+		double q2_max = 10;
 		
 		TH2D *WvsQ2_hist = new TH2D("WvsQ2_hist","W vs Q^{2}", bins, w_min, w_max, bins, q2_min, q2_max);
 		TH1D *W_hist = new TH1D("W","W",bins,  w_min, w_max);
@@ -50,8 +50,8 @@ class Histogram {
 		// W and Q^2
 
 		// P and E
-		float b_min = 0.1;
-		float b_max = 1.2;
+		double b_min = 0.1;
+		double b_max = 1.2;
 		TH2D *MomVsBeta_hist = new TH2D("MomVsBeta","Momentum versus #beta", bins, p_min, p_max, bins, b_min, b_max);
 		TH2D *MomVsBeta_hist_pos = new TH2D("MomVsBeta_pos","Momentum versus #beta Positive", bins, p_min, p_max, bins, b_min, b_max);
 		TH2D *MomVsBeta_hist_neg = new TH2D("MomVsBeta_neg","Momentum versus #beta Negative", bins, p_min, p_max, bins, b_min, b_max);
@@ -74,8 +74,8 @@ class Histogram {
 		// j -> type: 0=>Proton,1=>Pip,2=>Electron
 		// jj -> Fit point
 		static const int N_SIGMA = 3;
-		float Dt_min = -10;
-		float Dt_max = 10;
+		double Dt_min = -10;
+		double Dt_max = 10;
 		static const int num_points = 20;
 		TH1D *delta_t_hist[3][num_points];
 		const double bin_width = (p_max - p_min)/num_points;
@@ -106,8 +106,8 @@ class Histogram {
 
 		// cc hist
 		int bins_CC = 50;
-		float CC_min = 0;
-		float CC_max = 250;
+		double CC_min = 0;
+		double CC_max = 250;
 		char* L_R_C;
 		int sector = 6;
 		int segment = 18;
@@ -123,10 +123,10 @@ class Histogram {
 		// cc hist
 
 		// fiducial 
-		float theta_min = 0;
-		float theta_max = 90;
-		float phi_min = -360/2.0;
-		float phi_max = 360/2.0;
+		double theta_min = 0;
+		double theta_max = 90;
+		double phi_min = -360/2.0;
+		double phi_max = 360/2.0;
 
 		static const int sector_num = 6;
 		TH2D *fid_sec_hist[sector_num];
@@ -134,8 +134,8 @@ class Histogram {
 		// fiducial
 
 		// EC hists
-		float EC_min = 0;
-		float EC_max = 1;
+		double EC_min = 0;
+		double EC_max = 1;
 		TH2D *EC_sampling_fraction = new TH2D("EC_sampling_fraction","EC_sampling_fraction", bins, p_min, p_max, bins, EC_min, EC_max);
 		// EC hists
 
@@ -719,8 +719,8 @@ void Histogram::CC_canvas(){
 }
 
 void Histogram::makeHists_fid(){
-	float min_phi[6] = {0,60,120,-180,-120,-60};
-	float max_phi[6] = {60,120,180,-120,-60,0};
+	double min_phi[6] = {0,60,120,-180,-120,-60};
+	double max_phi[6] = {60,120,180,-120,-60,0};
 	for (int sec = 0; sec < sector_num; sec++) {
 		sprintf(hname,"fid_sec%d",sec+1);
 		sprintf(htitle,"fid_sec%d",sec+1);
