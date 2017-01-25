@@ -85,8 +85,8 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 			int cc_segment = (cc_segm[0] % 1000)/10;
 			int cc_pmt = cc_segm[0]/1000-1;
 			int cc_nphe = nphe[cc[0]-1];
-			
-			hists->CC_fill(cc_sector,cc_segment,cc_pmt,cc_nphe);
+			//cout << cc_sector <<","<< cc_segment <<","<< cc_pmt <<","<< cc_nphe << endl;
+			//hists->CC_fill(cc_sector,cc_segment,cc_pmt,cc_nphe);
 		}
 
 		if(electron_cuts){
