@@ -8,6 +8,7 @@ def main():
 	parser = argparse.ArgumentParser(description="Root datahandeler program")
 	parser.add_argument('input', type=str, help="Input directory for *.root files")
 	parser.add_argument('output', type=str, nargs='?', help="Output for pdf files", default='.')
+	parser.add_argument('-n', dest='ncore', type=int, nargs='?', help="Number of cores to use if not all the cores", default=0)
 
 	if len(sys.argv[1:])==0:
 		parser.print_help()
@@ -19,7 +20,6 @@ def main():
 	if args.output[-1] != '/':
 		args.output = args.output+'/'
 
-	#dh = datahandeler(args, num_cores=1)
 	dh = datahandeler(args)
 
 	gBenchmark.Start('Run')

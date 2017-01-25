@@ -15,14 +15,22 @@ else:
 #from multiprocessing import Pool, cpu_count
 import glob
 from ROOT import gBenchmark
+import pandas as pd
 
 class datahandeler(object):
 	"""Datahandeler class"""
-	def __init__(self, args,num_cores=0):
+	def __init__(self, args):
 		self.args = args
 		self.Q2 = np.array([])
 		self.W = np.array([])
-		self.num_cores = (cpu_count() , num_cores)[num_cores > 0]
+		self.args.ncore = (cpu_count() , self.args.ncore)[self.args.ncore > 0]
+
+	def split_list(self):
+		wanted_parts = self.args.ncore
+		alist = glob.glob(self.args.input + '*.root')
+		length = len(alist)
+		return [ alist[i*length // wanted_parts: (i+1)*length // wanted_parts]
+				for i in range(wanted_parts) ]
 
 	def run(self):
 		chain = ROOT.TChain('h10')
@@ -43,10 +51,12 @@ class datahandeler(object):
 				e_mu_p = fourvec(_e.p[0],_e.cx[0],_e.cy[0],_e.cz[0],mass['ELECTRON'])
 				self.Q2 = append(self.Q2,Q2_calc(e_mu,e_mu_p))
 				self.W = append(self.W,W_calc(e_mu,e_mu_p))
-		name = str(self.args.output+'W_'+str(mp.current_process().pid)+'.pkl')
-		pl.dump(self.W, open(name, "wb"))
-		name = str(self.args.output+'Q2_'+str(mp.current_process().pid)+'.pkl')
-		pl.dump(self.Q2, open(name, "wb"))
+		WQ2 = pd.DataFrame()
+		WQ2['W'] = self.W
+		WQ2['Q2'] = self.Q2
+
+		name = str(self.args.output+'WQ2_'+str(mp.current_process().pid)+'.pkl')
+		pl.dump(WQ2, open(name, "wb"),protocol=2)
 
 
 	def run_mp(self):
@@ -58,13 +68,5 @@ class datahandeler(object):
 
 		
 	def plot(self):
-		pl = plots.plotting()
-		pl.WvsQ2(self.W,self.Q2, output=self.args.output)
-
-	def split_list(self):
-		wanted_parts = self.num_cores
-		alist = glob.glob(self.args.input + '*.root')
-		length = len(alist)
-		return [ alist[i*length // wanted_parts: (i+1)*length // wanted_parts]
-				for i in range(wanted_parts) ]
-
+		plot = plots.plotting()
+		plot.WvsQ2(self.W,self.Q2, output=self.args.output)

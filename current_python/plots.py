@@ -20,6 +20,9 @@ class plotting(object):
 		self.facecolor = kwargs.get('facecolor', 'g')
 		self.alpha = kwargs.get('alpha', 0.45)
 
+		self.pickle = kwargs.get('pickle', False)
+		self.save = kwargs.get('save', False)
+
 		if platform.system() == 'Linux':
 			self.my_cmap = cm.get_cmap('Spectral')
 		else:
@@ -38,7 +41,6 @@ class plotting(object):
 		self.plot_name = kwargs.get('plot_name', 'hist2d.pdf')
 
 		fig = plt.figure(num=None, figsize=self.fig_size, dpi=200, facecolor='w', edgecolor='k')
-		ax = fig.gca()
 		if 'range' in kwargs:
 			plt.hist2d(x_val,y_val,bins=self.num_bins,range=kwargs['range'],cmap=self.my_cmap)
 		else:
@@ -48,11 +50,8 @@ class plotting(object):
 		plt.xlabel(self.x_lab, fontsize=20)
 		plt.colorbar()
 
-		if self.output[-1] != '/':
-			self.output = self.output + '/'
-
-		pl.dump(ax, open(self.output + self.plot_name + '.pkl','wb'))
-		plt.savefig(self.output + self.plot_name)
+		if self.pickle: pl.dump(fig, open(self.output + self.plot_name + '.pkl','wb'))
+		if self.save: plt.savefig(self.output + self.plot_name)
 
 
 	def hist1D(self, x_val, **kwargs):
@@ -79,11 +78,8 @@ class plotting(object):
 		plt.ylabel(self.y_lab, fontsize=18)
 		plt.xlabel(self.x_lab, fontsize=20)
 
-		if self.output[-1] != '/':
-			self.output = self.output + '/'
-
-		pl.dump(fig, open(self.output + self.plot_name + '.pkl','wb'))
-		plt.savefig(self.output + self.plot_name)
+		if self.pickle: pl.dump(fig, open(self.output + self.plot_name + '.pkl','wb'),protocol=2)
+		if self.save: plt.savefig(self.output + self.plot_name)
 
 
 	def WvsQ2(self,W,Q2,**kwargs):
@@ -92,18 +88,21 @@ class plotting(object):
 			x_lab = r'$W (GeV)$', 
 			y_lab = r'$Q^{2}$ $(GeV^{2})$', 
 			plot_name = 'WvsQ2.pdf',
+			pickle = True,
 			**kwargs)
 
 		self.hist1D(W,
 			range=[0,4],
 			x_lab = r'$W (GeV)$',
 			plot_name = 'W_Hist.pdf',
+			pickle = True,
 			**kwargs)
 
 		self.hist1D(Q2,
 			range=[0,10],
 			x_lab = r'$Q^{2}$ $(GeV^{2})$',
 			plot_name = 'Q2_Hist.pdf',
+			pickle = True,
 			**kwargs)
 
 
