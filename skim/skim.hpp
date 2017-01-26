@@ -88,7 +88,7 @@ void skim(char* fin, char* RootFile_output, double mean, double sigma){
 	std::vector<bool> is_proton, is_pip, is_electron, is_pim;
 	std::vector<double> dt_proton, dt_pip;
 	Int_t num_of_pis;
-	bool has_neutron, good_event;
+	bool has_neutron, bad_event;
 
 	TVector3 e_mu_prime_3;
 	TLorentzVector e_mu_prime;
@@ -175,7 +175,7 @@ void skim(char* fin, char* RootFile_output, double mean, double sigma){
 			}
 
 			// http://stackoverflow.com/questions/14888174/how-do-i-determine-if-exactly-one-boolean-is-true-without-type-conversion
-			good_event = (is_proton.at(part_num) ^ is_pip.at(part_num) ^ is_pim.at(part_num));
+			bad_event = (is_proton.at(part_num) ^ is_pip.at(part_num) ^ is_pim.at(part_num));
 
 		}
 		MM = (MissingMassNeutron.mass >=0 ) ? MissingMassNeutron.mass : NaN;
@@ -184,11 +184,11 @@ void skim(char* fin, char* RootFile_output, double mean, double sigma){
 		MM_cut = true;
 		MM_cut &= (MM == MM); //removes NaN
 
-		MM_cut &= (MM <= mean + 100 * sigma);
-		MM_cut &= (MM >= mean - 100 * sigma);
+		MM_cut &= (MM <= mean + 5 * sigma);
+		MM_cut &= (MM >= mean - 5 * sigma);
 		has_neutron = MM_cut;
 
-		if (electron_cuts && good_event && MM_cut){ //&& MM_cut
+		if (electron_cuts && MM_cut ){ //&& MM_cut
 			W = W_calc(e_mu,e_mu_prime);
 			Q2 = Q2_calc(e_mu,e_mu_prime);
 			is_electron.at(0) = true;

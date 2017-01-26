@@ -2,7 +2,8 @@
 from datahandler import datahandeler
 import argparse
 import sys
-from ROOT import gBenchmark
+from ROOT import gBenchmark, gROOT
+gROOT.SetBatch(True)
 
 def main():
 	parser = argparse.ArgumentParser(description="Root datahandeler program")

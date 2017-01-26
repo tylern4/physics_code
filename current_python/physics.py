@@ -18,7 +18,7 @@ def fourvec(_p,_cx,_cy,_cz,_mass):
 
 Square = lambda x: x**2
 append = lambda _arr,_val: np.append(_arr,_val)
-array = lambda _:np.array([])
+_array = lambda _:np.array([])
 
 #Beam 4 vector
 e_mu = TLorentzVector(0.0,0.0, np.sqrt(np.square(E1D_E0)-np.square(mass['ELECTRON'])), E1D_E0)
