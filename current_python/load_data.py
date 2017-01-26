@@ -12,6 +12,8 @@ import argparse
 import glob
 import sys
 import plots
+from ROOT import gBenchmark, gROOT
+gROOT.SetBatch(True)
 
 def load_values():
 	WQ2 = []

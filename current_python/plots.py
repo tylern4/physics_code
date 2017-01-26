@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import platform
+from ROOT import gBenchmark, gROOT
+gROOT.SetBatch(True)
 
 try:
 	import dill as pl
