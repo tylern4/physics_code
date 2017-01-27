@@ -5,7 +5,7 @@
 #include <TLorentzVector.h>
 #include "main.h"
 
-class test {
+class H10 {
 	private:
 
 		const static int MAX_PARTS = 100;
@@ -98,24 +98,10 @@ class test {
 		Float_t cc_t[MAX_PARTS];   //[cc_part]
 		Float_t cc_r[MAX_PARTS];   //[cc_part]
 		Float_t cc_c2[MAX_PARTS];   //[cc_part]
-		
-		/*Int_t   lac_part;
-		Int_t   lec_sect[MAX_PARTS];   //[lac_part]
-		Int_t   lec_hit[MAX_PARTS];   //[lac_part]
-		Int_t   lec_stat[MAX_PARTS];   //[lac_part]
-		Float_t lec_etot[MAX_PARTS];   //[lac_part]
-		Float_t lec_t[MAX_PARTS];   //[lac_part]
-		Float_t lec_r[MAX_PARTS];   //[lac_part]
-		Float_t lec_x[MAX_PARTS];   //[lac_part]
-		Float_t lec_y[MAX_PARTS];   //[lac_part]
-		Float_t lec_z[MAX_PARTS];   //[lac_part]
-		Float_t lec_c2[MAX_PARTS];   //[lac_part]
-		*/
 
 
 		void getBranches(TChain* myTree){
 			myTree->SetBranchAddress("npart", &npart);			//number of final particles
-			//myTree->SetBranchAddress("evstat", &evstat);
 			myTree->SetBranchAddress("evntid", &evntid);		//event number
 			myTree->SetBranchAddress("evntclas", &evntclas);
 			myTree->SetBranchAddress("q_l", &q_l);
@@ -130,7 +116,6 @@ class test {
 			myTree->SetBranchAddress("ec", &ec);
 			myTree->SetBranchAddress("lec", &lec);
 			myTree->SetBranchAddress("p", &p);					//momentum of i'th particle p[i] (GeV/C)
-			//myTree->SetBranchAddress("m", &m);					//mass of i'th particle m[i] (GeV/C)
 			myTree->SetBranchAddress("q", &q);					//charge of i'th particle q[i] (charge in e's 1,0,-1)
 			myTree->SetBranchAddress("b", &b);					//Velocity of i'th particle b[i] (in terms of c) ie. Beta
 			myTree->SetBranchAddress("cx", &cx);				//X direction cosine at origin
@@ -154,8 +139,6 @@ class test {
 			myTree->SetBranchAddress("ec_stat", &ec_stat);
 			myTree->SetBranchAddress("ec_sect", &ec_sect);
 			myTree->SetBranchAddress("ec_whol", &ec_whol);
-			//myTree->SetBranchAddress("ec_inst", &ec_inst);
-			//myTree->SetBranchAddress("ec_oust", &ec_oust);
 			myTree->SetBranchAddress("etot", &etot);
 			myTree->SetBranchAddress("ec_ei", &ec_ei);
 			myTree->SetBranchAddress("ec_eo", &ec_eo);
@@ -164,9 +147,6 @@ class test {
 			myTree->SetBranchAddress("ech_x", &ech_x);
 			myTree->SetBranchAddress("ech_y", &ech_y);
 			myTree->SetBranchAddress("ech_z", &ech_z);
-			//myTree->SetBranchAddress("ec_m2", &ec_m2);
-			//myTree->SetBranchAddress("ec_m3", &ec_m3);
-			//myTree->SetBranchAddress("ec_m4", &ec_m4);
 			myTree->SetBranchAddress("ec_c2", &ec_c2);
 			myTree->SetBranchAddress("sc_part", &sc_part);
 			myTree->SetBranchAddress("sc_sect", &sc_sect);
@@ -185,26 +165,15 @@ class test {
 			myTree->SetBranchAddress("cc_t", &cc_t);
 			myTree->SetBranchAddress("cc_r", &cc_r);
 			myTree->SetBranchAddress("cc_c2", &cc_c2);
-			/*myTree->SetBranchAddress("lac_part", &lac_part);
-			myTree->SetBranchAddress("lec_sect", &lec_sect);
-			myTree->SetBranchAddress("lec_hit", &lec_hit);
-			myTree->SetBranchAddress("lec_stat", &lec_stat);
-			myTree->SetBranchAddress("lec_etot", &lec_etot);
-			myTree->SetBranchAddress("lec_t", &lec_t);
-			myTree->SetBranchAddress("lec_r", &lec_r);
-			myTree->SetBranchAddress("lec_x", &lec_x);
-			myTree->SetBranchAddress("lec_y", &lec_y);
-			myTree->SetBranchAddress("lec_z", &lec_z);
-			myTree->SetBranchAddress("lec_c2", &lec_c2); */
 	
 			myTree->SetBranchStatus("*",1);
 		}
 
 	public:
-		test() {
+		H10() {
 		}
 
-		~test() {
+		~H10() {
 		}
 		int num_of_events;
 		bool electron_cuts;
@@ -214,21 +183,6 @@ class test {
 			int num_of_events = (int)chain.GetEntries();
 			std::cout << num_of_events << std::endl;
 		} 
-
-		void loadbar(long x, long n){
-		
-			int w = 50;
-			if ( (x != n) && (x % (n/100+1) != 0) ) return;
-		 
-			double ratio  =  x/(double)n;
-			int   c      =  ratio * w;
-		 
-			cout << " [";
-			for (int x=0; x<c; x++) cout << "=";
-			cout << ">";
-			for (int x=c; x<w; x++) cout << " ";
-			cout << (int)(ratio*100) << "%]\r" << flush;
-		}
 
 		void loop(TChain &chain){
 			TVector3 e_mu_prime_3;
@@ -240,7 +194,6 @@ class test {
 			//#pragma omp parallel for
 			for (int current_event = 0; current_event < num_of_events; current_event++) {
 				//update loadbar and get current event
-				//loadbar(current_event+1,num_of_events);
 				chain.GetEntry(current_event);	
 				//reset electron cut bool
 				electron_cuts = true;
@@ -260,7 +213,6 @@ class test {
 					e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
 					W = W_calc(e_mu, e_mu_prime);
 					Q2 = Q2_calc(e_mu, e_mu_prime);
-					//cout << W << "\t" << Q2 << endl;
 				}
 			}
 		}

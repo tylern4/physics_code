@@ -20,11 +20,9 @@ import pandas as pd
 
 from ROOT import gSystem
 # load library with MyClass dictionary
-gSystem.Load( 'kinematics_C' )
-gSystem.Load( 'test_C' )
+gSystem.Load( 'H10_C' )
 # get MyClass from ROOT
-from ROOT import kinematics
-from ROOT import test
+from ROOT import H10
 
 class datahandeler(object):
 	"""Datahandeler class"""
@@ -43,11 +41,11 @@ class datahandeler(object):
 
 	def _run(self, files):
 		chain = ROOT.TChain('h10')
-		t = test()
+		h10 = H10()
 		for _f in files:
 			chain.Add(_f)
-		t.loop(chain)
-		del t
+		h10.loop(chain)
+		del h10
 
 
 	def run_mp(self):
