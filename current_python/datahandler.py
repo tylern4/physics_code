@@ -47,7 +47,7 @@ class datahandeler(object):
 		for _f in files:
 			chain.Add(_f)
 		t.loop(chain)
-		#del t
+		del t
 
 
 	def run_mp(self):

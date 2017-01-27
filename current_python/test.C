@@ -1,8 +1,13 @@
 #include <iostream>
 #include "TChain.h"
 #include "TTree.h"
+#include "physics.hpp"
+#include <TLorentzVector.h>
+#include "main.h"
+
 class test {
 	private:
+
 		const static int MAX_PARTS = 100;
 		//////
 
@@ -106,6 +111,8 @@ class test {
 		Float_t lec_z[MAX_PARTS];   //[lac_part]
 		Float_t lec_c2[MAX_PARTS];   //[lac_part]
 		*/
+
+
 		void getBranches(TChain* myTree){
 			myTree->SetBranchAddress("npart", &npart);			//number of final particles
 			//myTree->SetBranchAddress("evstat", &evstat);
@@ -189,7 +196,7 @@ class test {
 			myTree->SetBranchAddress("lec_y", &lec_y);
 			myTree->SetBranchAddress("lec_z", &lec_z);
 			myTree->SetBranchAddress("lec_c2", &lec_c2); */
-		
+	
 			myTree->SetBranchStatus("*",1);
 		}
 
@@ -204,25 +211,43 @@ class test {
 
 		void pass_chain(TChain &chain){
 			getBranches(&chain);
-			num_of_events = (int)chain.GetEntries();
+			int num_of_events = (int)chain.GetEntries();
 			std::cout << num_of_events << std::endl;
 		} 
 
+		void loadbar(long x, long n){
+		
+			int w = 50;
+			if ( (x != n) && (x % (n/100+1) != 0) ) return;
+		 
+			double ratio  =  x/(double)n;
+			int   c      =  ratio * w;
+		 
+			cout << " [";
+			for (int x=0; x<c; x++) cout << "=";
+			cout << ">";
+			for (int x=c; x<w; x++) cout << " ";
+			cout << (int)(ratio*100) << "%]\r" << flush;
+		}
+
 		void loop(TChain &chain){
+			TVector3 e_mu_prime_3;
+			TLorentzVector e_mu_prime;
+			TLorentzVector e_mu(0.0,0.0, sqrt(Square(E1D_E0)-Square(MASS_E)), E1D_E0);
+
 			getBranches(&chain);
-			num_of_events = (int)chain.GetEntries();
+			int num_of_events = (int)chain.GetEntries();
 			//#pragma omp parallel for
 			for (int current_event = 0; current_event < num_of_events; current_event++) {
 				//update loadbar and get current event
 				//loadbar(current_event+1,num_of_events);
-				chain.GetEntry(current_event);
-		
+				chain.GetEntry(current_event);	
 				//reset electron cut bool
 				electron_cuts = true;
 				//electron cuts
 				electron_cuts &= (ec[0] > 0); // ``` ``` ``` ec
 				//if (electron_cuts) hists->EC_fill(etot[ec[0]-1],p[0]);
-				electron_cuts &= ((int)id[0] == 11); //First particle is electron
+				electron_cuts &= ((int)id[0] == ELECTRON); //First particle is electron
 				electron_cuts &= ((int)gpart > 0); //Number of good particles is greater than 0
 				electron_cuts &= ((int)stat[0] > 0); //First Particle hit stat
 				electron_cuts &= ((int)q[0] == -1); //First particle is negative Q
@@ -230,9 +255,12 @@ class test {
 				electron_cuts &= ((int)dc[0] > 0); // ``` ``` ``` dc
 				electron_cuts &= ((int)dc_stat[dc[0]-1] > 0);
 
-		
 				if(electron_cuts){
-					//std::cout << "Yay" << endl;
+					e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);	
+					e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
+					W = W_calc(e_mu, e_mu_prime);
+					Q2 = Q2_calc(e_mu, e_mu_prime);
+					//cout << W << "\t" << Q2 << endl;
 				}
 			}
 		}

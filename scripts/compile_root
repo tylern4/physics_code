@@ -1,5 +1,5 @@
 #!/usr/bin/expect -f
 set file_name [lindex $argv 0];
-spawn -noecho root -l $file_name++
+spawn -noecho root -l -b $file_name++
 send ".q;\r"
 interact
