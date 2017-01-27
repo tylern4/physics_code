@@ -170,6 +170,8 @@ class H10 {
 		}
 
 	public:
+		std::vector<double> W_vec;
+		std::vector<double> Q2_vec;
 		H10() {
 		}
 
@@ -212,7 +214,9 @@ class H10 {
 					e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);	
 					e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
 					W = W_calc(e_mu, e_mu_prime);
+					W_vec.push_back(W);
 					Q2 = Q2_calc(e_mu, e_mu_prime);
+					Q2_vec.push_back(Q2);
 				}
 			}
 		}

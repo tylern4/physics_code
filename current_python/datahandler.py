@@ -23,6 +23,8 @@ from ROOT import gSystem
 gSystem.Load( 'H10_C' )
 # get MyClass from ROOT
 from ROOT import H10
+from ROOT import std
+import array
 
 class datahandeler(object):
 	"""Datahandeler class"""
@@ -40,11 +42,14 @@ class datahandeler(object):
 				for i in range(wanted_parts) ]
 
 	def _run(self, files):
+		W_Q2 = pd.DataFrame()
 		chain = ROOT.TChain('h10')
 		h10 = H10()
 		for _f in files:
 			chain.Add(_f)
 		h10.loop(chain)
+		W_Q2['W'] = [_W for _W in h10.W_vec]
+		W_Q2['Q2'] = [_Q2 for _Q2 in h10.Q2_vec]
 		del h10
 
 
