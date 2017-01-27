@@ -199,11 +199,43 @@ class test {
 
 		~test() {
 		}
+		int num_of_events;
+		bool electron_cuts;
+
 		void pass_chain(TChain &chain){
-			int num_of_events;
 			getBranches(&chain);
 			num_of_events = (int)chain.GetEntries();
 			std::cout << num_of_events << std::endl;
 		} 
+
+		void loop(TChain &chain){
+			getBranches(&chain);
+			num_of_events = (int)chain.GetEntries();
+			//#pragma omp parallel for
+			for (int current_event = 0; current_event < num_of_events; current_event++) {
+				//update loadbar and get current event
+				//loadbar(current_event+1,num_of_events);
+				chain.GetEntry(current_event);
+		
+				//reset electron cut bool
+				electron_cuts = true;
+				//electron cuts
+				electron_cuts &= (ec[0] > 0); // ``` ``` ``` ec
+				//if (electron_cuts) hists->EC_fill(etot[ec[0]-1],p[0]);
+				electron_cuts &= ((int)id[0] == 11); //First particle is electron
+				electron_cuts &= ((int)gpart > 0); //Number of good particles is greater than 0
+				electron_cuts &= ((int)stat[0] > 0); //First Particle hit stat
+				electron_cuts &= ((int)q[0] == -1); //First particle is negative Q
+				electron_cuts &= ((int)sc[0] > 0); //First Particle hit sc
+				electron_cuts &= ((int)dc[0] > 0); // ``` ``` ``` dc
+				electron_cuts &= ((int)dc_stat[dc[0]-1] > 0);
+
+		
+				if(electron_cuts){
+					//std::cout << "Yay" << endl;
+				}
+			}
+		}
+
 
 };
