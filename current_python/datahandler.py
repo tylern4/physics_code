@@ -32,7 +32,9 @@ class datahandeler(object):
 		self.args = args
 		self.Q2 = np.array([])
 		self.W = np.array([])
+		self.W_Q2 = pd.DataFrame()
 		self.args.ncore = (cpu_count() , self.args.ncore)[self.args.ncore > 0]
+		print("Starting datahandeler with %d cores" % self.args.ncore)
 
 	def split_list(self):
 		wanted_parts = self.args.ncore
@@ -42,25 +44,30 @@ class datahandeler(object):
 				for i in range(wanted_parts) ]
 
 	def _run(self, files):
-		W_Q2 = pd.DataFrame()
+		_W_Q2 = pd.DataFrame()
 		chain = ROOT.TChain('h10')
 		h10 = H10()
 		for _f in files:
 			chain.Add(_f)
 		h10.loop(chain)
-		W_Q2['W'] = [_W for _W in h10.W_vec]
-		W_Q2['Q2'] = [_Q2 for _Q2 in h10.Q2_vec]
+		_W_Q2['W'] = [_W for _W in h10.W_vec]
+		_W_Q2['Q2'] = [_Q2 for _Q2 in h10.Q2_vec]
+		pl.dump(_W_Q2, open(self.args.output + 'W_Q2_'+str(mp.current_process().pid)+'.pkl','wb'))
 		del h10
+		return _W_Q2
+
 
 
 	def run_mp(self):
 		files = self.split_list()
 		pool = ProcessingPool()
-		pool.map(self._run, (files))
+		out = pool.map(self._run, (files))
 		pool.close()
 		pool.join()
+		self.W_Q2 = pd.concat(out, ignore_index=False)
+
 
 		
 	def plot(self):
 		plot = plots.plotting()
-		plot.WvsQ2(self.W,self.Q2, output=self.args.output)
+		plot.WvsQ2(self.W_Q2, output=self.args.output)

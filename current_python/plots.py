@@ -23,7 +23,7 @@ class plotting(object):
 		self.alpha = kwargs.get('alpha', 0.45)
 
 		self.pickle = kwargs.get('pickle', False)
-		self.save = kwargs.get('save', False)
+		self.save = kwargs.get('save', True)
 
 		if platform.system() == 'Linux':
 			self.my_cmap = cm.get_cmap('Spectral')
@@ -81,30 +81,31 @@ class plotting(object):
 		plt.xlabel(self.x_lab, fontsize=20)
 
 		if self.pickle: pl.dump(fig, open(self.output + self.plot_name + '.pkl','wb'),protocol=2)
-		if self.save: plt.savefig(self.output + self.plot_name)
+		if self.save: 
+			print("Output to "+self.output+ self.plot_name)
+			plt.savefig(self.output + self.plot_name)
 
 
-	def WvsQ2(self,W,Q2,**kwargs):
+	def WvsQ2(self,W_Q2,**kwargs):
+		W = W_Q2['W']
+		Q2 = W_Q2['Q2']
 		self.hist2D(W, Q2, 
 			range=[[0,4],[0,10]], 
 			x_lab = r'$W (GeV)$', 
 			y_lab = r'$Q^{2}$ $(GeV^{2})$', 
 			plot_name = 'WvsQ2.pdf',
-			pickle = True,
 			**kwargs)
 
 		self.hist1D(W,
 			range=[0,4],
 			x_lab = r'$W (GeV)$',
 			plot_name = 'W_Hist.pdf',
-			pickle = True,
 			**kwargs)
 
 		self.hist1D(Q2,
 			range=[0,10],
 			x_lab = r'$Q^{2}$ $(GeV^{2})$',
 			plot_name = 'Q2_Hist.pdf',
-			pickle = True,
 			**kwargs)
 
 

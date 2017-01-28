@@ -27,9 +27,9 @@ def main():
 	dh.run_mp()
 	gBenchmark.Show('Run')
 
-	#gBenchmark.Start('Plot')
-	#dh.plot()
-	#gBenchmark.Show('Plot')
+	gBenchmark.Start('Plot')
+	dh.plot()
+	gBenchmark.Show('Plot')
 
 
 
