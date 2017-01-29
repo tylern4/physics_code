@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import platform
@@ -53,7 +55,9 @@ class plotting(object):
 		plt.colorbar()
 
 		if self.pickle: pl.dump(fig, open(self.output + self.plot_name + '.pkl','wb'))
-		if self.save: plt.savefig(self.output + self.plot_name)
+		if self.save:
+			print("Output to "+self.output+ self.plot_name)
+			plt.savefig(self.output + self.plot_name)
 
 
 	def hist1D(self, x_val, **kwargs):
