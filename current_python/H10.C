@@ -196,6 +196,7 @@ class H10 {
 			//#pragma omp parallel for
 			for (int current_event = 0; current_event < num_of_events; current_event++) {
 				//update loadbar and get current event
+				//loadbar(current_event+1,num_of_events);
 				chain.GetEntry(current_event);	
 				//reset electron cut bool
 				electron_cuts = true;
