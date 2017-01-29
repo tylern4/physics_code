@@ -1,8 +1,24 @@
 #!/usr/bin/env python
+from __future__ import print_function
 from datahandler import datahandeler
 import argparse
 import sys
 from ROOT import gBenchmark, gROOT
+
+try:
+	from termcolor import cprint
+	print_green = lambda x: cprint(x,'green',attrs=['bold'])
+	print_red = lambda x: cprint(x,'red',attrs=['bold'])
+	print_blue = lambda x: cprint(x,'blue',attrs=['bold'])
+	print_white = lambda x: cprint(x,'white',attrs=['bold'])
+	print_yellow = lambda x: cprint(x,'yellow',attrs=['bold'])
+except ImportError:
+	print_green = lambda x: print(x)
+	print_red = lambda x: print(x)
+	print_blue = lambda x: print(x)
+	print_white = lambda x: print(x)
+	print_yellow = lambda x: print(x)
+
 gROOT.SetBatch(True)
 
 def main():
@@ -37,5 +53,5 @@ if __name__ == "__main__":
 	try:
 		main()
 	except KeyboardInterrupt:
-		print("\n\nExiting")
+		print_red("\n\nExiting")
 		sys.exit()
