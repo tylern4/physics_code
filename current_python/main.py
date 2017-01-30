@@ -32,10 +32,8 @@ def main():
 		parser.exit()
 	
 	args = parser.parse_args()
-	if args.input[-1] != '/':
-		args.input = args.input+'/'
-	if args.output[-1] != '/':
-		args.output = args.output+'/'
+	if args.input[-1] != '/': args.input = args.input+'/'
+	if args.output[-1] != '/': args.output = args.output+'/'
 
 	dh = datahandeler(args)
 
