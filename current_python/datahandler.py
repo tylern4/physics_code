@@ -53,14 +53,15 @@ class datahandeler(object):
 		for _f in files:
 			chain.Add(_f)
 		h10.loop(chain)
-		_W_Q2['W'] = [_W for _W in h10.W_vec]
-		_W_Q2['Q2'] = [_Q2 for _Q2 in h10.Q2_vec]
 		_p_beta['p'] = [_p for _p in h10.p_vec]
 		_p_beta['b'] = [_b for _b in h10.b_vec]
 		_p_beta['q'] = [_q for _q in h10.q_vec]
 		_p_beta['id'] = [_id for _id in h10.id_vec]
-		pl.dump(_W_Q2, open(self.args.output + 'W_Q2_'+str(mp.current_process().pid)+'.pkl','wb'))
 		pl.dump(_p_beta, open(self.args.output + 'p_beta_'+str(mp.current_process().pid)+'.pkl','wb'))
+		del _p_beta 
+		_W_Q2['W'] = [_W for _W in h10.W_vec]
+		_W_Q2['Q2'] = [_Q2 for _Q2 in h10.Q2_vec]
+		pl.dump(_W_Q2, open(self.args.output + 'W_Q2_'+str(mp.current_process().pid)+'.pkl','wb'))
 		del h10
 		return _W_Q2
 
