@@ -1,5 +1,5 @@
 #include <iostream>
-#include "TChain.h"
+#include "TTree.h"
 #include "TTree.h"
 #include "physics.hpp"
 #include <TLorentzVector.h>
@@ -100,7 +100,7 @@ class H10 {
 		Float_t cc_c2[MAX_PARTS];   //[cc_part]
 
 
-		void getBranches(TChain* myTree){
+		void getBranches(TTree* myTree){
 			myTree->SetBranchAddress("npart", &npart);			//number of final particles
 			myTree->SetBranchAddress("evntid", &evntid);		//event number
 			myTree->SetBranchAddress("evntclas", &evntclas);
@@ -180,24 +180,24 @@ class H10 {
 		int num_of_events;
 		bool electron_cuts;
 
-		void pass_chain(TChain &chain){
-			getBranches(&chain);
-			int num_of_events = (int)chain.GetEntries();
+		void pass_Tree(TTree &Tree){
+			getBranches(&Tree);
+			int num_of_events = (int)Tree.GetEntries();
 			std::cout << num_of_events << std::endl;
 		} 
 
-		void loop(TChain &chain){
+		void loop(TTree &Tree){
 			TVector3 e_mu_prime_3;
 			TLorentzVector e_mu_prime;
 			TLorentzVector e_mu(0.0,0.0, sqrt(Square(E1D_E0)-Square(MASS_E)), E1D_E0);
 
-			getBranches(&chain);
-			int num_of_events = (int)chain.GetEntries();
+			getBranches(&Tree);
+			int num_of_events = (int)Tree.GetEntries();
 			//#pragma omp parallel for
 			for (int current_event = 0; current_event < num_of_events; current_event++) {
 				//update loadbar and get current event
 				//loadbar(current_event+1,num_of_events);
-				chain.GetEntry(current_event);	
+				Tree.GetEntry(current_event);	
 				//reset electron cut bool
 				electron_cuts = true;
 				//electron cuts
