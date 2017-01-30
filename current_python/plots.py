@@ -15,7 +15,7 @@ else:
 
 class plotting(object):
 	"""Plotting class"""
-	def __init__(self, num_bins=500, fig_size=(16,9), output='.', **kwargs):
+	def __init__(self, num_bins=500, fig_size=(16,9), output='./', **kwargs):
 		self.num_bins = num_bins
 		self.fig_size = fig_size 
 		self.output = output

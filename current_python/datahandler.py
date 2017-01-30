@@ -33,6 +33,7 @@ class datahandeler(object):
 		self.Q2 = np.array([])
 		self.W = np.array([])
 		self.W_Q2 = pd.DataFrame()
+		self.p_beta = pd.DataFrame()
 		self.args.ncore = (cpu_count() , self.args.ncore)[self.args.ncore > 0]
 		print("Starting datahandeler with %d cores" % self.args.ncore)
 
@@ -45,6 +46,7 @@ class datahandeler(object):
 
 	def _run(self, files):
 		_W_Q2 = pd.DataFrame()
+		_p_beta = pd.DataFrame()
 		chain = ROOT.TChain('h10')
 		chain.UseCache(100,1024)
 		h10 = H10()
@@ -53,7 +55,12 @@ class datahandeler(object):
 		h10.loop(chain)
 		_W_Q2['W'] = [_W for _W in h10.W_vec]
 		_W_Q2['Q2'] = [_Q2 for _Q2 in h10.Q2_vec]
+		_p_beta['p'] = [_p for _p in h10.p_vec]
+		_p_beta['b'] = [_b for _b in h10.b_vec]
+		_p_beta['q'] = [_q for _q in h10.q_vec]
+		_p_beta['id'] = [_id for _id in h10.id_vec]
 		pl.dump(_W_Q2, open(self.args.output + 'W_Q2_'+str(mp.current_process().pid)+'.pkl','wb'))
+		pl.dump(_p_beta, open(self.args.output + 'p_beta_'+str(mp.current_process().pid)+'.pkl','wb'))
 		del h10
 		return _W_Q2
 
@@ -67,8 +74,6 @@ class datahandeler(object):
 		pool.join()
 		self.W_Q2 = pd.concat(out, ignore_index=False)
 
-
-		
 	def plot(self):
 		plot = plots.plotting()
 		plot.WvsQ2(self.W_Q2, output=self.args.output)

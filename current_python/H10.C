@@ -3,7 +3,6 @@
 #include "TTree.h"
 #include "physics.hpp"
 #include <TLorentzVector.h>
-#include "main.h"
 
 class H10 {
 	private:
@@ -173,6 +172,10 @@ class H10 {
 	public:
 		std::vector<double> W_vec;
 		std::vector<double> Q2_vec;
+		std::vector<float> p_vec;
+		std::vector<float> b_vec;
+		std::vector<short> q_vec;
+		std::vector<short> id_vec;
 		H10() {
 		}
 
@@ -194,7 +197,7 @@ class H10 {
 
 			getBranches(&chain);
 			int num_of_events = (int)chain.GetEntries();
-			int cachesize = 64000000; //10 MBytes
+			int cachesize = 64000000; //64 MBytes
 			chain.SetCacheSize(cachesize); //<<<
 			chain.AddBranchToCache("*",kTRUE);    //<<< add all branches to the cache
 			//#pragma omp parallel for
@@ -222,6 +225,13 @@ class H10 {
 					W_vec.push_back(W);
 					Q2 = Q2_calc(e_mu, e_mu_prime);
 					Q2_vec.push_back(Q2);
+				}
+				for(int part_num = 1; part_num < gpart; part_num++){
+					if (p[part_num] == 0) continue;
+					p_vec.push_back((float)p[part_num]);
+					b_vec.push_back((float)b[part_num]);
+					q_vec.push_back((short)q[part_num]);
+					id_vec.push_back((short)id[part_num]);
 				}
 			}
 		}

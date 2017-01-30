@@ -33,7 +33,7 @@ double xb_calc(double Q2, double E_prime){
 	double xb = (Q2/(2 * MASS_P * gamma));
 	return xb;
 }
-//overload with 4 vectors instaed of otehr calculations
+//overload with 4 vectors instaed of other calculations
 double xb_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime){
 	double Q2 = Q2_calc(e_mu,e_mu_prime);
 	TLorentzVector q = e_mu - e_mu_prime;
@@ -46,7 +46,6 @@ double theta_calc(double cosz){
 }
 
 double phi_calc(double cosx, double cosy){
-	//double phi = atan2(cosx, cosy)*D2R;
 	return atan2(cosx, cosy)/D2R;
 }
 
@@ -74,21 +73,6 @@ int get_sector(double phi) {
 	} else {
 		return (int)std::nan("0");
 	} 
-	/*if(phi>=-30 && phi <30) {
-		return 0;
-	} else if(phi>=30 && phi<90) {
-		return 1;
-	} else if(phi>=90 && phi <150) {
-		return 2;
-	} else if(phi>=150 || phi<-150) {
-		return 3;
-	} else if(phi>=-150 && phi<-90) {
-		return 4;
-	} else if(phi>=-90 && phi<-30) {
-		return 5;
-	} else {
-		return (int)std::nan("0");
-	} */
 }
 
 
