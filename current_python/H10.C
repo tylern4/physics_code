@@ -101,6 +101,7 @@ class H10 {
 
 
 		void getBranches(TTree* myTree){
+
 			myTree->SetBranchAddress("npart", &npart);			//number of final particles
 			myTree->SetBranchAddress("evntid", &evntid);		//event number
 			myTree->SetBranchAddress("evntclas", &evntclas);
@@ -180,24 +181,27 @@ class H10 {
 		int num_of_events;
 		bool electron_cuts;
 
-		void pass_Tree(TTree &Tree){
-			getBranches(&Tree);
-			int num_of_events = (int)Tree.GetEntries();
+		void pass_chain(TTree &chain){
+			getBranches(&chain);
+			int num_of_events = (int)chain.GetEntries();
 			std::cout << num_of_events << std::endl;
 		} 
 
-		void loop(TTree &Tree){
+		void loop(TTree &chain){
 			TVector3 e_mu_prime_3;
 			TLorentzVector e_mu_prime;
 			TLorentzVector e_mu(0.0,0.0, sqrt(Square(E1D_E0)-Square(MASS_E)), E1D_E0);
 
-			getBranches(&Tree);
-			int num_of_events = (int)Tree.GetEntries();
+			getBranches(&chain);
+			int num_of_events = (int)chain.GetEntries();
+			int cachesize = 64000000; //10 MBytes
+			chain.SetCacheSize(cachesize); //<<<
+			chain.AddBranchToCache("*",kTRUE);    //<<< add all branches to the cache
 			//#pragma omp parallel for
 			for (int current_event = 0; current_event < num_of_events; current_event++) {
 				//update loadbar and get current event
 				//loadbar(current_event+1,num_of_events);
-				Tree.GetEntry(current_event);	
+				chain.GetEntry(current_event);	
 				//reset electron cut bool
 				electron_cuts = true;
 				//electron cuts
