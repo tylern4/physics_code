@@ -133,7 +133,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 			for(int part_num = 1; part_num < gpart; part_num++){
 				if (p[part_num] == 0) continue;
 
-				if(is_proton->at(part_num) == is_pip->at(part_num)) continue;
+				//if(is_proton->at(part_num) == is_pip->at(part_num)) continue;
 
 				hists->Fill_Mass(m[part_num]);
 				Particle3.SetXYZ(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
@@ -142,20 +142,22 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 				hists->MomVsBeta_Fill(Particle4.E(),p[part_num],b[part_num]);
 				if (q[part_num] == 1){
 					hists->MomVsBeta_Fill_pos(p[part_num],b[part_num]);
-					if(is_proton->at(part_num) && id[part_num] == PROTON ) {
+					if(is_proton->at(part_num) ) {
 						num_of_proton++;
 						hists->Fill_proton_WQ2(W,Q2);
 						hists->Fill_proton_ID_P(p[part_num],b[part_num]);
-					} else if(is_pip->at(part_num) && id[part_num] == PIP){
+					} else if(is_pip->at(part_num)){
+						num_of_pis++;
 						hists->Fill_pion_WQ2(W,Q2);
 						hists->Fill_Pi_ID_P(p[part_num],b[part_num]);
-						num_of_pis++;
 						TLorentzVector gamma_mu = (e_mu - e_mu_prime);
 						MissingMassNeutron.MissingMassPxPyPz(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
 						MissingMassNeutron = MissingMassNeutron.missing_mass(gamma_mu);
+						hists->Fill_Missing_Mass(MissingMassNeutron.mass);
+						hists->Fill_Missing_Mass_square(Square(MissingMassNeutron.mass));
 					}
 
-					if ((is_pip->at(part_num) && id[part_num] == PIP) || (is_proton->at(part_num) && id[part_num] == PROTON)) {
+					if (is_pip->at(part_num) || is_proton->at(part_num)) {
 						hists->Fill_proton_Pi_ID_P(p[part_num],b[part_num]);
 					}
 				} else if(q[part_num] == -1) {
@@ -163,11 +165,8 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 				}
 			}
 	
-			if(num_of_pis == 1) {
-				hists->Fill_Missing_Mass(MissingMassNeutron.mass);
-				hists->Fill_Missing_Mass_square(Square(MissingMassNeutron.mass));
-				hists->Fill_single_pi_WQ2(W,Q2);
-			}
+
+			if(num_of_pis == 1) hists->Fill_single_pi_WQ2(W,Q2);
 			if(num_of_proton == 1) hists->Fill_single_proton_WQ2(W,Q2);
 		}
 	}

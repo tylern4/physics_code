@@ -594,10 +594,6 @@ void Histogram::delta_t_slices_Write(){
 		for (int jj = 0; jj < num_points; jj++) {
 			if(j != 2) {
 				delta_t_cut[j][num_points].FitGaus(delta_t_hist[j][jj],fit_dt_min,fit_dt_max);
-				delta_t_cut[j][num_points].FitPoly_1D(delta_t_hist[j][jj],fit_dt_min,fit_dt_max);
-				delta_t_cut[j][num_points].FitPoly_2D(delta_t_hist[j][jj],fit_dt_min,fit_dt_max);
-				delta_t_cut[j][num_points].FitPoly_3D(delta_t_hist[j][jj],fit_dt_min,fit_dt_max);
-				delta_t_cut[j][num_points].FitPoly_4D(delta_t_hist[j][jj],fit_dt_min,fit_dt_max);
 				//cout << j << ',' << jj << ',' << delta_t_cut[j][num_points].mean << ',' << delta_t_cut[j][num_points].sigma << endl;
 			}
 

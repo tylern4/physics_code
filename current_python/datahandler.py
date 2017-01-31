@@ -45,6 +45,7 @@ class datahandeler(object):
 				for i in range(wanted_parts) ]
 
 	def _run(self, files):
+		gBenchmark.Start("loop "+str(mp.current_process().pid))
 		_W_Q2 = pd.DataFrame()
 		chain = ROOT.TChain('h10')
 		chain.UseCache(100,1024)
@@ -52,12 +53,11 @@ class datahandeler(object):
 		for _f in files:
 			chain.Add(_f)
 		h10.loop(chain)
-		print("Done with loop "+str(mp.current_process().pid))
 		_W_Q2['W'] = [_W for _W in h10.W_vec]
 		_W_Q2['Q2'] = [_Q2 for _Q2 in h10.Q2_vec]
 		pl.dump(_W_Q2, open(self.args.output + 'W_Q2_'+str(mp.current_process().pid)+'.pkl','wb'),2)
 		del _W_Q2
-		print("Done with _W_Q2 "+str(mp.current_process().pid))
+		gBenchmark.Show("loop "+str(mp.current_process().pid))
 		return h10
 
 
