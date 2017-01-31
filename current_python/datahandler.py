@@ -45,6 +45,7 @@ class datahandeler(object):
 				for i in range(wanted_parts) ]
 
 	def _run(self, files):
+		_W_Q2 = pd.DataFrame()
 		chain = ROOT.TChain('h10')
 		chain.UseCache(100,1024)
 		h10 = H10()
