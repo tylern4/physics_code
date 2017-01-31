@@ -82,6 +82,12 @@ class datahandeler(object):
 			print("Doing loop "+str(i))
 			_p_beta = pd.DataFrame()
 			_p_beta['p'] = [_p for _p in _h10.p_vec]
+			_p_beta['cx'] = [_p for _p in _h10.cx_vec]
+			_p_beta['cy'] = [_p for _p in _h10.cy_vec]
+			_p_beta['cz'] = [_p for _p in _h10.cz_vec]
+			_p_beta['vx'] = [_p for _p in _h10.vx_vec]
+			_p_beta['vy'] = [_p for _p in _h10.vy_vec]
+			_p_beta['vz'] = [_p for _p in _h10.vz_vec]
 			_p_beta['b'] = [_b for _b in _h10.b_vec]
 			_p_beta['q'] = [_q for _q in _h10.q_vec]
 			_p_beta['id'] = [_id for _id in _h10.id_vec]

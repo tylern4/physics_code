@@ -176,6 +176,13 @@ class H10 {
 		std::vector<float> b_vec;
 		std::vector<short> q_vec;
 		std::vector<short> id_vec;
+		std::vector<float> cx_vec;
+		std::vector<float> cy_vec;		
+		std::vector<float> cz_vec;
+		std::vector<float> vx_vec;
+		std::vector<float> vy_vec;
+		std::vector<float> vz_vec;
+
 		H10() {
 		}
 
@@ -197,9 +204,9 @@ class H10 {
 
 			getBranches(&chain);
 			int num_of_events = (int)chain.GetEntries();
-			int cachesize = 64000000; //64 MBytes
-			chain.SetCacheSize(cachesize); //<<<
-			chain.AddBranchToCache("*",kTRUE);    //<<< add all branches to the cache
+			//int cachesize = 64000000; //64 MBytes
+			//chain.SetCacheSize(cachesize); //<<<
+			//chain.AddBranchToCache("*",kTRUE);    //<<< add all branches to the cache
 			//#pragma omp parallel for
 			for (int current_event = 0; current_event < num_of_events; current_event++) {
 				//update loadbar and get current event
@@ -229,6 +236,14 @@ class H10 {
 				for(int part_num = 1; part_num < gpart; part_num++){
 					if (p[part_num] == 0) continue;
 					p_vec.push_back((float)p[part_num]);
+
+					cx_vec.push_back((float)cx[part_num]);
+					cy_vec.push_back((float)cy[part_num]);
+					cz_vec.push_back((float)cz[part_num]);
+					vx_vec.push_back((float)vx[part_num]);
+					vy_vec.push_back((float)vy[part_num]);
+					vz_vec.push_back((float)vz[part_num]);
+
 					b_vec.push_back((float)b[part_num]);
 					q_vec.push_back((short)q[part_num]);
 					id_vec.push_back((short)id[part_num]);
