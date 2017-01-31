@@ -91,12 +91,12 @@ class datahandeler(object):
 			_p_beta['b'] = [_b for _b in _h10.b_vec]
 			_p_beta['q'] = [_q for _q in _h10.q_vec]
 			_p_beta['id'] = [_id for _id in _h10.id_vec]
-			pl.dump(_p_beta, open(self.args.output + 'p_beta_'+str(i)+'.pkl','wb'))
+			pl.dump(_p_beta, open(self.args.output + 'p_beta_'+str(i)+'.pkl','wb'),2)
 			del _p_beta
 			_W_Q2 = pd.DataFrame()
 			_W_Q2['W'] = [_W for _W in _h10.W_vec]
 			_W_Q2['Q2'] = [_Q2 for _Q2 in _h10.Q2_vec]
-			pl.dump(_W_Q2, open(self.args.output + 'W_Q2_'+str(i)+'.pkl','wb'))
+			pl.dump(_W_Q2, open(self.args.output + 'W_Q2_'+str(i)+'.pkl','wb'),2)
 			del _W_Q2
 
 		#self.W_Q2 = pd.concat(out, ignore_index=False)
