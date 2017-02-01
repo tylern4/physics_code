@@ -17,7 +17,7 @@
 
 using namespace std;
 
-int main(int argc, char **argv){
+int main(int argc, char** argv){
 	TStopwatch *Watch = new TStopwatch;
 	Watch->Start();
 	gStyle->SetOptFit(1111);

@@ -1,19 +1,16 @@
 /************************************************************************/
-/*																		*/
-/*																		*/
-/*  Created by Nick Tyler												*/
-/*	University Of South Carolina										*/
+/*																																			*/
+/*																																			*/
+/*  Created by Nick Tyler																								*/
+/*	University Of South Carolina																				*/
 /************************************************************************/
 
 #ifndef MISSING_H_GUARD
 #define MISSING_H_GUARD
 #include "TLorentzVector.h"
+#include "constants.h"
 
-class MissingMass
-{
-	double MASS_P = 0.93827203;
-	double MASS_PIP = 0.13957018;
-	double MASS_E = 0.000511;
+class MissingMass	{
 
 	double missing_mass_calc(TLorentzVector gamma_mu, TLorentzVector p_mu, TLorentzVector pi_mu){
 		TLorentzVector reaction(0.0,0.0,0.0,0.0);

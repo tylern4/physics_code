@@ -3,12 +3,14 @@
 #include "TTree.h"
 #include "physics.hpp"
 #include <TLorentzVector.h>
+#include "constants.h"
 
 class H10 {
 	private:
-
-		const static int MAX_PARTS = 100;
-		//////
+		/* My Branches */
+		Float_t W;
+		Float_t Q2;
+		Float_t MM;
 
 		UChar_t npart;
 		//UChar_t evstat;
@@ -223,7 +225,7 @@ class H10 {
 					p_vec.push_back((float)p[part_num]);
 
 				}
-				
+
 			}
 		}
 

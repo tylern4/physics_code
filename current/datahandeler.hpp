@@ -11,7 +11,7 @@
 // Mashing together W vs Q2 and Delta T cuts into one file
 // Saving the old files in a new folder to refer back to.
 //
-void dataHandeler(char *fin, char *RootFile_output, bool first_run){
+void dataHandeler(char* fin, char* RootFile_output, bool first_run){
 	TFile *RootOutputFile;
 	Histogram *hists = new Histogram();
 	TCanvas * c1 = new TCanvas("c1", "c1", 100, 100);
@@ -146,7 +146,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run){
 						hists->Fill_proton_WQ2(W,Q2);
 						hists->Fill_proton_ID_P(p[part_num],b[part_num]);
 					}
-					if(is_pip->at(part_num)){
+					if(is_pip->at(part_num) && ){
 						num_of_pis++;
 						hists->Fill_pion_WQ2(W,Q2);
 						hists->Fill_Pi_ID_P(p[part_num],b[part_num]);
