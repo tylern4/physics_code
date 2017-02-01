@@ -30,7 +30,7 @@ def main():
 	if len(sys.argv[1:])==0:
 		parser.print_help()
 		parser.exit()
-	
+
 	args = parser.parse_args()
 	if args.input[-1] != '/': args.input = args.input+'/'
 	if args.output[-1] != '/': args.output = args.output+'/'

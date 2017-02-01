@@ -11,7 +11,7 @@
 #include <TLorentzVector.h>
 #include "TROOT.h"
 
-//Calcuating Q^2 
+//Calcuating Q^2
 // q^mu^2 = (e^mu - e^mu')^2 = -Q^2
 double Q2_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime){
 	TLorentzVector q_mu = (e_mu - e_mu_prime);
@@ -72,7 +72,7 @@ int get_sector(double phi) {
 		return 5;
 	} else {
 		return (int)std::nan("0");
-	} 
+	}
 }
 
 

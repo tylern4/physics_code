@@ -24,7 +24,7 @@ _array = lambda _:np.array([])
 e_mu = TLorentzVector(0.0,0.0, np.sqrt(np.square(E1D_E0)-np.square(mass['ELECTRON'])), E1D_E0)
 _p_target = TLorentzVector(0, 0, 0, mass['PROTON'])
 
-#Calcuating Q^2 
+#Calcuating Q^2
 # q^mu^2 = (e^mu - e^mu')^2 = -Q^2
 def Q2_calc(_e_mu, _e_mu_prime):
 	_q_mu = (_e_mu - _e_mu_prime)

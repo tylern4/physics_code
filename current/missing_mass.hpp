@@ -43,7 +43,7 @@ public:
 
 		Temp_vec_3_PIP.SetXYZ(PX,PY,PZ);
 		Temp_vec_4_PIP.SetVectM(Temp_vec_3_PIP, MASS_PIP);
-		
+
 		MM.mass = missing_mass_calc(gamma_mu,Rest_PROTON,Temp_vec_4_PIP);
 
 		return MM;

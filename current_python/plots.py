@@ -17,7 +17,7 @@ class plotting(object):
 	"""Plotting class"""
 	def __init__(self, num_bins=500, fig_size=(16,9), output='./', **kwargs):
 		self.num_bins = num_bins
-		self.fig_size = fig_size 
+		self.fig_size = fig_size
 		self.output = output
 
 		self.histtype = kwargs.get('histtype', u'stepfilled')
@@ -35,7 +35,7 @@ class plotting(object):
 		self.my_cmap.set_over('w')
 		plt.ioff()
 		plt.rc('text', usetex=True)
-		
+
 	def hist2D(self, x_val, y_val, **kwargs):
 		self.output = kwargs.get('output', self.output)
 		self.num_bins = kwargs.get('num_bins', self.num_bins)
@@ -85,7 +85,7 @@ class plotting(object):
 		plt.xlabel(self.x_lab, fontsize=20)
 
 		if self.pickle: pl.dump(fig, open(self.output + self.plot_name + '.pkl','wb'),protocol=2)
-		if self.save: 
+		if self.save:
 			print("Output to "+self.output+ self.plot_name)
 			plt.savefig(self.output + self.plot_name)
 
@@ -93,10 +93,10 @@ class plotting(object):
 	def WvsQ2(self,W_Q2,**kwargs):
 		W = W_Q2['W']
 		Q2 = W_Q2['Q2']
-		self.hist2D(W, Q2, 
-			range=[[0,4],[0,10]], 
-			x_lab = r'$W (GeV)$', 
-			y_lab = r'$Q^{2}$ $(GeV^{2})$', 
+		self.hist2D(W, Q2,
+			range=[[0,4],[0,10]],
+			x_lab = r'$W (GeV)$',
+			y_lab = r'$Q^{2}$ $(GeV^{2})$',
 			plot_name = 'WvsQ2.pdf',
 			**kwargs)
 
@@ -111,7 +111,3 @@ class plotting(object):
 			x_lab = r'$Q^{2}$ $(GeV^{2})$',
 			plot_name = 'Q2_Hist.pdf',
 			**kwargs)
-
-
-
-

@@ -128,9 +128,9 @@ Float_t vx[MAX_PARTS];   //[gpart]
 Float_t vy[MAX_PARTS];   //[gpart]
 Float_t vz[MAX_PARTS];   //[gpart]
 
-//Each of the folowing has multiple parts 
- 
-Int_t   dc_part;		
+//Each of the folowing has multiple parts
+
+Int_t   dc_part;
 UChar_t dc_sect[MAX_PARTS];   //[dc_part]
 UChar_t dc_trk[MAX_PARTS];   //[dc_part]
 Char_t  dc_stat[MAX_PARTS];   //[dc_part]
@@ -212,10 +212,10 @@ void loadbar(long x, long n){
 
 	int w = 50;
     if ( (x != n) && (x % (n/100+1) != 0) ) return;
- 
+
     double ratio  =  x/(double)n;
     int   c      =  ratio * w;
- 
+
     cout << blue << " [";
     for (int x=0; x<c; x++) cout <<green << "=" << def;
     cout << green << ">" << def;
@@ -254,7 +254,7 @@ void getBranches(TTree* myTree){
 	myTree->SetBranchAddress("t_l", &t_l);
 	myTree->SetBranchAddress("tr_time", &tr_time);
 	myTree->SetBranchAddress("gpart", &gpart);			//number of particles in a single event (geometric particles)
-	myTree->SetBranchAddress("id", &id);				//particle ID of i'th element id[i]  
+	myTree->SetBranchAddress("id", &id);				//particle ID of i'th element id[i]
 	myTree->SetBranchAddress("stat", &stat);
 	myTree->SetBranchAddress("dc", &dc);
 	myTree->SetBranchAddress("cc", &cc);
@@ -266,7 +266,7 @@ void getBranches(TTree* myTree){
 	myTree->SetBranchAddress("q", &q);					//charge of i'th particle q[i] (charge in e's 1,0,-1)
 	myTree->SetBranchAddress("b", &b);					//Velocity of i'th particle b[i] (in terms of c) ie. Beta
 	myTree->SetBranchAddress("cx", &cx);				//X direction cosine at origin
-	myTree->SetBranchAddress("cy", &cy);				//Y direction cosine at origin			
+	myTree->SetBranchAddress("cy", &cy);				//Y direction cosine at origin
 	myTree->SetBranchAddress("cz", &cz);				//Z direction cosine at origin
 	myTree->SetBranchAddress("vx", &vx);				//X coordinate of vertex (cm)
 	myTree->SetBranchAddress("vy", &vy);				//y coordinate of vertex (cm)
@@ -330,5 +330,5 @@ void getBranches(TTree* myTree){
 	myTree->SetBranchAddress("lec_c2", &lec_c2); */
 
 	myTree->SetBranchStatus("*",1);
-} 
+}
 #endif

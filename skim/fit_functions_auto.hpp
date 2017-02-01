@@ -16,4 +16,3 @@ double Pip_Neg_fit(double x){
 	return -5.65144*exp(-2.87401*x)+-2.24482*x+1.12397;
 }
 #endif
-

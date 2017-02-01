@@ -29,7 +29,7 @@ class Histogram {
 		double w_max = 3.25;
 		double q2_min = 0;
 		double q2_max = 10;
-		
+
 		TH2D *WvsQ2_hist = new TH2D("WvsQ2_hist","W vs Q^{2}", bins, w_min, w_max, bins, q2_min, q2_max);
 		TH1D *W_hist = new TH1D("W","W",bins,  w_min, w_max);
 		TH1D *Q2_hist = new TH1D("Q2","Q^{2}",bins, q2_min, q2_max);
@@ -79,7 +79,7 @@ class Histogram {
 		static const int num_points = 20;
 		TH1D *delta_t_hist[3][num_points];
 		const double bin_width = (p_max - p_min)/num_points;
-		
+
 		static const int sc_sector_num = 6;
 		static const int sc_paddle_num = 48;
 		TH2D *delta_t_sec_pad_hist[3][sc_sector_num][sc_paddle_num];
@@ -87,17 +87,17 @@ class Histogram {
 			bins, p_min, p_max, bins, Dt_min, Dt_max);
 		TH2D *delta_t_mass_P_PID = new TH2D("delta_t_mass_P_PID","#Deltat assuming mass of proton with PID proton",
 			bins, p_min, p_max, bins, Dt_min, Dt_max);
-		
+
 		TH2D *delta_t_mass_PIP = new TH2D("delta_t_mass_PIP","#Deltat assuming mass of #pi^{+}",
 			bins, p_min, p_max, bins, Dt_min, Dt_max);
 		TH2D *delta_t_mass_PIP_PID = new TH2D("delta_t_mass_PIP_PID","#Deltat assuming mass of #pi^{+} with PID #pi^{+}",
 			bins, p_min, p_max, bins, Dt_min, Dt_max);
-		
+
 		TH2D *delta_t_mass_electron = new TH2D("delta_t_mass_electron","#Deltat assuming mass of e^{-}",
 			bins, p_min, p_max, bins, Dt_min, Dt_max);
 		TH2D *delta_t_mass_electron_PID = new TH2D("delta_t_mass_electron_PID","#Deltat assuming mass of e^{-} with PID e^{-}",
 			bins, p_min, p_max, bins, Dt_min, Dt_max);
-		
+
 		TH2D *delta_t_mass_positron = new TH2D("delta_t_mass_postitron","#Deltat assuming mass of e^{+}",
 			bins, p_min, p_max, bins, Dt_min, Dt_max);
 		TH2D *delta_t_mass_positron_PID = new TH2D("delta_t_mass_postitron_PID","#Deltat assuming mass of e^{+} with PID e^{+}",
@@ -122,7 +122,7 @@ class Histogram {
 		THnSparse* cc_sparse = new THnSparseD("cc_sparse", "Histogram", ndims_cc_sparse, bins_cc_sparse, xmin_cc_sparse, xmax_cc_sparse);
 		// cc hist
 
-		// fiducial 
+		// fiducial
 		double theta_min = 0;
 		double theta_max = 90;
 		double phi_min = -360/2.0;
@@ -461,7 +461,7 @@ void Histogram::delta_t_slice_fit(){
 	fit_functions << "//Auto Generated fit code from e1d" << endl;
 	fit_functions << "#ifndef FIT_FUNCTIONS_H_GUARD\n#define FIT_FUNCTIONS_H_GUARD\n#include \"main.h\"\n" << endl;
 	TF1 *peak = new TF1("peak","gaus", -1.5, 1.5);
-	//[0]*exp(-[1]*x) + 
+	//[0]*exp(-[1]*x) +
 	char *func = "[0]*exp(-[1]*x) + [2]*x + [3]";
 	delta_t_mass_P->FitSlicesY(peak,0,-1,10,"QRG5");
 	TH1D *delta_t_mass_P_0 = (TH1D*)gDirectory->Get("delta_t_mass_P_0");
@@ -482,7 +482,7 @@ void Histogram::delta_t_slice_fit(){
 			num++;
 		}
 	}
-	
+
 	TGraph *P = new TGraph(num,x,y_plus);
 	TGraph *M = new TGraph(num,x,y_minus);
 	TF1 *Proton_Pos_fit = new TF1("Proton_Pos_fit",func);
@@ -520,7 +520,7 @@ void Histogram::delta_t_slice_fit(){
 			num++;
 		}
 	}
-	
+
 	TGraph *P_pip = new TGraph(num,x_pip,y_plus_pip);
 	TGraph *M_pip = new TGraph(num,x_pip,y_minus_pip);
 	TF1 *Pip_Pos_fit = new TF1("Pip_Pos_fit",func);

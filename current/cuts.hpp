@@ -17,7 +17,7 @@
 // 2) Perform fits on the histograms
 //		make a few TF1's and choose which one to fit based on type
 // 3) Place the mean and sigma values for each cut into a variables
-//		Which i should be able to get back later as: 
+//		Which i should be able to get back later as:
 //		cut_delta_t.mean, cut_delta_t.sigma, etc.
 
 /*
@@ -53,7 +53,7 @@ public:
 		fitFunc->SetParNames("height","mean","FWHM");
 
 		hist->Fit("fitFunc","qM0+","", min_value, max_value);
-		
+
 		par_mean = std::isnan(fitFunc->GetParameter("mean")) ? 0 : fitFunc->GetParameter("mean");
 		par_FWHM = std::isnan(fitFunc->GetParameter("FWHM")) ? 0 : fitFunc->GetParameter("FWHM");
 
@@ -64,9 +64,9 @@ public:
 
 		mean = fitFunc->GetParameter("mean");
 		FWHM = fitFunc->GetParameter("FWHM");
-		sigma = fitFunc->GetParameter("FWHM") / (2 * sqrt(2 * log(2))); // 2.35482004503; 
+		sigma = fitFunc->GetParameter("FWHM") / (2 * sqrt(2 * log(2))); // 2.35482004503;
 		gStyle->SetOptFit(1111);
-	} 
+	}
 
 	inline void FitPoly_1D(TH1D *hist, double min_value, double max_value){
 		TF1 *fitFunc = new TF1("fitFunc",ploy1d.c_str(), min_value, max_value);
@@ -74,7 +74,7 @@ public:
 		fitFunc->SetParNames("a","b");
 
 		hist->Fit("fitFunc","qM0+","", min_value, max_value);
-		
+
 		fitFunc->SetParameter(0, fitFunc->GetParameter("a"));
 		fitFunc->SetParameter(1, fitFunc->GetParameter("b"));
 
@@ -92,7 +92,7 @@ public:
 		fitFunc->SetParNames("a","b","c");
 
 		hist->Fit("fitFunc","qM0+","", min_value, max_value);
-		
+
 		fitFunc->SetParameter(0, fitFunc->GetParameter("a"));
 		fitFunc->SetParameter(1, fitFunc->GetParameter("b"));
 		fitFunc->SetParameter(2, fitFunc->GetParameter("c"));
@@ -112,7 +112,7 @@ public:
 		fitFunc->SetParNames("a","b","c","d");
 
 		hist->Fit("fitFunc","qM0+","", min_value, max_value);
-		
+
 		fitFunc->SetParameter(0, fitFunc->GetParameter("a"));
 		fitFunc->SetParameter(1, fitFunc->GetParameter("b"));
 		fitFunc->SetParameter(2, fitFunc->GetParameter("c"));
@@ -134,7 +134,7 @@ public:
 		fitFunc->SetParNames("a","b","c","d","e");
 
 		hist->Fit("fitFunc","qM0+","", min_value, max_value);
-		
+
 		fitFunc->SetParameter(0, fitFunc->GetParameter("a"));
 		fitFunc->SetParameter(1, fitFunc->GetParameter("b"));
 		fitFunc->SetParameter(2, fitFunc->GetParameter("c"));

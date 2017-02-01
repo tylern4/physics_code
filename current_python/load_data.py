@@ -42,7 +42,7 @@ if __name__ == '__main__':
 	if len(sys.argv[1:])==0:
 		parser.print_help()
 		parser.exit()
-		
+
 	args = parser.parse_args()
 	if args.input[-1] != '/':
 		args.input = args.input+'/'
@@ -57,4 +57,3 @@ if __name__ == '__main__':
 	if args.o:
 		fig = load_graphs()
 		plt.show()
-

@@ -11,7 +11,7 @@
 #include <TLorentzVector.h>
 #include "TROOT.h"
 
-//Calcuating Q^2 
+//Calcuating Q^2
 // q^mu^2 = (e^mu - e^mu')^2 = -Q^2
 double Q2_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime){
 	TLorentzVector q_mu = (e_mu - e_mu_prime);
@@ -85,7 +85,7 @@ double Get_Mass(int ID){
 }
 
 //	Print the readable name from particle ID
-//	
+//
 void PrintID_Readable(int ID){
 	switch (ID){
 		case 2212:
@@ -122,7 +122,7 @@ void PrintID_Readable(int ID){
 }
 
 //	Print the readable name from particle ID
-//	
+//
 string PrintID_String(int ID){
 	switch (ID){
 		case 2212:
