@@ -22,7 +22,7 @@ class H10 {
 		Float_t tr_time;
 		Float_t rf_time1;
 		Float_t rf_time2;
-		
+
 		Int_t   gpart;
 		Short_t id[MAX_PARTS];   //[gpart]
 		Char_t  stat[MAX_PARTS];   //[gpart]
@@ -41,10 +41,10 @@ class H10 {
 		Float_t vx[MAX_PARTS];   //[gpart]
 		Float_t vy[MAX_PARTS];   //[gpart]
 		Float_t vz[MAX_PARTS];   //[gpart]
-		
-		//Each of the folowing has multiple parts 
-		 
-		Int_t   dc_part;		
+
+		//Each of the folowing has multiple parts
+
+		Int_t   dc_part;
 		UChar_t dc_sect[MAX_PARTS];   //[dc_part]
 		UChar_t dc_trk[MAX_PARTS];   //[dc_part]
 		Char_t  dc_stat[MAX_PARTS];   //[dc_part]
@@ -59,7 +59,7 @@ class H10 {
 		Float_t dc_zec[MAX_PARTS];   //[dc_part]
 		Float_t dc_thcc[MAX_PARTS];   //[dc_part]
 		Float_t dc_c2[MAX_PARTS];   //[dc_part]
-		
+
 		Int_t   ec_part;
 		UShort_t ec_stat[MAX_PARTS];   //[ec_part]
 		UChar_t ec_sect[MAX_PARTS];   //[ec_part]
@@ -78,7 +78,7 @@ class H10 {
 		//Float_t ec_m3[MAX_PARTS];   //[ec_part]
 		//Float_t ec_m4[MAX_PARTS];   //[ec_part]
 		Float_t ec_c2[MAX_PARTS];   //[ec_part]
-		
+
 		Int_t   sc_part;
 		UChar_t sc_sect[MAX_PARTS];   //[sc_part]
 		UChar_t sc_hit[MAX_PARTS];   //[sc_part]
@@ -88,7 +88,7 @@ class H10 {
 		Float_t sc_t[MAX_PARTS];   //[sc_part]
 		Float_t sc_r[MAX_PARTS];   //[sc_part]
 		Float_t sc_c2[MAX_PARTS];   //[sc_part]
-		
+
 		Int_t   cc_part;
 		UChar_t cc_sect[MAX_PARTS];   //[cc_part]
 		UChar_t cc_hit[MAX_PARTS];   //[cc_part]
@@ -108,7 +108,7 @@ class H10 {
 			myTree->SetBranchAddress("t_l", &t_l);
 			myTree->SetBranchAddress("tr_time", &tr_time);
 			myTree->SetBranchAddress("gpart", &gpart);			//number of particles in a single event (geometric particles)
-			myTree->SetBranchAddress("id", &id);				//particle ID of i'th element id[i]  
+			myTree->SetBranchAddress("id", &id);				//particle ID of i'th element id[i]
 			myTree->SetBranchAddress("stat", &stat);
 			myTree->SetBranchAddress("dc", &dc);
 			myTree->SetBranchAddress("cc", &cc);
@@ -119,7 +119,7 @@ class H10 {
 			myTree->SetBranchAddress("q", &q);					//charge of i'th particle q[i] (charge in e's 1,0,-1)
 			myTree->SetBranchAddress("b", &b);					//Velocity of i'th particle b[i] (in terms of c) ie. Beta
 			myTree->SetBranchAddress("cx", &cx);				//X direction cosine at origin
-			myTree->SetBranchAddress("cy", &cy);				//Y direction cosine at origin			
+			myTree->SetBranchAddress("cy", &cy);				//Y direction cosine at origin
 			myTree->SetBranchAddress("cz", &cz);				//Z direction cosine at origin
 			myTree->SetBranchAddress("vx", &vx);				//X coordinate of vertex (cm)
 			myTree->SetBranchAddress("vy", &vy);				//y coordinate of vertex (cm)
@@ -165,7 +165,7 @@ class H10 {
 			myTree->SetBranchAddress("cc_t", &cc_t);
 			myTree->SetBranchAddress("cc_r", &cc_r);
 			myTree->SetBranchAddress("cc_c2", &cc_c2);
-	
+
 			myTree->SetBranchStatus("*",1);
 		}
 
@@ -186,7 +186,7 @@ class H10 {
 			getBranches(&chain);
 			int num_of_events = (int)chain.GetEntries();
 			std::cout << num_of_events << std::endl;
-		} 
+		}
 
 		void loop(TTree &chain){
 			TVector3 e_mu_prime_3;
@@ -196,7 +196,7 @@ class H10 {
 			getBranches(&chain);
 			int num_of_events = (int)chain.GetEntries();
 			for (int current_event = 0; current_event < num_of_events; current_event++) {
-				chain.GetEntry(current_event);	
+				chain.GetEntry(current_event);
 				//reset electron cut bool
 				electron_cuts = true;
 				//electron cuts
@@ -211,7 +211,7 @@ class H10 {
 				electron_cuts &= ((int)dc_stat[dc[0]-1] > 0);
 
 				if(electron_cuts){
-					e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);	
+					e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);
 					e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
 					W = W_calc(e_mu, e_mu_prime);
 					W_vec.push_back(W);
@@ -223,6 +223,7 @@ class H10 {
 					p_vec.push_back((float)p[part_num]);
 
 				}
+				
 			}
 		}
 

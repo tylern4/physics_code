@@ -1,5 +1,5 @@
 import ROOT
-import numpy as np 
+import numpy as np
 from constants import *
 from ROOT import TLorentzVector,TVector3
 from ROOT import gBenchmark, gROOT

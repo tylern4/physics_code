@@ -32,7 +32,7 @@ void skim(char* fin, char* RootFile_output, double mean, double sigma){
 	TVector3 Particle3(0.0,0.0,0.0);
 	TLorentzVector Particle4(0.0,0.0,0.0,0.0);
 
-	RootOutputFile = new TFile(RootFile_output,"RECREATE"); 
+	RootOutputFile = new TFile(RootFile_output,"RECREATE");
 
 	TChain chain("h10");
 	cout << blue <<"Analyzing file " << green << fin << def << bgdef << endl;
@@ -76,7 +76,7 @@ void skim(char* fin, char* RootFile_output, double mean, double sigma){
 		electron_cuts &= (ec[0] > 0); // ``` ``` ``` ec
 		electron_cuts &= (dc_stat[dc[0]-1] > 0); //??
 
-		e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);	
+		e_mu_prime_3.SetXYZ(p[0]*cx[0],p[0]*cy[0],p[0]*cz[0]);
 		e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
 
 		dt_proton = delta_t_array(MASS_P, gpart);
@@ -84,33 +84,30 @@ void skim(char* fin, char* RootFile_output, double mean, double sigma){
 
 		for(int part_num = 1; part_num < gpart; part_num++){
 			num_of_pis = 0;
-			if(dt_pip.at(part_num) >= -2 //Pip_Neg_fit(p[part_num]) 
-				&& dt_pip.at(part_num) <= 2 //Pip_Pos_fit(p[part_num]) 
+			if(dt_pip.at(part_num) >= -2 //Pip_Neg_fit(p[part_num])
+				&& dt_pip.at(part_num) <= 2 //Pip_Pos_fit(p[part_num])
 				&& q[part_num] == 1){
 				is_pip.at(part_num) = true;
-			} 
-			else if(dt_proton.at(part_num) >= -2//Proton_Neg_fit(p[part_num])
-				&& dt_proton.at(part_num) <= 2//Proton_Pos_fit(p[part_num])
-				&& q[part_num] == 1){ 
-
-				is_proton.at(part_num) = true;
-			} 
-			else if(dt_pip.at(part_num) >= Pip_Neg_fit(p[part_num]) 
-				&& dt_pip.at(part_num) <= Pip_Pos_fit(p[part_num]) 
-				&& q[part_num] < 0){
-				is_pim.at(part_num) = true;
-			}
-
-			if(is_pip.at(part_num)){
 				num_of_pis++;
 				TLorentzVector gamma_mu = (e_mu - e_mu_prime);
 				MissingMassNeutron.MissingMassPxPyPz(p[part_num]*cx[part_num],p[part_num]*cy[part_num],p[part_num]*cz[part_num]);
 				MissingMassNeutron = MissingMassNeutron.missing_mass(gamma_mu);
 			}
+			if(dt_proton.at(part_num) >= -2//Proton_Neg_fit(p[part_num])
+				&& dt_proton.at(part_num) <= 2//Proton_Pos_fit(p[part_num])
+				&& q[part_num] == 1){
+
+				is_proton.at(part_num) = true;
+			}
+			if(dt_pip.at(part_num) >= Pip_Neg_fit(p[part_num])
+				&& dt_pip.at(part_num) <= Pip_Pos_fit(p[part_num])
+				&& q[part_num] < 0){
+				is_pim.at(part_num) = true;
+			}
 		}
 
 		MM = MissingMassNeutron.mass;
-		MM = (MM >= 0 ) ? MM : NaN;
+		//MM = (MM >= 0 ) ? MM : NaN;
 		//MM = (num_of_pis == 1) ? MM : NaN;
 
 		MM_cut = true;
