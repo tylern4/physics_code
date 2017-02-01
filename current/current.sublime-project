@@ -1,9 +1,0 @@
-{
-	"folders":
-	[
-		{
-			"path": "/home/tylern/physics_code/current"
-			"folder_exclude_patterns": ["inputFiles", "obj", "outputFiles"],
-		}
-	]
-}
