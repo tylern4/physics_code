@@ -1,8 +1,6 @@
 /************************************************************************/
-/*                                  																		*/
-/*                                  																		*/
-/*  Created by Nick Tyler						                         						*/
-/*	University Of South Carolina					                    					*/
+/*  Created by Nick Tyler*/
+/*	University Of South Carolina*/
 /************************************************************************/
 
 #ifndef MISSING_CPP_GUARD
