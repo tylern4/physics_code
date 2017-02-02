@@ -107,15 +107,14 @@ private:
 
   void getBranches(TTree *myTree) {
 
-    myTree->SetBranchAddress("npart", &npart); // number of final particles
+    myTree->SetBranchAddress("npart", &npart);   // number of final particles
     myTree->SetBranchAddress("evntid", &evntid); // event number
     myTree->SetBranchAddress("evntclas", &evntclas);
     myTree->SetBranchAddress("q_l", &q_l);
     myTree->SetBranchAddress("t_l", &t_l);
     myTree->SetBranchAddress("tr_time", &tr_time);
-    myTree->SetBranchAddress(
-        "gpart",
-        &gpart); // number of particles in a single event (geometric particles)
+    // number of particles in a single event (geometric particles)
+    myTree->SetBranchAddress("gpart", &gpart);
     myTree->SetBranchAddress("id", &id); // particle ID of i'th element id[i]
     myTree->SetBranchAddress("stat", &stat);
     myTree->SetBranchAddress("dc", &dc);
@@ -124,10 +123,10 @@ private:
     myTree->SetBranchAddress("ec", &ec);
     myTree->SetBranchAddress("lec", &lec);
     myTree->SetBranchAddress("p", &p); // momentum of i'th particle p[i] (GeV/C)
-    myTree->SetBranchAddress(
-        "q", &q); // charge of i'th particle q[i] (charge in e's 1,0,-1)
-    myTree->SetBranchAddress(
-        "b", &b); // Velocity of i'th particle b[i] (in terms of c) ie. Beta
+    // charge of i'th particle q[i] (charge in e's 1,0,-1)
+    myTree->SetBranchAddress("q", &q);
+    // Velocity of i'th particle b[i] (in terms of c) ie. Beta
+    myTree->SetBranchAddress("b", &b);
     myTree->SetBranchAddress("cx", &cx); // X direction cosine at origin
     myTree->SetBranchAddress("cy", &cy); // Y direction cosine at origin
     myTree->SetBranchAddress("cz", &cz); // Z direction cosine at origin
@@ -216,9 +215,9 @@ public:
       electron_cuts &=
           ((int)gpart > 0); // Number of good particles is greater than 0
       electron_cuts &= ((int)stat[0] > 0); // First Particle hit stat
-      electron_cuts &= ((int)q[0] == -1); // First particle is negative Q
-      electron_cuts &= ((int)sc[0] > 0); // First Particle hit sc
-      electron_cuts &= ((int)dc[0] > 0); // ``` ``` ``` dc
+      electron_cuts &= ((int)q[0] == -1);  // First particle is negative Q
+      electron_cuts &= ((int)sc[0] > 0);   // First Particle hit sc
+      electron_cuts &= ((int)dc[0] > 0);   // ``` ``` ``` dc
       electron_cuts &= ((int)dc_stat[dc[0] - 1] > 0);
 
       if (electron_cuts) {

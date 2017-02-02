@@ -40,7 +40,7 @@
 using namespace std;
 
 ofstream cut_outputs;
-ofstream fit_functions;
+// ofstream fit_functions;
 
 /* My Branches */
 Float_t W;
@@ -226,12 +226,12 @@ void getBranches(TTree *myTree) {
   myTree->SetBranchAddress("ec", &ec);
   myTree->SetBranchAddress("lec", &lec);
   myTree->SetBranchAddress("p", &p); // momentum of i'th particle p[i] (GeV/C)
-  // myTree->SetBranchAddress("m", &m);					//mass of i'th particle
-  // m[i] (GeV/C)
-  myTree->SetBranchAddress(
-      "q", &q); // charge of i'th particle q[i] (charge in e's 1,0,-1)
-  myTree->SetBranchAddress(
-      "b", &b); // Velocity of i'th particle b[i] (in terms of c) ie. Beta
+  // mass of the particle m[i] (GeV/C)
+  // myTree->SetBranchAddress("m", &m);
+  // charge of i'th particle q[i] (charge in e's 1,0,-1)
+  myTree->SetBranchAddress("q", &q);
+  // Velocity of i'th particle b[i] (in terms of c) ie. Beta
+  myTree->SetBranchAddress("b", &b);
   myTree->SetBranchAddress("cx", &cx); // X direction cosine at origin
   myTree->SetBranchAddress("cy", &cy); // Y direction cosine at origin
   myTree->SetBranchAddress("cz", &cz); // Z direction cosine at origin

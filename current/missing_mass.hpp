@@ -3,46 +3,34 @@
 /*	University Of South Carolina*/
 /************************************************************************/
 
-#ifndef MISSING_H_GUARD
-#define MISSING_H_GUARD
+#ifndef MISSING_H
+#define MISSING_H
 #include "TLorentzVector.h"
 #include "constants.h"
 
 class MissingMass {
-
-  double missing_mass_calc(TLorentzVector gamma_mu, TLorentzVector p_mu,
-                           TLorentzVector pi_mu) {
-    TLorentzVector reaction(0.0, 0.0, 0.0, 0.0);
-    reaction = (gamma_mu + p_mu - pi_mu);
-
-    return reaction.M();
-  } //
-
-public:
-  double mass = -1;
+private:
   double PX;
   double PY;
   double PZ;
+  double target_mass = MASS_P;
+  double target_px = 0.0;
+  double target_py = 0.0;
+  double target_pz = 0.0;
+  double out_mass = MASS_PIP;
 
-  inline void MissingMassPxPyPz(double px, double py, double pz) {
-    PX = px;
-    PY = py;
-    PZ = pz;
-  }
+public:
+  MissingMass();
+  ~MissingMass();
 
-  inline MissingMass missing_mass(TLorentzVector gamma_mu) {
-    MissingMass MM;
-    TVector3 Temp_vec_3_PIP(0.0, 0.0, 0.0);
-    TLorentzVector Temp_vec_4_PIP(0.0, 0.0, 0.0, 0.0);
+  void Set_PxPyPz(double px, double py, double pz);
+  void Set_P_cos(double p_out, double cx_out, double cy_out, double cz_out);
+  void Set_target_mass(double mass);
+  void Set_target_PxPyPz(int zero);
+  void Set_target_PxPyPz(double t_px, double t_py, double t_pz);
+  void Set_target_P_cos(double t_p, double t_cx, double t_cy, double t_cz);
 
-    TLorentzVector Rest_PROTON(0.0, 0.0, 0.0, MASS_P);
-
-    Temp_vec_3_PIP.SetXYZ(PX, PY, PZ);
-    Temp_vec_4_PIP.SetVectM(Temp_vec_3_PIP, MASS_PIP);
-
-    MM.mass = missing_mass_calc(gamma_mu, Rest_PROTON, Temp_vec_4_PIP);
-
-    return MM;
-  }
+  double missing_mass(TLorentzVector gamma_mu);
 };
+
 #endif

@@ -11,7 +11,14 @@
 //
 void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
   TFile *RootOutputFile;
+
+  // My Classes
   Histogram *hists = new Histogram();
+  // From missing_mass.hpp :: missing_mass_calc()
+  MissingMass *MM_neutron = new MissingMass();
+  MM_neutron->Set_target_mass(MASS_P);
+  MM_neutron->Set_target_PxPyPz(0);
+
   TCanvas *c1 = new TCanvas("c1", "c1", 100, 100);
   auto number_cols = 0;
   char rootFile[500];
@@ -28,9 +35,6 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
   // ofstream cut_outputs;
   cut_outputs.open("outputFiles/cut_outputs.csv");
   cut_outputs << "Cut,Mean,Sigma" << endl;
-
-  // From missing_mass.hpp :: missing_mass_calc()
-  MissingMass MissingMassNeutron;
 
   int num_of_pis, num_of_proton;
 
@@ -154,12 +158,14 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
             hists->Fill_pion_WQ2(W, Q2);
             hists->Fill_Pi_ID_P(p[part_num], b[part_num]);
             TLorentzVector gamma_mu = (e_mu - e_mu_prime);
-            MissingMassNeutron.MissingMassPxPyPz(p[part_num] * cx[part_num],
-                                                 p[part_num] * cy[part_num],
-                                                 p[part_num] * cz[part_num]);
-            MissingMassNeutron = MissingMassNeutron.missing_mass(gamma_mu);
-            hists->Fill_Missing_Mass(MissingMassNeutron.mass);
-            hists->Fill_Missing_Mass_square(Square(MissingMassNeutron.mass));
+            if (first_run) {
+              MM_neutron->Set_PxPyPz(p[part_num] * cx[part_num],
+                                     p[part_num] * cy[part_num],
+                                     p[part_num] * cz[part_num]);
+              MM = MM_neutron->missing_mass(gamma_mu);
+            }
+            hists->Fill_Missing_Mass(MM);
+            hists->Fill_Missing_Mass_square(Square(MM));
           }
 
           if ((is_pip->at(part_num) && (id[part_num] == PIP)) ||
@@ -179,15 +185,14 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
   }
 
   // Start of cuts
-  Cuts MissingMassNeutron_cut;
+  Cuts MM_neutron_cut;
   double fit_range_min = 0.88;
   double fit_range_max = 1.0;
-  MissingMassNeutron_cut.FitGaus(hists->Missing_Mass, fit_range_min,
-                                 fit_range_max);
+  MM_neutron_cut.FitGaus(hists->Missing_Mass, fit_range_min, fit_range_max);
 
   cut_outputs << "MM_N";
-  cut_outputs << "," << MissingMassNeutron_cut.mean;
-  cut_outputs << "," << MissingMassNeutron_cut.sigma << endl;
+  cut_outputs << "," << MM_neutron_cut.mean;
+  cut_outputs << "," << MM_neutron_cut.sigma << endl;
 
   Cuts MissingMassSquare_cut;
   fit_range_min = 0.5;
