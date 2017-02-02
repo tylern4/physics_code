@@ -144,12 +144,12 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
         hists->MomVsBeta_Fill(Particle4.E(), p[part_num], b[part_num]);
         if (q[part_num] == 1) {
           hists->MomVsBeta_Fill_pos(p[part_num], b[part_num]);
-          if (is_proton->at(part_num)) {
+          if (is_proton->at(part_num) && (id[part_num] == PROTON)) {
             num_of_proton++;
             hists->Fill_proton_WQ2(W, Q2);
             hists->Fill_proton_ID_P(p[part_num], b[part_num]);
           }
-          if (is_pip->at(part_num)) {
+          if (is_pip->at(part_num) && (id[part_num] == PIP)) {
             num_of_pis++;
             hists->Fill_pion_WQ2(W, Q2);
             hists->Fill_Pi_ID_P(p[part_num], b[part_num]);
@@ -162,7 +162,8 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
             hists->Fill_Missing_Mass_square(Square(MissingMassNeutron.mass));
           }
 
-          if (is_pip->at(part_num) || is_proton->at(part_num)) {
+          if ((is_pip->at(part_num) && (id[part_num] == PIP)) ||
+              (is_proton->at(part_num) && (id[part_num] == PROTON))) {
             hists->Fill_proton_Pi_ID_P(p[part_num], b[part_num]);
           }
         } else if (q[part_num] == -1) {
