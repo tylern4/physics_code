@@ -76,3 +76,9 @@ current/fit_functions.hpp
 *.pcm
 
 *.d
+
+current/cpp/e1d
+
+current/skim/fit_functions.hpp
+
+current/skim/Skim

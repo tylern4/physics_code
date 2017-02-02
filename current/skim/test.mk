@@ -24,7 +24,7 @@ all:	clean $(BINDIR)/$(TARGET)
 #	$(CXX) $(CXXFLAGS)  -c $< -o $@
 
 $(BINDIR)/$(TARGET): obj $(OBJ)
-	$(CXX) $(OBJ) $(CXXFLAGS) $(ROOTLIBS) -o $(BINDIR)/$(TARGET)
+	$(CXX) $(OBJ) $(CXXFLAGS) $(ROOTLIBS) -o $(TARGET)
 
 sobj:
 	@mkdir -p $@
@@ -36,4 +36,4 @@ lib:	sobj $(OBJ)
 	$(CXX) $(CXXFLAGS) -shared $(OBJ) $(ROOTLIBS) -o $(LIBOUT)
 
 clean:
-	-rm -f $(BINDIR)/$(TARGET) $(OBJ)
+	-rm -f $(TARGET) $(OBJ)
