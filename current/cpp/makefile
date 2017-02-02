@@ -15,7 +15,6 @@ BINDIR   = ../bin
 SRC = $(wildcard $(SRCDIR)/*.cpp)
 MAINS = $(wildcard ./*.cpp)
 
-#OBJ=	$(patsubst %.cpp,%.o,$(SRC))
 OBJECTS  = $(SRC:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 MAIN = $(MAINS:./%.cpp=$(OBJDIR)/%.o)
 LIBOUT =	$(LIBDIR)/lib.so
