@@ -7,19 +7,24 @@ ROOTLIBS	= $(shell root-config --libs)
 CXX = g++
 CXXFLAGS =      -O2 -fPIC -w -g $(FOPENMP) $(shell root-config --cflags)
 TARGET =	    e1d
-SRC = $(wildcard *.cpp)
-OBJ=	$(patsubst %.cpp,obj/%.o,$(SRC))
-LIBOUT =        sobj/lib.so
+SRCDIR   = ../src
+OBJDIR   = ../obj
+LIBDIR   = ../sobj
+BINDIR   = ../bin
+
+SRC = $(wildcard $(SRCDIR)/*.cpp) $(wildcard *.cpp)
+OBJ=	$(patsubst %.cpp,%.o,$(SRC))
+LIBOUT =	$(LIBDIR)/lib.so
 
 
 .PHONY: all clean
 
-all:	clean $(TARGET)
+all:	clean $(BINDIR)/$(TARGET)
 
-obj/%.o: %.cpp
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CXX) $(CXXFLAGS)  -c $< -o $@
 
-$(TARGET): obj $(OBJ)
+$(BINDIR)/$(TARGET): obj $(OBJ)
 	$(CXX) $(OBJ) $(CXXFLAGS) $(ROOTLIBS) -o $(TARGET)
 
 sobj:

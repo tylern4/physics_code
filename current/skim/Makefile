@@ -7,8 +7,8 @@ ROOTLIBS	= $(shell root-config --libs)
 CXX = g++
 CXXFLAGS =      -O2 -fPIC -w -g $(FOPENMP) $(shell root-config --cflags)
 TARGET =	    Skim
-SRC =		$(wildcard *.cpp)
-OBJ=	$(patsubst %.cpp,obj/%.o,$(SRC))
+SRC = $(wildcard ../src/*.cpp) $(wildcard *.cpp)
+OBJ=	$(patsubst %.cpp,%.o,$(SRC))
 #-lgfortran
 LIBOUT =        sobj/lib.so
 

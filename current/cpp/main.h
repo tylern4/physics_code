@@ -34,8 +34,8 @@
 #include "TSystem.h"
 #include <vector>
 #include <fstream>
-#include "color.cpp"
-#include "constants.h"
+#include "../src/color.cpp"
+#include "../src/constants.h"
 
 using namespace std;
 
