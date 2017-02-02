@@ -5,6 +5,7 @@
 
 #ifndef CONSTANTS_H_GUARD
 #define CONSTANTS_H_GUARD
+#include "TMath.h"
 
 static const int MAX_PARTS = 100;
 
@@ -17,7 +18,7 @@ static const double E1D_E0 = 4.802; // GeV
 static const double SOL = 29.9792458;
 // misc. constants
 static const double FSC = 0.00729735253;
-static const double NA = 6.02214129E23; // Avigadro's number
+static const double NA = 6.02214129E23;  // Avigadro's number
 static const double QE = 1.60217646E-19; // Charge or electron
 
 // particle codes, usually PDG codes, but always those used in BOS

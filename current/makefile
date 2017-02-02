@@ -7,7 +7,7 @@ ROOTLIBS	= $(shell root-config --libs)
 CXX = g++
 CXXFLAGS =      -O2 -fPIC -w -g $(FOPENMP) $(shell root-config --cflags)
 TARGET =	    e1d
-SRC =		color.cpp cuts.cpp histogram.cpp missing_mass.cpp main.cpp
+SRC = $(wildcard *.cpp)
 OBJ=	$(patsubst %.cpp,obj/%.o,$(SRC))
 LIBOUT =        sobj/lib.so
 

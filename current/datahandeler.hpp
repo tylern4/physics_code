@@ -113,8 +113,8 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
       e_mu_prime_3.SetXYZ(p[0] * cx[0], p[0] * cy[0], p[0] * cz[0]);
       e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
       // Set the vertex time (time of electron hit)
-
-      delta_t_cut(hists, first_run);
+      Delta_T *delta_t = new Delta_T();
+      delta_t->delta_t_cut(hists, first_run);
 
       theta = theta_calc(cz[0]);
       // phi = center_phi_calc(cx[0],cy[0]);
