@@ -149,7 +149,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
             hists->Fill_proton_WQ2(W, Q2);
             hists->Fill_proton_ID_P(p[part_num], b[part_num]);
           }
-          if (is_pip->at(part_num) && ) {
+          if (is_pip->at(part_num)) {
             num_of_pis++;
             hists->Fill_pion_WQ2(W, Q2);
             hists->Fill_Pi_ID_P(p[part_num], b[part_num]);
