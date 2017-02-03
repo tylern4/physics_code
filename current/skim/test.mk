@@ -6,34 +6,40 @@ endif
 ROOTLIBS	= $(shell root-config --libs)
 CXX = g++
 CXXFLAGS =      -O2 -fPIC -w -g $(FOPENMP) $(shell root-config --cflags)
-TARGET =	    e1d
+TARGET = Skim
 SRCDIR   = ../src
 OBJDIR   = ../obj
 LIBDIR   = ../sobj
 BINDIR   = ../bin
 
-SRC = $(wildcard $(SRCDIR)/*.cpp) $(wildcard *.cpp)
-OBJ=	$(patsubst %.cpp,%.o,$(SRC))
+SRC = $(wildcard $(SRCDIR)/*.cpp)
+MAINS = $(wildcard ./*.cpp)
+
+OBJECTS  = $(SRC:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
+MAIN = $(MAINS:./%.cpp=$(OBJDIR)/%.o)
 LIBOUT =	$(LIBDIR)/lib.so
 
 .PHONY: all clean
 
 all:	clean $(BINDIR)/$(TARGET)
 
-#$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
-#	$(CXX) $(CXXFLAGS)  -c $< -o $@
+$(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
+		$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(BINDIR)/$(TARGET): obj $(OBJ)
-	$(CXX) $(OBJ) $(CXXFLAGS) $(ROOTLIBS) -o $(TARGET)
+$(MAIN): $(OBJDIR)/%.o : ./%.cpp
+		$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(BINDIR)/$(TARGET): obj $(OBJECTS) $(MAIN)
+	$(CXX) $(OBJECTS) $(MAIN) $(CXXFLAGS) $(ROOTLIBS) -o $(BINDIR)/$(TARGET)
 
 sobj:
-	@mkdir -p $@
+	@mkdir -p $(LIBDIR)
 
 obj:
-	@mkdir -p $@
+	@mkdir -p $(OBJDIR)
 
-lib:	sobj $(OBJ)
-	$(CXX) $(CXXFLAGS) -shared $(OBJ) $(ROOTLIBS) -o $(LIBOUT)
+lib:	sobj $(OBJECTS)
+	$(CXX) $(CXXFLAGS) -shared $(OBJECTS) $(ROOTLIBS) -o $(LIBOUT)
 
 clean:
-	-rm -f $(TARGET) $(OBJ)
+	-rm -f $(BINDIR)/$(TARGET) $(OBJECTS) $(MAIN)

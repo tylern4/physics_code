@@ -6,9 +6,9 @@
 #include <iostream>
 #include "TTree.h"
 #include "TTree.h"
-#include "physics.hpp"
+#include "../src/physics.hpp"
 #include <TLorentzVector.h>
-#include "constants.h"
+#include "../src/constants.h"
 
 class H10 {
 private:

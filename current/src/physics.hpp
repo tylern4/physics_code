@@ -131,6 +131,7 @@ double Get_Mass(int ID) {
     return 0.0;
     break;
   }
+  return 0;
 }
 
 //	Print the readable name from particle ID
@@ -168,6 +169,7 @@ void PrintID_Readable(int ID) {
     cout << "***";
     break;
   }
+  cout << "***";
 }
 
 //	Print the readable name from particle ID
@@ -205,6 +207,7 @@ string PrintID_String(int ID) {
     return "***";
     break;
   }
+  return "***";
 }
 
 #endif
