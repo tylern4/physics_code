@@ -294,10 +294,10 @@ void Histogram::Fill_deltat_positron_PID(double momentum, double delta_t) {
 
 void Histogram::delta_t_slice_fit() {
   ofstream fit_functions;
-  fit_functions.open("fit_functions.hpp");
+  fit_functions.open("../src/fit_functions.hpp");
   fit_functions << "//Auto Generated fit code from e1d" << endl;
-  fit_functions << "#ifndef FIT_FUNCTIONS_H_GUARD\n#define "
-                   "FIT_FUNCTIONS_H_GUARD\n#include \"main.h\"\n" << endl;
+  fit_functions << "#ifndef FIT_FUNCTIONS_H\n#define "
+                   "FIT_FUNCTIONS_H\n\n" << endl;
   TF1 *peak = new TF1("peak", "gaus", -1.5, 1.5);
   //[0]*exp(-[1]*x) +
   char *func = "[0]*exp(-[1]*x) + [2]*x + [3]";

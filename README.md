@@ -8,7 +8,7 @@ and I usually use the root [github repo](https://github.com/root-mirror/root) to
 
 ## Compile and run
 All code is in the `current` folder. Inside current there is a cpp analysis program, a cpp skim program and an attempt at a python analysis program.
-To make either the cpp or skim program go into the folder and run make. The python program uses a root macro which is compiled using the 'comile_root' script in the `physics_code/scripts` folder.
+To make either the cpp or skim program go into the folder and run make. The python program uses a root macro which is compiled using the `comile_root` script in the `physics_code/scripts` folder.
 
 
 ### E1D analysis
