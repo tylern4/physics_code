@@ -34,7 +34,9 @@ void golden_run(char *fin, char *fout) {
       n_evnt = (int)chain.GetEntries();
       num_of_events = 0;
       total_q = 0.0;
+#pragma omp parallel for
       for (int current_event = 0; current_event < n_evnt; current_event++) {
+        loadbar(current_event + 1, n_evnt);
         chain.GetEntry(current_event);
         electron_cuts = true;
         // electron cuts
