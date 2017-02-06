@@ -6,14 +6,13 @@ endif
 ROOTLIBS	= $(shell root-config --libs)
 CXX = g++
 CXXFLAGS =      -O2 -fPIC -w -g $(FOPENMP) $(shell root-config --cflags)
-TARGET = Skim
+TARGET =	    golden_run
 SRCDIR   = ../src
 OBJDIR   = ../obj
 LIBDIR   = ../sobj
 BINDIR   = ../bin
 
 SRC = $(wildcard $(SRCDIR)/*.cpp)
-#MAINS = $(wildcard ./*.cpp)
 MAINS = ./main.cpp
 
 OBJECTS  = $(SRC:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)

@@ -13,7 +13,8 @@ LIBDIR   = ../sobj
 BINDIR   = ../bin
 
 SRC = $(wildcard $(SRCDIR)/*.cpp)
-MAINS = $(wildcard ./*.cpp)
+#MAINS = $(wildcard ./*.cpp)
+MAINS = ./main.cpp
 
 OBJECTS  = $(SRC:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 MAIN = $(MAINS:./%.cpp=$(OBJDIR)/%.o)
@@ -21,7 +22,7 @@ LIBOUT =	$(LIBDIR)/lib.so
 
 .PHONY: all clean
 
-all:	clean $(BINDIR)/$(TARGET)
+all:	$(BINDIR)/$(TARGET)
 
 $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
 		$(CXX) $(CXXFLAGS) -c $< -o $@
