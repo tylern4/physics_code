@@ -94,3 +94,5 @@ current/src/fit_functions.hpp
 current/bin/golden_run
 
 *.ipynb
+
+*.dblite

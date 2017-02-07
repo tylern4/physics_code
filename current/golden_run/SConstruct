@@ -1,0 +1,16 @@
+#!python
+import glob, os
+
+target = 'golden_run'
+
+env = Environment()
+env.Append(CXXFLAGS = ['-g','-O3','-march=native', '-fPIC', '-w'])
+env.ParseConfig('root-config --cflags')
+env.ParseConfig('root-config --libs')
+src = glob.glob('../src/*.cpp')
+tar_dir = '../bin/'
+sources = [ 'main.cpp']
+sources.append(src)
+target = tar_dir + target
+exe = env.Program(target=target, source=sources)
+Default(exe)

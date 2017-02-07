@@ -5,7 +5,7 @@ endif
 
 ROOTLIBS	= $(shell root-config --libs)
 CXX = g++
-CXXFLAGS =      -O2 -fPIC -w -g $(FOPENMP) $(shell root-config --cflags)
+CXXFLAGS = -O3 -march=native -fPIC -w -g $(FOPENMP) $(shell root-config --cflags)
 TARGET =	    e1d
 SRCDIR   = ../src
 OBJDIR   = ../obj
