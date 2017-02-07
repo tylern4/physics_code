@@ -53,11 +53,13 @@ void golden_run(char *fin, char *fout) {
           e_mu_prime_3.SetXYZ(p[0] * cx[0], p[0] * cy[0], p[0] * cz[0]);
           e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
           curr_q = q_l;
-          if (curr_q > 0.0 && curr_q > prev_q) {
-            delta_q = curr_q - prev_q;
-            total_q += delta_q;
+          if (curr_q > 0.0) {
+            if (curr_q > prev_q) {
+              delta_q = curr_q - prev_q;
+              total_q += delta_q;
+            }
+            prev_q = curr_q;
           }
-          prev_q = curr_q;
           for (int part_num = 1; part_num < gpart; part_num++) {
             if (id[part_num] == PIP) {
               pi_3vec.SetXYZ(p[part_num] * cx[part_num],
