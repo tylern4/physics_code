@@ -3,12 +3,12 @@
 /*	University Of South Carolina*/
 /************************************************************************/
 
-#ifndef DATAHANDELER_H_GUARD
-#define DATAHANDELER_H_GUARD
+#ifndef GOLDEN_RUN_H
+#define GOLDEN_RUN_H
 #include "main.h"
-// Mashing together W vs Q2 and Delta T cuts into one file
-// Saving the old files in a new folder to refer back to.
-//
+
+// Finds the files with golden runs
+
 void golden_run(char *fin, char *fout) {
   ifstream input(fin);
   ofstream golden_run(fout);
@@ -17,8 +17,8 @@ void golden_run(char *fin, char *fout) {
   int n_evnt, num_of_events = 0;
   double total_q = 0.0, curr_q = 0.0, prev_q = 0.0, delta_q = 0.0;
   bool electron_cuts;
-  TVector3 e_mu_prime_3;
-  TLorentzVector e_mu_prime;
+  TVector3 e_mu_prime_3, pi_3vec;
+  TLorentzVector e_mu_prime, pi_4vec;
   TLorentzVector e_mu(0.0, 0.0, sqrt(Square(E1D_E0) - Square(MASS_E)), E1D_E0);
   TLorentzVector ZERO(0.0, 0.0, 0.0, 0.0);
   int line_num = 0;
@@ -59,7 +59,13 @@ void golden_run(char *fin, char *fout) {
           }
           prev_q = curr_q;
           for (int part_num = 1; part_num < gpart; part_num++) {
-            if (e_mu_prime != ZERO)
+            if (id[part_num] == PIP) {
+              pi_3vec.SetXYZ(p[part_num] * cx[part_num],
+                             p[part_num] * cy[part_num],
+                             p[part_num] * cz[part_num]);
+              pi_4vec.SetVectM(pi_3vec, MASS_PIP);
+            }
+            if (e_mu_prime != ZERO && pi_4vec != ZERO)
               num_of_events++;
           }
         }
