@@ -5,7 +5,7 @@
 
 #ifndef PHYSICS_H_GUARD
 #define PHYSICS_H_GUARD
-#include "constants.h"
+#include "constants.hpp"
 #include <TLorentzVector.h>
 #include "TROOT.h"
 

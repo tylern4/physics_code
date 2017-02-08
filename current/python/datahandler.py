@@ -18,11 +18,14 @@ else:
 import glob
 import pandas as pd
 
-from ROOT import gSystem
+#from ROOT import gSystem
 # load library with MyClass dictionary
-gSystem.Load('H10_C')
+# gSystem.Load('H10_C')
 # get MyClass from ROOT
-from ROOT import H10
+#from ROOT import H10
+import cppyy
+cppyy.load_reflection_info("H10.so")
+
 from ROOT import std
 import array
 
@@ -51,7 +54,7 @@ class datahandeler(object):
         _W_Q2 = pd.DataFrame()
         chain = ROOT.TChain('h10')
         chain.UseCache(100, 1024)
-        h10 = H10()
+        h10 = cppyy.gbl.H10()
         for _f in files:
             chain.Add(_f)
         h10.loop(chain)
