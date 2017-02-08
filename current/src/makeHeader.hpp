@@ -2,12 +2,20 @@
 /*  Created by Nick Tyler*/
 /*	University Of South Carolina*/
 /************************************************************************/
+#include <iostream>
+#include <fstream>
+#include <string>
 
-#ifndef CLASSES_H
-#define CLASSES_H
-#include "makeHeader.hpp"
-#include "cuts.hpp"
-#include "delta_t.hpp"
-#include "missing_mass.hpp"
-#include "histogram.hpp"
+#ifndef MAKE_HEADER_H
+#define MAKE_HEADER_H
+
+class Header {
+private:
+  std::ofstream header_file;
+
+public:
+  Header(std::string file_name);
+  ~Header();
+};
+
 #endif

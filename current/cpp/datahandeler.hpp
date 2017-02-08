@@ -11,7 +11,7 @@
 //
 void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
   TFile *RootOutputFile;
-
+  Header *test_header = new Header("../src/test_header.hpp");
   // My Classes
   Histogram *hists = new Histogram();
   // From missing_mass.hpp :: missing_mass_calc()
@@ -252,7 +252,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
   TDirectory *Fid_cuts = RootOutputFile->mkdir("Fid_cuts");
   Fid_cuts->cd();
   hists->Fid_Write();
-
+  delete test_header;
   delete hists;
   RootOutputFile->Write();
   RootOutputFile->Close();
