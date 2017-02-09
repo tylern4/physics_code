@@ -11,15 +11,6 @@
 //
 void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
   TFile *RootOutputFile;
-
-  Header *test_header = new Header("../src/test_header.hpp");
-  test_header->Set_RetrunType("void");
-  test_header->Set_FuncName("Test_func");
-  test_header->Set_FuncInputs("double test, int cool");
-  test_header->Set_Function("test * cool");
-  test_header->AddComment("Testing a comment");
-  test_header->WriteFunction();
-
   // My Classes
   Histogram *hists = new Histogram();
   // From missing_mass.hpp :: missing_mass_calc()
@@ -260,7 +251,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
   TDirectory *Fid_cuts = RootOutputFile->mkdir("Fid_cuts");
   Fid_cuts->cd();
   hists->Fid_Write();
-  delete test_header;
+
   delete hists;
   RootOutputFile->Write();
   RootOutputFile->Close();

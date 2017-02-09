@@ -4,10 +4,14 @@
 #ifndef HEADER_H
 #define HEADER_H
 
+double gaussian_Test(double x) {
+		static const float inv_sqrt_2pi = 0.3989422804014327;
+	a = 30.000000;
+	m = 20.000000;
+	s = 10.000000;
+	double p = (x - m) / s;
 
-void Test_func(double test, int cool) {
-	// Testing a comment
-	return test * cool;
+	return inv_sqrt_2pi / s * a * std::exp(-0.5f * p * p);
 }
 
 #endif

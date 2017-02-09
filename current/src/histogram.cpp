@@ -3,11 +3,8 @@
 /*	University Of South Carolina*/
 /************************************************************************/
 #include "histogram.hpp"
-#include "cuts.hpp"
-#include <fstream>
-#include "TDirectory.h"
 
-using namespace std;
+// using namespace std;
 
 Histogram::Histogram() {
   makeHists_delta_t();
@@ -293,11 +290,13 @@ void Histogram::Fill_deltat_positron_PID(double momentum, double delta_t) {
 }
 
 void Histogram::delta_t_slice_fit() {
-  ofstream fit_functions;
-  fit_functions.open("../src/fit_functions.hpp");
-  fit_functions << "//Auto Generated fit code from e1d" << endl;
-  fit_functions << "#ifndef FIT_FUNCTIONS_H\n#define "
-                   "FIT_FUNCTIONS_H\n\n" << endl;
+  Header *fit_functions = new Header("../src/fit_functions.hpp");
+  // std::ofstream fit_functions;
+  // fit_functions.open("../src/fit_functions.hpp");
+  // fit_functions << "//Auto Generated fit code from e1d" << std::endl;
+  // fit_functions << "#ifndef FIT_FUNCTIONS_H\n#define "
+  //"FIT_FUNCTIONS_H\n\n" << std::endl;
+
   TF1 *peak = new TF1("peak", "gaus", -1.5, 1.5);
   //[0]*exp(-[1]*x) +
   char *func = "[0]*exp(-[1]*x) + [2]*x + [3]";
@@ -338,10 +337,19 @@ void Histogram::delta_t_slice_fit() {
   Proton_Pos_fit->Draw("Same");
   Proton_Neg_fit->Draw("Same");
 
-  fit_functions << "double Proton_Pos_fit(double x){\n\treturn "
-                << Proton_Pos_fit->GetExpFormula("P") << ";\n}" << endl;
-  fit_functions << "double Proton_Neg_fit(double x){\n\treturn "
-                << Proton_Neg_fit->GetExpFormula("P") << ";\n}" << endl;
+  fit_functions->NewFunction();
+  fit_functions->Set_RetrunType("double");
+  fit_functions->Set_FuncName("Proton_Pos_fit");
+  fit_functions->Set_FuncInputs("double x");
+  fit_functions->Set_Function(Proton_Pos_fit->GetExpFormula("P"));
+  fit_functions->WriteFunction();
+
+  fit_functions->NewFunction();
+  fit_functions->Set_RetrunType("double");
+  fit_functions->Set_FuncName("Proton_Neg_fit");
+  fit_functions->Set_FuncInputs("double x");
+  fit_functions->Set_Function(Proton_Neg_fit->GetExpFormula("P"));
+  fit_functions->WriteFunction();
 
   delta_t_mass_PIP->FitSlicesY(peak, 0, -1, 10, "QRG5");
   TH1D *delta_t_mass_PIP_0 = (TH1D *)gDirectory->Get("delta_t_mass_PIP_0");
@@ -380,11 +388,21 @@ void Histogram::delta_t_slice_fit() {
   Pip_Pos_fit->Draw("Same");
   Pip_Neg_fit->Draw("Same");
 
-  fit_functions << "double Pip_Pos_fit(double x){\n\treturn "
-                << Pip_Pos_fit->GetExpFormula("P") << ";\n}" << endl;
-  fit_functions << "double Pip_Neg_fit(double x){\n\treturn "
-                << Pip_Neg_fit->GetExpFormula("P") << ";\n}" << endl;
-  fit_functions << "#endif\n" << endl;
+  fit_functions->NewFunction();
+  fit_functions->Set_RetrunType("double");
+  fit_functions->Set_FuncName("Pip_Pos_fit");
+  fit_functions->Set_FuncInputs("double x");
+  fit_functions->Set_Function(Pip_Pos_fit->GetExpFormula("P"));
+  fit_functions->WriteFunction();
+
+  fit_functions->NewFunction();
+  fit_functions->Set_RetrunType("double");
+  fit_functions->Set_FuncName("Pip_Pos_fit");
+  fit_functions->Set_FuncInputs("double x");
+  fit_functions->Set_Function(Pip_Pos_fit->GetExpFormula("P"));
+  fit_functions->WriteFunction();
+
+  delete fit_functions;
 }
 
 void Histogram::delta_t_Write() {
@@ -443,7 +461,7 @@ void Histogram::delta_t_slices_Write() {
         delta_t_cut[j][num_points].FitGaus(delta_t_hist[j][jj], fit_dt_min,
                                            fit_dt_max);
         // cout << j << ',' << jj << ',' << delta_t_cut[j][num_points].mean <<
-        // ',' << delta_t_cut[j][num_points].sigma << endl;
+        // ',' << delta_t_cut[j][num_points].sigma << std::endl;
       }
 
       delta_t_hist[j][jj]->SetYTitle("#Deltat");

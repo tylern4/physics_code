@@ -12,12 +12,21 @@ Header::Header(std::string file_name) {
   header_file << "// Made from makeHeader.cpp\n\n";
   header_file << "#ifndef " << name_name << "_H\n";
   header_file << "#define " << name_name << "_H\n";
-  header_file << "\n\n";
+  header_file << "\n";
 }
 
 Header::~Header() {
-  header_file << "\n\n#endif\n" << std::endl;
+  header_file << "#endif\n" << std::endl;
   header_file.close();
+}
+
+void Header::NewFunction() {
+  r_type = "";
+  f_name = "";
+  f_input = "";
+  func = "";
+  a_text = "";
+  c_text = "";
 }
 
 void Header::Set_RetrunType(std::string RetrunType) { r_type = RetrunType; }
@@ -26,26 +35,58 @@ void Header::Set_FuncName(std::string FuncName) { f_name = FuncName; }
 
 void Header::Set_FuncInputs(std::string FuncInputs) { f_input = FuncInputs; }
 
-void Header::Set_Function(std::string Function) { func = Function; }
+void Header::Set_Function(TString Function) {
+  func = std::string(Function.Data());
+}
 
 void Header::AddText(std::string TextAdd) { a_text = TextAdd; }
 
 void Header::AddComment(std::string CommAdd) { c_text = CommAdd; }
 
 void Header::WriteFunction() {
-  std::cout << "header_file" << std::endl;
-  header_file << r_type << " " << f_name << "(";
-  header_file << f_input << ") {\n";
-  if (c_text.length() > 0)
-    header_file << "\t// " << c_text << "\n";
-  if (a_text.length() > 0)
-    header_file << "\t" << a_text << "\n";
-  header_file << "\treturn " << func;
-  header_file << ";\n}";
+  if (!r_type.empty() && !f_name.empty() && !f_input.empty() && !func.empty()) {
+    header_file << r_type << " " << f_name << "(";
+    header_file << f_input << ") {\n";
+    if (c_text.length() > 0)
+      header_file << "\t// " << c_text << "\n";
+    if (a_text.length() > 0)
+      header_file << "\t" << a_text << "\n";
+    header_file << "\treturn " << func;
+    header_file << ";\n}\n\n";
+    Header::NewFunction();
+  } else {
+    std::cerr << "Cannot Write to header:" << std::endl;
+  }
+}
+
+void Header::WriteGaussian(std::string name, double a, double m, double s) {
+  /*
+  double normal_pdf(double x, double m, double s){
+    static const float inv_sqrt_2pi = 0.3989422804014327;
+    float a = (x - m) / s;
+
+    return inv_sqrt_2pi / s * std::exp(-0.5f * a * a);
+  }
+  */
+  Header::NewFunction();
+  Header::Set_RetrunType("double");
+  Header::Set_FuncName("gaussian_" + name);
+  Header::Set_FuncInputs("double x");
+  std::string gauss;
+  gauss += "\tstatic const float inv_sqrt_2pi = 0.3989422804014327;\n";
+  gauss += "\ta = " + std::to_string(a) + ";\n";
+  gauss += "\tm = " + std::to_string(m) + ";\n";
+  gauss += "\ts = " + std::to_string(s) + ";\n";
+  gauss += "\tdouble p = (x - m) / s;\n";
+
+  Header::AddText(gauss);
+  Header::Set_Function("inv_sqrt_2pi / s * a * std::exp(-0.5f * p * p)");
+  Header::WriteFunction();
 }
 
 void Header::MakeFunction(std::string RetrunType, std::string FuncName,
                           std::string FuncInputs, std::string Function) {
+  Header::NewFunction();
   Header::Set_RetrunType(RetrunType);
   Header::Set_FuncName(FuncName);
   Header::Set_FuncInputs(FuncInputs);

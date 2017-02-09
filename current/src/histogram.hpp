@@ -10,9 +10,14 @@
 #include "THnSparse.h"
 #include "TGraph.h"
 #include "TF1.h"
+#include "cuts.hpp"
+#include "makeHeader.hpp"
+#include <fstream>
+#include "TDirectory.h"
 
 class Histogram {
 private:
+  Header *fit_functions;
   void makeHists_fid();
   void makeHists_delta_t();
   void makeHists_CC();
