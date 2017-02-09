@@ -24,3 +24,4 @@ current/bin/golden_run
 *.dblite
 *.so.dSYM
 *_rflx.cpp
+test_header.hpp
