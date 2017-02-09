@@ -19,6 +19,7 @@ private:
   std::string func;
   std::string a_text;
   std::string c_text;
+  std::vector<std::string> lines;
 
 public:
   Header(std::string file_name);
@@ -29,6 +30,7 @@ public:
   void Set_FuncInputs(std::string FuncInputs);
   void Set_Function(TString Function);
   void AddText(std::string TextAdd);
+  void AddLine(std::string LineAdd);
   void AddComment(std::string CommAdd);
   void MakeFunction(std::string RetrunType, std::string FuncName,
                     std::string FuncInputs, std::string Function);

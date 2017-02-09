@@ -9,7 +9,7 @@
 
 #ifndef SKIM_H_GUARD
 #define SKIM_H_GUARD
-//#include "main.h"
+#include "main.h"
 
 void skim(char *fin, char *RootFile_output, double mean, double sigma) {
 

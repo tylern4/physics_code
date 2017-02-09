@@ -397,9 +397,9 @@ void Histogram::delta_t_slice_fit() {
 
   fit_functions->NewFunction();
   fit_functions->Set_RetrunType("double");
-  fit_functions->Set_FuncName("Pip_Pos_fit");
+  fit_functions->Set_FuncName("Pip_Neg_fit");
   fit_functions->Set_FuncInputs("double x");
-  fit_functions->Set_Function(Pip_Pos_fit->GetExpFormula("P"));
+  fit_functions->Set_Function(Pip_Neg_fit->GetExpFormula("P"));
   fit_functions->WriteFunction();
 
   delete fit_functions;

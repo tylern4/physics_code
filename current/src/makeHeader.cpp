@@ -6,7 +6,7 @@
 
 Header::Header(std::string file_name) {
   header_file.open(file_name);
-  std::string name_name = "HEADER";
+  std::string name_name = "AUTO_GEN_HEADER";
 
   header_file << "// Auto Generated header file\n";
   header_file << "// Made from makeHeader.cpp\n\n";
@@ -27,6 +27,9 @@ void Header::NewFunction() {
   func = "";
   a_text = "";
   c_text = "";
+  // for each l in lines:
+  for (auto &l : lines)
+    l = "";
 }
 
 void Header::Set_RetrunType(std::string RetrunType) { r_type = RetrunType; }
@@ -41,16 +44,23 @@ void Header::Set_Function(TString Function) {
 
 void Header::AddText(std::string TextAdd) { a_text = TextAdd; }
 
+void Header::AddLine(std::string LineAdd) { lines.push_back(LineAdd); }
+
 void Header::AddComment(std::string CommAdd) { c_text = CommAdd; }
 
 void Header::WriteFunction() {
   if (!r_type.empty() && !f_name.empty() && !f_input.empty() && !func.empty()) {
     header_file << r_type << " " << f_name << "(";
     header_file << f_input << ") {\n";
+
     if (c_text.length() > 0)
       header_file << "\t// " << c_text << "\n";
     if (a_text.length() > 0)
       header_file << "\t" << a_text << "\n";
+    if (lines.size() > 0)
+      for (auto &l : lines)
+        header_file << "\t" << l << ";\n";
+
     header_file << "\treturn " << func;
     header_file << ";\n}\n\n";
     Header::NewFunction();
@@ -72,14 +82,13 @@ void Header::WriteGaussian(std::string name, double a, double m, double s) {
   Header::Set_RetrunType("double");
   Header::Set_FuncName("gaussian_" + name);
   Header::Set_FuncInputs("double x");
-  std::string gauss;
-  gauss += "\tstatic const float inv_sqrt_2pi = 0.3989422804014327;\n";
-  gauss += "\ta = " + std::to_string(a) + ";\n";
-  gauss += "\tm = " + std::to_string(m) + ";\n";
-  gauss += "\ts = " + std::to_string(s) + ";\n";
-  gauss += "\tdouble p = (x - m) / s;\n";
 
-  Header::AddText(gauss);
+  Header::AddLine("static const float inv_sqrt_2pi = 0.3989422804014327");
+  Header::AddLine("a = " + std::to_string(a));
+  Header::AddLine("m = " + std::to_string(m));
+  Header::AddLine("s = " + std::to_string(s));
+  Header::AddLine("double p = (x - m) / s");
+
   Header::Set_Function("inv_sqrt_2pi / s * a * std::exp(-0.5f * p * p)");
   Header::WriteFunction();
 }
