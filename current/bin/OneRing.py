@@ -42,7 +42,7 @@ def skim(lines):
         infile = [line]
         outfile = line.replace('.root', '_skim.root').replace('/root', '/skim')
         command = "./Skim " + infile[0] + " " + outfile
-        # print_yellow(command)
+        print_yellow(command)
         os.system(command)
 
 
@@ -66,7 +66,7 @@ def main():
         parser.print_help()
         parser.exit()
 
-    os.system("cd ../cpp && make && cd ../bin")
+    os.system("cd ../cpp && make clean && make -j4 && cd ../bin")
     input_file = str(sys.argv[1])
     outfile_file = input_file[:-4]
     e1d_command = "./e1d " + input_file + " " + \
@@ -75,7 +75,7 @@ def main():
     os.system(e1d_command)
 
     print_red("e1d done")
-    os.system("cd ../skim && make && cd ../bin")
+    os.system("cd ../skim && make clean && make -j4 && cd ../bin")
     num_cores = (cpu_count(), args.ncore)[args.ncore > 0]
     pool = Pool(processes=num_cores)
     lines = [line.rstrip('\n') for line in open(input_file)]
