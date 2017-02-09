@@ -25,3 +25,5 @@ current/bin/golden_run
 *.so.dSYM
 *_rflx.cpp
 test_header.hpp
+
+current/src/missing_mass_gaussians.hpp

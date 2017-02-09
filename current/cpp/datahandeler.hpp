@@ -32,8 +32,8 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
 
   // in main.h now
   // ofstream cut_outputs;
-  cut_outputs.open("outputFiles/cut_outputs.csv");
-  cut_outputs << "Cut,Mean,Sigma" << endl;
+  // cut_outputs.open("outputFiles/cut_outputs.csv");
+  // cut_outputs << "Cut,Mean,Sigma" << endl;
 
   int num_of_pis, num_of_proton;
 
@@ -189,19 +189,23 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
   double fit_range_max = 1.0;
   MM_neutron_cut.FitGaus(hists->Missing_Mass, fit_range_min, fit_range_max);
 
-  cut_outputs << "MM_N";
-  cut_outputs << "," << MM_neutron_cut.mean;
-  cut_outputs << "," << MM_neutron_cut.sigma << endl;
+  Header *MM_header = new Header("../src/missing_mass_gaussians.hpp", "MM");
+  MM_header->WriteGaussian("mm", 1, MM_neutron_cut.mean, MM_neutron_cut.sigma);
+  // cut_outputs << "MM_N";
+  // cut_outputs << "," << MM_neutron_cut.mean;
+  // cut_outputs << "," << MM_neutron_cut.sigma << endl;
 
   Cuts MissingMassSquare_cut;
   fit_range_min = 0.5;
   fit_range_max = 1.1;
   MissingMassSquare_cut.FitGaus(hists->Missing_Mass_square, fit_range_min,
                                 fit_range_max);
-
-  cut_outputs << "MM_N_2";
-  cut_outputs << "," << MissingMassSquare_cut.mean;
-  cut_outputs << "," << MissingMassSquare_cut.sigma << endl;
+  MM_header->WriteGaussian("mm_square", 1, MissingMassSquare_cut.mean,
+                           MissingMassSquare_cut.sigma);
+  delete MM_header;
+  // cut_outputs << "MM_N_2";
+  // cut_outputs << "," << MissingMassSquare_cut.mean;
+  // cut_outputs << "," << MissingMassSquare_cut.sigma << endl;
 
   //
   // end stuff

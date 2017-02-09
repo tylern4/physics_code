@@ -6,6 +6,7 @@
 #include <fstream>
 #include <string>
 #include "TString.h"
+#include "constants.h"
 
 #ifndef MAKE_HEADER_H
 #define MAKE_HEADER_H
@@ -22,7 +23,7 @@ private:
   std::vector<std::string> lines;
 
 public:
-  Header(std::string file_name);
+  Header(std::string file_name, std::string H_gaurd);
   ~Header();
   void NewFunction();
   void Set_RetrunType(std::string RetrunType);

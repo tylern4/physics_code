@@ -290,7 +290,7 @@ void Histogram::Fill_deltat_positron_PID(double momentum, double delta_t) {
 }
 
 void Histogram::delta_t_slice_fit() {
-  Header *fit_functions = new Header("../src/fit_functions.hpp");
+  Header *fit_functions = new Header("../src/fit_functions.hpp", "FF");
   // std::ofstream fit_functions;
   // fit_functions.open("../src/fit_functions.hpp");
   // fit_functions << "//Auto Generated fit code from e1d" << std::endl;

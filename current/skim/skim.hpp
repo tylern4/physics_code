@@ -11,7 +11,7 @@
 #define SKIM_H_GUARD
 #include "main.h"
 
-void skim(char *fin, char *RootFile_output, double mean, double sigma) {
+void skim(char *fin, char *RootFile_output) {
 
   TFile *RootOutputFile;
   int number_cols = 0;
@@ -88,9 +88,8 @@ void skim(char *fin, char *RootFile_output, double mean, double sigma) {
 
     for (int part_num = 1; part_num < gpart; part_num++) {
       num_of_pis = 0;
-      if (dt_pip.at(part_num) >= -2   // Pip_Neg_fit(p[part_num])
-          && dt_pip.at(part_num) <= 2 // Pip_Pos_fit(p[part_num])
-          && q[part_num] == 1) {
+      if (dt_pip.at(part_num) >= Pip_Neg_fit(p[part_num]) &&
+          dt_pip.at(part_num) <= Pip_Pos_fit(p[part_num]) && q[part_num] == 1) {
         is_pip.at(part_num) = true;
         num_of_pis++;
         TLorentzVector gamma_mu = (e_mu - e_mu_prime);
@@ -99,9 +98,9 @@ void skim(char *fin, char *RootFile_output, double mean, double sigma) {
                                p[part_num] * cz[part_num]);
         MM = MM_neutron->missing_mass(gamma_mu);
       }
-      if (dt_proton.at(part_num) >= -2   // Proton_Neg_fit(p[part_num])
-          && dt_proton.at(part_num) <= 2 // Proton_Pos_fit(p[part_num])
-          && q[part_num] == 1) {
+      if (dt_proton.at(part_num) >= Proton_Neg_fit(p[part_num]) &&
+          dt_proton.at(part_num) <= Proton_Pos_fit(p[part_num]) &&
+          q[part_num] == 1) {
 
         is_proton.at(part_num) = true;
       }
@@ -111,14 +110,7 @@ void skim(char *fin, char *RootFile_output, double mean, double sigma) {
       }
     }
 
-    // MM = (MM >= 0 ) ? MM : NaN;
-    // MM = (num_of_pis == 1) ? MM : NaN;
-
-    MM_cut = true;
-    MM_cut &= (MM == MM); // removes NaN
-    MM_cut &= (MM <= mean + 10 * sigma);
-    MM_cut &= (MM >= mean - 10 * sigma);
-    has_neutron = MM_cut;
+    has_neutron = between_mm(MM);
 
     if (electron_cuts && has_neutron) {
       W = W_calc(e_mu, e_mu_prime);

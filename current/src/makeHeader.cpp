@@ -4,15 +4,15 @@
 /************************************************************************/
 #include "makeHeader.hpp"
 
-Header::Header(std::string file_name) {
+Header::Header(std::string file_name, std::string H_gaurd) {
   header_file.open(file_name);
-  std::string name_name = "AUTO_GEN_HEADER";
+  H_gaurd = "AUTO_GEN_HEADER_" + H_gaurd;
 
   header_file << "// Auto Generated header file\n";
   header_file << "// Made from makeHeader.cpp\n\n";
-  header_file << "#ifndef " << name_name << "_H\n";
-  header_file << "#define " << name_name << "_H\n";
-  header_file << "\n";
+  header_file << "#ifndef " << H_gaurd << "_H\n";
+  header_file << "#define " << H_gaurd << "_H\n";
+  header_file << "\n#include \"constants.h\"\n\n";
 }
 
 Header::~Header() {
@@ -59,7 +59,8 @@ void Header::WriteFunction() {
       header_file << "\t" << a_text << "\n";
     if (lines.size() > 0)
       for (auto &l : lines)
-        header_file << "\t" << l << ";\n";
+        if (!l.empty())
+          header_file << "\t" << l << ";\n";
 
     header_file << "\treturn " << func;
     header_file << ";\n}\n\n";
@@ -83,13 +84,24 @@ void Header::WriteGaussian(std::string name, double a, double m, double s) {
   Header::Set_FuncName("gaussian_" + name);
   Header::Set_FuncInputs("double x");
 
-  Header::AddLine("static const float inv_sqrt_2pi = 0.3989422804014327");
-  Header::AddLine("a = " + std::to_string(a));
-  Header::AddLine("m = " + std::to_string(m));
-  Header::AddLine("s = " + std::to_string(s));
-  Header::AddLine("double p = (x - m) / s");
+  Header::AddLine("double a = " + std::to_string(a));
+  Header::AddLine("double m = " + std::to_string(m));
+  Header::AddLine("double s = " + std::to_string(s));
+  Header::AddLine("double p = ((x - m) / s)");
 
-  Header::Set_Function("inv_sqrt_2pi / s * a * std::exp(-0.5f * p * p)");
+  Header::Set_Function("(INV_SQRT_2PI / s * a * std::exp(-0.5f * p * p))");
+  Header::WriteFunction();
+  //////
+
+  Header::NewFunction();
+  Header::Set_RetrunType("bool");
+  Header::Set_FuncName("between_" + name);
+  Header::Set_FuncInputs("double x");
+  Header::AddLine("double m = " + std::to_string(m));
+  Header::AddLine("double s = " + std::to_string(s));
+  Header::AddLine("bool above = (x <= m+s*N_SIGMA)");
+  Header::AddLine("bool below = (x >= m-s*N_SIGMA)");
+  Header::Set_Function("(above && below)");
   Header::WriteFunction();
 }
 

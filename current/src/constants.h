@@ -8,8 +8,9 @@
 #include "TMath.h"
 
 static const int MAX_PARTS = 100;
-
+static const int N_SIGMA = 3;
 static const double PI = TMath::Pi();
+static const float INV_SQRT_2PI = TMath::Sqrt(2 * TMath::Pi());
 static const double D2R = PI / 180.0;
 static const double E1D_E0 = 4.802; // GeV
 // static const double E1D_E0 = 2.03939; //GeV ///This is for Ye's data.

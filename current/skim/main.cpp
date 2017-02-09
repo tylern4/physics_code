@@ -7,13 +7,13 @@
  */
 /************************************************************************/
 
-//#define PI 3.14159265;
 // Only My Includes. All others in main.h
 //#include "main.h"
 #include "../src/classes.hpp"
 #include "TStopwatch.h"
 #include "../src/physics.hpp"
 #include "../src/fit_functions.hpp"
+#include "../src/missing_mass_gaussians.hpp"
 #include "skim.hpp"
 
 using namespace std;
@@ -26,9 +26,7 @@ int main(int argc, char **argv) {
   if (argc == 3) {
     char *infilename = argv[1];
     char *outfilename = argv[2];
-    double mean = 0.947655;
-    double sigma = 0.00983651;
-    skim(infilename, outfilename, mean, sigma);
+    skim(infilename, outfilename);
   }
 
   Watch->Stop();
