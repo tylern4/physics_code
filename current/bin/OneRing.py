@@ -42,7 +42,7 @@ def skim(lines):
         infile = [line]
         outfile = line.replace('.root', '_skim.root').replace('/root', '/skim')
         command = "./Skim " + infile[0] + " " + outfile
-        print_yellow(command)
+        # print_yellow(command)
         os.system(command)
 
 
