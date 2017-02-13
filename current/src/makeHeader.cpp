@@ -91,7 +91,6 @@ void Header::WriteGaussian(std::string name, double a, double m, double s) {
 
   Header::Set_Function("(INV_SQRT_2PI / s * a * std::exp(-0.5f * p * p))");
   Header::WriteFunction();
-  //////
 
   Header::NewFunction();
   Header::Set_RetrunType("bool");

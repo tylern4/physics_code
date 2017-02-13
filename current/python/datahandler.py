@@ -10,10 +10,9 @@ from pathos.multiprocessing import Pool, cpu_count, ProcessingPool
 import multiprocessing as mp
 try:
     import dill as pl
-except:
-    import cPickle as pl
 else:
-    import pickle as pl
+    import sys
+    sys.exit()
 
 import glob
 import pandas as pd

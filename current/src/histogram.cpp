@@ -291,15 +291,10 @@ void Histogram::Fill_deltat_positron_PID(double momentum, double delta_t) {
 
 void Histogram::delta_t_slice_fit() {
   Header *fit_functions = new Header("../src/fit_functions.hpp", "FF");
-  // std::ofstream fit_functions;
-  // fit_functions.open("../src/fit_functions.hpp");
-  // fit_functions << "//Auto Generated fit code from e1d" << std::endl;
-  // fit_functions << "#ifndef FIT_FUNCTIONS_H\n#define "
-  //"FIT_FUNCTIONS_H\n\n" << std::endl;
 
-  TF1 *peak = new TF1("peak", "gaus", -1.5, 1.5);
+  TF1 *peak = new TF1("peak", "gaus", -1, 1);
   //[0]*exp(-[1]*x) +
-  char *func = "[0]*exp(-[1]*x) + [2]*x + [3]";
+  char *func = "[0]*exp(-[1]*x) + [2]*x*x + [3]*x + [4]";
   delta_t_mass_P->FitSlicesY(peak, 0, -1, 10, "QRG5");
   TH1D *delta_t_mass_P_0 = (TH1D *)gDirectory->Get("delta_t_mass_P_0");
   TH1D *delta_t_mass_P_1 = (TH1D *)gDirectory->Get("delta_t_mass_P_1");
@@ -326,9 +321,9 @@ void Histogram::delta_t_slice_fit() {
   TGraph *M = new TGraph(num, x, y_minus);
   TF1 *Proton_Pos_fit = new TF1("Proton_Pos_fit", func);
   TF1 *Proton_Neg_fit = new TF1("Proton_Neg_fit", func);
-  P->Fit(Proton_Pos_fit, "Q", "", 0.2, 2);
+  P->Fit(Proton_Pos_fit, "QRG5", "", 0.2, 2);
   P->Write();
-  M->Fit(Proton_Neg_fit, "Q", "", 0.2, 2);
+  M->Fit(Proton_Neg_fit, "QRG5", "", 0.2, 2);
   M->Write();
   Proton_Pos_fit->Write();
   Proton_Neg_fit->Write();
@@ -377,9 +372,9 @@ void Histogram::delta_t_slice_fit() {
   TGraph *M_pip = new TGraph(num, x_pip, y_minus_pip);
   TF1 *Pip_Pos_fit = new TF1("Pip_Pos_fit", func);
   TF1 *Pip_Neg_fit = new TF1("Pip_Neg_fit", func);
-  P_pip->Fit(Pip_Pos_fit, "Q", "", 0.1, 1.75);
+  P_pip->Fit(Pip_Pos_fit, "QRG5", "", 0.1, 1.75);
   P_pip->Write();
-  M_pip->Fit(Pip_Neg_fit, "Q", "", 0.1, 1.75);
+  M_pip->Fit(Pip_Neg_fit, "QRG5", "", 0.1, 1.75);
   M_pip->Write();
   Pip_Pos_fit->Write();
   Pip_Neg_fit->Write();
@@ -400,6 +395,26 @@ void Histogram::delta_t_slice_fit() {
   fit_functions->Set_FuncName("Pip_Neg_fit");
   fit_functions->Set_FuncInputs("double x");
   fit_functions->Set_Function(Pip_Neg_fit->GetExpFormula("P"));
+  fit_functions->WriteFunction();
+
+  fit_functions->NewFunction();
+  fit_functions->Set_RetrunType("bool");
+  fit_functions->Set_FuncName("Between_Pip_fit");
+  fit_functions->Set_FuncInputs("double dt, double p");
+  fit_functions->AddLine("bool between = true");
+  fit_functions->AddLine("between &= (dt >= Pip_Neg_fit(p))");
+  fit_functions->AddLine("between &= (dt <= Pip_Pos_fit(p))");
+  fit_functions->Set_Function("between");
+  fit_functions->WriteFunction();
+
+  fit_functions->NewFunction();
+  fit_functions->Set_RetrunType("bool");
+  fit_functions->Set_FuncName("Between_Proton_fit");
+  fit_functions->Set_FuncInputs("double dt, double p");
+  fit_functions->AddLine("bool between = true");
+  fit_functions->AddLine("between &= (dt >= Proton_Neg_fit(p))");
+  fit_functions->AddLine("between &= (dt <= Proton_Pos_fit(p))");
+  fit_functions->Set_Function("between");
   fit_functions->WriteFunction();
 
   delete fit_functions;

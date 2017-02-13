@@ -18,7 +18,7 @@ void skim(char *fin, char *RootFile_output) {
   char rootFile[500];
   int num_of_events, total_events, num_of_pis;
   bool electron_cuts, MM_cut, has_neutron;
-  // From missing_mass.hpp :: missing_mass_calc()
+
   MissingMass *MM_neutron = new MissingMass();
   MM_neutron->Set_target_mass(MASS_P);
   MM_neutron->Set_target_PxPyPz(0);
@@ -89,7 +89,7 @@ void skim(char *fin, char *RootFile_output) {
     for (int part_num = 1; part_num < gpart; part_num++) {
       num_of_pis = 0;
       if (dt_pip.at(part_num) >= Pip_Neg_fit(p[part_num]) &&
-          dt_pip.at(part_num) <= Pip_Pos_fit(p[part_num]) && q[part_num] == 1) {
+          dt_pip.at(part_num) <= Pip_Pos_fit(p[part_num])) {
         is_pip.at(part_num) = true;
         num_of_pis++;
         TLorentzVector gamma_mu = (e_mu - e_mu_prime);
@@ -105,7 +105,7 @@ void skim(char *fin, char *RootFile_output) {
         is_proton.at(part_num) = true;
       }
       if (dt_pip.at(part_num) >= Pip_Neg_fit(p[part_num]) &&
-          dt_pip.at(part_num) <= Pip_Pos_fit(p[part_num]) && q[part_num] < 0) {
+          dt_pip.at(part_num) <= Pip_Pos_fit(p[part_num])) {
         is_pim.at(part_num) = true;
       }
     }
