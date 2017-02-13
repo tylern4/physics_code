@@ -59,12 +59,12 @@ class datahandeler(object):
         pl.dump(Q2, open(self.args.output + 'Q2_' +
                          str(mp.current_process().pid) + '.pkl', 'wb'), 2)
         gBenchmark.Show("loop " + str(mp.current_process().pid))
-        return W, Q2
+        # return W, Q2
 
     def run_mp(self):
         files = self.split_list()
         pool = ProcessingPool()
-        out = pool.map(self._run, (files))
+        pool.map(self._run, (files))
         pool.close()
         pool.join()
         #self.W_Q2 = pd.concat(out, ignore_index=False)
