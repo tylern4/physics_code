@@ -13,7 +13,6 @@ try:
 except:
     import sys
     sys.exit()
-
 import glob
 import pandas as pd
 
@@ -45,7 +44,6 @@ class datahandeler(object):
 
     def _run(self, files):
         gBenchmark.Start("loop " + str(mp.current_process().pid))
-        #_W_Q2 = pd.DataFrame()
         chain = ROOT.TChain('h10')
         chain.UseCache(100, 1024)
         h10 = cppyy.gbl.H10()
@@ -59,7 +57,6 @@ class datahandeler(object):
         pl.dump(Q2, open(self.args.output + 'Q2_' +
                          str(mp.current_process().pid) + '.pkl', 'wb'), 2)
         gBenchmark.Show("loop " + str(mp.current_process().pid))
-        # return W, Q2
 
     def run_mp(self):
         files = self.split_list()
@@ -67,7 +64,6 @@ class datahandeler(object):
         pool.map(self._run, (files))
         pool.close()
         pool.join()
-        #self.W_Q2 = pd.concat(out, ignore_index=False)
 
     def plot(self):
         plot = plots.plotting()

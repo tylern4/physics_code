@@ -21,12 +21,11 @@ def fourvec(_p, _cx, _cy, _cz, _mass):
 
 Square = lambda x: x**2
 append = lambda _arr, _val: np.append(_arr, _val)
-_array = lambda _: np.array([])
 
 # Beam 4 vector
 e_mu = TLorentzVector(0.0, 0.0, np.sqrt(
-    np.square(E1D_E0) - np.square(mass['ELECTRON'])), E1D_E0)
-_p_target = TLorentzVector(0, 0, 0, mass['PROTON'])
+    np.square(E1D_E0) - np.square(get_mass('ELECTRON'))), E1D_E0)
+_p_target = TLorentzVector(0, 0, 0, get_mass('PROTON'))
 
 # Calcuating Q^2
 # q^mu^2 = (e^mu - e^mu')^2 = -Q^2
@@ -48,7 +47,7 @@ def W_calc(_e_mu, _e_mu_prime):
 
 def xb_calc(_Q2, _E_prime):
     _g = E1D_E0 - _E_prime
-    _xb = (_Q2 / (2 * mass['PROTON'] * _g))
+    _xb = (_Q2 / (2 * get_mass('PROTON') * _g))
     return _xb
 
 
