@@ -10,7 +10,7 @@ from pathos.multiprocessing import Pool, cpu_count, ProcessingPool
 import multiprocessing as mp
 try:
     import dill as pl
-else:
+except:
     import sys
     sys.exit()
 
