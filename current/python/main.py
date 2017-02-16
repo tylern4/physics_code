@@ -30,6 +30,8 @@ def main():
                         help="Output for pdf files", default='.')
     parser.add_argument('-n', dest='ncore', type=int, nargs='?',
                         help="Number of cores to use if not all the cores", default=0)
+    parser.add_argument('-c', dest='clean',
+                        help="Clean output directory of all pkl before start", default=False, action='store_true')
 
     if len(sys.argv[1:]) == 0:
         parser.print_help()

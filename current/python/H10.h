@@ -184,6 +184,7 @@ public:
   std::vector<double> W_vec;
   std::vector<double> Q2_vec;
   std::vector<float> p_vec;
+  std::vector<float> b_vec;
 
   H10() {}
 
@@ -234,6 +235,7 @@ public:
         if (p[part_num] == 0)
           continue;
         p_vec.push_back((float)p[part_num]);
+        b_vec.push_back((float)b[part_num]);
       }
     }
   }
