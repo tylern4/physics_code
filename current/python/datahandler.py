@@ -69,9 +69,10 @@ class datahandeler(object):
         # can be iterated over
         W = np.array([_W for _W in h10.W_vec])
         Q2 = np.array([_Q2 for _Q2 in h10.Q2_vec])
+
+        # TODO: Take vector values and send them to be plotted
         # At this point I'm dumping the numpy vectors to pickles to be able to
         # graph them later.
-        # My hope would be to return them to be plotted later.
         pl.dump(W, open(self.args.output + 'W_' +
                         str(mp.current_process().pid) + '.pkl', 'wb'), 2)
         pl.dump(Q2, open(self.args.output + 'Q2_' +
@@ -79,10 +80,14 @@ class datahandeler(object):
         gBenchmark.Show("loop " + str(mp.current_process().pid))
 
     def run_mp(self):
-        # Split input into
+        """Maps function to run on multiple cores"""
+        # Split input into chunks for processing
         files = self.split_list()
+        # Make processing pool
         pool = ProcessingPool()
+        # Map processing to _run function
         out = pool.map(self._run, (files))
+        # Close and join pool
         pool.close()
         pool.join()
 

@@ -55,6 +55,7 @@ def main():
     dh.run_mp()
     gBenchmark.Show('Run')
 
+    # TODO: Get plotting function to work
     # gBenchmark.Start('Plot')
     # dh.plot()
     # gBenchmark.Show('Plot')
