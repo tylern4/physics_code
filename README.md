@@ -8,7 +8,7 @@ and I usually use the root [github repo](https://github.com/root-mirror/root) to
 
 ## Compile and run
 All code is in the `current` folder. Inside current there is a cpp analysis program, a cpp skim program and an attempt at a python analysis program.
-To make either the cpp or skim program go into the folder and run make. The python program uses a root macro which is compiled using the `comile_root` script in the `physics_code/scripts` folder.
+To make either the cpp or skim program go into the folder and run make.
 
 
 ### E1D analysis
@@ -16,3 +16,5 @@ To make either the cpp or skim program go into the folder and run make. The pyth
 ### Skim
 
 ### Python
+
+I'm using [cppyy](http://doc.pypy.org/en/latest/cppyy.html) to compile a c++ class which I then map out to as many processors as I want.  Still working on the reduce portion of the function. To run first `make` and then run `./main.py path/to/input/files path/to/output/files`. There is also a `test.py` which runs all the code in pure python and as a cpp calculation but it seemed to very slow.
