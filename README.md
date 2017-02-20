@@ -17,4 +17,6 @@ To make either the cpp or skim program go into the folder and run make.
 
 ### Python
 
-I'm using [cppyy](http://doc.pypy.org/en/latest/cppyy.html) to compile a c++ class which I then map out to as many processors as I want.  Still working on the reduce portion of the function. To run first `make` and then run `./main.py path/to/input/files path/to/output/files`. There is also a `test.py` which runs all the code in pure python and as a cpp calculation but it seemed to very slow.
+I'm using [cppyy](http://doc.pypy.org/en/latest/cppyy.html) to compile a c++ class which I then map out to as many processors as I want.  Still working on the reduce portion of the function. To run first `make` and then run `./main.py path/to/input/files path/to/output/files`.
+
+There is also a `test.py` which runs all the code in pure python and as a cpp calculation but it seemed to very slow.
