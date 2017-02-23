@@ -7,9 +7,9 @@ import numpy as np
 from physics import *
 
 # Load in the functions written by me in c++
-import cppyy
-cppyy.load_reflection_info("Physics.so")
-physics = cppyy.gbl.Physics()
+#import cppyy
+# cppyy.load_reflection_info("Physics.so")
+#physics = cppyy.gbl.Physics()
 
 # Sets root to batch mode to eliminate any pop up windows
 gROOT.SetBatch(True)
