@@ -1,4 +1,17 @@
-
+from __future__ import print_function
+try:
+    from termcolor import cprint
+    print_green = lambda x: cprint(x, 'green', attrs=['bold'])
+    print_red = lambda x: cprint(x, 'red', attrs=['bold'])
+    print_blue = lambda x: cprint(x, 'blue', attrs=['bold'])
+    print_white = lambda x: cprint(x, 'white', attrs=['bold'])
+    print_yellow = lambda x: cprint(x, 'yellow', attrs=['bold'])
+except ImportError:
+    print_green = lambda x: print(x)
+    print_red = lambda x: print(x)
+    print_blue = lambda x: print(x)
+    print_white = lambda x: print(x)
+    print_yellow = lambda x: print(x)
 
 get_id = {'PROTON': 2212, 'NEUTRON': 2112, 'PIP': 211, 'PIM': -211,
           'PI0': 111, 'KP': 321, 'KM': -321, 'PHOTON': 22, 'ELECTRON': 11}

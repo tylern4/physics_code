@@ -5,19 +5,6 @@ import sys
 from ROOT import gBenchmark, gROOT
 from datahandler import datahandeler
 
-try:
-    from termcolor import cprint
-    print_green = lambda x: cprint(x, 'green', attrs=['bold'])
-    print_red = lambda x: cprint(x, 'red', attrs=['bold'])
-    print_blue = lambda x: cprint(x, 'blue', attrs=['bold'])
-    print_white = lambda x: cprint(x, 'white', attrs=['bold'])
-    print_yellow = lambda x: cprint(x, 'yellow', attrs=['bold'])
-except ImportError:
-    print_green = lambda x: print(x)
-    print_red = lambda x: print(x)
-    print_blue = lambda x: print(x)
-    print_white = lambda x: print(x)
-    print_yellow = lambda x: print(x)
 
 gROOT.SetBatch(True)
 
