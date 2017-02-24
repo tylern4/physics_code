@@ -37,15 +37,14 @@ def main():
     # Create datahandeler object based on the given arguments
     dh = datahandeler(args)
 
-    gBenchmark.Start('Run')
-    # Start multicore processing
-    dh.run_mp()
-    gBenchmark.Show('Run')
+    gBenchmark.Start('Map')
+    dh.run_map()
+    gBenchmark.Show('Map')
 
     # TODO: Get plotting function to work
-    # gBenchmark.Start('Plot')
-    # dh.plot()
-    # gBenchmark.Show('Plot')
+    gBenchmark.Start('Reduce')
+    dh.run_reduce()
+    gBenchmark.Show('Reduce')
 
 
 if __name__ == "__main__":

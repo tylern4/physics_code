@@ -3,7 +3,7 @@ import os
 import glob
 
 import ROOT
-from ROOT import TLorentzVector, TVector3
+from ROOT import TLorentzVector, TVector3, TH2D, TFile
 from ROOT import gBenchmark, gROOT, std
 gROOT.SetBatch(True)
 
@@ -67,29 +67,42 @@ class datahandeler(object):
 
         # h10 contains values from the c++ class in a ROOT vector form which
         # can be iterated over
-        W = np.array([_W for _W in h10.W_vec])
-        Q2 = np.array([_Q2 for _Q2 in h10.Q2_vec])
+        #W_Q2 = np.array([_W for _W in h10.W_vec], [_Q2 for _Q2 in h10.Q2_vec])
+        # Q2 = np.array()
 
         # TODO: Take vector values and send them to be plotted
         # At this point I'm dumping the numpy vectors to pickles to be able to
         # graph them later.
-        pl.dump(W, open(self.args.output + 'W_' +
-                        str(mp.current_process().pid) + '.pkl', 'wb'), 2)
-        pl.dump(Q2, open(self.args.output + 'Q2_' +
-                         str(mp.current_process().pid) + '.pkl', 'wb'), 2)
+        # pl.dump(W, open(self.args.output + 'W_' +
+        #                str(mp.current_process().pid) + '.pkl', 'wb'), 2)
+        # pl.dump(Q2, open(self.args.output + 'Q2_' +
+        #                 str(mp.current_process().pid) + '.pkl', 'wb'), 2)
         gBenchmark.Show("loop " + str(mp.current_process().pid))
+        return h10
 
-    def run_mp(self):
+    def run_map(self):
         """Maps function to run on multiple cores"""
         # Split input into chunks for processing
         files = self.split_list()
         # Make processing pool
         pool = ProcessingPool()
         # Map processing to _run function
-        out = pool.map(self._run, (files))
+        self.output = pool.map(self._run, (files))
         # Close and join pool
         pool.close()
         pool.join()
+
+    def run_reduce(self):
+        """Reduce function to add all histograms at the end and save"""
+        file = TFile(self.args.output + "test.root", "RECREATE")
+        WvsQ2_hist = TH2D("WvsQ2_hist", "W vs Q^{2}", 500, 0, 3.25,
+                          500, 0, 10)
+        for _h in self.output:
+            WvsQ2_hist.Add(_h.WvsQ2_hist)
+
+        WvsQ2_hist.Write()
+        file.Write()
+        file.Close()
 
     def plot(self):
         plot = plots.plotting()
