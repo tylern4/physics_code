@@ -4,7 +4,7 @@ import argparse
 import sys
 from ROOT import gBenchmark, gROOT
 from datahandler import datahandeler
-
+from constants import *
 
 gROOT.SetBatch(True)
 
