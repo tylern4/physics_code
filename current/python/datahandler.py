@@ -87,9 +87,13 @@ class datahandeler(object):
         # Make processing pool
         pool = ProcessingPool()
         # Map processing to _run function
+        print("Start pool")
         self.output = pool.map(self._run, (files))
+        print("Stop Pool")
         # Close and join pool
+        print("Close")
         pool.close()
+        print("Join")
         pool.join()
 
     def run_reduce(self):
