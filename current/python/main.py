@@ -42,9 +42,9 @@ def main():
     gBenchmark.Show('Map')
 
     # TODO: Get plotting function to work
-    gBenchmark.Start('Reduce')
-    dh.run_reduce()
-    gBenchmark.Show('Reduce')
+    # gBenchmark.Start('Reduce')
+    # dh.run_reduce()
+    # gBenchmark.Show('Reduce')
 
 
 if __name__ == "__main__":
