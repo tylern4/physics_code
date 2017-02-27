@@ -83,13 +83,13 @@ P_B = {'MomVsBeta_hist': MomVsBeta_hist,
        }
 
 bins_MM = 200
-MM_min = 0.0
-MM_max = 3.0
+mm_min = 0.0
+mm_max = 3.0
 
 Mass = TH1D("Mass", "Mass", 600, 0, 6)
-Missing_Mass = TH1D("Missing_Mass", "Missing Mass", bins_MM, MM_min, MM_max)
+Missing_Mass = TH1D("Missing_Mass", "Missing Mass", bins_MM, mm_min, mm_max)
 Missing_Mass_square = TH1D(
-    "Missing_Mass_square", "Missing Mass square", bins_MM, MM_min, MM_max * MM_max)
+    "Missing_Mass_square", "Missing Mass square", bins_MM, mm_min, mm_max * mm_max)
 
 MissMass = {'Mass': Mass,
             'Missing_Mass': Missing_Mass,
@@ -123,6 +123,14 @@ delta_t = {'delta_t_mass_P': delta_t_mass_P,
            'delta_t_mass_PIP': delta_t_mass_PIP,
            'delta_t_mass_PIP_PID': delta_t_mass_PIP_PID
            }
+
+ec_min = 0
+ec_max = 1
+ec_sampling_fraction = TH2D(
+    "EC_sampling_fraction", "EC_sampling_fraction", bins, p_min, p_max, bins, ec_min, ec_max)
+
+ec = {'EC_sampling_fraction': ec_sampling_fraction}
+
 """
 bins_CC = 50
 CC_min = 0
@@ -151,14 +159,9 @@ sector_num = 6
 fid_sec_hist[sector_num]
 fid_hist = TH2D("fid", "fid", bins, phi_min, phi_max, bins,
                 theta_min, theta_max)
-
-EC_min = 0
-EC_max = 1
-EC_sampling_fraction = TH2D(
-    "EC_sampling_fraction", "EC_sampling_fraction", bins, p_min, p_max, bins, EC_min, EC_max)
 """
 
 
 histo = {}
-for d in (W_Q2, P_B, MissMass, delta_t):
+for d in (W_Q2, P_B, MissMass, delta_t, ec):
     histo.update(d)
