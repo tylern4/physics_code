@@ -69,7 +69,7 @@ class datahandeler(object):
 
         # h10 contains values from the c++ class in a ROOT vector form which
         # can be iterated over
-        #W_Q2 = np.array([_W for _W in h10.W_vec], [_Q2 for _Q2 in h10.Q2_vec])
+        # W_Q2 = np.array([_W for _W in h10.W_vec], [_Q2 for _Q2 in h10.Q2_vec])
         # Q2 = np.array()
 
         # TODO: Take vector values and send them to be plotted
@@ -80,6 +80,7 @@ class datahandeler(object):
         # pl.dump(Q2, open(self.args.output + 'Q2_' +
         #                 str(mp.current_process().pid) + '.pkl', 'wb'), 2)
         gBenchmark.Show("loop " + str(mp.current_process().pid))
+        histograms = {'WvsQ2_hist': h10.WvsQ2_hist}
         return h10
 
     def run_map(self):
@@ -89,13 +90,9 @@ class datahandeler(object):
         # Make processing pool
         pool = ProcessingPool()
         # Map processing to _run function
-        print("Start pool")
-        output = pool.map(self._run, (files))
-        print("Stop Pool")
+        self.output = pool.map(self._run, (files))
         # Close and join pool
-        print("Close")
         pool.close()
-        print("Join")
         pool.join()
 
     def run_reduce(self):
@@ -103,7 +100,11 @@ class datahandeler(object):
         file = TFile(self.args.output + "test.root", "RECREATE")
         WvsQ2_hist = TH2D("WvsQ2_hist", "W vs Q^{2}", 500, 0, 3.25,
                           500, 0, 10)
+
         for _h in self.output:
+            # print(type(_h['WvsQ2_hist']))
+            # WvsQ2_hist.Add(_h['WvsQ2_hist'])
+            print(type(_h.WvsQ2_hist))
             WvsQ2_hist.Add(_h.WvsQ2_hist)
 
         WvsQ2_hist.Write()
