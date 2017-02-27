@@ -123,10 +123,10 @@ class datahandeler(object):
         root_file = TFile(self.args.output + "test_test.root", "RECREATE")
 
         for _h in self.output:
-            for key, value in histo.iteritems():
+            for key, value in histo.items():
                 value.Add(_h[key])
 
-        for key, value in histo.iteritems():
+        for key, value in histo.items():
             value.Write()
 
         root_file.Write()
