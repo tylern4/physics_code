@@ -132,6 +132,7 @@ public:
     //#pragma omp parallel for
     for (int current_event = 0; current_event < num_of_events;
          current_event++) {
+
       chain.GetEntry(current_event);
 
       // reset electron cut bool
@@ -143,10 +144,11 @@ public:
       electron_cuts &= ((int)id[0] == ELECTRON); // First particle is electron
       electron_cuts &=
           ((int)gpart > 0); // Number of good particles is greater than 0
-      electron_cuts &= ((int)stat[0] > 0); // First Particle hit stat
-      electron_cuts &= ((int)q[0] == -1);  // First particle is negative Q
-      electron_cuts &= ((int)sc[0] > 0);   // First Particle hit sc
-      electron_cuts &= ((int)dc[0] > 0);   // ``` ``` ``` dc
+      // electron_cuts &= ((int)stat[0] > 0); // First Particle hit stat
+      // std::cout << "stat " << (int)stat[0] << std::endl;
+      electron_cuts &= ((int)q[0] == -1); // First particle is negative Q
+      electron_cuts &= ((int)sc[0] > 0);  // First Particle hit sc
+      electron_cuts &= ((int)dc[0] > 0);  // ``` ``` ``` dc
       electron_cuts &= ((int)dc_stat[dc[0] - 1] > 0);
 
       if (electron_cuts && cc[0] > 0) {
@@ -154,9 +156,6 @@ public:
         int cc_segment = (cc_segm[0] % 1000) / 10;
         int cc_pmt = cc_segm[0] / 1000 - 1;
         int cc_nphe = nphe[cc[0] - 1];
-        // cout << cc_sector <<","<< cc_segment <<","<< cc_pmt <<","<< cc_nphe
-        // <<
-        // endl;
         hists.CC_fill(cc_sector, cc_segment, cc_pmt, cc_nphe);
       }
 
@@ -249,49 +248,7 @@ public:
           hists.Fill_single_proton_WQ2(W, Q2);
       }
     }
-    /*
-        Histogram hists;
-        TVector3 e_mu_prime_3;
-        TLorentzVector e_mu_prime;
-        TLorentzVector e_mu(0.0, 0.0, sqrt(Square(E1D_E0) - Square(MASS_E)),
-                            E1D_E0);
 
-        getBranches(&chain);
-        int num_of_events = (int)chain.GetEntries();
-        for (int current_event = 0; current_event < num_of_events;
-             current_event++) {
-          chain.GetEntry(current_event);
-          // reset electron cut bool
-          electron_cuts = true;
-          // electron cuts
-          electron_cuts &= (ec[0] > 0); // ``` ``` ``` ec
-          // if (electron_cuts) hists.EC_fill(etot[ec[0]-1],p[0]);
-          electron_cuts &= ((int)id[0] == ELECTRON); // First particle is
-       electron
-          electron_cuts &=
-              ((int)gpart > 0); // Number of good particles is greater than 0
-          electron_cuts &= ((int)stat[0] > 0); // First Particle hit stat
-          electron_cuts &= ((int)q[0] == -1);  // First particle is negative Q
-          electron_cuts &= ((int)sc[0] > 0);   // First Particle hit sc
-          electron_cuts &= ((int)dc[0] > 0);   // ``` ``` ``` dc
-          electron_cuts &= ((int)dc_stat[dc[0] - 1] > 0);
-
-          if (electron_cuts) {
-            e_mu_prime_3.SetXYZ(p[0] * cx[0], p[0] * cy[0], p[0] * cz[0]);
-            e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
-            W = W_calc(e_mu, e_mu_prime);
-            W_vec.push_back(W);
-            Q2 = Q2_calc(e_mu, e_mu_prime);
-            Q2_vec.push_back(Q2);
-            hists.WvsQ2_Fill(0, W, Q2, 0); // WvsQ2_hist->Fill(W, Q2);
-          }
-          for (int part_num = 1; part_num < gpart; part_num++) {
-            if (p[part_num] == 0)
-              continue;
-            p_vec.push_back((float)p[part_num]);
-            b_vec.push_back((float)b[part_num]);
-          }
-        } */
     chain.Reset();
     return hists;
   }

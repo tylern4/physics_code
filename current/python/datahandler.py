@@ -68,8 +68,41 @@ class datahandeler(object):
         hist_obj = h10.dataHandeler(chain)
 
         gBenchmark.Show("loop " + str(mp.current_process().pid))
-        print(hist_obj.WvsQ2_hist.GetEntries())
-        histograms = {'WvsQ2_hist': hist_obj.WvsQ2_hist}
+
+        histograms = {'WvsQ2_hist': hist_obj.WvsQ2_hist,
+                      'W_hist': hist_obj.W_hist,
+                      'Q2_hist': hist_obj.Q2_hist,
+                      'E_prime_hist': hist_obj.E_prime_hist,
+                      'Q2_vs_xb': hist_obj.Q2_vs_xb,
+                      'WvsQ2_proton': hist_obj.WvsQ2_proton,
+                      'W_proton': hist_obj.W_proton,
+                      'Q2_proton': hist_obj.Q2_proton,
+                      'WvsQ2_pion': hist_obj.WvsQ2_pion,
+                      'W_pion': hist_obj.W_pion,
+                      'Q2_pion': hist_obj.Q2_pion,
+                      'WvsQ2_single_pi': hist_obj.WvsQ2_single_pi,
+                      'W_single_pi': hist_obj.W_single_pi,
+                      'Q2_single_pi': hist_obj.Q2_single_pi,
+                      'WvsQ2_single_proton': hist_obj.WvsQ2_single_proton,
+                      'W_single_proton': hist_obj.W_single_proton,
+                      'Q2_single_proton': hist_obj.Q2_single_proton,
+                      'MomVsBeta_hist': hist_obj.MomVsBeta_hist,
+                      'MomVsBeta_hist_pos': hist_obj.MomVsBeta_hist_pos,
+                      'MomVsBeta_hist_neg': hist_obj.MomVsBeta_hist_neg,
+                      'Mom': hist_obj.Mom,
+                      'Energy_hist': hist_obj.Energy_hist,
+                      'MomVsBeta_proton_ID': hist_obj.MomVsBeta_proton_ID,
+                      'MomVsBeta_Pi_ID': hist_obj.MomVsBeta_Pi_ID,
+                      'MomVsBeta_proton_Pi_ID': hist_obj.MomVsBeta_proton_Pi_ID,
+                      'Mass': hist_obj.Mass,
+                      'Missing_Mass': hist_obj.Missing_Mass,
+                      'Missing_Mass_square': hist_obj.Missing_Mass_square,
+                      'delta_t_mass_P': hist_obj.delta_t_mass_P,
+                      'delta_t_mass_P_PID': hist_obj.delta_t_mass_P_PID,
+                      'delta_t_mass_PIP': hist_obj.delta_t_mass_PIP,
+                      'delta_t_mass_PIP_PID': hist_obj.delta_t_mass_PIP_PID
+                      }
+
         return histograms
 
     def run_map(self):
@@ -86,13 +119,15 @@ class datahandeler(object):
 
     def run_reduce(self):
         """Reduce function to add all histograms at the end and save"""
+        from histogram import histo
         root_file = TFile(self.args.output + "test_test.root", "RECREATE")
-        WvsQ2_hist = TH2D("WvsQ2_hist", "W vs Q^{2}", 500, 0, 3.25,
-                          500, 0, 10)
 
         for _h in self.output:
-            WvsQ2_hist.Add(_h['WvsQ2_hist'])
+            for key, value in histo.iteritems():
+                value.Add(_h[key])
 
-        WvsQ2_hist.Write()
+        for key, value in histo.iteritems():
+            value.Write()
+
         root_file.Write()
         root_file.Close()
