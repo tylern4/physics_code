@@ -65,7 +65,7 @@ class datahandeler(object):
         for _f in files:
             chain.Add(_f)
         # Pass the chain to the h10 loop function (c++ based)
-        h10.loop(chain)
+        hist_obj = h10.loop_test(chain)
 
         # h10 contains values from the c++ class in a ROOT vector form which
         # can be iterated over
@@ -80,8 +80,9 @@ class datahandeler(object):
         # pl.dump(Q2, open(self.args.output + 'Q2_' +
         #                 str(mp.current_process().pid) + '.pkl', 'wb'), 2)
         gBenchmark.Show("loop " + str(mp.current_process().pid))
-        histograms = {'WvsQ2_hist': h10.WvsQ2_hist}
-        return h10
+
+        histograms = {'WvsQ2_hist': hist_obj.WvsQ2_hist}
+        return histograms
 
     def run_map(self):
         """Maps function to run on multiple cores"""
@@ -102,10 +103,7 @@ class datahandeler(object):
                           500, 0, 10)
 
         for _h in self.output:
-            # print(type(_h['WvsQ2_hist']))
-            # WvsQ2_hist.Add(_h['WvsQ2_hist'])
-            print(type(_h.WvsQ2_hist))
-            WvsQ2_hist.Add(_h.WvsQ2_hist)
+            WvsQ2_hist.Add(_h['WvsQ2_hist'])
 
         WvsQ2_hist.Write()
         file.Write()

@@ -17,6 +17,7 @@
 
 class Histogram {
 private:
+public:
   Header *fit_functions;
   void makeHists_fid();
   void makeHists_delta_t();
@@ -182,7 +183,7 @@ private:
                p_max, bins, EC_min, EC_max);
   // EC hists
 
-public:
+  // public:
   Histogram();
   ~Histogram();
   TH1D *Missing_Mass =
