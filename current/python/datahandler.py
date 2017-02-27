@@ -65,22 +65,10 @@ class datahandeler(object):
         for _f in files:
             chain.Add(_f)
         # Pass the chain to the h10 loop function (c++ based)
-        hist_obj = h10.loop_test(chain)
+        hist_obj = h10.dataHandeler(chain)
 
-        # h10 contains values from the c++ class in a ROOT vector form which
-        # can be iterated over
-        # W_Q2 = np.array([_W for _W in h10.W_vec], [_Q2 for _Q2 in h10.Q2_vec])
-        # Q2 = np.array()
-
-        # TODO: Take vector values and send them to be plotted
-        # At this point I'm dumping the numpy vectors to pickles to be able to
-        # graph them later.
-        # pl.dump(W, open(self.args.output + 'W_' +
-        #                str(mp.current_process().pid) + '.pkl', 'wb'), 2)
-        # pl.dump(Q2, open(self.args.output + 'Q2_' +
-        #                 str(mp.current_process().pid) + '.pkl', 'wb'), 2)
         gBenchmark.Show("loop " + str(mp.current_process().pid))
-
+        print(hist_obj.WvsQ2_hist.GetEntries())
         histograms = {'WvsQ2_hist': hist_obj.WvsQ2_hist}
         return histograms
 
@@ -98,7 +86,7 @@ class datahandeler(object):
 
     def run_reduce(self):
         """Reduce function to add all histograms at the end and save"""
-        file = TFile(self.args.output + "test.root", "RECREATE")
+        root_file = TFile(self.args.output + "test_test.root", "RECREATE")
         WvsQ2_hist = TH2D("WvsQ2_hist", "W vs Q^{2}", 500, 0, 3.25,
                           500, 0, 10)
 
@@ -106,9 +94,5 @@ class datahandeler(object):
             WvsQ2_hist.Add(_h['WvsQ2_hist'])
 
         WvsQ2_hist.Write()
-        file.Write()
-        file.Close()
-
-    def plot(self):
-        plot = plots.plotting()
-        plot.WvsQ2(self.W_Q2, output=self.args.output)
+        root_file.Write()
+        root_file.Close()
