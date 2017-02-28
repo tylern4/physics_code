@@ -120,7 +120,7 @@ class datahandeler(object):
     def run_reduce(self):
         """Reduce function to add all histograms at the end and save"""
         from histogram import histo
-        root_file = TFile(self.args.output + "test_test.root", "RECREATE")
+        root_file = TFile(self.args.output, "RECREATE")
 
         for _h in self.output:
             for key, value in histo.items():

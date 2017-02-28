@@ -15,7 +15,7 @@ def main():
     parser.add_argument('input', type=str,
                         help="Input directory for *.root files")
     parser.add_argument('output', type=str, nargs='?',
-                        help="Output for pdf files", default='.')
+                        help="Output root file", default='./test.root')
     parser.add_argument('-n', dest='ncore', type=int, nargs='?',
                         help="Number of cores to use if not all the cores", default=0)
     parser.add_argument('-c', dest='clean',
@@ -31,8 +31,8 @@ def main():
     # Make sure file paths have ending /
     if args.input[-1] != '/':
         args.input = args.input + '/'
-    if args.output[-1] != '/':
-        args.output = args.output + '/'
+    if args.output[-5:] != '.root':
+        args.output = args.output + '.root'
 
     # Create datahandeler object based on the given arguments
     dh = datahandeler(args)
