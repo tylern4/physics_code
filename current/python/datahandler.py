@@ -11,9 +11,6 @@ from constants import *
 from physics import *
 import plots
 
-import numpy as np
-import pandas as pd
-
 #from pathos.multiprocessing import Pool, cpu_count, ProcessingPool
 from multiprocessing import Pool, cpu_count
 import multiprocessing as mp
