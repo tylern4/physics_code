@@ -131,6 +131,22 @@ ec_sampling_fraction = TH2D(
 
 ec = {'EC_sampling_fraction': ec_sampling_fraction}
 
+theta_min = 0
+theta_max = 90
+phi_min = -360 / 2.0
+phi_max = 360 / 2.0
+sector_num = 6
+min_phi = [0, 60, 120, -180, -120, -60]
+max_phi = [60, 120, 180, -120, -60, 0]
+
+fid_hist = TH2D("fid", "fid", bins, phi_min, phi_max, bins,
+                theta_min, theta_max)
+
+
+fid = {'fid_hist': fid_hist,
+       #'fid_sec_hist': fid_sec_hist
+       }
+
 """
 bins_CC = 50
 CC_min = 0
@@ -150,18 +166,122 @@ x_cc_sparse[ndims_cc_sparse]
 cc_sparse = THnSparseD("cc_sparse", "Histogram", ndims_cc_sparse,
                        bins_cc_sparse, xmin_cc_sparse, xmax_cc_sparse)
 
-theta_min = 0
-theta_max = 90
-phi_min = -360 / 2.0
-phi_max = 360 / 2.0
+fid_sec_hist = []
+for sec in range(sector_num):
+    hname = "fid_sec%d" % (sec + 1)
+    htitle = "fid_sec%d" % (sec + 1)
 
-sector_num = 6
-fid_sec_hist[sector_num]
-fid_hist = TH2D("fid", "fid", bins, phi_min, phi_max, bins,
-                theta_min, theta_max)
+    fid_sec_hist.append(TH2D(hname, htitle, bins, min_phi[sec],
+                             max_phi[sec], bins, theta_min, theta_max))
+
 """
 
 
 histo = {}
-for d in (W_Q2, P_B, MissMass, delta_t, ec):
+for d in (W_Q2, P_B, MissMass, delta_t, ec, fid):
     histo.update(d)
+
+
+def add_and_save(output, root_file):
+    for _h in output:
+        for key, value in histo.items():
+            value.Add(_h[key])
+
+    histo['EC_sampling_fraction'].SetXTitle("Momentum (GeV)")
+    histo['EC_sampling_fraction'].SetYTitle("Sampling Fraction")
+    histo['EC_sampling_fraction'].Write()
+
+    WvsQ2_folder = root_file.mkdir("W vs Q2")
+    WvsQ2_folder.cd()
+    histo['WvsQ2_hist'].SetXTitle("W (GeV)")
+    histo['WvsQ2_hist'].SetYTitle("Q^{2} (GeV^{2})")
+    histo['WvsQ2_hist'].Write()
+    histo['WvsQ2_hist'].SetXTitle("W (GeV)")
+    histo['WvsQ2_hist'].Write()
+    histo['Q2_hist'].SetXTitle("Q^{2} (GeV^{2})")
+    histo['Q2_hist'].Write()
+    histo['E_prime_hist'].SetXTitle("Energy (GeV)")
+    histo['E_prime_hist'].Write()
+    histo['Q2_vs_xb'].SetXTitle("X_b")
+    histo['Q2_vs_xb'].SetYTitle("Q^{2} (GeV^{2})")
+    histo['Q2_vs_xb'].Write()
+    histo['WvsQ2_proton'].SetXTitle("W (GeV)")
+    histo['WvsQ2_proton'].SetYTitle("Q^{2} (GeV^{2})")
+    histo['WvsQ2_proton'].Write()
+    histo['W_proton'].SetXTitle("W (GeV)")
+    histo['W_proton'].Write()
+    histo['Q2_proton'].SetXTitle("Q^{2} (GeV^{2})")
+    histo['Q2_proton'].Write()
+    histo['WvsQ2_pion'].SetXTitle("W (GeV)")
+    histo['WvsQ2_pion'].SetYTitle("Q^{2} (GeV^{2})")
+    histo['WvsQ2_pion'].Write()
+    histo['W_pion'].SetXTitle("W (GeV)")
+    histo['W_pion'].Write()
+    histo['Q2_pion'].SetXTitle("Q^{2} (GeV^{2})")
+    histo['Q2_pion'].Write()
+    histo['WvsQ2_single_pi'].SetXTitle("W (GeV)")
+    histo['WvsQ2_single_pi'].SetYTitle("Q^{2} (GeV^{2})")
+    histo['WvsQ2_single_pi'].Write()
+    histo['W_single_pi'].SetXTitle("W (GeV)")
+    histo['W_single_pi'].Write()
+    histo['Q2_single_pi'].SetXTitle("Q^{2} (GeV^{2})")
+    histo['Q2_single_pi'].Write()
+    histo['WvsQ2_single_proton'].SetXTitle("W (GeV)")
+    histo['WvsQ2_single_proton'].SetYTitle("Q^{2} (GeV^{2})")
+    histo['WvsQ2_single_proton'].Write()
+    histo['W_single_proton'].SetXTitle("W (GeV)")
+    histo['W_single_proton'].Write()
+    histo['Q2_single_proton'].SetXTitle("Q^{2} (GeV^{2})")
+    histo['Q2_single_proton'].Write()
+
+    pb_dir = root_file.mkdir("Momentum vs Beta")
+    pb_dir.cd()
+    histo['MomVsBeta_hist'].SetXTitle("Momentum (GeV)")
+    histo['MomVsBeta_hist'].SetYTitle("#beta")
+    histo['MomVsBeta_hist'].Write()
+    histo['MomVsBeta_hist_pos'].SetXTitle("Momentum (GeV)")
+    histo['MomVsBeta_hist_pos'].SetYTitle("#beta")
+    histo['MomVsBeta_hist_pos'].Write()
+    histo['MomVsBeta_hist_neg'].SetXTitle("Momentum (GeV)")
+    histo['MomVsBeta_hist_neg'].SetYTitle("#beta")
+    histo['MomVsBeta_hist_neg'].Write()
+    histo['MomVsBeta_proton_ID'].SetXTitle("Momentum (GeV)")
+    histo['MomVsBeta_proton_ID'].SetYTitle("#beta")
+    histo['MomVsBeta_proton_ID'].Write()
+    histo['MomVsBeta_Pi_ID'].SetXTitle("Momentum (GeV)")
+    histo['MomVsBeta_Pi_ID'].SetYTitle("#beta")
+    histo['MomVsBeta_Pi_ID'].Write()
+    histo['MomVsBeta_proton_Pi_ID'].SetXTitle("Momentum (GeV)")
+    histo['MomVsBeta_proton_Pi_ID'].SetYTitle("#beta")
+    histo['MomVsBeta_proton_Pi_ID'].Write()
+    histo['Mom'].SetXTitle("Momentum (GeV)")
+    histo['Mom'].Write()
+    histo['Energy_hist'].SetXTitle("Energy (GeV)")
+    histo['Energy_hist'].Write()
+
+    mm_dir = root_file.mkdir("Missing Mass")
+    mm_dir.cd()
+    histo['Mass'].SetXTitle("Mass (GeV)")
+    histo['Mass'].Write()
+    histo['Missing_Mass'].SetXTitle("Mass (GeV)")
+    histo['Missing_Mass'].Write()
+    histo['Missing_Mass_square'].SetXTitle("Mass^{2} (GeV^{2})")
+    histo['Missing_Mass_square'].Write()
+
+    DeltaT = root_file.mkdir("Delta_T")
+    DeltaT.cd()
+    for value in delta_t.values():
+        value.SetXTitle("Momentum (GeV)")
+        value.SetYTitle("#Deltat")
+        value.Write()
+
+    fid_dir = root_file.mkdir("Fid_cuts")
+    fid_dir.cd()
+    histo['fid_hist'].SetXTitle("#phi")
+    histo['fid_hist'].SetYTitle("#theta")
+    histo['fid_hist'].Write()
+    # print(type(histo['fid_sec_hist']))
+
+    for _h in output:
+        for value in histo.values():
+            del value
