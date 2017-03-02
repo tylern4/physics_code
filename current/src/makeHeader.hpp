@@ -6,7 +6,7 @@
 #include <fstream>
 #include <string>
 #include "TString.h"
-#include "constants.h"
+#include "constants.hpp"
 
 #ifndef MAKE_HEADER_H
 #define MAKE_HEADER_H

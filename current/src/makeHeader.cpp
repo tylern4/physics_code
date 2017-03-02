@@ -12,7 +12,7 @@ Header::Header(std::string file_name, std::string H_gaurd) {
   header_file << "// Made from makeHeader.cpp\n\n";
   header_file << "#ifndef " << H_gaurd << "_H\n";
   header_file << "#define " << H_gaurd << "_H\n";
-  header_file << "\n#include \"constants.h\"\n\n";
+  header_file << "\n#include \"constants.hpp\"\n\n";
 }
 
 Header::~Header() {

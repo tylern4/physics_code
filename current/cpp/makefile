@@ -14,7 +14,7 @@ BINDIR   = ../bin
 
 SRC = $(wildcard $(SRCDIR)/*.cpp)
 #MAINS = $(wildcard ./*.cpp)
-MAINS = ./main.cpp
+MAINS = ./main_cpp.cpp
 
 OBJECTS  = $(SRC:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 MAIN = $(MAINS:./%.cpp=$(OBJDIR)/%.o)

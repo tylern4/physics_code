@@ -15,6 +15,7 @@ OBJECTS  = $(SRCS:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 
 GEN = genreflex
 SRC = $(wildcard *.h)
+PYC = $(wildcard *.pyc)
 CPP = $(SRC:%.h=%_rflx.cpp)
 SOBJ  = $(SRC:%.h=%.so)
 TEMPS = $(wildcard *.pcm) $(wildcard *_tmp) $(wildcard *.so.dSYM) $(wildcard *_rflx*)
@@ -34,4 +35,4 @@ $(SOBJ): %.so : %_rflx.cpp
 
 
 clean:
-	-rm -rf $(SOBJ) $(OBJECTS) $(TEMPS)
+	-rm -rf $(SOBJ) $(OBJECTS) $(TEMPS) $(PYC)

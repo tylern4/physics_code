@@ -13,7 +13,7 @@ LIBDIR   = ../sobj
 BINDIR   = ../bin
 
 SRC = $(wildcard $(SRCDIR)/*.cpp)
-MAINS = ./main.cpp
+MAINS = ./main_gr.cpp
 
 OBJECTS  = $(SRC:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 MAIN = $(MAINS:./%.cpp=$(OBJDIR)/%.o)

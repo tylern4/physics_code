@@ -4,12 +4,12 @@
   
 set timeout 60
 #spawn ssh -Y -R 52698:localhost:52698 tylern@login.jlab.org
-spawn ssh -Y tylern@login.jlab.org
+spawn ssh -Y -tt tylern@login.jlab.org
 expect "yes/no" { 
                 send "yes\r"
                 expect "*?assword" { send "[lindex $argv 1]\r" }
                 } "*?assword" { send "[lindex $argv 1]\r" }
-expect "% " { send "ssh -X -R 52698:localhost:52698 [lindex $argv 0]\r" }
+expect "% " { send "ssh -tt -X -R 52698:localhost:52698 [lindex $argv 0]\r" }
 expect "yes/no" {
     send "yes\r"
     expect "*?assword" { send "[lindex $argv 1]\r" }

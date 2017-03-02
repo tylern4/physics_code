@@ -35,7 +35,7 @@
 #include <vector>
 #include <fstream>
 #include "../src/color.cpp"
-#include "../src/constants.h"
+#include "../src/constants.hpp"
 
 using namespace std;
 

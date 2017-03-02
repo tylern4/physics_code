@@ -7,7 +7,7 @@
 #define PHYSICS_H_GUARD
 #include <TLorentzVector.h>
 #include "TROOT.h"
-#include "constants.h"
+#include "constants.hpp"
 
 // Calcuating Q^2
 // q^mu^2 = (e^mu - e^mu')^2 = -Q^2

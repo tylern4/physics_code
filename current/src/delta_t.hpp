@@ -6,7 +6,7 @@
 #ifndef DELTA_T_H
 #define DELTA_T_H
 #include "histogram.hpp"
-#include "constants.h"
+#include "constants.hpp"
 #include "branches.hpp"
 
 class Delta_T {
