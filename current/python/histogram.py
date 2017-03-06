@@ -1,5 +1,36 @@
 import ROOT
 from ROOT import TH1D, TH2D
+import cppyy
+cppyy.load_reflection_info("H10.so")
+
+"""
+bins_CC = 50
+CC_min = 0
+CC_max = 250
+L_R_C - ""
+sector = 6
+segment = 18
+PMT = 3
+cc_hist[6][18][3]
+cc_hist_allSeg[6][3]
+ndims_cc_sparse = 4
+bins_cc_sparse[ndims_cc_sparse] = {sector, segment, PMT, bins_CC}
+xmin_cc_sparse[ndims_cc_sparse] = {0.0, 0.0, -2.0, CC_min}
+xmax_cc_sparse[ndims_cc_sparse] = {sector + 1.0, segment + 1.0, 1.0,
+                                   CC_max}
+x_cc_sparse[ndims_cc_sparse]
+cc_sparse = THnSparseD("cc_sparse", "Histogram", ndims_cc_sparse,
+                       bins_cc_sparse, xmin_cc_sparse, xmax_cc_sparse)
+
+fid_sec_hist = []
+for sec in range(sector_num):
+    hname = "fid_sec%d" % (sec + 1)
+    htitle = "fid_sec%d" % (sec + 1)
+
+    fid_sec_hist.append(TH2D(hname, htitle, bins, min_phi[sec],
+                             max_phi[sec], bins, theta_min, theta_max))
+
+"""
 
 bins = 500
 p_min = 0.0
@@ -147,42 +178,13 @@ fid = {'fid_hist': fid_hist,
        #'fid_sec_hist': fid_sec_hist
        }
 
-"""
-bins_CC = 50
-CC_min = 0
-CC_max = 250
-L_R_C - ""
-sector = 6
-segment = 18
-PMT = 3
-cc_hist[6][18][3]
-cc_hist_allSeg[6][3]
-ndims_cc_sparse = 4
-bins_cc_sparse[ndims_cc_sparse] = {sector, segment, PMT, bins_CC}
-xmin_cc_sparse[ndims_cc_sparse] = {0.0, 0.0, -2.0, CC_min}
-xmax_cc_sparse[ndims_cc_sparse] = {sector + 1.0, segment + 1.0, 1.0,
-                                   CC_max}
-x_cc_sparse[ndims_cc_sparse]
-cc_sparse = THnSparseD("cc_sparse", "Histogram", ndims_cc_sparse,
-                       bins_cc_sparse, xmin_cc_sparse, xmax_cc_sparse)
-
-fid_sec_hist = []
-for sec in range(sector_num):
-    hname = "fid_sec%d" % (sec + 1)
-    htitle = "fid_sec%d" % (sec + 1)
-
-    fid_sec_hist.append(TH2D(hname, htitle, bins, min_phi[sec],
-                             max_phi[sec], bins, theta_min, theta_max))
-
-"""
-
-
 histo = {}
 for d in (W_Q2, P_B, MissMass, delta_t, ec, fid):
     histo.update(d)
 
 
 def add_and_save(output, root_file):
+    h10 = cppyy.gbl.H10()
     for _h in output:
         for key, value in histo.items():
             value.Add(_h[key])
@@ -270,6 +272,7 @@ def add_and_save(output, root_file):
 
     DeltaT = root_file.mkdir("Delta_T")
     DeltaT.cd()
+    h10.deltat_slicefit(delta_t['delta_t_mass_P'], delta_t['delta_t_mass_PIP'])
     for value in delta_t.values():
         value.SetXTitle("Momentum (GeV)")
         value.SetYTitle("#Deltat")
@@ -280,7 +283,6 @@ def add_and_save(output, root_file):
     histo['fid_hist'].SetXTitle("#phi")
     histo['fid_hist'].SetYTitle("#theta")
     histo['fid_hist'].Write()
-    # print(type(histo['fid_sec_hist']))
 
     for _h in output:
         for value in histo.values():
