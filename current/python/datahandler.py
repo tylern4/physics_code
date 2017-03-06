@@ -75,7 +75,7 @@ def _run(files):
                   'delta_t_mass_PIP_PID': hist_obj.delta_t_mass_PIP_PID,
                   'EC_sampling_fraction': hist_obj.EC_sampling_fraction,
                   'fid_hist': hist_obj.fid_hist,
-                  #'fid_sec_hist': hist_obj.fid_sec_hist
+                  'fid_sec_hist': hist_obj.fid_sec_hist
                   }
 
     return histograms
@@ -114,7 +114,7 @@ class datahandeler(object):
         # Make processing pool
         pool = Pool(processes=self.args.ncore)
         # Map processing to _run function
-        self.output = pool.map(_run, (files))
+        self.output = pool.map(_run, files)
         # Close and join pool
         pool.close()
         pool.join()

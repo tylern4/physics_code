@@ -150,6 +150,7 @@ public:
   int sector = 6;
   int segment = 18;
   int PMT = 3;
+
   TH1D *cc_hist[6][18][3];
   TH1D *cc_hist_allSeg[6][3];
   static const Int_t ndims_cc_sparse = 4;
@@ -170,7 +171,7 @@ public:
   double phi_max = 360 / 2.0;
 
   static const int sector_num = 6;
-  TH2D *fid_sec_hist[sector_num];
+  std::vector<TH2D *> fid_sec_hist;
   TH2D *fid_hist = new TH2D("fid", "fid", bins, phi_min, phi_max, bins,
                             theta_min, theta_max);
   // fiducial

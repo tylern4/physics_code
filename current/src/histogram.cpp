@@ -619,6 +619,7 @@ void Histogram::CC_canvas() {
 }
 
 void Histogram::makeHists_fid() {
+  fid_sec_hist.reserve(sector_num);
   double min_phi[6] = {0, 60, 120, -180, -120, -60};
   double max_phi[6] = {60, 120, 180, -120, -60, 0};
   for (int sec = 0; sec < sector_num; sec++) {

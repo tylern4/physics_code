@@ -173,9 +173,16 @@ max_phi = [60, 120, 180, -120, -60, 0]
 fid_hist = TH2D("fid", "fid", bins, phi_min, phi_max, bins,
                 theta_min, theta_max)
 
+fid_sec_hist = []
+for sec in range(sector_num):
+    hname = "fid_sec%d" % (sec + 1)
+    htitle = "fid_sec%d" % (sec + 1)
+
+    fid_sec_hist.append(TH2D(hname, htitle, bins, min_phi[sec],
+                             max_phi[sec], bins, theta_min, theta_max))
 
 fid = {'fid_hist': fid_hist,
-       #'fid_sec_hist': fid_sec_hist
+       'fid_sec_hist': fid_sec_hist
        }
 
 histo = {}
@@ -187,7 +194,14 @@ def add_and_save(output, root_file):
     h10 = cppyy.gbl.H10()
     for _h in output:
         for key, value in histo.items():
-            value.Add(_h[key])
+            if key == 'fid_sec_hist':
+                pass
+                # for _i in xrange(len(6)):
+                # print(type(_h['fid_sec_hist']))
+                # print([type(_i) for _i in _h['fid_sec_hist'])
+                # print([_i for _i in _h['fid_sec_hist'])
+            else:
+                value.Add(_h[key])
 
     histo['EC_sampling_fraction'].SetXTitle("Momentum (GeV)")
     histo['EC_sampling_fraction'].SetYTitle("Sampling Fraction")
