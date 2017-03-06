@@ -1,4 +1,4 @@
-#!/usr/local/bin/ipython
+#!/usr/bin/env python
 from skim import skim, split_list
 from multiprocessing import Pool
 import multiprocessing
