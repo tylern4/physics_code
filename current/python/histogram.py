@@ -1,5 +1,6 @@
 import ROOT
-from ROOT import TH1D, TH2D
+from ROOT import TH1D, TH2D, TF1, gStyle, TCanvas
+from math import sqrt, log
 import cppyy
 cppyy.load_reflection_info("H10.so")
 
@@ -31,6 +32,37 @@ for sec in range(sector_num):
                              max_phi[sec], bins, theta_min, theta_max))
 
 """
+
+
+def fitGaus(hist, min_value, max_value):
+    c1 = TCanvas()
+    gaus = "[0]*TMath::Gaus(x,[1],[2],1)"
+    fitFunc = TF1("fitFunc", gaus, min_value, max_value)
+    fitFunc.SetLineColor(2)
+    par_max = hist.GetMaximum() if hist.GetMaximum() else 0
+    par_mean = hist.GetMean() if hist.GetMean() else 0
+    fitFunc.SetParameter(0, par_max)
+    fitFunc.SetParameter(1, par_mean)
+    fitFunc.SetParameter(2, 1)
+    fitFunc.SetParNames("height", "mean", "FWHM")
+
+    hist.Fit("fitFunc", "qM0+", "", min_value, max_value)
+
+    par_mean = fitFunc.GetParameter(
+        "mean") if fitFunc.GetParameter("mean") else 0
+
+    par_FWHM = fitFunc.GetParameter(
+        "FWHM") if fitFunc.GetParameter("FWHM") else 0
+
+    fitFunc.SetParameter(0, par_max)
+    fitFunc.SetParameter(1, par_mean)
+    fitFunc.SetParameter(2, par_FWHM)
+    hist.Fit("fitFunc", "qM+", "", min_value, max_value)
+    mean = fitFunc.GetParameter("mean")
+    FWHM = fitFunc.GetParameter("FWHM")
+    sigma = fitFunc.GetParameter("FWHM") / (2 * sqrt(2 * log(2)))
+    gStyle.SetOptFit(1111)
+
 
 bins = 500
 p_min = 0.0
@@ -277,10 +309,14 @@ def add_and_save(output, root_file):
 
     mm_dir = root_file.mkdir("Missing Mass")
     mm_dir.cd()
+    # h10.missing_mass_fit(histo['Missing_Mass'])
     histo['Mass'].SetXTitle("Mass (GeV)")
     histo['Mass'].Write()
+    fitGaus(histo['Missing_Mass'], 0.88, 1.0)
     histo['Missing_Mass'].SetXTitle("Mass (GeV)")
     histo['Missing_Mass'].Write()
+
+    fitGaus(histo['Missing_Mass_square'], 0.5, 1.1)
     histo['Missing_Mass_square'].SetXTitle("Mass^{2} (GeV^{2})")
     histo['Missing_Mass_square'].Write()
 

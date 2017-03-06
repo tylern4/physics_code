@@ -206,6 +206,23 @@ public:
     return hists;
   }
 
+  void missing_mass_fit(TH1D Missing_Mass) {
+    // Start of cuts
+    TCanvas *c2 = new TCanvas;
+    Cuts MM_neutron_cut;
+    double fit_range_min = 0.88;
+    double fit_range_max = 1.0;
+    MM_neutron_cut.FitGaus(&Missing_Mass, fit_range_min, fit_range_max);
+
+    Header *MM_header = new Header("../src/missing_mass_gaussians.hpp", "MM");
+    MM_header->WriteGaussian("mm", 1, MM_neutron_cut.mean,
+                             MM_neutron_cut.sigma);
+
+    delete MM_header;
+    std::cout << "Here" << std::endl;
+    // return Missing_Mass;
+  }
+
   void deltat_slicefit(TH2D delta_t_mass_P, TH2D delta_t_mass_PIP) {
     Header *fit_functions = new Header("../src/fit_functions.hpp", "FF");
     TCanvas *c1 = new TCanvas;
