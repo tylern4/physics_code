@@ -81,6 +81,17 @@ def _run(files):
     return histograms
 
 
+def _run_skim(root_file_name):
+    """Mapped skim funtion"""
+    # Make a chain to load in files, looking at the h10 branch in each file
+    chain = ROOT.TChain('h10')
+    # Crete h10 object (Can be found in H10.h
+    h10 = cppyy.gbl.H10()
+    out_file_name = root_file_name.replace(
+        "/root", "/skim").replace(".root", "_skim.root")
+    h10.Skim(root_file_name, out_file_name)
+
+
 class datahandeler(object):
     """Datahandeler class"""
 
@@ -127,3 +138,15 @@ class datahandeler(object):
 
         root_file.Write()
         root_file.Close()
+
+    def run_skim(self):
+        """Maps function to skim on multiple cores"""
+        # Split input into chunks for processin
+        skim_files = glob.glob(self.args.input + "*.root")
+        # Make processing pool
+        pool = Pool(processes=self.args.ncore)
+        # Map processing to _run function
+        pool.imap(_run_skim, skim_files)
+        # Close and join pool
+        pool.close()
+        pool.join()

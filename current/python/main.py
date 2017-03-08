@@ -20,6 +20,8 @@ def main():
                         help="Number of cores to use if not all the cores", default=0)
     parser.add_argument('-c', dest='clean',
                         help="Clean output directory of all pkl before start", default=False, action='store_true')
+    parser.add_argument('-s', dest='skim',
+                        help="Also skim files and run analysis", default=False, action='store_true')
 
     # Print help if there aren't enough arguments
     if len(sys.argv[1:]) == 0:
@@ -41,10 +43,26 @@ def main():
     dh.run_map()
     gBenchmark.Show('Map')
 
-    # TODO: Get plotting function to work
     gBenchmark.Start('Reduce')
     dh.run_reduce()
     gBenchmark.Show('Reduce')
+
+    # TODO get skim to work properly
+    if args.skim:
+        gBenchmark.Start('Skim')
+        dh.run_skim()
+        gBenchmark.Show('Skim')
+
+        #dh.args.input = dh.args.input.replace("/root", "/skim")
+        #dh.args.output = dh.args.output.replace(".root", "_skim.root")
+
+        # gBenchmark.Start('Map_Skim')
+        # dh.run_map()
+        # gBenchmark.Show('Map_Skim')
+
+        # gBenchmark.Start('Reduce_Skim')
+        # dh.run_reduce()
+        # gBenchmark.Show('Reduce_Skim')
 
 
 if __name__ == "__main__":
