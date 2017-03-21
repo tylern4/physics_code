@@ -53,15 +53,16 @@ def main():
         dh.run_skim()
         gBenchmark.Show('Skim')
 
-        #dh.args.input = dh.args.input.replace("/root", "/skim")
-        #dh.args.output = dh.args.output.replace(".root", "_skim.root")
+        #args.input = args.input.replace("/root", "/skim")
+        #args.output = args.output.replace(".root", "_skim.root")
+        #skim = datahandeler(args)
 
         # gBenchmark.Start('Map_Skim')
-        # dh.run_map()
+        # skim.run_map()
         # gBenchmark.Show('Map_Skim')
 
         # gBenchmark.Start('Reduce_Skim')
-        # dh.run_reduce()
+        # skim.run_reduce()
         # gBenchmark.Show('Reduce_Skim')
 
 
