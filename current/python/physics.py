@@ -10,6 +10,7 @@ append = lambda _arr, _val: np.append(_arr, _val)
 e_mu = TLorentzVector(0.0, 0.0,
                       np.sqrt(Square(E1D_E0) - Square(get_mass('ELECTRON'))),
                       E1D_E0)
+
 # Target four vector for Proton at rest
 _p_target = TLorentzVector(0, 0, 0, get_mass('PROTON'))
 
@@ -33,18 +34,11 @@ def fourvec(_p, _cx, _cy, _cz, _mass):
     _px, _py, _pz = all_mom(_p, _cx, _cy, _cz)
     return fvec(_px, _py, _pz, _mass)
 
-# Calcuating Q^2
-# q^mu^2 = (e^mu - e^mu')^2 = -Q^2
-
 
 def Q2_calc(_e_mu, _e_mu_prime):
     """Retruns Q^2 value: q^mu^2 = (e^mu - e^mu')^2 = -Q^2."""
     _q_mu = (_e_mu - _e_mu_prime)
     return -_q_mu.Mag2()
-
-#	Calcualting W
-#	Gotten from s channel [(gamma - P)^2 == s == w^2]
-#	Sqrt[M_p^2 - Q^2 + 2 M_p gamma]
 
 
 def W_calc(_e_mu, _e_mu_prime):

@@ -1,95 +1,51 @@
 #!/usr/bin/env python
 import ROOT
 from ROOT import gROOT, gBenchmark
-from pathos.multiprocessing import Pool, cpu_count, ProcessingPool
 import numpy as np
-
+import matplotlib
+matplotlib.use('pgf')
+import matplotlib.pyplot as plt
+import argparse
+import sys
 from physics import *
 
-# Load in the functions written by me in c++
-import cppyy
-# cppyy.load_reflection_info("Physics.so")
-# physics = cppyy.gbl.Physics()
-cppyy.load_reflection_info("H10.so")
+parser = argparse.ArgumentParser(description="Python ROOT program")
+parser.add_argument('input', type=str,
+                    help="Input directory for *.root files")
+parser.add_argument('output', type=str, nargs='?',
+                    help="Output pdf file", default='./test.pdf')
 
-# Sets root to batch mode to eliminate any pop up windows
+# Print help if there aren't enough arguments
+if len(sys.argv[1:]) == 0:
+    parser.print_help()
+    parser.exit()
+
+args = parser.parse_args()
+
+if args.input[-1] != '/':
+    args.input = args.input + '/'
+if args.output[-4:] != '.pdf':
+    args.output = args.output + '.pdf'
+
 gROOT.SetBatch(True)
-# Make a chain to load in files, looking at the h10 branch in each file
 chain = ROOT.TChain('h10')
-# Load the files, Can also use glob to get all files in the folder.
-num_files = chain.Add('~/Desktop/dumb/*.root')
+num_files = chain.Add(args.input + "*.root")
 
-# Make the Q^2 and W arrays that will be filled.
-Q2 = np.array([])
-W = np.array([])
-evnt_list = []
+Q2 = []
+W = []
 
-import timeit
-
-
-def calc(evnt):
-    if evnt.id[0] is get_id['ELECTRON']:
-        e_mu_p = fourvec(evnt.p[0], evnt.cx[0],
-                         evnt.cy[0], evnt.cz[0], get_mass('ELECTRON'))
-        Q2 = append(Q2, Q2_calc(e_mu, e_mu_p))
-        W = append(W, W_calc(e_mu, e_mu_p))
-        print(W_calc(e_mu, e_mu_p))
-
-
-def load(chain):
-    h10 = cppyy.gbl.H10()
-    chain = h10.pass_chain(chain)
-    return chain
-    '''
-    if evnt.id[0] is get_id['ELECTRON']:
-        e_mu_p = fourvec(evnt.p[0], evnt.cx[0],
-                         evnt.cy[0], evnt.cz[0], get_mass('ELECTRON'))
-        Q2 = append(Q2, Q2_calc(e_mu, e_mu_p))
-        W = append(W, W_calc(e_mu, e_mu_p))
-        print(W_calc(e_mu, e_mu_p))
-'''
-pool = ProcessingPool()
-c = pool.map(load, (chain))
-pool.map(calc, (c))
-
-print(W)
-''''
-# Start of ROOT based benchmark for testing
-    gBenchmark.Start('Python calcs')
-    # Loop over all events that have been added to the chain
-    for evnt in chain:
-        # If the events ID == ELECTRON then calcuate W and Q^2
-        if evnt.id[0] is get_id['ELECTRON']:
-            # Make electron four vector
-            e_mu_p = fourvec(evnt.p[0], evnt.cx[0],
-                             evnt.cy[0], evnt.cz[0], get_mass('ELECTRON'))
-            # Calcuate W and Q^2 and append them to the arrays
-            # Calcuations for W and Q^2 found in physics.py
-            Q2 = append(Q2, Q2_calc(e_mu, e_mu_p))
-            W = append(W, W_calc(e_mu, e_mu_p))
-    gBenchmark.Show('Python calcs')
-'''
-'''
-# Reset everying to do c++ based calculations to compare
-# del W
-# del Q2
-
-# Make the Q^2 and W arrays that will be filled.
-Q2 = np.array([])
-W = np.array([])
-
-# Start of ROOT based benchmark for testing
-gBenchmark.Start('CPP calcs')
-# Loop over all events that have been added to the chain
 for evnt in chain:
-    # If the events ID == ELECTRON then calcuate W and Q^2
     if evnt.id[0] is get_id['ELECTRON']:
-        # Make electron four vector
-        e_mu_p = fourvec(evnt.p[0], evnt.cx[0],
-                         evnt.cy[0], evnt.cz[0], get_mass('ELECTRON'))
-        # Calcuate W and Q^2 and append them to the arrays
-        # Calcuations for W and Q^2 found in Physics.h and compiled with cppyy
-        Q2 = append(Q2, physics.Q2_calc(e_mu, e_mu_p))
-        W = append(W, physics.W_calc(e_mu, e_mu_p))
-gBenchmark.Show('CPP calcs')
-'''
+        e_mu_p = fourvec(evnt.p[0], evnt.cx[0], evnt.cy[0],
+                         evnt.cz[0], get_mass('ELECTRON'))
+        Q2.append(Q2_calc(e_mu, e_mu_p))
+        W.append(W_calc(e_mu, e_mu_p))
+
+fig = plt.figure(num=None, figsize=(16, 9), dpi=200,
+                 facecolor='w', edgecolor='k')
+plt.hist2d(W, Q2, bins=500, range=[[0, 3.14], [0, 10]])
+plt.title("$W vs Q^{2}$")
+plt.xlabel("$W (GeV)$")
+plt.ylabel("$Q^{2} (GeV^{2})$")
+plt.colorbar()
+plt.savefig(args.output)
