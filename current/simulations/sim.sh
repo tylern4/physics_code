@@ -1,7 +1,7 @@
 #!/bin/bash
-source /root/.bashrc
+source /clas-software/env.sh
 declare -x CLAS_CALDB_DBNAME="calib"
-declare -x CLAS_CALDB_HOST=$CLASDB_PORT_3306_TCP_ADDR
+declare -x CLAS_CALDB_HOST=127.0.0.1
 declare -x CLAS_CALDB_PASS=""
 declare -x CLAS_CALDB_RUNINDEX="RunIndex"
 declare -x RECSIS_RUNTIME="/clas/parms/recsis/runtime"
@@ -12,10 +12,11 @@ function noisyexe {
     $(echo $@)
 }
 
-CODE=/root/code
-DATA=/root/data
-#DATA=.
-#BASE=.
+CODE=.
+#DATA=/srv/data
+mkdir -p /srv/data
+DATA=/srv/data
+BASE=.
 VOL=/root
 
 BLUE="\033[34m"
