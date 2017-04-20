@@ -13,11 +13,10 @@ function noisyexe {
 }
 
 CODE=.
-#DATA=/srv/data
-mkdir -p /srv/data
-DATA=/srv/data
+mkdir -p data
+DATA=./data
 BASE=.
-VOL=/root
+VOL=.
 
 BLUE="\033[34m"
 DEF="\033[0m"
@@ -25,6 +24,7 @@ MAG="\033[35m"
 RED="\033[31m"
 GREEN="\033[32m"
 
+echo hostname
 echo -e "$RED#################$DEF"
 aao_rad < $CODE/aao_rad.inp
 mv aao_rad.evt $DATA/aao_rad.evt
@@ -36,10 +36,10 @@ echo -e "$RED#################$DEF"
 
 echo -e "$BLUE##########$DEF"
 gsim_bat -nomcdata -ffread $CODE/gsim.inp -mcin $DATA/aao_rad.bos -kine 1 -bosout $DATA/gsim.bos
-h10maker -m $DATA/gsim.bos $DATA/gsim_m.root
 
-gsim_bat -nomcdata -ffread $CODE/gsim.inp -mcin $DATA/aao_rad.evt -kine 1 -bosout $DATA/gsim_evt.bos
-h10maker -p $DATA/gsim_evt.bos $DATA/gsim_evt_p.root
+cp gsim.bos uncooked.bos
+user_ana -t user_ana.tcl
+
 #cp gsim.bos uncooked.bos
 #noisyexe user_ana -t user_ana.tcl 2> user_ana_1.err 1> user_ana_1.out
 #h10maker -r cooked.bos cooked_1.root
