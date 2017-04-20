@@ -1,10 +1,9 @@
 #!/bin/bash
 source /clas-software/env.sh
-declare -x CLAS_CALDB_DBNAME="calib"
-declare -x CLAS_CALDB_HOST=127.0.0.1
-declare -x CLAS_CALDB_PASS=""
-declare -x CLAS_CALDB_RUNINDEX="RunIndex"
-declare -x RECSIS_RUNTIME="/clas/parms/recsis/runtime"
+export CLAS_CALDB_DBNAME="calib"
+export CLAS_CALDB_PASS=""
+export CLAS_CALDB_RUNINDEX="RunIndex"
+export RECSIS_RUNTIME="/clas/parms/recsis/runtime"
 
 function noisyexe {
     # Prints the command to stdout before running
@@ -12,44 +11,48 @@ function noisyexe {
     $(echo $@)
 }
 
-CODE=.
-mkdir -p data
-DATA=./data
-BASE=.
-VOL=.
-
 BLUE="\033[34m"
 DEF="\033[0m"
 MAG="\033[35m"
 RED="\033[31m"
 GREEN="\033[32m"
 
-echo hostname
-echo -e "$RED#################$DEF"
-aao_rad < $CODE/aao_rad.inp
-mv aao_rad.evt $DATA/aao_rad.evt
-part2mctk $DATA/aao_rad.evt $DATA/aao_rad.bos
-h10maker -m $DATA/aao_rad.bos $DATA/aao_rad.root
 
-h10maker -p $DATA/aao_rad.evt $DATA/aao_rad_evt_p.root
+HOST=${hostname}
+if ! [[ $HOST =~ ^[0-9A-F]{6}$ ]]; then
+  echo "Using Docker"
+  export SYSTEM="Docker"
+  export CLAS_CALDB_HOST=$CLASDB_PORT_3306_TCP_ADDR
+else
+  export SYSTEM="Not Docker"
+  export CLAS_CALDB_HOST='127.0.0.1'
+fi
+
+CODE=.
+mkdir -p data
+DATA=./data
+BASE=.
+VOL=.
+mkdir -p logs
+LOG=./logs
+
+echo -e "$RED#################$DEF"
+aao_rad < $CODE/aao_rad.inp 2> $LOG/aao_rad.err 1> $LOG/aao_rad.out
+mv aao_rad.evt $DATA/aao_rad.evt
+
+nt10maker -t2 $DATA/aao_rad.evt -o$DATA/aao_rad.hbook
+h2root $DATA/aao_rad.hbook $DATA/aao_rad.root
 echo -e "$RED#################$DEF"
 
 echo -e "$BLUE##########$DEF"
-gsim_bat -nomcdata -ffread $CODE/gsim.inp -mcin $DATA/aao_rad.bos -kine 1 -bosout $DATA/gsim.bos
+gsim_bat -nomcdata -ffread $CODE/gsim.inp -mcin $DATA/aao_rad.evt -kine 1 -bosout $DATA/gsim.evt 2> $LOG/gsim_bat.err 1> $LOG/gsim_bat.out
 
-cp gsim.bos uncooked.bos
-user_ana -t user_ana.tcl
+cp $DATA/gsim.evt uncooked.bos
+user_ana -t user_ana.tcl 2> $LOG/user_ana.err 1> $LOG/user_ana.out
 
-#cp gsim.bos uncooked.bos
-#noisyexe user_ana -t user_ana.tcl 2> user_ana_1.err 1> user_ana_1.out
-#h10maker -r cooked.bos cooked_1.root
-#h2root cooked_chist.hbook cooked_chist_1.root
-#rm -r uncooked.bos cooked.bos cooked_chist.hbook
-#cp gsim_evt.bos uncooked.bos
-#noisyexe user_ana -t user_ana.tcl 2> user_ana_2.err 1> user_ana_2.out
-#h10maker -r cooked.bos cooked_2.root
-#h2root cooked_chist.hbook cooked_chist_2.root
-#rm -r uncooked.bos cooked.bos cooked_chist.hbook
+cp cooked.bos $DATA/cooked.bos
+nt10maker -t1 $DATA/cooked.bos -o$DATA/reconstructed.hbook
+h2root $DATA/reconstructed.hbook $DATA/reconstructed.root
 echo -e "$BLUE##########$DEF"
 
 echo -e "$GREEN##########$DEF"

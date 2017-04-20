@@ -1,7 +1,5 @@
-#source /u/group/clas/builds/release-4-9/packages/tcl/recsis_proc.tcl;
-#source /group/clas/builds/test3/src/clas6-trunk/reconstruction/recsis/recsis_proc.tcl;
-source /clas_software/reconstruction/recsis/recsis_proc.tcl;
-#source /group/clas/builds/test3/environment.csh;
+source /clas/parms/recsis/recsis_proc.tcl;
+
 # define packages
 turnoff ALL;
 global_section off;
