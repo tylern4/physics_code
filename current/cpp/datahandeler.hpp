@@ -76,8 +76,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
     if (electron_cuts)
       hists->EC_fill(etot[ec[0] - 1], p[0]);
     electron_cuts &= ((int)id[0] == ELECTRON); // First particle is electron
-    electron_cuts &=
-        ((int)gpart > 0); // Number of good particles is greater than 0
+    electron_cuts &= ((int)gpart > 0); // Number of good particles is greater than 0
     electron_cuts &= ((int)stat[0] > 0); // First Particle hit stat
     electron_cuts &= ((int)q[0] == -1);  // First particle is negative Q
     electron_cuts &= ((int)sc[0] > 0);   // First Particle hit sc
