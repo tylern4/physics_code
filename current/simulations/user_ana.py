@@ -30,7 +30,7 @@ def cd(newdir, cleanup=lambda: True):
 
 @contextlib.contextmanager
 def tempdir():
-    dirpath = tempfile.mkdtemp()
+    dirpath = tempfile.mkdtemp(dir="/mnt/ssd/temp")
     def cleanup():
         shutil.rmtree(dirpath)
     with cd(dirpath, cleanup):
@@ -48,7 +48,7 @@ def do_user_ana(base):
     with tempdir() as dirpath:
         shutil.copyfile(base, dirpath+"/uncooked.bos")
         shutil.copyfile("/home/tylern/physics_code/current/simulations/user_ana.tcl", dirpath+"/user_ana.tcl")
-        shutil.copyfile("/home/tylern/physics_code/current/simulations/do_user_ana.sh", dirpath+"/user_ana.tcl")
+        shutil.copyfile("/home/tylern/physics_code/current/simulations/do_user_ana.sh", dirpath+"/do_user_ana.sh")
         os.system("docker run --link clasdb:clasdb -v`pwd`:/root/code --rm -it tylern4/clas6:latest do_user_ana.sh")
         shutil.copyfile(dirpath+"/cooked.root", base[:-4]+"_cooked.root")
 
