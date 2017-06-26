@@ -47,8 +47,8 @@ def split_list(args):
 def do_user_ana(base):
     with tempdir() as dirpath:
         shutil.copyfile(base, dirpath+"/uncooked.bos")
-        shutil.copyfile("/Users/tylern/physics_code/current/simulations/user_ana.tcl", dirpath+"/user_ana.tcl")
-        shutil.copyfile("/Users/tylern/physics_code/current/simulations/do_user_ana.sh", dirpath+"/user_ana.tcl")
+        shutil.copyfile("/home/tylern/physics_code/current/simulations/user_ana.tcl", dirpath+"/user_ana.tcl")
+        shutil.copyfile("/home/tylern/physics_code/current/simulations/do_user_ana.sh", dirpath+"/user_ana.tcl")
         os.system("docker run --link clasdb:clasdb -v`pwd`:/root/code --rm -it tylern4/clas6:latest do_user_ana.sh")
         shutil.copyfile(dirpath+"/cooked.root", base[:-4]+"_cooked.root")
 
