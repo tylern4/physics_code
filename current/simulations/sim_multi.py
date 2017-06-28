@@ -36,27 +36,31 @@ def tempdir():
     with cd(dirpath, cleanup):
         yield dirpath
 
-def split_list(args):
-    """Split the list of input files into equal chunks to be processed by the pool."""
-    wanted_parts = args.ncore
-    alist = glob.glob(args.input + 'gsim*.evt')
-    length = len(alist)
-    return [alist[i * length // wanted_parts: (i + 1) * length // wanted_parts]
-        for i in range(wanted_parts)]
+def make_list(num):
+    from datetime import datetime
+    time = datetime.now().strftime('%m_%d_%Y-%H%M_')
+    l = []
+    for i in range(0,num):
+        l.append("sim_"+time+str(i))
+    return l
 
-def do_user_ana(base):
+def do_sim(base):
     with tempdir() as dirpath:
-        shutil.copyfile(base, dirpath+"/uncooked.bos")
+        shutil.copyfile("/home/tylern/physics_code/current/simulations/aao_rad.inp", dirpath+"/aao_rad.inp")
+        shutil.copyfile("/home/tylern/physics_code/current/simulations/gsim.inp", dirpath+"/gsim.inp")
         shutil.copyfile("/home/tylern/physics_code/current/simulations/user_ana.tcl", dirpath+"/user_ana.tcl")
-        shutil.copyfile("/home/tylern/physics_code/current/simulations/do_user_ana.sh", dirpath+"/do_user_ana.sh")
-        os.system("docker run --link clasdb:clasdb -v`pwd`:/root/code --rm -it tylern4/clas6:latest do_user_ana.sh")
-        shutil.copyfile(dirpath+"/cooked.root", base[:-4]+"_cooked.root")
+
+        shutil.copyfile("/home/tylern/physics_code/current/simulations/do_sim.sh", dirpath+"/do_sim.sh")
+
+        os.system("docker run --link clasdb:clasdb -v`pwd`:/root/code --rm -it tylern4/clas6:latest do_sim.sh")
+        shutil.copyfile(dirpath+"/cooked.root", base+".root")
 
 def main():
     # Make argument parser
-    parser = argparse.ArgumentParser(description="User analysis")
-    parser.add_argument('input', type=str, help="Input directory for files to be user_ana'd")
+    parser = argparse.ArgumentParser(description="Full sim analysis")
+    parser.add_argument('output', type=str, help="Output directory for final root files")
     parser.add_argument('-n', dest='ncore', type=int, nargs='?', help="Number of cores to use if not all the cores", default=0)
+    parser.add_argument('-c', dest='count', type=int, nargs='?', help="Number of passes to do", default=0)
 
     # Print help if there aren't enough arguments
     if len(sys.argv[1:]) == 0:
@@ -65,21 +69,17 @@ def main():
 
     args = parser.parse_args()
     # Make sure file paths have ending /
-    if args.input[-1] != '/':
-        args.input = args.input + '/'
+    if args.output[-1] != '/':
+        args.output = args.output + '/'
     if args.ncore == 0 or cpu_count > cpu_count():
         args.ncore = cpu_count()
 
-    #files = split_list(args)
-    files = glob.glob(args.input + 'gsim*.evt')
+    files = make_list(args.count)
     pool = Pool(processes=args.ncore)
     print(files)
-    files = filter(lambda x: os.path.isfile(x[:-4]+"_cooked.root"), files)
-    print(files)
-
     #output = pool.map(do_user_ana, files)
-    #for _ in tqdm.tqdm(pool.imap_unordered(do_user_ana, files), total=len(files)):
-    #    pass
+    for _ in tqdm.tqdm(pool.imap_unordered(do_sim, files), total=len(files)):
+        pass
 
     # Close and join pool
     pool.close()
