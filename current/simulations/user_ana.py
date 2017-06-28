@@ -73,13 +73,13 @@ def main():
     #files = split_list(args)
     files = glob.glob(args.input + 'gsim*.evt')
     pool = Pool(processes=args.ncore)
-    print(files)
-    files = filter(lambda x: os.path.isfile(x[:-4]+"_cooked.root"), files)
-    print(files)
+
+    files = filter(lambda x: not os.path.isfile(x[:-4]+"_cooked.root"), files)
+
 
     #output = pool.map(do_user_ana, files)
-    #for _ in tqdm.tqdm(pool.imap_unordered(do_user_ana, files), total=len(files)):
-    #    pass
+    for _ in tqdm.tqdm(pool.imap_unordered(do_user_ana, files), total=len(files)):
+        pass
 
     # Close and join pool
     pool.close()
