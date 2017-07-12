@@ -40,7 +40,7 @@ def make_list(args):
     from datetime import datetime
     time = datetime.now().strftime('%m_%d_%Y-%H%M_')
     l = []
-    for i in range(0,args.count):
+    for i in range(0,args.num):
         l.append(args.output+"sim_"+time+str(i))
     return l
 
@@ -57,8 +57,8 @@ def do_sim(base):
 def main():
     # Make argument parser
     parser = argparse.ArgumentParser(description="Full sim analysis")
-    parser.add_argument('-n', dest='ncore', type=int, nargs='?', help="Number of cores to use if not all the cores", default=0)
-    parser.add_argument('-c', dest='count', type=int, nargs='?', help="Number of simulations to do", default=100)
+    parser.add_argument('-c', dest='cores', type=int, nargs='?', help="Number of cores to use if not all the cores", default=0)
+    parser.add_argument('-n', dest='num', type=int, nargs='?', help="Number of simulations to do", default=100)
     parser.add_argument('-o', dest='output', type=str, nargs='?', help="Output directory for final root files", default=".")
 
     # Print help if there aren't enough arguments
@@ -67,17 +67,17 @@ def main():
         parser.exit()
 
     args = parser.parse_args()
-    
+
     # Make sure file paths have ending /
     if args.output[-1] != '/':
         args.output = args.output + '/'
-    if args.ncore == 0 or cpu_count > cpu_count():
-        args.ncore = cpu_count()
+    if args.cores == 0 or cpu_count > cpu_count():
+        args.cores = cpu_count()
 
     files = make_list(args)
-    pool = Pool(processes=args.ncore)
+    pool = Pool(processes=args.cores)
 
-    for _ in tqdm.tqdm(pool.imap_unordered(do_sim, files), total=args.ncore):
+    for _ in tqdm.tqdm(pool.imap_unordered(do_sim, files), total=args.cores):
         pass
 
     # Close and join pool
