@@ -77,7 +77,7 @@ def main():
     files = make_list(args)
     pool = Pool(processes=args.cores)
 
-    for _ in tqdm.tqdm(pool.imap_unordered(do_sim, files), total=args.cores):
+    for _ in tqdm.tqdm(pool.imap_unordered(do_sim, files), total=args.num):
         pass
 
     # Close and join pool
