@@ -30,7 +30,10 @@ def cd(newdir, cleanup=lambda: True):
 
 @contextlib.contextmanager
 def tempdir():
-    dirpath = tempfile.mkdtemp(dir="/mnt/ssd/temp")
+    if os.uname()[1] == "workstation":
+        dirpath = tempfile.mkdtemp(dir="/mnt/ssd/temp")
+    else:
+        dirpath = tempfile.mkdtemp()
     def cleanup():
         shutil.rmtree(dirpath)
     with cd(dirpath, cleanup):
@@ -45,11 +48,12 @@ def make_list(args):
     return l
 
 def do_sim(base):
+    cwd = os.getcwd()
     with tempdir() as dirpath:
-        shutil.copyfile("/home/tylern/physics_code/current/simulations/aao_rad.inp", dirpath+"/aao_rad.inp")
-        shutil.copyfile("/home/tylern/physics_code/current/simulations/gsim.inp", dirpath+"/gsim.inp")
-        shutil.copyfile("/home/tylern/physics_code/current/simulations/user_ana.tcl", dirpath+"/user_ana.tcl")
-        shutil.copyfile("/home/tylern/physics_code/current/simulations/do_sim.sh", dirpath+"/do_sim.sh")
+        shutil.copyfile(cwd+"/aao_rad.inp", dirpath+"/aao_rad.inp")
+        shutil.copyfile(cwd+"/gsim.inp", dirpath+"/gsim.inp")
+        shutil.copyfile(cwd+"/user_ana.tcl", dirpath+"/user_ana.tcl")
+        shutil.copyfile(cwd+"/do_sim.sh", dirpath+"/do_sim.sh")
 
         os.system("docker run --link clasdb:clasdb -v`pwd`:/root/code --rm -it tylern4/clas6:latest do_sim.sh")
         shutil.copyfile(dirpath+"/cooked.root", base+".root")
@@ -62,9 +66,9 @@ def main():
     parser.add_argument('-o', dest='output', type=str, nargs='?', help="Output directory for final root files", default=".")
 
     # Print help if there aren't enough arguments
-    if len(sys.argv[1:]) == 0:
-        parser.print_help()
-        parser.exit()
+    #if len(sys.argv[1:]) == 0:
+    #    parser.print_help()
+    #    parser.exit()
 
     args = parser.parse_args()
 
