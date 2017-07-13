@@ -55,9 +55,12 @@ def do_sim(base):
         shutil.copyfile(cwd+"/user_ana.tcl", dirpath+"/user_ana.tcl")
         shutil.copyfile(cwd+"/do_sim.sh", dirpath+"/do_sim.sh")
 
-        os.system("docker run --link clasdb:clasdb -v`pwd`:/root/code --rm -it tylern4/clas6:latest do_sim.sh")
-        shutil.copyfile(dirpath+"/cooked.root", base+".root")
-
+        out = os.system("docker run --link clasdb:clasdb -v`pwd`:/root/code --rm -it tylern4/clas6:latest do_sim.sh")
+        if out == 0:
+            shutil.copyfile(dirpath+"/cooked.root", base+".root")
+        else:
+            print(out)
+            
 def main():
     # Make argument parser
     parser = argparse.ArgumentParser(description="Full sim analysis")

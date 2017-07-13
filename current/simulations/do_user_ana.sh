@@ -8,6 +8,8 @@ export RECSIS_RUNTIME="/clas/parms/recsis/runtime"
 export SYSTEM="Docker"
 export CLAS_CALDB_HOST=$CLASDB_PORT_3306_TCP_ADDR
 
+gpp -ouncooked.bos -a2.35 -b2.35 -c2.35 -f0.97 -P0x1b -R36557 gsim.bos >/dev/null 2>&1
+
 user_ana -t user_ana.tcl >/dev/null 2>&1
 nt10maker -t1 cooked.bos -ocooked.hbook >/dev/null 2>&1
 h2root cooked.hbook cooked.root >/dev/null 2>&1
