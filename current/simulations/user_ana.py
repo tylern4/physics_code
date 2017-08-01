@@ -30,7 +30,10 @@ def cd(newdir, cleanup=lambda: True):
 
 @contextlib.contextmanager
 def tempdir():
-    dirpath = tempfile.mkdtemp(dir="/mnt/ssd/temp")
+    if os.uname()[1] == "workstation":
+        dirpath = tempfile.mkdtemp(dir="/mnt/ssd/temp")
+    else:
+        dirpath = tempfile.mkdtemp()
     def cleanup():
         shutil.rmtree(dirpath)
     with cd(dirpath, cleanup):
@@ -38,17 +41,18 @@ def tempdir():
 
 def split_list(args):
     """Split the list of input files into equal chunks to be processed by the pool."""
-    wanted_parts = args.ncore
+    wanted_parts = args.cores
     alist = glob.glob(args.input + 'gsim*.evt')
     length = len(alist)
     return [alist[i * length // wanted_parts: (i + 1) * length // wanted_parts]
         for i in range(wanted_parts)]
 
 def do_user_ana(base):
+    cwd = os.getcwd()
     with tempdir() as dirpath:
-        shutil.copyfile(base, dirpath+"/uncooked.bos")
-        shutil.copyfile("/home/tylern/physics_code/current/simulations/user_ana.tcl", dirpath+"/user_ana.tcl")
-        shutil.copyfile("/home/tylern/physics_code/current/simulations/do_user_ana.sh", dirpath+"/do_user_ana.sh")
+        shutil.copyfile(base, dirpath+"/gsim.bos")
+        shutil.copyfile(cwd+"/user_ana.tcl", dirpath+"/user_ana.tcl")
+        shutil.copyfile(cwd+"/do_user_ana.sh", dirpath+"/do_user_ana.sh")
         out = os.system("docker run --link clasdb:clasdb -v`pwd`:/root/code --rm -it tylern4/clas6:latest do_user_ana.sh")
         if out == 0:
             shutil.copyfile(dirpath+"/cooked.root", base[:-4]+"_cooked.root")
@@ -59,7 +63,7 @@ def main():
     # Make argument parser
     parser = argparse.ArgumentParser(description="User analysis")
     parser.add_argument('input', type=str, help="Input directory for files to be user_ana'd")
-    parser.add_argument('-n', dest='ncore', type=int, nargs='?', help="Number of cores to use if not all the cores", default=0)
+    parser.add_argument('-c', dest='cores', type=int, nargs='?', help="Number of cores to use if not all the cores", default=0)
 
     # Print help if there aren't enough arguments
     if len(sys.argv[1:]) == 0:
@@ -70,12 +74,11 @@ def main():
     # Make sure file paths have ending /
     if args.input[-1] != '/':
         args.input = args.input + '/'
-    if args.ncore == 0 or cpu_count > cpu_count():
-        args.ncore = cpu_count()
+    if args.cores == 0 or cpu_count > cpu_count():
+        args.cores = cpu_count()
 
-    #files = split_list(args)
     files = glob.glob(args.input + 'gsim*.evt')
-    pool = Pool(processes=args.ncore)
+    pool = Pool(processes=args.cores)
 
     files = filter(lambda x: not os.path.isfile(x[:-4]+"_cooked.root"), files)
 
