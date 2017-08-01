@@ -57,6 +57,7 @@ def do_sim(base):
 
         os.system("docker run --link clasdb:clasdb -v`pwd`:/root/code --rm -it tylern4/clas6:latest do_sim.sh")
         shutil.copyfile(dirpath+"/cooked.root", base+".root")
+        shutil.copyfile(dirpath+"/cooked_chist.root", base+"_chist.root")
 
 def main():
     # Make argument parser
