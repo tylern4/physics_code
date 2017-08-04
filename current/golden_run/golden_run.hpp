@@ -36,9 +36,10 @@ void golden_run(char *fin, char *fout) {
       n_evnt = (int)chain.GetEntries();
       num_of_events = 0;
       total_q = 0.0;
-
+      
+      cout << blue << "\t[" << line_num++ << "]\r" << def << flush;
       for (int current_event = 0; current_event < n_evnt; current_event++) {
-        cout << blue << "\t[ " << progress[(current_event) % 4] << " ]\r" << def << flush;
+        cout << blue << "\t[ " << progress[(current_event/10) % 4] << " ]\r" << def << flush;
         chain.GetEntry(current_event);
         electron_cuts = true;
         // electron cuts
