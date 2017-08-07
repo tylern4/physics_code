@@ -36,16 +36,14 @@ void golden_run(char *fin, char *fout) {
       n_evnt = (int)chain.GetEntries();
       num_of_events = 0;
       total_q = 0.0;
-      
-      cout << blue << "\t[" << line_num++ << "]\r" << def << flush;
+
       for (int current_event = 0; current_event < n_evnt; current_event++) {
-        cout << blue << "\t[ " << progress[(current_event/10) % 4] << " ]\r" << def << flush;
+        cout << blue << "\t[ " << progress[(current_event/100) % 4] << " ]\r" << def << flush;
         chain.GetEntry(current_event);
         electron_cuts = true;
         // electron cuts
         electron_cuts &= ((int)id[0] == ELECTRON); // First particle is electron
-        electron_cuts &=
-            ((int)gpart > 0); // Number of good particles is greater than 0
+        electron_cuts &= ((int)gpart > 0); // Number of good particles is greater than 0
         electron_cuts &= ((int)stat[0] > 0); // First Particle hit stat
         electron_cuts &= ((int)q[0] == -1);  // First particle is negative Q
         electron_cuts &= ((int)sc[0] > 0);   // First Particle hit sc
