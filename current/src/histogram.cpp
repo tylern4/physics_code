@@ -50,6 +50,7 @@ Histogram::~Histogram() {
   delete EC_sampling_fraction;
   delete Missing_Mass;
   delete Missing_Mass_square;
+  delete Theta_CC;
 }
 
 // W and Q^2
@@ -537,8 +538,8 @@ void Histogram::delta_T_canvas() {
   }
 }
 
-void Histogram::CC_fill(int cc_sector, int cc_segment, int cc_pmt,
-                        int cc_nphe) {
+void Histogram::CC_fill(int cc_sector, int cc_segment, int cc_pmt, int cc_nphe,
+                        double theta_cc) {
   x_cc_sparse[0] = cc_sector;
   x_cc_sparse[1] = cc_segment;
   x_cc_sparse[2] = cc_pmt;
@@ -549,6 +550,8 @@ void Histogram::CC_fill(int cc_sector, int cc_segment, int cc_pmt,
     cc_pmt = 2;
   cc_hist[cc_sector - 1][cc_segment - 1][cc_pmt]->Fill(cc_nphe);
   cc_hist_allSeg[cc_sector - 1][cc_pmt]->Fill(cc_nphe);
+
+  Theta_CC->Fill(cc_segment, theta_cc);
 }
 
 void Histogram::makeHists_CC() {
@@ -581,7 +584,12 @@ void Histogram::makeHists_CC() {
 }
 
 void Histogram::CC_Write() {
+  Theta_CC->SetXTitle("CC segment");
+  Theta_CC->SetYTitle("#theta_CC");
+  Theta_CC->Write();
+
   cc_sparse->Write();
+
   for (int sec_i = 0; sec_i < sector; sec_i++) {
     for (int pmt_i = 0; pmt_i < PMT; pmt_i++) {
       cc_hist_allSeg[sec_i][pmt_i]->SetYTitle("number photoelectrons");

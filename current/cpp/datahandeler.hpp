@@ -90,9 +90,12 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
       int cc_segment = (cc_segm[0] % 1000) / 10;
       int cc_pmt = cc_segm[0] / 1000 - 1;
       int cc_nphe = nphe[cc[0] - 1];
-      // cout << cc_sector <<","<< cc_segment <<","<< cc_pmt <<","<< cc_nphe <<
-      // endl;
-      hists->CC_fill(cc_sector, cc_segment, cc_pmt, cc_nphe);
+      double theta_cc =
+          TMath::ACos(TMath::Abs(p[0] * cz[0]) / TMath::Abs(p[0]));
+
+      theta_cc = theta_cc / D2R;
+
+      hists->CC_fill(cc_sector, cc_segment, cc_pmt, cc_nphe, theta_cc);
     }
 
     if (electron_cuts) {
