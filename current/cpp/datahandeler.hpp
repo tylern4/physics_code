@@ -73,10 +73,8 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
     electron_cuts = true;
     // electron cuts
     electron_cuts &= (ec[0] > 0); // ``` ``` ``` ec
-    if (electron_cuts)
-      hists->EC_fill(etot[ec[0] - 1], p[0]);
-    electron_cuts &= ((int)id[0] == ELECTRON); // First particle is electron
-    electron_cuts &= (p[0] > MIN_P_CUT);       // Minimum Momentum cut
+    electron_cuts &= ((int)id[0] == ELECTRON ||
+                      (int)id[0] == 0); // First particle is electron
     electron_cuts &=
         ((int)gpart > 0); // Number of good particles is greater than 0
     electron_cuts &= ((int)stat[0] > 0); // First Particle hit stat
@@ -84,6 +82,11 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
     electron_cuts &= ((int)sc[0] > 0);   // First Particle hit sc
     electron_cuts &= ((int)dc[0] > 0);   // ``` ``` ``` dc
     electron_cuts &= ((int)dc_stat[dc[0] - 1] > 0);
+
+    if (electron_cuts)
+      hists->EC_fill(etot[ec[0] - 1], p[0]);
+
+    electron_cuts &= (p[0] > MIN_P_CUT); // Minimum Momentum cut
 
     if (electron_cuts && cc[0] > 0) {
       int cc_sector = cc_sect[cc[0] - 1];
@@ -167,8 +170,8 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
                                      p[part_num] * cz[part_num]);
               MM = MM_neutron->missing_mass(gamma_mu);
             }
-            hists->Fill_Missing_Mass(MM);
-            hists->Fill_Missing_Mass_square(Square(MM));
+            // hists->Fill_Missing_Mass(MM);
+            // hists->Fill_Missing_Mass_square(Square(MM));
           }
 
           if ((is_pip->at(part_num) && (id[part_num] == PIP)) ||
@@ -182,6 +185,11 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
 
       if (num_of_pis == 1)
         hists->Fill_single_pi_WQ2(W, Q2);
+
+      if (num_of_pis == 1 && num_of_proton == 0) {
+        hists->Fill_Missing_Mass(MM);
+        hists->Fill_Missing_Mass_square(Square(MM));
+      }
       if (num_of_proton == 1)
         hists->Fill_single_proton_WQ2(W, Q2);
     }
