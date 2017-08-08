@@ -24,8 +24,7 @@ except ImportError:
 def main():
     parser = argparse.ArgumentParser(
         description="Plot data from golden run output csv:")
-    parser.add_argument('input', type=str,
-                        help="Input CSV")
+    parser.add_argument('input', type=str, help="Input CSV")
     parser.add_argument('output', type=str, nargs='?',
                         help="Output folder for final root files", default='.')
 
@@ -47,6 +46,8 @@ def main():
     fig = plt.figure(num=None, figsize=(16, 9), dpi=200,
                      facecolor='w', edgecolor='k')
     plt.scatter(golden_df['run_num'], golden_df['ratio'], alpha=0.1)
+    plt.xlabel('Run Number')
+    plt.ylabel('Ratio (events/total Q)')
     plt.ylim([-10000, 150000])
     plt.savefig('golden_run.pdf')
 
