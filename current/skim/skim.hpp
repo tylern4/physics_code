@@ -110,7 +110,7 @@ void skim(char *fin, char *RootFile_output) {
       }
     }
 
-    has_neutron = between_mm(MM);
+    has_neutron = true; // between_mm(MM);
 
     if (electron_cuts && has_neutron) {
       W = W_calc(e_mu, e_mu_prime);

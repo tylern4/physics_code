@@ -170,8 +170,6 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
                                      p[part_num] * cz[part_num]);
               MM = MM_neutron->missing_mass(gamma_mu);
             }
-            // hists->Fill_Missing_Mass(MM);
-            // hists->Fill_Missing_Mass_square(Square(MM));
           }
 
           if ((is_pip->at(part_num) && (id[part_num] == PIP)) ||
@@ -203,9 +201,6 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
 
   Header *MM_header = new Header("../src/missing_mass_gaussians.hpp", "MM");
   MM_header->WriteGaussian("mm", 1, MM_neutron_cut.mean, MM_neutron_cut.sigma);
-  // cut_outputs << "MM_N";
-  // cut_outputs << "," << MM_neutron_cut.mean;
-  // cut_outputs << "," << MM_neutron_cut.sigma << endl;
 
   Cuts MissingMassSquare_cut;
   fit_range_min = 0.5;
@@ -215,9 +210,6 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
   MM_header->WriteGaussian("mm_square", 1, MissingMassSquare_cut.mean,
                            MissingMassSquare_cut.sigma);
   delete MM_header;
-  // cut_outputs << "MM_N_2";
-  // cut_outputs << "," << MissingMassSquare_cut.mean;
-  // cut_outputs << "," << MissingMassSquare_cut.sigma << endl;
 
   //
   // end stuff
