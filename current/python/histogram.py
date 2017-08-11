@@ -73,7 +73,7 @@ def fitGaus_py(hist, min_value, max_value):
         from scipy.optimize import curve_fit
         from root_numpy import hist2array
         import matplotlib.pyplot as plt
-    else:
+    except:
         return 0
 
     t = hist2array(hist, return_edges=True)
