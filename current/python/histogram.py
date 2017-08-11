@@ -64,6 +64,35 @@ def fitGaus(hist, min_value, max_value):
     gStyle.SetOptFit(1111)
 
 
+def gaussian(x, mu, sig, const):
+    return const * 1 / (sig * np.sqrt(2 * np.pi)) * np.exp(-(x - mu)**2 / 2 * sig**2)
+
+
+def fitGaus_py(hist, min_value, max_value):
+    try:
+        from scipy.optimize import curve_fit
+        from root_numpy import hist2array
+        import matplotlib.pyplot as plt
+    else:
+        return 0
+
+    t = hist2array(hist, return_edges=True)
+    xdata = (t[1][0][:-1] + t[1][0][1:]) / 2.0
+    ydata = t[0]
+
+    gaus_guess = np.array([0.9, 0.1, 1])
+
+    gaus_1, gaus_cov_1 = curve_fit(
+        gaussian, xdata, ydata, p0=gaus_guess, maxfev=80000)
+
+    plt.plot(xdata, gaussian(xdata, gaus_1[0], gaus_1[1], gaus_1[2]))
+    plt.xlim((np.min(xdata), np.max(xdata)))
+    plt.legend(loc=0)
+    plt.xlabel(r'Mass (GeV)', fontsize=20)
+    plt.ylabel(r'Counts (#)', fontsize=18)
+    plt.savefig("test.pdf")
+
+
 bins = 500
 p_min = 0.0
 p_max = 5.0
@@ -313,6 +342,7 @@ def add_and_save(output, root_file):
     histo['Mass'].SetXTitle("Mass (GeV)")
     histo['Mass'].Write()
     fitGaus(histo['Missing_Mass'], 0.88, 1.0)
+    fitGaus_py(histo['Missing_Mass'], 0.88, 1.0)
     histo['Missing_Mass'].SetXTitle("Mass (GeV)")
     histo['Missing_Mass'].Write()
 
