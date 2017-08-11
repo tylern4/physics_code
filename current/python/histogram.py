@@ -2,6 +2,7 @@ import ROOT
 from ROOT import TH1D, TH2D, TF1, gStyle, TCanvas
 from math import sqrt, log
 import cppyy
+import numpy as np
 cppyy.load_reflection_info("H10.so")
 
 """
