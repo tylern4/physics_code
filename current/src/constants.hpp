@@ -12,9 +12,10 @@ static const int N_SIGMA = 3;
 static const double PI = TMath::Pi();
 static const float INV_SQRT_2PI = TMath::Sqrt(2 * TMath::Pi());
 static const double D2R = PI / 180.0;
-static const double E1D_E0 = 4.802; // GeV
-// static const double E1D_E0 = 2.03939; //GeV ///This is for Ye's data.
-// Actually E1E_E0
+// static const double E1D_E0 = 4.802;   // GeV
+// Run Info 22848 - 23500
+// http://clasweb.jlab.org/clasonline/servlet/runinfo?action=detail&run=22880
+static const double E1D_E0 = 4.81726; // GeV
 
 static const double SOL = 29.9792458;
 // misc. constants
@@ -44,5 +45,10 @@ static const double MASS_KP = 0.493677;
 static const double MASS_KM = 0.493677;
 static const double MASS_G = 0.0;
 static const double MASS_OMEGA = 0.78265;
+
+// Got from ye/arjun
+// TODO::Get right EC threshhold
+// p_min(in MeV) = 214 + 2.47 × EC_threshold(in mV)
+static const double MIN_P_CUT = 0.5000;
 
 #endif

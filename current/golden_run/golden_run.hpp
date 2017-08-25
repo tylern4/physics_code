@@ -22,6 +22,7 @@ void golden_run(char *fin, char *fout) {
   TLorentzVector e_mu(0.0, 0.0, sqrt(Square(E1D_E0) - Square(MASS_E)), E1D_E0);
   TLorentzVector ZERO(0.0, 0.0, 0.0, 0.0);
   int line_num = 0;
+  const char *progress = "-\\|/";
 
   while (input.is_open() && input.good()) {
     getline(input, line);
@@ -35,8 +36,10 @@ void golden_run(char *fin, char *fout) {
       n_evnt = (int)chain.GetEntries();
       num_of_events = 0;
       total_q = 0.0;
-      cout << blue << "\t[" << line_num++ << "]\r" << def << flush;
+
       for (int current_event = 0; current_event < n_evnt; current_event++) {
+        cout << blue << "\t[ " << progress[(current_event / 100) % 4] << " ]\r"
+             << def << flush;
         chain.GetEntry(current_event);
         electron_cuts = true;
         // electron cuts

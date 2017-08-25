@@ -96,6 +96,7 @@ public:
       if (electron_cuts)
         hists.EC_fill(etot[ec[0] - 1], p[0]);
       electron_cuts &= ((int)id[0] == ELECTRON); // First particle is electron
+      electron_cuts &= (p[0] > MIN_P_CUT);       // Minimum Momentum cut
       electron_cuts &=
           ((int)gpart > 0); // Number of good particles is greater than 0
       // electron_cuts &= ((int)stat[0] > 0); // First Particle hit stat
@@ -110,7 +111,7 @@ public:
         int cc_segment = (cc_segm[0] % 1000) / 10;
         int cc_pmt = cc_segm[0] / 1000 - 1;
         int cc_nphe = nphe[cc[0] - 1];
-        hists.CC_fill(cc_sector, cc_segment, cc_pmt, cc_nphe);
+        hists.CC_fill(cc_sector, cc_segment, cc_pmt, cc_nphe, 0);
       }
 
       if (electron_cuts) {

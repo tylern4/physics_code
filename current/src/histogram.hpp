@@ -162,6 +162,9 @@ public:
   THnSparse *cc_sparse =
       new THnSparseD("cc_sparse", "Histogram", ndims_cc_sparse, bins_cc_sparse,
                      xmin_cc_sparse, xmax_cc_sparse);
+
+  TH2D *Theta_CC =
+      new TH2D("Theta_CC", "Theta_CC", 20, 0.0, 20.0, 60, 0.0, 60.0);
   // cc hist
 
   // fiducial
@@ -236,7 +239,8 @@ public:
   void delta_T_canvas();
 
   // cc hist
-  void CC_fill(int cc_sector, int cc_segment, int cc_pmt, int cc_nphe);
+  void CC_fill(int cc_sector, int cc_segment, int cc_pmt, int cc_nphe,
+               double theta_cc);
   void CC_Write();
   void CC_canvas();
 
