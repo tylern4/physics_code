@@ -45,7 +45,7 @@ void make_electron_csv(char *fin, char *csv_name_output) {
     electron_cuts &= ((int)dc[0] > 0);   // ``` ``` ``` dc
     electron_cuts &= ((int)dc_stat[dc[0] - 1] > 0);
 
-    csv_output << (int)id[0] << ",";
+    csv_output << (int)id[0] == ELECTRON << ",";
     csv_output << (int)gpart << ",";
     csv_output << (int)ec[0] << ",";
     csv_output << (int)stat[0] << ",";
