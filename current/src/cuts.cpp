@@ -115,3 +115,57 @@ void Cuts::FitPoly_4D(TH1D *hist, double min_value, double max_value) {
   e = fitFunc->GetParameter("e");
   gStyle->SetOptFit(1111);
 }
+
+void Cuts::FitFiducial_lo(TH2D *hist2d, double min_value, double max_value) {
+  a = b = c = d = 0.0;
+  TF1 *fitFunc =
+      new TF1("fid", "-37.14*TMath::Power(TMath::Sin(([0]-[1])*"
+                     "0.01745),[2] +[3] / [0] + 1500. / ([0] * [0]))",
+              min_value, (min_value + max_value) / 2.0);
+
+  fitFunc->SetLineColor(41);
+  fitFunc->SetParNames("a", "b", "c", "d");
+
+  hist2d->Fit("fitFunc", "qM0+", "", min_value, (min_value + max_value) / 2.0);
+
+  fitFunc->SetParameter(0, fitFunc->GetParameter("a"));
+  fitFunc->SetParameter(1, fitFunc->GetParameter("b"));
+  fitFunc->SetParameter(2, fitFunc->GetParameter("c"));
+  fitFunc->SetParameter(3, fitFunc->GetParameter("d"));
+
+  hist2d->Fit("fitFunc", "qM+", "", min_value, (min_value + max_value) / 2.0);
+
+  a = fitFunc->GetParameter("a");
+  b = fitFunc->GetParameter("b");
+  c = fitFunc->GetParameter("c");
+  d = fitFunc->GetParameter("d");
+
+  gStyle->SetOptFit(1111);
+}
+
+void Cuts::FitFiducial_hi(TH2D *hist2d, double min_value, double max_value) {
+  a = b = c = d = 0.0;
+  TF1 *fitFunc =
+      new TF1("fid", "37.14*TMath::Power(TMath::Sin(([0]-[1])*"
+                     "0.01745),[2] +[3] / [0] + 1500. / ([0] * [0]))",
+              (min_value + max_value) / 2.0, max_value);
+
+  fitFunc->SetLineColor(42);
+  fitFunc->SetParNames("a", "b", "c", "d");
+
+  hist2d->Fit("fitFunc", "qM0+", "", (min_value + max_value) / 2.0, max_value);
+
+  fitFunc->SetParameter(0, fitFunc->GetParameter("a"));
+  fitFunc->SetParameter(1, fitFunc->GetParameter("b"));
+  fitFunc->SetParameter(2, fitFunc->GetParameter("c"));
+  fitFunc->SetParameter(3, fitFunc->GetParameter("d"));
+
+  hist2d->Fit("fitFunc", "qM+", "", (min_value + max_value) / 2.0, max_value);
+
+  a = fitFunc->GetParameter("a");
+  b = fitFunc->GetParameter("b");
+  c = fitFunc->GetParameter("c");
+  d = fitFunc->GetParameter("d");
+
+  gStyle->SetOptFit(1111);
+}

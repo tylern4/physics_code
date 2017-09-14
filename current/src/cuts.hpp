@@ -6,7 +6,9 @@
 #ifndef CUTS_HPP
 #define CUTS_HPP
 #include "TH1D.h"
+#include "TH2D.h"
 #include "TF1.h"
+#include "TF2.h"
 #include "TCanvas.h"
 #include "TStyle.h"
 
@@ -27,6 +29,8 @@ public:
   void FitPoly_2D(TH1D *hist, double min_value, double max_value);
   void FitPoly_3D(TH1D *hist, double min_value, double max_value);
   void FitPoly_4D(TH1D *hist, double min_value, double max_value);
+  void FitFiducial_lo(TH2D *hist2d, double min_value, double max_value);
+  void FitFiducial_hi(TH2D *hist2d, double min_value, double max_value);
 };
 
 #endif

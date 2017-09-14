@@ -646,10 +646,15 @@ void Histogram::Fill_fid(double theta, double phi, int sector) {
 void Histogram::Fid_Write() {
   fid_hist->SetYTitle("#theta");
   fid_hist->SetXTitle("#phi");
-
+  double min_phi[6] = {0, 60, 120, -180, -120, -60};
+  double max_phi[6] = {60, 120, 180, -120, -60, 0};
   fid_hist->Write();
-
+  Cuts fid_sec_cuts[2][sector_num];
   for (int sec = 0; sec < sector_num; sec++) {
+    fid_sec_cuts[0][sec].FitFiducial_lo(fid_sec_hist[sec], min_phi[sec],
+                                        max_phi[sec]);
+    // fid_sec_cuts[1][sec].FitFiducial_hi(fid_sec_hist[sec], min_phi[sec],
+    //                                    max_phi[sec]);
     fid_sec_hist[sec]->SetYTitle("#theta");
     fid_sec_hist[sec]->SetXTitle("#phi");
     fid_sec_hist[sec]->Write();

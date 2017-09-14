@@ -18,7 +18,7 @@ void make_electron_csv(char *fin, char *csv_name_output) {
   csv_output.open(csv_name_output);
   csv_output << "id_0, gpart, ec_0, stat_0, q_0, sc_0, dc_0, dc_stat, p, "
                 "cx, cy, cz, cc_0, cc_sector, cc_segment, cc_pmt, cc_nphe, "
-                "theta_cc, theta_fid, phi_fid, sector_fid, W, Q2, Energy"
+                "theta_cc, theta_fid, phi_fid, sector_fid, W, Q2, Energy, MM"
              << endl;
 
   // Load chain from branch h10
@@ -107,7 +107,11 @@ void make_electron_csv(char *fin, char *csv_name_output) {
     e_E = e_mu_prime.E();
     csv_output << W << ",";
     csv_output << Q2 << ",";
-    csv_output << e_E;
+    csv_output << e_E << ",";
+
+    // TODO: Put missing mass in
+    csv_output << 0.945;
+
     csv_output << endl;
   }
   //
