@@ -194,7 +194,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
   }
 
   // Start of cuts
-  Cuts MM_neutron_cut;
+  Fits MM_neutron_cut;
   double fit_range_min = 0.88;
   double fit_range_max = 1.0;
   MM_neutron_cut.FitGaus(hists->Missing_Mass, fit_range_min, fit_range_max);
@@ -202,7 +202,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
   Header *MM_header = new Header("../src/missing_mass_gaussians.hpp", "MM");
   MM_header->WriteGaussian("mm", 1, MM_neutron_cut.mean, MM_neutron_cut.sigma);
 
-  Cuts MissingMassSquare_cut;
+  Fits MissingMassSquare_cut;
   fit_range_min = 0.5;
   fit_range_max = 1.1;
   MissingMassSquare_cut.FitGaus(hists->Missing_Mass_square, fit_range_min,

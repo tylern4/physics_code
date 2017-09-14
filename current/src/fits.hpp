@@ -3,8 +3,8 @@
 /*	University Of South Carolina*/
 /************************************************************************/
 
-#ifndef CUTS_HPP
-#define CUTS_HPP
+#ifndef FITS_HPP
+#define FITS_HPP
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TF1.h"
@@ -12,7 +12,7 @@
 #include "TCanvas.h"
 #include "TStyle.h"
 
-class Cuts {
+class Fits {
 private:
   double par_max, par_mean, par_FWHM;
   std::string ploy1d = "[0]+[1]*x";
@@ -20,10 +20,14 @@ private:
   std::string ploy3d = ploy2d + "+[3]*x*x*x";
   std::string ploy4d = ploy3d + "+[4]*x*x*x*x";
   std::string gaus = "[0]*TMath::Gaus(x,[1],[2],1)";
+  double fiducial_phi_lo(double theta_e, double theta_e_min, double k,
+                         double m);
+  double fiducial_phi_hi(double theta_e, double theta_e_min, double k,
+                         double m);
 
 public:
   double mean, sigma, FWHM;
-  double a, b, c, d, e;
+  double a, b, c, d, e = 0.0;
   void FitGaus(TH1D *hist, double min_value, double max_value);
   void FitPoly_1D(TH1D *hist, double min_value, double max_value);
   void FitPoly_2D(TH1D *hist, double min_value, double max_value);

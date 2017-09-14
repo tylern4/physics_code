@@ -468,7 +468,7 @@ void Histogram::delta_t_Fill(double momentum, int charge, double delta_t_proton,
 }
 
 void Histogram::delta_t_slices_Write() {
-  Cuts delta_t_cut[3][num_points];
+  Fits delta_t_cut[3][num_points];
   double fit_dt_min = -1.0;
   double fit_dt_max = 1.0;
   for (int j = 0; j < 3; j++) {
@@ -649,12 +649,13 @@ void Histogram::Fid_Write() {
   double min_phi[6] = {0, 60, 120, -180, -120, -60};
   double max_phi[6] = {60, 120, 180, -120, -60, 0};
   fid_hist->Write();
-  Cuts fid_sec_cuts[2][sector_num];
+  Fits fid_sec_lo[sector_num];
+  Fits fid_sec_hi[sector_num];
   for (int sec = 0; sec < sector_num; sec++) {
-    fid_sec_cuts[0][sec].FitFiducial_lo(fid_sec_hist[sec], min_phi[sec],
-                                        max_phi[sec]);
-    // fid_sec_cuts[1][sec].FitFiducial_hi(fid_sec_hist[sec], min_phi[sec],
-    //                                    max_phi[sec]);
+    fid_sec_lo[sec].FitFiducial_lo(fid_sec_hist[sec], min_phi[sec],
+                                   max_phi[sec]);
+    fid_sec_hi[sec].FitFiducial_hi(fid_sec_hist[sec], min_phi[sec],
+                                   max_phi[sec]);
     fid_sec_hist[sec]->SetYTitle("#theta");
     fid_sec_hist[sec]->SetXTitle("#phi");
     fid_sec_hist[sec]->Write();

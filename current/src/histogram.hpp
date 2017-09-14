@@ -10,7 +10,7 @@
 #include "THnSparse.h"
 #include "TGraph.h"
 #include "TF1.h"
-#include "cuts.hpp"
+#include "fits.hpp"
 #include "makeHeader.hpp"
 #include <fstream>
 #include "TDirectory.h"
