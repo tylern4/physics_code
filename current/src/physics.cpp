@@ -81,6 +81,26 @@ int get_sector(double phi) {
   } */
 }
 
+double fiducial_phi(double theta, double e_p) {
+  /////////// NOTE: Definitly just magic numbers here......... :(
+  double theta_min = 9.5 + 17.0 / (e_p + 0.17);
+  double k = 0.705 + 1.1 * e_p;
+  double m = -63.5 + (-30.0 * e_p);
+
+  return 37.14 * TMath::Power(TMath::Sin((theta - theta_min) * 0.01745),
+                              (k + (m / theta) + (1500. / (theta * theta))));
+}
+
+// double fiducial_phi_hi(double theta_e, double theta_e_min, double k, double
+// m) {
+//  return fiducial_phi(theta_e, theta_e_min, k, m, true);
+//}
+
+// double fiducial_phi_lo(double theta_e, double theta_e_min, double k, double
+// m) {
+//  return fiducial_phi(theta_e, theta_e_min, k, m, false);
+//}
+
 double Get_Mass(int ID) {
 
   switch (ID) {

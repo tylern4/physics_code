@@ -628,8 +628,6 @@ void Histogram::CC_canvas() {
 
 void Histogram::makeHists_fid() {
   fid_sec_hist.reserve(sector_num);
-  double min_phi[6] = {0, 60, 120, -180, -120, -60};
-  double max_phi[6] = {60, 120, 180, -120, -60, 0};
   for (int sec = 0; sec < sector_num; sec++) {
     sprintf(hname, "fid_sec%d", sec + 1);
     sprintf(htitle, "fid_sec%d", sec + 1);
@@ -646,16 +644,15 @@ void Histogram::Fill_fid(double theta, double phi, int sector) {
 void Histogram::Fid_Write() {
   fid_hist->SetYTitle("#theta");
   fid_hist->SetXTitle("#phi");
-  double min_phi[6] = {0, 60, 120, -180, -120, -60};
-  double max_phi[6] = {60, 120, 180, -120, -60, 0};
+
   fid_hist->Write();
-  Fits fid_sec_lo[sector_num];
-  Fits fid_sec_hi[sector_num];
+  // Fits fid_sec_lo[sector_num];
+  // Fits fid_sec_hi[sector_num];
   for (int sec = 0; sec < sector_num; sec++) {
-    fid_sec_lo[sec].FitFiducial_lo(fid_sec_hist[sec], min_phi[sec],
-                                   max_phi[sec]);
-    fid_sec_hi[sec].FitFiducial_hi(fid_sec_hist[sec], min_phi[sec],
-                                   max_phi[sec]);
+    // fid_sec_lo[sec].FitFiducial_lo(fid_sec_hist[sec], min_phi[sec],
+    //                               max_phi[sec]);
+    // fid_sec_hi[sec].FitFiducial_hi(fid_sec_hist[sec], min_phi[sec],
+    //                               max_phi[sec]);
     fid_sec_hist[sec]->SetYTitle("#theta");
     fid_sec_hist[sec]->SetXTitle("#phi");
     fid_sec_hist[sec]->Write();

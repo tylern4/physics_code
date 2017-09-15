@@ -115,7 +115,7 @@ void Fits::FitPoly_4D(TH1D *hist, double min_value, double max_value) {
   e = fitFunc->GetParameter("e");
   gStyle->SetOptFit(1111);
 }
-
+/*
 double Fits::fiducial_phi_lo(double theta_e, double theta_e_min, double k,
                              double m) {
   return -37.14 * pow(sin((theta_e - theta_e_min) * 0.01745),
@@ -185,3 +185,4 @@ void Fits::FitFiducial_hi(TH2D *hist2d, double min_value, double max_value) {
 
   gStyle->SetOptFit(1111);
 }
+*/

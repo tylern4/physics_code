@@ -20,10 +20,10 @@ private:
   std::string ploy3d = ploy2d + "+[3]*x*x*x";
   std::string ploy4d = ploy3d + "+[4]*x*x*x*x";
   std::string gaus = "[0]*TMath::Gaus(x,[1],[2],1)";
-  double fiducial_phi_lo(double theta_e, double theta_e_min, double k,
-                         double m);
-  double fiducial_phi_hi(double theta_e, double theta_e_min, double k,
-                         double m);
+  // double fiducial_phi_lo(double theta_e, double theta_e_min, double k,
+  //                       double m);
+  // double fiducial_phi_hi(double theta_e, double theta_e_min, double k,
+  //                       double m);
 
 public:
   double mean, sigma, FWHM;
@@ -33,8 +33,8 @@ public:
   void FitPoly_2D(TH1D *hist, double min_value, double max_value);
   void FitPoly_3D(TH1D *hist, double min_value, double max_value);
   void FitPoly_4D(TH1D *hist, double min_value, double max_value);
-  void FitFiducial_lo(TH2D *hist2d, double min_value, double max_value);
-  void FitFiducial_hi(TH2D *hist2d, double min_value, double max_value);
+  // void FitFiducial_lo(TH2D *hist2d, double min_value, double max_value);
+  // void FitFiducial_hi(TH2D *hist2d, double min_value, double max_value);
 };
 
 #endif
