@@ -192,7 +192,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
         hists->Fill_single_proton_WQ2(W, Q2);
     }
   }
-
+  std::cout << green << "Fitting" << def << std::endl;
   // Start of cuts
   Fits MM_neutron_cut;
   double fit_range_min = 0.88;
