@@ -97,40 +97,41 @@ public:
       electron_cuts &= ((int)dc[0] > 0);  // ``` ``` ``` dc
       electron_cuts &= ((int)dc_stat[dc[0] - 1] > 0);
 
-      // Setup scattered electron 4 vector
-      e_mu_prime_3.SetXYZ(p[0] * cx[0], p[0] * cy[0], p[0] * cz[0]);
-      e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
+      if (electron_cuts) { // Setup scattered electron 4 vector
+        e_mu_prime_3.SetXYZ(p[0] * cx[0], p[0] * cy[0], p[0] * cz[0]);
+        e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
 
-      out.W_vec.push_back(W_calc(e_mu, e_mu_prime));
-      out.Q2_vec.push_back(Q2_calc(e_mu, e_mu_prime));
-      for (int part_num = 0; part_num < gpart; part_num++) {
-        particle_vector.push_back(std::to_string(id[part_num]));
-      }
-      out.particle_list.push_back(particle_vector);
-      /*
-      num_of_proton = num_of_pis = 0;
-        for (int part_num = 1; part_num < gpart; part_num++) {
-          if (p[part_num] == 0)
-            continue;
-
-          Particle3.SetXYZ(p[part_num] * cx[part_num], p[part_num] *
-        cy[part_num],
-                           p[part_num] * cz[part_num]);
-          Particle4.SetVectM(Particle3, Get_Mass(id[part_num]));
-
-          if (id[part_num] == PIP) {
-            num_of_pis++;
-            TLorentzVector gamma_mu = (e_mu - e_mu_prime);
-
-            MM_neutron->Set_PxPyPz(p[part_num] * cx[part_num],
-                                   p[part_num] * cy[part_num],
-                                   p[part_num] * cz[part_num]);
-            out.MM_vec.push_back(MM_neutron->missing_mass(gamma_mu));
-          } else {
-            out.MM_vec.push_back(-999.0);
-          }
+        out.W_vec.push_back(W_calc(e_mu, e_mu_prime));
+        out.Q2_vec.push_back(Q2_calc(e_mu, e_mu_prime));
+        for (int part_num = 0; part_num < gpart; part_num++) {
+          particle_vector.push_back(std::to_string(id[part_num]));
         }
-        */
+        out.particle_list.push_back(particle_vector);
+        /*
+        num_of_proton = num_of_pis = 0;
+          for (int part_num = 1; part_num < gpart; part_num++) {
+            if (p[part_num] == 0)
+              continue;
+
+            Particle3.SetXYZ(p[part_num] * cx[part_num], p[part_num] *
+          cy[part_num],
+                             p[part_num] * cz[part_num]);
+            Particle4.SetVectM(Particle3, Get_Mass(id[part_num]));
+
+            if (id[part_num] == PIP) {
+              num_of_pis++;
+              TLorentzVector gamma_mu = (e_mu - e_mu_prime);
+
+              MM_neutron->Set_PxPyPz(p[part_num] * cx[part_num],
+                                     p[part_num] * cy[part_num],
+                                     p[part_num] * cz[part_num]);
+              out.MM_vec.push_back(MM_neutron->missing_mass(gamma_mu));
+            } else {
+              out.MM_vec.push_back(-999.0);
+            }
+          }
+          */
+      }
     }
 
     chain.Reset();
