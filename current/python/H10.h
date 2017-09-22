@@ -211,7 +211,7 @@ public:
   void missing_mass_fit(TH1D Missing_Mass) {
     // Start of cuts
     TCanvas *c2 = new TCanvas;
-    Cuts MM_neutron_cut;
+    Fits MM_neutron_cut;
     double fit_range_min = 0.88;
     double fit_range_max = 1.0;
     MM_neutron_cut.FitGaus(&Missing_Mass, fit_range_min, fit_range_max);
