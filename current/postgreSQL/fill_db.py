@@ -132,6 +132,8 @@ for e in xrange(0, num):
     rec.fill_record(particle_list=id_list)
     rec.insert_record()
 
+
+print(evnt_id_base)
 """
 
 CREATE TABLE EVENTS(
