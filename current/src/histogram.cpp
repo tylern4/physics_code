@@ -653,7 +653,7 @@ void Histogram::Fid_Write() {
   for (int sec = 0; sec < sector_num; sec++) {
     // fid_sec_lo[sec].FitFiducial_lo(fid_sec_hist[sec], min_phi[sec],
     //                               max_phi[sec]);
-    fid_sec[sec].FitPoly_fid(fid_sec_hist[sec], min_phi[sec], max_phi[sec]);
+    // fid_sec[sec].FitPoly_fid(fid_sec_hist[sec], min_phi[sec], max_phi[sec]);
     // fid_sec_hi[sec].FitFiducial_hi(fid_sec_hist[sec], min_phi[sec],
     //                               max_phi[sec]);
     fid_sec_hist[sec]->SetYTitle("#theta");
@@ -672,4 +672,22 @@ void Histogram::EC_Write() {
   EC_sampling_fraction->SetYTitle("Sampling Fraction");
 
   EC_sampling_fraction->Write();
+}
+
+void Histogram::Fill_Beam_Position(double vertex_x, double vertex_y) {
+  Beam_Position->Fill(vertex_x, vertex_y);
+  Beam_Position_X->Fill(vertex_x);
+  Beam_Position_Y->Fill(vertex_y);
+}
+
+void Histogram::Beam_Position_Write() {
+  Beam_Position->SetXTitle("X");
+  Beam_Position->SetYTitle("Y");
+  Beam_Position->Write();
+
+  Beam_Position_X->SetXTitle("X");
+  Beam_Position_X->Write();
+
+  Beam_Position_Y->SetXTitle("Y");
+  Beam_Position_Y->Write();
 }
