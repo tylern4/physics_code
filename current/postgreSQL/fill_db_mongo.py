@@ -1,8 +1,12 @@
 #!/usr/bin/env python
-from __future__ import print_function
+from __future__ import print_function, unicode_literals, absolute_import
 # Loads ROOT for opening files
 import ROOT
 from ROOT import gROOT, gBenchmark
+
+from halo import Halo
+spinner = Halo({'text': 'Startup', 'spinner': 'dots'})
+spinner.start()
 
 import sys
 import cppyy
@@ -24,11 +28,15 @@ gROOT.SetBatch(True)
 chain = ROOT.TChain('h10')
 h10 = cppyy.gbl.H10()
 
+spinner.succeed('Starting DataHandeler')
+spinner.start('Starting DataHandeler')
+
 num_files = chain.Add(filename)
 h10_data = h10.dataHandeler(chain)
 
 num = len(h10_data.W_vec)
 
+spinner.start('Filling mongodb')
 for e in xrange(0, num):
     id_list = []
     for ids in h10_data.particle_list[e]:
@@ -50,3 +58,4 @@ for e in xrange(0, num):
 
 
 print(evnt_id_base)
+spinner.stop()
