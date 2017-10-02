@@ -98,11 +98,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
           TMath::ACos(TMath::Abs(p[0] * cz[0]) / TMath::Abs(p[0]));
 
       theta_cc = theta_cc / D2R;
-      if (cc_segment < 18) {
-        hists->CC_fill(cc_sector, cc_segment, cc_pmt, cc_nphe, theta_cc);
-      } else {
-        std::cout << cc_segment << std::endl;
-      }
+      hists->CC_fill(cc_sector, cc_segment, cc_pmt, cc_nphe, theta_cc);
 
       hists->Fill_Beam_Position((double)vx[0], (double)vy[0]);
     }
@@ -146,14 +142,11 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
       hists->WvsQ2_Fill(e_E, W, Q2, xb_calc(Q2, e_E));
       num_of_proton = num_of_pis = 0;
 
-#pragma omp for
+#pragma omp parallel for
       for (int part_num = 1; part_num < gpart; part_num++) {
         if (p[part_num] == 0)
           continue;
         // if(is_proton->at(part_num) == is_pip->at(part_num)) continue;
-
-        if (id[part_num] == PROTON && (int)q[part_num] == -1)
-          std::cout << "Wango Bango" << std::endl;
 
         hists->Fill_Mass(m[part_num]);
         Particle3.SetXYZ(p[part_num] * cx[part_num], p[part_num] * cy[part_num],
