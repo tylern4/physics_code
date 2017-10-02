@@ -98,8 +98,11 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
           TMath::ACos(TMath::Abs(p[0] * cz[0]) / TMath::Abs(p[0]));
 
       theta_cc = theta_cc / D2R;
-
-      hists->CC_fill(cc_sector, cc_segment, cc_pmt, cc_nphe, theta_cc);
+      if (cc_segment < 18) {
+        hists->CC_fill(cc_sector, cc_segment, cc_pmt, cc_nphe, theta_cc);
+      } else {
+        std::cout << cc_segment << std::endl;
+      }
 
       hists->Fill_Beam_Position((double)vx[0], (double)vy[0]);
     }
