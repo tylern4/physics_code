@@ -165,6 +165,7 @@ public:
 
   TH2D *Theta_CC =
       new TH2D("Theta_CC", "Theta_CC", 20, 0.0, 20.0, 60, 0.0, 60.0);
+  TH2D *Theta_CC_Sec[6];
   // cc hist
 
   // fiducial
@@ -254,6 +255,8 @@ public:
   void CC_fill(int cc_sector, int cc_segment, int cc_pmt, int cc_nphe,
                double theta_cc);
   void CC_Write();
+  void Theta_CC_Write();
+  void theta_cc_slice_fit();
   void CC_canvas();
 
   // fiducial hist

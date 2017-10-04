@@ -30,3 +30,5 @@ current/src/missing_mass_gaussians.hpp
 current/bin/outputFiles/
 
 current/bin/csv_maker
+
+current/src/fit_theta_cc.hpp

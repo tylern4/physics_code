@@ -142,7 +142,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
       hists->WvsQ2_Fill(e_E, W, Q2, xb_calc(Q2, e_E));
       num_of_proton = num_of_pis = 0;
 
-#pragma omp parallel for
+      //#pragma omp parallel for
       for (int part_num = 1; part_num < gpart; part_num++) {
         if (p[part_num] == 0)
           continue;
@@ -251,6 +251,10 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
   TDirectory *Delta_T_canvases = RootOutputFile->mkdir("Delta_T_canvases");
   Delta_T_canvases->cd();
   hists->delta_T_canvas();
+
+  TDirectory *Theta_CC_hists = RootOutputFile->mkdir("Theta_CC_hists");
+  Theta_CC_hists->cd();
+  hists->Theta_CC_Write();
 
   TDirectory *CC_hists = RootOutputFile->mkdir("CC_hists");
   CC_hists->cd();

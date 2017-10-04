@@ -552,6 +552,7 @@ void Histogram::CC_fill(int cc_sector, int cc_segment, int cc_pmt, int cc_nphe,
   cc_hist_allSeg[cc_sector - 1][cc_pmt]->Fill(cc_nphe);
 
   Theta_CC->Fill(cc_segment, theta_cc);
+  Theta_CC_Sec[cc_sector - 1]->Fill(cc_segment, theta_cc);
 }
 
 void Histogram::makeHists_CC() {
@@ -561,6 +562,9 @@ void Histogram::makeHists_CC() {
   cc_sparse->GetAxis(3)->SetTitle(" cc_nphe ");
 
   for (int sec_i = 0; sec_i < sector; sec_i++) {
+    sprintf(hname, "Theta_CC_sec%d", sec_i + 1);
+    sprintf(htitle, "Theta CC sector %d", sec_i + 1);
+    Theta_CC_Sec[sec_i] = new TH2D(hname, htitle, 20, 0.0, 20.0, 60, 0.0, 60.0);
     for (int pmt_i = 0; pmt_i < PMT; pmt_i++) {
       if (pmt_i == 0)
         L_R_C = "both";
@@ -583,11 +587,19 @@ void Histogram::makeHists_CC() {
   }
 }
 
-void Histogram::CC_Write() {
+void Histogram::Theta_CC_Write() {
   Theta_CC->SetXTitle("CC segment");
   Theta_CC->SetYTitle("#theta_CC");
   Theta_CC->Write();
+  for (int sec_i = 0; sec_i < sector; sec_i++) {
+    Theta_CC_Sec[sec_i]->SetXTitle("CC segment");
+    Theta_CC_Sec[sec_i]->SetYTitle("#theta_CC");
+    Theta_CC_Sec[sec_i]->Write();
+  }
+  theta_cc_slice_fit();
+}
 
+void Histogram::CC_Write() {
   cc_sparse->Write();
 
   for (int sec_i = 0; sec_i < sector; sec_i++) {
@@ -600,6 +612,66 @@ void Histogram::CC_Write() {
       }
     }
   }
+}
+
+void Histogram::theta_cc_slice_fit() {
+  Header *fit_functions = new Header("../src/fit_theta_cc.hpp", "FF");
+
+  TF1 *peak = new TF1("peak", "gaus", 0, 60);
+  char *func = "[0]*exp(-[1]*x) + [2]*x*x + [3]*x + [4]";
+  Theta_CC->FitSlicesY(peak, 0, -1, 20, "QR");
+
+  TH1D *Theta_CC_0 = (TH1D *)gDirectory->Get("Theta_CC_0");
+  TH1D *Theta_CC_1 = (TH1D *)gDirectory->Get("Theta_CC_1");
+  TH1D *Theta_CC_2 = (TH1D *)gDirectory->Get("Theta_CC_2");
+  double x[20];
+  double y_plus[20];
+  double y_minus[20];
+  int num = 0;
+  for (int i = 0; i < 20; i++) {
+    if (Theta_CC_1->GetBinContent(i) != 0) {
+      // Get momentum from bin center
+      x[num] = (double)Theta_CC_1->GetBinCenter(i);
+      // mean + 3sigma
+      y_plus[num] = (double)Theta_CC_1->GetBinContent(i) +
+                    (N_SIGMA - 1) * (double)Theta_CC_2->GetBinContent(i);
+      // mean - 3simga
+      y_minus[num] = (double)Theta_CC_1->GetBinContent(i) -
+                     (N_SIGMA - 1) * (double)Theta_CC_2->GetBinContent(i);
+      num++;
+    }
+  }
+
+  TGraph *P = new TGraph(num, x, y_plus);
+  TGraph *M = new TGraph(num, x, y_minus);
+  TF1 *Theta_CC_Pos_fit = new TF1("Theta_CC_Pos_fit", func);
+  TF1 *Theta_CC_Neg_fit = new TF1("Theta_CC_Neg_fit", func);
+  P->Fit(Theta_CC_Pos_fit, "QRG5", "", 1, 20);
+  P->Write();
+  M->Fit(Theta_CC_Neg_fit, "QRG5", "", 1, 20);
+  M->Write();
+  Theta_CC_Pos_fit->Write();
+  Theta_CC_Neg_fit->Write();
+  P->Draw("Same");
+  M->Draw("Same");
+  Theta_CC_Pos_fit->Draw("Same");
+  Theta_CC_Neg_fit->Draw("Same");
+
+  fit_functions->NewFunction();
+  fit_functions->Set_RetrunType("double");
+  fit_functions->Set_FuncName("Theta_CC_Pos_fit");
+  fit_functions->Set_FuncInputs("double x");
+  fit_functions->Set_Function(Theta_CC_Pos_fit->GetExpFormula("P"));
+  fit_functions->WriteFunction();
+
+  fit_functions->NewFunction();
+  fit_functions->Set_RetrunType("double");
+  fit_functions->Set_FuncName("Theta_CC_Neg_fit");
+  fit_functions->Set_FuncInputs("double x");
+  fit_functions->Set_Function(Theta_CC_Neg_fit->GetExpFormula("P"));
+  fit_functions->WriteFunction();
+
+  delete fit_functions;
 }
 
 void Histogram::CC_canvas() {
@@ -653,7 +725,8 @@ void Histogram::Fid_Write() {
   for (int sec = 0; sec < sector_num; sec++) {
     // fid_sec_lo[sec].FitFiducial_lo(fid_sec_hist[sec], min_phi[sec],
     //                               max_phi[sec]);
-    // fid_sec[sec].FitPoly_fid(fid_sec_hist[sec], min_phi[sec], max_phi[sec]);
+    // fid_sec[sec].FitPoly_fid(fid_sec_hist[sec], min_phi[sec],
+    // max_phi[sec]);
     // fid_sec_hi[sec].FitFiducial_hi(fid_sec_hist[sec], min_phi[sec],
     //                               max_phi[sec]);
     fid_sec_hist[sec]->SetYTitle("#theta");
