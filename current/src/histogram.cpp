@@ -618,7 +618,8 @@ void Histogram::theta_cc_slice_fit() {
   Header *fit_functions = new Header("../src/fit_theta_cc.hpp", "FF");
 
   TF1 *peak = new TF1("peak", "gaus", 0, 60);
-  char *func = "[0]*exp(-[1]*x) + [2]*x*x + [3]*x + [4]";
+  //[2]*x*x +
+  char *func = "[0]*exp(-[1]*x) + [3]*x + [4]";
   Theta_CC->FitSlicesY(peak, 0, -1, 20, "QR");
 
   TH1D *Theta_CC_0 = (TH1D *)gDirectory->Get("Theta_CC_0");
