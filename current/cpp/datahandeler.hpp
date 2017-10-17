@@ -146,6 +146,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
       for (int part_num = 1; part_num < gpart; part_num++) {
         if (p[part_num] == 0)
           continue;
+
         // if(is_proton->at(part_num) == is_pip->at(part_num)) continue;
 
         hists->Fill_Mass(m[part_num]);

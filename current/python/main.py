@@ -7,11 +7,10 @@ from datahandler import datahandeler
 from constants import *
 
 gROOT.SetBatch(True)
-from halo import Halo
 
 
 def main():
-    spinner = Halo({'text': 'Running', 'spinner': 'dots'})
+
     # Make argument parser
     parser = argparse.ArgumentParser(description="Root datahandeler program")
     parser.add_argument('input', type=str,
@@ -31,30 +30,23 @@ def main():
         parser.exit()
 
     args = parser.parse_args()
-    spinner.start()
+
     # Make sure file paths have ending /
     if args.input[-1] != '/':
         args.input = args.input + '/'
     if args.output[-5:] != '.root':
         args.output = args.output + '.root'
 
-    spinner.succeed('Starting DataHandeler')
-    spinner.start()
     # Create datahandeler object based on the given arguments
     dh = datahandeler(args)
 
-    spinner.succeed('Starting Map')
-    spinner.start()
     gBenchmark.Start('Map')
     dh.run_map()
     gBenchmark.Show('Map')
 
-    spinner.succeed('Starting Reduce')
-    spinner.start()
     gBenchmark.Start('Reduce')
     dh.run_reduce()
     gBenchmark.Show('Reduce')
-    spinner.stop()
 
     # TODO get skim to work properly
     if args.skim:

@@ -619,7 +619,6 @@ void Histogram::theta_cc_slice_fit() {
 
   TF1 *peak = new TF1("peak", "gaus", 0, 60);
   //[2]*x*x +
-  char *func = "[0]*exp(-[1]*x) + [3]*x + [4]";
   Theta_CC->FitSlicesY(peak, 0, -1, 20, "QR");
 
   TH1D *Theta_CC_0 = (TH1D *)gDirectory->Get("Theta_CC_0");
@@ -635,21 +634,23 @@ void Histogram::theta_cc_slice_fit() {
       x[num] = (double)Theta_CC_1->GetBinCenter(i);
       // mean + 3sigma
       y_plus[num] = (double)Theta_CC_1->GetBinContent(i) +
-                    (N_SIGMA - 1) * (double)Theta_CC_2->GetBinContent(i);
+                    (2 * (double)Theta_CC_2->GetBinContent(i)); //(N_SIGMA)
+
       // mean - 3simga
       y_minus[num] = (double)Theta_CC_1->GetBinContent(i) -
-                     (N_SIGMA - 1) * (double)Theta_CC_2->GetBinContent(i);
+                     (2 * (double)Theta_CC_2->GetBinContent(i)); //(N_SIGMA)
       num++;
     }
   }
 
+  char *func = "[0]*exp([1]*x)+ [2]*x + [3]";
   TGraph *P = new TGraph(num, x, y_plus);
   TGraph *M = new TGraph(num, x, y_minus);
   TF1 *Theta_CC_Pos_fit = new TF1("Theta_CC_Pos_fit", func);
   TF1 *Theta_CC_Neg_fit = new TF1("Theta_CC_Neg_fit", func);
-  P->Fit(Theta_CC_Pos_fit, "QRG5", "", 1, 20);
+  P->Fit(Theta_CC_Pos_fit, "QR", "", 1, 16);
   P->Write();
-  M->Fit(Theta_CC_Neg_fit, "QRG5", "", 1, 20);
+  M->Fit(Theta_CC_Neg_fit, "QR", "", 1, 16);
   M->Write();
   Theta_CC_Pos_fit->Write();
   Theta_CC_Neg_fit->Write();

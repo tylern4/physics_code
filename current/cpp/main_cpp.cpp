@@ -15,6 +15,7 @@
 using namespace std;
 
 int main(int argc, char **argv) {
+  gROOT->SetBatch(true);
   TStopwatch *Watch = new TStopwatch;
   Watch->Start();
   gStyle->SetOptFit(1111);
