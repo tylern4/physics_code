@@ -100,7 +100,8 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
       theta_cc = theta_cc / D2R;
       hists->CC_fill(cc_sector, cc_segment, cc_pmt, cc_nphe, theta_cc);
 
-      hists->Fill_Beam_Position((double)vx[0], (double)vy[0]);
+      hists->Fill_Beam_Position((double)dc_xec[dc[0] - 1],
+                                (double)dc_yec[dc[0] - 1]);
     }
 
     if (electron_cuts) {
