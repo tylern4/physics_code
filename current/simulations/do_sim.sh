@@ -1,5 +1,5 @@
 #!/bin/bash
-source /clas-software/env.sh
+source /usr/local/clas-software/env.sh
 export CLAS_CALDB_DBNAME="calib"
 export CLAS_CALDB_PASS=""
 export CLAS_CALDB_RUNINDEX="RunIndex"
