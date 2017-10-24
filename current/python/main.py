@@ -68,6 +68,7 @@ def main():
 
 
 if __name__ == "__main__":
+    print("Test")
     main()
     # try:
     # except KeyboardInterrupt:
