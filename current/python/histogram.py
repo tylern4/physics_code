@@ -147,11 +147,13 @@ W_Q2 = {'WvsQ2_hist': WvsQ2_hist,
         'Q2_single_proton': Q2_single_proton
         }
 
-
-Beam_Position = TH2D("Beam_Position", "X vs Y", bins, -5.0, 5.0,
-                     bins, -5.0, 5.0,)
-Beam_Position_X = TH1D("Beam_Position_X", "Beam_Position_X", bins, -5.0, 5.0)
-Beam_Position_Y = TH1D("Beam_Position_Y", "Beam_Position_Y", bins, -5.0, 5.0)
+x_y_min_max = 1.5
+Beam_Position = TH2D("Beam_Position", "X vs Y", bins, -x_y_min_max, x_y_min_max,
+                     bins, -x_y_min_max, x_y_min_max,)
+Beam_Position_X = TH1D("Beam_Position_X", "Beam_Position_X",
+                       bins, -x_y_min_max, x_y_min_max)
+Beam_Position_Y = TH1D("Beam_Position_Y", "Beam_Position_Y",
+                       bins, -x_y_min_max, x_y_min_max)
 
 Beam_Pos = {
     'Beam_Position': Beam_Position,

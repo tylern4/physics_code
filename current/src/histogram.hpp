@@ -188,7 +188,7 @@ public:
                p_max, bins, EC_min, EC_max);
   // EC hists
   // Beam Position
-  double x_y_min_max = 5.0;
+  double x_y_min_max = 1.5;
   TH1D *Beam_Position_X = new TH1D("Beam_Position_X", "Beam_Position_X", bins,
                                    -x_y_min_max, x_y_min_max);
   TH1D *Beam_Position_Y = new TH1D("Beam_Position_Y", "Beam_Position_Y", bins,
