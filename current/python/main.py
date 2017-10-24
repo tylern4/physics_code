@@ -68,9 +68,8 @@ def main():
 
 
 if __name__ == "__main__":
-    print("Test")
-    main()
-    # try:
-    # except KeyboardInterrupt:
-    #    print_red("\n\nExiting")
-    #    sys.exit()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print_red("\n\nExiting")
+        sys.exit()
