@@ -15,10 +15,6 @@ import plots
 # from pathos.multiprocessing import Pool, cpu_count, ProcessingPool
 from multiprocessing import Pool, cpu_count
 import multiprocessing as mp
-try:
-    import dill as pl
-except:
-    sys.exit()
 
 import cppyy
 cppyy.load_reflection_info("H10.so")
