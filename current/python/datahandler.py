@@ -71,7 +71,10 @@ def _run(files):
                   'delta_t_mass_PIP_PID': hist_obj.delta_t_mass_PIP_PID,
                   'EC_sampling_fraction': hist_obj.EC_sampling_fraction,
                   'fid_hist': hist_obj.fid_hist,
-                  'fid_sec_hist': hist_obj.fid_sec_hist
+                  'fid_sec_hist': hist_obj.fid_sec_hist,
+                  'Beam_Position': hist_obj.Beam_Position,
+                  'Beam_Position_X': hist_obj.Beam_Position_X,
+                  'Beam_Position_Y': hist_obj.Beam_Position_Y
                   }
 
     return histograms
