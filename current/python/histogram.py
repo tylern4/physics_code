@@ -147,6 +147,20 @@ W_Q2 = {'WvsQ2_hist': WvsQ2_hist,
         'Q2_single_proton': Q2_single_proton
         }
 
+x_y_min_max = 1.5
+Beam_Position = TH2D("Beam_Position", "X vs Y", bins, -x_y_min_max, x_y_min_max,
+                     bins, -x_y_min_max, x_y_min_max,)
+Beam_Position_X = TH1D("Beam_Position_X", "Beam_Position_X",
+                       bins, -x_y_min_max, x_y_min_max)
+Beam_Position_Y = TH1D("Beam_Position_Y", "Beam_Position_Y",
+                       bins, -x_y_min_max, x_y_min_max)
+
+Beam_Pos = {
+    'Beam_Position': Beam_Position,
+    'Beam_Position_X': Beam_Position_X,
+    'Beam_Position_Y': Beam_Position_Y
+}
+
 
 b_min = 0.1
 b_max = 1.2
@@ -248,7 +262,7 @@ fid = {'fid_hist': fid_hist,
        }
 
 histo = {}
-for d in (W_Q2, P_B, MissMass, delta_t, ec, fid):
+for d in (W_Q2, P_B, MissMass, delta_t, ec, fid, Beam_Pos):
     histo.update(d)
 
 
@@ -269,13 +283,27 @@ def add_and_save(output, root_file):
     histo['EC_sampling_fraction'].SetYTitle("Sampling Fraction")
     histo['EC_sampling_fraction'].Write()
 
+    beam_folder = root_file.mkdir("beam")
+    beam_folder.cd()
+    histo['Beam_Position'].SetXTitle("X (cm)")
+    histo['Beam_Position'].SetYTitle("Y (cm)")
+    histo['Beam_Position'].Write()
+    fitGaus(histo['Beam_Position_X'], -1.0, 1.0)
+    fitGaus_py(histo['Beam_Position_X'], -1.0, 1.0)
+    histo['Beam_Position_X'].SetXTitle("X (cm)")
+    histo['Beam_Position_X'].Write()
+    fitGaus(histo['Beam_Position_Y'], -1.0, 1.0)
+    fitGaus_py(histo['Beam_Position_Y'], -1.0, 1.0)
+    histo['Beam_Position_Y'].SetXTitle("Y (cm)")
+    histo['Beam_Position_Y'].Write()
+
     WvsQ2_folder = root_file.mkdir("W vs Q2")
     WvsQ2_folder.cd()
     histo['WvsQ2_hist'].SetXTitle("W (GeV)")
     histo['WvsQ2_hist'].SetYTitle("Q^{2} (GeV^{2})")
     histo['WvsQ2_hist'].Write()
-    histo['WvsQ2_hist'].SetXTitle("W (GeV)")
-    histo['WvsQ2_hist'].Write()
+    histo['W_hist'].SetXTitle("W (GeV)")
+    histo['W_hist'].Write()
     histo['Q2_hist'].SetXTitle("Q^{2} (GeV^{2})")
     histo['Q2_hist'].Write()
     histo['E_prime_hist'].SetXTitle("Energy (GeV)")

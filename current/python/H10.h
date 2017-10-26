@@ -112,6 +112,8 @@ public:
         int cc_pmt = cc_segm[0] / 1000 - 1;
         int cc_nphe = nphe[cc[0] - 1];
         hists.CC_fill(cc_sector, cc_segment, cc_pmt, cc_nphe, 0);
+        hists.Fill_Beam_Position((double)dc_vx[dc[0] - 1],
+                                 (double)dc_vy[dc[0] - 1]);
       }
 
       if (electron_cuts) {
