@@ -63,7 +63,6 @@ def do_sim(base):
         out = os.system(
             "docker run --link clasdb:clasdb -v`pwd`:/root/code --rm -it tylern4/clas6:latest do_sim.sh")
         if out == 0:
-            shutil.copyfile(dirpath + "/cooked_h10.root", base + "_h10.root")
             shutil.copyfile(dirpath + "/cooked.root", base + ".root")
             shutil.copyfile(dirpath + "/cooked_chist.root",
                             base + "_chist.root")
