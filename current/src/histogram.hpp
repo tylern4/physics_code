@@ -175,7 +175,9 @@ public:
   double phi_max = 360 / 2.0;
 
   static const int sector_num = 6;
+  static const int fid_slices = 50;
   std::vector<TH2D *> fid_sec_hist;
+  TH1D *fid_sec_slice[sector_num][fid_slices];
   TH2D *fid_hist = new TH2D("fid", "fid", bins, phi_min, phi_max, bins,
                             theta_min, theta_max);
   // fiducial

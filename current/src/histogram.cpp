@@ -720,20 +720,18 @@ void Histogram::Fid_Write() {
   fid_hist->SetXTitle("#phi");
 
   fid_hist->Write();
-  Fits fid_sec_lo[sector_num];
-  Fits fid_sec_hi[sector_num];
-  Fits fid_sec[sector_num];
 
   for (int sec = 0; sec < sector_num; sec++) {
-    // fid_sec_lo[sec].FitFiducial_lo(fid_sec_hist[sec], min_phi[sec],
-    //                               max_phi[sec]);
-    // fid_sec[sec].FitPoly_fid(fid_sec_hist[sec], min_phi[sec],
-    // max_phi[sec]);
-    // fid_sec_hi[sec].FitFiducial_hi(fid_sec_hist[sec], min_phi[sec],
-    //                               max_phi[sec]);
     fid_sec_hist[sec]->SetYTitle("#theta");
     fid_sec_hist[sec]->SetXTitle("#phi");
     fid_sec_hist[sec]->Write();
+
+    for (int slice = 0; slice < fid_slices; slice++) {
+      sprintf(hname, "fid_sec_%d_%d", sec + 1, slice + 1);
+      fid_sec_slice[sec][slice] =
+          fid_sec_hist[sec]->ProjectionY(hname, 10 * slice, 10 * slice + 10);
+      fid_sec_slice[sec][slice]->Rebin(10);
+    }
   }
 }
 
