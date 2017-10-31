@@ -169,8 +169,8 @@ public:
   // cc hist
 
   // fiducial
-  double theta_min = 0;
-  double theta_max = 90;
+  double theta_min = 10;
+  double theta_max = 60;
   double phi_min = -360 / 2.0;
   double phi_max = 360 / 2.0;
 
@@ -190,15 +190,15 @@ public:
                p_max, bins, EC_min, EC_max);
   // EC hists
   // Beam Position
-  double x_y_min_max = 1.5;
-  TH1D *Beam_Position_X = new TH1D("Beam_Position_X", "Beam_Position_X",
-                                   bins * 100, -x_y_min_max, x_y_min_max);
-  TH1D *Beam_Position_Y = new TH1D("Beam_Position_Y", "Beam_Position_Y",
-                                   bins * 100, -x_y_min_max, x_y_min_max);
+  double x_y_min_max = 0.5;
+  TH1D *Beam_Position_X = new TH1D("Beam_Position_X", "Beam_Position_X", bins,
+                                   -x_y_min_max, x_y_min_max);
+  TH1D *Beam_Position_Y = new TH1D("Beam_Position_Y", "Beam_Position_Y", bins,
+                                   -x_y_min_max, x_y_min_max);
 
   TH2D *Beam_Position =
       new TH2D("Beam_Position", "Beam_Position", bins, -x_y_min_max,
-               x_y_min_max, bins * 100, -x_y_min_max, x_y_min_max);
+               x_y_min_max, bins, -x_y_min_max, x_y_min_max);
 
   // Beam Position
 
