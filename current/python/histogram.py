@@ -154,11 +154,14 @@ Beam_Position_X = TH1D("Beam_Position_X", "Beam_Position_X",
                        bins, -x_y_min_max, x_y_min_max)
 Beam_Position_Y = TH1D("Beam_Position_Y", "Beam_Position_Y",
                        bins, -x_y_min_max, x_y_min_max)
+Beam_Position_Z = TH1D("Beam_Position_Z", "Beam_Position_Z",
+                       bins, -5.0, 5.0)
 
 Beam_Pos = {
     'Beam_Position': Beam_Position,
     'Beam_Position_X': Beam_Position_X,
-    'Beam_Position_Y': Beam_Position_Y
+    'Beam_Position_Y': Beam_Position_Y,
+    'Beam_Position_Z': Beam_Position_Z
 }
 
 

@@ -74,7 +74,8 @@ def _run(files):
                   'fid_sec_hist': hist_obj.fid_sec_hist,
                   'Beam_Position': hist_obj.Beam_Position,
                   'Beam_Position_X': hist_obj.Beam_Position_X,
-                  'Beam_Position_Y': hist_obj.Beam_Position_Y
+                  'Beam_Position_Y': hist_obj.Beam_Position_Y,
+                  'Beam_Position_Z': hist_obj.Beam_Position_Z
                   }
 
     return histograms
@@ -134,7 +135,6 @@ class datahandeler(object):
         from histogram import add_and_save
         root_file = TFile(self.args.output, "RECREATE")
         add_and_save(self.output, root_file)
-        print("here")
         root_file.Write()
         root_file.Close()
 
