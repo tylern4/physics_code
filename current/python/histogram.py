@@ -270,6 +270,7 @@ def add_and_save(output, root_file):
     h10 = cppyy.gbl.H10()
     for _h in output:
         for key, value in histo.items():
+            print(key, value)
             if key == 'fid_sec_hist':
                 pass
                 # for _i in xrange(len(6)):
