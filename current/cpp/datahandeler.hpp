@@ -221,7 +221,12 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
   chain.Reset(); // delete Tree object
 
   RootOutputFile->cd();
+  TDirectory *EC_folder = RootOutputFile->mkdir("EC_hists");
+  EC_folder->cd();
   hists->EC_Write();
+
+  TDirectory *Beam_Folder = RootOutputFile->mkdir("Beam Position");
+  Beam_Folder->cd();
   hists->Beam_Position_Write();
 
   TDirectory *WvsQ2_folder = RootOutputFile->mkdir("W vs Q2");
