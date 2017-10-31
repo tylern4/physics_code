@@ -134,7 +134,7 @@ class datahandeler(object):
         from histogram import add_and_save
         root_file = TFile(self.args.output, "RECREATE")
         add_and_save(self.output, root_file)
-
+        print("here")
         root_file.Write()
         root_file.Close()
 

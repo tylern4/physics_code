@@ -189,12 +189,15 @@ public:
       new TH2D("EC_sampling_fraction", "EC_sampling_fraction", bins, p_min,
                p_max, bins, EC_min, EC_max);
   // EC hists
+
   // Beam Position
   double x_y_min_max = 0.5;
   TH1D *Beam_Position_X = new TH1D("Beam_Position_X", "Beam_Position_X", bins,
                                    -x_y_min_max, x_y_min_max);
   TH1D *Beam_Position_Y = new TH1D("Beam_Position_Y", "Beam_Position_Y", bins,
                                    -x_y_min_max, x_y_min_max);
+  TH1D *Beam_Position_Z =
+      new TH1D("Beam_Position_Z", "Beam_Position_Z", bins, -5.0, 5.0);
 
   TH2D *Beam_Position =
       new TH2D("Beam_Position", "Beam_Position", bins, -x_y_min_max,
@@ -270,8 +273,7 @@ public:
   void EC_Write();
 
   // Beam Position
-  void Fill_Beam_Position(double vertex_x, double vertex_y);
-  void Fill_Beam_Position(int sector, double vertex_x, double vertex_y);
+  void Fill_Beam_Position(double vertex_x, double vertex_y, double vertex_z);
   void Beam_Position_Write();
 };
 

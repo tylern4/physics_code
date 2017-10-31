@@ -270,7 +270,6 @@ def add_and_save(output, root_file):
     h10 = cppyy.gbl.H10()
     for _h in output:
         for key, value in histo.items():
-            print(key, value)
             if key == 'fid_sec_hist':
                 pass
                 # for _i in xrange(len(6)):
@@ -297,6 +296,10 @@ def add_and_save(output, root_file):
     fitGaus_py(histo['Beam_Position_Y'], -1.0, 1.0)
     histo['Beam_Position_Y'].SetXTitle("Y (cm)")
     histo['Beam_Position_Y'].Write()
+    fitGaus(histo['Beam_Position_Z'], -1.0, 1.0)
+    fitGaus_py(histo['Beam_Position_Z'], -1.0, 1.0)
+    histo['Beam_Position_Z'].SetXTitle("Z (cm)")
+    histo['Beam_Position_Z'].Write()
 
     WvsQ2_folder = root_file.mkdir("W vs Q2")
     WvsQ2_folder.cd()

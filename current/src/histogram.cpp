@@ -772,10 +772,12 @@ void Histogram::EC_Write() {
   EC_sampling_fraction->Write();
 }
 
-void Histogram::Fill_Beam_Position(double vertex_x, double vertex_y) {
+void Histogram::Fill_Beam_Position(double vertex_x, double vertex_y,
+                                   double vertex_z) {
   Beam_Position->Fill(vertex_x, vertex_y);
   Beam_Position_X->Fill(vertex_x);
   Beam_Position_Y->Fill(vertex_y);
+  Beam_Position_Z->Fill(vertex_z);
 }
 
 void Histogram::Beam_Position_Write() {
@@ -789,4 +791,7 @@ void Histogram::Beam_Position_Write() {
 
   Beam_Position_Y->SetXTitle("Y");
   Beam_Position_Y->Write();
+
+  Beam_Position_Z->SetXTitle("Z");
+  Beam_Position_Z->Write();
 }
