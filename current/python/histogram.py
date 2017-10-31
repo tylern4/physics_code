@@ -238,8 +238,8 @@ ec_sampling_fraction = TH2D(
 
 ec = {'EC_sampling_fraction': ec_sampling_fraction}
 
-theta_min = 0
-theta_max = 90
+theta_min = 10
+theta_max = 60
 phi_min = -360 / 2.0
 phi_max = 360 / 2.0
 sector_num = 6
