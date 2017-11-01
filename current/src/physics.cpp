@@ -137,3 +137,16 @@ double Get_Mass(int ID) {
   }
   return 0;
 }
+
+double genNormal(double *x, double *par) {
+  // auto frac = (par[1] / (2 * par[0] * TMath::Gamma(1 / par[1])));
+  // auto expo = TMath::Power(TMath::Abs(x[0] - par[2]) / par[0], par[1]);
+
+  // auto func = frac * TMath::Exp(-expo);
+
+  auto func =
+      par[0] *
+      TMath::Exp(-(TMath::Power(x[0] - par[1], 2.0) / (2 * par[2] * par[2])));
+
+  return func;
+}

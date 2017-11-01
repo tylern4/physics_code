@@ -11,6 +11,8 @@
 #include "TF2.h"
 #include "TCanvas.h"
 #include "TStyle.h"
+#include "physics.hpp"
+#include "Math/MinimizerOptions.h"
 
 class Fits {
 private:
@@ -29,6 +31,7 @@ public:
   double mean, sigma, FWHM;
   double a, b, c, d, e = 0.0;
   void FitGaus(TH1D *hist, double min_value, double max_value);
+  void FitLandau(TH1D *hist, double min_value, double max_value);
   void FitPoly_1D(TH1D *hist, double min_value, double max_value);
   void FitPoly_2D(TH1D *hist, double min_value, double max_value);
   void FitPoly_3D(TH1D *hist, double min_value, double max_value);
@@ -37,6 +40,7 @@ public:
   void FitFiducial_lo(TH2D *hist2d, double min_value, double max_value);
   void FitFiducial_hi(TH2D *hist2d, double min_value, double max_value);
   void FitFiducial(TH2D *hist2d, double min_value, double max_value);
+  void FitGenNormal(TH1D *hist, double min_value, double max_value);
 };
 
 #endif

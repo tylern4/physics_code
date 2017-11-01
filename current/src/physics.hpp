@@ -32,9 +32,7 @@ int get_sector(double phi);
 double Get_Mass(int ID);
 
 double fiducial_phi(double theta_e, double e_p);
-// double fiducial_phi_lo(double theta_e, double theta_e_min, double k, double
-// m);
-// double fiducial_phi_hi(double theta_e, double theta_e_min, double k, double
-// m);
+
+double genNormal(double *x, double *par);
 
 #endif

@@ -304,6 +304,7 @@ void Histogram::Fill_deltat_positron_PID(double momentum, double delta_t) {
 }
 
 void Histogram::delta_t_slice_fit() {
+  ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   Header *fit_functions = new Header("../src/fit_functions.hpp", "FF");
 
   TF1 *peak = new TF1("peak", "gaus", -1, 1);
@@ -739,6 +740,8 @@ void Histogram::Fill_fid(double theta, double phi, int sector) {
 }
 
 void Histogram::Fid_Write() {
+  Fits SliceFit[sector_num][fid_slices];
+
   fid_hist->SetYTitle("#theta");
   fid_hist->SetXTitle("#phi");
   fid_hist->SetOption("colz");
@@ -755,6 +758,8 @@ void Histogram::Fid_Write() {
       fid_sec_slice[sec][slice] =
           fid_sec_hist[sec]->ProjectionX(hname, 10 * slice, 10 * slice + 9);
       fid_sec_slice[sec][slice]->Rebin(10);
+      SliceFit[sec][slice].FitGenNormal(fid_sec_slice[sec][slice], min_phi[sec],
+                                        max_phi[sec]);
     }
   }
 }
