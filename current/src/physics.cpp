@@ -26,7 +26,7 @@ double xb_calc(double Q2, double E_prime) {
   double xb = (Q2 / (2 * MASS_P * gamma));
   return xb;
 }
-// overload with 4 vectors instaed of otehr calculations
+// overload with 4 vectors
 double xb_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime) {
   double Q2 = Q2_calc(e_mu, e_mu_prime);
   TLorentzVector q = e_mu - e_mu_prime;
@@ -139,14 +139,10 @@ double Get_Mass(int ID) {
 }
 
 double genNormal(double *x, double *par) {
-  // auto frac = (par[1] / (2 * par[0] * TMath::Gamma(1 / par[1])));
-  // auto expo = TMath::Power(TMath::Abs(x[0] - par[2]) / par[0], par[1]);
+  double frac = (par[1] / (2 * par[0] * TMath::Gamma(1 / par[1])));
+  double expo = TMath::Power(TMath::Abs(x[0] - par[2]) / par[0], par[1]);
 
-  // auto func = frac * TMath::Exp(-expo);
-
-  auto func =
-      par[0] *
-      TMath::Exp(-(TMath::Power(x[0] - par[1], 2.0) / (2 * par[2] * par[2])));
+  double func = par[3] * frac * TMath::Exp(-expo);
 
   return func;
 }

@@ -304,7 +304,7 @@ void Histogram::Fill_deltat_positron_PID(double momentum, double delta_t) {
 }
 
 void Histogram::delta_t_slice_fit() {
-  ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   Header *fit_functions = new Header("../src/fit_functions.hpp", "FF");
 
   TF1 *peak = new TF1("peak", "gaus", -1, 1);

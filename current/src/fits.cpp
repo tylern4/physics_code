@@ -3,11 +3,13 @@
 /*	University Of South Carolina*/
 /************************************************************************/
 
+// Reference: https://pprc.qmul.ac.uk/~bevan/yeti/fitting.pdf
+
 #include "fits.hpp"
 
 void Fits::FitGaus(TH1D *hist, double min_value, double max_value) {
   if (hist->GetEntries() > 1000) {
-    ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+    // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
     TF1 *fitFunc = new TF1("fitFunc", gaus.c_str(), min_value, max_value);
     fitFunc->SetLineColor(2);
     par_max = std::isnan(hist->GetMaximum()) ? 0 : hist->GetMaximum();
@@ -41,7 +43,7 @@ void Fits::FitGaus(TH1D *hist, double min_value, double max_value) {
 
 void Fits::FitLandau(TH1D *hist, double min_value, double max_value) {
   if (hist->GetEntries() > 1000) {
-    ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+    // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
     TF1 *fitFunc = new TF1("fitFunc", "landau", min_value, max_value);
 
     hist->Fit("fitFunc", "q", "", min_value, max_value);
@@ -52,7 +54,7 @@ void Fits::FitLandau(TH1D *hist, double min_value, double max_value) {
 }
 
 void Fits::FitPoly_1D(TH1D *hist, double min_value, double max_value) {
-  ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   TF1 *fitFunc = new TF1("fitFunc", ploy1d.c_str(), min_value, max_value);
   fitFunc->SetLineColor(9);
   fitFunc->SetParNames("a", "b");
@@ -69,7 +71,7 @@ void Fits::FitPoly_1D(TH1D *hist, double min_value, double max_value) {
 }
 
 void Fits::FitPoly_2D(TH1D *hist, double min_value, double max_value) {
-  ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   TF1 *fitFunc = new TF1("fitFunc", ploy2d.c_str(), min_value, max_value);
   fitFunc->SetLineColor(30);
   fitFunc->SetParNames("a", "b", "c");
@@ -88,7 +90,7 @@ void Fits::FitPoly_2D(TH1D *hist, double min_value, double max_value) {
 }
 
 void Fits::FitPoly_3D(TH1D *hist, double min_value, double max_value) {
-  ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   TF1 *fitFunc = new TF1("fitFunc", ploy3d.c_str(), min_value, max_value);
   fitFunc->SetLineColor(46);
   fitFunc->SetParNames("a", "b", "c", "d");
@@ -109,7 +111,7 @@ void Fits::FitPoly_3D(TH1D *hist, double min_value, double max_value) {
 }
 
 void Fits::FitPoly_4D(TH1D *hist, double min_value, double max_value) {
-  ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   TF1 *fitFunc = new TF1("fitFunc", ploy4d.c_str(), min_value, max_value);
   fitFunc->SetLineColor(42);
   fitFunc->SetParNames("a", "b", "c", "d", "e");
@@ -132,7 +134,7 @@ void Fits::FitPoly_4D(TH1D *hist, double min_value, double max_value) {
 }
 
 void Fits::FitPoly_fid(TH2D *hist, double min_value, double max_value) {
-  ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   TF1 *fitFunc = new TF1("fitFunc", "pol8", min_value, max_value);
   fitFunc->SetLineColor(42);
   fitFunc->SetParNames("a", "b", "c", "d", "e", "f", "g", "h");
@@ -170,7 +172,7 @@ double Fits::fiducial_phi_hi(double theta_e, double theta_e_min, double k,
 }
 
 void Fits::FitFiducial_lo(TH2D *hist2d, double min_value, double max_value) {
-  ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   a = b = c = d = 0.5;
   TF1 *fitFunc_lo =
       new TF1("fitFunc_lo", "-[0]*TMath::Power(TMath::Sin((x-[1])*0.01745),"
@@ -196,7 +198,7 @@ void Fits::FitFiducial_lo(TH2D *hist2d, double min_value, double max_value) {
 }
 
 void Fits::FitFiducial_hi(TH2D *hist2d, double min_value, double max_value) {
-  ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   a = b = c = d = 0.5;
   TF1 *fitFunc_hi =
       new TF1("fitFunc_hi", "[0]*TMath::Power(TMath::Sin((x-[1])*"
@@ -222,7 +224,7 @@ void Fits::FitFiducial_hi(TH2D *hist2d, double min_value, double max_value) {
 }
 
 void Fits::FitFiducial(TH2D *hist2d, double min_value, double max_value) {
-  ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   a = b = c = d = 0.5;
   TF1 *fitFunc = new TF1("fitFunc", "[0]*TMath::Power(TMath::Sin((x-[1])*"
                                     "0.01745),[2] +[3] / x + 1500. / (x * x))",
@@ -248,17 +250,20 @@ void Fits::FitFiducial(TH2D *hist2d, double min_value, double max_value) {
 
 void Fits::FitGenNormal(TH1D *hist, double min_value, double max_value) {
   if (hist->GetEntries() > 1000) {
-    ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit");
+    // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit");
     // TF1 *fitFunc = new TF1("genNormals", "landau", min_value, max_value);
     // "([1] / (2 * [0] * TMath::Gamma(1 / [1]))) *
     // TMath::Exp(-(TMath::Power((TMath::Abs(x - [2]) / [0]), [1])))"
 
     // Generalized normal distribution
-    TF1 *fitFunc = new TF1("genNormals",
-                           "[3] * ([1] / (2 * [0] * TMath::Gamma(1 / [1]))) "
-                           "*TMath::Exp(-(TMath::Power((TMath::Abs(x - [2]) / "
-                           "[0]), [1])))",
-                           -360, 360);
+    // TF1 *fitFunc = new TF1("genNormal",
+    //                       "[3] * ([1] / (2 * [0] * TMath::Gamma(1 / [1]))) "
+    //                       "*TMath::Exp(-(TMath::Power((TMath::Abs(x - [2]) /
+    //                       "
+    //                       "[0]), [1])))",
+    //                       min_value, max_value);
+
+    TF1 *fitFunc = new TF1("genNormal", genNormal, min_value, max_value, 4);
 
     fitFunc->SetParLimits(1, 0.0, 200.0);
 
@@ -266,9 +271,10 @@ void Fits::FitGenNormal(TH1D *hist, double min_value, double max_value) {
     fitFunc->SetParameter(1, 10.0);
     fitFunc->SetParameter(2, (min_value + max_value) / 2.0);
     fitFunc->SetParameter(3, 3000.0);
-    fitFunc->SetParNames("alpha", "beta", "mu", "w");
+    fitFunc->SetParNames("alpha", "beta", "mu", "weight");
 
     // for (int i = 0; i < 10; i++)
-    hist->Fit("genNormals", "q+", "", min_value, max_value);
+    // hist->Fit("genNormal", "QRNLE", "", min_value, max_value);
+    hist->Fit("genNormal", "Q+", "", min_value, max_value);
   }
 }
