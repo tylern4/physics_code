@@ -27,9 +27,10 @@ void golden_run(char *fin, char *fout) {
   while (input.is_open() && input.good()) {
     getline(input, line);
     if (!line.empty()) {
-      run_num = line.substr(line.find("/r2") + 2, 5);
-      file_num = line.substr(line.find("_") + 1, 2);
-
+      run_num = line.substr(line.find("/h10") + 6, 5);
+      // cout << run_num << endl;
+      file_num = line.substr(line.find("/h10") + 12, 2);
+      // cout << file_num << endl;
       TChain chain("h10");
       chain.AddFile(line.c_str());
       getBranches(&chain);
