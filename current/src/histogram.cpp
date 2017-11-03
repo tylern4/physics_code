@@ -770,7 +770,7 @@ void Histogram::fid_canvas() {
   for (int sec_i = 0; sec_i < sector; sec_i++) {
     sprintf(can_name, "Fid Sector %d", sec_i + 1);
     can[sec_i] = new TCanvas(can_name, can_name, 1200, 800);
-    can[sec_i]->Divide(5, 10);
+    can[sec_i]->Divide(fid_slices / 10, 10);
     for (int slice = 0; slice < fid_slices; slice++) {
       can[sec_i]->cd((int)slice + 1);
       fid_sec_slice[sec_i][slice]->Draw("same");
