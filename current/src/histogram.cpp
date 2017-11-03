@@ -51,7 +51,6 @@ Histogram::~Histogram() {
   delete Missing_Mass;
   delete Missing_Mass_square;
   delete Theta_CC;
-  // delete fid_hist;
 }
 
 // W and Q^2
@@ -761,6 +760,22 @@ void Histogram::Fid_Write() {
       SliceFit[sec][slice].FitGenNormal(fid_sec_slice[sec][slice], min_phi[sec],
                                         max_phi[sec]);
     }
+  }
+}
+
+void Histogram::fid_canvas() {
+  TCanvas *can[sector];
+  char can_name[50];
+
+  for (int sec_i = 0; sec_i < sector; sec_i++) {
+    sprintf(can_name, "Fid Sector %d", sec_i + 1);
+    can[sec_i] = new TCanvas(can_name, can_name, 1200, 800);
+    can[sec_i]->Divide(5, 10);
+    for (int slice = 0; slice < fid_slices; slice++) {
+      can[sec_i]->cd((int)slice + 1);
+      fid_sec_slice[sec_i][slice]->Draw("same");
+    }
+    can[sec_i]->Write();
   }
 }
 

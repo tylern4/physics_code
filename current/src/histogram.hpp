@@ -267,6 +267,7 @@ public:
   // fiducial hist
   void Fill_fid(double theta, double phi, int sector);
   void Fid_Write();
+  void fid_canvas();
 
   // EC hists
   void EC_fill(double etot, double momentum);

@@ -279,6 +279,10 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
   Fid_cuts->cd();
   hists->Fid_Write();
 
+  TDirectory *Fid_canvas = RootOutputFile->mkdir("Fid_canvas");
+  Fid_canvas->cd();
+  hists->fid_canvas();
+
   delete hists;
   RootOutputFile->Write();
   RootOutputFile->Close();
