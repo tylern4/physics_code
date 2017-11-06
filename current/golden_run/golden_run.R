@@ -1,6 +1,6 @@
 library(ggplot2)
 
-df <- read.csv("physics_code/current/outputFiles/v2_all_GR.csv", header = TRUE)
+df <- read.csv("v2_all_GR.csv", header = TRUE)
 df['ratio']<-df$num_of_events/df$total_q
 df<-subset(df, ratio<=500000)
 
