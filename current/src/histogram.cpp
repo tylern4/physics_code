@@ -739,6 +739,7 @@ void Histogram::Fill_fid(double theta, double phi, int sector) {
 }
 
 void Histogram::Fid_Write() {
+  int slice_width = (bins / fid_slices);
   Fits SliceFit[sector_num][fid_slices];
 
   fid_hist->SetYTitle("#theta");
@@ -754,8 +755,8 @@ void Histogram::Fid_Write() {
 
     for (int slice = 0; slice < fid_slices; slice++) {
       sprintf(hname, "fid_sec_%d_%d", sec + 1, slice + 1);
-      fid_sec_slice[sec][slice] =
-          fid_sec_hist[sec]->ProjectionX(hname, 10 * slice, 10 * slice + 9);
+      fid_sec_slice[sec][slice] = fid_sec_hist[sec]->ProjectionX(
+          hname, slice_width * slice, slice_width * slice + (slice_width - 1));
       fid_sec_slice[sec][slice]->Rebin(10);
       SliceFit[sec][slice].FitGenNormal(fid_sec_slice[sec][slice], min_phi[sec],
                                         max_phi[sec]);

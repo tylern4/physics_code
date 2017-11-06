@@ -251,21 +251,10 @@ void Fits::FitFiducial(TH2D *hist2d, double min_value, double max_value) {
 void Fits::FitGenNormal(TH1D *hist, double min_value, double max_value) {
   if (hist->GetEntries() > 1000) {
     // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit");
-    // TF1 *fitFunc = new TF1("genNormals", "landau", min_value, max_value);
-    // "([1] / (2 * [0] * TMath::Gamma(1 / [1]))) *
-    // TMath::Exp(-(TMath::Power((TMath::Abs(x - [2]) / [0]), [1])))"
-
-    // Generalized normal distribution
-    // TF1 *fitFunc = new TF1("genNormal",
-    //                       "[3] * ([1] / (2 * [0] * TMath::Gamma(1 / [1]))) "
-    //                       "*TMath::Exp(-(TMath::Power((TMath::Abs(x - [2]) /
-    //                       "
-    //                       "[0]), [1])))",
-    //                       min_value, max_value);
 
     TF1 *fitFunc = new TF1("genNormal", genNormal, min_value, max_value, 4);
 
-    fitFunc->SetParLimits(1, 0.0, 200.0);
+    fitFunc->SetParLimits(1, 5.0, 200.0);
 
     fitFunc->SetParameter(0, 15.0);
     fitFunc->SetParameter(1, 10.0);
@@ -273,8 +262,11 @@ void Fits::FitGenNormal(TH1D *hist, double min_value, double max_value) {
     fitFunc->SetParameter(3, 3000.0);
     fitFunc->SetParNames("alpha", "beta", "mu", "weight");
 
-    // for (int i = 0; i < 10; i++)
-    // hist->Fit("genNormal", "QRNLE", "", min_value, max_value);
     hist->Fit("genNormal", "Q+", "", min_value, max_value);
+
+    // double *parameters;
+    // fitFunc->GetParameters(parameters);
+
+    // std::cout << genNormal(0, parameters) << std::endl;
   }
 }
