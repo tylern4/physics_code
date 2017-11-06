@@ -29,6 +29,7 @@ private:
 
 public:
   double mean, sigma, FWHM;
+  double min_edge_x = std::nan("0"), max_edge_x = std::nan("0");
   double a, b, c, d, e = 0.0;
   void FitGaus(TH1D *hist, double min_value, double max_value);
   void FitLandau(TH1D *hist, double min_value, double max_value);

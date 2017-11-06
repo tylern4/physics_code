@@ -249,6 +249,7 @@ void Fits::FitFiducial(TH2D *hist2d, double min_value, double max_value) {
 }
 
 void Fits::FitGenNormal(TH1D *hist, double min_value, double max_value) {
+  double min, max, val, min_m, max_m;
   if (hist->GetEntries() > 1000) {
     // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit");
 
@@ -264,9 +265,19 @@ void Fits::FitGenNormal(TH1D *hist, double min_value, double max_value) {
 
     hist->Fit("genNormal", "Q+", "", min_value, max_value);
 
-    // double *parameters;
-    // fitFunc->GetParameters(parameters);
+    for (double m = min_value; m < max_value; m = m + 0.01) {
+      val = fitFunc->Derivative(m);
 
-    // std::cout << genNormal(0, parameters) << std::endl;
+      if (max < val) {
+        max = val;
+        max_m = m;
+      }
+      if (val < min) {
+        min = val;
+        min_m = m;
+      }
+    }
+    min_edge_x = min_m;
+    max_edge_x = max_m;
   }
 }

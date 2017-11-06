@@ -732,7 +732,7 @@ void Histogram::delta_T_canvas() {
       for (int pad_i = 0; pad_i < sc_paddle_num; pad_i++) {
         can_dt[sec_i][particle_i]->cd((int)pad_i + 1);
         delta_t_sec_pad_hist[particle_i][sec_i][pad_i]->Draw("same"
-                                                             "colz");
+                                                             "COLZ1");
       }
       can_dt[sec_i][particle_i]->Write();
     }
