@@ -129,7 +129,10 @@ void skim(char *fin, char *RootFile_output) {
       }
     }
 
-    has_neutron = true; // between_mm(MM);
+    // has_neutron = true; // between_mm(MM);
+
+    // Simple cut for missing mass
+    has_neutron = (MM > 0.9 && MM < 1.0);
 
     if (electron_cuts && has_neutron) {
       W = W_calc(e_mu, e_mu_prime);
