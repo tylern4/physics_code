@@ -88,6 +88,8 @@ void skim(char *fin, char *RootFile_output) {
 
     for (int part_num = 1; part_num < gpart; part_num++) {
       num_of_pis = 0;
+
+      /*
       if (dt_pip.at(part_num) >= Pip_Neg_fit(p[part_num]) &&
           dt_pip.at(part_num) <= Pip_Pos_fit(p[part_num])) {
         is_pip.at(part_num) = true;
@@ -106,6 +108,23 @@ void skim(char *fin, char *RootFile_output) {
       }
       if (dt_pip.at(part_num) >= Pip_Neg_fit(p[part_num]) &&
           dt_pip.at(part_num) <= Pip_Pos_fit(p[part_num])) {
+        is_pim.at(part_num) = true;
+      }
+      */
+      // Hard code of values to use for cut
+      if (abs(dt_pip.at(part_num)) <= 0.5 && q[part_num] == 1) {
+        is_pip.at(part_num) = true;
+        num_of_pis++;
+        TLorentzVector gamma_mu = (e_mu - e_mu_prime);
+        MM_neutron->Set_PxPyPz(p[part_num] * cx[part_num],
+                               p[part_num] * cy[part_num],
+                               p[part_num] * cz[part_num]);
+        MM = MM_neutron->missing_mass(gamma_mu);
+      }
+      if (abs(dt_proton.at(part_num)) <= 0.5 && q[part_num] == 1) {
+        is_proton.at(part_num) = true;
+      }
+      if (abs(dt_pip.at(part_num)) <= 0.5 && q[part_num] == -1) {
         is_pim.at(part_num) = true;
       }
     }
