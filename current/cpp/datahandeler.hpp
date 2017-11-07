@@ -125,13 +125,13 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
       // Set the vertex time (time of electron hit)
       Delta_T *delta_t = new Delta_T();
       delta_t->delta_t_cut(hists, first_run);
+      std::vector<double> dt_proton = delta_t->delta_t_array(MASS_P, gpart);
+      std::vector<double> dt_pi = delta_t->delta_t_array(MASS_PIP, gpart);
 
       theta = theta_calc(cz[0]);
       // phi = center_phi_calc(cx[0],cy[0]);
       phi = phi_calc(cx[0], cy[0]);
       sector = get_sector(phi);
-
-      // Fill_fid(theta,phi,get_sector(phi_calc(cx[0],cy[0])));
 
       hists->Fill_fid(theta, phi, sector);
 

@@ -761,19 +761,20 @@ void Histogram::Fid_Write() {
       SliceFit[sec][slice].FitGenNormal(fid_sec_slice[sec][slice], min_phi[sec],
                                         max_phi[sec]);
 
-      std::cout << "x: " << SliceFit[sec][slice].min_edge_x << "\t";
-      std::cout << SliceFit[sec][slice].max_edge_x << std::endl;
+      // std::cout << "x: " << SliceFit[sec][slice].min_edge_x << "\t";
+      // std::cout << SliceFit[sec][slice].max_edge_x << std::endl;
     }
   }
 }
 
 void Histogram::fid_canvas() {
   TCanvas *can[sector];
+  TCanvas *can2;
   char can_name[50];
 
   for (int sec_i = 0; sec_i < sector; sec_i++) {
-    sprintf(can_name, "Fid Sector %d", sec_i + 1);
-    can[sec_i] = new TCanvas(can_name, can_name, 1200, 800);
+    sprintf(can_name, "Fid Sector %d Slices", sec_i + 1);
+    can[sec_i] = new TCanvas(can_name, can_name, 1600, 900);
     can[sec_i]->Divide(fid_slices / 10, 10);
     for (int slice = 0; slice < fid_slices; slice++) {
       can[sec_i]->cd((int)slice + 1);

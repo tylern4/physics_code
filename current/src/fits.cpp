@@ -265,7 +265,7 @@ void Fits::FitGenNormal(TH1D *hist, double min_value, double max_value) {
 
     hist->Fit("genNormal", "Q+", "", min_value, max_value);
 
-    for (double m = min_value; m < max_value; m = m + 0.01) {
+    for (double m = min_value; m < max_value; m = m + 0.005) {
       val = fitFunc->Derivative(m);
 
       if (max < val) {
