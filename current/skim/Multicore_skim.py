@@ -8,11 +8,15 @@ from timeit import default_timer as timer
 
 try:
     start = timer()
-    os.system("make clean && make")
 
     lines = [line.rstrip('\n') for line in open(str(sys.argv[1]))]
+    if not sys.argv[2]:
+        num_cores = multiprocessing.cpu_count()
+    else:
+        print("Using " + sys.argv[2] + " Cores")
+        num_cores = int(sys.argv[2])
 
-    num_cores = multiprocessing.cpu_count()
+    #os.system("make clean && make -j" + str(num_cores))
     pool = Pool(processes=num_cores)
 
     lines_split = split_list(lines, wanted_parts=num_cores)
