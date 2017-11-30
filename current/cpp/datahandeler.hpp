@@ -82,10 +82,12 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
     electron_cuts &= ((int)dc[0] > 0);   // ``` ``` ``` dc
     electron_cuts &= ((int)dc_stat[dc[0] - 1] > 0);
     electron_cuts &= ((int)cc[0] > 0);
+    if (electron_cuts)
+      hists->EC_fill(etot[ec[0] - 1], p[0]);
     electron_cuts &= (p[0] > MIN_P_CUT); // Minimum Momentum cut????
 
     if (electron_cuts) {
-      hists->EC_fill(etot[ec[0] - 1], p[0]);
+
       int cc_sector = cc_sect[cc[0] - 1];
       int cc_segment = (cc_segm[0] % 1000) / 10;
       int cc_pmt = cc_segm[0] / 1000 - 1;
@@ -126,7 +128,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
       phi = phi_calc(cx[0], cy[0]);
       sector = get_sector(phi);
 
-      hists->Fill_fid(theta, phi, sector);
+      hists->Fill_electron_fid(theta, phi, sector);
 
       if (first_run) {
         W = W_calc(e_mu, e_mu_prime);

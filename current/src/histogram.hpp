@@ -176,10 +176,11 @@ public:
 
   static const int sector_num = 6;
   static const int fid_slices = 100;
-  std::vector<TH2D *> fid_sec_hist;
-  TH1D *fid_sec_slice[sector_num][fid_slices];
-  TH2D *fid_hist = new TH2D("fid", "fid", bins, phi_min, phi_max, bins,
-                            theta_min, theta_max);
+  std::vector<TH2D *> electron_fid_sec_hist;
+  TH1D *electron_fid_sec_slice[sector_num][fid_slices];
+  TH2D *electron_fid_hist =
+      new TH2D("electron_fid", "electron_fid", bins, phi_min, phi_max, bins,
+               theta_min, theta_max);
   // fiducial
 
   // EC hists
@@ -265,7 +266,7 @@ public:
   void CC_canvas();
 
   // fiducial hist
-  void Fill_fid(double theta, double phi, int sector);
+  void Fill_electron_fid(double theta, double phi, int sector);
   void Fid_Write();
   void fid_canvas();
 

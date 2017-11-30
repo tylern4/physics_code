@@ -46,7 +46,7 @@ Histogram::~Histogram() {
   delete delta_t_mass_electron_PID;
   delete delta_t_mass_positron;
   delete delta_t_mass_positron_PID;
-  delete fid_hist;
+  delete electron_fid_hist;
   delete EC_sampling_fraction;
   delete Missing_Mass;
   delete Missing_Mass_square;
@@ -724,68 +724,47 @@ void Histogram::CC_canvas() {
 }
 
 void Histogram::makeHists_fid() {
-  fid_sec_hist.reserve(sector_num);
+  electron_fid_sec_hist.reserve(sector_num);
   for (int sec = 0; sec < sector_num; sec++) {
-    sprintf(hname, "fid_sec%d", sec + 1);
-    sprintf(htitle, "fid_sec%d", sec + 1);
-    fid_sec_hist[sec] = new TH2D(hname, htitle, bins, min_phi[sec],
-                                 max_phi[sec], bins, theta_min, theta_max);
+    sprintf(hname, "electron_fid_sec%d", sec + 1);
+    sprintf(htitle, "electron_fid_sec%d", sec + 1);
+    electron_fid_sec_hist[sec] =
+        new TH2D(hname, htitle, bins, min_phi[sec], max_phi[sec], bins,
+                 theta_min, theta_max);
   }
 }
 
-void Histogram::Fill_fid(double theta, double phi, int sector) {
-  fid_hist->Fill(phi, theta);
-  fid_sec_hist[sector]->Fill(phi, theta);
+void Histogram::Fill_electron_fid(double theta, double phi, int sector) {
+  electron_fid_hist->Fill(phi, theta);
+  electron_fid_sec_hist[sector]->Fill(phi, theta);
 }
 
 void Histogram::Fid_Write() {
-  // Header *fid_fits = new Header("../src/fid_fits.hpp", "FidFits");
   int slice_width = (bins / fid_slices);
   Fits SliceFit[sector_num][fid_slices];
 
-  fid_hist->SetYTitle("#theta");
-  fid_hist->SetXTitle("#phi");
-  fid_hist->SetOption("COLZ");
-  fid_hist->Write();
-  // std::cerr << "{ \"stuff\" : [" << std::endl;
+  electron_fid_hist->SetYTitle("#theta");
+  electron_fid_hist->SetXTitle("#phi");
+  electron_fid_hist->SetOption("COLZ");
+  electron_fid_hist->Write();
+
   for (int sec = 0; sec < sector_num; sec++) {
-    fid_sec_hist[sec]->SetYTitle("#theta");
-    fid_sec_hist[sec]->SetXTitle("#phi");
-    fid_sec_hist[sec]->SetOption("COLZ");
-    fid_sec_hist[sec]->Write();
-    // fid_fits->NewFunction();
-    // fid_fits->Set_RetrunType("double");
-    // fid_fits->Set_FuncName("fid_fit");
-    // fid_fits->Set_FuncInputs("int min, int max");
-    // fid_fits->AddLine("double val[x][y] = {", false);
-    // std::cerr << "{\"sec\":" << sec + 1 << ",\n";
-    // std::cerr << "\"Slices\": [\n";
+    electron_fid_sec_hist[sec]->SetYTitle("#theta");
+    electron_fid_sec_hist[sec]->SetXTitle("#phi");
+    electron_fid_sec_hist[sec]->SetOption("COLZ");
+    electron_fid_sec_hist[sec]->Write();
+
     for (int slice = 0; slice < fid_slices; slice++) {
-      sprintf(hname, "fid_sec_%d_%d", sec + 1, slice + 1);
-      fid_sec_slice[sec][slice] = fid_sec_hist[sec]->ProjectionX(
-          hname, slice_width * slice, slice_width * slice + (slice_width - 1));
-      fid_sec_slice[sec][slice]->Rebin(10);
-      SliceFit[sec][slice].FitGenNormal(fid_sec_slice[sec][slice], min_phi[sec],
-                                        max_phi[sec]);
-
-      // fid_fits->AddLine(
-      //"{" + std::to_string(SliceFit[sec][slice].Get_min_edge()) + ",",
-      // false);
-      // fid_fits->AddLine(
-      // std::to_string(SliceFit[sec][slice].Get_max_edge()) + "},\n", false);
-
-      // std::cerr << "\t\t{\n\t\"num\": " << slice << ",\n"
-      //          << "\t\"min\": \"" << SliceFit[sec][slice].Get_min_edge()
-      //          << "\",\n"
-      //          << "\t\"max\": \"" << SliceFit[sec][slice].Get_max_edge()
-      //          << "\"\n\t},\n";
+      sprintf(hname, "electron_fid_sec_%d_%d", sec + 1, slice + 1);
+      electron_fid_sec_slice[sec][slice] =
+          electron_fid_sec_hist[sec]->ProjectionX(hname, slice_width * slice,
+                                                  slice_width * slice +
+                                                      (slice_width - 1));
+      electron_fid_sec_slice[sec][slice]->Rebin(10);
+      SliceFit[sec][slice].FitGenNormal(electron_fid_sec_slice[sec][slice],
+                                        min_phi[sec], max_phi[sec]);
     }
-    // std::cerr << "\n\t]\n}\n";
-    // fid_fits->Set_Function("val[min][max]");
-    // fid_fits->WriteFunction();
   }
-  // std::cerr << "] }" << std::endl;
-  // delete fid_fits;
 }
 
 void Histogram::fid_canvas() {
@@ -793,12 +772,12 @@ void Histogram::fid_canvas() {
   char can_name[50];
 
   for (int sec_i = 0; sec_i < sector; sec_i++) {
-    sprintf(can_name, "Fid Sector %d Slices", sec_i + 1);
+    sprintf(can_name, "Electron Fid Sector %d Slices", sec_i + 1);
     can[sec_i] = new TCanvas(can_name, can_name, 1600, 900);
     can[sec_i]->Divide(fid_slices / 10, 10);
     for (int slice = 0; slice < fid_slices; slice++) {
       can[sec_i]->cd((int)slice + 1);
-      fid_sec_slice[sec_i][slice]->Draw("same");
+      electron_fid_sec_slice[sec_i][slice]->Draw("same");
     }
     can[sec_i]->Write();
   }
