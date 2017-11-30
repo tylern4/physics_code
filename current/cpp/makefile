@@ -3,7 +3,7 @@ ifeq ($(UNAME), Linux)
     FOPENMP = -fopenmp -lgfortran
 endif
 
-ROOTLIBS	= $(shell root-config --libs)
+ROOTLIBS	= $(shell pkg-config --libs jsoncpp) $(shell root-config --libs)
 CXX = g++
 CXXFLAGS = -O3 -march=native -fPIC -w -g $(FOPENMP) $(shell root-config --cflags)
 TARGET =	    e1d

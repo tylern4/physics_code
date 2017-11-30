@@ -281,3 +281,6 @@ void Fits::FitGenNormal(TH1D *hist, double min_value, double max_value) {
     max_edge_x = max_m;
   }
 }
+
+double Fits::Get_min_edge() { return min_edge_x; };
+double Fits::Get_max_edge() { return max_edge_x; };

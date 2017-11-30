@@ -27,6 +27,7 @@ void Header::NewFunction() {
   func = "";
   a_text = "";
   c_text = "";
+  end = true;
   // for each l in lines:
   for (auto &l : lines)
     l = "";
@@ -45,6 +46,10 @@ void Header::Set_Function(TString Function) {
 void Header::AddText(std::string TextAdd) { a_text = TextAdd; }
 
 void Header::AddLine(std::string LineAdd) { lines.push_back(LineAdd); }
+void Header::AddLine(std::string LineAdd, bool ending) {
+  lines.push_back(LineAdd);
+  end = ending;
+}
 
 void Header::AddComment(std::string CommAdd) { c_text = CommAdd; }
 
@@ -59,14 +64,21 @@ void Header::WriteFunction() {
       header_file << "\t" << a_text << "\n";
     if (lines.size() > 0)
       for (auto &l : lines)
-        if (!l.empty())
+        if (!l.empty() && end) {
           header_file << "\t" << l << ";\n";
+        } else {
+          header_file << "\t" << l;
+        }
 
     header_file << "\treturn " << func;
     header_file << ";\n}\n\n";
     Header::NewFunction();
   } else {
-    std::cerr << "Cannot Write to header:" << std::endl;
+    std::cerr << "Cannot Write to header:" << std::endl
+              << "r_type = " << !r_type.empty() << std::endl
+              << "f_name = " << !f_name.empty() << std::endl
+              << "f_input = " << !f_input.empty() << std::endl
+              << "func = " << !func.empty() << std::endl;
   }
 }
 

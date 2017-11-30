@@ -89,7 +89,7 @@ void Histogram::Fill_pion_WQ2(double W, double Q2) {
 void Histogram::WvsQ2_Write() {
   WvsQ2_hist->SetXTitle("W (GeV)");
   WvsQ2_hist->SetYTitle("Q^{2} (GeV^{2})");
-  WvsQ2_hist->SetOption("COLZ1");
+  WvsQ2_hist->SetOption("COLZ");
   WvsQ2_hist->Write();
 
   W_hist->SetXTitle("W (GeV)");
@@ -103,12 +103,12 @@ void Histogram::WvsQ2_Write() {
 
   Q2_vs_xb->SetXTitle("x_{b}");
   Q2_vs_xb->SetYTitle("Q^{2}");
-  Q2_vs_xb->SetOption("COLZ1");
+  Q2_vs_xb->SetOption("COLZ");
   Q2_vs_xb->Write();
 
   WvsQ2_proton->SetXTitle("W (GeV)");
   WvsQ2_proton->SetYTitle("Q^{2} (GeV^{2})");
-  WvsQ2_proton->SetOption("COLZ1");
+  WvsQ2_proton->SetOption("COLZ");
   WvsQ2_proton->Write();
 
   W_proton->SetXTitle("W (GeV)");
@@ -119,7 +119,7 @@ void Histogram::WvsQ2_Write() {
 
   WvsQ2_pion->SetXTitle("W (GeV)");
   WvsQ2_pion->SetYTitle("Q^{2} (GeV^{2})");
-  WvsQ2_pion->SetOption("COLZ1");
+  WvsQ2_pion->SetOption("COLZ");
   WvsQ2_pion->Write();
 
   W_pion->SetXTitle("W (GeV)");
@@ -130,7 +130,7 @@ void Histogram::WvsQ2_Write() {
 
   WvsQ2_single_pi->SetXTitle("W (GeV)");
   WvsQ2_single_pi->SetYTitle("Q^{2} (GeV^{2})");
-  WvsQ2_single_pi->SetOption("COLZ1");
+  WvsQ2_single_pi->SetOption("COLZ");
   WvsQ2_single_pi->Write();
 
   W_single_pi->SetXTitle("W (GeV)");
@@ -141,7 +141,7 @@ void Histogram::WvsQ2_Write() {
 
   WvsQ2_single_proton->SetXTitle("W (GeV)");
   WvsQ2_single_proton->SetYTitle("Q^{2} (GeV^{2})");
-  WvsQ2_single_proton->SetOption("COLZ1");
+  WvsQ2_single_proton->SetOption("COLZ");
   WvsQ2_single_proton->Write();
 
   W_single_proton->SetXTitle("W (GeV)");
@@ -182,28 +182,28 @@ void Histogram::MomVsBeta_Fill(double Energy, double P, double Beta) {
 void Histogram::MomVsBeta_Write() {
   MomVsBeta_hist->SetXTitle("Momentum (GeV)");
   MomVsBeta_hist->SetYTitle("#beta");
-  MomVsBeta_hist->SetOption("COLZ1");
+  MomVsBeta_hist->SetOption("COLZ");
   MomVsBeta_hist_pos->SetXTitle("Momentum (GeV)");
   MomVsBeta_hist_pos->SetYTitle("#beta");
-  MomVsBeta_hist_pos->SetOption("COLZ1");
+  MomVsBeta_hist_pos->SetOption("COLZ");
   MomVsBeta_hist_neg->SetXTitle("Momentum (GeV)");
   MomVsBeta_hist_neg->SetYTitle("#beta");
-  MomVsBeta_hist_neg->SetOption("COLZ1");
+  MomVsBeta_hist_neg->SetOption("COLZ");
   Mom->SetXTitle("Momentum (GeV)");
 
   MomVsBeta_proton_ID->SetXTitle("Momentum (GeV)");
   MomVsBeta_proton_ID->SetYTitle("#beta");
-  MomVsBeta_proton_ID->SetOption("COLZ1");
+  MomVsBeta_proton_ID->SetOption("COLZ");
   MomVsBeta_proton_ID->Write();
 
   MomVsBeta_Pi_ID->SetXTitle("Momentum (GeV)");
   MomVsBeta_Pi_ID->SetYTitle("#beta");
-  MomVsBeta_Pi_ID->SetOption("COLZ1");
+  MomVsBeta_Pi_ID->SetOption("COLZ");
   MomVsBeta_Pi_ID->Write();
 
   MomVsBeta_proton_Pi_ID->SetXTitle("Momentum (GeV)");
   MomVsBeta_proton_Pi_ID->SetYTitle("#beta");
-  MomVsBeta_proton_Pi_ID->SetOption("COLZ1");
+  MomVsBeta_proton_Pi_ID->SetOption("COLZ");
   MomVsBeta_proton_Pi_ID->Write();
 
   Energy_hist->Write();
@@ -437,28 +437,28 @@ void Histogram::delta_t_slice_fit() {
 void Histogram::delta_t_Write() {
   delta_t_mass_P->SetXTitle("Momentum (GeV)");
   delta_t_mass_P->SetYTitle("#Deltat");
-  delta_t_mass_P->SetOption("COLZ1");
+  delta_t_mass_P->SetOption("COLZ");
   delta_t_mass_PIP->SetXTitle("Momentum (GeV)");
   delta_t_mass_PIP->SetYTitle("#Deltat");
-  delta_t_mass_PIP->SetOption("COLZ1");
+  delta_t_mass_PIP->SetOption("COLZ");
   delta_t_mass_P_PID->SetXTitle("Momentum (GeV)");
   delta_t_mass_P_PID->SetYTitle("#Deltat");
-  delta_t_mass_P_PID->SetOption("COLZ1");
+  delta_t_mass_P_PID->SetOption("COLZ");
   delta_t_mass_PIP_PID->SetXTitle("Momentum (GeV)");
   delta_t_mass_PIP_PID->SetYTitle("#Deltat");
-  delta_t_mass_PIP_PID->SetOption("COLZ1");
+  delta_t_mass_PIP_PID->SetOption("COLZ");
   delta_t_mass_electron->SetXTitle("Momentum (GeV)");
   delta_t_mass_electron->SetYTitle("#Deltat");
-  delta_t_mass_electron->SetOption("COLZ1");
+  delta_t_mass_electron->SetOption("COLZ");
   delta_t_mass_electron_PID->SetXTitle("Momentum (GeV)");
   delta_t_mass_electron_PID->SetYTitle("#Deltat");
-  delta_t_mass_electron_PID->SetOption("COLZ1");
+  delta_t_mass_electron_PID->SetOption("COLZ");
   delta_t_mass_positron->SetXTitle("Momentum (GeV)");
   delta_t_mass_positron->SetYTitle("#Deltat");
-  delta_t_mass_positron->SetOption("COLZ1");
+  delta_t_mass_positron->SetOption("COLZ");
   delta_t_mass_positron_PID->SetXTitle("Momentum (GeV)");
   delta_t_mass_positron_PID->SetYTitle("#Deltat");
-  delta_t_mass_positron_PID->SetOption("COLZ1");
+  delta_t_mass_positron_PID->SetOption("COLZ");
 
   delta_t_slice_fit();
 
@@ -552,7 +552,7 @@ void Histogram::delta_T_canvas() {
       for (int pad_i = 0; pad_i < sc_paddle_num; pad_i++) {
         can_dt[sec_i][particle_i]->cd((int)pad_i + 1);
         delta_t_sec_pad_hist[particle_i][sec_i][pad_i]->Draw("same"
-                                                             "COLZ1");
+                                                             "COLZ");
       }
       can_dt[sec_i][particle_i]->Write();
     }
@@ -611,12 +611,12 @@ void Histogram::makeHists_CC() {
 void Histogram::Theta_CC_Write() {
   Theta_CC->SetXTitle("CC segment");
   Theta_CC->SetYTitle("#theta_CC");
-  Theta_CC->SetOption("COLZ1");
+  Theta_CC->SetOption("COLZ");
   Theta_CC->Write();
   for (int sec_i = 0; sec_i < sector; sec_i++) {
     Theta_CC_Sec[sec_i]->SetXTitle("CC segment");
     Theta_CC_Sec[sec_i]->SetYTitle("#theta_CC");
-    Theta_CC_Sec[sec_i]->SetOption("COLZ1");
+    Theta_CC_Sec[sec_i]->SetOption("COLZ");
     Theta_CC_Sec[sec_i]->Write();
   }
   theta_cc_slice_fit();
@@ -739,20 +739,27 @@ void Histogram::Fill_fid(double theta, double phi, int sector) {
 }
 
 void Histogram::Fid_Write() {
+  // Header *fid_fits = new Header("../src/fid_fits.hpp", "FidFits");
   int slice_width = (bins / fid_slices);
   Fits SliceFit[sector_num][fid_slices];
 
   fid_hist->SetYTitle("#theta");
   fid_hist->SetXTitle("#phi");
-  fid_hist->SetOption("COLZ1");
+  fid_hist->SetOption("COLZ");
   fid_hist->Write();
-
+  // std::cerr << "{ \"stuff\" : [" << std::endl;
   for (int sec = 0; sec < sector_num; sec++) {
     fid_sec_hist[sec]->SetYTitle("#theta");
     fid_sec_hist[sec]->SetXTitle("#phi");
-    fid_sec_hist[sec]->SetOption("COLZ1");
+    fid_sec_hist[sec]->SetOption("COLZ");
     fid_sec_hist[sec]->Write();
-
+    // fid_fits->NewFunction();
+    // fid_fits->Set_RetrunType("double");
+    // fid_fits->Set_FuncName("fid_fit");
+    // fid_fits->Set_FuncInputs("int min, int max");
+    // fid_fits->AddLine("double val[x][y] = {", false);
+    // std::cerr << "{\"sec\":" << sec + 1 << ",\n";
+    // std::cerr << "\"Slices\": [\n";
     for (int slice = 0; slice < fid_slices; slice++) {
       sprintf(hname, "fid_sec_%d_%d", sec + 1, slice + 1);
       fid_sec_slice[sec][slice] = fid_sec_hist[sec]->ProjectionX(
@@ -761,15 +768,28 @@ void Histogram::Fid_Write() {
       SliceFit[sec][slice].FitGenNormal(fid_sec_slice[sec][slice], min_phi[sec],
                                         max_phi[sec]);
 
-      // std::cout << "x: " << SliceFit[sec][slice].min_edge_x << "\t";
-      // std::cout << SliceFit[sec][slice].max_edge_x << std::endl;
+      // fid_fits->AddLine(
+      //"{" + std::to_string(SliceFit[sec][slice].Get_min_edge()) + ",",
+      // false);
+      // fid_fits->AddLine(
+      // std::to_string(SliceFit[sec][slice].Get_max_edge()) + "},\n", false);
+
+      // std::cerr << "\t\t{\n\t\"num\": " << slice << ",\n"
+      //          << "\t\"min\": \"" << SliceFit[sec][slice].Get_min_edge()
+      //          << "\",\n"
+      //          << "\t\"max\": \"" << SliceFit[sec][slice].Get_max_edge()
+      //          << "\"\n\t},\n";
     }
+    // std::cerr << "\n\t]\n}\n";
+    // fid_fits->Set_Function("val[min][max]");
+    // fid_fits->WriteFunction();
   }
+  // std::cerr << "] }" << std::endl;
+  // delete fid_fits;
 }
 
 void Histogram::fid_canvas() {
   TCanvas *can[sector];
-  TCanvas *can2;
   char can_name[50];
 
   for (int sec_i = 0; sec_i < sector; sec_i++) {
@@ -792,7 +812,7 @@ void Histogram::EC_fill(double etot, double momentum) {
 void Histogram::EC_Write() {
   EC_sampling_fraction->SetXTitle("Momentum (GeV)");
   EC_sampling_fraction->SetYTitle("Sampling Fraction");
-  EC_sampling_fraction->SetOption("COLZ1");
+  EC_sampling_fraction->SetOption("COLZ");
 
   EC_sampling_fraction->Write();
 }
@@ -808,7 +828,7 @@ void Histogram::Fill_Beam_Position(double vertex_x, double vertex_y,
 void Histogram::Beam_Position_Write() {
   Beam_Position->SetXTitle("X");
   Beam_Position->SetYTitle("Y");
-  Beam_Position->SetOption("COLZ1");
+  Beam_Position->SetOption("COLZ");
   Beam_Position->Write();
 
   Beam_Position_X->SetXTitle("X");

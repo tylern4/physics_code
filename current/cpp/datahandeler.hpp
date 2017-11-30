@@ -63,8 +63,6 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
 
   num_of_events = (int)chain.GetEntries();
 
-  //#pragma omp parallel
-  //{
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     // update loadbar and get current event
     loadbar(current_event + 1, num_of_events);
@@ -83,13 +81,11 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
     electron_cuts &= ((int)sc[0] > 0);   // First Particle hit sc
     electron_cuts &= ((int)dc[0] > 0);   // ``` ``` ``` dc
     electron_cuts &= ((int)dc_stat[dc[0] - 1] > 0);
+    electron_cuts &= ((int)cc[0] > 0);
+    electron_cuts &= (p[0] > MIN_P_CUT); // Minimum Momentum cut????
 
-    if (electron_cuts)
+    if (electron_cuts) {
       hists->EC_fill(etot[ec[0] - 1], p[0]);
-
-    electron_cuts &= (p[0] > MIN_P_CUT); // Minimum Momentum cut
-
-    if (electron_cuts && cc[0] > 0) {
       int cc_sector = cc_sect[cc[0] - 1];
       int cc_segment = (cc_segm[0] % 1000) / 10;
       int cc_pmt = cc_segm[0] / 1000 - 1;
@@ -103,9 +99,6 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
       hists->Fill_Beam_Position((double)dc_vx[dc[0] - 1],
                                 (double)dc_vy[dc[0] - 1],
                                 (double)dc_vz[dc[0] - 1]);
-    }
-
-    if (electron_cuts) {
       if (first_run) {
         is_electron = &elec_vec;
         is_electron->at(0) = true;
@@ -129,7 +122,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
       std::vector<double> dt_pi = delta_t->delta_t_array(MASS_PIP, gpart);
 
       theta = theta_calc(cz[0]);
-      // phi = center_phi_calc(cx[0],cy[0]);
+
       phi = phi_calc(cx[0], cy[0]);
       sector = get_sector(phi);
 
@@ -144,12 +137,11 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
       hists->WvsQ2_Fill(e_E, W, Q2, xb_calc(Q2, e_E));
       num_of_proton = num_of_pis = 0;
 
-      //#pragma omp parallel for
       for (int part_num = 1; part_num < gpart; part_num++) {
         if (p[part_num] == 0)
           continue;
 
-        // if(is_proton->at(part_num) == is_pip->at(part_num)) continue;
+        // if (is_proton->at(part_num) == is_pip->at(part_num)) continue;
 
         hists->Fill_Mass(m[part_num]);
         Particle3.SetXYZ(p[part_num] * cx[part_num], p[part_num] * cy[part_num],
@@ -197,7 +189,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
         hists->Fill_single_proton_WQ2(W, Q2);
     }
   }
-  //}
+
   std::cout << green << "Fitting" << def << std::endl;
   // Start of cuts
   Fits MM_neutron_cut;

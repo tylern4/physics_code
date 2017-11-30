@@ -17,6 +17,7 @@
 class Fits {
 private:
   double par_max, par_mean, par_FWHM;
+  double min_edge_x = std::nan("0"), max_edge_x = std::nan("0");
   std::string ploy1d = "[0]+[1]*x";
   std::string ploy2d = ploy1d + "+[2]*x*x";
   std::string ploy3d = ploy2d + "+[3]*x*x*x";
@@ -29,7 +30,6 @@ private:
 
 public:
   double mean, sigma, FWHM;
-  double min_edge_x = std::nan("0"), max_edge_x = std::nan("0");
   double a, b, c, d, e = 0.0;
   void FitGaus(TH1D *hist, double min_value, double max_value);
   void FitLandau(TH1D *hist, double min_value, double max_value);
@@ -42,6 +42,8 @@ public:
   void FitFiducial_hi(TH2D *hist2d, double min_value, double max_value);
   void FitFiducial(TH2D *hist2d, double min_value, double max_value);
   void FitGenNormal(TH1D *hist, double min_value, double max_value);
+  double Get_min_edge();
+  double Get_max_edge();
 };
 
 #endif
