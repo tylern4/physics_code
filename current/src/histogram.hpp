@@ -169,7 +169,7 @@ public:
   // cc hist
 
   // fiducial
-  double theta_min = 10;
+  double theta_min = 0;
   double theta_max = 60;
   double phi_min = -360 / 2.0;
   double phi_max = 360 / 2.0;
@@ -181,6 +181,11 @@ public:
   TH2D *electron_fid_hist =
       new TH2D("electron_fid", "electron_fid", bins, phi_min, phi_max, bins,
                theta_min, theta_max);
+
+  std::vector<TH2D *> hadron_fid_sec_hist;
+  TH1D *hadron_fid_sec_slice[sector_num][fid_slices];
+  TH2D *hadron_fid_hist = new TH2D("hadron_fid", "hadron_fid", bins, phi_min,
+                                   phi_max, bins, theta_min, theta_max);
   // fiducial
 
   // EC hists
@@ -267,6 +272,7 @@ public:
 
   // fiducial hist
   void Fill_electron_fid(double theta, double phi, int sector);
+  void Fill_hadron_fid(double theta, double phi, int sector);
   void Fid_Write();
   void fid_canvas();
 
