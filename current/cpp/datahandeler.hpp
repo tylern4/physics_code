@@ -145,7 +145,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
         theta = theta_calc(cz[part_num]);
         phi = phi_calc(cx[part_num], cy[part_num]);
         sector = get_sector(phi);
-        hists->Fill_hadron_fid(theta, phi, sector);
+        hists->Fill_hadron_fid(theta, phi, sector, id[part_num]);
 
         // if (is_proton->at(part_num) == is_pip->at(part_num)) continue;
 

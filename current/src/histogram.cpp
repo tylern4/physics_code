@@ -10,6 +10,12 @@ Histogram::Histogram() {
   makeHists_delta_t();
   makeHists_CC();
   makeHists_fid();
+  hadron_fid_hist[0] = new TH2D("hadron_fid", "hadron_fid", bins, phi_min,
+                                phi_max, bins, theta_min, theta_max);
+  hadron_fid_hist[1] = new TH2D("proton_fid", "hadron_fid", bins, phi_min,
+                                phi_max, bins, theta_min, theta_max);
+  hadron_fid_hist[2] = new TH2D("pip_fid", "hadron_fid", bins, phi_min, phi_max,
+                                bins, theta_min, theta_max);
 }
 
 Histogram::~Histogram() {
@@ -47,7 +53,6 @@ Histogram::~Histogram() {
   delete delta_t_mass_positron;
   delete delta_t_mass_positron_PID;
   delete electron_fid_hist;
-  delete hadron_fid_hist;
   delete EC_sampling_fraction;
   delete Missing_Mass;
   delete Missing_Mass_square;
@@ -726,7 +731,7 @@ void Histogram::CC_canvas() {
 
 void Histogram::makeHists_fid() {
   electron_fid_sec_hist.reserve(sector_num);
-  hadron_fid_sec_hist.reserve(sector_num);
+  // hadron_fid_sec_hist.reserve(sector_num);
   for (int sec = 0; sec < sector_num; sec++) {
     sprintf(hname, "electron_fid_sec%d", sec + 1);
     sprintf(htitle, "electron_fid_sec%d", sec + 1);
@@ -734,11 +739,13 @@ void Histogram::makeHists_fid() {
         new TH2D(hname, htitle, bins, min_phi[sec], max_phi[sec], bins,
                  theta_min, theta_max);
 
-    sprintf(hname, "hadron_fid_sec%d", sec + 1);
-    sprintf(htitle, "hadron_fid_sec%d", sec + 1);
-    hadron_fid_sec_hist[sec] =
-        new TH2D(hname, htitle, bins, min_phi[sec], max_phi[sec], bins,
-                 theta_min, theta_max);
+    for (int t = 0; t < 3; t++) {
+      sprintf(hname, "hadron_fid_sec%d_%d", sec + 1, t);
+      sprintf(htitle, "hadron_fid_sec%d_%d", sec + 1, t);
+      hadron_fid_sec_hist[t][sec] =
+          new TH2D(hname, htitle, bins, min_phi[sec], max_phi[sec], bins,
+                   theta_min, theta_max);
+    }
   }
 }
 
@@ -747,9 +754,16 @@ void Histogram::Fill_electron_fid(double theta, double phi, int sector) {
   electron_fid_sec_hist[sector]->Fill(phi, theta);
 }
 
-void Histogram::Fill_hadron_fid(double theta, double phi, int sector) {
-  hadron_fid_hist->Fill(phi, theta);
-  hadron_fid_sec_hist[sector]->Fill(phi, theta);
+void Histogram::Fill_hadron_fid(double theta, double phi, int sector, int id) {
+  hadron_fid_hist[0]->Fill(phi, theta);
+  hadron_fid_sec_hist[0][sector]->Fill(phi, theta);
+  if (id == PROTON) {
+    hadron_fid_hist[1]->Fill(phi, theta);
+    hadron_fid_sec_hist[1][sector]->Fill(phi, theta);
+  } else if (id == PIP) {
+    hadron_fid_hist[2]->Fill(phi, theta);
+    hadron_fid_sec_hist[2][sector]->Fill(phi, theta);
+  }
 }
 
 void Histogram::Fid_Write() {
@@ -760,11 +774,12 @@ void Histogram::Fid_Write() {
   electron_fid_hist->SetXTitle("#phi");
   electron_fid_hist->SetOption("COLZ");
   electron_fid_hist->Write();
-
-  hadron_fid_hist->SetYTitle("#theta");
-  hadron_fid_hist->SetXTitle("#phi");
-  hadron_fid_hist->SetOption("COLZ");
-  hadron_fid_hist->Write();
+  for (int t = 0; t < 3; t++) {
+    hadron_fid_hist[t]->SetYTitle("#theta");
+    hadron_fid_hist[t]->SetXTitle("#phi");
+    hadron_fid_hist[t]->SetOption("COLZ");
+    hadron_fid_hist[t]->Write();
+  }
 
   for (int sec = 0; sec < sector_num; sec++) {
     electron_fid_sec_hist[sec]->SetYTitle("#theta");
@@ -772,10 +787,12 @@ void Histogram::Fid_Write() {
     electron_fid_sec_hist[sec]->SetOption("COLZ");
     electron_fid_sec_hist[sec]->Write();
 
-    hadron_fid_sec_hist[sec]->SetYTitle("#theta");
-    hadron_fid_sec_hist[sec]->SetXTitle("#phi");
-    hadron_fid_sec_hist[sec]->SetOption("COLZ");
-    hadron_fid_sec_hist[sec]->Write();
+    for (int t = 0; t < 3; t++) {
+      hadron_fid_sec_hist[t][sec]->SetYTitle("#theta");
+      hadron_fid_sec_hist[t][sec]->SetXTitle("#phi");
+      hadron_fid_sec_hist[t][sec]->SetOption("COLZ");
+      hadron_fid_sec_hist[t][sec]->Write();
+    }
 
     for (int slice = 0; slice < fid_slices; slice++) {
       sprintf(hname, "electron_fid_sec_%d_%d", sec + 1, slice + 1);
