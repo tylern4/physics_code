@@ -124,7 +124,6 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
       std::vector<double> dt_pi = delta_t->delta_t_array(MASS_PIP, gpart);
 
       theta = theta_calc(cz[0]);
-
       phi = phi_calc(cx[0], cy[0]);
       sector = get_sector(phi);
 
@@ -142,6 +141,11 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
       for (int part_num = 1; part_num < gpart; part_num++) {
         if (p[part_num] == 0)
           continue;
+
+        theta = theta_calc(cz[part_num]);
+        phi = phi_calc(cx[part_num], cy[part_num]);
+        sector = get_sector(phi);
+        hists->Fill_hadron_fid(theta, phi, sector);
 
         // if (is_proton->at(part_num) == is_pip->at(part_num)) continue;
 
