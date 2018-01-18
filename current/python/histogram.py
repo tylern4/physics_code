@@ -24,12 +24,12 @@ x_cc_sparse[ndims_cc_sparse]
 cc_sparse = THnSparseD("cc_sparse", "Histogram", ndims_cc_sparse,
                        bins_cc_sparse, xmin_cc_sparse, xmax_cc_sparse)
 
-fid_sec_hist = []
+electron_fid_sec_hist = []
 for sec in range(sector_num):
     hname = "fid_sec%d" % (sec + 1)
     htitle = "fid_sec%d" % (sec + 1)
 
-    fid_sec_hist.append(TH2D(hname, htitle, bins, min_phi[sec],
+    electron_fid_sec_hist.append(TH2D(hname, htitle, bins, min_phi[sec],
                              max_phi[sec], bins, theta_min, theta_max))
 
 """
@@ -241,27 +241,27 @@ ec_sampling_fraction = TH2D(
 
 ec = {'EC_sampling_fraction': ec_sampling_fraction}
 
-theta_min = 10
-theta_max = 60
+theta_min = 0.0
+theta_max = 60.0
 phi_min = -360 / 2.0
 phi_max = 360 / 2.0
 sector_num = 6
 min_phi = [0, 60, 120, -180, -120, -60]
 max_phi = [60, 120, 180, -120, -60, 0]
 
-fid_hist = TH2D("fid", "fid", bins, phi_min, phi_max, bins,
-                theta_min, theta_max)
+electron_fid_hist = TH2D("electron_fid", "electron_fid", bins, phi_min, phi_max, bins,
+                         theta_min, theta_max)
 
-fid_sec_hist = []
+electron_fid_sec_hist = []
 for sec in range(sector_num):
     hname = "fid_sec%d" % (sec + 1)
     htitle = "fid_sec%d" % (sec + 1)
 
-    fid_sec_hist.append(TH2D(hname, htitle, bins, min_phi[sec],
-                             max_phi[sec], bins, theta_min, theta_max))
+    electron_fid_sec_hist.append(TH2D(hname, htitle, bins, min_phi[sec],
+                                      max_phi[sec], bins, theta_min, theta_max))
 
-fid = {'fid_hist': fid_hist,
-       'fid_sec_hist': fid_sec_hist
+fid = {'electron_fid_hist': electron_fid_hist,
+       'electron_fid_sec_hist': electron_fid_sec_hist
        }
 
 histo = {}
@@ -273,12 +273,12 @@ def add_and_save(output, root_file):
     h10 = cppyy.gbl.H10()
     for _h in output:
         for key, value in histo.items():
-            if key == 'fid_sec_hist':
+            if key == 'electron_fid_sec_hist':
                 pass
                 # for _i in xrange(len(6)):
-                # print(type(_h['fid_sec_hist']))
-                # print([type(_i) for _i in _h['fid_sec_hist'])
-                # print([_i for _i in _h['fid_sec_hist'])
+                # print(type(_h['electron_fid_sec_hist']))
+                # print([type(_i) for _i in _h['electron_fid_sec_hist'])
+                # print([_i for _i in _h['electron_fid_sec_hist'])
             else:
                 value.Add(_h[key])
 
@@ -396,9 +396,9 @@ def add_and_save(output, root_file):
 
     fid_dir = root_file.mkdir("Fid_cuts")
     fid_dir.cd()
-    histo['fid_hist'].SetXTitle("#phi")
-    histo['fid_hist'].SetYTitle("#theta")
-    histo['fid_hist'].Write()
+    histo['electron_fid_hist'].SetXTitle("#phi")
+    histo['electron_fid_hist'].SetYTitle("#theta")
+    histo['electron_fid_hist'].Write()
 
     for _h in output:
         for value in histo.values():

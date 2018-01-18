@@ -145,7 +145,7 @@ public:
 
         // Fill_fid(theta,phi,get_sector(phi_calc(cx[0],cy[0])));
 
-        hists.Fill_fid(theta, phi, sector);
+        hists.Fill_electron_fid(theta, phi, sector);
 
         if (first_run) {
           W = W_calc(e_mu, e_mu_prime);
