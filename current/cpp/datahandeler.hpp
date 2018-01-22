@@ -123,12 +123,13 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
       std::vector<double> dt_proton = delta_t->delta_t_array(MASS_P, gpart);
       std::vector<double> dt_pi = delta_t->delta_t_array(MASS_PIP, gpart);
 
-      theta = theta_calc(cz[0]);
-      phi = phi_calc(cx[0], cy[0]);
-      sector = get_sector(phi);
+      if (electron_cuts) {
+        theta = theta_calc(cz[0]);
+        phi = phi_calc(cx[0], cy[0]);
+        sector = get_sector(phi);
 
-      hists->Fill_electron_fid(theta, phi, sector);
-
+        hists->Fill_electron_fid(theta, phi, sector);
+      }
       if (first_run) {
         W = W_calc(e_mu, e_mu_prime);
         Q2 = Q2_calc(e_mu, e_mu_prime);
@@ -142,12 +143,13 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
         if (p[part_num] == 0)
           continue;
 
+        if (is_proton->at(part_num) == is_pip->at(part_num))
+          continue;
+
         theta = theta_calc(cz[part_num]);
         phi = phi_calc(cx[part_num], cy[part_num]);
         sector = get_sector(phi);
         hists->Fill_hadron_fid(theta, phi, sector, id[part_num]);
-
-        // if (is_proton->at(part_num) == is_pip->at(part_num)) continue;
 
         hists->Fill_Mass(m[part_num]);
         Particle3.SetXYZ(p[part_num] * cx[part_num], p[part_num] * cy[part_num],
