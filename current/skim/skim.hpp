@@ -89,7 +89,7 @@ void skim(char *fin, char *RootFile_output) {
     for (int part_num = 1; part_num < gpart; part_num++) {
       num_of_pis = 0;
 
-      /*
+      /* */
       if (dt_pip.at(part_num) >= Pip_Neg_fit(p[part_num]) &&
           dt_pip.at(part_num) <= Pip_Pos_fit(p[part_num])) {
         is_pip.at(part_num) = true;
@@ -110,7 +110,7 @@ void skim(char *fin, char *RootFile_output) {
           dt_pip.at(part_num) <= Pip_Pos_fit(p[part_num])) {
         is_pim.at(part_num) = true;
       }
-      */
+      /* */
       // Hard code of values to use for cut
       if (abs(dt_pip.at(part_num)) <= 0.5 && q[part_num] == 1) {
         is_pip.at(part_num) = true;
