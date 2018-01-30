@@ -89,7 +89,7 @@ void skim(char *fin, char *RootFile_output) {
     for (int part_num = 1; part_num < gpart; part_num++) {
       num_of_pis = 0;
 
-      /* */
+      /*
       if (dt_pip.at(part_num) >= Pip_Neg_fit(p[part_num]) &&
           dt_pip.at(part_num) <= Pip_Pos_fit(p[part_num])) {
         is_pip.at(part_num) = true;
@@ -110,7 +110,7 @@ void skim(char *fin, char *RootFile_output) {
           dt_pip.at(part_num) <= Pip_Pos_fit(p[part_num])) {
         is_pim.at(part_num) = true;
       }
-      /* */
+      */
       // Hard code of values to use for cut
       if (abs(dt_pip.at(part_num)) <= 0.5 && q[part_num] == 1) {
         is_pip.at(part_num) = true;
@@ -121,6 +121,7 @@ void skim(char *fin, char *RootFile_output) {
                                p[part_num] * cz[part_num]);
         MM = MM_neutron->missing_mass(gamma_mu);
       }
+
       if (abs(dt_proton.at(part_num)) <= 0.5 && q[part_num] == 1) {
         is_proton.at(part_num) = true;
       }
@@ -129,10 +130,10 @@ void skim(char *fin, char *RootFile_output) {
       }
     }
 
-    // has_neutron = true; // between_mm(MM);
+    has_neutron = true; // between_mm(MM);
 
     // Simple cut for missing mass
-    has_neutron = (MM > 0.9 && MM < 1.0);
+    // has_neutron = (MM > 0.9 && MM < 1.0);
 
     if (electron_cuts && has_neutron) {
       W = W_calc(e_mu, e_mu_prime);
