@@ -10,7 +10,7 @@ try:
     start = timer()
 
     lines = [line.rstrip('\n') for line in open(str(sys.argv[1]))]
-    if len(argv) < 3:
+    if len(sys.argv) < 3:
         num_cores = multiprocessing.cpu_count()
     else:
         print("Using " + sys.argv[2] + " Cores")
