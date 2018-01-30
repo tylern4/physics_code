@@ -1,7 +1,8 @@
-/************************************************************************/
-/*  Created by Nick Tyler*/
-/*	University Of South Carolina*/
-/************************************************************************/
+/**************************************/
+/*																		*/
+/*  Created by Nick Tyler             */
+/*	University Of South Carolina      */
+/**************************************/
 #include "histogram.hpp"
 
 // using namespace std;

@@ -1,7 +1,8 @@
-/************************************************************************/
-/*  Created by Nick Tyler*/
-/*	University Of South Carolina*/
-/************************************************************************/
+/**************************************/
+/*																		*/
+/*  Created by Nick Tyler             */
+/*	University Of South Carolina      */
+/**************************************/
 #include "makeHeader.hpp"
 
 Header::Header(std::string file_name, std::string H_gaurd) {

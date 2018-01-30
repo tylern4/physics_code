@@ -1,12 +1,8 @@
-/************************************************************************/
+/**************************************/
 /*																		*/
-/*																		*/
-/*  Created by Nick Tyler
- */
-/*	University Of South Carolina
- */
-/************************************************************************/
-
+/*  Created by Nick Tyler             */
+/*	University Of South Carolina      */
+/**************************************/
 #ifndef SKIM_H_GUARD
 #define SKIM_H_GUARD
 #include "main.h"
