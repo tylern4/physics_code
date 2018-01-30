@@ -1,4 +1,4 @@
-#Physics Research Code
+# Physics Research Code
 
 This it my physics research code repo. It's mainly to help me organize and backup my code as well as have branches
 that will run and compile on my OSX vs linux systems. The main code can be found in the `current` folder with other
