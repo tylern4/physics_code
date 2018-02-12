@@ -18,7 +18,6 @@
 using namespace std;
 
 int main(int argc, char **argv) {
-  gStyle->SetOptFit(1111);
 
   if (argc == 3) {
     char *infilename = argv[1];
