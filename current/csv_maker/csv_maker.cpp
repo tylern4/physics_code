@@ -15,18 +15,18 @@
 using namespace std;
 
 int main(int argc, char **argv) {
-        TStopwatch *Watch = new TStopwatch;
-        Watch->Start();
-        gStyle->SetOptFit(1111);
+  TStopwatch *Watch = new TStopwatch;
+  Watch->Start();
+  gStyle->SetOptFit(1111);
 
-        if (argc == 3) {
-                char *infilename = argv[1];
-                char *outfilename = argv[2];
-                make_electron_csv(infilename, outfilename);
-        }
+  if (argc == 3) {
+    char *infilename = argv[1];
+    char *outfilename = argv[2];
+    make_electron_csv(infilename, outfilename);
+  }
 
-        Watch->Stop();
-        cout << red << Watch->RealTime() << "sec" << def << endl;
+  Watch->Stop();
+  cout << red << Watch->RealTime() << "sec" << def << endl;
 
-        return 0;
+  return 0;
 }

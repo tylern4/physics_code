@@ -16,13 +16,13 @@ static const double D2R = PI / 180.0;
 // static const double E1D_E0 = 4.802;   // GeV
 // Run Info 22848 - 23500
 // http://clasweb.jlab.org/clasonline/servlet/runinfo?action=detail&run=22880
-static const double E1D_E0 = 4.81726; // GeV
+static const double E1D_E0 = 4.81726;  // GeV
 
 static const double SOL = 29.9792458;
 // misc. constants
 static const double FSC = 0.00729735253;
-static const double NA = 6.02214129E23;  // Avigadro's number
-static const double QE = 1.60217646E-19; // Charge or electron
+static const double NA = 6.02214129E23;   // Avigadro's number
+static const double QE = 1.60217646E-19;  // Charge or electron
 
 // particle codes, usually PDG codes, but always those used in BOS
 static const int PROTON = 2212;

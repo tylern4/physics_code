@@ -14,7 +14,7 @@
 #include <TLorentzVector.h>
 
 class h10_data {
-public:
+ public:
   std::vector<double> W_vec;
   std::vector<double> Q2_vec;
   std::vector<double> MM_vec;
@@ -26,10 +26,10 @@ public:
 };
 
 class H10 {
-private:
+ private:
   double Square(double a) { return a * a; }
 
-public:
+ public:
   //  std::vector<double> W_vec;
   //  std::vector<double> Q2_vec;
   //  std::vector<double> MM_vec;
@@ -85,19 +85,19 @@ public:
       // reset electron cut bool
       electron_cuts = true;
       // electron cuts
-      electron_cuts &= (ec[0] > 0);              // ``` ``` ``` ec
-      electron_cuts &= ((int)id[0] == ELECTRON); // First particle is electron
-      electron_cuts &= (p[0] > MIN_P_CUT);       // Minimum Momentum cut
+      electron_cuts &= (ec[0] > 0);               // ``` ``` ``` ec
+      electron_cuts &= ((int)id[0] == ELECTRON);  // First particle is electron
+      electron_cuts &= (p[0] > MIN_P_CUT);        // Minimum Momentum cut
       electron_cuts &=
-          ((int)gpart > 0); // Number of good particles is greater than 0
+          ((int)gpart > 0);  // Number of good particles is greater than 0
       // electron_cuts &= ((int)stat[0] > 0); // First Particle hit stat
       // std::cout << "stat " << (int)stat[0] << std::endl;
-      electron_cuts &= ((int)q[0] == -1); // First particle is negative Q
-      electron_cuts &= ((int)sc[0] > 0);  // First Particle hit sc
-      electron_cuts &= ((int)dc[0] > 0);  // ``` ``` ``` dc
+      electron_cuts &= ((int)q[0] == -1);  // First particle is negative Q
+      electron_cuts &= ((int)sc[0] > 0);   // First Particle hit sc
+      electron_cuts &= ((int)dc[0] > 0);   // ``` ``` ``` dc
       electron_cuts &= ((int)dc_stat[dc[0] - 1] > 0);
 
-      if (electron_cuts) { // Setup scattered electron 4 vector
+      if (electron_cuts) {  // Setup scattered electron 4 vector
         e_mu_prime_3.SetXYZ(p[0] * cx[0], p[0] * cy[0], p[0] * cz[0]);
         e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
 
