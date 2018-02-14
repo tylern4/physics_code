@@ -74,6 +74,10 @@ void skim(char *fin, char *RootFile_output) {
     electron_cuts &= (dc[0] > 0);               // ``` ``` ``` d
     electron_cuts &= (ec[0] > 0);               // ``` ``` ``` ec
     electron_cuts &= (dc_stat[dc[0] - 1] > 0);  //??
+    if (electron_cuts) {
+      electron_cuts &= etot[ec[0] - 1] < 0.4;
+      electron_cuts &= etot[ec[0] - 1] > 0.2;
+    }
 
     e_mu_prime_3.SetXYZ(p[0] * cx[0], p[0] * cy[0], p[0] * cz[0]);
     e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
@@ -128,7 +132,7 @@ void skim(char *fin, char *RootFile_output) {
     has_neutron = true;  // between_mm(MM);
 
     // Simple cut for missing mass
-    // has_neutron = (MM > 0.9 && MM < 1.0);
+    has_neutron = (MM > 0.5 && MM < 1.5);
 
     if (electron_cuts && has_neutron) {
       W = W_calc(e_mu, e_mu_prime);
