@@ -75,8 +75,8 @@ void skim(char *fin, char *RootFile_output) {
     electron_cuts &= (ec[0] > 0);               // ``` ``` ``` ec
     electron_cuts &= (dc_stat[dc[0] - 1] > 0);  //??
     if (electron_cuts) {
-      electron_cuts &= etot[ec[0] - 1] < 0.4;
-      electron_cuts &= etot[ec[0] - 1] > 0.2;
+      electron_cuts &= (etot[ec[0] - 1] / p[0]) < 0.4;
+      electron_cuts &= (etot[ec[0] - 1] / p[0]) > 0.2;
     }
 
     e_mu_prime_3.SetXYZ(p[0] * cx[0], p[0] * cy[0], p[0] * cz[0]);
