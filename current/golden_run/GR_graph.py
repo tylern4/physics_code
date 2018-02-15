@@ -70,7 +70,7 @@ def main():
     for index, row in keep.iterrows():
         print(
             "rsync -rav --partial --progress ../h10_r" + str(row[0]) + "_" +
-            str(row[1]) + ".root",
+            str(row[1]).zfill(2) + ".root",
             end=" .; \n")
 
 
