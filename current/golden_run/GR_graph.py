@@ -8,6 +8,7 @@ import pandas as pd
 import matplotlib
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
+
 try:
     from termcolor import cprint
     print_green = lambda x: cprint(x, 'green', attrs=['bold'])
@@ -56,6 +57,21 @@ def main():
     plt.ylabel('Ratio (events/total Q)')
     plt.ylim([-10000, 150000])
     plt.savefig('golden_run.pdf')
+
+    fig = plt.figure(
+        num=None, figsize=(16, 9), dpi=200, facecolor='w', edgecolor='k')
+    bin_heights, bin_borders, _ = plt.hist(
+        golden_df['ratio'], bins=100, histtype='stepfilled', alpha=0.9)
+    plt.xlabel('Ratio')
+    plt.savefig('ratio_hist.pdf')
+
+    keep = golden_df[golden_df['ratio'] > 50000]
+    keep = keep[['run_num', 'file_num']]
+    for index, row in keep.iterrows():
+        print(
+            "rsync -rav --partial --progress ../h10_r" + str(row[0]) + "_" +
+            str(row[1]) + ".root",
+            end=" .; \n")
 
 
 if __name__ == "__main__":

@@ -32,3 +32,5 @@ current/bin/csv_maker
 current/src/fit_theta_cc.hpp
 current/src/fid_fits.hpp
 .vscode/*
+
+*.sh
