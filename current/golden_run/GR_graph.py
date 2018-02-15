@@ -5,6 +5,8 @@ import sys
 import os
 import numpy as np
 import pandas as pd
+import matplotlib
+matplotlib.use('agg')
 import matplotlib.pyplot as plt
 try:
     from termcolor import cprint
@@ -25,8 +27,12 @@ def main():
     parser = argparse.ArgumentParser(
         description="Plot data from golden run output csv:")
     parser.add_argument('input', type=str, help="Input CSV")
-    parser.add_argument('output', type=str, nargs='?',
-                        help="Output folder for final root files", default='.')
+    parser.add_argument(
+        'output',
+        type=str,
+        nargs='?',
+        help="Output folder for final root files",
+        default='.')
 
     args = parser.parse_args()
     if len(sys.argv[1:]) == 0:
@@ -43,8 +49,8 @@ def main():
     golden_df = pd.read_csv(args.input)
     golden_df['ratio'] = golden_df['num_of_events'] / golden_df['total_q']
 
-    fig = plt.figure(num=None, figsize=(16, 9), dpi=200,
-                     facecolor='w', edgecolor='k')
+    fig = plt.figure(
+        num=None, figsize=(16, 9), dpi=200, facecolor='w', edgecolor='k')
     plt.scatter(golden_df['run_num'], golden_df['ratio'], alpha=0.1)
     plt.xlabel('Run Number')
     plt.ylabel('Ratio (events/total Q)')
