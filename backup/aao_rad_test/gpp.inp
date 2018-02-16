@@ -1,0 +1,50 @@
+# GPP input file
+#
+# Hash tag at start of line is comment.  Empty lines are ok, but there
+# should only be a single line with content; bash-style variables are
+# not supported as the non-comment content of this file is fed in as
+# the arguments to GPP.
+#
+# GPP is strange in that there cannot be any space between option
+# flags and their arguments; e.g. -a2.5 is ok, while -a 2.5 is not.
+#
+# Initial settings:
+#
+# -ogpp_out.bos -a2.35 -b2.35 -c2.35 -f0.97 -P0x1b -R36557 gpp_in.bos
+#
+# OPTIONS:
+
+# Output:
+-ogpp_out.bos
+
+# Smear scale factors:
+# -a: DOCA1
+# -b: DOCA2
+# -c: DOCA3
+# -f: SC
+-a2.35
+-b2.35
+-c2.35
+-f0.97
+
+# Master processing flags:
+#
+# -P: binary number with the following bit-flags
+#
+# Bitwise process flags
+# Individual flags are
+# 0x1     DC - Remove dead wires
+# 0x2     Smear DC values
+# 0x4     SC - Remove dead paddles
+# 0x8     Smear SC values
+# 0x10    Create CALL Bank
+# 0x20    Smear Tagger timeing
+# 0x40    Remove bad tagger conters
+# 0x80    IC - Remove dead IC channels
+# 0x100   Smear IC values
+-P0x1b
+# -R: Run number
+-R36557
+
+# Input file (MUST BE THE FINAL ARGUMENT)
+gpp_in.bos

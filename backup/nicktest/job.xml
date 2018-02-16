@@ -1,0 +1,45 @@
+<Request>
+  <Email email="ghollis@jlab.org" request="false" job="true"/>
+  <Project name="e1e"/>
+  <Track name="analysis"/>
+  <Name name="onepigen-test"/>
+
+  <Memory space="1" unit="GB"/>
+  <TimeLimit unit="days" time="1"/>
+
+  <Command><![CDATA[
+  /home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/nicktest/sim.sh
+  ]]></Command>
+
+  <List name="iter">
+    1
+
+  </List>
+
+  <ForEach list="iter">
+    <Job>
+      <!-- Examples of IO formatting: -->
+      <!-- <Output src="thrown.root" dest="/home/ghollis/phdanalysis/work/sim/results/n-pi+/thrown_100k_${iter}.root" /> -->
+      <!-- <Stdout dest="/home/ghollis/phdanalysis/work/sim/results/n-pi+/stdout_100k_${iter}" /> -->
+      <!-- <Stderr dest="/home/ghollis/phdanalysis/work/sim/results/n-pi+/stderr_100k_${iter}" /> -->
+      
+      <Input src="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/nicktest/onepigen.inp" dest="onepigen.inp"/>
+<Input src="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/nicktest/user_ana.tcl" dest="user_ana.tcl"/>
+<Input src="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/nicktest/gsim.inp" dest="gsim.inp"/>
+<Input src="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/nicktest/gpp.inp" dest="gpp.inp"/>
+<Output src="thrown.root" dest="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/nicktest/${iter}_thrown.root"/>
+<Output src="thrown.bos" dest="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/nicktest/${iter}_thrown.bos"/>
+<Output src="gsim.bos" dest="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/nicktest/${iter}_gsim.bos"/>
+<Output src="gsim_uncooked.bos" dest="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/nicktest/${iter}_gsim_uncooked.bos"/>
+<Output src="gsim.root" dest="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/nicktest/${iter}_gsim.root"/>
+<Output src="gsim_chist.root" dest="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/nicktest/${iter}_gsim_chist.root"/>
+<Output src="reconstructed.bos" dest="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/nicktest/${iter}_reconstructed.bos"/>
+<Output src="reconstructed.root" dest="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/nicktest/${iter}_reconstructed.root"/>
+<Output src="reconstructed_chist.root" dest="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/nicktest/${iter}_reconstructed_chist.root"/>
+<Stdout dest="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/nicktest/${iter}_stdout"/>
+<Stderr dest="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/nicktest/${iter}_stderr"/>
+
+    </Job>
+  </ForEach>
+
+</Request>

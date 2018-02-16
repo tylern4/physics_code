@@ -1,0 +1,46 @@
+<Request>
+  <Email email="ghollis@jlab.org" request="false" job="true"/>
+  <Project name="e1e"/>
+  <Track name="analysis"/>
+  <Name name="aao_rad_test"/>
+  <OS name="centos7"/>
+
+  <Memory space="1" unit="GB"/>
+  <TimeLimit unit="days" time="1"/>
+
+  <Command><![CDATA[
+  /home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/aao_rad_test/sim.sh
+  ]]></Command>
+
+  <List name="iter">
+    1
+
+  </List>
+
+  <ForEach list="iter">
+    <Job>
+      <!-- Examples of IO formatting: -->
+      <!-- <Output src="thrown.root" dest="/home/ghollis/phdanalysis/work/sim/results/n-pi+/thrown_100k_${iter}.root" /> -->
+      <!-- <Stdout dest="/home/ghollis/phdanalysis/work/sim/results/n-pi+/stdout_100k_${iter}" /> -->
+      <!-- <Stderr dest="/home/ghollis/phdanalysis/work/sim/results/n-pi+/stderr_100k_${iter}" /> -->
+      
+      <Input src="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/aao_rad_test/aao_rad.inp" dest="aao_rad.inp"/>
+<Input src="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/aao_rad_test/user_ana.tcl" dest="user_ana.tcl"/>
+<Input src="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/aao_rad_test/gsim.inp" dest="gsim.inp"/>
+<Input src="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/aao_rad_test/gpp.inp" dest="gpp.inp"/>
+<Output src="thrown.root" dest="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/aao_rad_test/${iter}_thrown.root"/>
+<Output src="thrown.bos" dest="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/aao_rad_test/${iter}_thrown.bos"/>
+<Output src="gsim.bos" dest="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/aao_rad_test/${iter}_gsim.bos"/>
+<Output src="gsim_uncooked.bos" dest="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/aao_rad_test/${iter}_gsim_uncooked.bos"/>
+<Output src="gsim.root" dest="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/aao_rad_test/${iter}_gsim.root"/>
+<Output src="gsim_chist.root" dest="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/aao_rad_test/${iter}_gsim_chist.root"/>
+<Output src="reconstructed.bos" dest="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/aao_rad_test/${iter}_reconstructed.bos"/>
+<Output src="reconstructed.root" dest="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/aao_rad_test/${iter}_reconstructed.root"/>
+<Output src="reconstructed_chist.root" dest="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/aao_rad_test/${iter}_reconstructed_chist.root"/>
+<Stdout dest="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/aao_rad_test/${iter}_stdout"/>
+<Stderr dest="/home/ghollis/phdanalysis/work/makeres-jlab-work/sim/MAID/proton/aao_rad_test/${iter}_stderr"/>
+
+    </Job>
+  </ForEach>
+
+</Request>
