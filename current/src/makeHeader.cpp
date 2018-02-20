@@ -39,9 +39,7 @@ void Header::Set_FuncName(std::string FuncName) { f_name = FuncName; }
 
 void Header::Set_FuncInputs(std::string FuncInputs) { f_input = FuncInputs; }
 
-void Header::Set_Function(TString Function) {
-  func = std::string(Function.Data());
-}
+void Header::Set_Function(TString Function) { func = std::string(Function.Data()); }
 
 void Header::AddText(std::string TextAdd) { a_text = TextAdd; }
 
@@ -72,10 +70,8 @@ void Header::WriteFunction() {
     header_file << ";\n}\n\n";
     Header::NewFunction();
   } else {
-    std::cerr << "Cannot Write to header:" << std::endl
-              << "r_type = " << !r_type.empty() << std::endl
-              << "f_name = " << !f_name.empty() << std::endl
-              << "f_input = " << !f_input.empty() << std::endl
+    std::cerr << "Cannot Write to header:" << std::endl << "r_type = " << !r_type.empty() << std::endl
+              << "f_name = " << !f_name.empty() << std::endl << "f_input = " << !f_input.empty() << std::endl
               << "func = " << !func.empty() << std::endl;
   }
 }
@@ -114,8 +110,8 @@ void Header::WriteGaussian(std::string name, double a, double m, double s) {
   Header::WriteFunction();
 }
 
-void Header::MakeFunction(std::string RetrunType, std::string FuncName,
-                          std::string FuncInputs, std::string Function) {
+void Header::MakeFunction(std::string RetrunType, std::string FuncName, std::string FuncInputs,
+                          std::string Function) {
   Header::NewFunction();
   Header::Set_RetrunType(RetrunType);
   Header::Set_FuncName(FuncName);

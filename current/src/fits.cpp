@@ -22,23 +22,17 @@ void Fits::FitGaus(TH1D *hist, double min_value, double max_value) {
 
     hist->Fit("fitFunc", "q", "", min_value, max_value);
 
-    par_mean = std::isnan(fitFunc->GetParameter("mean"))
-                   ? 0
-                   : fitFunc->GetParameter("mean");
-    par_FWHM = std::isnan(fitFunc->GetParameter("FWHM"))
-                   ? 0
-                   : fitFunc->GetParameter("FWHM");
+    par_mean = std::isnan(fitFunc->GetParameter("mean")) ? 0 : fitFunc->GetParameter("mean");
+    par_FWHM = std::isnan(fitFunc->GetParameter("FWHM")) ? 0 : fitFunc->GetParameter("FWHM");
 
     fitFunc->SetParameter(0, par_max);
     fitFunc->SetParameter(1, par_mean);
     fitFunc->SetParameter(2, par_FWHM);
-    for (int i = 0; i < 10; i++)
-      hist->Fit("fitFunc", "q", "", min_value, max_value);
+    for (int i = 0; i < 10; i++) hist->Fit("fitFunc", "q", "", min_value, max_value);
 
     mean = fitFunc->GetParameter("mean");
     FWHM = fitFunc->GetParameter("FWHM");
-    sigma = fitFunc->GetParameter("FWHM") /
-            (2 * sqrt(2 * log(2)));  // 2.35482004503;
+    sigma = fitFunc->GetParameter("FWHM") / (2 * sqrt(2 * log(2)));  // 2.35482004503;
   }
 }
 
@@ -49,8 +43,7 @@ void Fits::FitLandau(TH1D *hist, double min_value, double max_value) {
 
     hist->Fit("fitFunc", "q", "", min_value, max_value);
 
-    for (int i = 0; i < 10; i++)
-      hist->Fit("fitFunc", "q", "", min_value, max_value);
+    for (int i = 0; i < 10; i++) hist->Fit("fitFunc", "q", "", min_value, max_value);
   }
 }
 
@@ -160,16 +153,12 @@ void Fits::FitPoly_fid(TH2D *hist, double min_value, double max_value) {
   // e = fitFunc->GetParameter("e");
 }
 
-double Fits::fiducial_phi_lo(double theta_e, double theta_e_min, double k,
-                             double m, int c) {
-  return -c * pow(sin((theta_e - theta_e_min) * 0.01745),
-                  k + m / theta_e + 1500. / (theta_e * theta_e));
+double Fits::fiducial_phi_lo(double theta_e, double theta_e_min, double k, double m, int c) {
+  return -c * pow(sin((theta_e - theta_e_min) * 0.01745), k + m / theta_e + 1500. / (theta_e * theta_e));
 }
 
-double Fits::fiducial_phi_hi(double theta_e, double theta_e_min, double k,
-                             double m, int c) {
-  return c * pow(sin((theta_e - theta_e_min) * 0.01745),
-                 k + m / theta_e + 1500. / (theta_e * theta_e));
+double Fits::fiducial_phi_hi(double theta_e, double theta_e_min, double k, double m, int c) {
+  return c * pow(sin((theta_e - theta_e_min) * 0.01745), k + m / theta_e + 1500. / (theta_e * theta_e));
 }
 
 void Fits::FitFiducial_lo(TH2D *hist2d, double min_value, double max_value) {

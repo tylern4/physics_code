@@ -24,10 +24,8 @@ class Fits {
   std::string ploy3d = ploy2d + "+[3]*x*x*x";
   std::string ploy4d = ploy3d + "+[4]*x*x*x*x";
   std::string gaus = "[0]*TMath::Gaus(x,[1],[2],1)";
-  double fiducial_phi_lo(double theta_e, double theta_e_min, double k, double m,
-                         int c);
-  double fiducial_phi_hi(double theta_e, double theta_e_min, double k, double m,
-                         int c);
+  double fiducial_phi_lo(double theta_e, double theta_e_min, double k, double m, int c);
+  double fiducial_phi_hi(double theta_e, double theta_e_min, double k, double m, int c);
 
  public:
   double mean, sigma, FWHM;
