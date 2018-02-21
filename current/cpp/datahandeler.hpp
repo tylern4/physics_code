@@ -125,7 +125,6 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
       hists->WvsQ2_Fill(e_E, W, Q2, physics::xb_calc(Q2, e_E));
       num_of_proton = num_of_pis = 0;
 
-      std::vector<Event *> all_events(MAX_PARTS);
       for (int part_num = 1; part_num < gpart; part_num++) {
         if (p[part_num] == 0) continue;
         if (is_proton->at(part_num) == is_pip->at(part_num)) continue;
@@ -138,7 +137,6 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
         hists->Fill_Mass(m[part_num]);
         TLorentzVector Particle =
             physics::fourVec(p[part_num], cx[part_num], cy[part_num], cz[part_num], id[part_num]);
-        all_events.push_back(new Event(p[part_num], cx[part_num], cy[part_num], cz[part_num], id[part_num]));
 
         hists->MomVsBeta_Fill(Particle.E(), p[part_num], b[part_num]);
         if (q[part_num] == 1) {
@@ -167,8 +165,6 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
         } else if (q[part_num] == -1) {
           hists->MomVsBeta_Fill_neg(p[part_num], b[part_num]);
         }
-        all_events.clear();
-        all_events.shrink_to_fit();
       }
 
       if (num_of_pis == 1) hists->Fill_single_pi_WQ2(W, Q2);
