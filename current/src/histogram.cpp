@@ -483,9 +483,9 @@ void Histogram::delta_t_slices_Write() {
   for (int j = 0; j < 3; j++) {
     for (int jj = 0; jj < num_points; jj++) {
       if (j != 2) {
-        delta_t_cut[j][num_points].FitGaus(delta_t_hist[j][jj], fit_dt_min, fit_dt_max);
-        // cout << j << ',' << jj << ',' << delta_t_cut[j][num_points].mean <<
-        // ',' << delta_t_cut[j][num_points].sigma << std::endl;
+        delta_t_cut[j][num_points].Set_min(fit_dt_min);
+        delta_t_cut[j][num_points].Set_max(fit_dt_max);
+        delta_t_cut[j][num_points].FitGaus(delta_t_hist[j][jj]);
       }
 
       delta_t_hist[j][jj]->SetYTitle("#Deltat");
@@ -762,7 +762,9 @@ void Histogram::Fid_Write() {
       electron_fid_sec_slice[sec][slice] = electron_fid_sec_hist[sec]->ProjectionX(
           hname, slice_width * slice, slice_width * slice + (slice_width - 1));
       electron_fid_sec_slice[sec][slice]->Rebin(10);
-      SliceFit[sec][slice].FitGenNormal(electron_fid_sec_slice[sec][slice], min_phi[sec], max_phi[sec]);
+      SliceFit[sec][slice].Set_min(min_phi[sec]);
+      SliceFit[sec][slice].Set_max(max_phi[sec]);
+      SliceFit[sec][slice].FitGenNormal(electron_fid_sec_slice[sec][slice]);
     }
   }
 }

@@ -5,16 +5,34 @@
 /**************************************/
 #include "physics.hpp"
 
+TLorentzVector physics::fourVec(double px, double py, double pz, double mass) {
+  TVector3 Particle3(0.0, 0.0, 0.0);
+  TLorentzVector Particle4(0.0, 0.0, 0.0, 0.0);
+  Particle3.SetXYZ(px, py, pz);
+  Particle4.SetVectM(Particle3, mass);
+  return Particle4;
+}
+TLorentzVector physics::fourVec(double px, double py, double pz, int pid) {
+  return physics::fourVec(px, py, pz, physics::Get_Mass(pid));
+}
+TLorentzVector physics::fourVec(double p, double cx, double cy, double cz, double mass) {
+  return physics::fourVec(p * cx, p * cy, p * cz, mass);
+}
+
+TLorentzVector physics::fourVec(double p, double cx, double cy, double cz, int pid) {
+  return physics::fourVec(p * cx, p * cy, p * cz, pid);
+}
+
 // Calcuating Q^2
 // q^mu^2 = (e^mu - e^mu')^2 = -Q^2
-double Q2_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime) {
+double physics::Q2_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime) {
   TLorentzVector q_mu = (e_mu - e_mu_prime);
   return -q_mu.Mag2();
 }
 //	Calcualting W
 //	Gotten from s channel [(gamma - P)^2 == s == w^2]
 //	Sqrt√[M_p^2 - Q^2 + 2 M_p gamma]
-double W_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime) {
+double physics::W_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime) {
   TLorentzVector q_mu = (e_mu - e_mu_prime);
   TVector3 p_mu_3(0, 0, 0);
   TLorentzVector p_mu;
@@ -22,24 +40,24 @@ double W_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime) {
   return (p_mu + q_mu).Mag();
 }
 
-double xb_calc(double Q2, double E_prime) {
+double physics::xb_calc(double Q2, double E_prime) {
   double gamma = E1D_E0 - E_prime;
   double xb = (Q2 / (2 * MASS_P * gamma));
   return xb;
 }
 // overload with 4 vectors
-double xb_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime) {
+double physics::xb_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime) {
   double Q2 = Q2_calc(e_mu, e_mu_prime);
   TLorentzVector q = e_mu - e_mu_prime;
   TLorentzVector target(0, 0, 0, MASS_P);
   return (Q2 / (2 * (q.Dot(target))));
 }
 
-double theta_calc(double cosz) { return acos(cosz) / D2R; }
+double physics::theta_calc(double cosz) { return acos(cosz) / D2R; }
 
-double phi_calc(double cosx, double cosy) { return atan2(cosx, cosy) / D2R; }
+double physics::phi_calc(double cosx, double cosy) { return atan2(cosx, cosy) / D2R; }
 
-double center_phi_calc(double cosx, double cosy) {
+double physics::center_phi_calc(double cosx, double cosy) {
   double phi0 = (atan2(cosx, cosy) / D2R);
   phi0 += 30;
   if (phi0 < 0.0) phi0 += 360.0;
@@ -47,7 +65,7 @@ double center_phi_calc(double cosx, double cosy) {
   return phi0;
 }
 
-int get_sector(double phi) {
+int physics::get_sector(double phi) {
   if (phi >= 0 && phi < 60) {
     return 0;
   } else if (phi >= 60 && phi < 120) {
@@ -80,7 +98,7 @@ int get_sector(double phi) {
      } */
 }
 
-double fiducial_phi(double theta, double e_p) {
+double physics::fiducial_phi(double theta, double e_p) {
   /////////// NOTE: Definitly just magic numbers here......... :(
   double theta_min = 9.5 + 17.0 / (e_p + 0.17);
   double k = 0.705 + 1.1 * e_p;
@@ -100,7 +118,7 @@ double fiducial_phi(double theta, double e_p) {
 //  return fiducial_phi(theta_e, theta_e_min, k, m, false);
 //}
 
-double Get_Mass(int ID) {
+double physics::Get_Mass(int ID) {
   switch (ID) {
     case 2212:
       return MASS_P;
@@ -136,7 +154,7 @@ double Get_Mass(int ID) {
   return 0;
 }
 
-double genNormal(double *x, double *par) {
+double physics::genNormal(double *x, double *par) {
   double frac = (par[1] / (2 * par[0] * TMath::Gamma(1 / par[1])));
   double expo = TMath::Power(TMath::Abs(x[0] - par[2]) / par[0], par[1]);
 

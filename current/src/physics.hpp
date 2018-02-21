@@ -10,6 +10,7 @@
 #include "TROOT.h"
 #include "constants.hpp"
 
+namespace physics {
 // Calcuating Q^2
 // q^mu^2 = (e^mu - e^mu')^2 = -Q^2
 double Q2_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime);
@@ -27,5 +28,9 @@ int get_sector(double phi);
 double Get_Mass(int ID);
 double fiducial_phi(double theta_e, double e_p);
 double genNormal(double *x, double *par);
-
+TLorentzVector fourVec(double px, double py, double pz, double mass);
+TLorentzVector fourVec(double p, double cx, double cy, double cz, double mass);
+TLorentzVector fourVec(double px, double py, double pz, int pid);
+TLorentzVector fourVec(double p, double cx, double cy, double cz, int pid);
+}
 #endif
