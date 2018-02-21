@@ -7,39 +7,39 @@
 
 Event::Event() {}
 Event::Event(double p, double cx, double cy, double cz, int pid, double mass) {
-  this->p = p;
-  this->cx = cx;
-  this->cy = cy;
-  this->cz = cz;
-  this->px = p * cx;
-  this->py = p * cy;
-  this->pz = p * cz;
-  this->pid = pid;
+  p_e = p;
+  cx_e = cx;
+  cy_e = cy;
+  cz_e = cz;
+  px_e = p * cx;
+  py_e = p * cy;
+  pz_e = p * cz;
+  pid_e = pid;
 
-  this->mass = mass;
+  mass_e = mass;
 
-  this->theta = physics::theta_calc(this->cz);
-  this->phi = physics::phi_calc(this->cx, this->cy);
-  this->sector = physics::get_sector(this->phi);
+  theta_e = physics::theta_calc(cz_e);
+  phi_e = physics::phi_calc(cx_e, cy_e);
+  sector_e = physics::get_sector(phi_e);
 
-  this->vec = physics::fourVec(this->px, this->py, this->pz, physics::Get_Mass(this->pid));
+  vec = physics::fourVec(px_e, py_e, pz_e, physics::Get_Mass(pid_e));
 }
 Event::Event(double p, double cx, double cy, double cz, int pid) {
-  this->p = p;
-  this->cx = cx;
-  this->cy = cy;
-  this->cz = cz;
-  this->px = p * cx;
-  this->py = p * cy;
-  this->pz = p * cz;
-  this->pid = pid;
+  p_e = p;
+  cx_e = cx;
+  cy_e = cy;
+  cz_e = cz;
+  px_e = p * cx;
+  py_e = p * cy;
+  pz_e = p * cz;
+  pid_e = pid;
 
-  this->mass = physics::Get_Mass(this->pid);
+  mass_e = physics::Get_Mass(pid_e);
 
-  this->theta = physics::theta_calc(this->cz);
-  this->phi = physics::phi_calc(this->cx, this->cy);
-  this->sector = physics::get_sector(this->phi);
+  theta_e = physics::theta_calc(cz_e);
+  phi_e = physics::phi_calc(cx_e, cy_e);
+  sector_e = physics::get_sector(phi_e);
 
-  this->vec = physics::fourVec(this->px, this->py, this->pz, physics::Get_Mass(this->pid));
+  vec = physics::fourVec(px_e, py_e, pz_e, physics::Get_Mass(pid_e));
 }
 Event::~Event() {}

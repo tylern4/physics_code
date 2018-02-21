@@ -6,9 +6,7 @@
 
 #include "delta_t.hpp"
 
-Delta_T::Delta_T(double sc_time, double sc_pathlength) {
-  this->vertex = vertex_time(sc_time, sc_pathlength, 1.0);
-}
+Delta_T::Delta_T(double sc_time, double sc_pathlength) { vertex = vertex_time(sc_time, sc_pathlength, 1.0); }
 
 Delta_T::~Delta_T() {}
 
@@ -18,23 +16,23 @@ double Delta_T::vertex_time(double sc_time, double sc_pathlength, double relatav
 
 void Delta_T::deltat(double momentum, double sc_t, double sc_r) {
   double beta = 0.0;
-  double mp = (this->masses.at(0) / momentum);
+  double mp = (masses.at(0) / momentum);
   beta = 1.0 / sqrt(1.0 + (mp * mp));
-  this->dt_E = this->vertex - vertex_time(sc_t, sc_r, beta);
+  dt_E = vertex - vertex_time(sc_t, sc_r, beta);
 
-  mp = (this->masses.at(1) / momentum);
+  mp = (masses.at(1) / momentum);
   beta = 1.0 / sqrt(1.0 + (mp * mp));
-  this->dt_P = this->vertex - vertex_time(sc_t, sc_r, beta);
+  dt_P = vertex - vertex_time(sc_t, sc_r, beta);
 
-  mp = (this->masses.at(2) / momentum);
+  mp = (masses.at(2) / momentum);
   beta = 1.0 / sqrt(1.0 + (mp * mp));
-  this->dt_Pi = this->vertex - vertex_time(sc_t, sc_r, beta);
+  dt_Pi = vertex - vertex_time(sc_t, sc_r, beta);
 }
 
-double Delta_T::Get_dt_E() { return this->dt_E; }
-double Delta_T::Get_dt_P() { return this->dt_P; }
-double Delta_T::Get_dt_Pi() { return this->dt_Pi; }
-double Delta_T::Get_vertex() { return this->vertex; }
+double Delta_T::Get_dt_E() { return dt_E; }
+double Delta_T::Get_dt_P() { return dt_P; }
+double Delta_T::Get_dt_Pi() { return dt_Pi; }
+double Delta_T::Get_vertex() { return vertex; }
 
 void Delta_T::delta_t_hists(Histogram *hists) {
   double delta_t_P, delta_t_PIP, delta_t_ELECTRON;
@@ -49,16 +47,16 @@ void Delta_T::delta_t_hists(Histogram *hists) {
     sc_paddle = (int)sc_pd[sc[event_number] - 1];
     sc_sector = (int)sc_sect[sc[event_number] - 1];
 
-    this->deltat(mom, sct, scr);
+    deltat(mom, sct, scr);
 
     if (first_run) {
-      delta_t_P = this->Get_dt_P();
-      delta_t_PIP = this->Get_dt_Pi();
-      delta_t_ELECTRON = this->Get_dt_E();
+      delta_t_P = Get_dt_P();
+      delta_t_PIP = Get_dt_Pi();
+      delta_t_ELECTRON = Get_dt_E();
     } else {
       delta_t_P = dt_proton->at(event_number);
       delta_t_PIP = dt_pip->at(event_number);
-      delta_t_ELECTRON = this->Get_dt_E();
+      delta_t_ELECTRON = Get_dt_E();
     }
 
     if (charge == 1) {
