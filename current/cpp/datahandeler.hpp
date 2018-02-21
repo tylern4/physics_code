@@ -173,7 +173,6 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
         hists->Fill_Missing_Mass_square(MM_neutron->Get_MM2());
       }
       if (num_of_proton == 1) hists->Fill_single_proton_WQ2(W, Q2);
-      delete MM_neutron;
     }
   }
 
