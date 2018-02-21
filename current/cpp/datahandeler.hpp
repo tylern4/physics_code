@@ -104,10 +104,10 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
       TLorentzVector e_mu_prime = physics::fourVec(p[0], cx[0], cy[0], cz[0], MASS_E);
 
       // Set the vertex time (time of electron hit)
-      Delta_T *delta_t = new Delta_T(sc_t[sc[0] - 1], sc_r[sc[0] - 1]);
-      delta_t->delta_t_hists(hists);
-      std::vector<double> dt_proton = delta_t->delta_t_array(MASS_P, gpart);
-      std::vector<double> dt_pi = delta_t->delta_t_array(MASS_PIP, gpart);
+      Delta_T delta_t(sc_t[sc[0] - 1], sc_r[sc[0] - 1]);
+      delta_t.delta_t_hists(hists);
+      std::vector<double> dt_proton = delta_t.delta_t_array(MASS_P, gpart);
+      std::vector<double> dt_pi = delta_t.delta_t_array(MASS_PIP, gpart);
 
       if (electron_cuts) {
         theta = physics::theta_calc(cz[0]);
@@ -164,7 +164,6 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
         } else if (q[part_num] == -1) {
           hists->MomVsBeta_Fill_neg(p[part_num], b[part_num]);
         }
-        delete delta_t;
       }
 
       if (num_of_pis == 1) hists->Fill_single_pi_WQ2(W, Q2);
