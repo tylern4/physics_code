@@ -18,19 +18,23 @@ double Delta_T::vertex_time(double sc_time, double sc_pathlength, double relatav
 
 void Delta_T::deltat(double momentum, double sc_t, double sc_r) {
   double beta = 0.0;
-  beta = 1.0 / sqrt(1.0 + (this->masses.at(0) / momentum) * (this->masses.at(0) / momentum));
+  double mp = (this->masses.at(0) / momentum);
+  beta = 1.0 / sqrt(1.0 + (mp * mp));
   this->dt_E = this->vertex - vertex_time(sc_t, sc_r, beta);
 
-  beta = 1.0 / sqrt(1.0 + (this->masses.at(1) / momentum) * (this->masses.at(1) / momentum));
+  mp = (this->masses.at(1) / momentum);
+  beta = 1.0 / sqrt(1.0 + (mp * mp));
   this->dt_P = this->vertex - vertex_time(sc_t, sc_r, beta);
 
-  beta = 1.0 / sqrt(1.0 + (this->masses.at(2) / momentum) * (this->masses.at(2) / momentum));
+  mp = (this->masses.at(2) / momentum);
+  beta = 1.0 / sqrt(1.0 + (mp * mp));
   this->dt_Pi = this->vertex - vertex_time(sc_t, sc_r, beta);
 }
 
 double Delta_T::Get_dt_E() { return this->dt_E; }
 double Delta_T::Get_dt_P() { return this->dt_P; }
 double Delta_T::Get_dt_Pi() { return this->dt_Pi; }
+double Delta_T::Get_vertex() { return this->vertex; }
 
 void Delta_T::delta_t_hists(Histogram *hists) {
   double delta_t_P, delta_t_PIP, delta_t_ELECTRON;
@@ -81,8 +85,9 @@ double Delta_T::delta_t(double electron_vertex_time, double mass, double momentu
 }
 
 double *Delta_T::delta_t_array(double *dt_array, double mass) {
+  Delta_T *dt = new Delta_T(sc_t[sc[0] - 1], sc_r[sc[0] - 1]);
   double delta_t_P;
-  double electron_vertex = vertex_time(sc_t[sc[0] - 1], sc_r[sc[0] - 1], 1.0);
+  double electron_vertex = dt->Get_vertex();
   double sct, scr, mom;
   int ID, charge, sc_paddle, sc_sector;
 
@@ -101,9 +106,10 @@ double *Delta_T::delta_t_array(double *dt_array, double mass) {
 }
 
 std::vector<double> Delta_T::delta_t_array(double mass, int num_parts) {
+  Delta_T *dt = new Delta_T(sc_t[sc[0] - 1], sc_r[sc[0] - 1]);
   std::vector<double> dt_array(num_parts);
   double delta_t_P;
-  double electron_vertex = vertex_time(sc_t[sc[0] - 1], sc_r[sc[0] - 1], 1.0);
+  double electron_vertex = dt->Get_vertex();
   double sct, scr, mom;
   int ID, charge, sc_paddle, sc_sector;
 

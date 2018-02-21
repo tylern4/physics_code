@@ -20,8 +20,7 @@ class Delta_T {
   double dt_Pi = 0.0;
   bool first_run = true;
 
-  double vertex_time(double sc_time, double sc_pathlength,
-                     double relatavistic_beta);
+  double vertex_time(double sc_time, double sc_pathlength, double relatavistic_beta);
 
  public:
   Delta_T(double sc_time, double sc_pathlength);
@@ -31,9 +30,9 @@ class Delta_T {
   double Get_dt_E();
   double Get_dt_P();
   double Get_dt_Pi();
+  double Get_vertex();
 
-  double delta_t(double electron_vertex_time, double mass, double momentum,
-                 double sc_t, double sc_r);
+  double delta_t(double electron_vertex_time, double mass, double momentum, double sc_t, double sc_r);
   void delta_t_hists(Histogram *hists);
   double *delta_t_array(double *dt_array, double mass);
   std::vector<double> delta_t_array(double mass, int num_parts);
