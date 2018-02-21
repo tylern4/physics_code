@@ -124,7 +124,6 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
 
       hists->WvsQ2_Fill(e_E, W, Q2, physics::xb_calc(Q2, e_E));
       num_of_proton = num_of_pis = 0;
-
       for (int part_num = 1; part_num < gpart; part_num++) {
         if (p[part_num] == 0) continue;
         if (is_proton->at(part_num) == is_pip->at(part_num)) continue;
@@ -165,6 +164,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
         } else if (q[part_num] == -1) {
           hists->MomVsBeta_Fill_neg(p[part_num], b[part_num]);
         }
+        delete delta_t;
       }
 
       if (num_of_pis == 1) hists->Fill_single_pi_WQ2(W, Q2);
@@ -174,6 +174,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
         hists->Fill_Missing_Mass_square(MM_neutron->Get_MM2());
       }
       if (num_of_proton == 1) hists->Fill_single_proton_WQ2(W, Q2);
+      delete MM_neutron;
     }
   }
 
