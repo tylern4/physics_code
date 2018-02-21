@@ -55,6 +55,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
   if (!first_run) getMorebranchs(&chain);
 
   num_of_events = (int)chain.GetEntries();
+
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     // update loadbar and get current event
     loadbar(current_event + 1, num_of_events);
@@ -124,9 +125,9 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
       hists->WvsQ2_Fill(e_E, W, Q2, physics::xb_calc(Q2, e_E));
       num_of_proton = num_of_pis = 0;
 
+      std::vector<Event *> all_events;
       for (int part_num = 1; part_num < gpart; part_num++) {
         if (p[part_num] == 0) continue;
-
         if (is_proton->at(part_num) == is_pip->at(part_num)) continue;
 
         theta = physics::theta_calc(cz[part_num]);
@@ -137,6 +138,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
         hists->Fill_Mass(m[part_num]);
         TLorentzVector Particle =
             physics::fourVec(p[part_num], cx[part_num], cy[part_num], cz[part_num], id[part_num]);
+        all_events.push_back(new Event(p[part_num], cx[part_num], cy[part_num], cz[part_num], id[part_num]));
 
         hists->MomVsBeta_Fill(Particle.E(), p[part_num], b[part_num]);
         if (q[part_num] == 1) {

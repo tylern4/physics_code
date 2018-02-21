@@ -19,7 +19,7 @@ class Fits {
  private:
   double par_max, par_mean, par_FWHM;
   double mean, sigma, FWHM;
-  double min_value, max_value;
+  double min_value = -1000, max_value = 1000;
   double a, b, c, d, e = 0.0;
   double min_edge_x = std::nan("0"), max_edge_x = std::nan("0");
   std::string ploy1d = "[0]+[1]*x";
