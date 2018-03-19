@@ -34,21 +34,28 @@ void Fits::FitGaus(TH1D *hist) {
 
     hist->Fit("fitFunc", "q", "", min_value, max_value);
 
-    par_mean = std::isnan(fitFunc->GetParameter("mean")) ? 0 : fitFunc->GetParameter("mean");
-    par_FWHM = std::isnan(fitFunc->GetParameter("FWHM")) ? 0 : fitFunc->GetParameter("FWHM");
+    par_mean = std::isnan(fitFunc->GetParameter("mean"))
+                   ? 0
+                   : fitFunc->GetParameter("mean");
+    par_FWHM = std::isnan(fitFunc->GetParameter("FWHM"))
+                   ? 0
+                   : fitFunc->GetParameter("FWHM");
 
     fitFunc->SetParameter(0, par_max);
     fitFunc->SetParameter(1, par_mean);
     fitFunc->SetParameter(2, par_FWHM);
+
     for (int i = 0; i < 10; i++) hist->Fit("fitFunc", "q", "", min_value, max_value);
+
 
     mean = fitFunc->GetParameter("mean");
     FWHM = fitFunc->GetParameter("FWHM");
-    sigma = fitFunc->GetParameter("FWHM") / (2 * sqrt(2 * log(2)));  // 2.35482004503;
+    sigma = fitFunc->GetParameter("FWHM") /
+            (2 * sqrt(2 * log(2)));  // 2.35482004503;
   }
 }
 
-void Fits::FitLandau(TH1D *hist) {
+void Fits::FitLandau(TH1D *hist, double min_value, double max_value) {
   if (hist->GetEntries() > 1000) {
     // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
     TF1 *fitFunc = new TF1("fitFunc", "landau", min_value, max_value);
@@ -59,7 +66,7 @@ void Fits::FitLandau(TH1D *hist) {
   }
 }
 
-void Fits::FitPoly_1D(TH1D *hist) {
+void Fits::FitPoly_1D(TH1D *hist, double min_value, double max_value) {
   // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   TF1 *fitFunc = new TF1("fitFunc", ploy1d.c_str(), min_value, max_value);
   fitFunc->SetLineColor(9);
@@ -76,7 +83,7 @@ void Fits::FitPoly_1D(TH1D *hist) {
   b = fitFunc->GetParameter("b");
 }
 
-void Fits::FitPoly_2D(TH1D *hist) {
+void Fits::FitPoly_2D(TH1D *hist, double min_value, double max_value) {
   // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   TF1 *fitFunc = new TF1("fitFunc", ploy2d.c_str(), min_value, max_value);
   fitFunc->SetLineColor(30);
@@ -95,7 +102,7 @@ void Fits::FitPoly_2D(TH1D *hist) {
   c = fitFunc->GetParameter("c");
 }
 
-void Fits::FitPoly_3D(TH1D *hist) {
+void Fits::FitPoly_3D(TH1D *hist, double min_value, double max_value) {
   // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   TF1 *fitFunc = new TF1("fitFunc", ploy3d.c_str(), min_value, max_value);
   fitFunc->SetLineColor(46);
@@ -116,7 +123,7 @@ void Fits::FitPoly_3D(TH1D *hist) {
   d = fitFunc->GetParameter("d");
 }
 
-void Fits::FitPoly_4D(TH1D *hist) {
+void Fits::FitPoly_4D(TH1D *hist, double min_value, double max_value) {
   // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   TF1 *fitFunc = new TF1("fitFunc", ploy4d.c_str(), min_value, max_value);
   fitFunc->SetLineColor(42);
@@ -139,7 +146,7 @@ void Fits::FitPoly_4D(TH1D *hist) {
   e = fitFunc->GetParameter("e");
 }
 
-void Fits::FitPoly_fid(TH2D *hist) {
+void Fits::FitPoly_fid(TH2D *hist, double min_value, double max_value) {
   // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   TF1 *fitFunc = new TF1("fitFunc", "pol8", min_value, max_value);
   fitFunc->SetLineColor(42);
@@ -165,15 +172,19 @@ void Fits::FitPoly_fid(TH2D *hist) {
   // e = fitFunc->GetParameter("e");
 }
 
-double Fits::fiducial_phi_lo(double theta_e, double theta_e_min, double k, double m, int c) {
-  return -c * pow(sin((theta_e - theta_e_min) * 0.01745), k + m / theta_e + 1500. / (theta_e * theta_e));
+double Fits::fiducial_phi_lo(double theta_e, double theta_e_min, double k,
+                             double m, int c) {
+  return -c * pow(sin((theta_e - theta_e_min) * 0.01745),
+                  k + m / theta_e + 1500. / (theta_e * theta_e));
 }
 
-double Fits::fiducial_phi_hi(double theta_e, double theta_e_min, double k, double m, int c) {
-  return c * pow(sin((theta_e - theta_e_min) * 0.01745), k + m / theta_e + 1500. / (theta_e * theta_e));
+double Fits::fiducial_phi_hi(double theta_e, double theta_e_min, double k,
+                             double m, int c) {
+  return c * pow(sin((theta_e - theta_e_min) * 0.01745),
+                 k + m / theta_e + 1500. / (theta_e * theta_e));
 }
 
-void Fits::FitFiducial_lo(TH2D *hist2d) {
+void Fits::FitFiducial_lo(TH2D *hist2d, double min_value, double max_value) {
   // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   a = b = c = d = 0.5;
   TF1 *fitFunc_lo = new TF1("fitFunc_lo",
@@ -199,7 +210,7 @@ void Fits::FitFiducial_lo(TH2D *hist2d) {
   d = fitFunc_lo->GetParameter("d");
 }
 
-void Fits::FitFiducial_hi(TH2D *hist2d) {
+void Fits::FitFiducial_hi(TH2D *hist2d, double min_value, double max_value) {
   // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   a = b = c = d = 0.5;
   TF1 *fitFunc_hi = new TF1("fitFunc_hi",
@@ -225,7 +236,7 @@ void Fits::FitFiducial_hi(TH2D *hist2d) {
   d = fitFunc_hi->GetParameter("d");
 }
 
-void Fits::FitFiducial(TH2D *hist2d) {
+void Fits::FitFiducial(TH2D *hist2d, double min_value, double max_value) {
   // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   a = b = c = d = 0.5;
   TF1 *fitFunc = new TF1("fitFunc",
@@ -251,7 +262,7 @@ void Fits::FitFiducial(TH2D *hist2d) {
   d = fitFunc->GetParameter("d");
 }
 
-void Fits::FitGenNormal(TH1D *hist) {
+void Fits::FitGenNormal(TH1D *hist, double min_value, double max_value) {
   double min, max, val, min_m, max_m;
   if (hist->GetEntries() > 1000) {
     // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit");
@@ -284,3 +295,6 @@ void Fits::FitGenNormal(TH1D *hist) {
     max_edge_x = max_m;
   }
 }
+
+double Fits::Get_min_edge() { return min_edge_x; };
+double Fits::Get_max_edge() { return max_edge_x; };

@@ -11,5 +11,4 @@
 #include "delta_t.hpp"
 #include "missing_mass.hpp"
 #include "histogram.hpp"
-#include "event.hpp"
 #endif

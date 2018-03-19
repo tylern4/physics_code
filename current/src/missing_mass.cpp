@@ -50,8 +50,9 @@ void MissingMass::Set_target_P_cos(double t_p, double t_cx, double t_cy, double 
   target_pz = t_p * t_cz;
 }
 
-void MissingMass::missing_mass(TLorentzVector gamma_mu) {
+double MissingMass::missing_mass(TLorentzVector gamma_mu) {
   // Initialize all vectors
+  TLorentzVector reaction(0.0, 0.0, 0.0, 0.0);
   TVector3 vec_3_out;
   TLorentzVector vec_4_out;
   TVector3 target_3;

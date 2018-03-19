@@ -36,8 +36,8 @@ class Header {
   void AddLine(std::string LineAdd);
   void AddLine(std::string LineAdd, bool ending);
   void AddComment(std::string CommAdd);
-  void MakeFunction(std::string RetrunType, std::string FuncName, std::string FuncInputs,
-                    std::string Function);
+  void MakeFunction(std::string RetrunType, std::string FuncName,
+                    std::string FuncInputs, std::string Function);
   void WriteFunction();
   void WriteGaussian(std::string name, double a, double m, double s);
 };
