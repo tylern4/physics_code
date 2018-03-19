@@ -8,7 +8,19 @@
 
 #include "fits.hpp"
 
-void Fits::FitGaus(TH1D *hist, double min_value, double max_value) {
+Fits::Fits() {}
+Fits::~Fits() {}
+
+void Fits::Set_min(double val) { min_value = val; };
+void Fits::Set_max(double val) { max_value = val; };
+
+double Fits::Get_min_edge() { return min_edge_x; }
+double Fits::Get_max_edge() { return max_edge_x; }
+double Fits::Get_sigma() { return sigma; }
+double Fits::Get_mean() { return mean; }
+double Fits::Get_FWHM() { return FWHM; }
+
+void Fits::FitGaus(TH1D *hist) {
   if (hist->GetEntries() > 1000) {
     // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
     TF1 *fitFunc = new TF1("fitFunc", gaus.c_str(), min_value, max_value);
@@ -32,8 +44,9 @@ void Fits::FitGaus(TH1D *hist, double min_value, double max_value) {
     fitFunc->SetParameter(0, par_max);
     fitFunc->SetParameter(1, par_mean);
     fitFunc->SetParameter(2, par_FWHM);
-    for (int i = 0; i < 10; i++)
-      hist->Fit("fitFunc", "q", "", min_value, max_value);
+
+    for (int i = 0; i < 10; i++) hist->Fit("fitFunc", "q", "", min_value, max_value);
+
 
     mean = fitFunc->GetParameter("mean");
     FWHM = fitFunc->GetParameter("FWHM");
@@ -49,8 +62,7 @@ void Fits::FitLandau(TH1D *hist, double min_value, double max_value) {
 
     hist->Fit("fitFunc", "q", "", min_value, max_value);
 
-    for (int i = 0; i < 10; i++)
-      hist->Fit("fitFunc", "q", "", min_value, max_value);
+    for (int i = 0; i < 10; i++) hist->Fit("fitFunc", "q", "", min_value, max_value);
   }
 }
 

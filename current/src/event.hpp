@@ -11,8 +11,8 @@
 class Event {
  private:
   TLorentzVector vec;
-  double p, cx, cy, cz, px, py, pz, mass, theta, phi;
-  int sector, pid;
+  double p_e, cx_e, cy_e, cz_e, px_e, py_e, pz_e, mass_e, theta_e, phi_e;
+  int sector_e, pid_e;
 
  public:
   Event();

@@ -8,7 +8,7 @@
 // using namespace std;
 
 Histogram::Histogram() {
-  makeHists_delta_t();
+  makeHists_deltat();
   makeHists_CC();
   makeHists_fid();
   hadron_fid_hist[0] = new TH2D("hadron_fid", "hadron_fid", bins, phi_min,
@@ -242,7 +242,7 @@ void Histogram::Write_Missing_Mass() {
   Missing_Mass_square->Write();
 }
 
-void Histogram::makeHists_delta_t() {
+void Histogram::makeHists_deltat() {
   for (int jj = 0; jj < num_points; jj++) {
     sprintf(hname, "delta_t_p_%d", jj);
     sprintf(htitle, "#Deltat P %d", jj);

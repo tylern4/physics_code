@@ -21,7 +21,7 @@ class Histogram {
  public:
   Header *fit_functions;
   void makeHists_fid();
-  void makeHists_delta_t();
+  void makeHists_deltat();
   void makeHists_CC();
   const int bins = 500;
   const double p_min = 0.0;

@@ -6,7 +6,9 @@
 
 #include "delta_t.hpp"
 
-Delta_T::Delta_T() {}
+
+Delta_T::Delta_T(double sc_time, double sc_pathlength) { vertex = vertex_time(sc_time, sc_pathlength, 1.0); }
+
 Delta_T::~Delta_T() {}
 
 double Delta_T::vertex_time(double sc_time, double sc_pathlength,
@@ -14,13 +16,28 @@ double Delta_T::vertex_time(double sc_time, double sc_pathlength,
   return sc_time - sc_pathlength / (cut_beta * c_special_units);
 }
 
-double Delta_T::delta_t(double electron_vertex_time, double mass,
-                        double momentum, double sc_t, double sc_r) {
-  double cut_beta = 1.0 / sqrt(1.0 + (mass / momentum) * (mass / momentum));
-  return electron_vertex_time - vertex_time(sc_t, sc_r, cut_beta);
+
+void Delta_T::deltat(double momentum, double sc_t, double sc_r) {
+  double beta = 0.0;
+  double mp = (masses.at(0) / momentum);
+  beta = 1.0 / sqrt(1.0 + (mp * mp));
+  dt_E = vertex - vertex_time(sc_t, sc_r, beta);
+
+  mp = (masses.at(1) / momentum);
+  beta = 1.0 / sqrt(1.0 + (mp * mp));
+  dt_P = vertex - vertex_time(sc_t, sc_r, beta);
+
+  mp = (masses.at(2) / momentum);
+  beta = 1.0 / sqrt(1.0 + (mp * mp));
+  dt_Pi = vertex - vertex_time(sc_t, sc_r, beta);
 }
 
-void Delta_T::delta_t_cut(Histogram *hists, bool first_run) {
+double Delta_T::Get_dt_E() { return dt_E; }
+double Delta_T::Get_dt_P() { return dt_P; }
+double Delta_T::Get_dt_Pi() { return dt_Pi; }
+double Delta_T::Get_vertex() { return vertex; }
+
+void Delta_T::delta_t_hists(Histogram *hists) {
   double delta_t_P, delta_t_PIP, delta_t_ELECTRON;
   double electron_vertex = vertex_time(sc_t[sc[0] - 1], sc_r[sc[0] - 1], 1.0);
   double sct, scr, mom;
@@ -35,14 +52,17 @@ void Delta_T::delta_t_cut(Histogram *hists, bool first_run) {
     sc_paddle = (int)sc_pd[sc[event_number] - 1];
     sc_sector = (int)sc_sect[sc[event_number] - 1];
 
+    deltat(mom, sct, scr);
+
     if (first_run) {
-      delta_t_P = delta_t(electron_vertex, MASS_P, mom, sct, scr);
-      delta_t_PIP = delta_t(electron_vertex, MASS_PIP, mom, sct, scr);
-      delta_t_ELECTRON = delta_t(electron_vertex, MASS_E, mom, sct, scr);
+      delta_t_P = Get_dt_P();
+      delta_t_PIP = Get_dt_Pi();
+      delta_t_ELECTRON = Get_dt_E();
     } else {
       delta_t_P = dt_proton->at(event_number);
       delta_t_PIP = dt_pip->at(event_number);
-      delta_t_ELECTRON = delta_t(electron_vertex, MASS_E, mom, sct, scr);
+      delta_t_ELECTRON = Get_dt_E();
+
     }
 
     if (charge == 1) {
@@ -83,6 +103,7 @@ double *Delta_T::delta_t_array(double *dt_array, double mass) {
 
     dt_array[event_number] = delta_t(electron_vertex, mass, mom, sct, scr);
   }
+  delete dt;
   return dt_array;
 }
 
@@ -104,5 +125,6 @@ std::vector<double> Delta_T::delta_t_array(double mass, int num_parts) {
 
     dt_array[event_number] = delta_t(electron_vertex, mass, mom, sct, scr);
   }
+  delete dt;
   return dt_array;
 }

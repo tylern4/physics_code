@@ -13,10 +13,6 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
   TFile *RootOutputFile;
   // My Classes
   Histogram *hists = new Histogram();
-  // From missing_mass.hpp :: missing_mass_calc()
-  MissingMass *MM_neutron = new MissingMass();
-  MM_neutron->Set_target_mass(MASS_P);
-  MM_neutron->Set_target_PxPyPz(0);
 
   TCanvas *c1 = new TCanvas("c1", "c1", 100, 100);
   auto number_cols = 0;
@@ -66,6 +62,8 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
     // update loadbar and get current event
     loadbar(current_event + 1, num_of_events);
     chain.GetEntry(current_event);
+    // From missing_mass.hpp :: missing_mass_calc()
+    MissingMass *MM_neutron = new MissingMass(MASS_P, 0.0);
 
     // reset electron cut bool
     electron_cuts = true;
@@ -116,10 +114,11 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
       e_mu_prime_3.SetXYZ(p[0] * cx[0], p[0] * cy[0], p[0] * cz[0]);
       e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
       // Set the vertex time (time of electron hit)
-      Delta_T *delta_t = new Delta_T();
-      delta_t->delta_t_cut(hists, first_run);
-      std::vector<double> dt_proton = delta_t->delta_t_array(MASS_P, gpart);
-      std::vector<double> dt_pi = delta_t->delta_t_array(MASS_PIP, gpart);
+      Delta_T *dt = new Delta_T(sc_t[sc[0] - 1], sc_r[sc[0] - 1]);
+      dt->delta_t_hists(hists);
+      std::vector<double> dt_proton = dt->delta_t_array(MASS_P, gpart);
+      std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, gpart);
+      delete dt;
 
       if (electron_cuts) {
         theta = physics::theta_calc(cz[0]);
@@ -194,6 +193,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
       if (num_of_proton == 1)
         hists->Fill_single_proton_WQ2(W, Q2);
     }
+    delete MM_neutron;
   }
 
   std::cout << green << "Fitting" << def << std::endl;
@@ -217,6 +217,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
   MM_header->WriteGaussian("mm_square", 1, MissingMassSquare_cut.mean,
                            MissingMassSquare_cut.sigma);
   delete MM_header;
+  delete MM_neutron_cut;
 
   //
   // end stuff
