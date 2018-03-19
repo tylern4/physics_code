@@ -100,6 +100,7 @@ double *Delta_T::delta_t_array(double *dt_array, double mass) {
 
     dt_array[event_number] = delta_t(electron_vertex, mass, mom, sct, scr);
   }
+  delete dt;
   return dt_array;
 }
 
@@ -122,5 +123,6 @@ std::vector<double> Delta_T::delta_t_array(double mass, int num_parts) {
 
     dt_array[event_number] = delta_t(electron_vertex, mass, mom, sct, scr);
   }
+  delete dt;
   return dt_array;
 }
