@@ -47,7 +47,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
   TString fins = fin;
   TFileCollection fc("fileList", "", fins.Data());
   chain.AddFileInfoList((TCollection *)fc.GetList());
-  cout << blue << "Analyzing file " << green << fin << def << bgdef << endl;
+  cout << BLUE << "Analyzing file " << GREEN << fin << DEF << endl;
 
   getBranches(&chain);
   if (!first_run) getMorebranchs(&chain);
@@ -180,7 +180,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
     delete MM_neutron;
   }
 
-  std::cout << green << "Fitting" << def << std::endl;
+  std::cout << GREEN << "\nFitting" << DEF << std::endl;
   // Start of cuts
   Fits *MM_neutron_cut = new Fits();
   MM_neutron_cut->Set_min(0.88);

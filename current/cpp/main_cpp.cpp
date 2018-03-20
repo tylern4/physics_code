@@ -15,25 +15,25 @@
 using namespace std;
 
 int main(int argc, char **argv) {
-        gROOT->SetBatch(true);
-        TStopwatch *Watch = new TStopwatch;
-        Watch->Start();
-        gStyle->SetOptFit(1111);
+  gROOT->SetBatch(true);
+  TStopwatch *Watch = new TStopwatch;
+  Watch->Start();
+  gStyle->SetOptFit(1111);
 
-        if (argc == 3) {
-                char *infilename = argv[1];
-                char *outfilename = argv[2];
-                dataHandeler(infilename, outfilename, true);
-        }
+  if (argc == 3) {
+    char *infilename = argv[1];
+    char *outfilename = argv[2];
+    dataHandeler(infilename, outfilename, true);
+  }
 
-        if (argc == 4) {
-                char *infilename = argv[1];
-                char *outfilename = argv[2];
-                dataHandeler(infilename, outfilename, false);
-        }
+  if (argc == 4) {
+    char *infilename = argv[1];
+    char *outfilename = argv[2];
+    dataHandeler(infilename, outfilename, false);
+  }
 
-        Watch->Stop();
-        cout << red << Watch->RealTime() << "sec" << def << endl;
+  Watch->Stop();
+  cout << RED << Watch->RealTime() << "sec" << DEF << endl;
 
-        return 0;
+  return 0;
 }

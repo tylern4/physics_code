@@ -34,7 +34,7 @@
 #include "TSystem.h"
 #include <vector>
 #include <fstream>
-#include "../src/color.cpp"
+#include "../src/color.hpp"
 #include "../src/constants.hpp"
 
 using namespace std;
@@ -42,7 +42,7 @@ using namespace std;
 ofstream cut_outputs;
 
 // Color outputs
-Color::Modifier red(Color::FG_RED);
+/*Color::Modifier red(Color::FG_RED);
 Color::Modifier blue(Color::FG_BLUE);
 Color::Modifier def(Color::FG_DEFAULT);
 Color::Modifier green(Color::FG_GREEN);
@@ -50,27 +50,21 @@ Color::Modifier bgred(Color::BG_RED);
 Color::Modifier bgblue(Color::BG_BLUE);
 Color::Modifier bgdef(Color::BG_DEFAULT);
 Color::Modifier bggreen(Color::BG_GREEN);
-
+*/
 void loadbar(long x, long n) {
+  int w = 50;
+  if ((x != n) && (x % (n / 100 + 1) != 0)) return;
 
-        int w = 50;
-        if ((x != n) && (x % (n / 100 + 1) != 0))
-                return;
+  double ratio = x / (double)n;
+  int c = ratio * w;
 
-        double ratio = x / (double)n;
-        int c = ratio * w;
-
-        cout << blue << " [";
-        for (int x = 0; x < c; x++)
-                cout << green << "=" << def;
-        cout << green << ">" << def;
-        for (int x = c; x < w; x++)
-                cout << " ";
-        cout << blue << (int)(ratio * 100) << "%]\r" << def << flush;
+  cout << BLUE << " [";
+  for (int x = 0; x < c; x++) cout << GREEN << "=" << DEF;
+  cout << GREEN << ">" << DEF;
+  for (int x = c; x < w; x++) cout << " ";
+  cout << BLUE << (int)(ratio * 100) << "%]\r" << DEF << flush;
 }
 
-double Square(double a) {
-        return a * a;
-}
+double Square(double a) { return a * a; }
 
 #endif
