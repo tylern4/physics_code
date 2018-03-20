@@ -33,12 +33,8 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
 
   int num_of_pis, num_of_proton;
 
-  TVector3 e_mu_prime_3;
-  TLorentzVector e_mu_prime;
   TLorentzVector e_mu(0.0, 0.0, sqrt(Square(E1D_E0) - Square(MASS_E)), E1D_E0);
 
-  TVector3 Particle3(0.0, 0.0, 0.0);
-  TLorentzVector Particle4(0.0, 0.0, 0.0, 0.0);
   double theta, phi;
   int sector;
   // End declrare variables
@@ -54,10 +50,10 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
   cout << blue << "Analyzing file " << green << fin << def << bgdef << endl;
 
   getBranches(&chain);
-  if (!first_run)
-    getMorebranchs(&chain);
+  if (!first_run) getMorebranchs(&chain);
 
   num_of_events = (int)chain.GetEntries();
+
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     // update loadbar and get current event
     loadbar(current_event + 1, num_of_events);
@@ -68,35 +64,29 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
     // reset electron cut bool
     electron_cuts = true;
     // electron cuts
-    electron_cuts &= (ec[0] > 0); // ``` ``` ``` ec
-    electron_cuts &= ((int)id[0] == ELECTRON ||
-                      (int)id[0] == 0); // First particle is electron
-    electron_cuts &=
-        ((int)gpart > 0); // Number of good particles is greater than 0
-    electron_cuts &= ((int)stat[0] > 0); // First Particle hit stat
-    electron_cuts &= ((int)q[0] == -1);  // First particle is negative Q
-    electron_cuts &= ((int)sc[0] > 0);   // First Particle hit sc
-    electron_cuts &= ((int)dc[0] > 0);   // ``` ``` ``` dc
+    electron_cuts &= (ec[0] > 0);                                  // ``` ``` ``` ec
+    electron_cuts &= ((int)id[0] == ELECTRON || (int)id[0] == 0);  // First particle is electron
+    electron_cuts &= ((int)gpart > 0);    // Number of good particles is greater than 0
+    electron_cuts &= ((int)stat[0] > 0);  // First Particle hit stat
+    electron_cuts &= ((int)q[0] == -1);   // First particle is negative Q
+    electron_cuts &= ((int)sc[0] > 0);    // First Particle hit sc
+    electron_cuts &= ((int)dc[0] > 0);    // ``` ``` ``` dc
     electron_cuts &= ((int)dc_stat[dc[0] - 1] > 0);
     electron_cuts &= ((int)cc[0] > 0);
-    if (electron_cuts)
-      hists->EC_fill(etot[ec[0] - 1], p[0]);
-    electron_cuts &= (p[0] > MIN_P_CUT); // Minimum Momentum cut????
+    if (electron_cuts) hists->EC_fill(etot[ec[0] - 1], p[0]);
+    electron_cuts &= (p[0] > MIN_P_CUT);  // Minimum Momentum cut????
 
     if (electron_cuts) {
       int cc_sector = cc_sect[cc[0] - 1];
       int cc_segment = (cc_segm[0] % 1000) / 10;
       int cc_pmt = cc_segm[0] / 1000 - 1;
       int cc_nphe = nphe[cc[0] - 1];
-      double theta_cc =
-          TMath::ACos(TMath::Abs(p[0] * cz[0]) / TMath::Abs(p[0]));
+      double theta_cc = TMath::ACos(TMath::Abs(p[0] * cz[0]) / TMath::Abs(p[0]));
 
       theta_cc = theta_cc / D2R;
       hists->CC_fill(cc_sector, cc_segment, cc_pmt, cc_nphe, theta_cc);
 
-      hists->Fill_Beam_Position((double)dc_vx[dc[0] - 1],
-                                (double)dc_vy[dc[0] - 1],
-                                (double)dc_vz[dc[0] - 1]);
+      hists->Fill_Beam_Position((double)dc_vx[dc[0] - 1], (double)dc_vy[dc[0] - 1], (double)dc_vz[dc[0] - 1]);
       if (first_run) {
         is_electron = &elec_vec;
         is_electron->at(0) = true;
@@ -111,8 +101,8 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
       }
 
       // Setup scattered electron 4 vector
-      e_mu_prime_3.SetXYZ(p[0] * cx[0], p[0] * cy[0], p[0] * cz[0]);
-      e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
+      TLorentzVector e_mu_prime = physics::fourVec(p[0], cx[0], cy[0], cz[0], MASS_E);
+
       // Set the vertex time (time of electron hit)
       Delta_T *dt = new Delta_T(sc_t[sc[0] - 1], sc_r[sc[0] - 1]);
       dt->delta_t_hists(hists);
@@ -135,13 +125,9 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
 
       hists->WvsQ2_Fill(e_E, W, Q2, physics::xb_calc(Q2, e_E));
       num_of_proton = num_of_pis = 0;
-
       for (int part_num = 1; part_num < gpart; part_num++) {
-        if (p[part_num] == 0)
-          continue;
-
-        if (is_proton->at(part_num) == is_pip->at(part_num))
-          continue;
+        if (p[part_num] == 0) continue;
+        if (is_proton->at(part_num) == is_pip->at(part_num)) continue;
 
         theta = physics::theta_calc(cz[part_num]);
         phi = physics::phi_calc(cx[part_num], cy[part_num]);
@@ -149,11 +135,10 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
         hists->Fill_hadron_fid(theta, phi, sector, id[part_num]);
 
         hists->Fill_Mass(m[part_num]);
-        Particle3.SetXYZ(p[part_num] * cx[part_num], p[part_num] * cy[part_num],
-                         p[part_num] * cz[part_num]);
-        Particle4.SetVectM(Particle3, physics::Get_Mass(id[part_num]));
+        TLorentzVector Particle =
+            physics::fourVec(p[part_num], cx[part_num], cy[part_num], cz[part_num], id[part_num]);
 
-        hists->MomVsBeta_Fill(Particle4.E(), p[part_num], b[part_num]);
+        hists->MomVsBeta_Fill(Particle.E(), p[part_num], b[part_num]);
         if (q[part_num] == 1) {
           hists->MomVsBeta_Fill_pos(p[part_num], b[part_num]);
           if (is_proton->at(part_num) && (id[part_num] == PROTON)) {
@@ -167,10 +152,9 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
             hists->Fill_Pi_ID_P(p[part_num], b[part_num]);
             TLorentzVector gamma_mu = (e_mu - e_mu_prime);
             if (first_run) {
-              MM_neutron->Set_PxPyPz(p[part_num] * cx[part_num],
-                                     p[part_num] * cy[part_num],
+              MM_neutron->Set_PxPyPz(p[part_num] * cx[part_num], p[part_num] * cy[part_num],
                                      p[part_num] * cz[part_num]);
-              MM = MM_neutron->missing_mass(gamma_mu);
+              MM_neutron->missing_mass(gamma_mu);
             }
           }
 
@@ -183,45 +167,41 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
         }
       }
 
-      if (num_of_pis == 1)
-        hists->Fill_single_pi_WQ2(W, Q2);
+      if (num_of_pis == 1) hists->Fill_single_pi_WQ2(W, Q2);
 
       if (num_of_pis == 1 && num_of_proton == 0) {
-        hists->Fill_Missing_Mass(MM);
-        hists->Fill_Missing_Mass_square(Square(MM));
+        hists->Fill_Missing_Mass(MM_neutron->Get_MM());
+        hists->Fill_Missing_Mass_square(MM_neutron->Get_MM2());
       }
-      if (num_of_proton == 1)
-        hists->Fill_single_proton_WQ2(W, Q2);
+      if (num_of_proton == 1) hists->Fill_single_proton_WQ2(W, Q2);
     }
     delete MM_neutron;
   }
 
   std::cout << green << "Fitting" << def << std::endl;
   // Start of cuts
-  Fits MM_neutron_cut;
-  double fit_range_min = 0.88;
-  double fit_range_max = 1.0;
-  MM_neutron_cut.FitGaus(hists->Missing_Mass, fit_range_min, fit_range_max);
-  MM_neutron_cut.FitLandau(hists->Missing_Mass, fit_range_min, fit_range_max);
+  Fits *MM_neutron_cut = new Fits();
+  MM_neutron_cut->Set_min(0.88);
+  MM_neutron_cut->Set_max(1.0);
+  MM_neutron_cut->FitGaus(hists->Missing_Mass);
+  MM_neutron_cut->FitLandau(hists->Missing_Mass);
 
   Header *MM_header = new Header("../src/missing_mass_gaussians.hpp", "MM");
-  MM_header->WriteGaussian("mm", 1, MM_neutron_cut.mean, MM_neutron_cut.sigma);
+  MM_header->WriteGaussian("mm", 1, MM_neutron_cut->Get_mean(), MM_neutron_cut->Get_sigma());
 
-  Fits MissingMassSquare_cut;
-  fit_range_min = 0.5;
-  fit_range_max = 1.1;
-  MissingMassSquare_cut.FitGaus(hists->Missing_Mass_square, fit_range_min,
-                                fit_range_max);
-  MissingMassSquare_cut.FitLandau(hists->Missing_Mass_square, fit_range_min,
-                                  fit_range_max);
-  MM_header->WriteGaussian("mm_square", 1, MissingMassSquare_cut.mean,
-                           MissingMassSquare_cut.sigma);
+  Fits *MissingMassSquare_cut = new Fits();
+  MissingMassSquare_cut->Set_min(0.5);
+  MissingMassSquare_cut->Set_max(1.1);
+  MissingMassSquare_cut->FitGaus(hists->Missing_Mass_square);
+  MissingMassSquare_cut->FitLandau(hists->Missing_Mass_square);
+  MM_header->WriteGaussian("mm_square", 1, MissingMassSquare_cut->Get_mean(),
+                           MissingMassSquare_cut->Get_sigma());
   delete MM_header;
   delete MM_neutron_cut;
 
   //
   // end stuff
-  chain.Reset(); // delete Tree object
+  chain.Reset();  // delete Tree object
 
   RootOutputFile->cd();
   TDirectory *EC_folder = RootOutputFile->mkdir("EC_hists");

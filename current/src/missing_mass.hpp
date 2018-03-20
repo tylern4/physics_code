@@ -11,17 +11,15 @@
 
 class MissingMass {
  private:
-  double PX;
-  double PY;
-  double PZ;
-  double target_mass = MASS_P;
-  double target_px = 0.0;
-  double target_py = 0.0;
-  double target_pz = 0.0;
+  double PX, PY, PZ;
+  double target_mass, target_px, target_py, target_pz;
   double out_mass = MASS_PIP;
+  double MM, MM2;
+  TLorentzVector reaction;
 
  public:
   MissingMass();
+  MissingMass(double t_mass, double t_p);
   ~MissingMass();
 
   void Set_PxPyPz(double px, double py, double pz);
@@ -31,7 +29,9 @@ class MissingMass {
   void Set_target_PxPyPz(double t_px, double t_py, double t_pz);
   void Set_target_P_cos(double t_p, double t_cx, double t_cy, double t_cz);
 
-  double missing_mass(TLorentzVector gamma_mu);
+  void missing_mass(TLorentzVector gamma_mu);
+  double Get_MM();
+  double Get_MM2();
 };
 
 #endif
