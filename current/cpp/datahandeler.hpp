@@ -64,7 +64,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
     sc_r, sc_c2, cc_part, cc_sect, cc_hit, cc_segm, nphe, cc_t, cc_r, cc_c2, lac_part, lec_sect, lec_hit,    \
     lec_stat, lec_etot, lec_ein, lec_t, lec_r, lec_x, lec_y, lec_z, lec_c2, st_part, st_status, st_time,     \
     st_rtrk, electron_cuts, num_of_pis, num_of_proton, theta, phi, sector,                                   \
-    chain) shared(hists, e_mu) reduction(+ : hists)
+    chain) shared(e_mu) reduction(+ : hists)
   for (current_event = 0; current_event < num_of_events; current_event++) {
     // update loadbar and get current event
     // loadbar(current_event + 1, num_of_events);
