@@ -18,8 +18,7 @@ void make_electron_csv(char *fin, char *csv_name_output) {
   csv_output.open(csv_name_output);
   csv_output << "id_0, gpart, ec_0, stat_0, q_0, sc_0, dc_0, dc_stat, p, "
                 "cx, cy, cz, cc_0, cc_sector, cc_segment, cc_pmt, cc_nphe, "
-                "theta_cc, theta_fid, phi_fid, sector_fid, W, Q2, Energy, MM"
-             << endl;
+                "theta_cc, theta_fid, phi_fid, sector_fid, W, Q2, Energy, MM" << endl;
 
   // Load chain from branch h10
   TChain chain("h10");
@@ -35,14 +34,13 @@ void make_electron_csv(char *fin, char *csv_name_output) {
     chain.GetEntry(current_event);
     electron_cuts = true;
     // electron cuts
-    electron_cuts &= ((int)ec[0] > 0);  // ``` ``` ``` ec
-    electron_cuts &= ((int)id[0] == ELECTRON ||
-                      (int)id[0] == 0);   // First particle is electron`
-    electron_cuts &= ((int)gpart > 0);    // Number of good particles is gt 0
-    electron_cuts &= ((int)stat[0] > 0);  // First Particle hit stat
-    electron_cuts &= ((int)q[0] == -1);   // First particle is negative Q
-    electron_cuts &= ((int)sc[0] > 0);    // First Particle hit sc
-    electron_cuts &= ((int)dc[0] > 0);    // ``` ``` ``` dc
+    electron_cuts &= ((int)ec[0] > 0);                             // ``` ``` ``` ec
+    electron_cuts &= ((int)id[0] == ELECTRON || (int)id[0] == 0);  // First particle is electron`
+    electron_cuts &= ((int)gpart > 0);                             // Number of good particles is gt 0
+    electron_cuts &= ((int)stat[0] > 0);                           // First Particle hit stat
+    electron_cuts &= ((int)q[0] == -1);                            // First particle is negative Q
+    electron_cuts &= ((int)sc[0] > 0);                             // First Particle hit sc
+    electron_cuts &= ((int)dc[0] > 0);                             // ``` ``` ``` dc
     electron_cuts &= ((int)dc_stat[dc[0] - 1] > 0);
 
     csv_output << (int)((int)id[0] == ELECTRON) << ",";
@@ -58,8 +56,7 @@ void make_electron_csv(char *fin, char *csv_name_output) {
     csv_output << (double)cy[0] << ",";
     csv_output << (double)cz[0] << ",";
 
-    if (electron_cuts)
-      electron_cuts &= (p[0] > MIN_P_CUT);  // Minimum Momentum cut
+    if (electron_cuts) electron_cuts &= (p[0] > MIN_P_CUT);  // Minimum Momentum cut
 
     int cc_sector = 0;
     int cc_segment = 0;
@@ -88,22 +85,21 @@ void make_electron_csv(char *fin, char *csv_name_output) {
     // Setup scattered electron 4 vector
     TVector3 e_mu_prime_3;
     TLorentzVector e_mu_prime;
-    TLorentzVector e_mu(0.0, 0.0, sqrt(Square(E1D_E0) - Square(MASS_E)),
-                        E1D_E0);
+    TLorentzVector e_mu(0.0, 0.0, sqrt(Square(E1D_E0) - Square(MASS_E)), E1D_E0);
 
     e_mu_prime_3.SetXYZ(p[0] * cx[0], p[0] * cy[0], p[0] * cz[0]);
     e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
 
-    theta = theta_calc(cz[0]);
-    phi = phi_calc(cx[0], cy[0]);
-    sector = get_sector(phi);
+    theta = physics::theta_calc(cz[0]);
+    phi = physics::phi_calc(cx[0], cy[0]);
+    sector = physics::get_sector(phi);
 
     csv_output << theta << ",";
     csv_output << phi << ",";
     csv_output << sector << ",";
 
-    W = W_calc(e_mu, e_mu_prime);
-    Q2 = Q2_calc(e_mu, e_mu_prime);
+    W = physics::W_calc(e_mu, e_mu_prime);
+    Q2 = physics::Q2_calc(e_mu, e_mu_prime);
     e_E = e_mu_prime.E();
     csv_output << W << ",";
     csv_output << Q2 << ",";
