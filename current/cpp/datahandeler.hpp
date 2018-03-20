@@ -55,8 +55,15 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
   num_of_events = (int)chain.GetEntries();
 
   int current_event = 0;
-#pragma omp parallel for private(current_event, ec, id, gpart, stat, q, sc, dc, dc_stat, cc, p, etot, \
-                                 cc_sect, cc_segm, nphe, cx, cy, cz, dc_vx, dc_vy, dc_vz)
+#pragma omp parallel for private(                                                                            \
+    current_event, npart, evstat, intt, evntid, evtype, evntclas, evthel, evntclas2, q_l, t_l, tr_time,      \
+    rf_time1, rf_time2, gpart, id, stat, dc, cc, sc, ec, lec, ccst, p, m, q, b, cx, cy, cz, vx, vy, vz,      \
+    dc_part, dc_sect, dc_trk, dc_stat, dc_vx, dc_vy, dc_vz, dc_vr, dc_xsc, dc_ysc, dc_zsc, dc_cxsc, dc_cysc, \
+    dc_czsc, dc_c2, ec_part, ec_stat, ec_sect, ec_whol, ec_inst, ec_oust, etot, ec_ei, ec_eo, ec_t, ec_r,    \
+    ech_x, ech_y, ech_z, ec_m2, ec_m3, ec_m4, ec_c2, sc_part, sc_sect, sc_hit, sc_pd, sc_stat, edep, sc_t,   \
+    sc_r, sc_c2, cc_part, cc_sect, cc_hit, cc_segm, nphe, cc_t, cc_r, cc_c2, lac_part, lec_sect, lec_hit,    \
+    lec_stat, lec_etot, lec_ein, lec_t, lec_r, lec_x, lec_y, lec_z, lec_c2, st_part, st_status, st_time,     \
+    st_rtrk) shared(hists)
   for (current_event = 0; current_event < num_of_events; current_event++) {
     // update loadbar and get current event
     loadbar(current_event + 1, num_of_events);
