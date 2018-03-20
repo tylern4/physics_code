@@ -66,7 +66,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
     st_rtrk, electron_cuts, num_of_pis, num_of_proton, theta, phi, sector, chain) shared(hists, e_mu)
   for (current_event = 0; current_event < num_of_events; current_event++) {
     // update loadbar and get current event
-    loadbar(current_event + 1, num_of_events);
+    // loadbar(current_event + 1, num_of_events);
     chain.GetEntry(current_event);
     // From missing_mass.hpp :: missing_mass_calc()
     MissingMass *MM_neutron = new MissingMass(MASS_P, 0.0);
