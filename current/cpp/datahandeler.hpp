@@ -185,6 +185,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
       }
       if (num_of_proton == 1) hists->Fill_single_proton_WQ2(W, Q2);
     }
+    std::cout << "End of loop " << current_event << std::endl;
     delete MM_neutron;
   }
 
