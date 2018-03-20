@@ -54,7 +54,10 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
 
   num_of_events = (int)chain.GetEntries();
 
-  for (int current_event = 0; current_event < num_of_events; current_event++) {
+  int current_event = 0;
+#pragma omp parallel for private(current_event, ec, id, gpart, stat, q, sc, dc, dc_stat, cc, p, etot, \
+                                 cc_sect, cc_segm, nphe, cx, cy, cz, dc_vx, dc_vy, dc_vz)
+  for (current_event = 0; current_event < num_of_events; current_event++) {
     // update loadbar and get current event
     loadbar(current_event + 1, num_of_events);
     chain.GetEntry(current_event);
@@ -106,8 +109,8 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
       // Set the vertex time (time of electron hit)
       Delta_T *dt = new Delta_T(sc_t[sc[0] - 1], sc_r[sc[0] - 1]);
       dt->delta_t_hists(hists);
-      std::vector<double> dt_proton = dt->delta_t_array(MASS_P, gpart);
-      std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, gpart);
+      // std::vector<double> dt_proton = dt->delta_t_array(MASS_P, gpart);
+      // std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, gpart);
       delete dt;
 
       if (electron_cuts) {
