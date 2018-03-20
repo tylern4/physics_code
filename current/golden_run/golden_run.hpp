@@ -39,19 +39,16 @@ void golden_run(char *fin, char *fout) {
       total_q = 0.0;
 
       for (int current_event = 0; current_event < n_evnt; current_event++) {
-        cout << blue << "\t[ " << progress[(current_event / 100) % 4] << " ]\r"
-             << def << flush;
+        cout << BLUE << "\t[ " << progress[(current_event / 100) % 4] << " ]\r" << DEF << flush;
         chain.GetEntry(current_event);
         electron_cuts = true;
         // electron cuts
-        electron_cuts &=
-            ((int)id[0] == ELECTRON);  // First particle is electron
-        electron_cuts &=
-            ((int)gpart > 0);  // Number of good particles is greater than 0
-        electron_cuts &= ((int)stat[0] > 0);  // First Particle hit stat
-        electron_cuts &= ((int)q[0] == -1);   // First particle is negative Q
-        electron_cuts &= ((int)sc[0] > 0);    // First Particle hit sc
-        electron_cuts &= ((int)dc[0] > 0);    // ``` ``` ``` dc
+        electron_cuts &= ((int)id[0] == ELECTRON);  // First particle is electron
+        electron_cuts &= ((int)gpart > 0);          // Number of good particles is greater than 0
+        electron_cuts &= ((int)stat[0] > 0);        // First Particle hit stat
+        electron_cuts &= ((int)q[0] == -1);         // First particle is negative Q
+        electron_cuts &= ((int)sc[0] > 0);          // First Particle hit sc
+        electron_cuts &= ((int)dc[0] > 0);          // ``` ``` ``` dc
         electron_cuts &= ((int)dc_stat[dc[0] - 1] > 0);
 
         if (electron_cuts) {
@@ -67,8 +64,7 @@ void golden_run(char *fin, char *fout) {
           }
           for (int part_num = 1; part_num < gpart; part_num++) {
             if (id[part_num] == PIP) {
-              pi_3vec.SetXYZ(p[part_num] * cx[part_num],
-                             p[part_num] * cy[part_num],
+              pi_3vec.SetXYZ(p[part_num] * cx[part_num], p[part_num] * cy[part_num],
                              p[part_num] * cz[part_num]);
               pi_4vec.SetVectM(pi_3vec, MASS_PIP);
             }
@@ -78,8 +74,7 @@ void golden_run(char *fin, char *fout) {
       }
 
       if (num_of_events != 0 && total_q != 0)
-        golden_run << run_num << "," << file_num << "," << num_of_events << ","
-                   << total_q << endl;
+        golden_run << run_num << "," << file_num << "," << num_of_events << "," << total_q << endl;
       chain.Clear();
     }
   }

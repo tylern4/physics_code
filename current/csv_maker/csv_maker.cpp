@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
   }
 
   Watch->Stop();
-  cout << red << Watch->RealTime() << "sec" << def << endl;
+  cout << RED << Watch->RealTime() << "sec" << DEF << endl;
 
   return 0;
 }

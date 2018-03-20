@@ -41,16 +41,6 @@ using namespace std;
 
 ofstream cut_outputs;
 
-// Color outputs
-/*Color::Modifier red(Color::FG_RED);
-Color::Modifier blue(Color::FG_BLUE);
-Color::Modifier def(Color::FG_DEFAULT);
-Color::Modifier green(Color::FG_GREEN);
-Color::Modifier bgred(Color::BG_RED);
-Color::Modifier bgblue(Color::BG_BLUE);
-Color::Modifier bgdef(Color::BG_DEFAULT);
-Color::Modifier bggreen(Color::BG_GREEN);
-*/
 void loadbar(long x, long n) {
   int w = 50;
   if ((x != n) && (x % (n / 100 + 1) != 0)) return;
