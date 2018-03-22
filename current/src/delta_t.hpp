@@ -13,11 +13,12 @@
 class Delta_T {
  private:
   const double c_special_units = 29.9792458;
-  std::vector<double> masses = {MASS_E, MASS_P, MASS_PIP};
+  std::vector<double> masses = {MASS_E, MASS_P, MASS_PIP, MASS_KP};
   double vertex = 0.0;
   double dt_E = 0.0;
   double dt_P = 0.0;
   double dt_Pi = 0.0;
+  double dt_K = 0.0;
   bool first_run = true;
 
   double vertex_time(double sc_time, double sc_pathlength, double relatavistic_beta);
@@ -30,6 +31,7 @@ class Delta_T {
   double Get_dt_E();
   double Get_dt_P();
   double Get_dt_Pi();
+  double Get_dt_K();
   double Get_vertex();
 
   double delta_t(double electron_vertex_time, double mass, double momentum, double sc_t, double sc_r);

@@ -27,11 +27,16 @@ void Delta_T::deltat(double momentum, double sc_t, double sc_r) {
   mp = (masses.at(2) / momentum);
   beta = 1.0 / sqrt(1.0 + (mp * mp));
   dt_Pi = vertex - vertex_time(sc_t, sc_r, beta);
+
+  mp = (masses.at(3) / momentum);
+  beta = 1.0 / sqrt(1.0 + (mp * mp));
+  dt_K = vertex - vertex_time(sc_t, sc_r, beta);
 }
 
 double Delta_T::Get_dt_E() { return dt_E; }
 double Delta_T::Get_dt_P() { return dt_P; }
 double Delta_T::Get_dt_Pi() { return dt_Pi; }
+double Delta_T::Get_dt_K() { return dt_K; }
 double Delta_T::Get_vertex() { return vertex; }
 
 void Delta_T::delta_t_hists(Histogram *hists) {
