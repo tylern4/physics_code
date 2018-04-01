@@ -11,10 +11,8 @@ Histogram::Histogram() {
   makeHists_deltat();
   makeHists_CC();
   makeHists_fid();
-  hadron_fid_hist[0] =
-      new TH2D("hadron_fid", "hadron_fid", bins, phi_min, phi_max, bins, theta_min, theta_max);
-  hadron_fid_hist[1] =
-      new TH2D("proton_fid", "hadron_fid", bins, phi_min, phi_max, bins, theta_min, theta_max);
+  hadron_fid_hist[0] = new TH2D("hadron_fid", "hadron_fid", bins, phi_min, phi_max, bins, theta_min, theta_max);
+  hadron_fid_hist[1] = new TH2D("proton_fid", "hadron_fid", bins, phi_min, phi_max, bins, theta_min, theta_max);
   hadron_fid_hist[2] = new TH2D("pip_fid", "hadron_fid", bins, phi_min, phi_max, bins, theta_min, theta_max);
 }
 
@@ -246,47 +244,38 @@ void Histogram::makeHists_deltat() {
     for (int jjj = 0; jjj < sc_paddle_num; jjj++) {
       sprintf(hname, "delta_t_p_sec%d_pad%d", jj + 1, jjj + 1);
       sprintf(htitle, "#Deltat P Sector %d Paddle %d", jj + 1, jjj + 1);
-      delta_t_sec_pad_hist[0][jj][jjj] =
-          new TH2D(hname, htitle, bins / 2, p_min, p_max, bins / 2, Dt_min, Dt_max);
+      delta_t_sec_pad_hist[0][jj][jjj] = new TH2D(hname, htitle, bins / 2, p_min, p_max, bins / 2, Dt_min, Dt_max);
 
       sprintf(hname, "delta_t_pip_sec%d_pad%d", jj + 1, jjj + 1);
       sprintf(htitle, "#Deltat #pi^{+} Sector %d Paddle %d", jj + 1, jjj + 1);
-      delta_t_sec_pad_hist[1][jj][jjj] =
-          new TH2D(hname, htitle, bins / 2, p_min, p_max, bins / 2, Dt_min, Dt_max);
+      delta_t_sec_pad_hist[1][jj][jjj] = new TH2D(hname, htitle, bins / 2, p_min, p_max, bins / 2, Dt_min, Dt_max);
 
       sprintf(hname, "delta_t_electron_sec%d_pad%d", jj + 1, jjj + 1);
       sprintf(htitle, "#Deltat electron Sector %d Paddle %d", jj + 1, jjj + 1);
-      delta_t_sec_pad_hist[2][jj][jjj] =
-          new TH2D(hname, htitle, bins / 2, p_min, p_max, bins / 2, Dt_min, Dt_max);
+      delta_t_sec_pad_hist[2][jj][jjj] = new TH2D(hname, htitle, bins / 2, p_min, p_max, bins / 2, Dt_min, Dt_max);
     }
   }
 }
 
 void Histogram::Fill_deltat_P(double momentum, double delta_t) { delta_t_mass_P->Fill(momentum, delta_t); }
 
-void Histogram::Fill_deltat_P_PID(double momentum, double delta_t) {
-  delta_t_mass_P_PID->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_P_PID(double momentum, double delta_t) { delta_t_mass_P_PID->Fill(momentum, delta_t); }
 
-void Histogram::Fill_deltat_PIP(double momentum, double delta_t) {
-  delta_t_mass_PIP->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_PIP(double momentum, double delta_t) { delta_t_mass_PIP->Fill(momentum, delta_t); }
 
-void Histogram::Fill_deltat_PIP_PID(double momentum, double delta_t) {
-  delta_t_mass_PIP_PID->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_PIP_PID(double momentum, double delta_t) { delta_t_mass_PIP_PID->Fill(momentum, delta_t); }
 
-void Histogram::Fill_deltat_electron(double momentum, double delta_t) {
-  delta_t_mass_electron->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_PIM(double momentum, double delta_t) { delta_t_mass_PIM->Fill(momentum, delta_t); }
+
+void Histogram::Fill_deltat_PIM_PID(double momentum, double delta_t) { delta_t_mass_PIM_PID->Fill(momentum, delta_t); }
+
+void Histogram::Fill_deltat_electron(double momentum, double delta_t) { delta_t_mass_electron->Fill(momentum, delta_t); }
 
 void Histogram::Fill_deltat_electron_PID(double momentum, double delta_t) {
   delta_t_mass_electron_PID->Fill(momentum, delta_t);
 }
 
-void Histogram::Fill_deltat_positron(double momentum, double delta_t) {
-  delta_t_mass_positron->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_positron(double momentum, double delta_t) { delta_t_mass_positron->Fill(momentum, delta_t); }
 
 void Histogram::Fill_deltat_positron_PID(double momentum, double delta_t) {
   delta_t_mass_positron_PID->Fill(momentum, delta_t);
@@ -312,11 +301,9 @@ void Histogram::delta_t_slice_fit() {
       // Get momentum from bin center
       x[num] = (double)delta_t_mass_P_1->GetBinCenter(i);
       // mean + 3sigma
-      y_plus[num] =
-          (double)delta_t_mass_P_1->GetBinContent(i) + N_SIGMA * (double)delta_t_mass_P_2->GetBinContent(i);
+      y_plus[num] = (double)delta_t_mass_P_1->GetBinContent(i) + N_SIGMA * (double)delta_t_mass_P_2->GetBinContent(i);
       // mean - 3simga
-      y_minus[num] =
-          (double)delta_t_mass_P_1->GetBinContent(i) - N_SIGMA * (double)delta_t_mass_P_2->GetBinContent(i);
+      y_minus[num] = (double)delta_t_mass_P_1->GetBinContent(i) - N_SIGMA * (double)delta_t_mass_P_2->GetBinContent(i);
       num++;
     }
   }
@@ -363,11 +350,11 @@ void Histogram::delta_t_slice_fit() {
       // Get momentum from bin center
       x_pip[num] = (double)delta_t_mass_PIP_1->GetBinCenter(i);
       // mean + 3sigma
-      y_plus_pip[num] = (double)delta_t_mass_PIP_1->GetBinContent(i) +
-                        N_SIGMA * (double)delta_t_mass_PIP_2->GetBinContent(i);
+      y_plus_pip[num] =
+          (double)delta_t_mass_PIP_1->GetBinContent(i) + N_SIGMA * (double)delta_t_mass_PIP_2->GetBinContent(i);
       // mean - 3simga
-      y_minus_pip[num] = (double)delta_t_mass_PIP_1->GetBinContent(i) -
-                         N_SIGMA * (double)delta_t_mass_PIP_2->GetBinContent(i);
+      y_minus_pip[num] =
+          (double)delta_t_mass_PIP_1->GetBinContent(i) - N_SIGMA * (double)delta_t_mass_PIP_2->GetBinContent(i);
       num++;
     }
   }
@@ -431,12 +418,18 @@ void Histogram::delta_t_Write() {
   delta_t_mass_PIP->SetXTitle("Momentum (GeV)");
   delta_t_mass_PIP->SetYTitle("#Deltat");
   delta_t_mass_PIP->SetOption("COLZ");
+  delta_t_mass_PIM->SetXTitle("Momentum (GeV)");
+  delta_t_mass_PIM->SetYTitle("#Deltat");
+  delta_t_mass_PIM->SetOption("COLZ");
   delta_t_mass_P_PID->SetXTitle("Momentum (GeV)");
   delta_t_mass_P_PID->SetYTitle("#Deltat");
   delta_t_mass_P_PID->SetOption("COLZ");
   delta_t_mass_PIP_PID->SetXTitle("Momentum (GeV)");
   delta_t_mass_PIP_PID->SetYTitle("#Deltat");
   delta_t_mass_PIP_PID->SetOption("COLZ");
+  delta_t_mass_PIM_PID->SetXTitle("Momentum (GeV)");
+  delta_t_mass_PIM_PID->SetYTitle("#Deltat");
+  delta_t_mass_PIM_PID->SetOption("COLZ");
   delta_t_mass_electron->SetXTitle("Momentum (GeV)");
   delta_t_mass_electron->SetYTitle("#Deltat");
   delta_t_mass_electron->SetOption("COLZ");
@@ -457,6 +450,8 @@ void Histogram::delta_t_Write() {
 
   delta_t_mass_PIP->Write();
   delta_t_mass_PIP_PID->Write();
+  delta_t_mass_PIM->Write();
+  delta_t_mass_PIM_PID->Write();
   delta_t_mass_electron->Write();
   delta_t_mass_electron_PID->Write();
   delta_t_mass_positron->Write();
@@ -630,12 +625,10 @@ void Histogram::theta_cc_slice_fit() {
       // Get momentum from bin center
       x[num] = (double)Theta_CC_1->GetBinCenter(i);
       // mean + 3sigma
-      y_plus[num] =
-          (double)Theta_CC_1->GetBinContent(i) + (2 * (double)Theta_CC_2->GetBinContent(i));  //(N_SIGMA)
+      y_plus[num] = (double)Theta_CC_1->GetBinContent(i) + (2 * (double)Theta_CC_2->GetBinContent(i));  //(N_SIGMA)
 
       // mean - 3simga
-      y_minus[num] =
-          (double)Theta_CC_1->GetBinContent(i) - (2 * (double)Theta_CC_2->GetBinContent(i));  //(N_SIGMA)
+      y_minus[num] = (double)Theta_CC_1->GetBinContent(i) - (2 * (double)Theta_CC_2->GetBinContent(i));  //(N_SIGMA)
       num++;
     }
   }
@@ -701,14 +694,12 @@ void Histogram::makeHists_fid() {
   for (int sec = 0; sec < sector_num; sec++) {
     sprintf(hname, "electron_fid_sec%d", sec + 1);
     sprintf(htitle, "electron_fid_sec%d", sec + 1);
-    electron_fid_sec_hist[sec] =
-        new TH2D(hname, htitle, bins, min_phi[sec], max_phi[sec], bins, theta_min, theta_max);
+    electron_fid_sec_hist[sec] = new TH2D(hname, htitle, bins, min_phi[sec], max_phi[sec], bins, theta_min, theta_max);
 
     for (int t = 0; t < 3; t++) {
       sprintf(hname, "hadron_fid_sec%d_%d", sec + 1, t);
       sprintf(htitle, "hadron_fid_sec%d_%d", sec + 1, t);
-      hadron_fid_sec_hist[t][sec] =
-          new TH2D(hname, htitle, bins, min_phi[sec], max_phi[sec], bins, theta_min, theta_max);
+      hadron_fid_sec_hist[t][sec] = new TH2D(hname, htitle, bins, min_phi[sec], max_phi[sec], bins, theta_min, theta_max);
     }
   }
 }
@@ -760,8 +751,8 @@ void Histogram::Fid_Write() {
 
     for (int slice = 0; slice < fid_slices; slice++) {
       sprintf(hname, "electron_fid_sec_%d_%d", sec + 1, slice + 1);
-      electron_fid_sec_slice[sec][slice] = electron_fid_sec_hist[sec]->ProjectionX(
-          hname, slice_width * slice, slice_width * slice + (slice_width - 1));
+      electron_fid_sec_slice[sec][slice] =
+          electron_fid_sec_hist[sec]->ProjectionX(hname, slice_width * slice, slice_width * slice + (slice_width - 1));
       electron_fid_sec_slice[sec][slice]->Rebin(10);
       SliceFit[sec][slice].Set_min(min_phi[sec]);
       SliceFit[sec][slice].Set_max(max_phi[sec]);
@@ -791,11 +782,71 @@ void Histogram::EC_fill(double etot, double momentum) {
   EC_sampling_fraction->Fill(momentum, sampling_frac);
 }
 
+void Histogram::EC_slice_fit() {
+  // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  Header *fit_functions = new Header("../src/EC_fit_functions.hpp", "FF");
+
+  // TF1 *peak = new TF1("peak", "gaus", 0.2, 0.4);
+  TF1 *peak = new TF1("peak", "gaus", -1.5, 3.5);
+  //[0]*exp(-[1]*x) +
+  char *func = "[4]";
+  EC_sampling_fraction->FitSlicesY(peak, 0, -1, 0, "QRG5");
+  TH1D *EC_sampling_fraction_0 = (TH1D *)gDirectory->Get("EC_sampling_fraction_0");
+  TH1D *EC_sampling_fraction_1 = (TH1D *)gDirectory->Get("EC_sampling_fraction_1");
+  TH1D *EC_sampling_fraction_2 = (TH1D *)gDirectory->Get("EC_sampling_fraction_2");
+  double x[bins];
+  double y_plus[bins];
+  double y_minus[bins];
+  int num = 0;
+  for (int i = 0; i < bins; i++) {
+    if (EC_sampling_fraction_1->GetBinContent(i) != 0) {
+      // Get momentum from bin center
+      x[num] = (double)EC_sampling_fraction_1->GetBinCenter(i);
+      // mean + 3sigma
+      y_plus[num] = (double)EC_sampling_fraction_1->GetBinContent(i) + (double)EC_sampling_fraction_2->GetBinContent(i);
+      // mean - 3simga
+      y_minus[num] = (double)EC_sampling_fraction_1->GetBinContent(i) - (double)EC_sampling_fraction_2->GetBinContent(i);
+      num++;
+    }
+  }
+
+  TGraph *EC_P = new TGraph(num, x, y_plus);
+  TGraph *EC_M = new TGraph(num, x, y_minus);
+  TF1 *EC_P_fit = new TF1("EC_P_fit", func);
+  TF1 *EC_M_fit = new TF1("EC_M_fit", func);
+  EC_P->Fit(EC_P_fit, "QRG5", "", 0.2, 2);
+  EC_P->Write();
+  EC_M->Fit(EC_M_fit, "QRG5", "", 0.2, 2);
+  EC_M->Write();
+  EC_P_fit->Write();
+  EC_M_fit->Write();
+  EC_P->Draw("Same");
+  EC_M->Draw("Same");
+  EC_P_fit->Draw("Same");
+  EC_M_fit->Draw("Same");
+
+  fit_functions->NewFunction();
+  fit_functions->Set_RetrunType("double");
+  fit_functions->Set_FuncName("EC_P_fit");
+  fit_functions->Set_FuncInputs("double x");
+  fit_functions->Set_Function(EC_P_fit->GetExpFormula("P"));
+  fit_functions->WriteFunction();
+
+  fit_functions->NewFunction();
+  fit_functions->Set_RetrunType("double");
+  fit_functions->Set_FuncName("EC_M_fit");
+  fit_functions->Set_FuncInputs("double x");
+  fit_functions->Set_Function(EC_M_fit->GetExpFormula("P"));
+  fit_functions->WriteFunction();
+
+  delete fit_functions;
+}
+
 void Histogram::EC_Write() {
   EC_sampling_fraction->SetXTitle("Momentum (GeV)");
   EC_sampling_fraction->SetYTitle("Sampling Fraction");
   EC_sampling_fraction->SetOption("COLZ");
-
+  EC_slice_fit();
   EC_sampling_fraction->Write();
 }
 

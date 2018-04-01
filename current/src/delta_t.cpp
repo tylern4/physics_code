@@ -73,8 +73,9 @@ void Delta_T::delta_t_hists(Histogram *hists) {
       if (ID == -11) hists->Fill_deltat_positron_PID(mom, delta_t_ELECTRON);
     } else if (charge == -1) {
       hists->Fill_deltat_electron(mom, delta_t_ELECTRON);
-      if (is_electron->at(event_number) && ID == ELECTRON)
-        hists->Fill_deltat_electron_PID(mom, delta_t_ELECTRON);
+      if (is_electron->at(event_number) && ID == ELECTRON) hists->Fill_deltat_electron_PID(mom, delta_t_ELECTRON);
+      hists->Fill_deltat_PIM(mom, delta_t_PIP);
+      if (is_pim->at(event_number) && ID == PIM) hists->Fill_deltat_PIM(mom, delta_t_PIP);
     }
 
     hists->delta_t_Fill(mom, charge, delta_t_P, delta_t_PIP, delta_t_ELECTRON);

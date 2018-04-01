@@ -67,11 +67,11 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
     // electron cuts
     electron_cuts &= (ec[0] > 0);                                  // ``` ``` ``` ec
     electron_cuts &= ((int)id[0] == ELECTRON || (int)id[0] == 0);  // First particle is electron
-    electron_cuts &= ((int)gpart > 0);    // Number of good particles is greater than 0
-    electron_cuts &= ((int)stat[0] > 0);  // First Particle hit stat
-    electron_cuts &= ((int)q[0] == -1);   // First particle is negative Q
-    electron_cuts &= ((int)sc[0] > 0);    // First Particle hit sc
-    electron_cuts &= ((int)dc[0] > 0);    // ``` ``` ``` dc
+    electron_cuts &= ((int)gpart > 0);                             // Number of good particles is greater than 0
+    electron_cuts &= ((int)stat[0] > 0);                           // First Particle hit stat
+    electron_cuts &= ((int)q[0] == -1);                            // First particle is negative Q
+    electron_cuts &= ((int)sc[0] > 0);                             // First Particle hit sc
+    electron_cuts &= ((int)dc[0] > 0);                             // ``` ``` ``` dc
     electron_cuts &= ((int)dc_stat[dc[0] - 1] > 0);
     electron_cuts &= ((int)cc[0] > 0);
     if (electron_cuts) hists->EC_fill(etot[ec[0] - 1], p[0]);
@@ -136,8 +136,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
         hists->Fill_hadron_fid(theta, phi, sector, id[part_num]);
 
         hists->Fill_Mass(m[part_num]);
-        TLorentzVector Particle =
-            physics::fourVec(p[part_num], cx[part_num], cy[part_num], cz[part_num], id[part_num]);
+        TLorentzVector Particle = physics::fourVec(p[part_num], cx[part_num], cy[part_num], cz[part_num], id[part_num]);
 
         hists->MomVsBeta_Fill(Particle.E(), p[part_num], b[part_num]);
         if (q[part_num] == 1) {
@@ -153,14 +152,12 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
             hists->Fill_Pi_ID_P(p[part_num], b[part_num]);
             TLorentzVector gamma_mu = (e_mu - e_mu_prime);
             if (first_run) {
-              MM_neutron->Set_PxPyPz(p[part_num] * cx[part_num], p[part_num] * cy[part_num],
-                                     p[part_num] * cz[part_num]);
+              MM_neutron->Set_PxPyPz(p[part_num] * cx[part_num], p[part_num] * cy[part_num], p[part_num] * cz[part_num]);
               MM_neutron->missing_mass(gamma_mu);
             }
           }
 
-          if ((is_pip->at(part_num) && (id[part_num] == PIP)) ||
-              (is_proton->at(part_num) && (id[part_num] == PROTON))) {
+          if ((is_pip->at(part_num) && (id[part_num] == PIP)) || (is_proton->at(part_num) && (id[part_num] == PROTON))) {
             hists->Fill_proton_Pi_ID_P(p[part_num], b[part_num]);
           }
         } else if (q[part_num] == -1) {
@@ -196,8 +193,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
   MissingMassSquare_cut->Set_max(1.1);
   MissingMassSquare_cut->FitGaus(hists->Missing_Mass_square);
   MissingMassSquare_cut->FitLandau(hists->Missing_Mass_square);
-  MM_header->WriteGaussian("mm_square", 1, MissingMassSquare_cut->Get_mean(),
-                           MissingMassSquare_cut->Get_sigma());
+  MM_header->WriteGaussian("mm_square", 1, MissingMassSquare_cut->Get_mean(), MissingMassSquare_cut->Get_sigma());
   delete MM_header;
   delete MM_neutron_cut;
 

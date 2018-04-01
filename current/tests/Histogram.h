@@ -14,7 +14,7 @@
 using namespace std;
 
 class Histogram {
-private:
+ private:
   void makeHists_fid();
   void makeHists_delta_t();
   void makeHists_CC();
@@ -30,59 +30,41 @@ private:
   double q2_min = 0;
   double q2_max = 10;
 
-  TH2D *WvsQ2_hist = new TH2D("WvsQ2_hist", "W vs Q^{2}", bins, w_min, w_max,
-                              bins, q2_min, q2_max);
+  TH2D *WvsQ2_hist = new TH2D("WvsQ2_hist", "W vs Q^{2}", bins, w_min, w_max, bins, q2_min, q2_max);
   TH1D *W_hist = new TH1D("W", "W", bins, w_min, w_max);
   TH1D *Q2_hist = new TH1D("Q2", "Q^{2}", bins, q2_min, q2_max);
-  TH1D *E_prime_hist =
-      new TH1D("E_prime", "Scattered Electron Energy", bins, 0.0, 5.0);
-  TH2D *Q2_vs_xb =
-      new TH2D("Q2_vs_xb", "Q^{2} vs x_{b}", bins, 0.1, 0.6, bins, 1.0, 3.5);
-  TH2D *WvsQ2_proton = new TH2D("WvsQ2_proton", "W vs Q^{2} P", bins, w_min,
-                                w_max, bins, q2_min, q2_max);
+  TH1D *E_prime_hist = new TH1D("E_prime", "Scattered Electron Energy", bins, 0.0, 5.0);
+  TH2D *Q2_vs_xb = new TH2D("Q2_vs_xb", "Q^{2} vs x_{b}", bins, 0.1, 0.6, bins, 1.0, 3.5);
+  TH2D *WvsQ2_proton = new TH2D("WvsQ2_proton", "W vs Q^{2} P", bins, w_min, w_max, bins, q2_min, q2_max);
   TH1D *W_proton = new TH1D("W_proton", "W P", bins, w_min, w_max);
   TH1D *Q2_proton = new TH1D("Q2_proton", "Q^{2} P", bins, q2_min, q2_max);
-  TH2D *WvsQ2_pion = new TH2D("WvsQ2_pion", "W vs Q^{2} #pi^{+} only", bins,
-                              w_min, w_max, bins, q2_min, q2_max);
+  TH2D *WvsQ2_pion = new TH2D("WvsQ2_pion", "W vs Q^{2} #pi^{+} only", bins, w_min, w_max, bins, q2_min, q2_max);
   TH1D *W_pion = new TH1D("W_pion", "W #pi^{+} only", bins, w_min, w_max);
-  TH1D *Q2_pion =
-      new TH1D("Q2_pion", "Q^{2} #pi^{+} only", bins, q2_min, q2_max);
-  TH2D *WvsQ2_single_pi = new TH2D("WvsQ2_single_pi", "W vs Q^{2} #pi^{+}",
-                                   bins, w_min, w_max, bins, q2_min, q2_max);
+  TH1D *Q2_pion = new TH1D("Q2_pion", "Q^{2} #pi^{+} only", bins, q2_min, q2_max);
+  TH2D *WvsQ2_single_pi = new TH2D("WvsQ2_single_pi", "W vs Q^{2} #pi^{+}", bins, w_min, w_max, bins, q2_min, q2_max);
   TH1D *W_single_pi = new TH1D("W_single_pi", "W #pi^{+}", bins, w_min, w_max);
-  TH1D *Q2_single_pi =
-      new TH1D("Q2_single_pi", "Q^{2} #pi^{+}", bins, q2_min, q2_max);
-  TH2D *WvsQ2_single_proton =
-      new TH2D("WvsQ2_single_proton", "W vs Q^{2} P", bins, w_min, w_max, bins,
-               q2_min, q2_max);
-  TH1D *W_single_proton =
-      new TH1D("W_single_proton", "W P", bins, w_min, w_max);
-  TH1D *Q2_single_proton =
-      new TH1D("Q2_single_proton", "Q^{2} P", bins, q2_min, q2_max);
+  TH1D *Q2_single_pi = new TH1D("Q2_single_pi", "Q^{2} #pi^{+}", bins, q2_min, q2_max);
+  TH2D *WvsQ2_single_proton = new TH2D("WvsQ2_single_proton", "W vs Q^{2} P", bins, w_min, w_max, bins, q2_min, q2_max);
+  TH1D *W_single_proton = new TH1D("W_single_proton", "W P", bins, w_min, w_max);
+  TH1D *Q2_single_proton = new TH1D("Q2_single_proton", "Q^{2} P", bins, q2_min, q2_max);
   // W and Q^2
 
   // P and E
   double b_min = 0.1;
   double b_max = 1.2;
-  TH2D *MomVsBeta_hist = new TH2D("MomVsBeta", "Momentum versus #beta", bins,
-                                  p_min, p_max, bins, b_min, b_max);
+  TH2D *MomVsBeta_hist = new TH2D("MomVsBeta", "Momentum versus #beta", bins, p_min, p_max, bins, b_min, b_max);
   TH2D *MomVsBeta_hist_pos =
-      new TH2D("MomVsBeta_pos", "Momentum versus #beta Positive", bins, p_min,
-               p_max, bins, b_min, b_max);
+      new TH2D("MomVsBeta_pos", "Momentum versus #beta Positive", bins, p_min, p_max, bins, b_min, b_max);
   TH2D *MomVsBeta_hist_neg =
-      new TH2D("MomVsBeta_neg", "Momentum versus #beta Negative", bins, p_min,
-               p_max, bins, b_min, b_max);
+      new TH2D("MomVsBeta_neg", "Momentum versus #beta Negative", bins, p_min, p_max, bins, b_min, b_max);
   TH1D *Mom = new TH1D("Momentum", "Momentum", bins, 0, 2.5);
   TH1D *Energy_hist = new TH1D("Energy_hist", "Energy_hist", bins, 0.0, 2.5);
   TH2D *MomVsBeta_proton_ID =
-      new TH2D("MomVsBeta_proton_ID", "Momentum versus #beta p", bins, p_min,
-               p_max, bins, b_min, b_max);
+      new TH2D("MomVsBeta_proton_ID", "Momentum versus #beta p", bins, p_min, p_max, bins, b_min, b_max);
   TH2D *MomVsBeta_Pi_ID =
-      new TH2D("MomVsBeta_Pi_ID", "Momentum versus #beta #pi^{+}", bins, p_min,
-               p_max, bins, b_min, b_max);
+      new TH2D("MomVsBeta_Pi_ID", "Momentum versus #beta #pi^{+}", bins, p_min, p_max, bins, b_min, b_max);
   TH2D *MomVsBeta_proton_Pi_ID =
-      new TH2D("MomVsBeta_proton_Pi_ID", "Momentum versus #beta P #pi^{+}",
-               bins, p_min, p_max, bins, b_min, b_max);
+      new TH2D("MomVsBeta_proton_Pi_ID", "Momentum versus #beta P #pi^{+}", bins, p_min, p_max, bins, b_min, b_max);
   // P and E
 
   // Missing Mass
@@ -107,35 +89,24 @@ private:
   static const int sc_paddle_num = 48;
   TH2D *delta_t_sec_pad_hist[3][sc_sector_num][sc_paddle_num];
   TH2D *delta_t_mass_P =
-      new TH2D("delta_t_mass_P", "#Deltat assuming mass of proton", bins, p_min,
-               p_max, bins, Dt_min, Dt_max);
-  TH2D *delta_t_mass_P_PID = new TH2D(
-      "delta_t_mass_P_PID", "#Deltat assuming mass of proton with PID proton",
-      bins, p_min, p_max, bins, Dt_min, Dt_max);
+      new TH2D("delta_t_mass_P", "#Deltat assuming mass of proton", bins, p_min, p_max, bins, Dt_min, Dt_max);
+  TH2D *delta_t_mass_P_PID = new TH2D("delta_t_mass_P_PID", "#Deltat assuming mass of proton with PID proton", bins, p_min,
+                                      p_max, bins, Dt_min, Dt_max);
 
   TH2D *delta_t_mass_PIP =
-      new TH2D("delta_t_mass_PIP", "#Deltat assuming mass of #pi^{+}", bins,
-               p_min, p_max, bins, Dt_min, Dt_max);
-  TH2D *delta_t_mass_PIP_PID =
-      new TH2D("delta_t_mass_PIP_PID",
-               "#Deltat assuming mass of #pi^{+} with PID #pi^{+}", bins, p_min,
-               p_max, bins, Dt_min, Dt_max);
+      new TH2D("delta_t_mass_PIP", "#Deltat assuming mass of #pi^{+}", bins, p_min, p_max, bins, Dt_min, Dt_max);
+  TH2D *delta_t_mass_PIP_PID = new TH2D("delta_t_mass_PIP_PID", "#Deltat assuming mass of #pi^{+} with PID #pi^{+}", bins,
+                                        p_min, p_max, bins, Dt_min, Dt_max);
 
   TH2D *delta_t_mass_electron =
-      new TH2D("delta_t_mass_electron", "#Deltat assuming mass of e^{-}", bins,
-               p_min, p_max, bins, Dt_min, Dt_max);
-  TH2D *delta_t_mass_electron_PID =
-      new TH2D("delta_t_mass_electron_PID",
-               "#Deltat assuming mass of e^{-} with PID e^{-}", bins, p_min,
-               p_max, bins, Dt_min, Dt_max);
+      new TH2D("delta_t_mass_electron", "#Deltat assuming mass of e^{-}", bins, p_min, p_max, bins, Dt_min, Dt_max);
+  TH2D *delta_t_mass_electron_PID = new TH2D("delta_t_mass_electron_PID", "#Deltat assuming mass of e^{-} with PID e^{-}",
+                                             bins, p_min, p_max, bins, Dt_min, Dt_max);
 
   TH2D *delta_t_mass_positron =
-      new TH2D("delta_t_mass_postitron", "#Deltat assuming mass of e^{+}", bins,
-               p_min, p_max, bins, Dt_min, Dt_max);
-  TH2D *delta_t_mass_positron_PID =
-      new TH2D("delta_t_mass_postitron_PID",
-               "#Deltat assuming mass of e^{+} with PID e^{+}", bins, p_min,
-               p_max, bins, Dt_min, Dt_max);
+      new TH2D("delta_t_mass_postitron", "#Deltat assuming mass of e^{+}", bins, p_min, p_max, bins, Dt_min, Dt_max);
+  TH2D *delta_t_mass_positron_PID = new TH2D("delta_t_mass_postitron_PID", "#Deltat assuming mass of e^{+} with PID e^{+}",
+                                             bins, p_min, p_max, bins, Dt_min, Dt_max);
   // Delta T
 
   // cc hist
@@ -151,12 +122,10 @@ private:
   static const Int_t ndims_cc_sparse = 4;
   Int_t bins_cc_sparse[ndims_cc_sparse] = {sector, segment, PMT, bins_CC};
   Double_t xmin_cc_sparse[ndims_cc_sparse] = {0.0, 0.0, -2.0, CC_min};
-  Double_t xmax_cc_sparse[ndims_cc_sparse] = {sector + 1.0, segment + 1.0, 1.0,
-                                              CC_max};
+  Double_t xmax_cc_sparse[ndims_cc_sparse] = {sector + 1.0, segment + 1.0, 1.0, CC_max};
   Double_t x_cc_sparse[ndims_cc_sparse];
   THnSparse *cc_sparse =
-      new THnSparseD("cc_sparse", "Histogram", ndims_cc_sparse, bins_cc_sparse,
-                     xmin_cc_sparse, xmax_cc_sparse);
+      new THnSparseD("cc_sparse", "Histogram", ndims_cc_sparse, bins_cc_sparse, xmin_cc_sparse, xmax_cc_sparse);
   // cc hist
 
   // fiducial
@@ -167,26 +136,21 @@ private:
 
   static const int sector_num = 6;
   TH2D *fid_sec_hist[sector_num];
-  TH2D *fid_hist = new TH2D("fid", "fid", bins, phi_min, phi_max, bins,
-                            theta_min, theta_max);
+  TH2D *fid_hist = new TH2D("fid", "fid", bins, phi_min, phi_max, bins, theta_min, theta_max);
   // fiducial
 
   // EC hists
   double EC_min = 0;
   double EC_max = 1;
   TH2D *EC_sampling_fraction =
-      new TH2D("EC_sampling_fraction", "EC_sampling_fraction", bins, p_min,
-               p_max, bins, EC_min, EC_max);
+      new TH2D("EC_sampling_fraction", "EC_sampling_fraction", bins, p_min, p_max, bins, EC_min, EC_max);
   // EC hists
 
-public:
+ public:
   Histogram();
   ~Histogram();
-  TH1D *Missing_Mass =
-      new TH1D("Missing_Mass", "Missing Mass", bins_MM, MM_min, MM_max);
-  TH1D *Missing_Mass_square =
-      new TH1D("Missing_Mass_square", "Missing Mass square", bins_MM, MM_min,
-               MM_max * MM_max);
+  TH1D *Missing_Mass = new TH1D("Missing_Mass", "Missing Mass", bins_MM, MM_min, MM_max);
+  TH1D *Missing_Mass_square = new TH1D("Missing_Mass_square", "Missing Mass square", bins_MM, MM_min, MM_max * MM_max);
   // W and Q^2
   void Fill_proton_WQ2(double W, double Q2);
   void Fill_single_pi_WQ2(double W, double Q2);
@@ -221,11 +185,9 @@ public:
   void Fill_deltat_positron_PID(double momentum, double delta_t);
   void delta_t_slice_fit();
   void delta_t_Write();
-  void delta_t_Fill(double momentum, int charge, double delta_t_proton,
-                    double delta_t_pip, double delta_t_electron);
+  void delta_t_Fill(double momentum, int charge, double delta_t_proton, double delta_t_pip, double delta_t_electron);
   void delta_t_slices_Write();
-  void delta_t_sec_pad(double momentum, int charge, double delta_t_proton,
-                       double delta_t_pip, double delta_t_electron,
+  void delta_t_sec_pad(double momentum, int charge, double delta_t_proton, double delta_t_pip, double delta_t_electron,
                        int sc_sector, int sc_paddle);
   void delta_t_sec_pad_Write();
   void delta_T_canvas();
@@ -384,25 +346,15 @@ void Histogram::WvsQ2_Write() {
 // W and Q^2
 
 // P and E
-void Histogram::MomVsBeta_Fill_pos(double P, double Beta) {
-  MomVsBeta_hist_pos->Fill(P, Beta);
-}
+void Histogram::MomVsBeta_Fill_pos(double P, double Beta) { MomVsBeta_hist_pos->Fill(P, Beta); }
 
-void Histogram::MomVsBeta_Fill_neg(double P, double Beta) {
-  MomVsBeta_hist_neg->Fill(P, Beta);
-}
+void Histogram::MomVsBeta_Fill_neg(double P, double Beta) { MomVsBeta_hist_neg->Fill(P, Beta); }
 
-void Histogram::Fill_proton_ID_P(double p, double beta) {
-  MomVsBeta_proton_ID->Fill(p, beta);
-}
+void Histogram::Fill_proton_ID_P(double p, double beta) { MomVsBeta_proton_ID->Fill(p, beta); }
 
-void Histogram::Fill_Pi_ID_P(double p, double beta) {
-  MomVsBeta_Pi_ID->Fill(p, beta);
-}
+void Histogram::Fill_Pi_ID_P(double p, double beta) { MomVsBeta_Pi_ID->Fill(p, beta); }
 
-void Histogram::Fill_proton_Pi_ID_P(double p, double beta) {
-  MomVsBeta_proton_Pi_ID->Fill(p, beta);
-}
+void Histogram::Fill_proton_Pi_ID_P(double p, double beta) { MomVsBeta_proton_Pi_ID->Fill(p, beta); }
 
 void Histogram::MomVsBeta_Fill(double Energy, double P, double Beta) {
   Energy_hist->Fill(Energy);
@@ -439,15 +391,11 @@ void Histogram::MomVsBeta_Write() {
 }
 
 // Missing Mass
-void Histogram::Fill_Missing_Mass(double miss_mass) {
-  Missing_Mass->Fill(miss_mass);
-}
+void Histogram::Fill_Missing_Mass(double miss_mass) { Missing_Mass->Fill(miss_mass); }
 
 void Histogram::Fill_Mass(double mass) { Mass->Fill(mass); }
 
-void Histogram::Fill_Missing_Mass_square(double miss_mass_2) {
-  Missing_Mass_square->Fill(miss_mass_2);
-}
+void Histogram::Fill_Missing_Mass_square(double miss_mass_2) { Missing_Mass_square->Fill(miss_mass_2); }
 
 void Histogram::Write_Missing_Mass() {
   Missing_Mass->SetXTitle("Mass (GeV)");
@@ -479,49 +427,34 @@ void Histogram::makeHists_delta_t() {
     for (int jjj = 0; jjj < sc_paddle_num; jjj++) {
       sprintf(hname, "delta_t_p_sec%d_pad%d", jj + 1, jjj + 1);
       sprintf(htitle, "#Deltat P Sector %d Paddle %d", jj + 1, jjj + 1);
-      delta_t_sec_pad_hist[0][jj][jjj] = new TH2D(
-          hname, htitle, bins / 2, p_min, p_max, bins / 2, Dt_min, Dt_max);
+      delta_t_sec_pad_hist[0][jj][jjj] = new TH2D(hname, htitle, bins / 2, p_min, p_max, bins / 2, Dt_min, Dt_max);
 
       sprintf(hname, "delta_t_pip_sec%d_pad%d", jj + 1, jjj + 1);
       sprintf(htitle, "#Deltat #pi^{+} Sector %d Paddle %d", jj + 1, jjj + 1);
-      delta_t_sec_pad_hist[1][jj][jjj] = new TH2D(
-          hname, htitle, bins / 2, p_min, p_max, bins / 2, Dt_min, Dt_max);
+      delta_t_sec_pad_hist[1][jj][jjj] = new TH2D(hname, htitle, bins / 2, p_min, p_max, bins / 2, Dt_min, Dt_max);
 
       sprintf(hname, "delta_t_electron_sec%d_pad%d", jj + 1, jjj + 1);
       sprintf(htitle, "#Deltat electron Sector %d Paddle %d", jj + 1, jjj + 1);
-      delta_t_sec_pad_hist[2][jj][jjj] = new TH2D(
-          hname, htitle, bins / 2, p_min, p_max, bins / 2, Dt_min, Dt_max);
+      delta_t_sec_pad_hist[2][jj][jjj] = new TH2D(hname, htitle, bins / 2, p_min, p_max, bins / 2, Dt_min, Dt_max);
     }
   }
 }
 
-void Histogram::Fill_deltat_P(double momentum, double delta_t) {
-  delta_t_mass_P->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_P(double momentum, double delta_t) { delta_t_mass_P->Fill(momentum, delta_t); }
 
-void Histogram::Fill_deltat_P_PID(double momentum, double delta_t) {
-  delta_t_mass_P_PID->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_P_PID(double momentum, double delta_t) { delta_t_mass_P_PID->Fill(momentum, delta_t); }
 
-void Histogram::Fill_deltat_PIP(double momentum, double delta_t) {
-  delta_t_mass_PIP->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_PIP(double momentum, double delta_t) { delta_t_mass_PIP->Fill(momentum, delta_t); }
 
-void Histogram::Fill_deltat_PIP_PID(double momentum, double delta_t) {
-  delta_t_mass_PIP_PID->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_PIP_PID(double momentum, double delta_t) { delta_t_mass_PIP_PID->Fill(momentum, delta_t); }
 
-void Histogram::Fill_deltat_electron(double momentum, double delta_t) {
-  delta_t_mass_electron->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_electron(double momentum, double delta_t) { delta_t_mass_electron->Fill(momentum, delta_t); }
 
 void Histogram::Fill_deltat_electron_PID(double momentum, double delta_t) {
   delta_t_mass_electron_PID->Fill(momentum, delta_t);
 }
 
-void Histogram::Fill_deltat_positron(double momentum, double delta_t) {
-  delta_t_mass_positron->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_positron(double momentum, double delta_t) { delta_t_mass_positron->Fill(momentum, delta_t); }
 
 void Histogram::Fill_deltat_positron_PID(double momentum, double delta_t) {
   delta_t_mass_positron_PID->Fill(momentum, delta_t);
@@ -549,11 +482,9 @@ void Histogram::delta_t_slice_fit() {
       // Get momentum from bin center
       x[num] = (double)delta_t_mass_P_1->GetBinCenter(i);
       // mean + 3sigma
-      y_plus[num] = (double)delta_t_mass_P_1->GetBinContent(i) +
-                    N_SIGMA * (double)delta_t_mass_P_2->GetBinContent(i);
+      y_plus[num] = (double)delta_t_mass_P_1->GetBinContent(i) + N_SIGMA * (double)delta_t_mass_P_2->GetBinContent(i);
       // mean - 3simga
-      y_minus[num] = (double)delta_t_mass_P_1->GetBinContent(i) -
-                     N_SIGMA * (double)delta_t_mass_P_2->GetBinContent(i);
+      y_minus[num] = (double)delta_t_mass_P_1->GetBinContent(i) - N_SIGMA * (double)delta_t_mass_P_2->GetBinContent(i);
       num++;
     }
   }
@@ -573,10 +504,8 @@ void Histogram::delta_t_slice_fit() {
   Proton_Pos_fit->Draw("Same");
   Proton_Neg_fit->Draw("Same");
 
-  fit_functions << "double Proton_Pos_fit(double x){\n\treturn "
-                << Proton_Pos_fit->GetExpFormula("P") << ";\n}" << endl;
-  fit_functions << "double Proton_Neg_fit(double x){\n\treturn "
-                << Proton_Neg_fit->GetExpFormula("P") << ";\n}" << endl;
+  fit_functions << "double Proton_Pos_fit(double x){\n\treturn " << Proton_Pos_fit->GetExpFormula("P") << ";\n}" << endl;
+  fit_functions << "double Proton_Neg_fit(double x){\n\treturn " << Proton_Neg_fit->GetExpFormula("P") << ";\n}" << endl;
 
   delta_t_mass_PIP->FitSlicesY(peak, 0, -1, 10, "QRG5");
   TH1D *delta_t_mass_PIP_0 = (TH1D *)gDirectory->Get("delta_t_mass_PIP_0");
@@ -591,11 +520,11 @@ void Histogram::delta_t_slice_fit() {
       // Get momentum from bin center
       x_pip[num] = (double)delta_t_mass_PIP_1->GetBinCenter(i);
       // mean + 3sigma
-      y_plus_pip[num] = (double)delta_t_mass_PIP_1->GetBinContent(i) +
-                        N_SIGMA * (double)delta_t_mass_PIP_2->GetBinContent(i);
+      y_plus_pip[num] =
+          (double)delta_t_mass_PIP_1->GetBinContent(i) + N_SIGMA * (double)delta_t_mass_PIP_2->GetBinContent(i);
       // mean - 3simga
-      y_minus_pip[num] = (double)delta_t_mass_PIP_1->GetBinContent(i) -
-                         N_SIGMA * (double)delta_t_mass_PIP_2->GetBinContent(i);
+      y_minus_pip[num] =
+          (double)delta_t_mass_PIP_1->GetBinContent(i) - N_SIGMA * (double)delta_t_mass_PIP_2->GetBinContent(i);
       num++;
     }
   }
@@ -615,10 +544,8 @@ void Histogram::delta_t_slice_fit() {
   Pip_Pos_fit->Draw("Same");
   Pip_Neg_fit->Draw("Same");
 
-  fit_functions << "double Pip_Pos_fit(double x){\n\treturn "
-                << Pip_Pos_fit->GetExpFormula("P") << ";\n}" << endl;
-  fit_functions << "double Pip_Neg_fit(double x){\n\treturn "
-                << Pip_Neg_fit->GetExpFormula("P") << ";\n}" << endl;
+  fit_functions << "double Pip_Pos_fit(double x){\n\treturn " << Pip_Pos_fit->GetExpFormula("P") << ";\n}" << endl;
+  fit_functions << "double Pip_Neg_fit(double x){\n\treturn " << Pip_Neg_fit->GetExpFormula("P") << ";\n}" << endl;
   fit_functions << "#endif\n" << endl;
 }
 
@@ -653,17 +580,15 @@ void Histogram::delta_t_Write() {
   delta_t_mass_positron_PID->Write();
 }
 
-void Histogram::delta_t_Fill(double momentum, int charge, double delta_t_proton,
-                             double delta_t_pip, double delta_t_electron) {
+void Histogram::delta_t_Fill(double momentum, int charge, double delta_t_proton, double delta_t_pip,
+                             double delta_t_electron) {
   for (int jj = 0; jj < num_points; jj++) {
     if (momentum > jj * bin_width && momentum <= (jj + 1) * bin_width) {
-      if (charge == 1 && !std::isnan(delta_t_proton) &&
-          !std::isnan(delta_t_pip)) {
+      if (charge == 1 && !std::isnan(delta_t_proton) && !std::isnan(delta_t_pip)) {
         delta_t_hist[0][jj]->Fill(delta_t_proton);
         delta_t_hist[1][jj]->Fill(delta_t_pip);
       }
-      if (charge == -1)
-        delta_t_hist[2][jj]->Fill(delta_t_electron);
+      if (charge == -1) delta_t_hist[2][jj]->Fill(delta_t_electron);
     }
   }
 }
@@ -675,8 +600,7 @@ void Histogram::delta_t_slices_Write() {
   for (int j = 0; j < 3; j++) {
     for (int jj = 0; jj < num_points; jj++) {
       if (j != 2) {
-        delta_t_cut[j][num_points].FitGaus(delta_t_hist[j][jj], fit_dt_min,
-                                           fit_dt_max);
+        delta_t_cut[j][num_points].FitGaus(delta_t_hist[j][jj], fit_dt_min, fit_dt_max);
         // cout << j << ',' << jj << ',' << delta_t_cut[j][num_points].mean <<
         // ',' << delta_t_cut[j][num_points].sigma << endl;
       }
@@ -687,19 +611,13 @@ void Histogram::delta_t_slices_Write() {
   }
 }
 
-void Histogram::delta_t_sec_pad(double momentum, int charge,
-                                double delta_t_proton, double delta_t_pip,
-                                double delta_t_electron, int sc_sector,
-                                int sc_paddle) {
+void Histogram::delta_t_sec_pad(double momentum, int charge, double delta_t_proton, double delta_t_pip,
+                                double delta_t_electron, int sc_sector, int sc_paddle) {
   if (charge == 1) {
-    delta_t_sec_pad_hist[0][sc_sector - 1][sc_paddle - 1]->Fill(momentum,
-                                                                delta_t_proton);
-    delta_t_sec_pad_hist[1][sc_sector - 1][sc_paddle - 1]->Fill(momentum,
-                                                                delta_t_pip);
+    delta_t_sec_pad_hist[0][sc_sector - 1][sc_paddle - 1]->Fill(momentum, delta_t_proton);
+    delta_t_sec_pad_hist[1][sc_sector - 1][sc_paddle - 1]->Fill(momentum, delta_t_pip);
   }
-  if (charge == -1)
-    delta_t_sec_pad_hist[2][sc_sector - 1][sc_paddle - 1]->Fill(
-        momentum, delta_t_electron);
+  if (charge == -1) delta_t_sec_pad_hist[2][sc_sector - 1][sc_paddle - 1]->Fill(momentum, delta_t_electron);
 }
 
 void Histogram::delta_t_sec_pad_Write() {
@@ -731,24 +649,23 @@ void Histogram::delta_T_canvas() {
       can_dt[sec_i][particle_i]->Divide(6, 8);
       for (int pad_i = 0; pad_i < sc_paddle_num; pad_i++) {
         can_dt[sec_i][particle_i]->cd((int)pad_i + 1);
-        delta_t_sec_pad_hist[particle_i][sec_i][pad_i]->Draw("same"
-                                                             "COLZ");
+        delta_t_sec_pad_hist[particle_i][sec_i][pad_i]->Draw(
+            "same"
+            "COLZ");
       }
       can_dt[sec_i][particle_i]->Write();
     }
   }
 }
 
-void Histogram::CC_fill(int cc_sector, int cc_segment, int cc_pmt,
-                        int cc_nphe) {
+void Histogram::CC_fill(int cc_sector, int cc_segment, int cc_pmt, int cc_nphe) {
   x_cc_sparse[0] = cc_sector;
   x_cc_sparse[1] = cc_segment;
   x_cc_sparse[2] = cc_pmt;
   x_cc_sparse[3] = cc_nphe;
   cc_sparse->Fill(x_cc_sparse);
 
-  if (cc_pmt == -1)
-    cc_pmt = 2;
+  if (cc_pmt == -1) cc_pmt = 2;
   cc_hist[cc_sector - 1][cc_segment - 1][cc_pmt]->Fill(cc_nphe);
   cc_hist_allSeg[cc_sector - 1][cc_pmt]->Fill(cc_nphe);
 }
@@ -761,22 +678,16 @@ void Histogram::makeHists_CC() {
 
   for (int sec_i = 0; sec_i < sector; sec_i++) {
     for (int pmt_i = 0; pmt_i < PMT; pmt_i++) {
-      if (pmt_i == 0)
-        L_R_C = "both";
-      if (pmt_i == 1)
-        L_R_C = "right";
-      if (pmt_i == 2)
-        L_R_C = "left";
+      if (pmt_i == 0) L_R_C = "both";
+      if (pmt_i == 1) L_R_C = "right";
+      if (pmt_i == 2) L_R_C = "left";
       sprintf(hname, "CC_sec%d_%s", sec_i + 1, L_R_C);
       sprintf(htitle, "CC sector %d %s", sec_i + 1, L_R_C);
-      cc_hist_allSeg[sec_i][pmt_i] =
-          new TH1D(hname, htitle, bins_CC, CC_min, CC_max);
+      cc_hist_allSeg[sec_i][pmt_i] = new TH1D(hname, htitle, bins_CC, CC_min, CC_max);
       for (int seg_i = 0; seg_i < segment; seg_i++) {
         sprintf(hname, "CC_sec%d_seg%d_%s", sec_i + 1, seg_i + 1, L_R_C);
-        sprintf(htitle, "CC sector %d segment %d %s", sec_i + 1, seg_i + 1,
-                L_R_C);
-        cc_hist[sec_i][seg_i][pmt_i] =
-            new TH1D(hname, htitle, bins_CC, CC_min, CC_max);
+        sprintf(htitle, "CC sector %d segment %d %s", sec_i + 1, seg_i + 1, L_R_C);
+        cc_hist[sec_i][seg_i][pmt_i] = new TH1D(hname, htitle, bins_CC, CC_min, CC_max);
       }
     }
   }
@@ -801,12 +712,9 @@ void Histogram::CC_canvas() {
   char can_name[50];
   for (int pmt_i = 0; pmt_i < PMT; pmt_i++) {
     for (int sec_i = 0; sec_i < sector; sec_i++) {
-      if (pmt_i == 0)
-        L_R_C = "both";
-      if (pmt_i == 1)
-        L_R_C = "right";
-      if (pmt_i == 2)
-        L_R_C = "left";
+      if (pmt_i == 0) L_R_C = "both";
+      if (pmt_i == 1) L_R_C = "right";
+      if (pmt_i == 2) L_R_C = "left";
 
       sprintf(can_name, "Sector %d %s", sec_i + 1, L_R_C);
       can[sec_i][pmt_i] = new TCanvas(can_name, can_name, 1200, 800);
@@ -826,8 +734,7 @@ void Histogram::makeHists_fid() {
   for (int sec = 0; sec < sector_num; sec++) {
     sprintf(hname, "fid_sec%d", sec + 1);
     sprintf(htitle, "fid_sec%d", sec + 1);
-    fid_sec_hist[sec] = new TH2D(hname, htitle, bins, min_phi[sec],
-                                 max_phi[sec], bins, theta_min, theta_max);
+    fid_sec_hist[sec] = new TH2D(hname, htitle, bins, min_phi[sec], max_phi[sec], bins, theta_min, theta_max);
   }
 }
 
@@ -857,6 +764,5 @@ void Histogram::EC_fill(double etot, double momentum) {
 void Histogram::EC_Write() {
   EC_sampling_fraction->SetXTitle("Momentum (GeV)");
   EC_sampling_fraction->SetYTitle("Sampling Fraction");
-
   EC_sampling_fraction->Write();
 }

@@ -43,16 +43,13 @@ class Histogram {
   TH2D *WvsQ2_proton = new TH2D("WvsQ2_proton", "W vs Q^{2} P", bins, w_min, w_max, bins, q2_min, q2_max);
   TH1D *W_proton = new TH1D("W_proton", "W P", bins, w_min, w_max);
   TH1D *Q2_proton = new TH1D("Q2_proton", "Q^{2} P", bins, q2_min, q2_max);
-  TH2D *WvsQ2_pion =
-      new TH2D("WvsQ2_pion", "W vs Q^{2} #pi^{+} only", bins, w_min, w_max, bins, q2_min, q2_max);
+  TH2D *WvsQ2_pion = new TH2D("WvsQ2_pion", "W vs Q^{2} #pi^{+} only", bins, w_min, w_max, bins, q2_min, q2_max);
   TH1D *W_pion = new TH1D("W_pion", "W #pi^{+} only", bins, w_min, w_max);
   TH1D *Q2_pion = new TH1D("Q2_pion", "Q^{2} #pi^{+} only", bins, q2_min, q2_max);
-  TH2D *WvsQ2_single_pi =
-      new TH2D("WvsQ2_single_pi", "W vs Q^{2} #pi^{+}", bins, w_min, w_max, bins, q2_min, q2_max);
+  TH2D *WvsQ2_single_pi = new TH2D("WvsQ2_single_pi", "W vs Q^{2} #pi^{+}", bins, w_min, w_max, bins, q2_min, q2_max);
   TH1D *W_single_pi = new TH1D("W_single_pi", "W #pi^{+}", bins, w_min, w_max);
   TH1D *Q2_single_pi = new TH1D("Q2_single_pi", "Q^{2} #pi^{+}", bins, q2_min, q2_max);
-  TH2D *WvsQ2_single_proton =
-      new TH2D("WvsQ2_single_proton", "W vs Q^{2} P", bins, w_min, w_max, bins, q2_min, q2_max);
+  TH2D *WvsQ2_single_proton = new TH2D("WvsQ2_single_proton", "W vs Q^{2} P", bins, w_min, w_max, bins, q2_min, q2_max);
   TH1D *W_single_proton = new TH1D("W_single_proton", "W P", bins, w_min, w_max);
   TH1D *Q2_single_proton = new TH1D("Q2_single_proton", "Q^{2} P", bins, q2_min, q2_max);
   // W and Q^2
@@ -60,8 +57,7 @@ class Histogram {
   // P and E
   double b_min = 0.1;
   double b_max = 1.2;
-  TH2D *MomVsBeta_hist =
-      new TH2D("MomVsBeta", "Momentum versus #beta", bins, p_min, p_max, bins, b_min, b_max);
+  TH2D *MomVsBeta_hist = new TH2D("MomVsBeta", "Momentum versus #beta", bins, p_min, p_max, bins, b_min, b_max);
   TH2D *MomVsBeta_hist_pos =
       new TH2D("MomVsBeta_pos", "Momentum versus #beta Positive", bins, p_min, p_max, bins, b_min, b_max);
   TH2D *MomVsBeta_hist_neg =
@@ -72,8 +68,8 @@ class Histogram {
       new TH2D("MomVsBeta_proton_ID", "Momentum versus #beta p", bins, p_min, p_max, bins, b_min, b_max);
   TH2D *MomVsBeta_Pi_ID =
       new TH2D("MomVsBeta_Pi_ID", "Momentum versus #beta #pi^{+}", bins, p_min, p_max, bins, b_min, b_max);
-  TH2D *MomVsBeta_proton_Pi_ID = new TH2D("MomVsBeta_proton_Pi_ID", "Momentum versus #beta P #pi^{+}", bins,
-                                          p_min, p_max, bins, b_min, b_max);
+  TH2D *MomVsBeta_proton_Pi_ID =
+      new TH2D("MomVsBeta_proton_Pi_ID", "Momentum versus #beta P #pi^{+}", bins, p_min, p_max, bins, b_min, b_max);
   // P and E
 
   // Missing Mass
@@ -99,26 +95,28 @@ class Histogram {
   TH2D *delta_t_sec_pad_hist[3][sc_sector_num][sc_paddle_num];
   TH2D *delta_t_mass_P =
       new TH2D("delta_t_mass_P", "#Deltat assuming mass of proton", bins, p_min, p_max, bins, Dt_min, Dt_max);
-  TH2D *delta_t_mass_P_PID = new TH2D("delta_t_mass_P_PID", "#Deltat assuming mass of proton with PID proton",
-                                      bins, p_min, p_max, bins, Dt_min, Dt_max);
+  TH2D *delta_t_mass_P_PID = new TH2D("delta_t_mass_P_PID", "#Deltat assuming mass of proton with PID proton", bins, p_min,
+                                      p_max, bins, Dt_min, Dt_max);
 
-  TH2D *delta_t_mass_PIP = new TH2D("delta_t_mass_PIP", "#Deltat assuming mass of #pi^{+}", bins, p_min,
-                                    p_max, bins, Dt_min, Dt_max);
-  TH2D *delta_t_mass_PIP_PID =
-      new TH2D("delta_t_mass_PIP_PID", "#Deltat assuming mass of #pi^{+} with PID #pi^{+}", bins, p_min,
-               p_max, bins, Dt_min, Dt_max);
+  TH2D *delta_t_mass_PIP =
+      new TH2D("delta_t_mass_PIP", "#Deltat assuming mass of #pi^{+}", bins, p_min, p_max, bins, Dt_min, Dt_max);
+  TH2D *delta_t_mass_PIP_PID = new TH2D("delta_t_mass_PIP_PID", "#Deltat assuming mass of #pi^{+} with PID #pi^{+}", bins,
+                                        p_min, p_max, bins, Dt_min, Dt_max);
 
-  TH2D *delta_t_mass_electron = new TH2D("delta_t_mass_electron", "#Deltat assuming mass of e^{-}", bins,
-                                         p_min, p_max, bins, Dt_min, Dt_max);
-  TH2D *delta_t_mass_electron_PID =
-      new TH2D("delta_t_mass_electron_PID", "#Deltat assuming mass of e^{-} with PID e^{-}", bins, p_min,
-               p_max, bins, Dt_min, Dt_max);
+  TH2D *delta_t_mass_PIM =
+      new TH2D("delta_t_mass_PIM", "#Deltat assuming mass of #pi^{-}", bins, p_min, p_max, bins, Dt_min, Dt_max);
+  TH2D *delta_t_mass_PIM_PID = new TH2D("delta_t_mass_PIM_PID", "#Deltat assuming mass of #pi^{-} with PID #pi^{-}", bins,
+                                        p_min, p_max, bins, Dt_min, Dt_max);
 
-  TH2D *delta_t_mass_positron = new TH2D("delta_t_mass_postitron", "#Deltat assuming mass of e^{+}", bins,
-                                         p_min, p_max, bins, Dt_min, Dt_max);
-  TH2D *delta_t_mass_positron_PID =
-      new TH2D("delta_t_mass_postitron_PID", "#Deltat assuming mass of e^{+} with PID e^{+}", bins, p_min,
-               p_max, bins, Dt_min, Dt_max);
+  TH2D *delta_t_mass_electron =
+      new TH2D("delta_t_mass_electron", "#Deltat assuming mass of e^{-}", bins, p_min, p_max, bins, Dt_min, Dt_max);
+  TH2D *delta_t_mass_electron_PID = new TH2D("delta_t_mass_electron_PID", "#Deltat assuming mass of e^{-} with PID e^{-}",
+                                             bins, p_min, p_max, bins, Dt_min, Dt_max);
+
+  TH2D *delta_t_mass_positron =
+      new TH2D("delta_t_mass_postitron", "#Deltat assuming mass of e^{+}", bins, p_min, p_max, bins, Dt_min, Dt_max);
+  TH2D *delta_t_mass_positron_PID = new TH2D("delta_t_mass_postitron_PID", "#Deltat assuming mass of e^{+} with PID e^{+}",
+                                             bins, p_min, p_max, bins, Dt_min, Dt_max);
   // Delta T
 
   // cc hist
@@ -137,8 +135,8 @@ class Histogram {
   Double_t xmin_cc_sparse[ndims_cc_sparse] = {0.0, 0.0, -2.0, CC_min};
   Double_t xmax_cc_sparse[ndims_cc_sparse] = {sector + 1.0, segment + 1.0, 1.0, CC_max};
   Double_t x_cc_sparse[ndims_cc_sparse];
-  THnSparse *cc_sparse = new THnSparseD("cc_sparse", "Histogram", ndims_cc_sparse, bins_cc_sparse,
-                                        xmin_cc_sparse, xmax_cc_sparse);
+  THnSparse *cc_sparse =
+      new THnSparseD("cc_sparse", "Histogram", ndims_cc_sparse, bins_cc_sparse, xmin_cc_sparse, xmax_cc_sparse);
 
   TH2D *Theta_CC = new TH2D("Theta_CC", "Theta_CC", 20, 0.0, 20.0, 60, 0.0, 60.0);
   TH2D *Theta_CC_Sec[6];
@@ -154,8 +152,7 @@ class Histogram {
   static const int fid_slices = 100;
   std::vector<TH2D *> electron_fid_sec_hist;
   TH1D *electron_fid_sec_slice[sector_num][fid_slices];
-  TH2D *electron_fid_hist =
-      new TH2D("electron_fid", "electron_fid", bins, phi_min, phi_max, bins, theta_min, theta_max);
+  TH2D *electron_fid_hist = new TH2D("electron_fid", "electron_fid", bins, phi_min, phi_max, bins, theta_min, theta_max);
 
   TH2D *hadron_fid_sec_hist[3][sector_num];
   TH1D *hadron_fid_sec_slice[sector_num][fid_slices];
@@ -175,8 +172,8 @@ class Histogram {
   TH1D *Beam_Position_Y = new TH1D("Beam_Position_Y", "Beam_Position_Y", bins, -x_y_min_max, x_y_min_max);
   TH1D *Beam_Position_Z = new TH1D("Beam_Position_Z", "Beam_Position_Z", bins, -5.0, 5.0);
 
-  TH2D *Beam_Position = new TH2D("Beam_Position", "Beam_Position", bins, -x_y_min_max, x_y_min_max, bins,
-                                 -x_y_min_max, x_y_min_max);
+  TH2D *Beam_Position =
+      new TH2D("Beam_Position", "Beam_Position", bins, -x_y_min_max, x_y_min_max, bins, -x_y_min_max, x_y_min_max);
 
   // Beam Position
 
@@ -184,8 +181,7 @@ class Histogram {
   Histogram();
   ~Histogram();
   TH1D *Missing_Mass = new TH1D("Missing_Mass", "Missing Mass", bins_MM, MM_min, MM_max);
-  TH1D *Missing_Mass_square =
-      new TH1D("Missing_Mass_square", "Missing Mass square", bins_MM, MM_min, MM_max * MM_max);
+  TH1D *Missing_Mass_square = new TH1D("Missing_Mass_square", "Missing Mass square", bins_MM, MM_min, MM_max * MM_max);
   // W and Q^2
   void Fill_proton_WQ2(double W, double Q2);
   void Fill_single_pi_WQ2(double W, double Q2);
@@ -214,17 +210,18 @@ class Histogram {
   void Fill_deltat_P_PID(double momentum, double delta_t);
   void Fill_deltat_PIP(double momentum, double delta_t);
   void Fill_deltat_PIP_PID(double momentum, double delta_t);
+  void Fill_deltat_PIM(double momentum, double delta_t);
+  void Fill_deltat_PIM_PID(double momentum, double delta_t);
   void Fill_deltat_electron(double momentum, double delta_t);
   void Fill_deltat_electron_PID(double momentum, double delta_t);
   void Fill_deltat_positron(double momentum, double delta_t);
   void Fill_deltat_positron_PID(double momentum, double delta_t);
   void delta_t_slice_fit();
   void delta_t_Write();
-  void delta_t_Fill(double momentum, int charge, double delta_t_proton, double delta_t_pip,
-                    double delta_t_electron);
+  void delta_t_Fill(double momentum, int charge, double delta_t_proton, double delta_t_pip, double delta_t_electron);
   void delta_t_slices_Write();
-  void delta_t_sec_pad(double momentum, int charge, double delta_t_proton, double delta_t_pip,
-                       double delta_t_electron, int sc_sector, int sc_paddle);
+  void delta_t_sec_pad(double momentum, int charge, double delta_t_proton, double delta_t_pip, double delta_t_electron,
+                       int sc_sector, int sc_paddle);
   void delta_t_sec_pad_Write();
   void delta_T_canvas();
 
@@ -243,6 +240,7 @@ class Histogram {
 
   // EC hists
   void EC_fill(double etot, double momentum);
+  void EC_slice_fit();
   void EC_Write();
 
   // Beam Position

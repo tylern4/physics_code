@@ -34,3 +34,7 @@ current/src/fid_fits.hpp
 .vscode/*
 
 *.sh
+
+current/bin/511_lab
+
+current/src/EC_fit_functions.hpp
