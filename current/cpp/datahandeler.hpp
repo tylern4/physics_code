@@ -206,6 +206,10 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
   EC_folder->cd();
   hists->EC_Write();
 
+  TDirectory *EC_slices = RootOutputFile->mkdir("EC_slices");
+  EC_slices->cd();
+  hists->EC_slices_Write();
+
   TDirectory *Beam_Folder = RootOutputFile->mkdir("Beam Position");
   Beam_Folder->cd();
   hists->Beam_Position_Write();

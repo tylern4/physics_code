@@ -9,6 +9,7 @@
 
 Histogram::Histogram() {
   makeHists_deltat();
+  makeHists_EC();
   makeHists_CC();
   makeHists_fid();
   hadron_fid_hist[0] = new TH2D("hadron_fid", "hadron_fid", bins, phi_min, phi_max, bins, theta_min, theta_max);
@@ -776,10 +777,23 @@ void Histogram::fid_canvas() {
     can[sec_i]->Write();
   }
 }
+void Histogram::makeHists_EC() {
+  for (int n = 0; n < num_points; n++) {
+    sprintf(hname, "ec_%d", n);
+    sprintf(htitle, "Sampling Fraction %d", n);
+    EC_hist[n] = new TH1D(hname, htitle, bins, EC_min, EC_max);
+  }
+}
 
 void Histogram::EC_fill(double etot, double momentum) {
   double sampling_frac = etot / momentum;
   EC_sampling_fraction->Fill(momentum, sampling_frac);
+
+  for (int n = 0; n < num_points; n++) {
+    if (momentum > n * bin_width && momentum <= (n + 1) * bin_width) {
+      EC_hist[n]->Fill(sampling_frac);
+    }
+  }
 }
 
 void Histogram::EC_slice_fit() {
@@ -787,9 +801,9 @@ void Histogram::EC_slice_fit() {
   Header *fit_functions = new Header("../src/EC_fit_functions.hpp", "FF");
 
   // TF1 *peak = new TF1("peak", "gaus", 0.2, 0.4);
-  TF1 *peak = new TF1("peak", "gaus", -1.5, 3.5);
+  TF1 *peak = new TF1("peak", "gaus", 0.2, 0.4);
   //[0]*exp(-[1]*x) +
-  char *func = "[4]";
+  char *func = "[0]+[1]*x+[2]*x*x*x*x*x*x";
   EC_sampling_fraction->FitSlicesY(peak, 0, -1, 0, "QRG5");
   TH1D *EC_sampling_fraction_0 = (TH1D *)gDirectory->Get("EC_sampling_fraction_0");
   TH1D *EC_sampling_fraction_1 = (TH1D *)gDirectory->Get("EC_sampling_fraction_1");
@@ -803,27 +817,29 @@ void Histogram::EC_slice_fit() {
       // Get momentum from bin center
       x[num] = (double)EC_sampling_fraction_1->GetBinCenter(i);
       // mean + 3sigma
-      y_plus[num] = (double)EC_sampling_fraction_1->GetBinContent(i) + (double)EC_sampling_fraction_2->GetBinContent(i);
+      y_plus[num] =
+          (double)EC_sampling_fraction_1->GetBinContent(i) + 2.0 * (double)EC_sampling_fraction_2->GetBinContent(i);
       // mean - 3simga
-      y_minus[num] = (double)EC_sampling_fraction_1->GetBinContent(i) - (double)EC_sampling_fraction_2->GetBinContent(i);
+      y_minus[num] =
+          (double)EC_sampling_fraction_1->GetBinContent(i) - 2.0 * (double)EC_sampling_fraction_2->GetBinContent(i);
       num++;
     }
   }
 
   TGraph *EC_P = new TGraph(num, x, y_plus);
   TGraph *EC_M = new TGraph(num, x, y_minus);
-  TF1 *EC_P_fit = new TF1("EC_P_fit", func);
-  TF1 *EC_M_fit = new TF1("EC_M_fit", func);
-  EC_P->Fit(EC_P_fit, "QRG5", "", 0.2, 2);
-  EC_P->Write();
-  EC_M->Fit(EC_M_fit, "QRG5", "", 0.2, 2);
-  EC_M->Write();
-  EC_P_fit->Write();
-  EC_M_fit->Write();
+  TF1 *EC_P_fit = new TF1("EC_P_fit", func, 0.4, 3.0);
+  TF1 *EC_M_fit = new TF1("EC_M_fit", func, 0.4, 3.0);
+  EC_P->Fit(EC_P_fit, "QRG");
+  EC_M->Fit(EC_M_fit, "QRG");
   EC_P->Draw("Same");
   EC_M->Draw("Same");
   EC_P_fit->Draw("Same");
   EC_M_fit->Draw("Same");
+  EC_P_fit->Write();
+  EC_M_fit->Write();
+  EC_P->Write();
+  EC_M->Write();
 
   fit_functions->NewFunction();
   fit_functions->Set_RetrunType("double");
@@ -842,12 +858,25 @@ void Histogram::EC_slice_fit() {
   delete fit_functions;
 }
 
+void Histogram::EC_slices_Write() {
+  Fits EC_cut[num_points];
+  double fit_ec_min = -1.0;
+  double fit_ec_max = 1.0;
+  for (int n = 0; n < num_points; n++) {
+    EC_cut[n].Set_min(fit_ec_min);
+    EC_cut[n].Set_max(fit_ec_max);
+    EC_cut[n].FitGaus(EC_hist[n]);
+    EC_hist[n]->SetYTitle("Sampling Fraction");
+    EC_hist[n]->Write();
+  }
+}
+
 void Histogram::EC_Write() {
   EC_sampling_fraction->SetXTitle("Momentum (GeV)");
   EC_sampling_fraction->SetYTitle("Sampling Fraction");
   EC_sampling_fraction->SetOption("COLZ");
-  EC_slice_fit();
   EC_sampling_fraction->Write();
+  EC_slice_fit();
 }
 
 void Histogram::Fill_Beam_Position(double vertex_x, double vertex_y, double vertex_z) {

@@ -1,6 +1,6 @@
 #!/usr/bin/expect -f
 spawn -noecho root -l
 send "TBrowser a;\r"
-send "gStyle->SetOptStat(111111);\r"
-send "gStyle->SetOptFit(111111);\r"
+send "gStyle->SetOptStat(1111);\r"
+send "gStyle->SetOptFit(1111);\r"
 interact

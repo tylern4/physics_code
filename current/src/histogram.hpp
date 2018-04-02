@@ -164,6 +164,7 @@ class Histogram {
   double EC_max = 1;
   TH2D *EC_sampling_fraction =
       new TH2D("EC_sampling_fraction", "EC_sampling_fraction", bins, p_min, p_max, bins, EC_min, EC_max);
+  TH1D *EC_hist[num_points];
   // EC hists
 
   // Beam Position
@@ -239,6 +240,8 @@ class Histogram {
   void fid_canvas();
 
   // EC hists
+  void makeHists_EC();
+  void EC_slices_Write();
   void EC_fill(double etot, double momentum);
   void EC_slice_fit();
   void EC_Write();
