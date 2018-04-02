@@ -25,7 +25,7 @@ void make_electron_csv(char *fin) {
   // in main.h now
   // ofstream cut_outputs;
   csv_output.open(csv_name_output);
-  csv_output << "p, cx, cy, cz" << endl;
+  csv_output << "p,cx,cy,cz" << endl;
 
   // Load chain from branch h10
   TChain chain("h10");
