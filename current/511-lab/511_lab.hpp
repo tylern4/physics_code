@@ -37,11 +37,15 @@ void make_electron_csv(char *fin) {
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain.GetEntry(current_event);
 
-    double n_prot = 0;
+    int n_prot = 0;
+    int n_other = 0;
     for (int x = 0; x < gpart; x++)
-      if (id[x] == PROTON) n_prot++;
+      if (id[x] == PROTON)
+        n_prot++;
+      else
+        n_other++;
 
-    if (n_prot != 1) continue;
+    if (n_prot != 1 || n_other > 1) continue;
 
     electron_cuts = true;
     // electron cuts
