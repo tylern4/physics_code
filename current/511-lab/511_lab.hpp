@@ -37,9 +37,9 @@ void make_electron_csv(char *fin) {
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain.GetEntry(current_event);
-
-    cout << "\t[ " << progress[((current_event / 100) % 4)] << " ]\t\t[" << (current_event / num_of_events) << "]\r\r"
-         << flush;
+    if (current_event % 100 == 0)
+      cout << "\t[ " << progress[((current_event / 100) % 4)] << " ]\t\t[" << (current_event / num_of_events) << "]\r\r"
+           << flush;
 
     int n_prot = 0;
     int n_other = 0;
