@@ -50,15 +50,24 @@ void skim(char *fin, char *RootFile_output) {
   TBranch *is_Pip = skim->Branch("is_pip", &is_pip);
   TBranch *is_Pim = skim->Branch("is_pim", &is_pim);
 
-  TBranch *DeltaT_P_branch =
-      skim->Branch("DeltaT_P", "vector<double>", &dt_proton);
-  TBranch *DeltaT_Pip_branch =
-      skim->Branch("DeltaT_Pip", "vector<double>", &dt_pip);
+  TBranch *DeltaT_P_branch = skim->Branch("DeltaT_P", "vector<double>", &dt_proton);
+  TBranch *DeltaT_Pip_branch = skim->Branch("DeltaT_Pip", "vector<double>", &dt_pip);
   TBranch *NumPI_branch = skim->Branch("NumPI", &num_of_pis);
   TBranch *Neutron_branch = skim->Branch("has_neutron", &has_neutron);
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain.GetEntry(current_event);
+    /*********/
+    int n_prot = 0;
+    int n_other = 0;
+    for (int x = 0; x < gpart; x++)
+      if (id[x] == PROTON)
+        n_prot++;
+      else
+        n_other++;
+
+    if (n_prot != 1 || n_other > 1) continue;
+    /*********/
     is_proton = std::vector<bool>(gpart, false);
     is_electron = std::vector<bool>(gpart, false);
     is_pip = std::vector<bool>(gpart, false);
@@ -66,8 +75,8 @@ void skim(char *fin, char *RootFile_output) {
 
     electron_cuts = true;
     // electron cuts
-    electron_cuts &= (id[0] == ELECTRON);  // First particle is electron
-    electron_cuts &= (gpart > 0);  // Number of good particles is greater than 0
+    electron_cuts &= (id[0] == ELECTRON);       // First particle is electron
+    electron_cuts &= (gpart > 0);               // Number of good particles is greater than 0
     electron_cuts &= (stat[0] > 0);             // First Particle hit stat
     electron_cuts &= ((int)q[0] == -1);         // First particle is negative Q
     electron_cuts &= (sc[0] > 0);               // First Particle hit sc
@@ -115,9 +124,7 @@ void skim(char *fin, char *RootFile_output) {
         is_pip.at(part_num) = true;
         num_of_pis++;
         TLorentzVector gamma_mu = (e_mu - e_mu_prime);
-        MM_neutron->Set_PxPyPz(p[part_num] * cx[part_num],
-                               p[part_num] * cy[part_num],
-                               p[part_num] * cz[part_num]);
+        MM_neutron->Set_PxPyPz(p[part_num] * cx[part_num], p[part_num] * cy[part_num], p[part_num] * cz[part_num]);
         MM = MM_neutron->missing_mass(gamma_mu);
       }
 
