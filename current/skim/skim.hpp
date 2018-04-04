@@ -17,7 +17,6 @@ void skim(char *fin, char *RootFile_output) {
   MissingMass *MM_neutron = new MissingMass();
   MM_neutron->Set_target_mass(MASS_P);
   MM_neutron->Set_target_PxPyPz(0);
-  Delta_T *delta_t = new Delta_T();
 
   Float_t W, Q2, MM;
   std::vector<bool> is_proton, is_pip, is_electron, is_pim;
@@ -33,7 +32,7 @@ void skim(char *fin, char *RootFile_output) {
   RootOutputFile = new TFile(RootFile_output, "RECREATE");
 
   TChain chain("h10");
-  cout << blue << "Analyzing file " << green << fin << def << bgdef << endl;
+  cout << BLUE << "Analyzing file " << GREEN << fin << DEF << endl;
   chain.AddFile(fin);
 
   getBranches(&chain);
@@ -90,7 +89,7 @@ void skim(char *fin, char *RootFile_output) {
 
     e_mu_prime_3.SetXYZ(p[0] * cx[0], p[0] * cy[0], p[0] * cz[0]);
     e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
-
+    Delta_T *delta_t = new Delta_T();
     dt_proton = delta_t->delta_t_array(MASS_P, gpart);
     dt_pip = delta_t->delta_t_array(MASS_PIP, gpart);
 
@@ -125,7 +124,8 @@ void skim(char *fin, char *RootFile_output) {
         num_of_pis++;
         TLorentzVector gamma_mu = (e_mu - e_mu_prime);
         MM_neutron->Set_PxPyPz(p[part_num] * cx[part_num], p[part_num] * cy[part_num], p[part_num] * cz[part_num]);
-        MM = MM_neutron->missing_mass(gamma_mu);
+        MM_neutron->missing_mass(gamma_mu);
+        MM = MM_neutron->Get_MM();
       }
 
       if (abs(dt_proton.at(part_num)) <= 0.5 && q[part_num] == 1) {
@@ -142,8 +142,8 @@ void skim(char *fin, char *RootFile_output) {
     has_neutron = (MM > 0.5 && MM < 1.5);
 
     if (electron_cuts && has_neutron) {
-      W = W_calc(e_mu, e_mu_prime);
-      Q2 = Q2_calc(e_mu, e_mu_prime);
+      W = physics::W_calc(e_mu, e_mu_prime);
+      Q2 = physics::Q2_calc(e_mu, e_mu_prime);
       is_electron.at(0) = true;
       skim->Fill();  // Fill the banks after the skim
     }
