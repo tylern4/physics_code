@@ -72,7 +72,7 @@ void make_electron_csv(char *fin) {
     W = physics::W_calc(e_mu, e_mu_prime);
     Q2 = physics::Q2_calc(e_mu, e_mu_prime);
 
-    if (W > 0 && W < 2.0 && Q2 > 1.0 && Q2 < 4.0) {
+    if (W < 4.0 && Q2 < 4.0) {
       _p = (double)p[0];
       _cx = (double)cx[0];
       _cy = (double)cy[0];

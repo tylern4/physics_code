@@ -12,7 +12,7 @@ OBJDIR   = ../obj
 LIBDIR   = ../sobj
 BINDIR   = ../bin
 
-SRC = $(wildcard $(SRCDIR)/*.cpp)
+SRC = $(SRCDIR)/branches.cpp $(SRCDIR)/physics.cpp #$(wildcard $(SRCDIR)/*.cpp)
 MAINS = ./511_lab.cpp
 
 OBJECTS  = $(SRC:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
