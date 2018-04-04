@@ -57,15 +57,15 @@ void skim(char *fin, char *RootFile_output) {
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain.GetEntry(current_event);
     /*********/
-    int n_prot = 0;
+    int n_pip = 0;
     int n_other = 0;
     for (int x = 0; x < gpart; x++)
-      if (id[x] == PROTON)
-        n_prot++;
+      if (id[x] == PIP)
+        n_pip++;
       else
         n_other++;
 
-    if (n_prot != 1 || n_other > 1) continue;
+    if (n_pip != 1 || n_other > 1) continue;
     /*********/
     is_proton = std::vector<bool>(gpart, false);
     is_electron = std::vector<bool>(gpart, false);
