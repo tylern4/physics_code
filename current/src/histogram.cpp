@@ -844,8 +844,8 @@ void Histogram::EC_slice_fit() {
   TGraph *EC_M = new TGraph(num, x, y_minus);
   EC_P->SetName("Positive_EC_graph");
   EC_M->SetName("Negative_EC_graph");
-  TF1 *EC_P_fit = new TF1("EC_P_fit", func, 0.4, 3.0);
-  TF1 *EC_M_fit = new TF1("EC_M_fit", func, 0.4, 3.0);
+  TF1 *EC_P_fit = new TF1("EC_P_fit", func, 0.25, 4.0);
+  TF1 *EC_M_fit = new TF1("EC_M_fit", func, 0.25, 4.0);
   EC_P->Fit(EC_P_fit, "QRG");
   EC_M->Fit(EC_M_fit, "QRG");
 
