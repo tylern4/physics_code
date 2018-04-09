@@ -283,7 +283,7 @@ void Histogram::Fill_deltat_positron_PID(double momentum, double delta_t) {
 }
 
 void Histogram::delta_t_slice_fit() {
-  // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   Header *fit_functions = new Header("../src/fit_functions.hpp", "FF");
 
   TF1 *peak = new TF1("peak", "gaus", -1, 1);
@@ -316,15 +316,20 @@ void Histogram::delta_t_slice_fit() {
   TF1 *Proton_Pos_fit = new TF1("Proton_Pos_fit", func);
   TF1 *Proton_Neg_fit = new TF1("Proton_Neg_fit", func);
   P->Fit(Proton_Pos_fit, "QRG5", "", 0.2, 2);
-  P->Write();
   M->Fit(Proton_Neg_fit, "QRG5", "", 0.2, 2);
-  M->Write();
-  Proton_Pos_fit->Write();
-  Proton_Neg_fit->Write();
-  P->Draw("Same");
-  M->Draw("Same");
-  Proton_Pos_fit->Draw("Same");
-  Proton_Neg_fit->Draw("Same");
+  // P->Write();
+  // M->Write();
+  // Proton_Pos_fit->Write();
+  // Proton_Neg_fit->Write();
+
+  TCanvas *dt_proton_canvas = new TCanvas("dt_proton_canvas", "#dt Proton", 1280, 720);
+  dt_proton_canvas->cd();
+  delta_t_mass_P->Draw();
+  Proton_Pos_fit->Draw("same");
+  Proton_Neg_fit->Draw("same");
+  P->Draw("*same");
+  M->Draw("*same");
+  dt_proton_canvas->Write();
 
   fit_functions->NewFunction();
   fit_functions->Set_RetrunType("double");
@@ -369,15 +374,20 @@ void Histogram::delta_t_slice_fit() {
   TF1 *Pip_Pos_fit = new TF1("Pip_Pos_fit", func);
   TF1 *Pip_Neg_fit = new TF1("Pip_Neg_fit", func);
   P_pip->Fit(Pip_Pos_fit, "QRG5", "", 0.1, 1.75);
-  P_pip->Write();
   M_pip->Fit(Pip_Neg_fit, "QRG5", "", 0.1, 1.75);
-  M_pip->Write();
-  Pip_Pos_fit->Write();
-  Pip_Neg_fit->Write();
-  P_pip->Draw("Same");
-  M_pip->Draw("Same");
-  Pip_Pos_fit->Draw("Same");
-  Pip_Neg_fit->Draw("Same");
+  // P_pip->Write();
+  // M_pip->Write();
+  // Pip_Pos_fit->Write();
+  // Pip_Neg_fit->Write();
+
+  TCanvas *dt_Pip_canvas = new TCanvas("dt_Pip_canvas", "#dt #pi^+", 1280, 720);
+  dt_Pip_canvas->cd();
+  delta_t_mass_PIP->Draw();
+  Pip_Pos_fit->Draw("same");
+  Pip_Neg_fit->Draw("same");
+  P_pip->Draw("*same");
+  M_pip->Draw("*same");
+  dt_Pip_canvas->Write();
 
   fit_functions->NewFunction();
   fit_functions->Set_RetrunType("double");
@@ -801,7 +811,7 @@ void Histogram::EC_fill(double etot, double momentum) {
 }
 
 void Histogram::EC_slice_fit() {
-  // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   Header *fit_functions = new Header("../src/EC_fit_functions.hpp", "FF");
 
   // TF1 *peak = new TF1("peak", "gaus", 0.2, 0.4);
@@ -838,14 +848,20 @@ void Histogram::EC_slice_fit() {
   TF1 *EC_M_fit = new TF1("EC_M_fit", func, 0.4, 3.0);
   EC_P->Fit(EC_P_fit, "QRG");
   EC_M->Fit(EC_M_fit, "QRG");
-  EC_P->Draw("Same");
-  EC_M->Draw("Same");
-  EC_P_fit->Draw("Same");
-  EC_M_fit->Draw("Same");
-  EC_P_fit->Write();
-  EC_M_fit->Write();
-  EC_P->Write();
-  EC_M->Write();
+
+  // EC_P_fit->Write();
+  // EC_M_fit->Write();
+  // EC_P->Write();
+  // EC_M->Write();
+
+  TCanvas *EC_canvas = new TCanvas("EC_canvas", "EC canvas", 1280, 720);
+  EC_canvas->cd();
+  EC_sampling_fraction->Draw();
+  EC_P_fit->Draw("same");
+  EC_M_fit->Draw("same");
+  EC_P->Draw("*same");
+  EC_M->Draw("*same");
+  EC_canvas->Write();
 
   fit_functions->NewFunction();
   fit_functions->Set_RetrunType("double");

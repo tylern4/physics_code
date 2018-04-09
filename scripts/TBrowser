@@ -1,6 +1,11 @@
 #!/usr/bin/expect -f
 spawn -noecho root -l
-send "TBrowser a;\r"
 send "gStyle->SetOptStat(1111);\r"
 send "gStyle->SetOptFit(1111);\r"
+send "gStyle->SetNumberContours(999);\r"
+send "gStyle->SetPadGridX(kTRUE);\r"
+send "gStyle->SetPadGridY(kTRUE);\r"
+send "gStyle->SetCanvasDefH(800);\r"
+send "gStyle->SetCanvasDefW(1200);\r"
+send "TBrowser a;\r"
 interact
