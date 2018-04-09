@@ -311,6 +311,8 @@ void Histogram::delta_t_slice_fit() {
 
   TGraph *P = new TGraph(num, x, y_plus);
   TGraph *M = new TGraph(num, x, y_minus);
+  P->SetName("Proton_Pos_graph");
+  M->SetName("Proton_Neg_graph");
   TF1 *Proton_Pos_fit = new TF1("Proton_Pos_fit", func);
   TF1 *Proton_Neg_fit = new TF1("Proton_Neg_fit", func);
   P->Fit(Proton_Pos_fit, "QRG5", "", 0.2, 2);
@@ -362,6 +364,8 @@ void Histogram::delta_t_slice_fit() {
 
   TGraph *P_pip = new TGraph(num, x_pip, y_plus_pip);
   TGraph *M_pip = new TGraph(num, x_pip, y_minus_pip);
+  P_pip->SetName("Pip_Pos_graph");
+  M_pip->SetName("Pip_Neg_graph");
   TF1 *Pip_Pos_fit = new TF1("Pip_Pos_fit", func);
   TF1 *Pip_Neg_fit = new TF1("Pip_Neg_fit", func);
   P_pip->Fit(Pip_Pos_fit, "QRG5", "", 0.1, 1.75);
@@ -828,6 +832,8 @@ void Histogram::EC_slice_fit() {
 
   TGraph *EC_P = new TGraph(num, x, y_plus);
   TGraph *EC_M = new TGraph(num, x, y_minus);
+  EC_P->SetName("Positive_EC_graph");
+  EC_M->SetName("Negative_EC_graph");
   TF1 *EC_P_fit = new TF1("EC_P_fit", func, 0.4, 3.0);
   TF1 *EC_M_fit = new TF1("EC_M_fit", func, 0.4, 3.0);
   EC_P->Fit(EC_P_fit, "QRG");

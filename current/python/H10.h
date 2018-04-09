@@ -238,7 +238,9 @@ class H10 {
     }
 
     TGraph *P = new TGraph(num, x, y_plus);
+    P->SetName("Positive_Proton_graph");
     TGraph *M = new TGraph(num, x, y_minus);
+    M->SetName("Negative_Proton_graph");
     TF1 *Proton_Pos_fit = new TF1("Proton_Pos_fit", func.c_str());
     TF1 *Proton_Neg_fit = new TF1("Proton_Neg_fit", func.c_str());
     P->Fit(Proton_Pos_fit, "QRG5", "", 0.2, 2);
@@ -289,7 +291,9 @@ class H10 {
     }
 
     TGraph *P_pip = new TGraph(num, x_pip, y_plus_pip);
+    P_pip->SetName("Positive_pip_graph");
     TGraph *M_pip = new TGraph(num, x_pip, y_minus_pip);
+    M_pip->SetName("Positive_pip_graph");
     TF1 *Pip_Pos_fit = new TF1("Pip_Pos_fit", func.c_str());
     TF1 *Pip_Neg_fit = new TF1("Pip_Neg_fit", func.c_str());
     P_pip->Fit(Pip_Pos_fit, "QRG5", "", 0.1, 1.75);
