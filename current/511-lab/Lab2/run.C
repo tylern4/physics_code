@@ -37,26 +37,14 @@ float process(int file) {
   c1.cd((int)file + 1);
   hist->SetXTitle("x");
   hist->Draw();
-  if (file == 3 || file == 7) {
-    TF1 *gauss = new TF1("gauss", gausf, min_val[file], max_val[file], 4);
-    gauss->SetParName(0, "Const");
-    gauss->SetParName(1, "#mu");
-    gauss->SetParName(2, "#sigma");
-    gauss->SetParName(3, "norm");
-    gauss->SetParameter(0, 1000);
-    gauss->SetParameter(1, hist->GetMean());
-    gauss->SetParameter(2, hist->GetRMS());
-    hist->Fit("gauss", "QM+", "", min_val[file], max_val[file]);
-    return gauss->GetParameter("#mu");
-  } else {
-    TF1 *pois = new TF1("pois", poissonf, min_val[file], max_val[file], 2);
-    pois->SetParName(0, "Const");
-    pois->SetParName(1, "#mu");
-    pois->SetParameter(0, 1);
-    pois->SetParameter(1, 1);
-    hist->Fit("pois", "QM+", "", min_val[file], max_val[file]);
-    return pois->GetParameter("#mu");
-  }
+
+  TF1 *pois = new TF1("pois", poissonf, min_val[file], max_val[file], 2);
+  pois->SetParName(0, "Const");
+  pois->SetParName(1, "#mu");
+  pois->SetParameter(0, 1);
+  pois->SetParameter(1, hist->GetMean());
+  hist->Fit("pois", "QM+", "", min_val[file], max_val[file]);
+  return pois->GetParameter("#mu");
 }
 
 void graph(float mu[8]) {
