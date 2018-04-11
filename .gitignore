@@ -3,6 +3,7 @@ current/inputFiles
 current/outputFiles
 *.out
 *.csv
+*.csv.gz
 *.lis
 *.pyc
 *.root
