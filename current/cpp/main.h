@@ -37,6 +37,10 @@
 #include "../src/color.hpp"
 #include "../src/constants.hpp"
 
+#define MIN(a, b) ((a < b) ? a : b)
+#define MAX(a, b) ((a > b) ? a : b)
+#define Square(a) (a * a)
+
 using namespace std;
 
 ofstream cut_outputs;
@@ -55,6 +59,6 @@ void loadbar(long x, long n) {
   cout << BLUE << (int)(ratio * 100) << "%]\r" << DEF << flush;
 }
 
-double Square(double a) { return a * a; }
+// double Square(double a) { return a * a; }
 
 #endif

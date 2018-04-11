@@ -68,5 +68,7 @@ void run() {
   }
   std::cout << "mu,dt,T,r" << std::endl;
   for (int i = 0; i < 8; i++) std::cout << mu[i] << "," << dt[i] << "," << T[i] << "," << mu[i] / dt[i] << std::endl;
+  gStyle->SetStatX(0.5);
+  gStyle->SetStatY(0.8);
   graph(mu);
 }

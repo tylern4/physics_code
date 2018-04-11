@@ -13,6 +13,7 @@
 #include "TCanvas.h"
 #include "TStyle.h"
 #include "physics.hpp"
+#include "func.hpp"
 #include "Math/MinimizerOptions.h"
 
 class Fits {
@@ -34,6 +35,7 @@ class Fits {
   Fits();
   ~Fits();
   void FitGaus(TH1D *hist);
+  void Fit2Gaus(TH1D *hist);
   void FitLandau(TH1D *hist);
   void FitPoly_1D(TH1D *hist);
   void FitPoly_2D(TH1D *hist);

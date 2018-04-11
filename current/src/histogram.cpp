@@ -288,7 +288,7 @@ void Histogram::delta_t_slice_fit() {
 
   TF1 *peak = new TF1("peak", "gaus", -1, 1);
   //[0]*exp(-[1]*x) +
-  char *func = "[0]*exp(-[1]*x) + [2]*x*x + [3]*x + [4]";
+  // char *func = "[0]*exp(-[1]*x) + [2]*x*x + [3]*x + [4]";
   delta_t_mass_P->FitSlicesY(peak, 0, -1, 10, "QRG5");
   TH1D *delta_t_mass_P_0 = (TH1D *)gDirectory->Get("delta_t_mass_P_0");
   TH1D *delta_t_mass_P_1 = (TH1D *)gDirectory->Get("delta_t_mass_P_1");
@@ -313,8 +313,8 @@ void Histogram::delta_t_slice_fit() {
   TGraph *M = new TGraph(num, x, y_minus);
   P->SetName("Proton_Pos_graph");
   M->SetName("Proton_Neg_graph");
-  TF1 *Proton_Pos_fit = new TF1("Proton_Pos_fit", func);
-  TF1 *Proton_Neg_fit = new TF1("Proton_Neg_fit", func);
+  TF1 *Proton_Pos_fit = new TF1("Proton_Pos_fit", func::dt_fit, 0.1, 3.0, 2);
+  TF1 *Proton_Neg_fit = new TF1("Proton_Neg_fit", func::dt_fit, 0.1, 3.0, 2);
   P->Fit(Proton_Pos_fit, "QRG5", "", 0.2, 2);
   M->Fit(Proton_Neg_fit, "QRG5", "", 0.2, 2);
   // P->Write();
@@ -371,8 +371,8 @@ void Histogram::delta_t_slice_fit() {
   TGraph *M_pip = new TGraph(num, x_pip, y_minus_pip);
   P_pip->SetName("Pip_Pos_graph");
   M_pip->SetName("Pip_Neg_graph");
-  TF1 *Pip_Pos_fit = new TF1("Pip_Pos_fit", func);
-  TF1 *Pip_Neg_fit = new TF1("Pip_Neg_fit", func);
+  TF1 *Pip_Pos_fit = new TF1("Pip_Pos_fit", func::dt_fit, 0.1, 3.0, 2);
+  TF1 *Pip_Neg_fit = new TF1("Pip_Neg_fit", func::dt_fit, 0.1, 3.0, 2);
   P_pip->Fit(Pip_Pos_fit, "QRG5", "", 0.1, 1.75);
   M_pip->Fit(Pip_Neg_fit, "QRG5", "", 0.1, 1.75);
   // P_pip->Write();

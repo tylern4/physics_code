@@ -98,15 +98,6 @@ int physics::get_sector(double phi) {
      } */
 }
 
-double physics::fiducial_phi(double theta, double e_p) {
-  /////////// NOTE: Definitly just magic numbers here......... :(
-  double theta_min = 9.5 + 17.0 / (e_p + 0.17);
-  double k = 0.705 + 1.1 * e_p;
-  double m = -63.5 + (-30.0 * e_p);
-
-  return 37.14 * TMath::Power(TMath::Sin((theta - theta_min) * 0.01745), (k + (m / theta) + (1500. / (theta * theta))));
-}
-
 // double fiducial_phi_hi(double theta_e, double theta_e_min, double k, double
 // m) {
 //  return fiducial_phi(theta_e, theta_e_min, k, m, true);
@@ -152,14 +143,3 @@ double physics::Get_Mass(int ID) {
   }
   return 0;
 }
-
-double physics::genNormal(double *x, double *par) {
-  double frac = (par[1] / (2 * par[0] * TMath::Gamma(1 / par[1])));
-  double expo = TMath::Power(TMath::Abs(x[0] - par[2]) / par[0], par[1]);
-
-  double func = par[3] * frac * TMath::Exp(-expo);
-
-  return func;
-}
-
-double physics::breit_wigner(double *x, double *par) { return par[2] * TMath::BreitWigner(x[0], par[0], par[1]); }
