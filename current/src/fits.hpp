@@ -44,6 +44,7 @@ class Fits {
   void FitFiducial_hi(TH2D *hist2d);
   void FitFiducial(TH2D *hist2d);
   void FitGenNormal(TH1D *hist);
+  void FitBreitWigner(TH1D *hist);
   void Set_min(double val);
   void Set_max(double val);
   double Get_min_edge();

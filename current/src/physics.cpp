@@ -104,8 +104,7 @@ double physics::fiducial_phi(double theta, double e_p) {
   double k = 0.705 + 1.1 * e_p;
   double m = -63.5 + (-30.0 * e_p);
 
-  return 37.14 * TMath::Power(TMath::Sin((theta - theta_min) * 0.01745),
-                              (k + (m / theta) + (1500. / (theta * theta))));
+  return 37.14 * TMath::Power(TMath::Sin((theta - theta_min) * 0.01745), (k + (m / theta) + (1500. / (theta * theta))));
 }
 
 // double fiducial_phi_hi(double theta_e, double theta_e_min, double k, double
@@ -162,3 +161,5 @@ double physics::genNormal(double *x, double *par) {
 
   return func;
 }
+
+double physics::breit_wigner(double *x, double *par) { return par[2] * TMath::BreitWigner(x[0], par[0], par[1]); }

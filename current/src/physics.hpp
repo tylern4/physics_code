@@ -28,6 +28,7 @@ int get_sector(double phi);
 double Get_Mass(int ID);
 double fiducial_phi(double theta_e, double e_p);
 double genNormal(double *x, double *par);
+double breit_wigner(double *x, double *par);
 TLorentzVector fourVec(double px, double py, double pz, double mass);
 TLorentzVector fourVec(double p, double cx, double cy, double cz, double mass);
 TLorentzVector fourVec(double px, double py, double pz, int pid);
