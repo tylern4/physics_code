@@ -15,6 +15,7 @@ double fiducial_phi(double theta, double e_p);
 double fiducial_phi(double *x, double *par);
 
 double gausian2(double *x, double *par);
+double peak(double *x, double *par);
 
 double horizontal(double *x, double *par);
 double line(double *x, double *par);
