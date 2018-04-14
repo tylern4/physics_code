@@ -40,8 +40,8 @@ void make_electron_csv(char *fin) {
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain.GetEntry(current_event);
     if (current_event % 100 == 0)
-      cout << "\t[ " << progress[((current_event / 100) % 4)] << " ]\t\t["
-           << 100 * ((float)current_event / (float)num_of_events) << "]\r\r" << flush;
+      cout << "\t[ " << progress[((current_event / 100) % 4)] << " ]\t\t"
+           << 100 * ((float)current_event / (float)num_of_events) << "\r\r" << flush;
 
     int n_prot = 0;
     int n_other = 0;
@@ -78,7 +78,7 @@ void make_electron_csv(char *fin) {
     W = physics::W_calc(e_mu, e_mu_prime);
     Q2 = physics::Q2_calc(e_mu, e_mu_prime);
 
-    if (W < 4.0 && Q2 < 4.0) {
+    if (W < 4.0 && Q2 < 4.0 && cz[0] > 0.9) {
       _p = (double)p[0];
       _cx = (double)cx[0];
       _cy = (double)cy[0];
@@ -136,8 +136,8 @@ void make_mm_csv(char *fin) {
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain.GetEntry(current_event);
     if (current_event % 100 == 0)
-      cout << "\t[ " << progress[((current_event / 100) % 4)] << " ]\t\t["
-           << 100 * ((float)current_event / (float)num_of_events) << "]\r\r" << flush;
+      cout << "\t[ " << progress[((current_event / 100) % 4)] << " ]\t\t"
+           << 100 * ((float)current_event / (float)num_of_events) << "\r\r" << flush;
 
     int n_pion = 0;
     int n_other = 0;
@@ -163,7 +163,7 @@ void make_mm_csv(char *fin) {
     electron_cuts &= ((int)dc_stat[dc[0] - 1] > 0);
 
     // if (electron_cuts) electron_cuts &= (p[0] > MIN_P_CUT);  // Minimum Momentum cut
-    if (electron_cuts) {
+    if (electron_cuts && gpart < 3) {
       e_p = (double)p[0];
       e_cx = (double)cx[0];
       e_cy = (double)cy[0];
@@ -286,12 +286,6 @@ void analyze_MM(char *fin, const char *fout) {
     e_mu_prime_3.SetXYZ(e_p * e_cx, e_p * e_cy, e_p * e_cz);
     e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
 
-    W = physics::W_calc(e_mu, e_mu_prime);
-    Q2 = physics::Q2_calc(e_mu, e_mu_prime);
-    hist_W_2->Fill(W);
-    hist_Q2_2->Fill(Q2);
-    hist_2->Fill(W, Q2);
-
     pip_mu_prime_3.SetXYZ(pip_p * pip_cx, pip_p * pip_cy, pip_p * pip_cz);
     pip_mu_prime.SetVectM(pip_mu_prime_3, MASS_PIP);
 
@@ -299,6 +293,14 @@ void analyze_MM(char *fin, const char *fout) {
     gamma_mu = e_mu - e_mu_prime;
     double mm = missing_mass(gamma_mu, pip_mu_prime);
     MM->Fill(mm);
+
+    if (mm < 1.1) {
+      W = physics::W_calc(e_mu, e_mu_prime);
+      Q2 = physics::Q2_calc(e_mu, e_mu_prime);
+      hist_W_2->Fill(W);
+      hist_Q2_2->Fill(Q2);
+      hist_2->Fill(W, Q2);
+    }
   }
   //
   // end stuff
