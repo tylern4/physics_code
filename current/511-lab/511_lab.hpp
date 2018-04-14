@@ -163,7 +163,7 @@ void make_mm_csv(char *fin) {
     electron_cuts &= ((int)dc_stat[dc[0] - 1] > 0);
 
     // if (electron_cuts) electron_cuts &= (p[0] > MIN_P_CUT);  // Minimum Momentum cut
-    if (electron_cuts && gpart < 3) {
+    if (electron_cuts && cz[0] > 0.9) {
       e_p = (double)p[0];
       e_cx = (double)cx[0];
       e_cy = (double)cy[0];
