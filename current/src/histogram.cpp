@@ -814,8 +814,8 @@ void Histogram::EC_slice_fit() {
   // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   Header *fit_functions = new Header("../src/EC_fit_functions.hpp", "FF");
 
-  // TF1 *peak = new TF1("peak", "gaus", 0.2, 0.4);
   TF1 *peak = new TF1("peak", "gaus", 0.2, 0.4);
+  // TF1 *peak = new TF1("peak", func::peak, 0.2, 0.4, 3);
   //[0]*exp(-[1]*x) +
   char *func = "[0]+[1]*x+[2]*x*x*x*x*x*x";
   EC_sampling_fraction->FitSlicesY(peak, 0, -1, 0, "QRG5");
@@ -881,13 +881,13 @@ void Histogram::EC_slice_fit() {
 }
 
 void Histogram::EC_slices_Write() {
-  Fits EC_cut[num_points];
+  Fits EC_fit[num_points];
   double fit_ec_min = -1.0;
   double fit_ec_max = 1.0;
   for (int n = 0; n < num_points; n++) {
-    EC_cut[n].Set_min(fit_ec_min);
-    EC_cut[n].Set_max(fit_ec_max);
-    EC_cut[n].FitGaus(EC_hist[n]);
+    EC_fit[n].Set_min(fit_ec_min);
+    EC_fit[n].Set_max(fit_ec_max);
+    EC_fit[n].FitGaus(EC_hist[n]);
     EC_hist[n]->SetYTitle("Sampling Fraction");
     EC_hist[n]->Write();
   }
