@@ -4,7 +4,7 @@ ifeq ($(UNAME), Linux)
 endif
 
 ROOTLIBS	= $(shell root-config --libs)
-CXX = g++
+CXX = $(shell root-config --cxx)
 CXXFLAGS =      -O2 -fPIC -w -g $(FOPENMP) $(shell root-config --cflags)
 TARGET = Skim
 SRCDIR   = ../src

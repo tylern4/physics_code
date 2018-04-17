@@ -3,7 +3,7 @@ ifeq ($(UNAME), Linux)
     FOPENMP = -fopenmp 
 endif
 ROOTLIBS	= $(shell root-config --libs) -lCling
-CXX = g++
+CXX = $(shell root-config --cxx)
 CXXFLAGS = -O3 -rdynamic -shared -march=native -fPIC -w -g $(FOPENMP) $(shell root-config --cflags)
 INC = $(root-config --incdir)
 

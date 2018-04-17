@@ -41,7 +41,7 @@ void make_electron_csv(char *fin) {
     chain.GetEntry(current_event);
     if (current_event % 100 == 0)
       cout << "\t[ " << progress[((current_event / 100) % 4)] << " ]\t\t"
-           << 100 * ((float)current_event / (float)num_of_events) << "\r\r" << flush;
+           << 100 * floor((float)current_event / (float)num_of_events) << "\r\r" << flush;
 
     int n_prot = 0;
     int n_other = 0;
@@ -137,7 +137,7 @@ void make_mm_csv(char *fin) {
     chain.GetEntry(current_event);
     if (current_event % 100 == 0)
       cout << "\t[ " << progress[((current_event / 100) % 4)] << " ]\t\t"
-           << 100 * ((float)current_event / (float)num_of_events) << "\r\r" << flush;
+           << 100 * floor((float)current_event / (float)num_of_events) << "\r\r" << flush;
 
     int n_pion = 0;
     int n_other = 0;
@@ -257,6 +257,12 @@ void analyze_MM(char *fin, const char *fout) {
   TH1D *MM = new TH1D("mm", "mm", 500, 0, 3);
   TH1D *hist_W_2 = new TH1D("W_mm", "W_mm", 500, 0, 3);
   TH1D *hist_Q2_2 = new TH1D("Q2_mm", "Q2_mm", 500, 0, 4);
+
+  TH2D *hist_2_after = new TH2D("WvsQ2_mm_after", "WvsQ2_mm_after", 500, 0, 3, 500, 0, 4);
+  TH1D *MM_after = new TH1D("mm_after", "mm_after", 500, 0, 3);
+  TH1D *hist_W_2_after = new TH1D("W_mm_after", "W_mm_after", 500, 0, 3);
+  TH1D *hist_Q2_2_after = new TH1D("Q2_mm_after", "Q2_mm_after", 500, 0, 4);
+
   TF1 *bw = new TF1("bw", Breit, 0, 2, 3);
 
   // Load chain from branch h10
@@ -293,13 +299,17 @@ void analyze_MM(char *fin, const char *fout) {
     gamma_mu = e_mu - e_mu_prime;
     double mm = missing_mass(gamma_mu, pip_mu_prime);
     MM->Fill(mm);
+    W = physics::W_calc(e_mu, e_mu_prime);
+    Q2 = physics::Q2_calc(e_mu, e_mu_prime);
+    hist_W_2->Fill(W);
+    hist_Q2_2->Fill(Q2);
+    hist_2->Fill(W, Q2);
 
     if (mm < 1.1) {
-      W = physics::W_calc(e_mu, e_mu_prime);
-      Q2 = physics::Q2_calc(e_mu, e_mu_prime);
-      hist_W_2->Fill(W);
-      hist_Q2_2->Fill(Q2);
-      hist_2->Fill(W, Q2);
+      MM_after->Fill(mm);
+      hist_W_2_after->Fill(W);
+      hist_Q2_2_after->Fill(Q2);
+      hist_2_after->Fill(W, Q2);
     }
   }
   //
@@ -317,6 +327,10 @@ void analyze_MM(char *fin, const char *fout) {
   bw->SetParameter(2, 1);
   MM->Fit("bw", "M", "", 0.8, 1.0);
   MM->Write();
+  MM_after->Write();
+  hist_2_after->Write();
+  hist_W_2_after->Write();
+  hist_Q2_2_after->Write();
   OutputFile->Close();
 }
 #endif

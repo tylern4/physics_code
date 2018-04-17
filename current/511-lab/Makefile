@@ -4,7 +4,7 @@ ifeq ($(UNAME), Linux)
 endif
 
 ROOTLIBS	= $(shell root-config --libs)
-CXX = g++
+CXX = $(shell root-config --cxx)
 CXXFLAGS = -O3 -march=native -fPIC -w -g $(FOPENMP) $(shell root-config --cflags)
 TARGET =	    511_lab
 SRCDIR   = ../src
