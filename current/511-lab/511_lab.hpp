@@ -41,7 +41,7 @@ void make_electron_csv(char *fin) {
     chain.GetEntry(current_event);
     if (current_event % 100 == 0)
       cout << "\t[ " << progress[((current_event / 100) % 4)] << " ]\t\t"
-           << 100 * floor((float)current_event / (float)num_of_events) << "\r\r" << flush;
+           << 100 * ((float)current_event / (float)num_of_events) << "\r\r" << flush;
 
     int n_prot = 0;
     int n_other = 0;
@@ -137,7 +137,7 @@ void make_mm_csv(char *fin) {
     chain.GetEntry(current_event);
     if (current_event % 100 == 0)
       cout << "\t[ " << progress[((current_event / 100) % 4)] << " ]\t\t"
-           << 100 * floor((float)current_event / (float)num_of_events) << "\r\r" << flush;
+           << 100 * ((float)current_event / (float)num_of_events) << "\r\r" << flush;
 
     int n_pion = 0;
     int n_other = 0;
@@ -161,6 +161,7 @@ void make_mm_csv(char *fin) {
     electron_cuts &= ((int)sc[0] > 0);                             // First Particle hit sc
     electron_cuts &= ((int)dc[0] > 0);                             // ``` ``` ``` dc
     electron_cuts &= ((int)dc_stat[dc[0] - 1] > 0);
+    electron_cuts &= (nphe[cc[0] - 1] > 40);
 
     // if (electron_cuts) electron_cuts &= (p[0] > MIN_P_CUT);  // Minimum Momentum cut
     if (electron_cuts && cz[0] > 0.9) {
