@@ -24,13 +24,14 @@ TLorentzVector physics::fourVec(double p, double cx, double cy, double cz, int p
 }
 
 // Calcuating Q^2
-// q^mu^2 = (e^mu - e^mu')^2 = -Q^2
+//	Gotten from t channel
+// -q^mu^2 = -(e^mu - e^mu')^2 = Q^2
 double physics::Q2_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime) {
   TLorentzVector q_mu = (e_mu - e_mu_prime);
   return -q_mu.Mag2();
 }
 //	Calcualting W
-//	Gotten from s channel [(gamma - P)^2 == s == w^2]
+//	Gotten from s channel [(gamma + P)^2 == s == w^2]
 //	Sqrt√[M_p^2 - Q^2 + 2 M_p gamma]
 double physics::W_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime) {
   TLorentzVector q_mu = (e_mu - e_mu_prime);

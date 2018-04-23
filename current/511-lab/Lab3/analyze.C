@@ -18,7 +18,7 @@ double Q2_calc(TLorentzVector q_mu) { return -q_mu.Mag2(); }
 double W_calc(TLorentzVector q_mu) { return (p_mu + q_mu).Mag(); }
 
 void analyze() {
-  const char* fin = "511_lab_E_data_small.root";
+  const char* fin = "511_lab_E_data.root";
   const char* fout = "WvsQ2.root";
   TH1D* W_hist = new TH1D("W_hist", "W_hist", 500, 0.0, 3.0);
   TH1D* Q2_hist = new TH1D("Q2_hist", "Q2_hist", 500, 0.0, 4.0);
