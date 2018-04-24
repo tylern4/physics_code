@@ -63,6 +63,7 @@ void make_electron_csv(char *fin) {
     electron_cuts &= ((int)sc[0] > 0);                             // First Particle hit sc
     electron_cuts &= ((int)dc[0] > 0);                             // ``` ``` ``` dc
     electron_cuts &= ((int)dc_stat[dc[0] - 1] > 0);
+    electron_cuts &= ((int)nphe[cc[0] - 1] > 40);
 
     // if (electron_cuts) electron_cuts &= (p[0] > MIN_P_CUT);  // Minimum Momentum cut
     if (!electron_cuts) continue;
@@ -161,7 +162,7 @@ void make_mm_csv(char *fin) {
     electron_cuts &= ((int)sc[0] > 0);                             // First Particle hit sc
     electron_cuts &= ((int)dc[0] > 0);                             // ``` ``` ``` dc
     electron_cuts &= ((int)dc_stat[dc[0] - 1] > 0);
-    electron_cuts &= (nphe[cc[0] - 1] > 40);
+    electron_cuts &= ((int)nphe[cc[0] - 1] > 40);
 
     // if (electron_cuts) electron_cuts &= (p[0] > MIN_P_CUT);  // Minimum Momentum cut
     if (electron_cuts && cz[0] > 0.9) {
@@ -325,8 +326,9 @@ void analyze_MM(char *fin, const char *fout) {
   bw->SetParName(2, "Const");
   bw->SetParameter(0, 1);
   bw->SetParameter(1, 1);
-  bw->SetParameter(2, 1);
-  MM->Fit("bw", "M", "", 0.8, 1.0);
+  bw->SetParameter(2, 1000);
+  bw->SetParLimits(2, 100.0, 10000.0);
+  MM->Fit("bw", "M", "", 0.5, 1.1);
   MM->Write();
   MM_after->Write();
   hist_2_after->Write();
