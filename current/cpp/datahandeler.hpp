@@ -33,7 +33,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
 
   int num_of_pis, num_of_proton;
 
-  TLorentzVector e_mu(0.0, 0.0, sqrt(Square(E1D_E0) - Square(MASS_E)), E1D_E0);
+  // TLorentzVector e_mu(0.0, 0.0, sqrt(Square(E1D_E0) - Square(MASS_E)), E1D_E0);
 
   double theta, phi;
   int sector;
@@ -59,6 +59,8 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
     // update loadbar and get current event
     loadbar(current_event + 1, num_of_events);
     chain.GetEntry(current_event);
+    // Setup scattered electron 4 vector
+    Electron *e_mu_prime = new Electron(p[0], cx[0], cy[0], cz[0]);
     // From missing_mass.hpp :: missing_mass_calc()
     MissingMass *MM_neutron = new MissingMass(MASS_P, 0.0);
 
@@ -101,9 +103,6 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
         }
       }
 
-      // Setup scattered electron 4 vector
-      TLorentzVector e_mu_prime = physics::fourVec(p[0], cx[0], cy[0], cz[0], MASS_E);
-
       // Set the vertex time (time of electron hit)
       Delta_T *dt = new Delta_T(sc_t[sc[0] - 1], sc_r[sc[0] - 1]);
       dt->delta_t_hists(hists);
@@ -119,9 +118,9 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
         hists->Fill_electron_fid(theta, phi, sector);
       }
       if (first_run) {
-        W = physics::W_calc(e_mu, e_mu_prime);
-        Q2 = physics::Q2_calc(e_mu, e_mu_prime);
-        e_E = e_mu_prime.E();
+        W = e_mu_prime->GetW();
+        Q2 = e_mu_prime->GetQ2();
+        e_E = e_mu_prime->GetE();
       }
 
       hists->WvsQ2_Fill(e_E, W, Q2, physics::xb_calc(Q2, e_E));
@@ -149,10 +148,9 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
             num_of_pis++;
             hists->Fill_pion_WQ2(W, Q2);
             hists->Fill_Pi_ID_P(p[part_num], b[part_num]);
-            TLorentzVector gamma_mu = (e_mu - e_mu_prime);
             if (first_run) {
               MM_neutron->Set_PxPyPz(p[part_num] * cx[part_num], p[part_num] * cy[part_num], p[part_num] * cz[part_num]);
-              MM_neutron->missing_mass(gamma_mu);
+              MM_neutron->missing_mass(e_mu_prime->Get_q_mu());
             }
           }
 
@@ -174,6 +172,7 @@ void dataHandeler(char *fin, char *RootFile_output, bool first_run) {
     }
     // std::cout << "End of loop " << current_event << std::endl;
     delete MM_neutron;
+    delete e_mu_prime;
   }
 
   std::cout << GREEN << "\nFitting" << DEF << std::endl;

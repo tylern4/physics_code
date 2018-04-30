@@ -26,6 +26,24 @@ TLorentzVector physics::fourVec(double p, double cx, double cy, double cz, int p
 // Calcuating Q^2
 //	Gotten from t channel
 // -q^mu^2 = -(e^mu - e^mu')^2 = Q^2
+double physics::Q2_calc(TLorentzVector e_mu_prime) {
+  TLorentzVector _beam(0.0, 0.0, sqrt(Square(E1D_E0) - Square(MASS_E)), E1D_E0);
+  TLorentzVector q_mu = (_beam - e_mu_prime);
+  return -q_mu.Mag2();
+}
+//	Calcualting W
+//	Gotten from s channel [(gamma + P)^2 == s == w^2]
+//	Sqrt√[M_p^2 - Q^2 + 2 M_p gamma]
+double physics::W_calc(TLorentzVector e_mu_prime) {
+  TLorentzVector _beam(0.0, 0.0, sqrt(Square(E1D_E0) - Square(MASS_E)), E1D_E0);
+  TLorentzVector q_mu = (_beam - e_mu_prime);
+  TLorentzVector p_mu(0.0, 0.0, 0.0, MASS_P);
+  return (p_mu + q_mu).Mag();
+}
+
+// Calcuating Q^2
+//	Gotten from t channel
+// -q^mu^2 = -(e^mu - e^mu')^2 = Q^2
 double physics::Q2_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime) {
   TLorentzVector q_mu = (e_mu - e_mu_prime);
   return -q_mu.Mag2();
@@ -82,32 +100,7 @@ int physics::get_sector(double phi) {
   } else {
     return (int)std::nan("0");
   }
-  /*if(phi>=-30 && phi <30) {
-          return 0;
-     } else if(phi>=30 && phi<90) {
-          return 1;
-     } else if(phi>=90 && phi <150) {
-          return 2;
-     } else if(phi>=150 || phi<-150) {
-          return 3;
-     } else if(phi>=-150 && phi<-90) {
-          return 4;
-     } else if(phi>=-90 && phi<-30) {
-          return 5;
-     } else {
-          return (int)std::nan("0");
-     } */
 }
-
-// double fiducial_phi_hi(double theta_e, double theta_e_min, double k, double
-// m) {
-//  return fiducial_phi(theta_e, theta_e_min, k, m, true);
-//}
-
-// double fiducial_phi_lo(double theta_e, double theta_e_min, double k, double
-// m) {
-//  return fiducial_phi(theta_e, theta_e_min, k, m, false);
-//}
 
 double physics::Get_Mass(int ID) {
   switch (ID) {
