@@ -127,7 +127,7 @@ DataHandeler::~DataHandeler() {
 }
 
 void DataHandeler::run() {
-#pragma omp parallel for
+  //#pragma omp parallel for
   for (std::vector<std::string>::const_iterator file_name = input_files.begin(); file_name != input_files.end();
        ++file_name) {
     file_handeler(*file_name);
