@@ -162,13 +162,13 @@ void DataHandeler::file_handeler(std::string fin) {
   double phi;
   int sector;
   bool first_run = true;
-  TChain *chain = new TChain("h10");
-  chain->Add(fin.c_str());
+  // TChain *chain = new TChain("h10");
+  // chain->Add(fin.c_str());
 
-  getBranches(chain);
-  if (!first_run) getMorebranchs(chain);
-  num_of_events = (int)chain->GetEntries();
-  std::cout << "Hi I'm parallel " << num_of_events << std::endl;
+  // getBranches(chain);
+  // if (!first_run) getMorebranchs(chain);
+  // num_of_events = (int)chain->GetEntries();
+  std::cout << "Hi I'm parallel " << std::endl;
   /*
     int current_event = 0;
     for (current_event = 0; current_event < num_of_events; current_event++) {
@@ -290,6 +290,6 @@ void DataHandeler::file_handeler(std::string fin) {
       // std::cout << "End of loop " << current_event << std::endl;
     }
     */
-  chain->Reset();  // delete Tree object
-  delete chain;
+  // chain->Reset();  // delete Tree object
+  // delete chain;
 }
