@@ -1,6 +1,6 @@
 UNAME := $(shell uname)
 ifeq ($(UNAME), Linux)
-    FOPENMP = -fopenmp 
+    FOPENMP = -fopenmp
 endif
 
 ROOTLIBS	= $(shell root-config --libs)

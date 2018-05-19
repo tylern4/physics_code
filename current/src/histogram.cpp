@@ -270,13 +270,17 @@ void Histogram::Fill_deltat_PIM(double momentum, double delta_t) { delta_t_mass_
 
 void Histogram::Fill_deltat_PIM_PID(double momentum, double delta_t) { delta_t_mass_PIM_PID->Fill(momentum, delta_t); }
 
-void Histogram::Fill_deltat_electron(double momentum, double delta_t) { delta_t_mass_electron->Fill(momentum, delta_t); }
+void Histogram::Fill_deltat_electron(double momentum, double delta_t) {
+  delta_t_mass_electron->Fill(momentum, delta_t);
+}
 
 void Histogram::Fill_deltat_electron_PID(double momentum, double delta_t) {
   delta_t_mass_electron_PID->Fill(momentum, delta_t);
 }
 
-void Histogram::Fill_deltat_positron(double momentum, double delta_t) { delta_t_mass_positron->Fill(momentum, delta_t); }
+void Histogram::Fill_deltat_positron(double momentum, double delta_t) {
+  delta_t_mass_positron->Fill(momentum, delta_t);
+}
 
 void Histogram::Fill_deltat_positron_PID(double momentum, double delta_t) {
   delta_t_mass_positron_PID->Fill(momentum, delta_t);
@@ -714,7 +718,8 @@ void Histogram::makeHists_fid() {
     for (int t = 0; t < 3; t++) {
       sprintf(hname, "hadron_fid_sec%d_%d", sec + 1, t);
       sprintf(htitle, "hadron_fid_sec%d_%d", sec + 1, t);
-      hadron_fid_sec_hist[t][sec] = new TH2D(hname, htitle, bins, min_phi[sec], max_phi[sec], bins, theta_min, theta_max);
+      hadron_fid_sec_hist[t][sec] =
+          new TH2D(hname, htitle, bins, min_phi[sec], max_phi[sec], bins, theta_min, theta_max);
     }
   }
 }
