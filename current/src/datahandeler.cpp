@@ -55,7 +55,6 @@ DataHandeler::~DataHandeler() {
 
   //
   // end stuff
-  /////////chain.Reset();  // delete Tree object
 
   RootOutputFile->cd();
   TDirectory *EC_folder = RootOutputFile->mkdir("EC_hists");
@@ -144,10 +143,11 @@ void DataHandeler::run() {
   int size = input_files.size();
   int i = 0;
 
-  //#pragma omp parallel for private(i)
+#pragma omp parallel for private(i)
   for (i = 0; i < size; i++) {
-    loadbar(i + 1, size);
-    file_handeler(input_files.at(i));
+    std::cout << "Hi I'm parallel" << std::cout;
+    // loadbar(i + 1, size);
+    // file_handeler(input_files.at(i));
   }
 }
 
@@ -163,18 +163,16 @@ void DataHandeler::file_handeler(std::string fin) {
   double phi;
   int sector;
   bool first_run = true;
-  TChain chain("h10");
+  TChain *chain = new TChain("h10");
+  chain->Add(fin.c_str());
 
-  chain.Add(fin.c_str());
-
-  getBranches(&chain);
-  if (!first_run) getMorebranchs(&chain);
-
-  num_of_events = (int)chain.GetEntries();
+  getBranches(chain);
+  if (!first_run) getMorebranchs(chain);
+  num_of_events = (int)chain->GetEntries();
 
   int current_event = 0;
   for (current_event = 0; current_event < num_of_events; current_event++) {
-    chain.GetEntry(current_event);
+    chain->GetEntry(current_event);
 
     // reset electron cut bool
     electron_cuts = true;
@@ -290,4 +288,6 @@ void DataHandeler::file_handeler(std::string fin) {
     }
     // std::cout << "End of loop " << current_event << std::endl;
   }
+  chain->Reset();  // delete Tree object
+  delete chain;
 }
