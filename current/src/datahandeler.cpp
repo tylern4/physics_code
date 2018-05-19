@@ -126,11 +126,28 @@ DataHandeler::~DataHandeler() {
   cut_outputs.close();
 }
 
+void DataHandeler::loadbar(long x, long n) {
+  int w = 50;
+  if ((x != n) && (x % (n / 100 + 1) != 0)) return;
+
+  double ratio = x / (double)n;
+  int c = ratio * w;
+
+  std::cout << BLUE << " [";
+  for (int x = 0; x < c; x++) std::cout << GREEN << "=" << DEF;
+  std::cout << GREEN << ">" << DEF;
+  for (int x = c; x < w; x++) std::cout << " ";
+  std::cout << BLUE << (int)(ratio * 100) << "%]\r" << DEF << std::flush;
+}
+
 void DataHandeler::run() {
-  //#pragma omp parallel for
-  for (std::vector<std::string>::const_iterator file_name = input_files.begin(); file_name != input_files.end();
-       ++file_name) {
-    file_handeler(*file_name);
+  int size = input_files.size();
+  int i = 0;
+
+#pragma omp parallel for private(i)
+  for (i = 0; i < size; i++) {
+    loadbar(i + 1, size);
+    file_handeler(input_files.at(i));
   }
 }
 
@@ -139,7 +156,6 @@ void DataHandeler::file_handeler(std::string fin) {
   bool cuts, electron_cuts;
   int num_of_events;
   int total_events;
-
   int num_of_pis;
   int num_of_proton;
   double e_E;
@@ -148,11 +164,8 @@ void DataHandeler::file_handeler(std::string fin) {
   int sector;
   bool first_run = true;
   TChain chain("h10");
-  // TString fins = fin;
-  // TFileCollection fc("fileList", "", fins.Data());
-  // chain.AddFileInfoList((TCollection *)fc.GetList());
+
   chain.Add(fin.c_str());
-  std::cout << BLUE << "Analyzing file " << GREEN << fin << DEF << std::endl;
 
   getBranches(&chain);
   if (!first_run) getMorebranchs(&chain);
@@ -161,8 +174,6 @@ void DataHandeler::file_handeler(std::string fin) {
 
   int current_event = 0;
   for (current_event = 0; current_event < num_of_events; current_event++) {
-    // update loadbar and get current event
-    // loadbar(current_event + 1, num_of_events);
     chain.GetEntry(current_event);
 
     // reset electron cut bool
