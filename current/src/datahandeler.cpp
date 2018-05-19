@@ -144,7 +144,7 @@ void DataHandeler::run() {
   int size = input_files.size();
   int i = 0;
 
-#pragma omp parallel for private(i)
+  //#pragma omp parallel for private(i)
   for (i = 0; i < size; i++) {
     loadbar(i + 1, size);
     file_handeler(input_files.at(i));
