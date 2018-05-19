@@ -145,7 +145,7 @@ void DataHandeler::run() {
 
 #pragma omp parallel for private(i)
   for (i = 0; i < size; i++) {
-    std::cout << "Hi I'm parallel" << std::cout;
+    std::cout << "Hi I'm parallel" << std::endl;
     // loadbar(i + 1, size);
     // file_handeler(input_files.at(i));
   }
