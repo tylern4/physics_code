@@ -57,6 +57,7 @@ DataHandeler::~DataHandeler() {
   // end stuff
 
   RootOutputFile->cd();
+
   TDirectory *EC_folder = RootOutputFile->mkdir("EC_hists");
   EC_folder->cd();
   hists->EC_Write();
@@ -120,7 +121,7 @@ DataHandeler::~DataHandeler() {
   hists->fid_canvas();
 
   delete hists;
-  RootOutputFile->Write();
+  // RootOutputFile->Write();
   RootOutputFile->Close();
   cut_outputs.close();
 }
@@ -284,9 +285,7 @@ void DataHandeler::file_handeler(std::string fin) {
       }
       if (num_of_proton == 1) hists->Fill_single_proton_WQ2(W, Q2);
     }
-    // std::cout << "End of loop " << current_event << std::endl;
   }
 
   chain.Reset();  // delete Tree object
-  // delete chain;
 }
