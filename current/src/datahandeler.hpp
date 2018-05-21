@@ -28,7 +28,6 @@ class DataHandeler {
   TFile *RootOutputFile;
   TLorentzVector *e_mu;
   std::vector<std::string> input_files;
-  std::ofstream cut_outputs;
   MissingMass *MM_neutron;
   std::vector<bool> *pip_vec;
   std::vector<bool> *pim_vec;

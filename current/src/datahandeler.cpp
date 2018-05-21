@@ -123,7 +123,7 @@ DataHandeler::~DataHandeler() {
   delete hists;
   // RootOutputFile->Write();
   RootOutputFile->Close();
-  cut_outputs.close();
+  // cut_outputs.close();
 }
 
 void DataHandeler::loadbar(long x, long n) {
@@ -143,9 +143,8 @@ void DataHandeler::loadbar(long x, long n) {
 void DataHandeler::run() {
   int size = input_files.size();
   int i = 0;
-
   for (i = 0; i < size; i++) {
-    // loadbar(i + 1, size);
+    loadbar(i + 1, size);
     file_handeler(input_files.at(i));
   }
 }
