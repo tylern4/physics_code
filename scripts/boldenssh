@@ -1,0 +1,15 @@
+#!/usr/bin/expect
+
+#Usage sshjlab <host> <ssh password>
+
+set timeout 60
+spawn ssh -p 222 -Y -tt tylerns@bolden.sc.edu
+expect "yes/no" {
+                send "yes\r"
+                expect "*?assword" {
+                send "[lindex $argv 0]\r"
+                }
+              } "*?assword" { send "[lindex $argv 0]\r" }
+expect "Passcode or option (1-3):" { send "1\r" }
+
+interact
