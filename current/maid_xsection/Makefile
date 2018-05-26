@@ -8,13 +8,12 @@ else
 	LDFLAGS = -lc++
 endif
 
-ROOTLIBS	= $(shell root-config --libs)
-CXXFLAGS = -O3 -Wall -Wextra -march=native -fPIC -w -g $(shell root-config --cflags)
+CXXFLAGS = -O3 -fPIC 
 FCFLAGS = -std=legacy -fPIC -I.
 
 C_SRC = $(wildcard *.cc)
-F_SRC = maid.F splie2.F maid_xsection.F spline.F splin2.F splint.F dsigma.F aaosig1.F aao.F daresbury.F maid_lee.F 
-#$(wildcard *.F) helicity_amps.F read_sf_file.F cgln_amps.F legendre.F multipole_amps.F xsection.F interp.F
+F_SRC = $(wildcard *.F)
+
 C_OBJECTS  = $(C_SRC:%.cc=%.o)
 F_OBJECTS = $(F_SRC:%.F=%.o)
 
@@ -32,8 +31,6 @@ $(F_OBJECTS) : %.o : %.F
 
 lib:	$(C_OBJECTS) $(F_OBJECTS)
 	$(FC) $(FCFLAGS) -shared $(C_OBJECTS) $(F_OBJECTS) $(LDFLAGS) -o $(LIBOUT)
-	#$(CXX) $(CXXFLAGS) -shared $(C_OBJECTS) $(F_OBJECTS) $(ROOTLIBS) $(LDFLAGS) -o $(LIBOUT)
-
 
 clean :
 	$(RM) -rf *.o libmaid_xsection.so

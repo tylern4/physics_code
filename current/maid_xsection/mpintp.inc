@@ -8,7 +8,7 @@ c 	Multipole and Helicity Amplitudes
 
       parameter(max_L = 5)
       parameter(wave_L = 5)
-	  
+
       complex sp(0:max_L+1), sm(0:max_L+1)
       complex ep(0:max_L+1), em(0:max_L+1)
       complex mp(0:max_L+1), mm(0:max_L+1)
@@ -16,7 +16,7 @@ c 	Multipole and Helicity Amplitudes
       complex bp(0:max_L+1), bm(0:max_L+1)
       complex cp(0:max_L+1), cm(0:max_L+1)
 
-      common /mp_amplitudes/sp, sm, ep, em, mp, mm, 
+      common /mp_amplitudes/sp, sm, ep, em, mp, mm,
      1                      ap, am, bp, bm, cp, cm
       common /method/method_helicity,mwave_L
 
@@ -25,7 +25,7 @@ c 	Multipole and Helicity Amplitudes
 
       common /hel_amplitudes/hh1,hh2,hh3,hh4,hh5,hh6
       common /cgln_amplitudes/ff1,ff2,ff3,ff4,ff5,ff6
-      
+
       real pol(0:max_L+2,2)
 
       common /legend/ pol
@@ -34,16 +34,16 @@ C Parameters and options
 
 	  character*132 data_file
 
-	  common /input_file/data_file      
+	  common /input_file/data_file
 
 C*******************************************************************************
 CEV The following is for the response functions.
 C*******************************************************************************
-	  
-	  real sigma_0, sigma_l, sigma_t, sigma_tt, sigma_lt, sigma_ltp, asym_ltp
-	  real sigma_0_5fold
-	  
-	  common /reponse_fcns/asym_ltp, sigma_0, sigma_l, sigma_t, 
+
+	  real sigma_0, sigma_l, sigma_t, sigma_tt, sigma_lt, sigma_ltp
+	  real sigma_0_5fold, asym_ltp
+
+	  common /reponse_fcns/asym_ltp, sigma_0, sigma_l, sigma_t,
      1                     sigma_tt, sigma_lt, sigma_ltp, sigma_0_5fold
 
 C*******************************************************************************
@@ -55,7 +55,7 @@ C*******************************************************************************
 C Parameters
 
       INTEGER MAX_MP
-      INTEGER NVAR1, NVAR2 
+      INTEGER NVAR1, NVAR2
 
       PARAMETER( MAX_MP = 62 )
 C for OOPS:   NVAR1 = 16, NVAR2 = 26
@@ -63,9 +63,9 @@ C for SatoLee:   NVAR1 = 77, NVAR2 = 26
 C for NSTAR:  NVAR1 = 77, NVAR2 = 61
 c for NSTAR 2000 format:  NVAR1 = 81, NVAR2 = 91
 
-C 	  PARAMETER( NVAR1  = 77,   NVAR2 = 26 )	! Q2,W 
-c      PARAMETER( NVAR1  = 77 , NVAR2 = 61 )	! Q2,W 
-C      PARAMETER( NVAR1  = 16 , NVAR2 = 26 )	! Q2,W 
+C 	  PARAMETER( NVAR1  = 77,   NVAR2 = 26 )	! Q2,W
+c      PARAMETER( NVAR1  = 77 , NVAR2 = 61 )	! Q2,W
+C      PARAMETER( NVAR1  = 16 , NVAR2 = 26 )	! Q2,W
       PARAMETER( NVAR1  = 81 , NVAR2 = 91 ) ! Q2,W
 
 C Vectors of Kinematic Variables
@@ -210,20 +210,3 @@ CEV Second derivatives for cubic spline:
      &                   D2SF49,D2SF50,D2SF51,D2SF52,D2SF53,D2SF54,
      &                   D2SF55,D2SF56,D2SF57,D2SF58,D2SF59,D2SF60,
      &                   D2SF61,D2SF62
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
