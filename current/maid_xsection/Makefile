@@ -2,11 +2,11 @@ FC = gfortran
 CXX = $(shell root-config --cxx)
 UNAME := $(shell uname -s)
 
-ifeq ($(UNAME_S),Darwin)
-	LDFLAGS = -lstdc++
-else
-	LDFLAGS = -lc++
-endif
+#ifeq ($(UNAME_S),Darwin)
+#	LDFLAGS = -lstdc++
+#else
+#	LDFLAGS = -lc++
+#endif
 
 CXXFLAGS = -O3 -fPIC
 FCFLAGS = -std=legacy -fPIC -I.
@@ -30,7 +30,7 @@ $(F_OBJECTS) : %.o : %.F
 		$(FC) $(FCFLAGS) -c $< -o $@
 
 lib:	$(C_OBJECTS) $(F_OBJECTS)
-	$(FC) $(FCFLAGS) -shared $(C_OBJECTS) $(F_OBJECTS) $(LDFLAGS) -o $(LIBOUT)
+	$(FC) $(FCFLAGS) -shared $(C_OBJECTS) $(F_OBJECTS) $(LDFLAGS) -L/usr/local/root/lib -lminicern -o $(LIBOUT)
 
 clean :
 	$(RM) -rf *.o libmaid_xsection.so

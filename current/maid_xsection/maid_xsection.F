@@ -199,32 +199,32 @@ c     Write output line:
 
  100  end program
 
-      function electron_theta(beam_energy,target_mass,w,q2)
-      implicit none
+c      function electron_theta(beam_energy,target_mass,w,q2)
+c      implicit none
 
-      real electron_theta
-      real beam_energy, target_mass, w, q2
+c      real electron_theta
+c      real beam_energy, target_mass, w, q2
 
 c     FUNCTION VARIABLES
-      real nu, Eprime, p, pprime, costheta
+c      real nu, Eprime, p, pprime, costheta
 c     CONSTANTS
-      real me
-      parameter (me=0.511e-3)
-      real pi
-      parameter(pi=4.D0*DATAN(1.D0))
+c      real me
+c      parameter (me=0.511e-3)
+c      real pi
+c      parameter(pi=4.D0*DATAN(1.D0))
 
-      nu = (w**2+q2-target_mass**2)/(2.0*target_mass)
+c      nu = (w**2+q2-target_mass**2)/(2.0*target_mass)
 
-      eprime = beam_energy - nu
+c      eprime = beam_energy - nu
 c     Debug
 c     write(*,*) "E' = ", eprime
 c     End debug
 
-      p = sqrt(beam_energy**2 - me**2)
-      pprime = sqrt(eprime**2 - me**2)
+c      p = sqrt(beam_energy**2 - me**2)
+c      pprime = sqrt(eprime**2 - me**2)
 
-      costheta = (q2/2 - beam_energy*eprime + me**2)
-     +     /(p*pprime)
+c      costheta = (q2/2 - beam_energy*eprime + me**2)
+c     +     /(p*pprime)
 
 c     debug
 c     write(*,*) "costheta=", costheta
@@ -233,12 +233,12 @@ c     end debug
 c     Ye's
 c     theta = 2*TMath::ASin(TMath::Sqrt((Q2)/(4*Ei*Ef)))*(180/TMath::Pi());
 c     Ef=Ei-(w*w+Q2-mn*mn)/(2*mn);
-      eprime=beam_energy-(w*w+q2-target_mass*target_mass)
-     +     /(2*target_mass);
-      electron_theta = 2*asin(sqrt((q2)/(4*beam_energy*eprime)))
-     +     * (180/pi)
+c      eprime=beam_energy-(w*w+q2-target_mass*target_mass)
+c     +     /(2*target_mass);
+c      electron_theta = 2*asin(sqrt((q2)/(4*beam_energy*eprime)))
+c     +     * (180/pi)
 c     End Ye's
 
 c     electron_theta = acos(costheta)
 
-      end
+c      end

@@ -27,10 +27,10 @@ COMPILE_FLAGS = $(shell root-config --cflags)
 
 # Targets:
 $(PROGRAM): $(PROGRAM).o
-	g++  $(COMPILE_FLAGS) $(PROGRAM).o  -L../ -lmaid_xsection $(shell root-config --libs) -o $(PROGRAM)
+	g++  $(COMPILE_FLAGS) $(shell /usr/bin/cernlib) $(PROGRAM).o  -L.. -lmaid_xsection $(shell root-config --libs) -lminicern -o $(PROGRAM)
 
 $(PROGRAM).o: $(SOURCE)
-	g++ $(COMPILE_FLAGS) -c $(SOURCE) -o $(PROGRAM).o
+	g++ $(shell /usr/bin/cernlib) $(COMPILE_FLAGS) -c $(SOURCE) -o $(PROGRAM).o
 
 clean:
 	rm -f $(PROGRAM) $(PROGRAM).o
