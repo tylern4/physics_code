@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../maid.h"
+#include "maid.h"
 
 int main() {
   std::cout << maid_dsigma(  // beam_energy

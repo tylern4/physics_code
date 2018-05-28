@@ -1,36 +1,20 @@
-FC = gfortran
+PROGRAM=example
+SOURCE=example.cc
+
+# Compilation and linking settings:
+FCFLAGS = -O3 -m64 -fno-automatic -ffixed-line-length-none -fno-second-underscore
+LIB_PATH = -L$(CERNLIB) -L$(CLAS6)/lib
+LIB = -lmaid_xsection -lgfortran -lrecutl -lmathlib -lkernlib $(shell root-config --libs)
+CXXFLAGS = $(shell root-config --cflags)
 CXX = $(shell root-config --cxx)
-UNAME := $(shell uname -s)
 
-#ifeq ($(UNAME_S),Darwin)
-#	LDFLAGS = -lstdc++
-#else
-#	LDFLAGS = -lc++
-#endif
+# Targets:
+$(PROGRAM): $(PROGRAM).o
+	$(CXX) $(CXXFLAGS) $(PROGRAM).o $(LIB_PATH) $(LIB) -o $(PROGRAM)
 
-CXXFLAGS = -O3 -fPIC
-FCFLAGS = -std=legacy -fPIC -I.
+$(PROGRAM).o: $(SOURCE)
+	$(CXX) $(CXXFLAGS) -c $(SOURCE) -o $(PROGRAM).o
 
-C_SRC = $(wildcard *.cc)
-F_SRC = $(wildcard *.F)
+clean:
+	$(RM) $(PROGRAM) $(PROGRAM).o
 
-C_OBJECTS  = $(C_SRC:%.cc=%.o)
-F_OBJECTS = $(F_SRC:%.F=%.o)
-
-LIBOUT =	libmaid_xsection.so
-
-.PHONY: all clean
-
-all: lib
-
-$(C_OBJECTS) : %.o : %.cc
-		$(CXX) $(CXXFLAGS) -c $< -o $@
-
-$(F_OBJECTS) : %.o : %.F
-		$(FC) $(FCFLAGS) -c $< -o $@
-
-lib:	$(C_OBJECTS) $(F_OBJECTS)
-	$(FC) $(FCFLAGS) -shared $(C_OBJECTS) $(F_OBJECTS) $(LDFLAGS) -L/usr/local/root/lib -lminicern -o $(LIBOUT)
-
-clean :
-	$(RM) -rf *.o libmaid_xsection.so
