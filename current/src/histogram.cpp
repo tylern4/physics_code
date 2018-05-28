@@ -612,7 +612,7 @@ void Histogram::Theta_CC_Write() {
 
 void Histogram::CC_Write() {
   cc_sparse->Write();
-  Fits cc_fits[sector][segment][PMT];
+  Fits *cc_fits[sector][segment][PMT];
   for (int sec_i = 0; sec_i < sector; sec_i++) {
     for (int pmt_i = 0; pmt_i < PMT; pmt_i++) {
       cc_hist_allSeg[sec_i][pmt_i]->SetYTitle("number photoelectrons");
