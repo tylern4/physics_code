@@ -8,7 +8,7 @@ else
 	LDFLAGS = -lc++
 endif
 
-CXXFLAGS = -O3 -fPIC 
+CXXFLAGS = -O3 -fPIC
 FCFLAGS = -std=legacy -fPIC -I.
 
 C_SRC = $(wildcard *.cc)
