@@ -184,8 +184,10 @@ void DataHandeler::file_handeler(std::string fin) {
     electron_cuts &= ((int)dc[0] > 0);                             // ``` ``` ``` dc
     electron_cuts &= ((int)dc_stat[dc[0] - 1] > 0);
     electron_cuts &= ((int)cc[0] > 0);
-    if (electron_cuts) hists->EC_fill(etot[ec[0] - 1], p[0]);
+    double sf = etot[ec[0] - 1] / p[0];
+    electron_cuts &= (sf > 0.2 && sf < 0.4);
     electron_cuts &= (p[0] > MIN_P_CUT);  // Minimum Momentum cut????
+    if (electron_cuts) hists->EC_fill(etot[ec[0] - 1], p[0]);
 
     if (electron_cuts) {
       int cc_sector = cc_sect[cc[0] - 1];
