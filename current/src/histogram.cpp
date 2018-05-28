@@ -621,7 +621,7 @@ void Histogram::CC_Write() {
         cc_fits[sec_i][seg_i][pmt_i] = new Fits();
         cc_fits[sec_i][seg_i][pmt_i]->Set_min(40.0);
         cc_fits[sec_i][seg_i][pmt_i]->Set_max(200.0);
-        cc_fits[sec_i][seg_i][pmt_i]->FitGenNormal(cc_hist[sec_i][seg_i][pmt_i]);
+        cc_fits[sec_i][seg_i][pmt_i]->Fit2Gaus(cc_hist[sec_i][seg_i][pmt_i]);
         cc_hist[sec_i][seg_i][pmt_i]->SetYTitle("number photoelectrons");
         cc_hist[sec_i][seg_i][pmt_i]->Write();
         delete cc_fits[sec_i][seg_i][pmt_i];
