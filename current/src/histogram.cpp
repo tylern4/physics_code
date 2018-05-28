@@ -618,13 +618,13 @@ void Histogram::CC_Write() {
       cc_hist_allSeg[sec_i][pmt_i]->SetYTitle("number photoelectrons");
       cc_hist_allSeg[sec_i][pmt_i]->Write();
       for (int seg_i = 0; seg_i < segment; seg_i++) {
-        cc_fits[sec_i][seg_i][pmt_i] = new Fits();
-        cc_fits[sec_i][seg_i][pmt_i]->Set_min(40.0);
-        cc_fits[sec_i][seg_i][pmt_i]->Set_max(200.0);
-        cc_fits[sec_i][seg_i][pmt_i]->Fit2Gaus(cc_hist[sec_i][seg_i][pmt_i]);
+        // cc_fits[sec_i][seg_i][pmt_i] = new Fits();
+        // cc_fits[sec_i][seg_i][pmt_i]->Set_min(40.0);
+        // cc_fits[sec_i][seg_i][pmt_i]->Set_max(200.0);
+        // cc_fits[sec_i][seg_i][pmt_i]->Fit2Gaus(cc_hist[sec_i][seg_i][pmt_i]);
         cc_hist[sec_i][seg_i][pmt_i]->SetYTitle("number photoelectrons");
         cc_hist[sec_i][seg_i][pmt_i]->Write();
-        delete cc_fits[sec_i][seg_i][pmt_i];
+        // delete cc_fits[sec_i][seg_i][pmt_i];
       }
     }
   }
@@ -704,7 +704,7 @@ void Histogram::CC_canvas() {
       can[sec_i][pmt_i]->Divide(6, 3);
       for (int seg_i = 0; seg_i < segment; seg_i++) {
         can[sec_i][pmt_i]->cd((int)seg_i + 1);
-        // cc_hist[sec_i][seg_i][pmt_i]->Fit("gaus");
+        cc_hist[sec_i][seg_i][pmt_i]->Fit("gaus");
         cc_hist[sec_i][seg_i][pmt_i]->Draw("same");
       }
       can[sec_i][pmt_i]->Write();
