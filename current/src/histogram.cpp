@@ -499,9 +499,9 @@ void Histogram::delta_t_slices_Write() {
     for (int jj = 0; jj < num_points; jj++) {
       if (j != 2) {
         delta_t_cut[j][jj] = new Fits();
-        delta_t_cut[j][jj].Set_min(fit_dt_min);
-        delta_t_cut[j][jj].Set_max(fit_dt_max);
-        delta_t_cut[j][jj].FitGaus(delta_t_hist[j][jj]);
+        delta_t_cut[j][jj]->Set_min(fit_dt_min);
+        delta_t_cut[j][jj]->Set_max(fit_dt_max);
+        delta_t_cut[j][jj]->FitGaus(delta_t_hist[j][jj]);
         delete delta_t_cut[j][jj];
       }
 
@@ -792,9 +792,9 @@ void Histogram::Fid_Write() {
           electron_fid_sec_hist[sec]->ProjectionX(hname, slice_width * slice, slice_width * slice + (slice_width - 1));
       electron_fid_sec_slice[sec][slice]->Rebin(10);
       SliceFit[sec][slice] = new Fits();
-      SliceFit[sec][slice].Set_min(min_phi[sec]);
-      SliceFit[sec][slice].Set_max(max_phi[sec]);
-      SliceFit[sec][slice].FitGenNormal(electron_fid_sec_slice[sec][slice]);
+      SliceFit[sec][slice]->Set_min(min_phi[sec]);
+      SliceFit[sec][slice]->Set_max(max_phi[sec]);
+      SliceFit[sec][slice]->FitGenNormal(electron_fid_sec_slice[sec][slice]);
       delete SliceFit[sec][slice];
     }
   }
@@ -925,9 +925,9 @@ void Histogram::EC_slices_Write() {
   double fit_ec_max = 1.0;
   for (int n = 0; n < num_points; n++) {
     EC_fit[n] = new Fits();
-    EC_fit[n].Set_min(fit_ec_min);
-    EC_fit[n].Set_max(fit_ec_max);
-    EC_fit[n].FitGaus(EC_hist[n]);
+    EC_fit[n]->Set_min(fit_ec_min);
+    EC_fit[n]->Set_max(fit_ec_max);
+    EC_fit[n]->FitGaus(EC_hist[n]);
     EC_hist[n]->SetYTitle("Sampling Fraction");
     EC_hist[n]->Write();
     delete EC_fit[n];
