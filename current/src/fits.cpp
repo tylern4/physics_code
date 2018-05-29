@@ -22,8 +22,8 @@ double Fits::Get_FWHM() { return FWHM; }
 void Fits::FitGaus(TH1D *hist) {
   if (hist->GetEntries() > 1000) {
     // if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
-    // TF1 *fitFunc = new TF1("fitFunc", func::gausian, min_value, max_value, 4);
-    TF1 *fitFunc = new TF1("fitFunc", "gaus", min_value, max_value);
+    TF1 *fitFunc = new TF1("fitFunc", func::gausian, min_value, max_value, 4);
+    // TF1 *fitFunc = new TF1("fitFunc", "gaus", min_value, max_value);
     fitFunc->SetLineColor(2);
     par_max = std::isnan(hist->GetMaximum()) ? 0 : hist->GetMaximum();
     par_mean = std::isnan(hist->GetMean()) ? 0 : hist->GetMean();
