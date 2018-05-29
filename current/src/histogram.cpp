@@ -619,6 +619,7 @@ void Histogram::Theta_CC_Write() {
     Theta_CC_Sec_cut[sec_i]->SetOption("COLZ");
     Theta_CC_Sec_cut[sec_i]->Write();
   }
+
   theta_cc_slice_fit();
 }
 
@@ -644,11 +645,9 @@ void Histogram::CC_Write() {
 
 void Histogram::theta_cc_slice_fit() {
   Header *fit_functions = new Header("../src/fit_theta_cc.hpp", "FF");
-
-  TF1 *peak = new TF1("peak", "gaus", 0, 60);
-  //[2]*x*x +
-  Theta_CC->FitSlicesY(peak, 0, -1, 20, "QR");
-
+  // TF1 *peak = new TF1("peak", func::gausian, 10, 60, 4);
+  TF1 *peak = new TF1("peak", "gaus", 10, 60);
+  Theta_CC->FitSlicesY(peak, 0, -1, 20, "QRM+");
   TH1D *Theta_CC_0 = (TH1D *)gDirectory->Get("Theta_CC_0");
   TH1D *Theta_CC_1 = (TH1D *)gDirectory->Get("Theta_CC_1");
   TH1D *Theta_CC_2 = (TH1D *)gDirectory->Get("Theta_CC_2");
@@ -656,34 +655,34 @@ void Histogram::theta_cc_slice_fit() {
   double y_plus[20];
   double y_minus[20];
   int num = 0;
+
   for (int i = 0; i < 20; i++) {
     if (Theta_CC_1->GetBinContent(i) != 0) {
       // Get momentum from bin center
       x[num] = (double)Theta_CC_1->GetBinCenter(i);
       // mean + 3sigma
-      y_plus[num] = (double)Theta_CC_1->GetBinContent(i) + (2 * (double)Theta_CC_2->GetBinContent(i));  //(N_SIGMA)
-
+      y_plus[num] = (double)Theta_CC_1->GetBinContent(i) + (3 * (double)Theta_CC_2->GetBinContent(i));  //(N_SIGMA)
       // mean - 3simga
-      y_minus[num] = (double)Theta_CC_1->GetBinContent(i) - (2 * (double)Theta_CC_2->GetBinContent(i));  //(N_SIGMA)
+      y_minus[num] = (double)Theta_CC_1->GetBinContent(i) - (3 * (double)Theta_CC_2->GetBinContent(i));  //(N_SIGMA)
       num++;
     }
   }
 
-  char *func = "[0]*exp([1]*x)+ [2]*x + [3]";
-  TGraph *P = new TGraph(num, x, y_plus);
-  TGraph *M = new TGraph(num, x, y_minus);
-  TF1 *Theta_CC_Pos_fit = new TF1("Theta_CC_Pos_fit", func);
-  TF1 *Theta_CC_Neg_fit = new TF1("Theta_CC_Neg_fit", func);
-  P->Fit(Theta_CC_Pos_fit, "QR", "", 1, 16);
-  P->Write();
-  M->Fit(Theta_CC_Neg_fit, "QR", "", 1, 16);
-  M->Write();
-  Theta_CC_Pos_fit->Write();
-  Theta_CC_Neg_fit->Write();
-  P->Draw("Same");
-  M->Draw("Same");
-  Theta_CC_Pos_fit->Draw("Same");
-  Theta_CC_Neg_fit->Draw("Same");
+  TGraph *CC_P = new TGraph(num, x, y_plus);
+  TGraph *CC_M = new TGraph(num, x, y_minus);
+  TF1 *Theta_CC_Pos_fit = new TF1("Theta_CC_Pos_fit", func::theta_cc_fit, 0, 20, 3);
+  TF1 *Theta_CC_Neg_fit = new TF1("Theta_CC_Neg_fit", func::theta_cc_fit, 0, 20, 3);
+  CC_P->Fit(Theta_CC_Pos_fit, "QRM+", "", 0, 20);
+  CC_M->Fit(Theta_CC_Neg_fit, "QRM+", "", 0, 20);
+
+  TCanvas *Theta_CC_canvas = new TCanvas("Theta_CC_canvas", "Theta cc canvas", 1280, 720);
+  Theta_CC_canvas->cd();
+  Theta_CC->Draw();
+  Theta_CC_Pos_fit->Draw("same");
+  Theta_CC_Neg_fit->Draw("same");
+  CC_P->Draw("*same");
+  CC_M->Draw("*same");
+  Theta_CC_canvas->Write();
 
   fit_functions->NewFunction();
   fit_functions->Set_RetrunType("double");
@@ -696,7 +695,7 @@ void Histogram::theta_cc_slice_fit() {
   fit_functions->Set_RetrunType("double");
   fit_functions->Set_FuncName("Theta_CC_Neg_fit");
   fit_functions->Set_FuncInputs("double x");
-  fit_functions->Set_Function(Theta_CC_Neg_fit->GetExpFormula("P"));
+  fit_functions->Set_Function(Theta_CC_Neg_fit->GetExpFormula("M"));
   fit_functions->WriteFunction();
 
   delete fit_functions;

@@ -22,7 +22,8 @@ double Fits::Get_FWHM() { return FWHM; }
 void Fits::FitGaus(TH1D *hist) {
   if (hist->GetEntries() > 1000) {
     // if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
-    TF1 *fitFunc = new TF1("fitFunc", func::gausian, min_value, max_value, 3);
+    // TF1 *fitFunc = new TF1("fitFunc", func::gausian, min_value, max_value, 4);
+    TF1 *fitFunc = new TF1("fitFunc", "gaus", min_value, max_value);
     fitFunc->SetLineColor(2);
     par_max = std::isnan(hist->GetMaximum()) ? 0 : hist->GetMaximum();
     par_mean = std::isnan(hist->GetMean()) ? 0 : hist->GetMean();
@@ -45,6 +46,7 @@ void Fits::FitGaus(TH1D *hist) {
     mean = fitFunc->GetParameter("mean");
     FWHM = fitFunc->GetParameter("FWHM");
     sigma = fitFunc->GetParameter("FWHM") / (2 * sqrt(2 * log(2)));  // 2.35482004503;
+    delete fitFunc;
   }
 }
 
@@ -73,6 +75,7 @@ void Fits::Fit2Gaus(TH1D *hist) {
     mean = fitFunc->GetParameter("mean");
     FWHM = fitFunc->GetParameter("FWHM");
     sigma = fitFunc->GetParameter("FWHM") / (2 * sqrt(2 * log(2)));  // 2.35482004503;
+    delete fitFunc;
   }
 }
 
@@ -84,6 +87,8 @@ void Fits::FitLandau(TH1D *hist) {
     hist->Fit("fitFunc", "QM+", "", min_value, max_value);
 
     for (int i = 0; i < 10; i++) hist->Fit("fitFunc", "QM+", "", min_value, max_value);
+
+    delete fitFunc;
   }
 }
 
@@ -102,6 +107,7 @@ void Fits::FitPoly_1D(TH1D *hist) {
 
   a = fitFunc->GetParameter("intercept");
   b = fitFunc->GetParameter("slope");
+  delete fitFunc;
 }
 
 void Fits::FitPoly_2D(TH1D *hist) {
@@ -121,6 +127,7 @@ void Fits::FitPoly_2D(TH1D *hist) {
   a = fitFunc->GetParameter("a");
   b = fitFunc->GetParameter("b");
   c = fitFunc->GetParameter("c");
+  delete fitFunc;
 }
 
 void Fits::FitPoly_3D(TH1D *hist) {
@@ -142,6 +149,7 @@ void Fits::FitPoly_3D(TH1D *hist) {
   b = fitFunc->GetParameter("b");
   c = fitFunc->GetParameter("c");
   d = fitFunc->GetParameter("d");
+  delete fitFunc;
 }
 
 void Fits::FitPoly_4D(TH1D *hist) {
@@ -165,6 +173,7 @@ void Fits::FitPoly_4D(TH1D *hist) {
   c = fitFunc->GetParameter("c");
   d = fitFunc->GetParameter("d");
   e = fitFunc->GetParameter("e");
+  delete fitFunc;
 }
 
 void Fits::FitPoly_fid(TH2D *hist) {
@@ -185,6 +194,7 @@ void Fits::FitPoly_fid(TH2D *hist) {
   fitFunc->SetParameter(7, fitFunc->GetParameter("h"));
 
   hist->Fit("fitFunc", "QM+", "", min_value, max_value);
+  delete fitFunc;
 }
 
 double Fits::fiducial_phi_lo(double theta_e, double theta_e_min, double k, double m, int c) {
@@ -219,6 +229,7 @@ void Fits::FitFiducial_lo(TH2D *hist2d) {
   b = fitFunc_lo->GetParameter("b");
   c = fitFunc_lo->GetParameter("c");
   d = fitFunc_lo->GetParameter("d");
+  delete fitFunc_lo;
 }
 
 void Fits::FitFiducial_hi(TH2D *hist2d) {
@@ -245,6 +256,7 @@ void Fits::FitFiducial_hi(TH2D *hist2d) {
   b = fitFunc_hi->GetParameter("b");
   c = fitFunc_hi->GetParameter("c");
   d = fitFunc_hi->GetParameter("d");
+  delete fitFunc_hi;
 }
 
 void Fits::FitFiducial(TH2D *hist2d) {
@@ -271,6 +283,7 @@ void Fits::FitFiducial(TH2D *hist2d) {
   b = fitFunc->GetParameter("b");
   c = fitFunc->GetParameter("c");
   d = fitFunc->GetParameter("d");
+  delete fitFunc;
 }
 
 void Fits::FitGenNormal(TH1D *hist) {
@@ -304,6 +317,7 @@ void Fits::FitGenNormal(TH1D *hist) {
     }
     min_edge_x = min_m;
     max_edge_x = max_m;
+    delete fitFunc;
   }
 }
 
@@ -317,4 +331,5 @@ void Fits::FitBreitWigner(TH1D *hist) {
   fitbw->SetParNames("Mean", "Width", "Const");
 
   for (int i = 0; i < 10; i++) hist->Fit("bw", "QM+", "", min_value, max_value);
+  delete fitbw;
 }

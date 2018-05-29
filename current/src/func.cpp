@@ -51,6 +51,8 @@ double func::peak(double *x, double *par) {
   return par[0] * TMath::Gaus(x[0], par[1], par[2], true);
 }
 
+double func::landau(double *x, double *par) { return par[2] * TMath::Landau(x[0], par[0], par[1], true); }
+
 double func::horizontal(double *x, double *par) { return par[0]; }
 double func::line(double *x, double *par) { return x[0] * par[1] + par[0]; }
 double func::quad(double *x, double *par) { return x[0] * x[0] * par[1] + x[0] * par[1] + par[0]; }
@@ -82,4 +84,8 @@ double func::pol5(double *x, double *par) {
   return result;
 }
 
+double func::theta_cc_fit(double *x, double *par) {
+  return par[0] + par[1] * x[0] + par[2] * -1 * TMath::Exp(x[0]);
+  // + TMath::Exp(x[0]) * (par[0] + par[1] * x[0] + par[2] * x[0] * x[0]);
+}
 double func::dt_fit(double *x, double *par) { return par[0] + par[1] * x[0]; }  //+ par[2] * TMath::Exp(x[0]); }

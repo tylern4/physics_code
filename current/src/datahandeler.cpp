@@ -57,69 +57,69 @@ DataHandeler::~DataHandeler() {
   // end stuff
 
   RootOutputFile->cd();
-
+  std::cout << GREEN << "EC_Write()" << DEF << std::endl;
   TDirectory *EC_folder = RootOutputFile->mkdir("EC_hists");
   EC_folder->cd();
   hists->EC_Write();
-
+  std::cout << GREEN << "EC_slices()" << DEF << std::endl;
   TDirectory *EC_slices = RootOutputFile->mkdir("EC_slices");
   EC_slices->cd();
   hists->EC_slices_Write();
-
+  std::cout << GREEN << "Beam_Position()" << DEF << std::endl;
   TDirectory *Beam_Folder = RootOutputFile->mkdir("Beam Position");
   Beam_Folder->cd();
   hists->Beam_Position_Write();
-
+  std::cout << GREEN << "WvsQ2()" << DEF << std::endl;
   TDirectory *WvsQ2_folder = RootOutputFile->mkdir("W vs Q2");
   WvsQ2_folder->cd();
   hists->WvsQ2_Write();
-
+  std::cout << GREEN << "MomVsBeta_Fill()" << DEF << std::endl;
   TDirectory *MomVsBeta_folder = RootOutputFile->mkdir("Momentum vs beta");
   MomVsBeta_folder->cd();
   hists->MomVsBeta_Write();
-
+  std::cout << GREEN << "Write_Missing_Mass()" << DEF << std::endl;
   // Missing Mass Write
   TDirectory *MissMass = RootOutputFile->mkdir("Missing_Mass");
   MissMass->cd();
   hists->Write_Missing_Mass();
-
+  std::cout << GREEN << "delta_t_Write()" << DEF << std::endl;
   // Delta T Write
   TDirectory *DeltaT = RootOutputFile->mkdir("Delta_T");
   DeltaT->cd();
   hists->delta_t_Write();
-
+  std::cout << GREEN << "delta_t_slices_Write()" << DEF << std::endl;
   TDirectory *DeltaT_slices = RootOutputFile->mkdir("Delta_T_slices");
   DeltaT_slices->cd();
   hists->delta_t_slices_Write();
-
+  std::cout << GREEN << "delta_t_sec_pad_Write()" << DEF << std::endl;
   TDirectory *DeltaT_sec_pad = RootOutputFile->mkdir("Delta_T_sec_pad");
   DeltaT_sec_pad->cd();
   hists->delta_t_sec_pad_Write();
-
+  std::cout << GREEN << "delta_T_canvas()" << DEF << std::endl;
   TDirectory *Delta_T_canvases = RootOutputFile->mkdir("Delta_T_canvases");
   Delta_T_canvases->cd();
   hists->delta_T_canvas();
-
+  std::cout << GREEN << "Theta_CC_Write()" << DEF << std::endl;
   TDirectory *Theta_CC_hists = RootOutputFile->mkdir("Theta_CC_hists");
   Theta_CC_hists->cd();
   hists->Theta_CC_Write();
-
+  std::cout << GREEN << "CC_Write()" << DEF << std::endl;
   TDirectory *CC_hists = RootOutputFile->mkdir("CC_hists");
   CC_hists->cd();
   hists->CC_Write();
-
+  std::cout << GREEN << "CC_canvas()" << DEF << std::endl;
   TDirectory *CC_canvases = RootOutputFile->mkdir("CC_canvases");
   CC_canvases->cd();
   hists->CC_canvas();
-
+  std::cout << GREEN << "Fid_Write()" << DEF << std::endl;
   TDirectory *Fid_cuts = RootOutputFile->mkdir("Fid_cuts");
   Fid_cuts->cd();
   hists->Fid_Write();
-
+  std::cout << GREEN << "fid_canvas()" << DEF << std::endl;
   TDirectory *Fid_canvas = RootOutputFile->mkdir("Fid_canvas");
   Fid_canvas->cd();
   hists->fid_canvas();
-
+  std::cout << GREEN << "Done!!!" << DEF << std::endl;
   delete hists;
   // RootOutputFile->Write();
   RootOutputFile->Close();
