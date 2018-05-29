@@ -53,6 +53,7 @@ Histogram::~Histogram() {
   delete delta_t_mass_positron_PID;
   delete electron_fid_hist;
   delete EC_sampling_fraction;
+  delete EC_sampling_fraction_cut;
   delete Missing_Mass;
   delete Missing_Mass_square;
   delete Theta_CC;
@@ -568,6 +569,7 @@ void Histogram::CC_fill(int cc_sector, int cc_segment, int cc_pmt, int cc_nphe, 
 
   Theta_CC->Fill(cc_segment, theta_cc);
   Theta_CC_Sec[cc_sector - 1]->Fill(cc_segment, theta_cc);
+  Theta_CC_Sec_cut[cc_sector - 1]->Fill(cc_segment, theta_cc);
 }
 
 void Histogram::makeHists_CC() {
@@ -580,6 +582,9 @@ void Histogram::makeHists_CC() {
     sprintf(hname, "Theta_CC_sec%d", sec_i + 1);
     sprintf(htitle, "Theta CC sector %d", sec_i + 1);
     Theta_CC_Sec[sec_i] = new TH2D(hname, htitle, 20, 0.0, 20.0, 60, 0.0, 60.0);
+    sprintf(hname, "Theta_CC_sec_cut%d", sec_i + 1);
+    sprintf(htitle, "Theta CC sector cut %d", sec_i + 1);
+    Theta_CC_Sec_cut[sec_i] = new TH2D(hname, htitle, 20, 0.0, 20.0, 60, 0.0, 60.0);
     for (int pmt_i = 0; pmt_i < PMT; pmt_i++) {
       if (pmt_i == 0) L_R_C = "both";
       if (pmt_i == 1) L_R_C = "right";
@@ -606,6 +611,11 @@ void Histogram::Theta_CC_Write() {
     Theta_CC_Sec[sec_i]->SetYTitle("#theta_CC");
     Theta_CC_Sec[sec_i]->SetOption("COLZ");
     Theta_CC_Sec[sec_i]->Write();
+
+    Theta_CC_Sec_cut[sec_i]->SetXTitle("CC segment");
+    Theta_CC_Sec_cut[sec_i]->SetYTitle("#theta_CC");
+    Theta_CC_Sec_cut[sec_i]->SetOption("COLZ");
+    Theta_CC_Sec_cut[sec_i]->Write();
   }
   theta_cc_slice_fit();
 }
@@ -621,7 +631,7 @@ void Histogram::CC_Write() {
         cc_fits[sec_i][seg_i][pmt_i] = new Fits();
         cc_fits[sec_i][seg_i][pmt_i]->Set_min(40.0);
         cc_fits[sec_i][seg_i][pmt_i]->Set_max(200.0);
-        cc_fits[sec_i][seg_i][pmt_i]->Fit2Gaus(cc_hist[sec_i][seg_i][pmt_i]);
+        cc_fits[sec_i][seg_i][pmt_i]->FitLandau(cc_hist[sec_i][seg_i][pmt_i]);
         cc_hist[sec_i][seg_i][pmt_i]->SetYTitle("number photoelectrons");
         cc_hist[sec_i][seg_i][pmt_i]->Write();
         delete cc_fits[sec_i][seg_i][pmt_i];
@@ -806,6 +816,10 @@ void Histogram::makeHists_EC() {
     sprintf(hname, "ec_%d", n);
     sprintf(htitle, "Sampling Fraction %d", n);
     EC_hist[n] = new TH1D(hname, htitle, bins, EC_min, EC_max);
+
+    sprintf(hname, "ec_cut_%d", n);
+    sprintf(htitle, "Sampling Fraction cut %d", n);
+    EC_hist_cut[n] = new TH1D(hname, htitle, bins, EC_min, EC_max);
   }
 }
 
@@ -816,6 +830,17 @@ void Histogram::EC_fill(double etot, double momentum) {
   for (int n = 0; n < num_points; n++) {
     if (momentum > n * bin_width && momentum <= (n + 1) * bin_width) {
       EC_hist[n]->Fill(sampling_frac);
+    }
+  }
+}
+
+void Histogram::EC_cut_fill(double etot, double momentum) {
+  double sampling_frac = etot / momentum;
+  EC_sampling_fraction_cut->Fill(momentum, sampling_frac);
+
+  for (int n = 0; n < num_points; n++) {
+    if (momentum > n * bin_width && momentum <= (n + 1) * bin_width) {
+      EC_hist_cut[n]->Fill(sampling_frac);
     }
   }
 }
@@ -900,6 +925,9 @@ void Histogram::EC_slices_Write() {
     EC_fit[n].FitGaus(EC_hist[n]);
     EC_hist[n]->SetYTitle("Sampling Fraction");
     EC_hist[n]->Write();
+
+    EC_hist_cut[n]->SetYTitle("Sampling Fraction");
+    EC_hist_cut[n]->Write();
   }
 }
 
@@ -908,6 +936,12 @@ void Histogram::EC_Write() {
   EC_sampling_fraction->SetYTitle("Sampling Fraction");
   EC_sampling_fraction->SetOption("COLZ");
   EC_sampling_fraction->Write();
+
+  EC_sampling_fraction_cut->SetXTitle("Momentum (GeV)");
+  EC_sampling_fraction_cut->SetYTitle("Sampling Fraction");
+  EC_sampling_fraction_cut->SetOption("COLZ");
+  EC_sampling_fraction_cut->Write();
+
   EC_slice_fit();
 }
 

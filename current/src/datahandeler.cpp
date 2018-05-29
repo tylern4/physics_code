@@ -184,10 +184,14 @@ void DataHandeler::file_handeler(std::string fin) {
     electron_cuts &= ((int)dc[0] > 0);                             // ``` ``` ``` dc
     electron_cuts &= ((int)dc_stat[dc[0] - 1] > 0);
     electron_cuts &= ((int)cc[0] > 0);
-    double sf = etot[ec[0] - 1] / p[0];
-    electron_cuts &= (sf > 0.2 && sf < 0.4);
-    electron_cuts &= (p[0] > MIN_P_CUT);  // Minimum Momentum cut????
+
     if (electron_cuts) hists->EC_fill(etot[ec[0] - 1], p[0]);
+
+    // Start of strict cuts
+    electron_cuts &= (p[0] > MIN_P_CUT);  // Minimum Momentum cut????
+    double sf = (double)etot[ec[0] - 1] / (double)p[0];
+    electron_cuts &= (sf > 0.2 && sf < 0.4);
+    electron_cuts &= (nphe[cc[0] - 1] > 40);
 
     if (electron_cuts) {
       int cc_sector = cc_sect[cc[0] - 1];
@@ -198,7 +202,7 @@ void DataHandeler::file_handeler(std::string fin) {
 
       theta_cc = theta_cc / D2R;
       hists->CC_fill(cc_sector, cc_segment, cc_pmt, cc_nphe, theta_cc);
-
+      hists->EC_cut_fill(etot[ec[0] - 1], p[0]);
       hists->Fill_Beam_Position((double)dc_vx[dc[0] - 1], (double)dc_vy[dc[0] - 1], (double)dc_vz[dc[0] - 1]);
       if (first_run) {
         is_electron = elec_vec;

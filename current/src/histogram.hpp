@@ -6,15 +6,15 @@
 
 #ifndef HISTOGRAM_H
 #define HISTOGRAM_H
-#include "TH2.h"
-#include "TH1.h"
-#include "THnSparse.h"
-#include "TGraph.h"
-#include "TF1.h"
-#include "fits.hpp"
-#include "makeHeader.hpp"
 #include <fstream>
 #include "TDirectory.h"
+#include "TF1.h"
+#include "TGraph.h"
+#include "TH1.h"
+#include "TH2.h"
+#include "THnSparse.h"
+#include "fits.hpp"
+#include "makeHeader.hpp"
 
 class Histogram {
  private:
@@ -95,32 +95,34 @@ class Histogram {
   TH2D *delta_t_sec_pad_hist[3][sc_sector_num][sc_paddle_num];
   TH2D *delta_t_mass_P =
       new TH2D("delta_t_mass_P", "#Deltat assuming mass of proton", bins, p_min, p_max, bins, Dt_min, Dt_max);
-  TH2D *delta_t_mass_P_PID = new TH2D("delta_t_mass_P_PID", "#Deltat assuming mass of proton with PID proton", bins, p_min,
-                                      p_max, bins, Dt_min, Dt_max);
+  TH2D *delta_t_mass_P_PID = new TH2D("delta_t_mass_P_PID", "#Deltat assuming mass of proton with PID proton", bins,
+                                      p_min, p_max, bins, Dt_min, Dt_max);
 
   TH2D *delta_t_mass_PIP =
       new TH2D("delta_t_mass_PIP", "#Deltat assuming mass of #pi^{+}", bins, p_min, p_max, bins, Dt_min, Dt_max);
-  TH2D *delta_t_mass_PIP_PID = new TH2D("delta_t_mass_PIP_PID", "#Deltat assuming mass of #pi^{+} with PID #pi^{+}", bins,
-                                        p_min, p_max, bins, Dt_min, Dt_max);
+  TH2D *delta_t_mass_PIP_PID = new TH2D("delta_t_mass_PIP_PID", "#Deltat assuming mass of #pi^{+} with PID #pi^{+}",
+                                        bins, p_min, p_max, bins, Dt_min, Dt_max);
 
   TH2D *delta_t_mass_PIM =
       new TH2D("delta_t_mass_PIM", "#Deltat assuming mass of #pi^{-}", bins, p_min, p_max, bins, Dt_min, Dt_max);
-  TH2D *delta_t_mass_PIM_PID = new TH2D("delta_t_mass_PIM_PID", "#Deltat assuming mass of #pi^{-} with PID #pi^{-}", bins,
-                                        p_min, p_max, bins, Dt_min, Dt_max);
+  TH2D *delta_t_mass_PIM_PID = new TH2D("delta_t_mass_PIM_PID", "#Deltat assuming mass of #pi^{-} with PID #pi^{-}",
+                                        bins, p_min, p_max, bins, Dt_min, Dt_max);
 
   TH2D *delta_t_mass_electron =
       new TH2D("delta_t_mass_electron", "#Deltat assuming mass of e^{-}", bins, p_min, p_max, bins, Dt_min, Dt_max);
-  TH2D *delta_t_mass_electron_PID = new TH2D("delta_t_mass_electron_PID", "#Deltat assuming mass of e^{-} with PID e^{-}",
-                                             bins, p_min, p_max, bins, Dt_min, Dt_max);
+  TH2D *delta_t_mass_electron_PID =
+      new TH2D("delta_t_mass_electron_PID", "#Deltat assuming mass of e^{-} with PID e^{-}", bins, p_min, p_max, bins,
+               Dt_min, Dt_max);
 
   TH2D *delta_t_mass_positron =
       new TH2D("delta_t_mass_postitron", "#Deltat assuming mass of e^{+}", bins, p_min, p_max, bins, Dt_min, Dt_max);
-  TH2D *delta_t_mass_positron_PID = new TH2D("delta_t_mass_postitron_PID", "#Deltat assuming mass of e^{+} with PID e^{+}",
-                                             bins, p_min, p_max, bins, Dt_min, Dt_max);
+  TH2D *delta_t_mass_positron_PID =
+      new TH2D("delta_t_mass_postitron_PID", "#Deltat assuming mass of e^{+} with PID e^{+}", bins, p_min, p_max, bins,
+               Dt_min, Dt_max);
   // Delta T
 
   // cc hist
-  int bins_CC = 50;
+  int bins_CC = 100;
   double CC_min = 0;
   double CC_max = 250;
   char *L_R_C;
@@ -140,6 +142,7 @@ class Histogram {
 
   TH2D *Theta_CC = new TH2D("Theta_CC", "Theta_CC", 20, 0.0, 20.0, 60, 0.0, 60.0);
   TH2D *Theta_CC_Sec[6];
+  TH2D *Theta_CC_Sec_cut[6];
   // cc hist
 
   // fiducial
@@ -152,7 +155,8 @@ class Histogram {
   static const int fid_slices = 100;
   std::vector<TH2D *> electron_fid_sec_hist;
   TH1D *electron_fid_sec_slice[sector_num][fid_slices];
-  TH2D *electron_fid_hist = new TH2D("electron_fid", "electron_fid", bins, phi_min, phi_max, bins, theta_min, theta_max);
+  TH2D *electron_fid_hist =
+      new TH2D("electron_fid", "electron_fid", bins, phi_min, phi_max, bins, theta_min, theta_max);
 
   TH2D *hadron_fid_sec_hist[3][sector_num];
   TH1D *hadron_fid_sec_slice[sector_num][fid_slices];
@@ -164,7 +168,10 @@ class Histogram {
   double EC_max = 1;
   TH2D *EC_sampling_fraction =
       new TH2D("EC_sampling_fraction", "EC_sampling_fraction", bins, p_min, p_max, bins, EC_min, EC_max);
+  TH2D *EC_sampling_fraction_cut =
+      new TH2D("EC_sampling_fraction_cut", "EC_sampling_fraction_cut", bins, p_min, p_max, bins, EC_min, EC_max);
   TH1D *EC_hist[num_points];
+  TH1D *EC_hist_cut[num_points];
   // EC hists
 
   // Beam Position
@@ -182,7 +189,7 @@ class Histogram {
   Histogram();
   ~Histogram();
   TH1D *Missing_Mass = new TH1D("Missing_Mass", "Missing Mass", bins_MM, MM_min, MM_max);
-  TH1D *Missing_Mass_square = new TH1D("Missing_Mass_square", "Missing Mass square", bins_MM, MM_min, MM_max * MM_max);
+  TH1D *Missing_Mass_square = new TH1D("Missing_Mass_square", "Missing Mass square", bins_MM, MM_min, MM_max *MM_max);
   // W and Q^2
   void Fill_proton_WQ2(double W, double Q2);
   void Fill_single_pi_WQ2(double W, double Q2);
@@ -243,6 +250,7 @@ class Histogram {
   void makeHists_EC();
   void EC_slices_Write();
   void EC_fill(double etot, double momentum);
+  void EC_cut_fill(double etot, double momentum);
   void EC_slice_fit();
   void EC_Write();
 
