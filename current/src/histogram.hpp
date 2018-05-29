@@ -122,16 +122,16 @@ class Histogram {
   // Delta T
 
   // cc hist
-  int bins_CC = 100;
+  int bins_CC = 50;
   double CC_min = 0;
   double CC_max = 250;
   char *L_R_C;
-  int sector = 6;
-  int segment = 18;
-  int PMT = 3;
+  static const int sector = 6;
+  static const int segment = 18;
+  static const int PMT = 3;
 
-  TH1D *cc_hist[6][18][3];
-  TH1D *cc_hist_allSeg[6][3];
+  TH1D *cc_hist[sector][segment][PMT];
+  TH1D *cc_hist_allSeg[sector][PMT];
   static const Int_t ndims_cc_sparse = 4;
   Int_t bins_cc_sparse[ndims_cc_sparse] = {sector, segment, PMT, bins_CC};
   Double_t xmin_cc_sparse[ndims_cc_sparse] = {0.0, 0.0, -2.0, CC_min};
@@ -141,8 +141,8 @@ class Histogram {
       new THnSparseD("cc_sparse", "Histogram", ndims_cc_sparse, bins_cc_sparse, xmin_cc_sparse, xmax_cc_sparse);
 
   TH2D *Theta_CC = new TH2D("Theta_CC", "Theta_CC", 20, 0.0, 20.0, 60, 0.0, 60.0);
-  TH2D *Theta_CC_Sec[6];
-  TH2D *Theta_CC_Sec_cut[6];
+  TH2D *Theta_CC_Sec[sector];
+  TH2D *Theta_CC_Sec_cut[sector];
   // cc hist
 
   // fiducial

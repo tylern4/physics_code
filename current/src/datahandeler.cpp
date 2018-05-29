@@ -34,10 +34,10 @@ DataHandeler::~DataHandeler() {
   Fits *MM_neutron_cut = new Fits();
   MM_neutron_cut->Set_min(0.88);
   MM_neutron_cut->Set_max(1.0);
-  // MM_neutron_cut->FitBreitWigner(hists->Missing_Mass);
+  MM_neutron_cut->FitBreitWigner(hists->Missing_Mass);
   // MM_neutron_cut->FitGaus(hists->Missing_Mass);
   // MM_neutron_cut->Fit2Gaus(hists->Missing_Mass);
-  MM_neutron_cut->FitLandau(hists->Missing_Mass);
+  // MM_neutron_cut->FitLandau(hists->Missing_Mass);
 
   Header *MM_header = new Header("../src/missing_mass_gaussians.hpp", "MM");
   MM_header->WriteGaussian("mm", 1, MM_neutron_cut->Get_mean(), MM_neutron_cut->Get_sigma());
@@ -45,10 +45,10 @@ DataHandeler::~DataHandeler() {
   Fits *MissingMassSquare_cut = new Fits();
   MissingMassSquare_cut->Set_min(0.5);
   MissingMassSquare_cut->Set_max(1.1);
-  // MissingMassSquare_cut->FitBreitWigner(hists->Missing_Mass_square);
+  MissingMassSquare_cut->FitBreitWigner(hists->Missing_Mass_square);
   // MissingMassSquare_cut->FitGaus(hists->Missing_Mass_square);
   // MissingMassSquare_cut->Fit2Gaus(hists->Missing_Mass_square);
-  MissingMassSquare_cut->FitLandau(hists->Missing_Mass_square);
+  // MissingMassSquare_cut->FitLandau(hists->Missing_Mass_square);
   MM_header->WriteGaussian("mm_square", 1, MissingMassSquare_cut->Get_mean(), MissingMassSquare_cut->Get_sigma());
   delete MM_header;
   delete MM_neutron_cut;

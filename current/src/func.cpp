@@ -33,6 +33,12 @@ double func::fiducial_phi(double *x, double *par) {
 }
 
 double func::breit_wigner(double *x, double *par) { return par[2] * TMath::BreitWigner(x[0], par[0], par[1]); }
+
+double func::gausian(double *x, double *par) {
+  double g1 = par[2] * TMath::Gaus(x[0], par[0], par[1], true);
+  return g1;
+}
+
 double func::gausian2(double *x, double *par) {
   double g1 = par[2] * TMath::Gaus(x[0], par[0], par[1], true);
   double g2 = par[5] * TMath::Gaus(x[0], par[3], par[4], true);

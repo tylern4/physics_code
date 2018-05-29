@@ -492,15 +492,17 @@ void Histogram::delta_t_Fill(double momentum, int charge, double delta_t_proton,
 }
 
 void Histogram::delta_t_slices_Write() {
-  Fits delta_t_cut[3][num_points];
+  Fits *delta_t_cut[3][num_points];
   double fit_dt_min = -1.0;
   double fit_dt_max = 1.0;
   for (int j = 0; j < 3; j++) {
     for (int jj = 0; jj < num_points; jj++) {
       if (j != 2) {
-        delta_t_cut[j][num_points].Set_min(fit_dt_min);
-        delta_t_cut[j][num_points].Set_max(fit_dt_max);
-        delta_t_cut[j][num_points].FitGaus(delta_t_hist[j][jj]);
+        delta_t_cut[j][jj] = new Fits();
+        delta_t_cut[j][jj].Set_min(fit_dt_min);
+        delta_t_cut[j][jj].Set_max(fit_dt_max);
+        delta_t_cut[j][jj].FitGaus(delta_t_hist[j][jj]);
+        delete delta_t_cut[j][jj];
       }
 
       delta_t_hist[j][jj]->SetYTitle("#Deltat");
@@ -629,9 +631,9 @@ void Histogram::CC_Write() {
       cc_hist_allSeg[sec_i][pmt_i]->Write();
       for (int seg_i = 0; seg_i < segment; seg_i++) {
         cc_fits[sec_i][seg_i][pmt_i] = new Fits();
-        cc_fits[sec_i][seg_i][pmt_i]->Set_min(40.0);
-        cc_fits[sec_i][seg_i][pmt_i]->Set_max(200.0);
-        cc_fits[sec_i][seg_i][pmt_i]->FitLandau(cc_hist[sec_i][seg_i][pmt_i]);
+        cc_fits[sec_i][seg_i][pmt_i]->Set_min(30.0);
+        cc_fits[sec_i][seg_i][pmt_i]->Set_max(250.0);
+        cc_fits[sec_i][seg_i][pmt_i]->FitGaus(cc_hist[sec_i][seg_i][pmt_i]);
         cc_hist[sec_i][seg_i][pmt_i]->SetYTitle("number photoelectrons");
         cc_hist[sec_i][seg_i][pmt_i]->Write();
         delete cc_fits[sec_i][seg_i][pmt_i];
@@ -758,7 +760,7 @@ void Histogram::Fill_hadron_fid(double theta, double phi, int sector, int id) {
 
 void Histogram::Fid_Write() {
   int slice_width = (bins / fid_slices);
-  Fits SliceFit[sector_num][fid_slices];
+  Fits *SliceFit[sector_num][fid_slices];
 
   electron_fid_hist->SetYTitle("#theta");
   electron_fid_hist->SetXTitle("#phi");
@@ -789,9 +791,11 @@ void Histogram::Fid_Write() {
       electron_fid_sec_slice[sec][slice] =
           electron_fid_sec_hist[sec]->ProjectionX(hname, slice_width * slice, slice_width * slice + (slice_width - 1));
       electron_fid_sec_slice[sec][slice]->Rebin(10);
+      SliceFit[sec][slice] = new Fits();
       SliceFit[sec][slice].Set_min(min_phi[sec]);
       SliceFit[sec][slice].Set_max(max_phi[sec]);
       SliceFit[sec][slice].FitGenNormal(electron_fid_sec_slice[sec][slice]);
+      delete SliceFit[sec][slice];
     }
   }
 }
@@ -916,16 +920,17 @@ void Histogram::EC_slice_fit() {
 }
 
 void Histogram::EC_slices_Write() {
-  Fits EC_fit[num_points];
+  Fits *EC_fit[num_points];
   double fit_ec_min = -1.0;
   double fit_ec_max = 1.0;
   for (int n = 0; n < num_points; n++) {
+    EC_fit[n] = new Fits();
     EC_fit[n].Set_min(fit_ec_min);
     EC_fit[n].Set_max(fit_ec_max);
     EC_fit[n].FitGaus(EC_hist[n]);
     EC_hist[n]->SetYTitle("Sampling Fraction");
     EC_hist[n]->Write();
-
+    delete EC_fit[n];
     EC_hist_cut[n]->SetYTitle("Sampling Fraction");
     EC_hist_cut[n]->Write();
   }
