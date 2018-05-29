@@ -645,12 +645,13 @@ void Histogram::CC_Write() {
 
 void Histogram::theta_cc_slice_fit() {
   Header *fit_functions = new Header("../src/fit_theta_cc.hpp", "FF");
-  // TF1 *peak = new TF1("peak", func::gausian, 10, 60, 4);
-  TF1 *peak = new TF1("peak", "gaus", 10, 60);
+  // TF1 *peak = new TF1("peak", func::landau, 0, 60, 3);
+  TF1 *peak = new TF1("peak", "landau", 10, 60);
   Theta_CC->FitSlicesY(peak, 0, -1, 20, "QRM+");
   TH1D *Theta_CC_0 = (TH1D *)gDirectory->Get("Theta_CC_0");
   TH1D *Theta_CC_1 = (TH1D *)gDirectory->Get("Theta_CC_1");
   TH1D *Theta_CC_2 = (TH1D *)gDirectory->Get("Theta_CC_2");
+
   double x[20];
   double y_plus[20];
   double y_minus[20];
@@ -670,8 +671,8 @@ void Histogram::theta_cc_slice_fit() {
 
   TGraph *CC_P = new TGraph(num, x, y_plus);
   TGraph *CC_M = new TGraph(num, x, y_minus);
-  TF1 *Theta_CC_Pos_fit = new TF1("Theta_CC_Pos_fit", func::theta_cc_fit, 0, 20, 3);
-  TF1 *Theta_CC_Neg_fit = new TF1("Theta_CC_Neg_fit", func::theta_cc_fit, 0, 20, 3);
+  TF1 *Theta_CC_Pos_fit = new TF1("Theta_CC_Pos_fit", func::pol1, 0, 20, 2);
+  TF1 *Theta_CC_Neg_fit = new TF1("Theta_CC_Neg_fit", func::pol1, 0, 20, 2);
   CC_P->Fit(Theta_CC_Pos_fit, "QRM+", "", 0, 20);
   CC_M->Fit(Theta_CC_Neg_fit, "QRM+", "", 0, 20);
 
