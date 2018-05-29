@@ -191,19 +191,9 @@ void DataHandeler::file_handeler(std::string fin) {
     electron_cuts &= (p[0] > MIN_P_CUT);  // Minimum Momentum cut????
     double sf = (double)etot[ec[0] - 1] / (double)p[0];
     electron_cuts &= (sf > 0.2 && sf < 0.4);
-    electron_cuts &= (nphe[cc[0] - 1] > 40);
+    // electron_cuts &= (nphe[cc[0] - 1] > 40);
 
     if (electron_cuts) {
-      int cc_sector = cc_sect[cc[0] - 1];
-      int cc_segment = (cc_segm[0] % 1000) / 10;
-      int cc_pmt = cc_segm[0] / 1000 - 1;
-      int cc_nphe = nphe[cc[0] - 1];
-      double theta_cc = TMath::ACos(TMath::Abs(p[0] * cz[0]) / TMath::Abs(p[0]));
-
-      theta_cc = theta_cc / D2R;
-      hists->CC_fill(cc_sector, cc_segment, cc_pmt, cc_nphe, theta_cc);
-      hists->EC_cut_fill(etot[ec[0] - 1], p[0]);
-      hists->Fill_Beam_Position((double)dc_vx[dc[0] - 1], (double)dc_vy[dc[0] - 1], (double)dc_vz[dc[0] - 1]);
       if (first_run) {
         is_electron = elec_vec;
         is_electron->at(0) = true;
@@ -217,6 +207,17 @@ void DataHandeler::file_handeler(std::string fin) {
         }
       }
 
+      int cc_sector = cc_sect[cc[0] - 1];
+      int cc_segment = (cc_segm[0] % 1000) / 10;
+      int cc_pmt = cc_segm[0] / 1000 - 1;
+      int cc_nphe = nphe[cc[0] - 1];
+      double theta_cc = TMath::ACos(TMath::Abs(p[0] * cz[0]) / TMath::Abs(p[0]));
+
+      theta_cc = theta_cc / D2R;
+      hists->CC_fill(cc_sector, cc_segment, cc_pmt, cc_nphe, theta_cc);
+      hists->EC_cut_fill(etot[ec[0] - 1], p[0]);
+      hists->Fill_Beam_Position((double)dc_vx[dc[0] - 1], (double)dc_vy[dc[0] - 1], (double)dc_vz[dc[0] - 1]);
+
       // Setup scattered electron 4 vector
       TLorentzVector e_mu_prime = physics::fourVec(p[0], cx[0], cy[0], cz[0], MASS_E);
 
@@ -227,13 +228,11 @@ void DataHandeler::file_handeler(std::string fin) {
       std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, gpart);
       delete dt;
 
-      if (electron_cuts) {
-        theta = physics::theta_calc(cz[0]);
-        phi = physics::phi_calc(cx[0], cy[0]);
-        sector = physics::get_sector(phi);
+      theta = physics::theta_calc(cz[0]);
+      phi = physics::phi_calc(cx[0], cy[0]);
+      sector = physics::get_sector(phi);
+      hists->Fill_electron_fid(theta, phi, sector);
 
-        hists->Fill_electron_fid(theta, phi, sector);
-      }
       if (first_run) {
         W = physics::W_calc(*e_mu, e_mu_prime);
         Q2 = physics::Q2_calc(*e_mu, e_mu_prime);
@@ -244,7 +243,7 @@ void DataHandeler::file_handeler(std::string fin) {
       num_of_proton = num_of_pis = 0;
       for (int part_num = 1; part_num < gpart; part_num++) {
         if (p[part_num] == 0) continue;
-        if (is_proton->at(part_num) == is_pip->at(part_num)) continue;
+        // if (is_proton->at(part_num) == is_pip->at(part_num)) continue;
 
         theta = physics::theta_calc(cz[part_num]);
         phi = physics::phi_calc(cx[part_num], cy[part_num]);
