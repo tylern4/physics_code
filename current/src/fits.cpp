@@ -21,9 +21,9 @@ double Fits::Get_FWHM() { return FWHM; }
 
 void Fits::FitGaus(TH1D *hist) {
   if (hist->GetEntries() > 1000) {
-    if (hist->GetEntries() > 50000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
-    // TF1 *fitFunc = new TF1("fitFunc", func::gausian, min_value, max_value, 3);
-    TF1 *fitFunc = new TF1("fitFunc", "gaus", min_value, max_value);
+    // if (hist->GetEntries() > 50000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+    TF1 *fitFunc = new TF1("fitFunc", func::gausian, min_value, max_value, 3);
+    // TF1 *fitFunc = new TF1("fitFunc", "gaus", min_value, max_value);
     fitFunc->SetLineColor(2);
     par_max = std::isnan(hist->GetMaximum()) ? 0 : hist->GetMaximum();
     par_mean = std::isnan(hist->GetMean()) ? 0 : hist->GetMean();
@@ -31,16 +31,18 @@ void Fits::FitGaus(TH1D *hist) {
     fitFunc->SetParameter(0, par_max);
     fitFunc->SetParameter(1, par_mean);
     fitFunc->SetParameter(2, par_RMS);
-    fitFunc->SetParNames("height", "mean", "#sigma");
+    fitFunc->SetParNames("constant", "mean", "#sigma");
 
-    hist->Fit("fitFunc", "QM+", "", min_value, max_value);
+    hist->Fit("fitFunc", "QM0+", "", min_value, max_value);
+    for (size_t i = 0; i < 10; i++) {
+      par_mean = std::isnan(fitFunc->GetParameter("mean")) ? 0 : fitFunc->GetParameter("mean");
+      par_RMS = std::isnan(fitFunc->GetParameter("#sigma")) ? 0 : fitFunc->GetParameter("#sigma");
+      fitFunc->SetParameter(0, par_max);
+      fitFunc->SetParameter(1, par_mean);
+      fitFunc->SetParameter(2, par_RMS);
+      hist->Fit("fitFunc", "QM0+", "", min_value, max_value);
+    }
 
-    par_mean = std::isnan(fitFunc->GetParameter("mean")) ? 0 : fitFunc->GetParameter("mean");
-    par_RMS = std::isnan(fitFunc->GetParameter("#sigma")) ? 0 : fitFunc->GetParameter("#sigma");
-
-    fitFunc->SetParameter(0, par_max);
-    fitFunc->SetParameter(1, par_mean);
-    fitFunc->SetParameter(2, par_RMS);
     hist->Fit("fitFunc", "QM+", "", min_value, max_value);
 
     mean = fitFunc->GetParameter("mean");
@@ -206,7 +208,7 @@ double Fits::fiducial_phi_hi(double theta_e, double theta_e_min, double k, doubl
 }
 
 void Fits::FitFiducial_lo(TH2D *hist2d) {
-  ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   a = b = c = d = 0.5;
   TF1 *fitFunc_lo = new TF1("fitFunc_lo",
                             "-[0]*TMath::Power(TMath::Sin((x-[1])*0.01745),"
@@ -233,7 +235,7 @@ void Fits::FitFiducial_lo(TH2D *hist2d) {
 }
 
 void Fits::FitFiducial_hi(TH2D *hist2d) {
-  ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   a = b = c = d = 0.5;
   TF1 *fitFunc_hi = new TF1("fitFunc_hi",
                             "[0]*TMath::Power(TMath::Sin((x-[1])*"
@@ -260,7 +262,7 @@ void Fits::FitFiducial_hi(TH2D *hist2d) {
 }
 
 void Fits::FitFiducial(TH2D *hist2d) {
-  ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   a = b = c = d = 0.5;
   TF1 *fitFunc = new TF1("fitFunc",
                          "[0]*TMath::Power(TMath::Sin((x-[1])*"
