@@ -18,6 +18,7 @@
 
 class Fits {
  private:
+  int color = 2;
   double par_max, par_mean, par_FWHM, par_RMS;
   double mean, sigma, FWHM;
   double min_value = -1000, max_value = 1000;
@@ -35,6 +36,7 @@ class Fits {
   Fits();
   ~Fits();
   void FitGaus(TH1D *hist);
+  void FitLandauGaus(TH1D *hist);
   void Fit2Gaus(TH1D *hist);
   void FitLandau(TH1D *hist);
   void FitPoly_1D(TH1D *hist);
@@ -49,6 +51,7 @@ class Fits {
   void FitBreitWigner(TH1D *hist);
   void Set_min(double val);
   void Set_max(double val);
+  void Set_lineColor(int val);
   double Get_min_edge();
   double Get_max_edge();
   double Get_sigma();
