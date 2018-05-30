@@ -24,7 +24,7 @@ void Fits::FitGaus(TH1D *hist) {
     // if (hist->GetEntries() > 50000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
     TF1 *fitFunc = new TF1("fitFunc", func::gausian, min_value, max_value, 3);
     // TF1 *fitFunc = new TF1("fitFunc", "gaus", min_value, max_value);
-    fitFunc->SetLineColor(2);
+    fitFunc->SetLineColor(8);
     par_max = std::isnan(hist->GetMaximum()) ? 0 : hist->GetMaximum();
     par_mean = std::isnan(hist->GetMean()) ? 0 : hist->GetMean();
     par_RMS = std::isnan(hist->GetRMS()) ? 0 : hist->GetRMS();

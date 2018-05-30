@@ -650,62 +650,83 @@ void Histogram::CC_Write() {
 }
 
 void Histogram::theta_cc_slice_fit() {
-  Header *fit_functions = new Header("../src/fit_theta_cc.hpp", "FF");
-  // TF1 *peak = new TF1("peak", func::landau, 0, 60, 3);
-  TF1 *peak = new TF1("peak", "landau", 10, 60);
-  Theta_CC->FitSlicesY(peak, 0, -1, 20, "QRM+");
-  TH1D *Theta_CC_0 = (TH1D *)gDirectory->Get("Theta_CC_0");
-  TH1D *Theta_CC_1 = (TH1D *)gDirectory->Get("Theta_CC_1");
-  TH1D *Theta_CC_2 = (TH1D *)gDirectory->Get("Theta_CC_2");
+  TCanvas *Theta_CC_canvas[sector_num];
 
-  double x[20];
-  double y_plus[20];
-  double y_minus[20];
-  int num = 0;
+  TF1 *peak[sector_num];
+  TH1D *Theta_CC_0[sector_num];
+  TH1D *Theta_CC_1[sector_num];
+  TH1D *Theta_CC_2[sector_num];
 
-  for (int i = 0; i < 20; i++) {
-    if (Theta_CC_1->GetBinContent(i) != 0) {
-      // Get momentum from bin center
-      x[num] = (double)Theta_CC_1->GetBinCenter(i);
-      // mean + 3sigma
-      y_plus[num] = (double)Theta_CC_1->GetBinContent(i) + (3 * (double)Theta_CC_2->GetBinContent(i));  //(N_SIGMA)
-      // mean - 3simga
-      y_minus[num] = (double)Theta_CC_1->GetBinContent(i) - (3 * (double)Theta_CC_2->GetBinContent(i));  //(N_SIGMA)
-      num++;
+  TGraph *CC_P[sector_num];
+  TGraph *CC_M[sector_num];
+  TF1 *Theta_CC_Pos_fit[sector_num];
+  TF1 *Theta_CC_Neg_fit[sector_num];
+  char get_name[100];
+  char can_name[100];
+  char can_title[100];
+
+  for (int sec_i = 0; sec_i < sector_num; sec_i++) {
+    // TF1 *peak = new TF1("peak", func::landau, 0, 60, 3);
+    peak[sec_i] = new TF1("peak", "landau", 10, 60);
+
+    Theta_CC_Sec[sec_i]->FitSlicesY(peak[sec_i], 0, -1, 20, "QRM+");
+    sprintf(get_name, "Theta_CC_sec%d_%d", sec_i + 1, 0);
+    Theta_CC_0[sec_i] = (TH1D *)gDirectory->Get(get_name);
+    sprintf(get_name, "Theta_CC_sec%d_%d", sec_i + 1, 1);
+    Theta_CC_1[sec_i] = (TH1D *)gDirectory->Get(get_name);
+    sprintf(get_name, "Theta_CC_sec%d_%d", sec_i + 1, 2);
+    Theta_CC_2[sec_i] = (TH1D *)gDirectory->Get(get_name);
+
+    double x[20];
+    double y_plus[20];
+    double y_minus[20];
+    int num = 0;
+    for (int i = 0; i < 20; i++) {
+      if (Theta_CC_1[sec_i]->GetBinContent(i) != 0) {
+        // Get momentum from bin center
+        x[num] = (double)Theta_CC_1[sec_i]->GetBinCenter(i);
+        // mean + 3sigma
+        y_plus[num] = (double)Theta_CC_1[sec_i]->GetBinContent(i) +
+                      (3 * (double)Theta_CC_2[sec_i]->GetBinContent(i));  //(N_SIGMA)
+        // mean - 3simga
+        y_minus[num] = (double)Theta_CC_1[sec_i]->GetBinContent(i) -
+                       (3 * (double)Theta_CC_2[sec_i]->GetBinContent(i));  //(N_SIGMA)
+        num++;
+      }
     }
+
+    CC_P[sec_i] = new TGraph(num, x, y_plus);
+    CC_M[sec_i] = new TGraph(num, x, y_minus);
+    sprintf(get_name, "Theta_CC_sec%d_pos_fit", sec_i + 1);
+    // Theta_CC_Pos_fit[sec_i] = new TF1(get_name, func::pol1, 0, 14, 2);
+    Theta_CC_Pos_fit[sec_i] = new TF1(get_name, func::theta_cc_fit, 1, 14, 4);
+    Theta_CC_Pos_fit[sec_i]->SetParNames("intercept", "slope", "a", "exp^c*x");
+    Theta_CC_Pos_fit[sec_i]->SetParLimits(3, 0, 10);
+
+    sprintf(get_name, "Theta_CC_sec%d_neg_fit", sec_i + 1);
+    // Theta_CC_Neg_fit[sec_i] = new TF1(get_name, func::pol1, 0, 14, 2);
+    Theta_CC_Neg_fit[sec_i] = new TF1(get_name, func::theta_cc_fit, 1, 14, 4);
+    Theta_CC_Neg_fit[sec_i]->SetParNames("intercept", "slope", "a", "exp^c*x");
+    Theta_CC_Neg_fit[sec_i]->SetParLimits(3, 0, 10);
+    CC_P[sec_i]->Fit(Theta_CC_Pos_fit[sec_i], "QRM+", "", 1, 14);
+    CC_M[sec_i]->Fit(Theta_CC_Neg_fit[sec_i], "QRM+", "", 1, 14);
+
+    sprintf(can_name, "Theta_CC_sec%d", sec_i + 1);
+    sprintf(can_title, "Theta CC sec_i %d", sec_i + 1);
+    Theta_CC_canvas[sec_i] = new TCanvas(can_name, can_title, 1280, 720);
+    Theta_CC_canvas[sec_i]->cd();
+    Theta_CC_Sec[sec_i]->Draw();
+    Theta_CC_Pos_fit[sec_i]->Draw("same");
+    Theta_CC_Neg_fit[sec_i]->Draw("same");
+    CC_P[sec_i]->Draw("*same");
+    CC_M[sec_i]->Draw("*same");
+    Theta_CC_canvas[sec_i]->Write();
+
+    delete peak[sec_i];
+    delete Theta_CC_0[sec_i];
+    delete Theta_CC_1[sec_i];
+    delete Theta_CC_2[sec_i];
   }
-
-  TGraph *CC_P = new TGraph(num, x, y_plus);
-  TGraph *CC_M = new TGraph(num, x, y_minus);
-  TF1 *Theta_CC_Pos_fit = new TF1("Theta_CC_Pos_fit", func::pol1, 0, 20, 2);
-  TF1 *Theta_CC_Neg_fit = new TF1("Theta_CC_Neg_fit", func::pol1, 0, 20, 2);
-  CC_P->Fit(Theta_CC_Pos_fit, "QRM+", "", 0, 20);
-  CC_M->Fit(Theta_CC_Neg_fit, "QRM+", "", 0, 20);
-
-  TCanvas *Theta_CC_canvas = new TCanvas("Theta_CC_canvas", "Theta cc canvas", 1280, 720);
-  Theta_CC_canvas->cd();
-  Theta_CC->Draw();
-  Theta_CC_Pos_fit->Draw("same");
-  Theta_CC_Neg_fit->Draw("same");
-  CC_P->Draw("*same");
-  CC_M->Draw("*same");
-  Theta_CC_canvas->Write();
-
-  fit_functions->NewFunction();
-  fit_functions->Set_RetrunType("double");
-  fit_functions->Set_FuncName("Theta_CC_Pos_fit");
-  fit_functions->Set_FuncInputs("double x");
-  fit_functions->Set_Function(Theta_CC_Pos_fit->GetExpFormula("P"));
-  fit_functions->WriteFunction();
-
-  fit_functions->NewFunction();
-  fit_functions->Set_RetrunType("double");
-  fit_functions->Set_FuncName("Theta_CC_Neg_fit");
-  fit_functions->Set_FuncInputs("double x");
-  fit_functions->Set_Function(Theta_CC_Neg_fit->GetExpFormula("M"));
-  fit_functions->WriteFunction();
-
-  delete fit_functions;
 }
 
 void Histogram::CC_canvas() {
@@ -733,16 +754,17 @@ void Histogram::CC_canvas() {
 void Histogram::makeHists_fid() {
   electron_fid_sec_hist.reserve(sector_num);
   // hadron_fid_sec_hist.reserve(sector_num);
-  for (int sec = 0; sec < sector_num; sec++) {
-    sprintf(hname, "electron_fid_sec%d", sec + 1);
-    sprintf(htitle, "electron_fid_sec%d", sec + 1);
-    electron_fid_sec_hist[sec] = new TH2D(hname, htitle, bins, min_phi[sec], max_phi[sec], bins, theta_min, theta_max);
+  for (int sec_i = 0; sec_i < sector_num; sec_i++) {
+    sprintf(hname, "electron_fid_sec%d", sec_i + 1);
+    sprintf(htitle, "electron_fid_sec%d", sec_i + 1);
+    electron_fid_sec_hist[sec_i] =
+        new TH2D(hname, htitle, bins, min_phi[sec_i], max_phi[sec_i], bins, theta_min, theta_max);
 
     for (int t = 0; t < 3; t++) {
-      sprintf(hname, "hadron_fid_sec%d_%d", sec + 1, t);
-      sprintf(htitle, "hadron_fid_sec%d_%d", sec + 1, t);
-      hadron_fid_sec_hist[t][sec] =
-          new TH2D(hname, htitle, bins, min_phi[sec], max_phi[sec], bins, theta_min, theta_max);
+      sprintf(hname, "hadron_fid_sec%d_%d", sec_i + 1, t);
+      sprintf(htitle, "hadron_fid_sec%d_%d", sec_i + 1, t);
+      hadron_fid_sec_hist[t][sec_i] =
+          new TH2D(hname, htitle, bins, min_phi[sec_i], max_phi[sec_i], bins, theta_min, theta_max);
     }
   }
 }
@@ -779,29 +801,29 @@ void Histogram::Fid_Write() {
     hadron_fid_hist[t]->Write();
   }
 
-  for (int sec = 0; sec < sector_num; sec++) {
-    electron_fid_sec_hist[sec]->SetYTitle("#theta");
-    electron_fid_sec_hist[sec]->SetXTitle("#phi");
-    electron_fid_sec_hist[sec]->SetOption("COLZ");
-    electron_fid_sec_hist[sec]->Write();
+  for (int sec_i = 0; sec_i < sector_num; sec_i++) {
+    electron_fid_sec_hist[sec_i]->SetYTitle("#theta");
+    electron_fid_sec_hist[sec_i]->SetXTitle("#phi");
+    electron_fid_sec_hist[sec_i]->SetOption("COLZ");
+    electron_fid_sec_hist[sec_i]->Write();
 
     for (int t = 0; t < 3; t++) {
-      hadron_fid_sec_hist[t][sec]->SetYTitle("#theta");
-      hadron_fid_sec_hist[t][sec]->SetXTitle("#phi");
-      hadron_fid_sec_hist[t][sec]->SetOption("COLZ");
-      hadron_fid_sec_hist[t][sec]->Write();
+      hadron_fid_sec_hist[t][sec_i]->SetYTitle("#theta");
+      hadron_fid_sec_hist[t][sec_i]->SetXTitle("#phi");
+      hadron_fid_sec_hist[t][sec_i]->SetOption("COLZ");
+      hadron_fid_sec_hist[t][sec_i]->Write();
     }
 
     for (int slice = 0; slice < fid_slices; slice++) {
-      sprintf(hname, "electron_fid_sec_%d_%d", sec + 1, slice + 1);
-      electron_fid_sec_slice[sec][slice] =
-          electron_fid_sec_hist[sec]->ProjectionX(hname, slice_width * slice, slice_width * slice + (slice_width - 1));
-      electron_fid_sec_slice[sec][slice]->Rebin(10);
-      SliceFit[sec][slice] = new Fits();
-      SliceFit[sec][slice]->Set_min(min_phi[sec]);
-      SliceFit[sec][slice]->Set_max(max_phi[sec]);
-      SliceFit[sec][slice]->FitGenNormal(electron_fid_sec_slice[sec][slice]);
-      delete SliceFit[sec][slice];
+      sprintf(hname, "electron_fid_sec_%d_%d", sec_i + 1, slice + 1);
+      electron_fid_sec_slice[sec_i][slice] = electron_fid_sec_hist[sec_i]->ProjectionX(
+          hname, slice_width * slice, slice_width * slice + (slice_width - 1));
+      electron_fid_sec_slice[sec_i][slice]->Rebin(10);
+      SliceFit[sec_i][slice] = new Fits();
+      SliceFit[sec_i][slice]->Set_min(min_phi[sec_i]);
+      SliceFit[sec_i][slice]->Set_max(max_phi[sec_i]);
+      SliceFit[sec_i][slice]->FitGenNormal(electron_fid_sec_slice[sec_i][slice]);
+      delete SliceFit[sec_i][slice];
     }
   }
 }

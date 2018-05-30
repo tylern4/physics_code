@@ -84,6 +84,7 @@ double func::pol5(double *x, double *par) {
 }
 
 double func::theta_cc_fit(double *x, double *par) {
+  // intercept, slope, const, exp_const, pol_const
   return par[0] + par[1] * x[0] + par[2] * TMath::Exp(par[3] * x[0]);
   // + TMath::Exp(x[0]) * (par[0] + par[1] * x[0] + par[2] * x[0] * x[0]);
 }

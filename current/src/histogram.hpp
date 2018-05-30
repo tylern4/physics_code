@@ -14,6 +14,7 @@
 #include "TH2.h"
 #include "TH3.h"
 #include "THnSparse.h"
+#include "color.hpp"
 #include "fits.hpp"
 #include "makeHeader.hpp"
 
