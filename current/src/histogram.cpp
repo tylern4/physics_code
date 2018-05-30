@@ -290,26 +290,32 @@ void Histogram::Fill_deltat_positron_PID(double momentum, double delta_t) {
 void Histogram::delta_t_slice_fit() {
   // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   Header *fit_functions = new Header("../src/fit_functions.hpp", "FF");
-
   TF1 *peak = new TF1("peak", "gaus", -1, 1);
-  //[0]*exp(-[1]*x) +
-  // char *func = "[0]*exp(-[1]*x) + [2]*x*x + [3]*x + [4]";
-  delta_t_mass_P->FitSlicesY(peak, 0, -1, 10, "QRG5");
-  TH1D *delta_t_mass_P_0 = (TH1D *)gDirectory->Get("delta_t_mass_P_0");
-  TH1D *delta_t_mass_P_1 = (TH1D *)gDirectory->Get("delta_t_mass_P_1");
-  TH1D *delta_t_mass_P_2 = (TH1D *)gDirectory->Get("delta_t_mass_P_2");
+  // TF1 *peak = new TF1("peak", func::peak, -1, 1, 3);
+  peak->SetParNames("constant", "mean", "#sigma");
+  // Bin 50 = 0.5GeV, Bin 300 = 3 GeV
+  delta_t_mass_P->FitSlicesY(peak, 50, 300, 10, "QRG5");
+  TH1D *delta_t_mass_P_const = (TH1D *)gDirectory->Get("delta_t_mass_P_0");
+  TH1D *delta_t_mass_P_mean = (TH1D *)gDirectory->Get("delta_t_mass_P_1");
+  TH1D *delta_t_mass_P_sigma = (TH1D *)gDirectory->Get("delta_t_mass_P_2");
+  delta_t_mass_P_const->Write();
+  delta_t_mass_P_mean->Write();
+  delta_t_mass_P_sigma->Write();
+
   double x[500];
   double y_plus[500];
   double y_minus[500];
   int num = 0;
   for (int i = 0; i < 500; i++) {
-    if (delta_t_mass_P_1->GetBinContent(i) != 0) {
+    if (delta_t_mass_P_mean->GetBinContent(i) != 0) {
       // Get momentum from bin center
-      x[num] = (double)delta_t_mass_P_1->GetBinCenter(i);
+      x[num] = (double)delta_t_mass_P_mean->GetBinCenter(i);
       // mean + 3sigma
-      y_plus[num] = (double)delta_t_mass_P_1->GetBinContent(i) + N_SIGMA * (double)delta_t_mass_P_2->GetBinContent(i);
+      y_plus[num] =
+          (double)delta_t_mass_P_mean->GetBinContent(i) + N_SIGMA * (double)delta_t_mass_P_sigma->GetBinContent(i);
       // mean - 3simga
-      y_minus[num] = (double)delta_t_mass_P_1->GetBinContent(i) - N_SIGMA * (double)delta_t_mass_P_2->GetBinContent(i);
+      y_minus[num] =
+          (double)delta_t_mass_P_mean->GetBinContent(i) - N_SIGMA * (double)delta_t_mass_P_sigma->GetBinContent(i);
       num++;
     }
   }

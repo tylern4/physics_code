@@ -324,14 +324,20 @@ void Fits::FitGenNormal(TH1D *hist) {
 }
 
 void Fits::FitBreitWigner(TH1D *hist) {
-  // if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit");
-  TF1 *fitbw = new TF1("bw", func::breit_wigner, min_value, max_value, 3);
+  if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit");
 
-  fitbw->SetParameter(0, 1.0);
-  fitbw->SetParameter(1, 1.0);
-  fitbw->SetParameter(2, 1.0);
+  TF1 *fitbw = new TF1("bw", func::breit_wigner, min_value, max_value, 3);
+  par_max = std::isnan(hist->GetMaximum()) ? 0 : hist->GetMaximum();
+  par_mean = std::isnan(hist->GetMean()) ? 0 : hist->GetMean();
+  par_RMS = std::isnan(hist->GetRMS()) ? 0 : hist->GetRMS();
+  fitbw->SetParameter(0, par_mean);
+  fitbw->SetParameter(1, par_RMS);
+  fitbw->SetParameter(2, par_max);
   fitbw->SetParNames("Mean", "Width", "Const");
 
-  for (int i = 0; i < 10; i++) hist->Fit("bw", "QM+", "", min_value, max_value);
+  for (int i = 0; i < 10; i++) {
+    hist->Fit("bw", "QM0+", "", min_value, max_value);
+  }
+  hist->Fit("bw", "QM+", "", min_value, max_value);
   delete fitbw;
 }

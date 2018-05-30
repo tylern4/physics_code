@@ -46,8 +46,7 @@ double func::gausian2(double *x, double *par) {
 }
 
 double func::peak(double *x, double *par) {
-  double g1 = par[0] * TMath::Gaus(x[0], par[1], par[2], false);
-  // double g2 = par[5] * TMath::Gaus(x[0], par[3], par[4], true);
+  double g1 = par[0] * TMath::Gaus(x[0], par[1], par[2], true);
   return g1;
 }
 

@@ -32,8 +32,8 @@ DataHandeler::~DataHandeler() {
   std::cout << GREEN << "\nFitting" << DEF << std::endl;
   // Start of cuts
   Fits *MM_neutron_cut = new Fits();
-  MM_neutron_cut->Set_min(0.88);
-  MM_neutron_cut->Set_max(1.0);
+  MM_neutron_cut->Set_min(0.8);
+  MM_neutron_cut->Set_max(1.2);
   MM_neutron_cut->FitBreitWigner(hists->Missing_Mass);
   // MM_neutron_cut->FitGaus(hists->Missing_Mass);
   // MM_neutron_cut->Fit2Gaus(hists->Missing_Mass);
