@@ -649,6 +649,7 @@ void Histogram::CC_Write() {
         cc_fits[sec_i][seg_i][pmt_i]->Set_max(30.0);
         cc_fits[sec_i][seg_i][pmt_i]->FitLandau(cc_hist[sec_i][seg_i][pmt_i]);
 
+        cc_fits[sec_i][seg_i][pmt_i]->FitLandauGaus(cc_hist[sec_i][seg_i][pmt_i]);
         cc_hist[sec_i][seg_i][pmt_i]->SetYTitle("number photoelectrons");
         cc_hist[sec_i][seg_i][pmt_i]->Write();
         delete cc_fits[sec_i][seg_i][pmt_i];

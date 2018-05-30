@@ -55,34 +55,36 @@ void Fits::FitGaus(TH1D *hist) {
 
 void Fits::FitLandauGaus(TH1D *hist) {
   if (hist->GetEntries() > 1000) {
-    // if (hist->GetEntries() > 50000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
-    TF1 *fitFunc = new TF1("fitFunc", func::gausian, min_value, max_value, 3);
-    // TF1 *fitFunc = new TF1("fitFunc", "gaus", min_value, max_value);
-    fitFunc->SetLineColor(8);
+    double par[6];
+    // TF1 *fitFuncGaus = new TF1("fitFuncGaus", func::gausian, 30.0, 250.0, 3);
+    TF1 *fitFuncGaus = new TF1("fitFuncGaus", "gaus", 30.0, 250.0);
+    TF1 *fitFuncLandau = new TF1("fitFuncLandau", "landau", 0.0, 30.0);
+    TF1 *total = new TF1("total", "fitFuncLandau(0)+fitFuncGaus(3)", 0.0, 250.0);
+
+    fitFuncLandau->SetLineColor(9);
+    fitFuncLandau->SetParameter(0, 1);
+    fitFuncLandau->SetParameter(1, 1);
+    fitFuncLandau->SetParameter(2, 1);
+    hist->Fit("fitFuncLandau", "RQM+", "", 0.0, 30.0);
+
+    fitFuncGaus->SetLineColor(8);
     par_max = std::isnan(hist->GetMaximum()) ? 0 : hist->GetMaximum();
     par_mean = std::isnan(hist->GetMean()) ? 0 : hist->GetMean();
     par_RMS = std::isnan(hist->GetRMS()) ? 0 : hist->GetRMS();
-    fitFunc->SetParameter(0, par_max);
-    fitFunc->SetParameter(1, par_mean);
-    fitFunc->SetParameter(2, par_RMS);
-    fitFunc->SetParNames("constant", "mean", "#sigma");
+    fitFuncGaus->SetParameter(0, par_max);
+    fitFuncGaus->SetParameter(1, par_mean);
+    fitFuncGaus->SetParameter(2, par_RMS);
+    fitFuncGaus->SetParNames("constant", "mean", "#sigma");
+    hist->Fit("fitFuncGaus", "RQM+", "", 30.0, 250.0);
 
-    hist->Fit("fitFunc", "QM0+", "", min_value, max_value);
-    for (size_t i = 0; i < 10; i++) {
-      par_mean = std::isnan(fitFunc->GetParameter("mean")) ? 0 : fitFunc->GetParameter("mean");
-      par_RMS = std::isnan(fitFunc->GetParameter("#sigma")) ? 0 : fitFunc->GetParameter("#sigma");
-      fitFunc->SetParameter(0, par_max);
-      fitFunc->SetParameter(1, par_mean);
-      fitFunc->SetParameter(2, par_RMS);
-      hist->Fit("fitFunc", "QM0+", "", min_value, max_value);
-    }
+    fitFuncLandau->GetParameters(&par[0]);
+    fitFuncGaus->GetParameters(&par[3]);
+    total->SetParameters(par);
+    hist->Fit(total, "RQM+", "", 0.0, 250.0);
 
-    hist->Fit("fitFunc", "QM+", "", min_value, max_value);
-
-    mean = fitFunc->GetParameter("mean");
-    FWHM = fitFunc->GetParameter("#sigma");
-    sigma = fitFunc->GetParameter("#sigma") / (2 * sqrt(2 * log(2)));  // 2.35482004503;
-    delete fitFunc;
+    delete fitFuncGaus;
+    delete fitFuncLandau;
+    delete total;
   }
 }
 
