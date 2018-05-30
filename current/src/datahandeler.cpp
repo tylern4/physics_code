@@ -144,10 +144,15 @@ void DataHandeler::loadbar(long x, long n) {
 void DataHandeler::run() {
   int size = input_files.size();
   int i = 0;
+  std::thread *fh_thread[size];
+
   for (i = 0; i < size; i++) {
-    loadbar(i + 1, size);
-    file_handeler(input_files.at(i));
+    loadbar(i, size - 1);
+    // file_handeler(input_files.at(i));
+    fh_thread[i] = new std::thread(std::mem_fn(&DataHandeler::file_handeler), this, input_files.at(i));
+    fh_thread[i]->join();
   }
+  ///// for (i = 0; i < size; i++) fh_thread[i]->join();
 }
 
 void DataHandeler::file_handeler(std::string fin) {
@@ -162,16 +167,16 @@ void DataHandeler::file_handeler(std::string fin) {
   double phi;
   int sector;
   // bool first_run = true;
-  TChain chain("h10");
-  chain.Add(fin.c_str());
+  TChain *chain = new TChain("h10");
+  chain->Add(fin.c_str());
 
-  getBranches(&chain);
-  // if (!first_run) getMorebranchs(&chain);
-  num_of_events = (int)chain.GetEntries();
+  getBranches(chain);
+  // if (!first_run) getMorebranchs(chain);
+  num_of_events = (int)chain->GetEntries();
 
   int current_event = 0;
   for (current_event = 0; current_event < num_of_events; current_event++) {
-    chain.GetEntry(current_event);
+    chain->GetEntry(current_event);
 
     // reset electron cut bool
     electron_cuts = true;
@@ -292,7 +297,7 @@ void DataHandeler::file_handeler(std::string fin) {
     }
   }
 
-  chain.Reset();  // delete Tree object
+  chain->Reset();  // delete Tree object
 }
 /*********
 void DataHandeler::skim(std::string fin) {
