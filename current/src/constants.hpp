@@ -13,6 +13,8 @@ static const int N_SIGMA = 3;
 static const double PI = TMath::Pi();
 static const float INV_SQRT_2PI = TMath::Sqrt(2 * TMath::Pi());
 static const double D2R = PI / 180.0;
+static const int POSITIVE = 1;
+static const int NEGATIVE = -1;
 // static const double E1D_E0 = 4.802;   // GeV
 // Run Info 22848 - 23500
 // http://clasweb.jlab.org/clasonline/servlet/runinfo?action=detail&run=22880

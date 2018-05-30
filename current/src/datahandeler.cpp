@@ -69,6 +69,7 @@ DataHandeler::~DataHandeler() {
   TDirectory *Beam_Folder = RootOutputFile->mkdir("Beam Position");
   Beam_Folder->cd();
   hists->Beam_Position_Write();
+  hists->Target_Vertex_Write();
   std::cerr << BOLDBLUE << "WvsQ2()" << DEF << std::endl;
   TDirectory *WvsQ2_folder = RootOutputFile->mkdir("W vs Q2");
   WvsQ2_folder->cd();
@@ -160,12 +161,12 @@ void DataHandeler::file_handeler(std::string fin) {
   double theta;
   double phi;
   int sector;
-  bool first_run = true;
+  // bool first_run = true;
   TChain chain("h10");
   chain.Add(fin.c_str());
 
   getBranches(&chain);
-  if (!first_run) getMorebranchs(&chain);
+  // if (!first_run) getMorebranchs(&chain);
   num_of_events = (int)chain.GetEntries();
 
   int current_event = 0;
@@ -194,18 +195,18 @@ void DataHandeler::file_handeler(std::string fin) {
     // electron_cuts &= (nphe[cc[0] - 1] > 40);
 
     if (electron_cuts) {
-      if (first_run) {
-        is_electron = elec_vec;
-        is_electron->at(0) = true;
-        for (int part_num = 1; part_num < gpart; part_num++) {
-          is_pip = pip_vec;
-          is_pim = pim_vec;
-          is_proton = proton_vec;
-          is_pip->at(part_num) = (id[part_num] == PIP);
-          is_proton->at(part_num) = (id[part_num] == PROTON);
-          is_pim->at(part_num) = (id[part_num] == PIM);
-        }
+      // if (first_run) {
+      is_electron = elec_vec;
+      is_electron->at(0) = true;
+      for (int part_num = 1; part_num < gpart; part_num++) {
+        is_pip = pip_vec;
+        is_pim = pim_vec;
+        is_proton = proton_vec;
+        is_pip->at(part_num) = (id[part_num] == PIP);
+        is_proton->at(part_num) = (id[part_num] == PROTON);
+        is_pim->at(part_num) = (id[part_num] == PIM);
       }
+      //}
 
       int cc_sector = cc_sect[cc[0] - 1];
       int cc_segment = (cc_segm[0] % 1000) / 10;
@@ -233,17 +234,18 @@ void DataHandeler::file_handeler(std::string fin) {
       sector = physics::get_sector(phi);
       hists->Fill_electron_fid(theta, phi, sector);
 
-      if (first_run) {
-        W = physics::W_calc(*e_mu, e_mu_prime);
-        Q2 = physics::Q2_calc(*e_mu, e_mu_prime);
-        e_E = e_mu_prime.E();
-      }
+      // if (first_run) {
+      W = physics::W_calc(*e_mu, e_mu_prime);
+      Q2 = physics::Q2_calc(*e_mu, e_mu_prime);
+      e_E = e_mu_prime.E();
+      //}
 
       hists->WvsQ2_Fill(e_E, W, Q2, physics::xb_calc(Q2, e_E));
       num_of_proton = num_of_pis = 0;
       for (int part_num = 1; part_num < gpart; part_num++) {
         if (p[part_num] == 0) continue;
         // if (is_proton->at(part_num) == is_pip->at(part_num)) continue;
+        hists->Fill_Target_Vertex((double)vx[part_num], (double)vy[part_num], (double)vz[part_num]);
 
         theta = physics::theta_calc(cz[part_num]);
         phi = physics::phi_calc(cx[part_num], cy[part_num]);
@@ -254,7 +256,7 @@ void DataHandeler::file_handeler(std::string fin) {
         TLorentzVector Particle = physics::fourVec(p[part_num], cx[part_num], cy[part_num], cz[part_num], id[part_num]);
 
         hists->MomVsBeta_Fill(Particle.E(), p[part_num], b[part_num]);
-        if (q[part_num] == 1) {
+        if (q[part_num] == POSITIVE) {
           hists->MomVsBeta_Fill_pos(p[part_num], b[part_num]);
           if (is_proton->at(part_num) && (id[part_num] == PROTON)) {
             num_of_proton++;
@@ -265,18 +267,17 @@ void DataHandeler::file_handeler(std::string fin) {
             hists->Fill_pion_WQ2(W, Q2);
             hists->Fill_Pi_ID_P(p[part_num], b[part_num]);
             TLorentzVector gamma_mu = (*e_mu - e_mu_prime);
-            if (first_run) {
-              MM_neutron->Set_PxPyPz(p[part_num] * cx[part_num], p[part_num] * cy[part_num],
-                                     p[part_num] * cz[part_num]);
-              MM_neutron->missing_mass(gamma_mu);
-            }
+            // if (first_run) {
+            MM_neutron->Set_PxPyPz(p[part_num] * cx[part_num], p[part_num] * cy[part_num], p[part_num] * cz[part_num]);
+            MM_neutron->missing_mass(gamma_mu);
+            //}
           }
 
           if ((is_pip->at(part_num) && (id[part_num] == PIP)) ||
               (is_proton->at(part_num) && (id[part_num] == PROTON))) {
             hists->Fill_proton_Pi_ID_P(p[part_num], b[part_num]);
           }
-        } else if (q[part_num] == -1) {
+        } else if (q[part_num] == NEGATIVE) {
           hists->MomVsBeta_Fill_neg(p[part_num], b[part_num]);
         }
       }
@@ -293,3 +294,124 @@ void DataHandeler::file_handeler(std::string fin) {
 
   chain.Reset();  // delete Tree object
 }
+/*********
+void DataHandeler::skim(std::string fin) {
+  int num_of_events, total_events, num_of_pis;
+  bool electron_cuts, MM_cut, has_neutron;
+
+  MissingMass *MM_neutron = new MissingMass();
+  MM_neutron->Set_target_mass(MASS_P);
+  MM_neutron->Set_target_PxPyPz(0);
+
+  Float_t W, Q2, MM;
+  std::vector<bool> is_proton, is_pip, is_electron, is_pim;
+  std::vector<double> dt_proton, dt_pip;
+
+  TVector3 Particle3(0.0, 0.0, 0.0);
+  TLorentzVector Particle4(0.0, 0.0, 0.0, 0.0);
+
+  RootOutputFile = new TFile(RootFile_output, "RECREATE");
+
+  TChain chain("h10");
+  cout << BLUE << "Analyzing file " << GREEN << fin << DEF << endl;
+  chain.AddFile(fin);
+
+  getBranches(&chain);
+
+  num_of_events = (int)chain.GetEntries();
+
+  TTree *skim = chain.CloneTree(0);
+  TBranch *W_branch = skim->Branch("W", &W);
+  TBranch *Q2_branch = skim->Branch("Q2", &Q2);
+  TBranch *MM_branch = skim->Branch("MM", &MM);
+
+  TBranch *is_Electron = skim->Branch("is_electron", &is_electron);
+  TBranch *is_Proton = skim->Branch("is_proton", &is_proton);
+  TBranch *is_Pip = skim->Branch("is_pip", &is_pip);
+  TBranch *is_Pim = skim->Branch("is_pim", &is_pim);
+
+  TBranch *DeltaT_P_branch = skim->Branch("DeltaT_P", "vector<double>", &dt_proton);
+  TBranch *DeltaT_Pip_branch = skim->Branch("DeltaT_Pip", "vector<double>", &dt_pip);
+  TBranch *NumPI_branch = skim->Branch("NumPI", &num_of_pis);
+  TBranch *Neutron_branch = skim->Branch("has_neutron", &has_neutron);
+
+  for (int current_event = 0; current_event < num_of_events; current_event++) {
+    chain.GetEntry(current_event);
+    /********
+    int n_pip = 0;
+    int n_other = 0;
+    for (int x = 0; x < gpart; x++)
+      if (id[x] == PIP)
+        n_pip++;
+      else
+        n_other++;
+
+    if (n_pip != 1 || n_other > 1) continue;
+    /********
+    is_proton = std::vector<bool>(gpart, false);
+    is_electron = std::vector<bool>(gpart, false);
+    is_pip = std::vector<bool>(gpart, false);
+    is_pim = std::vector<bool>(gpart, false);
+
+    electron_cuts = true;
+    // electron cuts
+    electron_cuts &= (id[0] == ELECTRON);       // First particle is electron
+    electron_cuts &= (gpart > 0);               // Number of good particles is greater than 0
+    electron_cuts &= (stat[0] > 0);             // First Particle hit stat
+    electron_cuts &= ((int)q[0] == -1);         // First particle is negative Q
+    electron_cuts &= (sc[0] > 0);               // First Particle hit sc
+    electron_cuts &= (dc[0] > 0);               // ``` ``` ``` d
+    electron_cuts &= (ec[0] > 0);               // ``` ``` ``` ec
+    electron_cuts &= (dc_stat[dc[0] - 1] > 0);  //??
+    if (electron_cuts) {
+      electron_cuts &= (etot[ec[0] - 1] / p[0]) < 0.4;
+      electron_cuts &= (etot[ec[0] - 1] / p[0]) > 0.2;
+    }
+
+    e_mu_prime_3.SetXYZ(p[0] * cx[0], p[0] * cy[0], p[0] * cz[0]);
+    e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
+    Delta_T *delta_t = new Delta_T();
+    dt_proton = delta_t->delta_t_array(MASS_P, gpart);
+    dt_pip = delta_t->delta_t_array(MASS_PIP, gpart);
+
+    for (int part_num = 1; part_num < gpart; part_num++) {
+      num_of_pis = 0;
+      // Hard code of values to use for cut
+      if (abs(dt_pip.at(part_num)) <= 0.5 && q[part_num] == 1) {
+        is_pip.at(part_num) = true;
+        num_of_pis++;
+        TLorentzVector gamma_mu = (e_mu - e_mu_prime);
+        MM_neutron->Set_PxPyPz(p[part_num] * cx[part_num], p[part_num] * cy[part_num], p[part_num] * cz[part_num]);
+        MM_neutron->missing_mass(gamma_mu);
+        MM = MM_neutron->Get_MM();
+      }
+
+      if (abs(dt_proton.at(part_num)) <= 0.5 && q[part_num] == 1) {
+        is_proton.at(part_num) = true;
+      }
+      if (abs(dt_pip.at(part_num)) <= 0.5 && q[part_num] == -1) {
+        is_pim.at(part_num) = true;
+      }
+    }
+
+    has_neutron = true;  // between_mm(MM);
+
+    // Simple cut for missing mass
+    has_neutron = (MM > 0.5 && MM < 1.5);
+
+    if (electron_cuts && has_neutron) {
+      W = physics::W_calc(e_mu, e_mu_prime);
+      Q2 = physics::Q2_calc(e_mu, e_mu_prime);
+      is_electron.at(0) = true;
+      skim->Fill();  // Fill the banks after the skim
+    }
+  }
+  //
+  // end stuff
+  chain.Reset();  // delete Tree object
+
+  RootOutputFile->cd();
+  RootOutputFile->Write();
+  RootOutputFile->Close();
+}
+*********/

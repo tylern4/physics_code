@@ -978,3 +978,48 @@ void Histogram::Beam_Position_Write() {
   Beam_Position_Z->SetXTitle("Z");
   Beam_Position_Z->Write();
 }
+
+void Histogram::Fill_Target_Vertex(double vertex_x, double vertex_y, double vertex_z) {
+  if (0 == vertex_x) return;
+  if (0 == vertex_y && 0 == vertex_z) return;
+  target_vertex_X->Fill(vertex_x);
+  target_vertex_Y->Fill(vertex_y);
+  target_vertex_Z->Fill(vertex_z);
+  target_vertex_xy->Fill(vertex_x, vertex_y);
+  target_vertex_zy->Fill(vertex_z, vertex_y);
+  target_vertex_zx->Fill(vertex_z, vertex_x);
+  // target_vertex_3d->Fill(vertex_x, vertex_y, vertex_x);
+}
+
+void Histogram::Target_Vertex_Write() {
+  target_vertex_X->SetXTitle("X");
+  target_vertex_X->Write();
+
+  target_vertex_Y->SetXTitle("Y");
+  target_vertex_Y->Write();
+
+  target_vertex_Z->SetXTitle("Z");
+  target_vertex_Z->Write();
+
+  target_vertex_xy->SetXTitle("X");
+  target_vertex_xy->SetYTitle("Y");
+  target_vertex_xy->SetOption("COLZ");
+  target_vertex_xy->Write();
+
+  target_vertex_zy->SetXTitle("Z");
+  target_vertex_zy->SetYTitle("Y");
+  target_vertex_zy->SetOption("COLZ");
+  target_vertex_zy->Write();
+
+  target_vertex_zx->SetXTitle("Z");
+  target_vertex_zx->SetYTitle("X");
+  target_vertex_zx->SetOption("COLZ");
+  target_vertex_zx->Write();
+  /*
+    target_vertex_3d->SetXTitle("X");
+    target_vertex_3d->SetYTitle("Y");
+    target_vertex_3d->SetZTitle("Z");
+    target_vertex_3d->SetOption("COLZ");
+    target_vertex_3d->Write();
+    */
+}

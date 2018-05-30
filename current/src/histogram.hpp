@@ -12,6 +12,7 @@
 #include "TGraph.h"
 #include "TH1.h"
 #include "TH2.h"
+#include "TH3.h"
 #include "THnSparse.h"
 #include "fits.hpp"
 #include "makeHeader.hpp"
@@ -185,6 +186,20 @@ class Histogram {
 
   // Beam Position
 
+  // Vertex
+  TH1D *target_vertex_X = new TH1D("Target_vertex_X", "Target_vertex_X", bins, -6.0, 6.0);
+  TH1D *target_vertex_Y = new TH1D("Target_vertex_Y", "Target_vertex_Y", bins, -6.0, 6.0);
+  TH1D *target_vertex_Z = new TH1D("Target_vertex_Z", "Target_vertex_Z", bins, -6.0, 6.0);
+
+  TH2D *target_vertex_xy = new TH2D("Target_vertex_xy", "Target_vertex_xy", bins, -6.0, 6.0, bins, -6.0, 6.0);
+  TH2D *target_vertex_zy = new TH2D("Target_vertex_zy", "Target_vertex_zy", bins, -6.0, 6.0, bins, -6.0, 6.0);
+  TH2D *target_vertex_zx = new TH2D("Target_vertex_zx", "Target_vertex_zx", bins, -6.0, 6.0, bins, -6.0, 6.0);
+
+  // TH3D *target_vertex_3d =
+  //      new TH3D("Target_vertex_3d", "Target_vertex_3d", bins, -5.0, 5.0, bins, -5.0, 5.0, bins, -5.0, 5.0);
+
+  // Vertex
+
   // public:
   Histogram();
   ~Histogram();
@@ -257,6 +272,9 @@ class Histogram {
   // Beam Position
   void Fill_Beam_Position(double vertex_x, double vertex_y, double vertex_z);
   void Beam_Position_Write();
+
+  void Fill_Target_Vertex(double vertex_x, double vertex_y, double vertex_z);
+  void Target_Vertex_Write();
 };
 
 #endif
