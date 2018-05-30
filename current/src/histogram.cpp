@@ -288,7 +288,7 @@ void Histogram::Fill_deltat_positron_PID(double momentum, double delta_t) {
 }
 
 void Histogram::delta_t_slice_fit() {
-  // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   Header *fit_functions = new Header("../src/fit_functions.hpp", "FF");
   TF1 *peak = new TF1("peak", "gaus", -1, 1);
   // TF1 *peak = new TF1("peak", func::peak, -1, 1, 3);
@@ -887,7 +887,7 @@ void Histogram::EC_cut_fill(double etot, double momentum) {
 }
 
 void Histogram::EC_slice_fit() {
-  // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   Header *fit_functions = new Header("../src/EC_fit_functions.hpp", "FF");
 
   TF1 *peak = new TF1("peak", "gaus", 0.2, 0.4);
