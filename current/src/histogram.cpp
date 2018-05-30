@@ -921,8 +921,8 @@ void Histogram::EC_slice_fit() {
 
 void Histogram::EC_slices_Write() {
   Fits *EC_fit[num_points];
-  double fit_ec_min = -1.0;
-  double fit_ec_max = 1.0;
+  double fit_ec_min = 0.2;
+  double fit_ec_max = 0.4;
   for (int n = 0; n < num_points; n++) {
     EC_fit[n] = new Fits();
     EC_fit[n]->Set_min(fit_ec_min);

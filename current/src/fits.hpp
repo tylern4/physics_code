@@ -6,19 +6,19 @@
 
 #ifndef FITS_HPP
 #define FITS_HPP
-#include "TH1D.h"
-#include "TH2D.h"
+#include "Math/MinimizerOptions.h"
+#include "TCanvas.h"
 #include "TF1.h"
 #include "TF2.h"
-#include "TCanvas.h"
+#include "TH1D.h"
+#include "TH2D.h"
 #include "TStyle.h"
-#include "physics.hpp"
 #include "func.hpp"
-#include "Math/MinimizerOptions.h"
+#include "physics.hpp"
 
 class Fits {
  private:
-  double par_max, par_mean, par_FWHM;
+  double par_max, par_mean, par_FWHM, par_RMS;
   double mean, sigma, FWHM;
   double min_value = -1000, max_value = 1000;
   double a, b, c, d, e = 0.0;

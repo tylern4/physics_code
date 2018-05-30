@@ -22,29 +22,30 @@ double Fits::Get_FWHM() { return FWHM; }
 void Fits::FitGaus(TH1D *hist) {
   if (hist->GetEntries() > 1000) {
     if (hist->GetEntries() > 50000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
-    TF1 *fitFunc = new TF1("fitFunc", func::gausian, min_value, max_value, 4);
-    // TF1 *fitFunc = new TF1("fitFunc", "gaus", min_value, max_value);
+    // TF1 *fitFunc = new TF1("fitFunc", func::gausian, min_value, max_value, 3);
+    TF1 *fitFunc = new TF1("fitFunc", "gaus", min_value, max_value);
     fitFunc->SetLineColor(2);
     par_max = std::isnan(hist->GetMaximum()) ? 0 : hist->GetMaximum();
     par_mean = std::isnan(hist->GetMean()) ? 0 : hist->GetMean();
+    par_RMS = std::isnan(hist->GetRMS()) ? 0 : hist->GetRMS();
     fitFunc->SetParameter(0, par_max);
     fitFunc->SetParameter(1, par_mean);
-    fitFunc->SetParameter(2, 1);
-    fitFunc->SetParNames("height", "mean", "FWHM");
+    fitFunc->SetParameter(2, par_RMS);
+    fitFunc->SetParNames("height", "mean", "#sigma");
 
     hist->Fit("fitFunc", "QM+", "", min_value, max_value);
 
     par_mean = std::isnan(fitFunc->GetParameter("mean")) ? 0 : fitFunc->GetParameter("mean");
-    par_FWHM = std::isnan(fitFunc->GetParameter("FWHM")) ? 0 : fitFunc->GetParameter("FWHM");
+    par_RMS = std::isnan(fitFunc->GetParameter("#sigma")) ? 0 : fitFunc->GetParameter("#sigma");
 
     fitFunc->SetParameter(0, par_max);
     fitFunc->SetParameter(1, par_mean);
-    fitFunc->SetParameter(2, par_FWHM);
+    fitFunc->SetParameter(2, par_RMS);
     hist->Fit("fitFunc", "QM+", "", min_value, max_value);
 
     mean = fitFunc->GetParameter("mean");
-    FWHM = fitFunc->GetParameter("FWHM");
-    sigma = fitFunc->GetParameter("FWHM") / (2 * sqrt(2 * log(2)));  // 2.35482004503;
+    FWHM = fitFunc->GetParameter("#sigma");
+    sigma = fitFunc->GetParameter("#sigma") / (2 * sqrt(2 * log(2)));  // 2.35482004503;
     delete fitFunc;
   }
 }
