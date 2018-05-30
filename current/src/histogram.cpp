@@ -298,9 +298,9 @@ void Histogram::delta_t_slice_fit() {
   TH1D *delta_t_mass_P_const = (TH1D *)gDirectory->Get("delta_t_mass_P_0");
   TH1D *delta_t_mass_P_mean = (TH1D *)gDirectory->Get("delta_t_mass_P_1");
   TH1D *delta_t_mass_P_sigma = (TH1D *)gDirectory->Get("delta_t_mass_P_2");
-  delta_t_mass_P_const->Write();
-  delta_t_mass_P_mean->Write();
-  delta_t_mass_P_sigma->Write();
+  // delta_t_mass_P_const->Write();
+  // delta_t_mass_P_mean->Write();
+  // delta_t_mass_P_sigma->Write();
 
   double x[500];
   double y_plus[500];
@@ -356,24 +356,24 @@ void Histogram::delta_t_slice_fit() {
   fit_functions->Set_Function(Proton_Neg_fit->GetExpFormula("P"));
   fit_functions->WriteFunction();
 
-  delta_t_mass_PIP->FitSlicesY(peak, 0, -1, 10, "QRG5");
-  TH1D *delta_t_mass_PIP_0 = (TH1D *)gDirectory->Get("delta_t_mass_PIP_0");
-  TH1D *delta_t_mass_PIP_1 = (TH1D *)gDirectory->Get("delta_t_mass_PIP_1");
-  TH1D *delta_t_mass_PIP_2 = (TH1D *)gDirectory->Get("delta_t_mass_PIP_2");
+  delta_t_mass_PIP->FitSlicesY(peak, 50, 300, 10, "QRG5");
+  TH1D *delta_t_mass_PIP_const = (TH1D *)gDirectory->Get("delta_t_mass_PIP_0");
+  TH1D *delta_t_mass_PIP_mean = (TH1D *)gDirectory->Get("delta_t_mass_PIP_1");
+  TH1D *delta_t_mass_PIP_sigma = (TH1D *)gDirectory->Get("delta_t_mass_PIP_2");
   double x_pip[500];
   double y_plus_pip[500];
   double y_minus_pip[500];
   num = 0;
   for (int i = 0; i < 500; i++) {
-    if (delta_t_mass_PIP_1->GetBinContent(i) != 0) {
+    if (delta_t_mass_PIP_mean->GetBinContent(i) != 0) {
       // Get momentum from bin center
-      x_pip[num] = (double)delta_t_mass_PIP_1->GetBinCenter(i);
+      x_pip[num] = (double)delta_t_mass_PIP_mean->GetBinCenter(i);
       // mean + 3sigma
       y_plus_pip[num] =
-          (double)delta_t_mass_PIP_1->GetBinContent(i) + N_SIGMA * (double)delta_t_mass_PIP_2->GetBinContent(i);
+          (double)delta_t_mass_PIP_mean->GetBinContent(i) + N_SIGMA * (double)delta_t_mass_PIP_sigma->GetBinContent(i);
       // mean - 3simga
       y_minus_pip[num] =
-          (double)delta_t_mass_PIP_1->GetBinContent(i) - N_SIGMA * (double)delta_t_mass_PIP_2->GetBinContent(i);
+          (double)delta_t_mass_PIP_mean->GetBinContent(i) - N_SIGMA * (double)delta_t_mass_PIP_sigma->GetBinContent(i);
       num++;
     }
   }
