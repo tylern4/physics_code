@@ -197,6 +197,10 @@ void DataHandeler::file_handeler(std::string fin) {
     electron_cuts &= (p[0] > MIN_P_CUT);  // Minimum Momentum cut????
     double sf = (double)etot[ec[0] - 1] / (double)p[0];
     electron_cuts &= (sf > 0.2 && sf < 0.4);
+    electron_cuts &= (abs((double)dc_vz[dc[0] - 1]) < 2.0);
+    electron_cuts &= (abs((double)dc_vy[dc[0] - 1]) < 0.3);
+    electron_cuts &= ((double)dc_vx[dc[0] - 1] > 0.2 && (double)dc_vx[dc[0] - 1] < 0.4);
+
     // electron_cuts &= (nphe[cc[0] - 1] > 40);
 
     if (electron_cuts) {
@@ -249,6 +253,10 @@ void DataHandeler::file_handeler(std::string fin) {
       num_of_proton = num_of_pis = 0;
       for (int part_num = 1; part_num < gpart; part_num++) {
         if (p[part_num] == 0) continue;
+        if (abs((double)vz[part_num]) > 2.0) continue;
+        if (abs((double)vy[part_num]) > 1.0) continue;
+        if (abs((double)vx[part_num]) > 1.0) continue;
+
         // if (is_proton->at(part_num) == is_pip->at(part_num)) continue;
         hists->Fill_Target_Vertex((double)vx[part_num], (double)vy[part_num], (double)vz[part_num]);
 
