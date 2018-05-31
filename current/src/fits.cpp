@@ -23,7 +23,7 @@ double Fits::Get_FWHM() { return FWHM; }
 void Fits::FitGaus(TH1D *hist) {
   if (hist->GetEntries() > 1000) {
     if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
-    TF1 *fitFunc = new TF1("fitFunc", func::gausian, min_value, max_value, 3);
+    TF1 *fitFunc = new TF1("fitFunc", func::gausian, -100.0, 100.0, 3);
     // TF1 *fitFunc = new TF1("fitFunc", "gaus", min_value, max_value);
     fitFunc->SetLineColor(color);
     par_max = std::isnan(hist->GetMaximum()) ? 0 : hist->GetMaximum();
@@ -57,15 +57,15 @@ void Fits::FitLandauGaus(TH1D *hist) {
   if (hist->GetEntries() > 1000) {
     double par[6];
     // TF1 *fitFuncGaus = new TF1("fitFuncGaus", func::gausian, 30.0, 250.0, 3);
-    TF1 *fitFuncGaus = new TF1("fitFuncGaus", "gaus", 30.0, 250.0);
-    TF1 *fitFuncLandau = new TF1("fitFuncLandau", "landau", 0.0, 30.0);
-    TF1 *total = new TF1("total", "fitFuncLandau(0)+fitFuncGaus(3)", 0.0, 250.0);
+    TF1 *fitFuncGaus = new TF1("gaus", "gaus", 30.0, 250.0);
+    TF1 *fitFuncLandau = new TF1("landau", "landau", 0.0, 30.0);
+    TF1 *total = new TF1("total", "landau(0)+gaus(3)", 0.0, 250.0);
 
     fitFuncLandau->SetLineColor(9);
     fitFuncLandau->SetParameter(0, 1);
     fitFuncLandau->SetParameter(1, 1);
     fitFuncLandau->SetParameter(2, 1);
-    hist->Fit("fitFuncLandau", "RQM+", "", 0.0, 30.0);
+    hist->Fit("landau", "RQM+", "", 0.0, 30.0);
 
     fitFuncGaus->SetLineColor(8);
     par_max = std::isnan(hist->GetMaximum()) ? 0 : hist->GetMaximum();
@@ -75,7 +75,7 @@ void Fits::FitLandauGaus(TH1D *hist) {
     fitFuncGaus->SetParameter(1, par_mean);
     fitFuncGaus->SetParameter(2, par_RMS);
     fitFuncGaus->SetParNames("constant", "mean", "#sigma");
-    hist->Fit("fitFuncGaus", "RQM+", "", 30.0, 250.0);
+    hist->Fit("gaus", "RQM+", "", 30.0, 250.0);
 
     fitFuncLandau->GetParameters(&par[0]);
     fitFuncGaus->GetParameters(&par[3]);
@@ -120,10 +120,10 @@ void Fits::Fit2Gaus(TH1D *hist) {
 void Fits::FitLandau(TH1D *hist) {
   if (hist->GetEntries() > 1000) {
     if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
-    TF1 *fitFunc = new TF1("fitFunc", "landau", min_value, max_value);
 
+    TF1 *fitFunc = new TF1("fitFunc", "landau", -100.0, 100.0);
+    fitFunc->SetLineColor(color);
     hist->Fit("fitFunc", "QM+", "", min_value, max_value);
-
     for (int i = 0; i < 10; i++) hist->Fit("fitFunc", "QM+", "", min_value, max_value);
 
     delete fitFunc;
