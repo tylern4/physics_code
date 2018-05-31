@@ -6,10 +6,10 @@
 
 #ifndef CLASSES_H
 #define CLASSES_H
-#include "makeHeader.hpp"
-#include "fits.hpp"
 #include "delta_t.hpp"
-#include "missing_mass.hpp"
-#include "histogram.hpp"
 #include "event.hpp"
+#include "fits.hpp"
+#include "histogram.hpp"
+#include "makeHeader.hpp"
+#include "missing_mass.hpp"
 #endif

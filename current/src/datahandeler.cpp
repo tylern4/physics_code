@@ -196,10 +196,11 @@ void DataHandeler::file_handeler(std::string fin) {
     // Start of strict cuts
     electron_cuts &= (p[0] > MIN_P_CUT);  // Minimum Momentum cut????
     double sf = (double)etot[ec[0] - 1] / (double)p[0];
-    electron_cuts &= (sf > 0.2 && sf < 0.4);
+    electron_cuts &= Cuts::sf_cut(sf, p[0]);
     electron_cuts &= (abs((double)dc_vz[dc[0] - 1]) < 2.0);
     electron_cuts &= (abs((double)dc_vy[dc[0] - 1]) < 0.3);
     electron_cuts &= ((double)dc_vx[dc[0] - 1] > 0.2 && (double)dc_vx[dc[0] - 1] < 0.4);
+    electron_cuts &= (nphe[cc[0] - 1] > 30);
 
     // electron_cuts &= (nphe[cc[0] - 1] > 40);
 
@@ -271,11 +272,13 @@ void DataHandeler::file_handeler(std::string fin) {
         hists->MomVsBeta_Fill(Particle.E(), p[part_num], b[part_num]);
         if (q[part_num] == POSITIVE) {
           hists->MomVsBeta_Fill_pos(p[part_num], b[part_num]);
-          if (is_proton->at(part_num) && (id[part_num] == PROTON)) {
+          //// if (is_proton->at(part_num) && (id[part_num] == PROTON)) {
+          if (Cuts::dt_P_cut(dt_proton.at(part_num), p[part_num])) {
             num_of_proton++;
             hists->Fill_proton_WQ2(W, Q2);
             hists->Fill_proton_ID_P(p[part_num], b[part_num]);
-          } else if (is_pip->at(part_num) && (id[part_num] == PIP)) {
+            //// } else if (is_pip->at(part_num) && (id[part_num] == PIP)) {
+          } else if (Cuts::dt_Pip_cut(dt_pi.at(part_num), p[part_num])) {
             num_of_pis++;
             hists->Fill_pion_WQ2(W, Q2);
             hists->Fill_Pi_ID_P(p[part_num], b[part_num]);
@@ -286,8 +289,10 @@ void DataHandeler::file_handeler(std::string fin) {
             //}
           }
 
-          if ((is_pip->at(part_num) && (id[part_num] == PIP)) ||
-              (is_proton->at(part_num) && (id[part_num] == PROTON))) {
+          // if ((is_pip->at(part_num) && (id[part_num] == PIP)) ||
+          //    (is_proton->at(part_num) && (id[part_num] == PROTON))) {
+          if (Cuts::dt_Pip_cut(dt_pi.at(part_num), p[part_num]) ||
+              Cuts::dt_P_cut(dt_proton.at(part_num), p[part_num])) {
             hists->Fill_proton_Pi_ID_P(p[part_num], b[part_num]);
           }
         } else if (q[part_num] == NEGATIVE) {

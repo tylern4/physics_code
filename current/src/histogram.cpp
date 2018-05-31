@@ -341,7 +341,8 @@ void Histogram::delta_t_slice_fit() {
   P->Draw("*same");
   M->Draw("*same");
   dt_proton_canvas->Write();
-
+  std::cerr << "Proton_Pos_fit\t" << std::string(Proton_Pos_fit->GetExpFormula("P").Data()) << std::endl;
+  std::cerr << "Proton_Neg_fit\t" << std::string(Proton_Neg_fit->GetExpFormula("P").Data()) << std::endl;
   fit_functions->NewFunction();
   fit_functions->Set_RetrunType("double");
   fit_functions->Set_FuncName("Proton_Pos_fit");
@@ -399,6 +400,8 @@ void Histogram::delta_t_slice_fit() {
   P_pip->Draw("*same");
   M_pip->Draw("*same");
   dt_Pip_canvas->Write();
+  std::cerr << "Pip_Pos_fit\t" << std::string(Pip_Pos_fit->GetExpFormula("P").Data()) << std::endl;
+  std::cerr << "Pip_Neg_fit\t" << std::string(Pip_Neg_fit->GetExpFormula("P").Data()) << std::endl;
 
   fit_functions->NewFunction();
   fit_functions->Set_RetrunType("double");
