@@ -341,8 +341,7 @@ void Histogram::delta_t_slice_fit() {
   P->Draw("*same");
   M->Draw("*same");
   dt_proton_canvas->Write();
-  std::cerr << "Proton_Pos_fit\t" << std::string(Proton_Pos_fit->GetExpFormula("P").Data()) << std::endl;
-  std::cerr << "Proton_Neg_fit\t" << std::string(Proton_Neg_fit->GetExpFormula("P").Data()) << std::endl;
+
   fit_functions->NewFunction();
   fit_functions->Set_RetrunType("double");
   fit_functions->Set_FuncName("Proton_Pos_fit");
@@ -400,8 +399,6 @@ void Histogram::delta_t_slice_fit() {
   P_pip->Draw("*same");
   M_pip->Draw("*same");
   dt_Pip_canvas->Write();
-  std::cerr << "Pip_Pos_fit\t" << std::string(Pip_Pos_fit->GetExpFormula("P").Data()) << std::endl;
-  std::cerr << "Pip_Neg_fit\t" << std::string(Pip_Neg_fit->GetExpFormula("P").Data()) << std::endl;
 
   fit_functions->NewFunction();
   fit_functions->Set_RetrunType("double");
@@ -641,16 +638,17 @@ void Histogram::CC_Write() {
       cc_hist_allSeg[sec_i][pmt_i]->Write();
       for (int seg_i = 0; seg_i < segment; seg_i++) {
         cc_fits[sec_i][seg_i][pmt_i] = new Fits();
-
+        /*
         cc_fits[sec_i][seg_i][pmt_i]->FitLandauGaus(cc_hist[sec_i][seg_i][pmt_i]);
 
         cc_fits[sec_i][seg_i][pmt_i]->Set_lineColor(9);
         cc_fits[sec_i][seg_i][pmt_i]->Set_min(0.0);
         cc_fits[sec_i][seg_i][pmt_i]->Set_max(30.0);
         cc_fits[sec_i][seg_i][pmt_i]->FitLandau(cc_hist[sec_i][seg_i][pmt_i]);
-
+        */
         cc_fits[sec_i][seg_i][pmt_i]->Set_lineColor(8);
-        cc_fits[sec_i][seg_i][pmt_i]->Set_min(30.0);
+        // cc_fits[sec_i][seg_i][pmt_i]->Set_min(30.0);
+        cc_fits[sec_i][seg_i][pmt_i]->Set_min(0.0);
         cc_fits[sec_i][seg_i][pmt_i]->Set_max(250.0);
         cc_fits[sec_i][seg_i][pmt_i]->FitGaus(cc_hist[sec_i][seg_i][pmt_i]);
 
@@ -803,6 +801,10 @@ void Histogram::Fid_Write() {
   int slice_width = (bins / fid_slices);
   Fits *SliceFit[sector_num][fid_slices];
 
+  double x_right[fid_slices];
+  double x_left[fid_slices];
+  double y[fid_slices];
+
   electron_fid_hist->SetYTitle("#theta");
   electron_fid_hist->SetXTitle("#phi");
   electron_fid_hist->SetOption("COLZ");
@@ -815,11 +817,6 @@ void Histogram::Fid_Write() {
   }
 
   for (int sec_i = 0; sec_i < sector_num; sec_i++) {
-    electron_fid_sec_hist[sec_i]->SetYTitle("#theta");
-    electron_fid_sec_hist[sec_i]->SetXTitle("#phi");
-    electron_fid_sec_hist[sec_i]->SetOption("COLZ");
-    electron_fid_sec_hist[sec_i]->Write();
-
     for (int t = 0; t < 3; t++) {
       hadron_fid_sec_hist[t][sec_i]->SetYTitle("#theta");
       hadron_fid_sec_hist[t][sec_i]->SetXTitle("#phi");
@@ -836,8 +833,35 @@ void Histogram::Fid_Write() {
       SliceFit[sec_i][slice]->Set_min(min_phi[sec_i]);
       SliceFit[sec_i][slice]->Set_max(max_phi[sec_i]);
       SliceFit[sec_i][slice]->FitGenNormal(electron_fid_sec_slice[sec_i][slice]);
+      x_right[slice] = SliceFit[sec_i][slice]->Get_right_edge();
+      x_left[slice] = SliceFit[sec_i][slice]->Get_left_edge();
+      y[slice] = slice_width * slice;
       delete SliceFit[sec_i][slice];
     }
+
+    TGraph *fid_right = new TGraph(fid_slices, x_right, y);
+    TGraph *fid_left = new TGraph(fid_slices, x_left, y);
+    fid_right->SetName("Proton_Pos_graph");
+    fid_left->SetName("Proton_Neg_graph");
+    /*
+    TF1 *Proton_Pos_fit = new TF1("Proton_Pos_fit", func::dt_fit, 0.1, 3.0, 2);
+    TF1 *Proton_Neg_fit = new TF1("Proton_Neg_fit", func::dt_fit, 0.1, 3.0, 2);
+    P->Fit(Proton_Pos_fit, "QRG5", "", 0.2, 2);
+    M->Fit(Proton_Neg_fit, "QRG5", "", 0.2, 2);
+
+    TCanvas *dt_proton_canvas = new TCanvas("dt_proton_canvas", "#dt Proton", 1280, 720);
+    dt_proton_canvas->cd();
+    delta_t_mass_P->Draw();
+    Proton_Pos_fit->Draw("same");
+    Proton_Neg_fit->Draw("same");
+    */
+    electron_fid_sec_hist[sec_i]->Draw();
+    fid_right->Draw("*same");
+    fid_left->Draw("*same");
+    electron_fid_sec_hist[sec_i]->SetYTitle("#theta");
+    electron_fid_sec_hist[sec_i]->SetXTitle("#phi");
+    electron_fid_sec_hist[sec_i]->SetOption("COLZ");
+    electron_fid_sec_hist[sec_i]->Write();
   }
 }
 
@@ -856,6 +880,7 @@ void Histogram::fid_canvas() {
     can[sec_i]->Write();
   }
 }
+
 void Histogram::makeHists_EC() {
   for (int n = 0; n < num_points; n++) {
     sprintf(hname, "ec_%d", n);
