@@ -800,6 +800,8 @@ void Histogram::Fill_hadron_fid(double theta, double phi, int sector, int id) {
 void Histogram::Fid_Write() {
   int slice_width = (bins / fid_slices);
   Fits *SliceFit[sector_num][fid_slices];
+  TCanvas *electron_fid_can = new TCanvas("electron_fid_can", "electron_fid_can", 1280, 720);
+  electron_fid_can->Divide(3, 2);
 
   double x_right[fid_slices];
   double x_left[fid_slices];
@@ -836,13 +838,20 @@ void Histogram::Fid_Write() {
       x_right[slice] = SliceFit[sec_i][slice]->Get_right_edge();
       x_left[slice] = SliceFit[sec_i][slice]->Get_left_edge();
       y[slice] = slice_width * slice;
+      /*
+            y[slice] = slice_width * slice;
+            x[slice] = SliceFit[sec_i][slice]->Get_left_edge();
+            y[slice * fid_slices + 1] = slice_width * slice;
+            x[slice * fid_slices + 1] = SliceFit[sec_i][slice]->Get_right_edge();
+      */
+
       delete SliceFit[sec_i][slice];
     }
 
     TGraph *fid_right = new TGraph(fid_slices, x_right, y);
     TGraph *fid_left = new TGraph(fid_slices, x_left, y);
-    fid_right->SetName("Proton_Pos_graph");
-    fid_left->SetName("Proton_Neg_graph");
+    fid_right->SetName("fid_right");
+    fid_left->SetName("fid_left");
     /*
     TF1 *Proton_Pos_fit = new TF1("Proton_Pos_fit", func::dt_fit, 0.1, 3.0, 2);
     TF1 *Proton_Neg_fit = new TF1("Proton_Neg_fit", func::dt_fit, 0.1, 3.0, 2);
@@ -855,14 +864,16 @@ void Histogram::Fid_Write() {
     Proton_Pos_fit->Draw("same");
     Proton_Neg_fit->Draw("same");
     */
-    electron_fid_sec_hist[sec_i]->Draw();
-    fid_right->Draw("*same");
-    fid_left->Draw("*same");
+    electron_fid_can->cd((int)sec_i + 1);
     electron_fid_sec_hist[sec_i]->SetYTitle("#theta");
     electron_fid_sec_hist[sec_i]->SetXTitle("#phi");
     electron_fid_sec_hist[sec_i]->SetOption("COLZ");
+    electron_fid_sec_hist[sec_i]->Draw();
+    fid_right->Draw("*same");
+    fid_left->Draw("*same");
     electron_fid_sec_hist[sec_i]->Write();
   }
+  electron_fid_can->Write();
 }
 
 void Histogram::fid_canvas() {
