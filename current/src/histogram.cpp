@@ -847,7 +847,7 @@ void Histogram::Fid_Write() {
       // x_right[slice] = SliceFit[sec_i][slice]->Get_right_edge();
       // x_left[slice] = SliceFit[sec_i][slice]->Get_left_edge();
       // y[slice] = slice_width * slice;
-      std::cout << "Here\t" << sec_i << "\t" << slice << std::endl;
+
       y[slice] = slice_width * slice;
       x[slice] = SliceFit[sec_i][slice]->Get_left_edge();
       // y[slice * fid_slices + 1] = slice_width * slice;
@@ -855,7 +855,7 @@ void Histogram::Fid_Write() {
 
       delete SliceFit[sec_i][slice];
     }
-    std::cout << "Here" << std::endl;
+
     // TGraph *fid_right = new TGraph(fid_slices, x_right, y);
     // TGraph *fid_left = new TGraph(fid_slices, x_left, y);
     fid[sec_i] = new TGraph(fid_slices, x, y);
@@ -863,7 +863,6 @@ void Histogram::Fid_Write() {
     // FidGraph[sec_i]->Set_min(-360);
     // FidGraph[sec_i]->Set_max(360);
     // FidGraph[sec_i]->FitFiducial(fid[sec_i]);
-    std::cout << "Here" << std::endl;
 
     electron_fid_can->cd((int)sec_i + 1);
     electron_fid_sec_hist[sec_i]->SetYTitle("#theta");
