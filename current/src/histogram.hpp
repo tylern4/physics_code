@@ -31,6 +31,8 @@ class Histogram {
   char hname[50];
   char htitle[500];
 
+  static const int sector = 6;
+
   // W and Q^2
   double w_min = 0;
   double w_max = 3.25;
@@ -92,9 +94,8 @@ class Histogram {
   TH1D *delta_t_hist[3][num_points];
   const double bin_width = (p_max - p_min) / num_points;
 
-  static const int sc_sector_num = 6;
   static const int sc_paddle_num = 48;
-  TH2D *delta_t_sec_pad_hist[3][sc_sector_num][sc_paddle_num];
+  TH2D *delta_t_sec_pad_hist[3][sector][sc_paddle_num];
   TH2D *delta_t_mass_P =
       new TH2D("delta_t_mass_P", "#Deltat assuming mass of proton", bins, p_min, p_max, bins, Dt_min, Dt_max);
   TH2D *delta_t_mass_P_PID = new TH2D("delta_t_mass_P_PID", "#Deltat assuming mass of proton with PID proton", bins,
@@ -128,7 +129,6 @@ class Histogram {
   double CC_min = 0;
   double CC_max = 250;
   char *L_R_C;
-  static const int sector = 6;
   static const int segment = 18;
   static const int PMT = 3;
 
@@ -153,15 +153,14 @@ class Histogram {
   double phi_min = -360 / 2.0;
   double phi_max = 360 / 2.0;
 
-  static const int sector_num = 6;
   static const int fid_slices = 100;
   std::vector<TH2D *> electron_fid_sec_hist;
-  TH1D *electron_fid_sec_slice[sector_num][fid_slices];
+  TH1D *electron_fid_sec_slice[sector][fid_slices];
   TH2D *electron_fid_hist =
       new TH2D("electron_fid", "electron_fid", bins, phi_min, phi_max, bins, theta_min, theta_max);
 
-  TH2D *hadron_fid_sec_hist[3][sector_num];
-  TH1D *hadron_fid_sec_slice[sector_num][fid_slices];
+  TH2D *hadron_fid_sec_hist[3][sector];
+  TH1D *hadron_fid_sec_slice[sector][fid_slices];
   TH2D *hadron_fid_hist[3];
   // fiducial
 

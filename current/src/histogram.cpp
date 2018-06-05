@@ -57,6 +57,12 @@ Histogram::~Histogram() {
   delete Missing_Mass;
   delete Missing_Mass_square;
   delete Theta_CC;
+
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < num_points; j++) delete delta_t_hist[i][j];
+    for (int j = 0; j < sector; j++)
+      for (int k = 0; k < sc_paddle_num; k++) delete delta_t_sec_pad_hist[i][j][k];
+  }
 }
 
 // W and Q^2
@@ -242,7 +248,7 @@ void Histogram::makeHists_deltat() {
     delta_t_hist[2][jj] = new TH1D(hname, htitle, bins, Dt_min, Dt_max);
   }
 
-  for (int jj = 0; jj < sc_sector_num; jj++) {
+  for (int jj = 0; jj < sector; jj++) {
     for (int jjj = 0; jjj < sc_paddle_num; jjj++) {
       sprintf(hname, "delta_t_p_sec%d_pad%d", jj + 1, jjj + 1);
       sprintf(htitle, "#Deltat P Sector %d Paddle %d", jj + 1, jjj + 1);
@@ -528,7 +534,7 @@ void Histogram::delta_t_sec_pad(double momentum, int charge, double delta_t_prot
 
 void Histogram::delta_t_sec_pad_Write() {
   for (int j = 0; j < 3; j++) {
-    for (int jj = 0; jj < sc_sector_num; jj++) {
+    for (int jj = 0; jj < sector; jj++) {
       for (int jjj = 0; jjj < sc_paddle_num; jjj++) {
         delta_t_sec_pad_hist[j][jj][jjj]->SetYTitle("#Deltat");
         delta_t_sec_pad_hist[j][jj][jjj]->Write();
@@ -538,11 +544,11 @@ void Histogram::delta_t_sec_pad_Write() {
 }
 
 void Histogram::delta_T_canvas() {
-  TCanvas *can_dt[sc_sector_num][3];
+  TCanvas *can_dt[sector][3];
   char can_name[50];
   char *P_PIP_E;
   for (int particle_i = 0; particle_i < 3; particle_i++) {
-    for (int sec_i = 0; sec_i < sc_sector_num; sec_i++) {
+    for (int sec_i = 0; sec_i < sector; sec_i++) {
       if (particle_i == 0)
         P_PIP_E = "Proton";
       else if (particle_i == 1)
@@ -661,22 +667,22 @@ void Histogram::CC_Write() {
 }
 
 void Histogram::theta_cc_slice_fit() {
-  TCanvas *Theta_CC_canvas[sector_num];
+  TCanvas *Theta_CC_canvas[sector];
 
-  TF1 *peak[sector_num];
-  TH1D *Theta_CC_0[sector_num];
-  TH1D *Theta_CC_1[sector_num];
-  TH1D *Theta_CC_2[sector_num];
+  TF1 *peak[sector];
+  TH1D *Theta_CC_0[sector];
+  TH1D *Theta_CC_1[sector];
+  TH1D *Theta_CC_2[sector];
 
-  TGraph *CC_P[sector_num];
-  TGraph *CC_M[sector_num];
-  TF1 *Theta_CC_Pos_fit[sector_num];
-  TF1 *Theta_CC_Neg_fit[sector_num];
+  TGraph *CC_P[sector];
+  TGraph *CC_M[sector];
+  TF1 *Theta_CC_Pos_fit[sector];
+  TF1 *Theta_CC_Neg_fit[sector];
   char get_name[100];
   char can_name[100];
   char can_title[100];
 
-  for (int sec_i = 0; sec_i < sector_num; sec_i++) {
+  for (int sec_i = 0; sec_i < sector; sec_i++) {
     // TF1 *peak = new TF1("peak", func::landau, 0, 60, 3);
     peak[sec_i] = new TF1("peak", "landau", 10, 60);
 
@@ -763,9 +769,8 @@ void Histogram::CC_canvas() {
 }
 
 void Histogram::makeHists_fid() {
-  electron_fid_sec_hist.reserve(sector_num);
-  // hadron_fid_sec_hist.reserve(sector_num);
-  for (int sec_i = 0; sec_i < sector_num; sec_i++) {
+  electron_fid_sec_hist.reserve(sector);
+  for (int sec_i = 0; sec_i < sector; sec_i++) {
     sprintf(hname, "electron_fid_sec%d", sec_i + 1);
     sprintf(htitle, "electron_fid_sec%d", sec_i + 1);
     electron_fid_sec_hist[sec_i] =
@@ -799,7 +804,7 @@ void Histogram::Fill_hadron_fid(double theta, double phi, int sector, int id) {
 
 void Histogram::Fid_Write() {
   int slice_width = (bins / fid_slices);
-  Fits *SliceFit[sector_num][fid_slices];
+  Fits *SliceFit[sector][fid_slices];
   TCanvas *electron_fid_can = new TCanvas("electron_fid_can", "electron_fid_can", 1280, 720);
   electron_fid_can->Divide(3, 2);
 
@@ -818,7 +823,7 @@ void Histogram::Fid_Write() {
     hadron_fid_hist[t]->Write();
   }
 
-  for (int sec_i = 0; sec_i < sector_num; sec_i++) {
+  for (int sec_i = 0; sec_i < sector; sec_i++) {
     for (int t = 0; t < 3; t++) {
       hadron_fid_sec_hist[t][sec_i]->SetYTitle("#theta");
       hadron_fid_sec_hist[t][sec_i]->SetXTitle("#phi");

@@ -153,8 +153,15 @@ void DataHandeler::run() {
   for (i = 0; i < size; i++) {
     loadbar(i, size - 1);
     // file_handeler(input_files.at(i));
-    fh_thread[i] = new std::thread(std::mem_fn(&DataHandeler::file_handeler), this, input_files.at(i));
-    fh_thread[i]->join();
+    try {
+      fh_thread[i] = new std::thread(std::mem_fn(&DataHandeler::file_handeler), this, input_files.at(i));
+      fh_thread[i]->join();
+    } catch (const std::exception &e) {
+      std::cerr << RED << "Error:\t" << e.what() << std::endl;
+      std::cerr << CYAN << "Bad File: \t" << input_files.at(i) << DEF << std::endl;
+
+      fh_thread[i]->join();
+    }
   }
   ///// for (i = 0; i < size; i++) fh_thread[i]->join();
 }
