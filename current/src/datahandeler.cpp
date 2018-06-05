@@ -159,8 +159,6 @@ void DataHandeler::run() {
     } catch (const std::exception &e) {
       std::cerr << RED << "Error:\t" << e.what() << std::endl;
       std::cerr << CYAN << "Bad File: \t" << input_files.at(i) << DEF << std::endl;
-
-      fh_thread[i]->join();
     }
   }
   ///// for (i = 0; i < size; i++) fh_thread[i]->join();
