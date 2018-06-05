@@ -14,6 +14,11 @@ double func::genNormal(double *x, double *par) {
   return func;
 }
 
+double func::ec_fit_func(double *x, double *par) {
+  double func = par[0] + par[1] * x[0] + par[2] * x[0] * x[0] * x[0] * x[0] * x[0] * x[0];
+  return func;
+}
+
 double func::fiducial_phi(double theta, double e_p) {
   /////////// NOTE: Definitly just magic numbers here......... :(
   double theta_min = 9.5 + 17.0 / (e_p + 0.17);
@@ -24,7 +29,6 @@ double func::fiducial_phi(double theta, double e_p) {
 }
 
 double func::fiducial_phi(double *x, double *par) {
-  /////////// NOTE: Definitly just magic numbers here......... :(
   double theta_min = par[3] + par[4] / (x[1] + par[5]);
   double k = par[6] + par[7] * x[1];
   double m = par[8] + (par[9] * x[1]);

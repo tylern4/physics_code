@@ -243,31 +243,29 @@ double Fits::fiducial_phi_hi(double theta_e, double theta_e_min, double k, doubl
   return c * pow(sin((theta_e - theta_e_min) * 0.01745), k + m / theta_e + 1500. / (theta_e * theta_e));
 }
 
-TF1 *Fits::FitFiducial_lo(TH2D *hist2d) {
+TF1 *Fits::FitFiducial(TGraph *profile) {
   ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
-  a = b = c = d = 0.5;
-  TF1 *fitFunc_lo = new TF1("fitFunc_lo",
-                            "-[0]*TMath::Power(TMath::Sin((x-[1])*0.01745),"
-                            "[2] +[3] / x + 1500. / (x * x))",
-                            min_value, max_value);
+  TF1 *fitFunc = new TF1("fitFunc", func::fiducial_phi, min_value, max_value, 10);
 
-  fitFunc_lo->SetLineColor(7);
-  fitFunc_lo->SetParNames("a", "b", "c", "d");
+  fitFunc->SetLineColor(7);
 
-  hist2d->Fit("fitFunc_lo", "QM+", "", min_value, max_value);
+  profile->Fit("fitFunc", "QM0+", "", min_value, max_value);
 
-  fitFunc_lo->SetParameter(0, fitFunc_lo->GetParameter("a"));
-  fitFunc_lo->SetParameter(1, fitFunc_lo->GetParameter("b"));
-  fitFunc_lo->SetParameter(2, fitFunc_lo->GetParameter("c"));
-  fitFunc_lo->SetParameter(3, fitFunc_lo->GetParameter("d"));
+  fitFunc->SetParameter(0, fitFunc->GetParameter(0));
+  fitFunc->SetParameter(1, fitFunc->GetParameter(1));
+  fitFunc->SetParameter(2, fitFunc->GetParameter(2));
+  fitFunc->SetParameter(3, fitFunc->GetParameter(3));
+  fitFunc->SetParameter(4, fitFunc->GetParameter(4));
+  fitFunc->SetParameter(5, fitFunc->GetParameter(5));
+  fitFunc->SetParameter(6, fitFunc->GetParameter(6));
+  fitFunc->SetParameter(7, fitFunc->GetParameter(7));
+  fitFunc->SetParameter(8, fitFunc->GetParameter(8));
+  fitFunc->SetParameter(9, fitFunc->GetParameter(9));
+  fitFunc->SetParameter(10, fitFunc->GetParameter(10));
 
-  hist2d->Fit("fitFunc_lo", "QM+", "", min_value, max_value);
+  profile->Fit("fitFunc", "QM+", "", min_value, max_value);
 
-  a = fitFunc_lo->GetParameter("a");
-  b = fitFunc_lo->GetParameter("b");
-  c = fitFunc_lo->GetParameter("c");
-  d = fitFunc_lo->GetParameter("d");
-  return fitFunc_lo;
+  return fitFunc;
 }
 
 TF1 *Fits::FitFiducial_hi(TH2D *hist2d) {

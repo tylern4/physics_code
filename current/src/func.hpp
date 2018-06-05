@@ -9,6 +9,7 @@
 #include "TMath.h"
 
 namespace func {
+double ec_fit_func(double *x, double *par);
 double genNormal(double *x, double *par);
 double breit_wigner(double *x, double *par);
 double fiducial_phi(double theta, double e_p);

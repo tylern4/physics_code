@@ -805,12 +805,16 @@ void Histogram::Fill_hadron_fid(double theta, double phi, int sector, int id) {
 void Histogram::Fid_Write() {
   int slice_width = (bins / fid_slices);
   Fits *SliceFit[sector][fid_slices];
+  TGraph *fid[sector];
+  Fits *FidGraph[sector];
+
   TCanvas *electron_fid_can = new TCanvas("electron_fid_can", "electron_fid_can", 1280, 720);
   electron_fid_can->Divide(3, 2);
 
   double x_right[fid_slices];
   double x_left[fid_slices];
-  double y[fid_slices];
+  double x[fid_slices + 10 * 2];
+  double y[fid_slices + 10 * 2];
 
   electron_fid_hist->SetYTitle("#theta");
   electron_fid_hist->SetXTitle("#phi");
@@ -840,42 +844,33 @@ void Histogram::Fid_Write() {
       SliceFit[sec_i][slice]->Set_min(min_phi[sec_i]);
       SliceFit[sec_i][slice]->Set_max(max_phi[sec_i]);
       SliceFit[sec_i][slice]->FitGenNormal(electron_fid_sec_slice[sec_i][slice]);
-      x_right[slice] = SliceFit[sec_i][slice]->Get_right_edge();
-      x_left[slice] = SliceFit[sec_i][slice]->Get_left_edge();
+      // x_right[slice] = SliceFit[sec_i][slice]->Get_right_edge();
+      // x_left[slice] = SliceFit[sec_i][slice]->Get_left_edge();
+      // y[slice] = slice_width * slice;
+      std::cout << "Here\t" << sec_i << "\t" << slice << std::endl;
       y[slice] = slice_width * slice;
-      /*
-            y[slice] = slice_width * slice;
-            x[slice] = SliceFit[sec_i][slice]->Get_left_edge();
-            y[slice * fid_slices + 1] = slice_width * slice;
-            x[slice * fid_slices + 1] = SliceFit[sec_i][slice]->Get_right_edge();
-      */
+      x[slice] = SliceFit[sec_i][slice]->Get_left_edge();
+      // y[slice * fid_slices + 1] = slice_width * slice;
+      // x[slice * fid_slices + 1] = SliceFit[sec_i][slice]->Get_right_edge();
 
       delete SliceFit[sec_i][slice];
     }
+    std::cout << "Here" << std::endl;
+    // TGraph *fid_right = new TGraph(fid_slices, x_right, y);
+    // TGraph *fid_left = new TGraph(fid_slices, x_left, y);
+    fid[sec_i] = new TGraph(fid_slices, x, y);
+    // FidGraph[sec_i] = new Fits();
+    // FidGraph[sec_i]->Set_min(-360);
+    // FidGraph[sec_i]->Set_max(360);
+    // FidGraph[sec_i]->FitFiducial(fid[sec_i]);
+    std::cout << "Here" << std::endl;
 
-    TGraph *fid_right = new TGraph(fid_slices, x_right, y);
-    TGraph *fid_left = new TGraph(fid_slices, x_left, y);
-    fid_right->SetName("fid_right");
-    fid_left->SetName("fid_left");
-    /*
-    TF1 *Proton_Pos_fit = new TF1("Proton_Pos_fit", func::dt_fit, 0.1, 3.0, 2);
-    TF1 *Proton_Neg_fit = new TF1("Proton_Neg_fit", func::dt_fit, 0.1, 3.0, 2);
-    P->Fit(Proton_Pos_fit, "QRG5", "", 0.2, 2);
-    M->Fit(Proton_Neg_fit, "QRG5", "", 0.2, 2);
-
-    TCanvas *dt_proton_canvas = new TCanvas("dt_proton_canvas", "#dt Proton", 1280, 720);
-    dt_proton_canvas->cd();
-    delta_t_mass_P->Draw();
-    Proton_Pos_fit->Draw("same");
-    Proton_Neg_fit->Draw("same");
-    */
     electron_fid_can->cd((int)sec_i + 1);
     electron_fid_sec_hist[sec_i]->SetYTitle("#theta");
     electron_fid_sec_hist[sec_i]->SetXTitle("#phi");
     electron_fid_sec_hist[sec_i]->SetOption("COLZ");
     electron_fid_sec_hist[sec_i]->Draw();
-    fid_right->Draw("*same");
-    fid_left->Draw("*same");
+    fid[sec_i]->Draw("*same");
     electron_fid_sec_hist[sec_i]->Write();
   }
   electron_fid_can->Write();
@@ -938,7 +933,7 @@ void Histogram::EC_slice_fit() {
   TF1 *peak = new TF1("peak", "gaus", 0.2, 0.4);
   // TF1 *peak = new TF1("peak", func::peak, 0.2, 0.4, 3);
   //[0]*exp(-[1]*x) +
-  char *func = "[0]+[1]*x+[2]*x*x*x*x*x*x";
+  // char *func = "[0]+[1]*x+[2]*x*x*x*x*x*x";
   EC_sampling_fraction->FitSlicesY(peak, 0, -1, 0, "QRG5");
   TH1D *EC_sampling_fraction_0 = (TH1D *)gDirectory->Get("EC_sampling_fraction_0");
   TH1D *EC_sampling_fraction_1 = (TH1D *)gDirectory->Get("EC_sampling_fraction_1");
@@ -965,8 +960,8 @@ void Histogram::EC_slice_fit() {
   TGraph *EC_M = new TGraph(num, x, y_minus);
   EC_P->SetName("Positive_EC_graph");
   EC_M->SetName("Negative_EC_graph");
-  TF1 *EC_P_fit = new TF1("EC_P_fit", func, 0.25, 4.0);
-  TF1 *EC_M_fit = new TF1("EC_M_fit", func, 0.25, 4.0);
+  TF1 *EC_P_fit = new TF1("EC_P_fit", func::ec_fit_func, 0.25, 4.0, 3);
+  TF1 *EC_M_fit = new TF1("EC_M_fit", func::ec_fit_func, 0.25, 4.0, 3);
   EC_P->Fit(EC_P_fit, "QRG");
   EC_M->Fit(EC_M_fit, "QRG");
 
