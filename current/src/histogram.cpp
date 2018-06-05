@@ -813,8 +813,8 @@ void Histogram::Fid_Write() {
 
   double x_right[fid_slices];
   double x_left[fid_slices];
-  double x[fid_slices + 10 * 2];
-  double y[fid_slices + 10 * 2];
+  double x[fid_slices * 2];
+  double y[fid_slices * 2];
 
   electron_fid_hist->SetYTitle("#theta");
   electron_fid_hist->SetXTitle("#phi");
@@ -849,7 +849,11 @@ void Histogram::Fid_Write() {
       // y[slice] = slice_width * slice;
 
       y[slice] = slice_width * slice;
-      x[slice] = SliceFit[sec_i][slice]->Get_left_edge();
+      if (SliceFit[sec_i][slice]->Get_left_edge() == SliceFit[sec_i][slice]->Get_left_edge()) {
+        x[slice] = SliceFit[sec_i][slice]->Get_left_edge();
+      } else {
+        x[slice] = -99;
+      }
       // y[slice * fid_slices + 1] = slice_width * slice;
       // x[slice * fid_slices + 1] = SliceFit[sec_i][slice]->Get_right_edge();
 
@@ -859,16 +863,16 @@ void Histogram::Fid_Write() {
     // TGraph *fid_right = new TGraph(fid_slices, x_right, y);
     // TGraph *fid_left = new TGraph(fid_slices, x_left, y);
     fid[sec_i] = new TGraph(fid_slices, x, y);
-    // FidGraph[sec_i] = new Fits();
-    // FidGraph[sec_i]->Set_min(-360);
-    // FidGraph[sec_i]->Set_max(360);
-    // FidGraph[sec_i]->FitFiducial(fid[sec_i]);
+    FidGraph[sec_i] = new Fits();
+    FidGraph[sec_i]->Set_min(min_phi[sec_i]);
+    FidGraph[sec_i]->Set_max(max_phi[sec_i]);
+    FidGraph[sec_i]->FitFiducial(fid[sec_i]);
 
-    electron_fid_can->cd((int)sec_i + 1);
     electron_fid_sec_hist[sec_i]->SetYTitle("#theta");
     electron_fid_sec_hist[sec_i]->SetXTitle("#phi");
     electron_fid_sec_hist[sec_i]->SetOption("COLZ");
-    electron_fid_sec_hist[sec_i]->Draw();
+    electron_fid_can->cd((int)sec_i + 1);
+    electron_fid_sec_hist[sec_i]->Draw("same");
     fid[sec_i]->Draw("*same");
     electron_fid_sec_hist[sec_i]->Write();
   }

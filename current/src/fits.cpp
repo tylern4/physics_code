@@ -21,7 +21,7 @@ double Fits::Get_mean() { return mean; }
 double Fits::Get_FWHM() { return FWHM; }
 
 TF1 *Fits::FitGaus(TH1D *hist) {
-  if (hist->GetEntries() > 1000) {
+  if (hist->GetEntries() > 100) {
     if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
     TF1 *fitFunc = new TF1("fitFunc", func::gausian, -100.0, 100.0, 3);
     // TF1 *fitFunc = new TF1("fitFunc", "gaus", min_value, max_value);
@@ -49,6 +49,10 @@ TF1 *Fits::FitGaus(TH1D *hist) {
     mean = fitFunc->GetParameter("mean");
     FWHM = fitFunc->GetParameter("#sigma");
     sigma = fitFunc->GetParameter("#sigma") / (2 * sqrt(2 * log(2)));  // 2.35482004503;
+
+    left_edge_x = mean - 3 * sigma;
+    right_edge_x = mean + 3 * sigma;
+
     return fitFunc;
   }
 }
