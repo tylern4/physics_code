@@ -13,12 +13,13 @@ DataHandeler::DataHandeler(std::vector<std::string> fin, std::string RootFile_ou
   elec_vec = new std::vector<bool>(MAX_PARTS, false);
   c1 = new TCanvas("c1", "c1", 100, 100);
 
-  // in main.h now
-  // ofstream cut_outputs;
-  // cut_outputs.open("outputFiles/cut_outputs.csv");
-  // cut_outputs << "Cut,Mean,Sigma" << endl;
-
-  e_mu = new TLorentzVector(0.0, 0.0, sqrt(E1D_E0 * E1D_E0 - MASS_E * MASS_E), E1D_E0);
+  double BEAM_ENERGY;
+  if (getenv("BEAM_E") != NULL) {
+    BEAM_ENERGY = atof(getenv("BEAM_E"));
+  } else {
+    BEAM_ENERGY = E1D_E0;
+  }
+  e_mu = new TLorentzVector(0.0, 0.0, sqrt(BEAM_ENERGY * BEAM_ENERGY - MASS_E * MASS_E), BEAM_ENERGY);
   // End declrare variables
 
   // Open outputfile
