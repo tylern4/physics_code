@@ -261,6 +261,8 @@ void DataHandeler::file_handeler(std::string fin) {
       W = physics::W_calc(*e_mu, e_mu_prime);
       Q2 = physics::Q2_calc(*e_mu, e_mu_prime);
       e_E = e_mu_prime.E();
+      PhotonFlux *photon_flux = new PhotonFlux(*e_mu, e_mu_prime);
+      delete photon_flux;
       //}
 
       hists->WvsQ2_Fill(e_E, W, Q2, physics::xb_calc(Q2, e_E));

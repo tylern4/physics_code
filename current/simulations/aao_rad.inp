@@ -6,13 +6,13 @@
 .2                      ! a limit on the error in (mm)**2
 5.0                     ! target cell length (cm)
 0.486                   ! radius of target cyclinder
-0.3                      ! x-coord of beam position
-0.03                      ! y-coord of beam position
+3.0                      ! x-coord of beam position
+0.3                      ! y-coord of beam position
 0.                      ! z-coord of beam positio
 4.81726                   ! beam energy
 0.25 5.                 ! Q2_min, Q2_max
 0.1 4.25                ! scattered electron momentum min and max
 .005                    ! minimum photon energy for integration
-10000	                ! number of events
+50000	                ! number of events
 0.	                    ! a multiplication factor for sigr_max
 .005                    ! sigr_max

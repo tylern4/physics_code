@@ -12,4 +12,5 @@
 #include "histogram.hpp"
 #include "makeHeader.hpp"
 #include "missing_mass.hpp"
+#include "photon_flux.hpp"
 #endif

@@ -19,6 +19,7 @@
 #include "delta_t.hpp"
 #include "histogram.hpp"
 #include "missing_mass.hpp"
+#include "photon_flux.hpp"
 #include "physics.hpp"
 
 class DataHandeler {
