@@ -8,6 +8,7 @@
 // using namespace std;
 
 Histogram::Histogram() {
+  makeHists_WvsQ2();
   makeHists_deltat();
   makeHists_EC();
   makeHists_CC();
@@ -66,6 +67,19 @@ Histogram::~Histogram() {
 }
 
 // W and Q^2
+void Histogram::makeHists_WvsQ2() {
+  for (int y = 0; y < Q2_bins; y++) {
+    sprintf(hname, "W_%0.3f_%0.3f", Q2_width * y, Q2_width * (y + 1));
+    sprintf(htitle, "W hist\nQ^{2} %0.3f %0.3f", Q2_width * y, Q2_width * (y + 1));
+    W_binned[y] = new TH1D(hname, htitle, bins, w_min, w_max);
+  }
+  for (int x = 0; x < W_bins; x++) {
+    sprintf(hname, "Q2_%0.3f_%0.3f", W_width * x, W_width * (x + 1));
+    sprintf(htitle, "Q^{2} hist\nW %0.3f %0.3f", W_width * x, W_width * (x + 1));
+    Q2_binned[x] = new TH1D(hname, htitle, bins, q2_min, q2_max);
+  }
+}
+
 void Histogram::Fill_proton_WQ2(double W, double Q2) {
   WvsQ2_proton->Fill(W, Q2);
   W_proton->Fill(W);
@@ -87,6 +101,22 @@ void Histogram::Fill_single_proton_WQ2(double W, double Q2) {
 void Histogram::WvsQ2_Fill(double E_prime, double W, double Q2, double xb) {
   E_prime_hist->Fill(E_prime);
   WvsQ2_hist->Fill(W, Q2);
+  WvsQ2_binned->Fill(W, Q2);
+
+  for (int y = 0; y < Q2_bins; y++) {
+    if ((Q2_width * y) <= Q2 && (Q2_width * (y + 1)) >= Q2) {
+      W_binned[y]->Fill(W);
+      continue;
+    }
+  }
+
+  for (int x = 0; x < W_bins; x++) {
+    if ((W_width * x) <= W && (W_width * (x + 1)) >= W) {
+      Q2_binned[x]->Fill(Q2);
+      continue;
+    }
+  }
+
   W_hist->Fill(W);
   Q2_hist->Fill(Q2);
   Q2_vs_xb->Fill(xb, Q2);
@@ -103,6 +133,11 @@ void Histogram::WvsQ2_Write() {
   WvsQ2_hist->SetYTitle("Q^{2} (GeV^{2})");
   WvsQ2_hist->SetOption("COLZ");
   WvsQ2_hist->Write();
+
+  WvsQ2_binned->SetXTitle("W (GeV)");
+  WvsQ2_binned->SetYTitle("Q^{2} (GeV^{2})");
+  WvsQ2_binned->SetOption("COLZ");
+  WvsQ2_binned->Write();
 
   W_hist->SetXTitle("W (GeV)");
   W_hist->Write();
@@ -161,6 +196,17 @@ void Histogram::WvsQ2_Write() {
 
   Q2_single_proton->SetXTitle("Q^{2} (GeV^{2})");
   Q2_single_proton->Write();
+}
+
+void Histogram::WvsQ2_binned_Write() {
+  for (int x = 0; x < Q2_bins; x++) {
+    W_binned[x]->SetXTitle("W (GeV)");
+    W_binned[x]->Write();
+  }
+  for (int y = 0; y < W_bins; y++) {
+    Q2_binned[y]->SetXTitle("Q^{2} (GeV^{2})");
+    Q2_binned[y]->Write();
+  }
 }
 // W and Q^2
 

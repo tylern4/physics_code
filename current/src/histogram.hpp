@@ -6,6 +6,7 @@
 
 #ifndef HISTOGRAM_H
 #define HISTOGRAM_H
+#include <cmath>
 #include <fstream>
 #include "TDirectory.h"
 #include "TF1.h"
@@ -25,6 +26,7 @@ class Histogram {
   void makeHists_fid();
   void makeHists_deltat();
   void makeHists_CC();
+  void makeHists_WvsQ2();
   const int bins = 500;
   const double p_min = 0.0;
   const double p_max = 5.0;
@@ -38,6 +40,16 @@ class Histogram {
   double w_max = 3.25;
   double q2_min = 0;
   double q2_max = 10;
+
+  static const int W_bins = 32;
+  static const int Q2_bins = 4;
+  double w_binned_min = 0.0;
+  double w_binned_max = 4.0;
+  double q2_binned_min = 0.0;
+  double q2_binned_max = 10.0;
+
+  double W_width = (w_binned_max - w_binned_min) / W_bins;
+  double Q2_width = (q2_binned_max - q2_binned_min) / Q2_bins;
 
   TH2D *WvsQ2_hist = new TH2D("WvsQ2_hist", "W vs Q^{2}", bins, w_min, w_max, bins, q2_min, q2_max);
   TH1D *W_hist = new TH1D("W", "W", bins, w_min, w_max);
@@ -56,6 +68,12 @@ class Histogram {
   TH2D *WvsQ2_single_proton = new TH2D("WvsQ2_single_proton", "W vs Q^{2} P", bins, w_min, w_max, bins, q2_min, q2_max);
   TH1D *W_single_proton = new TH1D("W_single_proton", "W P", bins, w_min, w_max);
   TH1D *Q2_single_proton = new TH1D("Q2_single_proton", "Q^{2} P", bins, q2_min, q2_max);
+  TH2D *WvsQ2_binned = new TH2D("WvsQ2_hist_binned", "W vs Q^{2} binned", W_bins, w_binned_min, w_binned_max, Q2_bins,
+                                q2_binned_min, q2_binned_max);
+
+  TH1D *W_binned[Q2_bins];
+  TH1D *Q2_binned[W_bins];
+
   // W and Q^2
 
   // P and E
@@ -212,6 +230,7 @@ class Histogram {
   void WvsQ2_Fill(double E_prime, double W, double Q2, double xb);
   void Fill_pion_WQ2(double W, double Q2);
   void WvsQ2_Write();
+  void WvsQ2_binned_Write();
 
   // P and E
   void MomVsBeta_Fill_pos(double P, double Beta);

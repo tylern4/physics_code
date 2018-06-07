@@ -75,6 +75,9 @@ DataHandeler::~DataHandeler() {
   TDirectory *WvsQ2_folder = RootOutputFile->mkdir("W vs Q2");
   WvsQ2_folder->cd();
   hists->WvsQ2_Write();
+  TDirectory *W_Q2_binned = RootOutputFile->mkdir("W_Q2_binned");
+  W_Q2_binned->cd();
+  hists->WvsQ2_binned_Write();
   std::cerr << BOLDBLUE << "MomVsBeta_Fill()" << DEF << std::endl;
   TDirectory *MomVsBeta_folder = RootOutputFile->mkdir("Momentum vs beta");
   MomVsBeta_folder->cd();
