@@ -274,12 +274,14 @@ void DataHandeler::file_handeler(std::string fin) {
       for (int part_num = 1; part_num < gpart; part_num++) {
         if (p[part_num] == 0) continue;
         PID = id[part_num];
+#ifndef __PID__
         if (q[part_num] == POSITIVE) {
           if (Cuts::dt_P_cut(dt_proton.at(part_num), p[part_num])) PID = PROTON;
           if (Cuts::dt_Pip_cut(dt_proton.at(part_num), p[part_num])) PID = PIP;
         } else if (q[part_num] == POSITIVE) {
           if (Cuts::dt_Pip_cut(dt_proton.at(part_num), p[part_num])) PID = PIM;
         }
+#endif
         /*
         if (abs((double)vz[part_num]) > 2.0) continue;
         if (abs((double)vy[part_num]) > 1.0) continue;

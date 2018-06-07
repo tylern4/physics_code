@@ -854,8 +854,7 @@ void Histogram::Fid_Write() {
   TGraph *fid[sector];
   Fits *FidGraph[sector];
 
-  TCanvas *electron_fid_can = new TCanvas("electron_fid_can", "electron_fid_can", 1280, 720);
-  electron_fid_can->Divide(3, 2);
+  TCanvas *electron_fid_can[sector];
 
   double x_right[fid_slices];
   double x_left[fid_slices];
@@ -880,7 +879,9 @@ void Histogram::Fid_Write() {
       hadron_fid_sec_hist[t][sec_i]->SetOption("COLZ");
       hadron_fid_sec_hist[t][sec_i]->Write();
     }
-
+    sprintf(hname, "electron_fid_sector_%d", sec_i + 1);
+    sprintf(htitle, "electron_fid_sector_%d", sec_i + 1);
+    electron_fid_can[sec_i] = new TCanvas(hname, htitle, 1280, 720);
     for (int slice = 0; slice < fid_slices; slice++) {
       sprintf(hname, "electron_fid_sec_%d_%d", sec_i + 1, slice + 1);
       electron_fid_sec_slice[sec_i][slice] = electron_fid_sec_hist[sec_i]->ProjectionX(
@@ -898,7 +899,7 @@ void Histogram::Fid_Write() {
       if (SliceFit[sec_i][slice]->Get_left_edge() == SliceFit[sec_i][slice]->Get_left_edge()) {
         x[slice] = SliceFit[sec_i][slice]->Get_left_edge();
       } else {
-        x[slice] = -99;
+        x[slice] = 0;
       }
       // y[slice * fid_slices + 1] = slice_width * slice;
       // x[slice * fid_slices + 1] = SliceFit[sec_i][slice]->Get_right_edge();
@@ -906,23 +907,21 @@ void Histogram::Fid_Write() {
       delete SliceFit[sec_i][slice];
     }
 
-    // TGraph *fid_right = new TGraph(fid_slices, x_right, y);
-    // TGraph *fid_left = new TGraph(fid_slices, x_left, y);
     fid[sec_i] = new TGraph(fid_slices, x, y);
     FidGraph[sec_i] = new Fits();
     FidGraph[sec_i]->Set_min(min_phi[sec_i]);
     FidGraph[sec_i]->Set_max(max_phi[sec_i]);
     FidGraph[sec_i]->FitFiducial(fid[sec_i]);
 
+    electron_fid_can[sec_i]->cd();
     electron_fid_sec_hist[sec_i]->SetYTitle("#theta");
     electron_fid_sec_hist[sec_i]->SetXTitle("#phi");
     electron_fid_sec_hist[sec_i]->SetOption("COLZ");
-    electron_fid_can->cd((int)sec_i + 1);
-    electron_fid_sec_hist[sec_i]->Draw("same");
+    electron_fid_sec_hist[sec_i]->Draw();
     fid[sec_i]->Draw("*same");
+    electron_fid_can[sec_i]->Write();
     electron_fid_sec_hist[sec_i]->Write();
   }
-  electron_fid_can->Write();
 }
 
 void Histogram::fid_canvas() {
