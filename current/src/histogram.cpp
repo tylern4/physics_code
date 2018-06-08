@@ -896,8 +896,11 @@ void Histogram::Fid_Write() {
       // y[slice] = slice_width * slice;
 
       y[slice] = slice_width * slice;
+
       if (SliceFit[sec_i][slice]->Get_left_edge() == SliceFit[sec_i][slice]->Get_left_edge()) {
         x[slice] = SliceFit[sec_i][slice]->Get_left_edge();
+        std::cerr << SliceFit[sec_i][slice]->Get_left_edge() << "," << SliceFit[sec_i][slice]->Get_right_edge()
+                  << std::endl;
       } else {
         x[slice] = 0;
       }
