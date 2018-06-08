@@ -332,7 +332,8 @@ TF1 *Fits::FitGenNormal(TH1D *hist) {
   if (hist->GetEntries() > 1000) {
     // if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
 
-    fitFunc->SetParLimits(1, 5.0, 200.0);
+    // fitFunc->SetParLimits(1, 5.0, 200.0);
+    fitFunc->SetParLimits(1, 2.0, 200.0);
 
     fitFunc->SetParameter(0, 15.0);
     fitFunc->SetParameter(1, 10.0);
@@ -340,7 +341,7 @@ TF1 *Fits::FitGenNormal(TH1D *hist) {
     fitFunc->SetParameter(3, 3000.0);
     fitFunc->SetParNames("alpha", "beta", "mu", "weight");
 
-    for (int i = 0; i < 10; i++) hist->Fit("genNormal", "QMR0+", "", min_value, max_value);
+    // for (int i = 0; i < 10; i++) hist->Fit("genNormal", "QMR0+", "", min_value, max_value);
     hist->Fit("genNormal", "QMR+", "", min_value, max_value);
 
     for (double m = min_value; m < max_value; m = m + 0.005) {
