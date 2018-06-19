@@ -856,9 +856,6 @@ void Histogram::Fid_Write() {
   Fits *FidGraph[sector];
 
   TCanvas *electron_fid_can[sector];
-
-  double x_right[fid_slices];
-  double x_left[fid_slices];
   double x[fid_slices * 2];
   double y[fid_slices * 2];
 
@@ -892,19 +889,18 @@ void Histogram::Fid_Write() {
       SliceFit[sec_i][slice]->Set_min(min_phi[sec_i]);
       SliceFit[sec_i][slice]->Set_max(max_phi[sec_i]);
       SliceFit[sec_i][slice]->FitGenNormal(electron_fid_sec_slice[sec_i][slice]);
-      // x_right[slice] = SliceFit[sec_i][slice]->Get_right_edge();
-      // x_left[slice] = SliceFit[sec_i][slice]->Get_left_edge();
-      // y[slice] = slice_width * slice;
 
       if (SliceFit[sec_i][slice]->Get_left_edge() == SliceFit[sec_i][slice]->Get_left_edge() &&
           SliceFit[sec_i][slice]->Get_right_edge() == SliceFit[sec_i][slice]->Get_right_edge()) {
         y[slice] = y_width * slice_width * slice;
         x[slice] = SliceFit[sec_i][slice]->Get_right_edge();
+
         y[slice + fid_slices] = y_width * slice_width * slice;
         x[slice + fid_slices] = SliceFit[sec_i][slice]->Get_left_edge();
+
+        std::cout << y[slice] << "," << x[slice] << "," << y[slice + fid_slices] << "," << x[slice + fid_slices]
+                  << std::endl;
       }
-      // y[slice * fid_slices + 1] = slice_width * slice;
-      // x[slice * fid_slices + 1] = SliceFit[sec_i][slice]->Get_right_edge();
 
       delete SliceFit[sec_i][slice];
     }
@@ -913,8 +909,6 @@ void Histogram::Fid_Write() {
     FidGraph[sec_i] = new Fits();
     FidGraph[sec_i]->Set_min(min_phi[sec_i]);
     FidGraph[sec_i]->Set_max(max_phi[sec_i]);
-    // FidGraph[sec_i]->FitPoly_4D(fid[sec_i]);
-
     //    FidGraph[sec_i]->FitFiducial(fid[sec_i]);
 
     electron_fid_can[sec_i]->cd();
