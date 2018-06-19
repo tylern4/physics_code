@@ -925,7 +925,7 @@ void Histogram::fid_canvas() {
   for (int sec_i = 0; sec_i < sector; sec_i++) {
     sprintf(can_name, "Electron Fid Sector %d Slices", sec_i + 1);
     can[sec_i] = new TCanvas(can_name, can_name, 1600, 900);
-    can[sec_i]->Divide(fid_slices / 10, 10);
+    can[sec_i]->Divide(10, fid_slices / 10);
     for (int slice = 0; slice < fid_slices; slice++) {
       can[sec_i]->cd((int)slice + 1);
       electron_fid_sec_slice[sec_i][slice]->Draw("same");
@@ -956,6 +956,8 @@ void Histogram::EC_fill(double etot, double momentum) {
     }
   }
 }
+
+void Histogram::TM_Fill(double momentum, double theta) { Theta_vs_mom->Fill(momentum, theta); }
 
 void Histogram::EC_cut_fill(double etot, double momentum) {
   double sampling_frac = etot / momentum;
@@ -1067,6 +1069,11 @@ void Histogram::EC_Write() {
   EC_sampling_fraction_cut->Write();
 
   EC_slice_fit();
+
+  Theta_vs_mom->SetXTitle("Momentum (GeV)");
+  Theta_vs_mom->SetYTitle("Theta #theta");
+  Theta_vs_mom->SetOption("COLZ");
+  Theta_vs_mom->Write();
 }
 
 void Histogram::Fill_Beam_Position(double vertex_x, double vertex_y, double vertex_z) {
@@ -1074,6 +1081,8 @@ void Histogram::Fill_Beam_Position(double vertex_x, double vertex_y, double vert
   Beam_Position_X->Fill(vertex_x);
   Beam_Position_Y->Fill(vertex_y);
   Beam_Position_Z->Fill(vertex_z);
+
+  // Phi vs vertex
 }
 
 void Histogram::Beam_Position_Write() {

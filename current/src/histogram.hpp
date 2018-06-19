@@ -171,7 +171,7 @@ class Histogram {
   double phi_min = -360 / 2.0;
   double phi_max = 360 / 2.0;
 
-  static const int fid_slices = 50;
+  static const int fid_slices = 40;
   std::vector<TH2D *> electron_fid_sec_hist;
   TH1D *electron_fid_sec_slice[sector][fid_slices];
   TH2D *electron_fid_hist =
@@ -191,6 +191,7 @@ class Histogram {
       new TH2D("EC_sampling_fraction_cut", "EC_sampling_fraction_cut", bins, p_min, p_max, bins, EC_min, EC_max);
   TH1D *EC_hist[num_points];
   TH1D *EC_hist_cut[num_points];
+  TH2D *Theta_vs_mom = new TH2D("Theta_vs_mom", "Theta_vs_mom", bins, p_min, p_max, bins, 0, 100);
   // EC hists
 
   // Beam Position
@@ -287,6 +288,8 @@ class Histogram {
   void EC_cut_fill(double etot, double momentum);
   void EC_slice_fit();
   void EC_Write();
+
+  void TM_Fill(double momentum, double theta);
 
   // Beam Position
   void Fill_Beam_Position(double vertex_x, double vertex_y, double vertex_z);
