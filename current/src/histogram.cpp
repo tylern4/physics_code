@@ -892,20 +892,16 @@ void Histogram::Fid_Write() {
 
       if (SliceFit[sec_i][slice]->Get_left_edge() == SliceFit[sec_i][slice]->Get_left_edge() &&
           SliceFit[sec_i][slice]->Get_right_edge() == SliceFit[sec_i][slice]->Get_right_edge()) {
-        y[slice] = y_width * slice_width * slice;
-        x[slice] = SliceFit[sec_i][slice]->Get_right_edge();
-
         y[slice + fid_slices] = y_width * slice_width * slice;
         x[slice + fid_slices] = SliceFit[sec_i][slice]->Get_left_edge();
-
-        std::cout << y[slice] << "," << x[slice] << "," << y[slice + fid_slices] << "," << x[slice + fid_slices]
-                  << std::endl;
+        y[slice] = y_width * slice_width * slice;
+        x[slice] = SliceFit[sec_i][slice]->Get_right_edge();
       }
 
       delete SliceFit[sec_i][slice];
     }
 
-    fid[sec_i] = new TGraph(fid_slices, x, y);
+    fid[sec_i] = new TGraph(fid_slices * 2, x, y);
     FidGraph[sec_i] = new Fits();
     FidGraph[sec_i]->Set_min(min_phi[sec_i]);
     FidGraph[sec_i]->Set_max(max_phi[sec_i]);
