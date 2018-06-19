@@ -850,6 +850,7 @@ void Histogram::Fill_hadron_fid(double theta, double phi, int sector, int id) {
 
 void Histogram::Fid_Write() {
   int slice_width = (bins / fid_slices);
+  int y_width = (60 / bins);
   Fits *SliceFit[sector][fid_slices];
   TGraph *fid[sector];
   Fits *FidGraph[sector];
@@ -895,11 +896,11 @@ void Histogram::Fid_Write() {
       // x_left[slice] = SliceFit[sec_i][slice]->Get_left_edge();
       // y[slice] = slice_width * slice;
 
-      y[slice] = slice_width * slice;
+      y[slice] = y_width * slice;
 
       if (SliceFit[sec_i][slice]->Get_left_edge() == SliceFit[sec_i][slice]->Get_left_edge()) {
         x[slice] = SliceFit[sec_i][slice]->Get_left_edge();
-        std::cerr << "Y? " << y[slice] << "width? " << slice_width << "slice: ";
+        std::cerr << "Y? " << y[slice] << " width? " << slice_width << " slice: ";
         std::cerr << slice << "," << SliceFit[sec_i][slice]->Get_left_edge() << ","
                   << SliceFit[sec_i][slice]->Get_right_edge() << std::endl;
       } else {
