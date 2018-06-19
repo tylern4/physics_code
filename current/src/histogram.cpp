@@ -913,7 +913,7 @@ void Histogram::Fid_Write() {
     FidGraph[sec_i] = new Fits();
     FidGraph[sec_i]->Set_min(min_phi[sec_i]);
     FidGraph[sec_i]->Set_max(max_phi[sec_i]);
-    FidGraph[sec_i]->FitPoly_4D(fid[sec_i]);
+    // FidGraph[sec_i]->FitPoly_4D(fid[sec_i]);
 
     //    FidGraph[sec_i]->FitFiducial(fid[sec_i]);
 
