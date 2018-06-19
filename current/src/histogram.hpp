@@ -171,7 +171,7 @@ class Histogram {
   double phi_min = -360 / 2.0;
   double phi_max = 360 / 2.0;
 
-  static const int fid_slices = 100;
+  static const int fid_slices = 50;
   std::vector<TH2D *> electron_fid_sec_hist;
   TH1D *electron_fid_sec_slice[sector][fid_slices];
   TH2D *electron_fid_hist =
