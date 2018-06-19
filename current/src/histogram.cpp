@@ -849,8 +849,8 @@ void Histogram::Fill_hadron_fid(double theta, double phi, int sector, int id) {
 }
 
 void Histogram::Fid_Write() {
-  int slice_width = (bins / fid_slices);
-  int y_width = (60.0 / (double)bins);
+  double slice_width = ((double)bins / (double)fid_slices);
+  double y_width = (60.0 / (double)bins);
   Fits *SliceFit[sector][fid_slices];
   TGraph *fid[sector];
   Fits *FidGraph[sector];
@@ -896,15 +896,10 @@ void Histogram::Fid_Write() {
       // x_left[slice] = SliceFit[sec_i][slice]->Get_left_edge();
       // y[slice] = slice_width * slice;
 
-      y[slice] = y_width * slice;
-
-      if (SliceFit[sec_i][slice]->Get_left_edge() == SliceFit[sec_i][slice]->Get_left_edge()) {
+      if (SliceFit[sec_i][slice]->Get_left_edge() == SliceFit[sec_i][slice]->Get_left_edge() &&
+          SliceFit[sec_i][slice]->Get_right_edge() == SliceFit[sec_i][slice]->Get_right_edge()) {
+        y[slice] = y_width * slice_width * slice;
         x[slice] = SliceFit[sec_i][slice]->Get_left_edge();
-        std::cerr << "Y? " << y[slice] << " width? " << y_width << " slice: ";
-        std::cerr << slice << "," << SliceFit[sec_i][slice]->Get_left_edge() << ","
-                  << SliceFit[sec_i][slice]->Get_right_edge() << std::endl;
-      } else {
-        x[slice] = 0;
       }
       // y[slice * fid_slices + 1] = slice_width * slice;
       // x[slice * fid_slices + 1] = SliceFit[sec_i][slice]->Get_right_edge();
