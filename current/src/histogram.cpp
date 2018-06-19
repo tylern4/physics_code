@@ -901,7 +901,7 @@ void Histogram::Fid_Write() {
         y[slice] = y_width * slice_width * slice;
         x[slice] = SliceFit[sec_i][slice]->Get_right_edge();
         y[slice + fid_slices] = y_width * slice_width * slice;
-        x[slice + fid_slices] = SliceFit[sec_i][slice]->Get_right_edge();
+        x[slice + fid_slices] = SliceFit[sec_i][slice]->Get_left_edge();
       }
       // y[slice * fid_slices + 1] = slice_width * slice;
       // x[slice * fid_slices + 1] = SliceFit[sec_i][slice]->Get_right_edge();
