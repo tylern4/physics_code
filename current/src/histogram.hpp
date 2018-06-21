@@ -41,15 +41,15 @@ class Histogram {
   double q2_min = 0;
   double q2_max = 10;
 
-  static const int W_bins = 4;
-  static const int Q2_bins = 10;
-  double w_binned_min = 0.0;
-  double w_binned_max = 4.0;
-  double q2_binned_min = 0.0;
-  double q2_binned_max = 10.0;
+  static const int W_bins = 80;
+  static const int Q2_bins = 15;
+  double w_binned_min = 0.5;
+  double w_binned_max = 2.5;
+  double q2_binned_min = 1.0;
+  double q2_binned_max = 4.0;
 
-  double W_width = (w_binned_max - w_binned_min) / W_bins;
-  double Q2_width = (q2_binned_max - q2_binned_min) / Q2_bins;
+  double W_width = (w_binned_max - w_binned_min) / (double)W_bins;
+  double Q2_width = (q2_binned_max - q2_binned_min) / (double)Q2_bins;
 
   TH2D *WvsQ2_hist = new TH2D("WvsQ2_hist", "W vs Q^{2}", bins, w_min, w_max, bins, q2_min, q2_max);
   TH1D *W_hist = new TH1D("W", "W", bins, w_min, w_max);
