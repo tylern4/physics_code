@@ -206,14 +206,14 @@ void DataHandeler::file_handeler(std::string fin) {
 
     // Start of strict cuts
     // CC cut
-
     electron_cuts &= (nphe[cc[0] - 1] > 30);
     // Sampling Fraction Cut
+    if (electron_cuts) hists->EC_fill(etot[ec[0] - 1], p[0]);
     double sf = (double)etot[ec[0] - 1] / (double)p[0];
     electron_cuts &= Cuts::sf_cut(sf, p[0]);
 
     if (electron_cuts) hists->TM_Fill(p[0], physics::theta_calc(cz[0]));
-    if (electron_cuts) hists->EC_fill(etot[ec[0] - 1], p[0]);
+
     // Minimum Momentum cut????
     electron_cuts &= (p[0] > MIN_P_CUT);
     // Beam position cut
@@ -261,6 +261,7 @@ void DataHandeler::file_handeler(std::string fin) {
       theta = physics::theta_calc(cz[0]);
       phi = physics::phi_calc(cx[0], cy[0]);
       sector = physics::get_sector(phi);
+
       hists->Fill_electron_fid(theta, phi, sector);
 
       // if (first_run) {

@@ -880,7 +880,8 @@ void Histogram::Fid_Write() {
     sprintf(hname, "electron_fid_sector_%d", sec_i + 1);
     sprintf(htitle, "electron_fid_sector_%d", sec_i + 1);
     electron_fid_can[sec_i] = new TCanvas(hname, htitle, 1280, 720);
-    for (int slice = 0; slice < fid_slices; slice++) {
+    int start_slice = 12;
+    for (int slice = start_slice; slice < fid_slices; slice++) {
       sprintf(hname, "electron_fid_sec_%d_%d", sec_i + 1, slice + 1);
       electron_fid_sec_slice[sec_i][slice] = electron_fid_sec_hist[sec_i]->ProjectionX(
           hname, slice_width * slice, slice_width * slice + (slice_width - 1));
