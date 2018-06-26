@@ -885,7 +885,7 @@ void Histogram::Fid_Write() {
       sprintf(hname, "electron_fid_sec_%d_%d", sec_i + 1, slice + 1);
       electron_fid_sec_slice[sec_i][slice] = electron_fid_sec_hist[sec_i]->ProjectionX(
           hname, slice_width * slice, slice_width * slice + (slice_width - 1));
-      electron_fid_sec_slice[sec_i][slice]->Rebin(100);
+      electron_fid_sec_slice[sec_i][slice]->Rebin(10);
       SliceFit[sec_i][slice] = new Fits();
       SliceFit[sec_i][slice]->Set_min(min_phi[sec_i]);
       SliceFit[sec_i][slice]->Set_max(max_phi[sec_i]);

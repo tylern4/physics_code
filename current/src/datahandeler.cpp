@@ -190,32 +190,26 @@ void DataHandeler::file_handeler(std::string fin) {
   int current_event = 0;
   for (current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
+    Cuts *check = new Cuts();
 
-    // reset electron cut bool
-    electron_cuts = true;
     // electron cuts
-    electron_cuts &= (ec[0] > 0);                                  // ``` ``` ``` ec
-    electron_cuts &= ((int)id[0] == ELECTRON || (int)id[0] == 0);  // First particle is electron
-    electron_cuts &= ((int)gpart > 0);                             // Number of good particles is greater than 0
-    electron_cuts &= ((int)stat[0] > 0);                           // First Particle hit stat
-    electron_cuts &= ((int)q[0] == -1);                            // First particle is negative Q
-    electron_cuts &= ((int)sc[0] > 0);                             // First Particle hit sc
-    electron_cuts &= ((int)dc[0] > 0);                             // ``` ``` ``` dc
-    electron_cuts &= ((int)dc_stat[dc[0] - 1] > 0);
-    electron_cuts &= ((int)cc[0] > 0);
+    check->Set_charge((int)q[0]);
+    check->Set_ec_cut(ec[0] > 0);        // ``` ``` ``` ec
+    check->Set_electron_id((int)id[0]);  // First particle is electron
+    check->Set_gpart((int)gpart);        // Number of good particles is greater than 0
+    check->Set_cc_cut((int)cc[0] > 0);
+    check->Set_stat_cut((int)stat[0] > 0);  // First Particle hit stat
+    check->Set_sc_cut((int)sc[0] > 0);
+    check->Set_dc_cut((int)dc[0] > 0);
+    check->Set_dc_stat_cut((int)dc_stat[dc[0] - 1] > 0);
+    check->Set_p((double)p[0]);
 
-    // Start of strict cuts
-    // CC cut
-    electron_cuts &= (nphe[cc[0] - 1] > 30);
-    // Sampling Fraction Cut
-    if (electron_cuts) hists->EC_fill(etot[ec[0] - 1], p[0]);
-    double sf = (double)etot[ec[0] - 1] / (double)p[0];
-    electron_cuts &= Cuts::sf_cut(sf, p[0]);
+    if (check->isElecctron()) hists->EC_fill(etot[ec[0] - 1], p[0]);
+    if (check->isElecctron()) hists->TM_Fill(p[0], physics::theta_calc(cz[0]));
 
-    if (electron_cuts) hists->TM_Fill(p[0], physics::theta_calc(cz[0]));
+    check->Set_Sf((double)etot[ec[0] - 1] / (double)p[0]);
+    check->Set_num_phe((int)nphe[cc[0] - 1]);
 
-    // Minimum Momentum cut????
-    electron_cuts &= (p[0] > MIN_P_CUT);
     // Beam position cut
     /*
     electron_cuts &= (abs((double)dc_vz[dc[0] - 1]) < 2.0);
@@ -223,8 +217,7 @@ void DataHandeler::file_handeler(std::string fin) {
     electron_cuts &= ((double)dc_vx[dc[0] - 1] > 0.2 && (double)dc_vx[dc[0] - 1] < 0.4);
     */
 
-    if (electron_cuts) {
-      // if (first_run) {
+    if (check->isStrictElecctron()) {
       is_electron = elec_vec;
       is_electron->at(0) = true;
       for (int part_num = 1; part_num < gpart; part_num++) {
@@ -235,7 +228,6 @@ void DataHandeler::file_handeler(std::string fin) {
         is_proton->at(part_num) = (id[part_num] == PROTON);
         is_pim->at(part_num) = (id[part_num] == PIM);
       }
-      //}
 
       int cc_sector = cc_sect[cc[0] - 1];
       int cc_segment = (cc_segm[0] % 1000) / 10;
@@ -279,10 +271,10 @@ void DataHandeler::file_handeler(std::string fin) {
         PID = id[part_num];
 #ifndef __PID__
         if (q[part_num] == POSITIVE) {
-          if (Cuts::dt_P_cut(dt_proton.at(part_num), p[part_num])) PID = PROTON;
-          if (Cuts::dt_Pip_cut(dt_proton.at(part_num), p[part_num])) PID = PIP;
+          if (check->dt_P_cut(dt_proton.at(part_num), p[part_num])) PID = PROTON;
+          if (check->dt_Pip_cut(dt_proton.at(part_num), p[part_num])) PID = PIP;
         } else if (q[part_num] == POSITIVE) {
-          if (Cuts::dt_Pip_cut(dt_proton.at(part_num), p[part_num])) PID = PIM;
+          if (check->dt_Pip_cut(dt_proton.at(part_num), p[part_num])) PID = PIM;
         }
 #endif
         /*
@@ -305,14 +297,14 @@ void DataHandeler::file_handeler(std::string fin) {
         if (q[part_num] == POSITIVE) {
           hists->MomVsBeta_Fill_pos(p[part_num], b[part_num]);
           //// if (is_proton->at(part_num) && (id[part_num] == PROTON)) {
-          if (Cuts::dt_P_cut(dt_proton.at(part_num), p[part_num])) {
+          if (check->dt_P_cut(dt_proton.at(part_num), p[part_num])) {
             num_of_proton++;
             hists->Fill_proton_WQ2(W, Q2);
             hists->Fill_proton_ID_P(p[part_num], b[part_num]);
 #ifdef __PID__
           } else if (is_pip->at(part_num) && (id[part_num] == PIP)) {
 #else
-          } else if (Cuts::dt_Pip_cut(dt_pi.at(part_num), p[part_num])) {
+          } else if (check->dt_Pip_cut(dt_pi.at(part_num), p[part_num])) {
 #endif
             num_of_pis++;
             hists->Fill_pion_WQ2(W, Q2);
@@ -328,8 +320,8 @@ void DataHandeler::file_handeler(std::string fin) {
           if ((is_pip->at(part_num) && (id[part_num] == PIP)) ||
               (is_proton->at(part_num) && (id[part_num] == PROTON))) {
 #else
-          if (Cuts::dt_Pip_cut(dt_pi.at(part_num), p[part_num]) ||
-              Cuts::dt_P_cut(dt_proton.at(part_num), p[part_num])) {
+          if (check->dt_Pip_cut(dt_pi.at(part_num), p[part_num]) ||
+              check->dt_P_cut(dt_proton.at(part_num), p[part_num])) {
 #endif
             hists->Fill_proton_Pi_ID_P(p[part_num], b[part_num]);
           }
@@ -346,6 +338,7 @@ void DataHandeler::file_handeler(std::string fin) {
       }
       if (num_of_proton == 1) hists->Fill_single_proton_WQ2(W, Q2);
     }
+    delete check;
   }
 
   chain->Reset();  // delete Tree object
