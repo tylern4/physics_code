@@ -885,7 +885,7 @@ void Histogram::Fid_Write() {
       sprintf(hname, "electron_fid_sec_%d_%d", sec_i + 1, slice + 1);
       electron_fid_sec_slice[sec_i][slice] = electron_fid_sec_hist[sec_i]->ProjectionX(
           hname, slice_width * slice, slice_width * slice + (slice_width - 1));
-      electron_fid_sec_slice[sec_i][slice]->Rebin(10);
+      electron_fid_sec_slice[sec_i][slice]->Rebin(100);
       SliceFit[sec_i][slice] = new Fits();
       SliceFit[sec_i][slice]->Set_min(min_phi[sec_i]);
       SliceFit[sec_i][slice]->Set_max(max_phi[sec_i]);
@@ -927,7 +927,7 @@ void Histogram::fid_canvas() {
     sprintf(can_name, "Electron Fid Sector %d Slices", sec_i + 1);
     can[sec_i] = new TCanvas(can_name, can_name, 1600, 900);
     can[sec_i]->Divide(10, fid_slices / 10);
-    for (int slice = 0; slice < fid_slices; slice++) {
+    for (int slice = 12; slice < fid_slices; slice++) {
       can[sec_i]->cd((int)slice + 1);
       electron_fid_sec_slice[sec_i][slice]->Draw("same");
     }
