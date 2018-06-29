@@ -6,6 +6,7 @@
 #include "datahandeler.hpp"
 
 DataHandeler::DataHandeler(std::vector<std::string> fin, std::string RootFile_output) {
+  ROOT::EnableImplicitMT();
   input_files = fin;
   pip_vec = new std::vector<bool>(MAX_PARTS, false);
   pim_vec = new std::vector<bool>(MAX_PARTS, false);
