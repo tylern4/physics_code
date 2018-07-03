@@ -6,8 +6,8 @@
 .2                      ! a limit on the error in (mm)**2
 5.0                     ! target cell length (cm)
 0.486                   ! radius of target cyclinder
-0.3                      ! x-coord of beam position
-0.03                      ! y-coord of beam position
+3.0                      ! x-coord of beam position
+0.3                      ! y-coord of beam position
 0.                      ! z-coord of beam positio
 4.81726                   ! beam energy
 0.25 5.                 ! Q2_min, Q2_max

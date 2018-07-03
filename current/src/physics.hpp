@@ -7,8 +7,12 @@
 #ifndef PHYSICS_H_GUARD
 #define PHYSICS_H_GUARD
 #include <TLorentzVector.h>
-#include "TROOT.h"
+//#include "TROOT.h"
 #include "constants.hpp"
+
+#include "Math/Vector3D.h"
+#include "Math/Vector4D.h"
+#include "ROOT/RVec.hxx"
 
 namespace physics {
 // Calcuating Q^2
@@ -31,5 +35,5 @@ TLorentzVector fourVec(double px, double py, double pz, double mass);
 TLorentzVector fourVec(double p, double cx, double cy, double cz, double mass);
 TLorentzVector fourVec(double px, double py, double pz, int pid);
 TLorentzVector fourVec(double p, double cx, double cy, double cz, int pid);
-}
+}  // namespace physics
 #endif

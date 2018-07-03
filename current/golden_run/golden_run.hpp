@@ -41,15 +41,18 @@ void golden_run(char *fin, char *fout) {
       for (int current_event = 0; current_event < n_evnt; current_event++) {
         cout << BLUE << "\t[ " << progress[(current_event / 100) % 4] << " ]\r" << DEF << flush;
         chain.GetEntry(current_event);
+        // reset electron cut bool
         electron_cuts = true;
         // electron cuts
-        electron_cuts &= ((int)id[0] == ELECTRON);  // First particle is electron
-        electron_cuts &= ((int)gpart > 0);          // Number of good particles is greater than 0
-        electron_cuts &= ((int)stat[0] > 0);        // First Particle hit stat
-        electron_cuts &= ((int)q[0] == -1);         // First particle is negative Q
-        electron_cuts &= ((int)sc[0] > 0);          // First Particle hit sc
-        electron_cuts &= ((int)dc[0] > 0);          // ``` ``` ``` dc
+        electron_cuts &= (ec[0] > 0);                                  // ``` ``` ``` ec
+        electron_cuts &= ((int)id[0] == ELECTRON || (int)id[0] == 0);  // First particle is electron
+        electron_cuts &= ((int)gpart > 0);                             // Number of good particles is greater than 0
+        electron_cuts &= ((int)stat[0] > 0);                           // First Particle hit stat
+        electron_cuts &= ((int)q[0] == -1);                            // First particle is negative Q
+        electron_cuts &= ((int)sc[0] > 0);                             // First Particle hit sc
+        electron_cuts &= ((int)dc[0] > 0);                             // ``` ``` ``` dc
         electron_cuts &= ((int)dc_stat[dc[0] - 1] > 0);
+        electron_cuts &= ((int)cc[0] > 0);
 
         if (electron_cuts) {
           e_mu_prime_3.SetXYZ(p[0] * cx[0], p[0] * cy[0], p[0] * cz[0]);
@@ -64,8 +67,7 @@ void golden_run(char *fin, char *fout) {
           }
           for (int part_num = 1; part_num < gpart; part_num++) {
             if (id[part_num] == PIP) {
-              pi_3vec.SetXYZ(p[part_num] * cx[part_num], p[part_num] * cy[part_num],
-                             p[part_num] * cz[part_num]);
+              pi_3vec.SetXYZ(p[part_num] * cx[part_num], p[part_num] * cy[part_num], p[part_num] * cz[part_num]);
               pi_4vec.SetVectM(pi_3vec, MASS_PIP);
             }
             if (e_mu_prime != ZERO && pi_4vec != ZERO) num_of_events++;

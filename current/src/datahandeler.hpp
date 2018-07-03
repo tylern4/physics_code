@@ -5,15 +5,6 @@
 
 #ifndef DATAHANDELER_H_GUARD
 #define DATAHANDELER_H_GUARD
-#include "color.hpp"
-#include "constants.hpp"
-#include "delta_t.hpp"
-#include "histogram.hpp"
-#include "missing_mass.hpp"
-#include "physics.hpp"
-
-#include <thread>
-
 #include <TFile.h>
 #include <TLorentzVector.h>
 #include <cstring>
@@ -22,9 +13,20 @@
 #include <thread>
 #include <vector>
 #include "TChain.h"
+#include "color.hpp"
+#include "constants.hpp"
+#include "cuts.hpp"
+#include "delta_t.hpp"
+#include "histogram.hpp"
+#include "missing_mass.hpp"
+#include "photon_flux.hpp"
+#include "physics.hpp"
+
+using vec4 = ROOT::Math::PxPyPzMVector;
 
 class DataHandeler {
  private:
+  int PID;
   Histogram *hists;
   TFile *RootOutputFile;
   TLorentzVector *e_mu;

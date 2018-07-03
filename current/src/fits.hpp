@@ -10,6 +10,7 @@
 #include "TCanvas.h"
 #include "TF1.h"
 #include "TF2.h"
+#include "TGraph.h"
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TStyle.h"
@@ -23,7 +24,7 @@ class Fits {
   double mean, sigma, FWHM;
   double min_value = -1000, max_value = 1000;
   double a, b, c, d, e = 0.0;
-  double min_edge_x = std::nan("0"), max_edge_x = std::nan("0");
+  double left_edge_x = std::nan("0"), right_edge_x = std::nan("0");
   std::string ploy1d = "[0]+[1]*x";
   std::string ploy2d = ploy1d + "+[2]*x*x";
   std::string ploy3d = ploy2d + "+[3]*x*x*x";
@@ -35,25 +36,26 @@ class Fits {
  public:
   Fits();
   ~Fits();
-  void FitGaus(TH1D *hist);
-  void FitLandauGaus(TH1D *hist);
-  void Fit2Gaus(TH1D *hist);
-  void FitLandau(TH1D *hist);
-  void FitPoly_1D(TH1D *hist);
-  void FitPoly_2D(TH1D *hist);
-  void FitPoly_3D(TH1D *hist);
-  void FitPoly_4D(TH1D *hist);
-  void FitPoly_fid(TH2D *hist);
-  void FitFiducial_lo(TH2D *hist2d);
-  void FitFiducial_hi(TH2D *hist2d);
-  void FitFiducial(TH2D *hist2d);
-  void FitGenNormal(TH1D *hist);
-  void FitBreitWigner(TH1D *hist);
+  TF1 *FitGaus(TH1D *hist);
+  TF1 *FitLandauGaus(TH1D *hist);
+  TF1 *Fit2Gaus(TH1D *hist);
+  TF1 *FitLandau(TH1D *hist);
+  TF1 *FitPoly_1D(TH1D *hist);
+  TF1 *FitPoly_2D(TH1D *hist);
+  TF1 *FitPoly_3D(TH1D *hist);
+  TF1 *FitPoly_4D(TH1D *hist);
+  TF1 *FitPoly_fid(TH2D *hist);
+  // TF1 *FitFiducial_lo(TH2D *hist2d);
+  TF1 *FitFiducial(TGraph *profile);
+  TF1 *FitFiducial_hi(TH2D *hist2d);
+  TF1 *FitFiducial(TH2D *hist2d);
+  TF1 *FitGenNormal(TH1D *hist);
+  TF1 *FitBreitWigner(TH1D *hist);
   void Set_min(double val);
   void Set_max(double val);
   void Set_lineColor(int val);
-  double Get_min_edge();
-  double Get_max_edge();
+  double Get_left_edge();
+  double Get_right_edge();
   double Get_sigma();
   double Get_mean();
   double Get_FWHM();

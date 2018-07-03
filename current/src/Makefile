@@ -18,7 +18,7 @@ LIBOUT =	$(LIBDIR)/lib.so
 
 .PHONY: all clean
 
-all: lib
+all: libphysics
 
 $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
 		$(CXX) $(CXXFLAGS) -c $< -o $@
@@ -29,7 +29,7 @@ sobj:
 obj:
 	@mkdir -p $(OBJDIR)
 
-lib:	sobj $(OBJECTS)
+libphysics:	sobj $(OBJECTS)
 	$(CXX) $(CXXFLAGS) -shared $(OBJECTS) $(ROOTLIBS) -o $(LIBOUT)
 
 clean:
