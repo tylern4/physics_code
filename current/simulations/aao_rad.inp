@@ -13,6 +13,6 @@
 0.25 5.                 ! Q2_min, Q2_max
 0.1 4.25                ! scattered electron momentum min and max
 .005                    ! minimum photon energy for integration
-10000	                ! number of events
+50000	                ! number of events
 0.	                    ! a multiplication factor for sigr_max
 .005                    ! sigr_max
