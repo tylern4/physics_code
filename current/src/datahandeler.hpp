@@ -22,6 +22,8 @@
 #include "photon_flux.hpp"
 #include "physics.hpp"
 
+using vec4 = ROOT::Math::PxPyPzMVector;
+
 class DataHandeler {
  private:
   int PID;
