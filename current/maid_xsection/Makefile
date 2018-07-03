@@ -1,5 +1,5 @@
-PROGRAM=example
-SOURCE=example.cc
+PROGRAM=maid_csv
+SOURCE=maid_csv.cpp
 
 # Compilation and linking settings:
 FCFLAGS = -O3 -m64 -fno-automatic -ffixed-line-length-none -fno-second-underscore
