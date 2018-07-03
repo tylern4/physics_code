@@ -22,10 +22,10 @@ int main() {
 
   std::cout << "W,Q2,cos,phi,dsigma\n";
 
-  for (int c = 0; c < c_size; c++) {
-    for (int p = 0; p < p_size; p++) {
-      for (int q = 0; q < q2_size; q++) {
-        for (int w = 0; w < w_size; w++) {
+  for (int w = 0; w < w_size; w++) {
+    for (int q = 0; q < q2_size; q++) {
+      for (int c = 0; c < c_size; c++) {
+        for (int p = 0; p < p_size; p++) {
           std::cout << W_bins[w] << ",";
           std::cout << Q2_bins[q] << ",";
           std::cout << cos_bins[c] << ",";
