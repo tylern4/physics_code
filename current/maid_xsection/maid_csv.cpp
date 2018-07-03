@@ -28,8 +28,8 @@ int main() {
         for (int w = 0; w < w_size; w++) {
           std::cout << W_bins[w] << ",";
           std::cout << Q2_bins[q] << ",";
-          std::cout << cos_bins[0] << ",";
-          std::cout << phi_bins[0] << ",";
+          std::cout << cos_bins[c] << ",";
+          std::cout << phi_bins[p] << ",";
           dsigma = maid_dsigma(  // beam_energy
               4.81726,
               // W
