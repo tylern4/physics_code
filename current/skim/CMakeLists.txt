@@ -1,39 +1,32 @@
-cmake_minimum_required(VERSION 3.6)
-project(hipoio VERSION 0.0.1 DESCRIPTION "skim")
-
+cmake_minimum_required(VERSION 3.5)
+project(pySkim)
 set(CMAKE_MODULE_PATH
    ${CMAKE_MODULE_PATH}
-   ${PROJECT_SOURCE_DIR}/cmake
-   ${PROJECT_SOURCE_DIR}/cmake/modules)
-
-set(HEADERS
-  ../src/skim.hpp
-  )
-
-
-include(cmake/os.cmake)
+   ${PROJECT_SOURCE_DIR}/cmake)
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS}/etc/cmake)
-find_package(ROOT REQUIRED COMPONENTS Tree)
-include(${ROOT_USE_FILE})
-include_directories("../src" ${ROOT_INCLUDE_DIRS})
-link_directories(${ROOT_LIBRARY_DIR})
+include(cmake/os.cmake)
 include(cmake/root.cmake)
-set(lib_HEADERS ${HEADERS})
 
 find_package(PythonInterp)
 find_package(PythonLibs)
 find_package(PythonExtensions)
 find_package(Cython REQUIRED)
+find_package(ROOT REQUIRED COMPONENTS Tree)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_cython_target(skim skim.pyx CXX PY3 OUTPUT_VAR _skim)
-include_directories(${PYTHON_INCLUDE_DIRS})
+add_library(phySkim STATIC skim.cpp)
 
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}" )
+
+add_cython_target(skim skim.pyx CXX PY2 OUTPUT_VAR _skim)
+include_directories(_skim PUBLIC
+  ${PROJECT_SOURCE_DIR}
+  ${PYTHON_INCLUDE_DIRS}
+  ${ROOT_INCLUDE_DIRS}
+  ../src)
 
 add_library(skim MODULE ${_skim})
+add_dependencies(skim phySkim)
+target_link_libraries(skim phySkim ${PYTHON_LIBRARIES} ${ROOT_LIBRARIES})
 python_extension_module(skim)
-
-#target_link_libraries(${PYTHON_LIBRARIES})
