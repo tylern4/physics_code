@@ -11,11 +11,9 @@
 #include "../src/classes.hpp"
 #include "../src/glob_files.hpp"
 #include "../src/physics.hpp"
+#include "../src/skim.hpp"
 #include "TStopwatch.h"
-#include "skim.hpp"
-#ifdef __OMP__
-#include <omp.h>
-#endif
+
 using namespace std;
 
 int main(int argc, char **argv) {
@@ -38,12 +36,9 @@ int main(int argc, char **argv) {
 
   int num_files = files.size();
   int i = 0;
-  int tid = 0;
-#pragma omp parallel
-#pragma omp for private(i, tid)
   for (i = 0; i < num_files; i++) {
-#pragma omp task
-    skim(files.at(i).c_str());
+    Skim *s = new Skim(files.at(i).c_str());
+    s->Process();
   }
 
   return 0;
