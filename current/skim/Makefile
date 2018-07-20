@@ -1,11 +1,11 @@
 UNAME := $(shell uname)
 ifeq ($(UNAME), Linux)
-    FOPENMP = -fopenmp 
+    FOPENMP = -fopenmp
 endif
 
 ROOTLIBS	= $(shell root-config --libs)
 CXX = $(shell root-config --cxx)
-CXXFLAGS =      -O2 -fPIC -w -g $(FOPENMP) $(shell root-config --cflags)
+CXXFLAGS = -O2 -fPIC -w -g $(FOPENMP) $(shell root-config --cflags)
 TARGET = Skim
 SRCDIR   = ../src
 OBJDIR   = ../obj

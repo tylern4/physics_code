@@ -19,7 +19,9 @@ bool is_pip_dt(double dt, double p) {
   return (pos && neg);
 }
 
-void skim(char *fin, char *RootFile_output) {
+void skim(std::string fin) {
+  std::string fout = fin.substr(0, fin.size() - 5) + "_skim.root";
+  std::cout << fout << '\n';
   TFile *RootOutputFile;
   int number_cols = 0;
   char rootFile[500];
@@ -41,11 +43,11 @@ void skim(char *fin, char *RootFile_output) {
   TVector3 Particle3(0.0, 0.0, 0.0);
   TLorentzVector Particle4(0.0, 0.0, 0.0, 0.0);
 
-  RootOutputFile = new TFile(RootFile_output, "RECREATE");
+  RootOutputFile = new TFile(fout.c_str(), "RECREATE");
 
   TChain chain("h10");
   cout << BLUE << "Analyzing file " << GREEN << fin << DEF << endl;
-  chain.AddFile(fin);
+  chain.AddFile(fin.c_str());
 
   getBranches(&chain);
 
