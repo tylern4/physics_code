@@ -38,7 +38,7 @@ Skim::~Skim() {}
 void Skim::Process() {
   int num_of_events;
   bool electron_cuts;
-  // std::cout << BLUE << "Analyzing file " << GREEN << fin << DEF << std::endl;
+  std::cout << BLUE << "Analyzing file " << GREEN << fin << DEF << std::endl;
   getSkimBranches();
   num_of_events = (int)chain->GetEntries();
   TTree *skim = chain->CloneTree(0);
