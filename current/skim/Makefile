@@ -12,7 +12,7 @@ OBJDIR   = ../obj
 LIBDIR   = ../sobj
 BINDIR   = ../bin
 
-SRC = $(wildcard $(SRCDIR)/*.cpp)
+SRC = $(SRCDIR)/skim.cpp $(SRCDIR)/glob_files.cpp 
 MAINS = ./main_skim.cpp
 
 OBJECTS  = $(SRC:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
