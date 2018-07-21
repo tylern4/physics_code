@@ -1,27 +1,9 @@
+/**************************************/
+/*																		*/
+/*  Created by Nick Tyler             */
+/*	University Of South Carolina      */
+/**************************************/
 #include "skim.hpp"
-
-void Skim::getSkimBranches() {
-  chain->SetBranchAddress("gpart", &gpart);
-  chain->SetBranchAddress("id", id);
-  chain->SetBranchAddress("stat", stat);
-  chain->SetBranchAddress("dc", dc);
-  chain->SetBranchAddress("cc", cc);
-  chain->SetBranchAddress("sc", sc);
-  chain->SetBranchAddress("ec", ec);
-  chain->SetBranchAddress("p", p);
-  chain->SetBranchAddress("m", m);
-  chain->SetBranchAddress("q", q);
-  chain->SetBranchAddress("b", b);
-  chain->SetBranchAddress("cx", cx);
-  chain->SetBranchAddress("cy", cy);
-  chain->SetBranchAddress("cz", cz);
-  chain->SetBranchAddress("vx", vx);
-  chain->SetBranchAddress("vy", vy);
-  chain->SetBranchAddress("vz", vz);
-  chain->SetBranchAddress("dc_stat", dc_stat);
-  chain->SetBranchAddress("etot", etot);
-  chain->SetBranchStatus("*", 1);
-}
 
 Skim::Skim(std::string input) {
   fin = input;
@@ -38,13 +20,16 @@ Skim::~Skim() {}
 void Skim::Process() {
   int num_of_events;
   bool electron_cuts;
+  int num_proton, num_pi;
   std::cout << BLUE << "Analyzing file " << GREEN << fin << DEF << std::endl;
-  getSkimBranches();
+  getBranches(chain);
   num_of_events = (int)chain->GetEntries();
   TTree *skim = chain->CloneTree(0);
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
+    num_proton = 0;
+    num_pi = 0;
 
     electron_cuts = true;
     // electron cuts
@@ -57,16 +42,25 @@ void Skim::Process() {
     electron_cuts &= (ec[0] > 0);               // ``` ``` ``` ec
     electron_cuts &= (dc_stat[dc[0] - 1] > 0);  //??
     if (electron_cuts) {
-      electron_cuts &= (etot[ec[0] - 1] / p[0]) < 0.4;
-      electron_cuts &= (etot[ec[0] - 1] / p[0]) > 0.2;
+      electron_cuts &= sf_cut((etot[ec[0] - 1] / p[0]), p[0]);
+      electron_cuts &= ((int)nphe[cc[0] - 1] > 30);
     }
 
-    // e_mu_prime_3.SetXYZ(p[0] * cx[0], p[0] * cy[0], p[0] * cz[0]);
-    // e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
+    e_mu_prime_3.SetXYZ(p[0] * cx[0], p[0] * cy[0], p[0] * cz[0]);
+    e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
 
-    if (electron_cuts) {
+    Delta_T *dt = new Delta_T(sc_t[sc[0] - 1], sc_r[sc[0] - 1]);
+    std::vector<double> dt_proton = dt->delta_t_array(MASS_P, gpart);
+    std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, gpart);
+    for (auto proton_dt : dt_proton)
+      if (abs(proton_dt) < 0.5) num_proton++;
+    for (auto pi_dt : dt_pi)
+      if (abs(pi_dt) < 0.5) num_pi++;
+
+    if (electron_cuts && (num_pi == 1 || num_proton == 1)) {
       skim->Fill();  // Fill the banks after the skim
     }
+    delete dt;
   }
   chain->Reset();  // delete Tree object
   delete chain;
@@ -76,3 +70,38 @@ void Skim::Process() {
   RootOutputFile->Close();
   delete RootOutputFile;
 }
+
+double Skim::sf_top_fit(double P) {
+  double par[3] = {0.363901, -0.00992778, 5.84749e-06};
+  double x[1] = {P};
+  return func::ec_fit_func(x, par);
+}
+double Skim::sf_bot_fit(double P) {
+  double par[3] = {0.103964, 0.0524214, -3.64355e-05};
+  double x[1] = {P};
+  return func::ec_fit_func(x, par);
+}
+bool Skim::sf_cut(double sf, double P) { return ((sf > sf_bot_fit(P)) && (sf < sf_top_fit(P))); }
+
+double Skim::dt_P_bot_fit(double P) {
+  double par[2] = {-1.509, 0.4172};
+  double x[1] = {P};
+  return func::dt_fit(x, par);
+}
+double Skim::dt_P_top_fit(double P) {
+  double par[2] = {1.307, -0.3473};
+  double x[1] = {P};
+  return func::dt_fit(x, par);
+}
+bool Skim::dt_P_cut(double dt, double P) { return ((dt > dt_P_bot_fit(P)) && (dt < dt_P_top_fit(P))); }
+double Skim::dt_Pip_bot_fit(double P) {
+  double par[2] = {-0.9285, -0.04094};
+  double x[1] = {P};
+  return func::dt_fit(x, par);
+}
+double Skim::dt_Pip_top_fit(double P) {
+  double par[2] = {0.9845, -0.05473};
+  double x[1] = {P};
+  return func::dt_fit(x, par);
+}
+bool Skim::dt_Pip_cut(double dt, double P) { return ((dt > dt_Pip_bot_fit(P)) && (dt < dt_Pip_top_fit(P))); }

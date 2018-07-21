@@ -127,8 +127,10 @@ std::vector<double> Delta_T::delta_t_array(double mass, int num_parts) {
     charge = (int)q[event_number];
     sc_paddle = (int)sc_pd[sc[event_number] - 1];
     sc_sector = (int)sc_sect[sc[event_number] - 1];
-
-    dt_array[event_number] = delta_t(electron_vertex, mass, mom, sct, scr);
+    if (charge == POSITIVE)
+      dt_array[event_number] = delta_t(electron_vertex, mass, mom, sct, scr);
+    else
+      dt_array[event_number] = -99;
   }
   delete dt;
   return dt_array;

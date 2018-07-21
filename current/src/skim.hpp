@@ -5,17 +5,20 @@
 /**************************************/
 #ifndef SKIM_H_GUARD
 #define SKIM_H_GUARD
+#include <iostream>
 #include "TChain.h"
 #include "TFile.h"
 #include "TLorentzVector.h"
 #include "TVector3.h"
+#include "branches.hpp"
 #include "color.hpp"
 #include "constants.hpp"
+#include "delta_t.hpp"
+#include "func.hpp"
 #include "glob_files.hpp"
-#include <iostream>
 
 class Skim {
-private:
+ private:
   TChain *chain;
   std::string fout;
   std::string fin;
@@ -25,31 +28,21 @@ private:
   TLorentzVector e_mu;
   TVector3 Particle3;
   TLorentzVector Particle4;
-  int gpart;
-  int id[MAX_PARTS];      //[gpart]
-  int stat[MAX_PARTS];    //[gpart]
-  int dc[MAX_PARTS];      //[gpart]
-  int cc[MAX_PARTS];      //[gpart]
-  int sc[MAX_PARTS];      //[gpart]
-  int ec[MAX_PARTS];      //[gpart]
-  float p[MAX_PARTS];     //[gpart]
-  float m[MAX_PARTS];     //[gpart]
-  int q[MAX_PARTS];       //[gpart]
-  float b[MAX_PARTS];     //[gpart]
-  float cx[MAX_PARTS];    //[gpart]
-  float cy[MAX_PARTS];    //[gpart]
-  float cz[MAX_PARTS];    //[gpart]
-  float vx[MAX_PARTS];    //[gpart]
-  float vy[MAX_PARTS];    //[gpart]
-  float vz[MAX_PARTS];    //[gpart]
-  int dc_stat[MAX_PARTS]; //[dc_part]
-  float etot[MAX_PARTS];  //[ec_part]
 
-  void getSkimBranches();
-
-public:
+ public:
   Skim(std::string input);
   void Process();
   ~Skim();
+  double sf_top_fit(double P);
+  double sf_bot_fit(double P);
+  bool sf_cut(double sf, double P);
+
+  double dt_P_bot_fit(double P);
+  double dt_P_top_fit(double P);
+  bool dt_P_cut(double dt, double P);
+
+  double dt_Pip_bot_fit(double P);
+  double dt_Pip_top_fit(double P);
+  bool dt_Pip_cut(double dt, double P);
 };
 #endif
