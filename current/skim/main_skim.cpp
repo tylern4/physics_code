@@ -18,14 +18,16 @@ using namespace std;
 
 int main(int argc, char **argv) {
   gROOT->SetBatch(true);
-  TStopwatch *Watch = new TStopwatch;
-  Watch->Start();
-  gStyle->SetOptFit(1111);
 
-  std::vector<std::string> files;
-  if (argc >= 2) {
-    files = glob(argv[1]);
-  } else if (argc < 2) {
+  std::vector<std::string> infile;
+  std::string outfile;
+  if (argc == 2) {
+    infile = glob(argv[1]);
+    outfile = infile[0].substr(0, infile[0].size() - 8) + "_skim.root";
+  } else if (argc == 3) {
+    infile = glob(argv[1]);
+    outfile = argv[2];
+  } else {
     std::cerr << RED << "Error: \n";
     std::cerr << BOLDRED << "\tNeed input file and output file\n";
     std::cerr << RESET << "Usage:\n\t";
@@ -34,12 +36,8 @@ int main(int argc, char **argv) {
     return 1;
   }
 
-  int num_files = files.size();
-  int i = 0;
-  for (i = 0; i < num_files; i++) {
-    Skim *s = new Skim(files.at(i).c_str());
-    s->Process();
-  }
+  Skim *s = new Skim(infile, outfile);
+  s->Process();
 
   return 0;
 }

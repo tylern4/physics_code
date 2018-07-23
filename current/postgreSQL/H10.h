@@ -101,8 +101,8 @@ class H10 {
         e_mu_prime_3.SetXYZ(p[0] * cx[0], p[0] * cy[0], p[0] * cz[0]);
         e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
 
-        out.W_vec.push_back(W_calc(e_mu, e_mu_prime));
-        out.Q2_vec.push_back(Q2_calc(e_mu, e_mu_prime));
+        out.W_vec.push_back(physics::W_calc(e_mu, e_mu_prime));
+        out.Q2_vec.push_back(physics::Q2_calc(e_mu, e_mu_prime));
         for (int part_num = 0; part_num < gpart; part_num++) {
           particle_vector.push_back(std::to_string(id[part_num]));
         }
