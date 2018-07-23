@@ -5,6 +5,7 @@
 /**************************************/
 #ifndef SKIM_H_GUARD
 #define SKIM_H_GUARD
+#include <iostream>
 #include "TChain.h"
 #include "TFile.h"
 #include "TLorentzVector.h"
@@ -12,14 +13,14 @@
 #include "branches.hpp"
 #include "color.hpp"
 #include "constants.hpp"
+#include "cuts.hpp"
 #include "delta_t.hpp"
 #include "func.hpp"
 #include "glob_files.hpp"
 #include "missing_mass.hpp"
-#include <iostream>
 
 class Skim {
-private:
+ private:
   TChain *chain;
   std::string fout;
   std::vector<std::string> fin;
@@ -33,7 +34,7 @@ private:
   TLorentzVector Particle4;
   MissingMass *MM_neutron;
 
-public:
+ public:
   Skim(std::vector<std::string> input, std::string output);
   void Process();
   ~Skim();

@@ -32,10 +32,6 @@ class DataHandeler {
   TLorentzVector *e_mu;
   std::vector<std::string> input_files;
   MissingMass *MM_neutron;
-  std::vector<bool> *pip_vec;
-  std::vector<bool> *pim_vec;
-  std::vector<bool> *proton_vec;
-  std::vector<bool> *elec_vec;
   TCanvas *c1;
 
  public:

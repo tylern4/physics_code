@@ -55,28 +55,22 @@ void Delta_T::delta_t_hists(Histogram *hists) {
 
     deltat(mom, sct, scr);
 
-    if (first_run) {
-      delta_t_P = Get_dt_P();
-      delta_t_PIP = Get_dt_Pi();
-      delta_t_ELECTRON = Get_dt_E();
-    } else {
-      delta_t_P = dt_proton->at(event_number);
-      delta_t_PIP = dt_pip->at(event_number);
-      delta_t_ELECTRON = Get_dt_E();
-    }
+    delta_t_P = Get_dt_P();
+    delta_t_PIP = Get_dt_Pi();
+    delta_t_ELECTRON = Get_dt_E();
 
     if (charge == 1) {
       hists->Fill_deltat_P(mom, delta_t_P);
       hists->Fill_deltat_PIP(mom, delta_t_PIP);
       hists->Fill_deltat_positron(mom, delta_t_ELECTRON);
-      if (is_proton->at(event_number) && ID == PROTON) hists->Fill_deltat_P_PID(mom, delta_t_P);
-      if (is_pip->at(event_number) && ID == PIP) hists->Fill_deltat_PIP_PID(mom, delta_t_PIP);
+      if (ID == PROTON) hists->Fill_deltat_P_PID(mom, delta_t_P);
+      if (ID == PIP) hists->Fill_deltat_PIP_PID(mom, delta_t_PIP);
       if (ID == -11) hists->Fill_deltat_positron_PID(mom, delta_t_ELECTRON);
     } else if (charge == -1) {
       hists->Fill_deltat_electron(mom, delta_t_ELECTRON);
-      if (is_electron->at(event_number) && ID == ELECTRON) hists->Fill_deltat_electron_PID(mom, delta_t_ELECTRON);
+      if (ID == ELECTRON) hists->Fill_deltat_electron_PID(mom, delta_t_ELECTRON);
       hists->Fill_deltat_PIM(mom, delta_t_PIP);
-      if (is_pim->at(event_number) && ID == PIM) hists->Fill_deltat_PIM(mom, delta_t_PIP);
+      if (ID == PIM) hists->Fill_deltat_PIM(mom, delta_t_PIP);
     }
 
     hists->delta_t_Fill(mom, charge, delta_t_P, delta_t_PIP, delta_t_ELECTRON);

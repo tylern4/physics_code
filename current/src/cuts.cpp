@@ -13,7 +13,11 @@ void Cuts::Set_num_phe(int set) { num_phe = set; }
 void Cuts::Set_charge(int set) { charge = set; }
 void Cuts::Set_electron_id(int set) { electron_id = set; }
 void Cuts::Set_gpart(int set) { gpart = set; }
-
+void Cuts::Set_BeamPosition(double x, double y, double z) {
+  vx = x;
+  vy = y;
+  vz = z;
+}
 void Cuts::Set_p(double set) { electron_p = set; }
 void Cuts::Set_Sf(double set) { samp_frac = set; }
 
@@ -47,6 +51,10 @@ bool Cuts::isStrictElecctron() {
 
   samp_frac_cut = sf_cut(samp_frac, electron_p);
   _elec &= samp_frac_cut;
+
+  _elec &= (abs(vz) < 2.0);
+  _elec &= (abs(vy) < 0.3);
+  _elec &= (vx > 0.2 && vx < 0.4);
 
   electron_cut = _elec;
   return _elec;

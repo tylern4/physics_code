@@ -19,6 +19,9 @@ class Cuts {
   int electron_id = 0;
   double electron_p = 0;
   double samp_frac = 0;
+  double vx = 0;
+  double vy = 0;
+  double vz = 0.3;
 
   bool ec_cut = false;
   bool cc_cut = false;
@@ -38,6 +41,7 @@ class Cuts {
   void Set_gpart(int set);
   void Set_p(double set);
   void Set_Sf(double set);
+  void Set_BeamPosition(double x, double y, double z);
 
   void Set_ec_cut(bool set);
   void Set_cc_cut(bool set);

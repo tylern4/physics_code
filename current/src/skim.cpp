@@ -9,13 +9,11 @@ Skim::Skim(std::vector<std::string> input, std::string output) {
   fin = input;
   fout = output;
   chain = new TChain("h10");
-  for (auto f : fin)
-    chain->AddFile(f.c_str());
+  for (auto f : fin) chain->AddFile(f.c_str());
 
   RootOutputFile = new TFile(fout.c_str(), "RECREATE");
 
-  e_mu.SetPxPyPzE(0.0, 0.0, sqrt((E1D_E0 * E1D_E0) - (MASS_E * MASS_E)),
-                  E1D_E0);
+  e_mu.SetPxPyPzE(0.0, 0.0, sqrt((E1D_E0 * E1D_E0) - (MASS_E * MASS_E)), E1D_E0);
   MM_neutron = new MissingMass(MASS_P, 0.0);
 }
 Skim::~Skim() {}
@@ -31,24 +29,27 @@ void Skim::Process() {
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
+    Cuts *check = new Cuts();
+
     num_proton = 0;
     num_pi = 0;
 
-    electron_cuts = true;
     // electron cuts
-    electron_cuts &= (id[0] == ELECTRON); // First particle is electron
-    electron_cuts &= (gpart > 0); // Number of good particles is greater than 0
-    electron_cuts &= (stat[0] > 0);            // First Particle hit stat
-    electron_cuts &= ((int)q[0] == -1);        // First particle is negative Q
-    electron_cuts &= (sc[0] > 0);              // First Particle hit sc
-    electron_cuts &= (dc[0] > 0);              // ``` ``` ``` d
-    electron_cuts &= (ec[0] > 0);              // ``` ``` ``` ec
-    electron_cuts &= (dc_stat[dc[0] - 1] > 0); //??
-    if (electron_cuts) {
-      electron_cuts &= sf_cut((etot[ec[0] - 1] / p[0]), p[0]);
-      electron_cuts &= ((int)nphe[cc[0] - 1] > 30);
-    }
+    check->Set_charge((int)q[0]);
+    check->Set_ec_cut(ec[0] > 0);        // ``` ``` ``` ec
+    check->Set_electron_id((int)id[0]);  // First particle is electron
+    check->Set_gpart((int)gpart);        // Number of good particles is greater than 0
+    check->Set_cc_cut((int)cc[0] > 0);
+    check->Set_stat_cut((int)stat[0] > 0);  // First Particle hit stat
+    check->Set_sc_cut((int)sc[0] > 0);
+    check->Set_dc_cut((int)dc[0] > 0);
+    check->Set_dc_stat_cut((int)dc_stat[dc[0] - 1] > 0);
+    check->Set_p((double)p[0]);
+    check->Set_Sf((double)etot[ec[0] - 1] / (double)p[0]);
+    check->Set_num_phe((int)nphe[cc[0] - 1]);
+    check->Set_BeamPosition((double)dc_vx[dc[0] - 1], (double)dc_vy[dc[0] - 1], (double)dc_vz[dc[0] - 1]);
 
+    if (!check->isStrictElecctron()) continue;
     e_mu_prime_3.SetXYZ(p[0] * cx[0], p[0] * cy[0], p[0] * cz[0]);
     e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
     TLorentzVector gamma_mu = (e_mu - e_mu_prime);
@@ -58,30 +59,33 @@ void Skim::Process() {
     std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, gpart);
 
     mm_cut = true;
-    for (int part_num = 0; part_num < gpart; part_num++) {
-      particle_3.SetXYZ(p[part_num] * cx[part_num], p[part_num] * cy[part_num],
-                        p[part_num] * cz[part_num]);
-      if (abs(dt_proton[part_num]) < 0.5) {
+    for (int part_num = 1; part_num < gpart; part_num++) {
+      if (q[part_num] == NEGATIVE) continue;
+      if (abs((double)vz[part_num]) > 2.0) continue;
+      if (abs((double)vy[part_num]) > 1.0) continue;
+      if (abs((double)vx[part_num]) > 1.0) continue;
+
+      particle_3.SetXYZ(p[part_num] * cx[part_num], p[part_num] * cy[part_num], p[part_num] * cz[part_num]);
+      if (check->dt_P_cut(dt_proton[part_num], p[part_num])) {
         num_proton++;
         particle.SetVectM(particle_3, MASS_P);
-        id[part_num] = PROTON;
       }
-      if (abs(dt_pi[part_num]) < 0.5) {
+      if (check->dt_P_cut(dt_pi[part_num], p[part_num])) {
         num_pi++;
         particle.SetVectM(particle_3, MASS_PIP);
         MM_neutron->Set_4Vec(particle);
         MM_neutron->missing_mass(gamma_mu);
-        id[part_num] = PIP;
       }
     }
     mm_cut &= (MM_neutron->Get_MM() < 1.05);
     mm_cut &= (MM_neutron->Get_MM() > 0.9);
-    if (electron_cuts && num_proton == 0 && num_pi == 1 && mm_cut) {
-      skim->Fill(); // Fill the banks after the skim
+    if (check->isStrictElecctron() && num_proton == 0 && num_pi == 1 && mm_cut) {
+      skim->Fill();  // Fill the banks after the skim
     }
     delete dt;
+    delete check;
   }
-  chain->Reset(); // delete Tree object
+  chain->Reset();  // delete Tree object
   delete chain;
 
   RootOutputFile->cd();
@@ -100,9 +104,7 @@ double Skim::sf_bot_fit(double P) {
   double x[1] = {P};
   return func::ec_fit_func(x, par);
 }
-bool Skim::sf_cut(double sf, double P) {
-  return ((sf > sf_bot_fit(P)) && (sf < sf_top_fit(P)));
-}
+bool Skim::sf_cut(double sf, double P) { return ((sf > sf_bot_fit(P)) && (sf < sf_top_fit(P))); }
 
 double Skim::dt_P_bot_fit(double P) {
   double par[2] = {-1.509, 0.4172};
@@ -114,9 +116,7 @@ double Skim::dt_P_top_fit(double P) {
   double x[1] = {P};
   return func::dt_fit(x, par);
 }
-bool Skim::dt_P_cut(double dt, double P) {
-  return ((dt > dt_P_bot_fit(P)) && (dt < dt_P_top_fit(P)));
-}
+bool Skim::dt_P_cut(double dt, double P) { return ((dt > dt_P_bot_fit(P)) && (dt < dt_P_top_fit(P))); }
 double Skim::dt_Pip_bot_fit(double P) {
   double par[2] = {-0.9285, -0.04094};
   double x[1] = {P};
@@ -127,6 +127,4 @@ double Skim::dt_Pip_top_fit(double P) {
   double x[1] = {P};
   return func::dt_fit(x, par);
 }
-bool Skim::dt_Pip_cut(double dt, double P) {
-  return ((dt > dt_Pip_bot_fit(P)) && (dt < dt_Pip_top_fit(P)));
-}
+bool Skim::dt_Pip_cut(double dt, double P) { return ((dt > dt_Pip_bot_fit(P)) && (dt < dt_Pip_top_fit(P))); }

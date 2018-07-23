@@ -7,10 +7,6 @@
 
 DataHandeler::DataHandeler(std::vector<std::string> fin, std::string RootFile_output) {
   input_files = fin;
-  pip_vec = new std::vector<bool>(MAX_PARTS, false);
-  pim_vec = new std::vector<bool>(MAX_PARTS, false);
-  proton_vec = new std::vector<bool>(MAX_PARTS, false);
-  elec_vec = new std::vector<bool>(MAX_PARTS, false);
   c1 = new TCanvas("c1", "c1", 100, 100);
 
   double BEAM_ENERGY;
@@ -156,7 +152,9 @@ void DataHandeler::run() {
 
   for (i = 0; i < size; i++) {
     loadbar(i, size - 1);
-    // file_handeler(input_files.at(i));
+    file_handeler(input_files.at(i));
+
+    /*
     try {
       fh_thread[i] = new std::thread(std::mem_fn(&DataHandeler::file_handeler), this, input_files.at(i));
       fh_thread[i]->join();
@@ -164,6 +162,7 @@ void DataHandeler::run() {
       std::cerr << RED << "Error:\t" << e.what() << std::endl;
       std::cerr << CYAN << "Bad File: \t" << input_files.at(i) << DEF << std::endl;
     }
+    */
   }
   ///// for (i = 0; i < size; i++) fh_thread[i]->join();
 }
@@ -180,6 +179,7 @@ void DataHandeler::file_handeler(std::string fin) {
   double phi;
   int sector;
   // bool first_run = true;
+
   TChain *chain = new TChain("h10");
   chain->Add(fin.c_str());
 
@@ -203,32 +203,13 @@ void DataHandeler::file_handeler(std::string fin) {
     check->Set_dc_cut((int)dc[0] > 0);
     check->Set_dc_stat_cut((int)dc_stat[dc[0] - 1] > 0);
     check->Set_p((double)p[0]);
-
     if (check->isElecctron()) hists->EC_fill(etot[ec[0] - 1], p[0]);
     if (check->isElecctron()) hists->TM_Fill(p[0], physics::theta_calc(cz[0]));
-
     check->Set_Sf((double)etot[ec[0] - 1] / (double)p[0]);
     check->Set_num_phe((int)nphe[cc[0] - 1]);
-
     // Beam position cut
-    /*
-    electron_cuts &= (abs((double)dc_vz[dc[0] - 1]) < 2.0);
-    electron_cuts &= (abs((double)dc_vy[dc[0] - 1]) < 0.3);
-    electron_cuts &= ((double)dc_vx[dc[0] - 1] > 0.2 && (double)dc_vx[dc[0] - 1] < 0.4);
-    */
-
+    check->Set_BeamPosition((double)dc_vx[dc[0] - 1], (double)dc_vy[dc[0] - 1], (double)dc_vz[dc[0] - 1]);
     if (check->isStrictElecctron()) {
-      is_electron = elec_vec;
-      is_electron->at(0) = true;
-      for (int part_num = 1; part_num < gpart; part_num++) {
-        is_pip = pip_vec;
-        is_pim = pim_vec;
-        is_proton = proton_vec;
-        is_pip->at(part_num) = (id[part_num] == PIP);
-        is_proton->at(part_num) = (id[part_num] == PROTON);
-        is_pim->at(part_num) = (id[part_num] == PIM);
-      }
-
       int cc_sector = cc_sect[cc[0] - 1];
       int cc_segment = (cc_segm[0] % 1000) / 10;
       int cc_pmt = cc_segm[0] / 1000 - 1;
@@ -237,46 +218,40 @@ void DataHandeler::file_handeler(std::string fin) {
 
       theta_cc = theta_cc / D2R;
       hists->CC_fill(cc_sector, cc_segment, cc_pmt, cc_nphe, theta_cc);
+
       hists->EC_cut_fill(etot[ec[0] - 1], p[0]);
       hists->Fill_Beam_Position((double)dc_vx[dc[0] - 1], (double)dc_vy[dc[0] - 1], (double)dc_vz[dc[0] - 1]);
 
       // Setup scattered electron 4 vector
       TLorentzVector e_mu_prime = physics::fourVec(p[0], cx[0], cy[0], cz[0], MASS_E);
-
       // Set the vertex time (time of electron hit)
       Delta_T *dt = new Delta_T(sc_t[sc[0] - 1], sc_r[sc[0] - 1]);
       dt->delta_t_hists(hists);
       std::vector<double> dt_proton = dt->delta_t_array(MASS_P, gpart);
       std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, gpart);
       delete dt;
-
       theta = physics::theta_calc(cz[0]);
       phi = physics::phi_calc(cx[0], cy[0]);
       sector = physics::get_sector(phi);
-
       hists->Fill_electron_fid(theta, phi, sector);
-
-      // if (first_run) {
       W = physics::W_calc(*e_mu, e_mu_prime);
       Q2 = physics::Q2_calc(*e_mu, e_mu_prime);
       e_E = e_mu_prime.E();
       PhotonFlux *photon_flux = new PhotonFlux(*e_mu, e_mu_prime);
       delete photon_flux;
-      //}
-
       hists->WvsQ2_Fill(e_E, W, Q2, physics::xb_calc(Q2, e_E));
       num_of_proton = num_of_pis = 0;
       for (int part_num = 1; part_num < gpart; part_num++) {
         if (p[part_num] == 0) continue;
         PID = id[part_num];
-#ifndef __PID__
+
         if (q[part_num] == POSITIVE) {
           if (check->dt_P_cut(dt_proton.at(part_num), p[part_num])) PID = PROTON;
           if (check->dt_Pip_cut(dt_proton.at(part_num), p[part_num])) PID = PIP;
         } else if (q[part_num] == POSITIVE) {
           if (check->dt_Pip_cut(dt_proton.at(part_num), p[part_num])) PID = PIM;
         }
-#endif
+
         /*
         if (abs((double)vz[part_num]) > 2.0) continue;
         if (abs((double)vy[part_num]) > 1.0) continue;
@@ -296,16 +271,11 @@ void DataHandeler::file_handeler(std::string fin) {
         hists->MomVsBeta_Fill(Particle.E(), p[part_num], b[part_num]);
         if (q[part_num] == POSITIVE) {
           hists->MomVsBeta_Fill_pos(p[part_num], b[part_num]);
-          //// if (is_proton->at(part_num) && (id[part_num] == PROTON)) {
           if (check->dt_P_cut(dt_proton.at(part_num), p[part_num])) {
             num_of_proton++;
             hists->Fill_proton_WQ2(W, Q2);
             hists->Fill_proton_ID_P(p[part_num], b[part_num]);
-#ifdef __PID__
-          } else if (is_pip->at(part_num) && (id[part_num] == PIP)) {
-#else
           } else if (check->dt_Pip_cut(dt_pi.at(part_num), p[part_num])) {
-#endif
             num_of_pis++;
             hists->Fill_pion_WQ2(W, Q2);
             hists->Fill_Pi_ID_P(p[part_num], b[part_num]);
@@ -316,13 +286,8 @@ void DataHandeler::file_handeler(std::string fin) {
             //}
           }
 
-#ifdef __PID__
-          if ((is_pip->at(part_num) && (id[part_num] == PIP)) ||
-              (is_proton->at(part_num) && (id[part_num] == PROTON))) {
-#else
           if (check->dt_Pip_cut(dt_pi.at(part_num), p[part_num]) ||
               check->dt_P_cut(dt_proton.at(part_num), p[part_num])) {
-#endif
             hists->Fill_proton_Pi_ID_P(p[part_num], b[part_num]);
           }
         } else if (q[part_num] == NEGATIVE) {

@@ -1,7 +1,7 @@
-SUBDIRS = src cpp csv_maker golden_run
+SUBDIRS = src cpp csv_maker golden_run skim
 #python skim
 
-all: clean $(SUBDIRS)
+all: $(SUBDIRS)
 
 clean:
 	-rm -f obj/*.o
