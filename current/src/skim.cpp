@@ -107,12 +107,12 @@ void Skim::Strict() {
     for (int part_num = 1; part_num < gpart; part_num++) {
       if (q[part_num] == NEGATIVE)
         continue;
-      if (abs((double)vz[part_num]) > 2.0)
-        continue;
-      if (abs((double)vy[part_num]) > 1.0)
-        continue;
-      if (abs((double)vx[part_num]) > 1.0)
-        continue;
+        //if (abs((double)vz[part_num]) > 2.0)
+        //continue;
+      //if (abs((double)vy[part_num]) > 1.0)
+        //continue;
+      //if (abs((double)vx[part_num]) > 1.0)
+        //continue;
 
       particle_3.SetXYZ(p[part_num] * cx[part_num], p[part_num] * cy[part_num],
                         p[part_num] * cz[part_num]);
@@ -123,14 +123,14 @@ void Skim::Strict() {
       if (check->dt_P_cut(dt_pi[part_num], p[part_num])) {
         num_pi++;
         particle.SetVectM(particle_3, MASS_PIP);
+      }
         MM_neutron->Set_4Vec(particle);
         MM_neutron->missing_mass(gamma_mu);
-      }
     }
     mm_cut &= (MM_neutron->Get_MM() < 1.05);
     mm_cut &= (MM_neutron->Get_MM() > 0.9);
 
-    if (check->isStrictElecctron() && num_proton == 0 && num_pi >= 1) {
+    if (check->isStrictElecctron() && mm_cut && num_proton == 0 && num_pi == 1) {
       skim->Fill(); // Fill the banks after the skim
     }
     // delete dt;
