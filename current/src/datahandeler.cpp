@@ -251,7 +251,7 @@ void DataHandeler::file_handeler(std::string fin) {
         } else if (q[part_num] == POSITIVE) {
           if (check->dt_Pip_cut(dt_proton.at(part_num), p[part_num])) PID = PIM;
         }
-
+        TLorentzVector Particle = physics::fourVec(p[part_num], cx[part_num], cy[part_num], cz[part_num], PID);
         /*
         if (abs((double)vz[part_num]) > 2.0) continue;
         if (abs((double)vy[part_num]) > 1.0) continue;
@@ -260,13 +260,16 @@ void DataHandeler::file_handeler(std::string fin) {
 
         hists->Fill_Target_Vertex((double)vx[part_num], (double)vy[part_num], (double)vz[part_num]);
 
-        theta = physics::theta_calc(cz[part_num]);
-        phi = physics::phi_calc(cx[part_num], cy[part_num]);
+        // theta = physics::theta_calc(cz[part_num]);
+        // phi = physics::phi_calc(cx[part_num], cy[part_num]);
+        theta = Particle.Theta() / D2R;
+        phi = Particle.Phi() / D2R;
         sector = physics::get_sector(phi);
-        hists->Fill_hadron_fid(theta, phi, sector, PID);
 
+        // std::cout << "Theta:\t" << theta << "\t" << Particle.Theta() / D2R << '\n';
+        // std::cout << "Phi:\t" << phi << "\t" << Particle.Phi() / D2R << '\n';
+        hists->Fill_hadron_fid(theta, phi, sector, PID);
         hists->Fill_Mass(m[part_num]);
-        TLorentzVector Particle = physics::fourVec(p[part_num], cx[part_num], cy[part_num], cz[part_num], PID);
 
         hists->MomVsBeta_Fill(Particle.E(), p[part_num], b[part_num]);
         if (q[part_num] == POSITIVE) {
@@ -280,10 +283,10 @@ void DataHandeler::file_handeler(std::string fin) {
             hists->Fill_pion_WQ2(W, Q2);
             hists->Fill_Pi_ID_P(p[part_num], b[part_num]);
             TLorentzVector gamma_mu = (*e_mu - e_mu_prime);
-            // if (first_run) {
-            MM_neutron->Set_PxPyPz(p[part_num] * cx[part_num], p[part_num] * cy[part_num], p[part_num] * cz[part_num]);
+            MM_neutron->Set_4Vec(Particle);
+            // MM_neutron->Set_PxPyPz(p[part_num] * cx[part_num], p[part_num] * cy[part_num], p[part_num] *
+            // cz[part_num]);
             MM_neutron->missing_mass(gamma_mu);
-            //}
           }
 
           if (check->dt_Pip_cut(dt_pi.at(part_num), p[part_num]) ||
