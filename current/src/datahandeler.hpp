@@ -5,13 +5,6 @@
 
 #ifndef DATAHANDELER_H_GUARD
 #define DATAHANDELER_H_GUARD
-#include <TFile.h>
-#include <TLorentzVector.h>
-#include <cstring>
-#include <fstream>
-#include <string>
-#include <thread>
-#include <vector>
 #include "TChain.h"
 #include "color.hpp"
 #include "constants.hpp"
@@ -21,11 +14,18 @@
 #include "missing_mass.hpp"
 #include "photon_flux.hpp"
 #include "physics.hpp"
+#include <TFile.h>
+#include <TLorentzVector.h>
+#include <cstring>
+#include <fstream>
+#include <string>
+#include <thread>
+#include <vector>
 
-using vec4 = ROOT::Math::PxPyPzMVector;
+// using vec4 = ROOT::Math::PxPyPzMVector;
 
 class DataHandeler {
- private:
+private:
   int PID;
   Histogram *hists;
   TFile *RootOutputFile;
@@ -34,7 +34,7 @@ class DataHandeler {
   MissingMass *MM_neutron;
   TCanvas *c1;
 
- public:
+public:
   DataHandeler(std::vector<std::string> fin, std::string RootFile_output);
   ~DataHandeler();
   void file_handeler(std::string fin);
