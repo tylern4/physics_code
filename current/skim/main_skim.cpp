@@ -37,7 +37,8 @@ int main(int argc, char **argv) {
   }
 
   Skim *s = new Skim(infile, outfile);
-  s->Process();
+  s->Basic();
+  // s->Strict();
 
   return 0;
 }

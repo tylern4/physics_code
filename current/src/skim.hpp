@@ -5,7 +5,6 @@
 /**************************************/
 #ifndef SKIM_H_GUARD
 #define SKIM_H_GUARD
-#include <iostream>
 #include "TChain.h"
 #include "TFile.h"
 #include "TLorentzVector.h"
@@ -18,9 +17,10 @@
 #include "func.hpp"
 #include "glob_files.hpp"
 #include "missing_mass.hpp"
+#include <iostream>
 
 class Skim {
- private:
+private:
   TChain *chain;
   std::string fout;
   std::vector<std::string> fin;
@@ -34,9 +34,10 @@ class Skim {
   TLorentzVector Particle4;
   MissingMass *MM_neutron;
 
- public:
+public:
   Skim(std::vector<std::string> input, std::string output);
-  void Process();
+  void Basic();
+  void Strict();
   ~Skim();
   double sf_top_fit(double P);
   double sf_bot_fit(double P);
