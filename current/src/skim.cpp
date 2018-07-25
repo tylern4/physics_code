@@ -104,7 +104,7 @@ void Skim::Strict() {
     for (int part_num = 0; part_num < gpart; part_num++) {
       particle_3.SetXYZ(p[part_num] * cx[part_num], p[part_num] * cy[part_num], p[part_num] * cz[part_num]);
       if (q[part_num] == NEGATIVE) {
-        if (check->dt_P_cut(dt_pi[part_num], p[part_num])) {
+        if (check->dt_Pip_cut(dt_pi[part_num], p[part_num])) {
           num_pim++;
           particle.SetVectM(particle_3, MASS_PIM);
           id[part_num] = PIM;
@@ -114,7 +114,7 @@ void Skim::Strict() {
           num_proton++;
           particle.SetVectM(particle_3, MASS_P);
           id[part_num] = PROTON;
-        } else if (check->dt_P_cut(dt_pi[part_num], p[part_num])) {
+        } else if (check->dt_Pip_cut(dt_pi[part_num], p[part_num])) {
           num_pip++;
           particle.SetVectM(particle_3, MASS_PIP);
           id[part_num] = PIP;
@@ -126,7 +126,7 @@ void Skim::Strict() {
       mm_cut &= (MM_neutron->Get_MM() < 1.05);
       mm_cut &= (MM_neutron->Get_MM() > 0.5);
 
-      if (check->isElecctron() && mm_cut && num_proton == 0 && num_pip == 1) {
+      if (check->isStrictElecctron() && (num_pip >= 1 || num_proton >= 1)) {
         skim->Fill();  // Fill the banks after the skim
       }
     }
