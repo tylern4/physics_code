@@ -56,6 +56,7 @@ class Histogram {
   TH1D *W_hist = new TH1D("W", "W", bins, w_min, w_max);
   TH1D *Q2_hist = new TH1D("Q2", "Q^{2}", bins, q2_min, q2_max);
   TH1D *E_prime_hist = new TH1D("E_prime", "Scattered Electron Energy", bins, 0.0, 5.0);
+  TH1D *photon_flux_hist = new TH1D("photon_flux", "Photon Flux", bins, -0.1, 0.1);
   TH2D *Q2_vs_xb = new TH2D("Q2_vs_xb", "Q^{2} vs x_{b}", bins, 0.1, 0.6, bins, 1.0, 3.5);
   TH2D *WvsQ2_proton = new TH2D("WvsQ2_proton", "W vs Q^{2} P", bins, w_min, w_max, bins, q2_min, q2_max);
   TH1D *W_proton = new TH1D("W_proton", "W P", bins, w_min, w_max);
@@ -249,6 +250,7 @@ class Histogram {
   void Fill_Pi_ID_P(double p, double beta);
   void Fill_proton_Pi_ID_P(double p, double beta);
   void MomVsBeta_Fill(double Energy, double P, double Beta);
+  void Photon_flux_Fill(double photon_flux);
   void MomVsBeta_Write();
 
   // Missing Mass

@@ -96,17 +96,7 @@ void Histogram::Fill_channel_WQ2(double W, double Q2) {
   WvsQ2_channel->Fill(W, Q2);
   W_channel->Fill(W);
   Q2_channel->Fill(Q2);
-}
 
-void Histogram::Fill_single_proton_WQ2(double W, double Q2) {
-  WvsQ2_single_proton->Fill(W, Q2);
-  W_single_proton->Fill(W);
-  Q2_single_proton->Fill(Q2);
-}
-
-void Histogram::WvsQ2_Fill(double E_prime, double W, double Q2, double xb) {
-  E_prime_hist->Fill(E_prime);
-  WvsQ2_hist->Fill(W, Q2);
   WvsQ2_binned->Fill(W, Q2);
 
   for (int y = 0; y < Q2_bins; y++) {
@@ -122,6 +112,17 @@ void Histogram::WvsQ2_Fill(double E_prime, double W, double Q2, double xb) {
       continue;
     }
   }
+}
+
+void Histogram::Fill_single_proton_WQ2(double W, double Q2) {
+  WvsQ2_single_proton->Fill(W, Q2);
+  W_single_proton->Fill(W);
+  Q2_single_proton->Fill(Q2);
+}
+
+void Histogram::WvsQ2_Fill(double E_prime, double W, double Q2, double xb) {
+  E_prime_hist->Fill(E_prime);
+  WvsQ2_hist->Fill(W, Q2);
 
   W_hist->Fill(W);
   Q2_hist->Fill(Q2);
@@ -244,6 +245,8 @@ void Histogram::MomVsBeta_Fill(double Energy, double P, double Beta) {
   Mom->Fill(P);
 }
 
+void Histogram::Photon_flux_Fill(double photon_flux) { photon_flux_hist->Fill(photon_flux); }
+
 void Histogram::MomVsBeta_Write() {
   MomVsBeta_hist->SetXTitle("Momentum (GeV)");
   MomVsBeta_hist->SetYTitle("#beta");
@@ -276,6 +279,8 @@ void Histogram::MomVsBeta_Write() {
   MomVsBeta_hist_pos->Write();
   MomVsBeta_hist_neg->Write();
   Mom->Write();
+
+  photon_flux_hist->Write();
 }
 
 // Missing Mass

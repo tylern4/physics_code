@@ -41,6 +41,7 @@ double Delta_T::Get_dt_K() { return dt_K; }
 double Delta_T::Get_vertex() { return vertex; }
 
 void Delta_T::delta_t_hists(Histogram *hists) {
+  Cuts *dt_cut = new Cuts();
   double delta_t_P, delta_t_PIP, delta_t_ELECTRON;
   double sct, scr, mom;
   int ID, charge, sc_paddle, sc_sector;
@@ -63,14 +64,15 @@ void Delta_T::delta_t_hists(Histogram *hists) {
       hists->Fill_deltat_P(mom, delta_t_P);
       hists->Fill_deltat_PIP(mom, delta_t_PIP);
       hists->Fill_deltat_positron(mom, delta_t_ELECTRON);
-      if (ID == PROTON) hists->Fill_deltat_P_PID(mom, delta_t_P);
-      if (ID == PIP) hists->Fill_deltat_PIP_PID(mom, delta_t_PIP);
-      if (ID == -11) hists->Fill_deltat_positron_PID(mom, delta_t_ELECTRON);
+      if (dt_cut->dt_P_cut(delta_t_P, mom)) hists->Fill_deltat_P_PID(mom, delta_t_P);
+      if (dt_cut->dt_Pip_cut(delta_t_PIP, mom)) hists->Fill_deltat_PIP_PID(mom, delta_t_PIP);
+      if (dt_cut->dt_P_cut(delta_t_P, mom) && dt_cut->dt_Pip_cut(delta_t_PIP, mom))
+        hists->Fill_deltat_positron_PID(mom, delta_t_ELECTRON);
     } else if (charge == -1) {
       hists->Fill_deltat_electron(mom, delta_t_ELECTRON);
       if (ID == ELECTRON) hists->Fill_deltat_electron_PID(mom, delta_t_ELECTRON);
       hists->Fill_deltat_PIM(mom, delta_t_PIP);
-      if (ID == PIM) hists->Fill_deltat_PIM(mom, delta_t_PIP);
+      if (dt_cut->dt_Pip_cut(delta_t_PIP, mom)) hists->Fill_deltat_PIM(mom, delta_t_PIP);
     }
 
     hists->delta_t_Fill(mom, charge, delta_t_P, delta_t_PIP, delta_t_ELECTRON);

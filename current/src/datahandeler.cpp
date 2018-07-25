@@ -239,7 +239,9 @@ void DataHandeler::file_handeler(std::string fin) {
       Q2 = physics::Q2_calc(*e_mu, e_mu_prime);
       e_E = e_mu_prime.E();
       PhotonFlux *photon_flux = new PhotonFlux(*e_mu, e_mu_prime);
+      hists->Photon_flux_Fill(photon_flux->GetVirtualPhotonFlux());
       delete photon_flux;
+      TLorentzVector gamma_mu = (*e_mu - e_mu_prime);
       hists->WvsQ2_Fill(e_E, W, Q2, physics::xb_calc(Q2, e_E));
       num_of_proton = num_of_pis = 0;
       for (int part_num = 1; part_num < gpart; part_num++) {
@@ -267,13 +269,10 @@ void DataHandeler::file_handeler(std::string fin) {
             num_of_proton++;
             hists->Fill_proton_WQ2(W, Q2);
             hists->Fill_proton_ID_P(p[part_num], b[part_num]);
-          }
-
-          if (check->dt_Pip_cut(dt_pi.at(part_num), p[part_num])) {
+          } else if (check->dt_Pip_cut(dt_pi.at(part_num), p[part_num])) {
             num_of_pis++;
             hists->Fill_pion_WQ2(W, Q2);
             hists->Fill_Pi_ID_P(p[part_num], b[part_num]);
-            TLorentzVector gamma_mu = (*e_mu - e_mu_prime);
             MM_neutron->Set_4Vec(Particle);
             MM_neutron->missing_mass(gamma_mu);
             hists->Fill_Missing_Mass(MM_neutron);
