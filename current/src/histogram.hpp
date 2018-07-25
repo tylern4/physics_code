@@ -99,7 +99,7 @@ class Histogram {
   // P and E
 
   // Missing Mass
-  int bins_MM = 100;
+  int bins_MM = 300;
   double MM_min = 0.0;
   double MM_max = 3.0;
   // TH1D *Mass = new TH1D("Mass", "Mass", 600, 0, 6);

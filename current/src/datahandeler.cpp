@@ -305,8 +305,8 @@ void DataHandeler::file_handeler(std::string fin) {
 
       if (num_of_pis == 1) hists->Fill_single_pi_WQ2(W, Q2);
       if (num_of_pis == 1 && mm_cut && num_of_proton == 0 && gpart < 3) hists->Fill_channel_WQ2(W, Q2);
-      if (num_of_pis == 1 && num_of_proton == 0 && gpart < 3) hists->Fill_Missing_Mass_strict(MM_neutron);
-      if (num_of_proton == 1) hists->Fill_single_proton_WQ2(W, Q2);
+      if (num_of_pis == 1 && num_of_proton == 0 && gpart <= 3) hists->Fill_Missing_Mass_strict(MM_neutron);
+      if (num_of_proton == 1 && num_of_pis == 0 && gpart <= 3) hists->Fill_single_proton_WQ2(W, Q2);
     }
     delete check;
   }
