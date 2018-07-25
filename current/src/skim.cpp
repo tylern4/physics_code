@@ -68,6 +68,7 @@ void Skim::Strict() {
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
+    if (gpart > 4) continue;
     Cuts *check = new Cuts();
 
     num_proton = 0;
