@@ -3,8 +3,8 @@
 /*  Created by Nick Tyler             */
 /*	University Of South Carolina      */
 /**************************************/
-#include "cuts.hpp"
 #include <iostream>
+#include "cuts.hpp"
 
 Cuts::Cuts() {}
 Cuts::~Cuts() {}
@@ -52,11 +52,11 @@ bool Cuts::isStrictElecctron() {
 
   samp_frac_cut = sf_cut(samp_frac, electron_p);
   _elec &= samp_frac_cut;
-
-  _elec &= (abs(vz) < 2.0);
-  _elec &= (abs(vy) < 0.3);
-  _elec &= (vx > 0.2 && vx < 0.4);
-
+  /*
+    _elec &= (abs(vz) < 2.0);
+    _elec &= (abs(vy) < 0.3);
+    _elec &= (vx > 0.2 && vx < 0.4);
+  */
   electron_cut = _elec;
   return _elec;
 }
@@ -73,9 +73,7 @@ double Cuts::sf_bot_fit(double P) {
   double x[1] = {P};
   return func::ec_fit_func(x, par);
 }
-bool Cuts::sf_cut(double sf, double P) {
-  return ((sf > sf_bot_fit(P)) && (sf < sf_top_fit(P)));
-}
+bool Cuts::sf_cut(double sf, double P) { return ((sf > sf_bot_fit(P)) && (sf < sf_top_fit(P))); }
 
 double Cuts::dt_P_bot_fit(double P) {
   double par[2] = {-1.509, 0.4172};
@@ -87,9 +85,7 @@ double Cuts::dt_P_top_fit(double P) {
   double x[1] = {P};
   return func::dt_fit(x, par);
 }
-bool Cuts::dt_P_cut(double dt, double P) {
-  return ((dt > dt_P_bot_fit(P)) && (dt < dt_P_top_fit(P)));
-}
+bool Cuts::dt_P_cut(double dt, double P) { return ((dt > dt_P_bot_fit(P)) && (dt < dt_P_top_fit(P))); }
 
 double Cuts::dt_Pip_bot_fit(double P) {
   double par[2] = {-0.9285, -0.04094};
@@ -101,6 +97,4 @@ double Cuts::dt_Pip_top_fit(double P) {
   double x[1] = {P};
   return func::dt_fit(x, par);
 }
-bool Cuts::dt_Pip_cut(double dt, double P) {
-  return ((dt > dt_Pip_bot_fit(P)) && (dt < dt_Pip_top_fit(P)));
-}
+bool Cuts::dt_Pip_cut(double dt, double P) { return ((dt > dt_Pip_bot_fit(P)) && (dt < dt_Pip_top_fit(P))); }
