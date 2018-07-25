@@ -126,7 +126,7 @@ void Skim::Strict() {
       mm_cut &= (MM_neutron->Get_MM() < 1.05);
       mm_cut &= (MM_neutron->Get_MM() > 0.5);
 
-      if (check->isStrictElecctron() && (num_pip != 0 || num_proton != 0)) {
+      if (check->isStrictElecctron() && num_pip >= 1 && gpart <= 4) {
         skim->Fill();  // Fill the banks after the skim
       }
     }
