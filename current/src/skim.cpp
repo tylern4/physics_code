@@ -107,17 +107,17 @@ void Skim::Strict() {
         if (check->dt_Pip_cut(dt_pi[part_num], p[part_num])) {
           num_pim++;
           particle.SetVectM(particle_3, MASS_PIM);
-          id[part_num] = PIM;
+          // id[part_num] = PIM;
         }
       } else {
         if (check->dt_P_cut(dt_proton[part_num], p[part_num])) {
           num_proton++;
           particle.SetVectM(particle_3, MASS_P);
-          id[part_num] = PROTON;
+          // id[part_num] = PROTON;
         } else if (check->dt_Pip_cut(dt_pi[part_num], p[part_num])) {
           num_pip++;
           particle.SetVectM(particle_3, MASS_PIP);
-          id[part_num] = PIP;
+          // id[part_num] = PIP;
         }
       }
       MM_neutron->Set_4Vec(particle);
@@ -126,7 +126,7 @@ void Skim::Strict() {
       mm_cut &= (MM_neutron->Get_MM() < 1.05);
       mm_cut &= (MM_neutron->Get_MM() > 0.5);
 
-      if (check->isStrictElecctron() && (num_pip >= 1 || num_proton >= 1)) {
+      if (check->isElecctron() && (num_pip != 0 || num_proton != 0)) {
         skim->Fill();  // Fill the banks after the skim
       }
     }
