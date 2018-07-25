@@ -190,6 +190,7 @@ void DataHandeler::file_handeler(std::string fin) {
   int current_event = 0;
   for (current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
+    if (gpart > 4) continue;
     Cuts *check = new Cuts();
 
     // electron cuts
@@ -300,13 +301,13 @@ void DataHandeler::file_handeler(std::string fin) {
       hists->Fill_Missing_Mass(MM_neutron);
 
       bool mm_cut = true;
-      mm_cut &= (MM_neutron->Get_MM() < 1.05);
-      mm_cut &= (MM_neutron->Get_MM() > 0.5);
+      mm_cut &= (MM_neutron->Get_MM() < 1.005);
+      mm_cut &= (MM_neutron->Get_MM() > 0.90);
 
       if (num_of_pis == 1) hists->Fill_single_pi_WQ2(W, Q2);
       if (num_of_pis == 1 && mm_cut && num_of_proton == 0 && gpart < 3) hists->Fill_channel_WQ2(W, Q2);
-      if (num_of_pis == 1 && num_of_proton == 0 && gpart <= 3) hists->Fill_Missing_Mass_strict(MM_neutron);
-      if (num_of_proton == 1 && num_of_pis == 0 && gpart <= 3) hists->Fill_single_proton_WQ2(W, Q2);
+      if (num_of_pis == 1 && num_of_proton == 0) hists->Fill_Missing_Mass_strict(MM_neutron);
+      if (num_of_proton == 1 && num_of_pis == 0) hists->Fill_single_proton_WQ2(W, Q2);
     }
     delete check;
   }
