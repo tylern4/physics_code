@@ -60,7 +60,8 @@ void Skim::Basic() {
 void Skim::Strict() {
   int num_of_events;
   bool electron_cuts, mm_cut;
-  int num_proton, num_pip, num_pim;
+  int num_proton, num_pip;
+  int num_PPIP = 0;
   std::cout << BLUE << "Skim file " << GREEN << fout << DEF << std::endl;
   getBranches(chain);
   num_of_events = (int)chain->GetEntries();
@@ -73,7 +74,7 @@ void Skim::Strict() {
 
     num_proton = 0;
     num_pip = 0;
-    num_pim = 0;
+    // num_PPIP = 0;
     // Not Used
     check->Set_electron_id((int)id[0]);  // First particle is electron
     // electron cuts
@@ -103,32 +104,29 @@ void Skim::Strict() {
 
     mm_cut = true;
     for (int part_num = 0; part_num < gpart; part_num++) {
+      if (q[part_num] == NEGATIVE) continue;
       particle_3.SetXYZ(p[part_num] * cx[part_num], p[part_num] * cy[part_num], p[part_num] * cz[part_num]);
-      if (q[part_num] == NEGATIVE) {
-        if (check->dt_Pip_cut(dt_pi[part_num], p[part_num])) {
-          num_pim++;
-          particle.SetVectM(particle_3, MASS_PIM);
-          // id[part_num] = PIM;
-        }
-      } else {
-        if (check->dt_P_cut(dt_proton[part_num], p[part_num])) {
-          num_proton++;
-          particle.SetVectM(particle_3, MASS_P);
-          // id[part_num] = PROTON;
-        } else if (check->dt_Pip_cut(dt_pi[part_num], p[part_num])) {
-          num_pip++;
-          particle.SetVectM(particle_3, MASS_PIP);
-          // id[part_num] = PIP;
-        }
+      if (check->dt_P_cut(dt_proton[part_num], p[part_num]) && check->dt_Pip_cut(dt_pi[part_num], p[part_num]))
+        num_PPIP++;
+
+      if (check->dt_P_cut(dt_proton[part_num], p[part_num])) {
+        num_proton++;
+        particle.SetVectM(particle_3, MASS_P);
       }
+
+      if (check->dt_Pip_cut(dt_pi[part_num], p[part_num])) {
+        num_pip++;
+        particle.SetVectM(particle_3, MASS_PIP);
+      }
+
       MM_neutron->Set_4Vec(particle);
       MM_neutron->missing_mass(gamma_mu);
 
       mm_cut &= (MM_neutron->Get_MM() < 1.5);
       mm_cut &= (MM_neutron->Get_MM() > 0.5);
 
-      if (check->isStrictElecctron() && num_pip >= 1 && mm_cut) {
-        skim->Fill();  // Fill the banks after the skim
+      if (check->isStrictElecctron() && num_pip >= 1 && mm_cut && num_PPIP == 0) {
+        skim->Fill();  // Fill the banks after the skim}
       }
     }
     // delete dt;
@@ -136,7 +134,6 @@ void Skim::Strict() {
   }
   chain->Reset();  // delete Tree object
   delete chain;
-
   RootOutputFile->cd();
   RootOutputFile->Write();
   RootOutputFile->Close();
