@@ -18,6 +18,7 @@
 #include "color.hpp"
 #include "fits.hpp"
 #include "makeHeader.hpp"
+#include "missing_mass.hpp"
 
 class Histogram {
  private:
@@ -65,6 +66,9 @@ class Histogram {
   TH2D *WvsQ2_single_pi = new TH2D("WvsQ2_single_pi", "W vs Q^{2} #pi^{+}", bins, w_min, w_max, bins, q2_min, q2_max);
   TH1D *W_single_pi = new TH1D("W_single_pi", "W #pi^{+}", bins, w_min, w_max);
   TH1D *Q2_single_pi = new TH1D("Q2_single_pi", "Q^{2} #pi^{+}", bins, q2_min, q2_max);
+  TH2D *WvsQ2_channel = new TH2D("WvsQ2_channel", "W vs Q^{2} #pi^{+} N", bins, w_min, w_max, bins, q2_min, q2_max);
+  TH1D *W_channel = new TH1D("W_channel", "W #pi^{+}", bins, w_min, w_max);
+  TH1D *Q2_channel = new TH1D("Q2_channel", "Q^{2} #pi^{+}", bins, q2_min, q2_max);
   TH2D *WvsQ2_single_proton = new TH2D("WvsQ2_single_proton", "W vs Q^{2} P", bins, w_min, w_max, bins, q2_min, q2_max);
   TH1D *W_single_proton = new TH1D("W_single_proton", "W P", bins, w_min, w_max);
   TH1D *Q2_single_proton = new TH1D("Q2_single_proton", "Q^{2} P", bins, q2_min, q2_max);
@@ -95,10 +99,10 @@ class Histogram {
   // P and E
 
   // Missing Mass
-  int bins_MM = 200;
+  int bins_MM = 100;
   double MM_min = 0.0;
   double MM_max = 3.0;
-  TH1D *Mass = new TH1D("Mass", "Mass", 600, 0, 6);
+  // TH1D *Mass = new TH1D("Mass", "Mass", 600, 0, 6);
   // Missing Mass
 
   // Delta T
@@ -224,9 +228,14 @@ class Histogram {
   ~Histogram();
   TH1D *Missing_Mass = new TH1D("Missing_Mass", "Missing Mass", bins_MM, MM_min, MM_max);
   TH1D *Missing_Mass_square = new TH1D("Missing_Mass_square", "Missing Mass square", bins_MM, MM_min, MM_max *MM_max);
+
+  TH1D *Missing_Mass_strict = new TH1D("Missing_Mass_strict", "Missing Mass", bins_MM, MM_min, MM_max);
+  TH1D *Missing_Mass_square_strict =
+      new TH1D("Missing_Mass_square_strict", "Missing Mass square", bins_MM, MM_min, MM_max *MM_max);
   // W and Q^2
   void Fill_proton_WQ2(double W, double Q2);
   void Fill_single_pi_WQ2(double W, double Q2);
+  void Fill_channel_WQ2(double W, double Q2);
   void Fill_single_proton_WQ2(double W, double Q2);
   void WvsQ2_Fill(double E_prime, double W, double Q2, double xb);
   void Fill_pion_WQ2(double W, double Q2);
@@ -244,7 +253,9 @@ class Histogram {
 
   // Missing Mass
   void Fill_Missing_Mass(double miss_mass);
-  void Fill_Mass(double mass);
+  void Fill_Missing_Mass(MissingMass *miss_mass);
+  void Fill_Missing_Mass_strict(MissingMass *miss_mass);
+  // void Fill_Mass(double mass);
   void Fill_Missing_Mass_square(double miss_mass_2);
   void Write_Missing_Mass();
 

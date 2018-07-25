@@ -92,6 +92,12 @@ void Histogram::Fill_single_pi_WQ2(double W, double Q2) {
   Q2_single_pi->Fill(Q2);
 }
 
+void Histogram::Fill_channel_WQ2(double W, double Q2) {
+  WvsQ2_channel->Fill(W, Q2);
+  W_channel->Fill(W);
+  Q2_channel->Fill(Q2);
+}
+
 void Histogram::Fill_single_proton_WQ2(double W, double Q2) {
   WvsQ2_single_proton->Fill(W, Q2);
   W_single_proton->Fill(W);
@@ -186,6 +192,17 @@ void Histogram::WvsQ2_Write() {
   Q2_single_pi->SetXTitle("Q^{2} (GeV^{2})");
   Q2_single_pi->Write();
 
+  WvsQ2_channel->SetXTitle("W (GeV)");
+  WvsQ2_channel->SetYTitle("Q^{2} (GeV^{2})");
+  WvsQ2_channel->SetOption("COLZ");
+  WvsQ2_channel->Write();
+
+  W_channel->SetXTitle("W (GeV)");
+  W_channel->Write();
+
+  Q2_channel->SetXTitle("Q^{2} (GeV^{2})");
+  Q2_channel->Write();
+
   WvsQ2_single_proton->SetXTitle("W (GeV)");
   WvsQ2_single_proton->SetYTitle("Q^{2} (GeV^{2})");
   WvsQ2_single_proton->SetOption("COLZ");
@@ -264,7 +281,16 @@ void Histogram::MomVsBeta_Write() {
 // Missing Mass
 void Histogram::Fill_Missing_Mass(double miss_mass) { Missing_Mass->Fill(miss_mass); }
 
-void Histogram::Fill_Mass(double mass) { Mass->Fill(mass); }
+void Histogram::Fill_Missing_Mass(MissingMass *miss_mass) {
+  Missing_Mass->Fill(miss_mass->Get_MM());
+  Missing_Mass_square->Fill(miss_mass->Get_MM2());
+}
+void Histogram::Fill_Missing_Mass_strict(MissingMass *miss_mass) {
+  Missing_Mass_strict->Fill(miss_mass->Get_MM());
+  Missing_Mass_square_strict->Fill(miss_mass->Get_MM2());
+}
+
+// void Histogram::Fill_Mass(double mass) { Mass->Fill(mass); }
 
 void Histogram::Fill_Missing_Mass_square(double miss_mass_2) { Missing_Mass_square->Fill(miss_mass_2); }
 
@@ -272,11 +298,14 @@ void Histogram::Write_Missing_Mass() {
   Missing_Mass->SetXTitle("Mass (GeV)");
   Missing_Mass->Write();
 
-  Mass->SetXTitle("Mass (GeV)");
-  Mass->Write();
-
   Missing_Mass_square->SetXTitle("Mass (GeV)");
   Missing_Mass_square->Write();
+
+  Missing_Mass_strict->SetXTitle("Mass (GeV)");
+  Missing_Mass_strict->Write();
+
+  Missing_Mass_square_strict->SetXTitle("Mass (GeV)");
+  Missing_Mass_square_strict->Write();
 }
 
 void Histogram::makeHists_deltat() {
