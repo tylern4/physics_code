@@ -67,8 +67,8 @@ class Histogram {
   TH1D *W_single_pi = new TH1D("W_single_pi", "W #pi^{+}", bins, w_min, w_max);
   TH1D *Q2_single_pi = new TH1D("Q2_single_pi", "Q^{2} #pi^{+}", bins, q2_min, q2_max);
   TH2D *WvsQ2_channel = new TH2D("WvsQ2_channel", "W vs Q^{2} #pi^{+} N", bins, w_min, w_max, bins, q2_min, q2_max);
-  TH1D *W_channel = new TH1D("W_channel", "W #pi^{+}", bins, w_min, w_max);
-  TH1D *Q2_channel = new TH1D("Q2_channel", "Q^{2} #pi^{+}", bins, q2_min, q2_max);
+  TH1D *W_channel = new TH1D("W_channel", "W #pi^{+} N", bins, w_min, w_max);
+  TH1D *Q2_channel = new TH1D("Q2_channel", "Q^{2} #pi^{+} N", bins, q2_min, q2_max);
   TH2D *WvsQ2_single_proton = new TH2D("WvsQ2_single_proton", "W vs Q^{2} P", bins, w_min, w_max, bins, q2_min, q2_max);
   TH1D *W_single_proton = new TH1D("W_single_proton", "W P", bins, w_min, w_max);
   TH1D *Q2_single_proton = new TH1D("Q2_single_proton", "Q^{2} P", bins, q2_min, q2_max);
