@@ -242,7 +242,7 @@ void DataHandeler::file_handeler(std::string fin) {
       hists->Photon_flux_Fill(photon_flux->GetVirtualPhotonFlux());
       delete photon_flux;
       TLorentzVector gamma_mu = (*e_mu - e_mu_prime);
-      hists->WvsQ2_Fill(e_E, W, Q2, physics::xb_calc(Q2, e_E));
+      hists->WvsQ2_Fill(W, Q2);
       num_of_proton = num_of_pis = 0;
       for (int part_num = 1; part_num < gpart; part_num++) {
         if (p[part_num] == 0) continue;
@@ -293,7 +293,8 @@ void DataHandeler::file_handeler(std::string fin) {
 
       if (num_of_pis == 1 && gpart == 2) hists->Fill_single_pi_WQ2(W, Q2);
       if (num_of_proton == 1 && gpart == 2) hists->Fill_single_proton_WQ2(W, Q2);
-      if (num_of_pis == 1 && mm_cut && num_of_proton == 0 && gpart <= 3) hists->Fill_channel_WQ2(W, Q2);
+      if (num_of_pis == 1 && mm_cut && num_of_proton == 0 && gpart <= 3)
+        hists->Fill_channel_WQ2(W, Q2, e_mu_prime.E(), physics::xb_calc(Q2, e_mu_prime.E()));
       if (num_of_pis == 1 && num_of_proton == 0) hists->Fill_Missing_Mass_strict(MM_neutron);
     }
     delete check;

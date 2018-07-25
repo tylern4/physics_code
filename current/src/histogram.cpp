@@ -92,7 +92,10 @@ void Histogram::Fill_single_pi_WQ2(double W, double Q2) {
   Q2_single_pi->Fill(Q2);
 }
 
-void Histogram::Fill_channel_WQ2(double W, double Q2) {
+void Histogram::Fill_channel_WQ2(double W, double Q2, double e_prime, double xb) {
+  E_prime_hist->Fill(e_prime);
+  Q2_vs_xb->Fill(xb, Q2);
+
   WvsQ2_channel->Fill(W, Q2);
   W_channel->Fill(W);
   Q2_channel->Fill(Q2);
@@ -120,13 +123,10 @@ void Histogram::Fill_single_proton_WQ2(double W, double Q2) {
   Q2_single_proton->Fill(Q2);
 }
 
-void Histogram::WvsQ2_Fill(double E_prime, double W, double Q2, double xb) {
-  E_prime_hist->Fill(E_prime);
+void Histogram::WvsQ2_Fill(double W, double Q2) {
   WvsQ2_hist->Fill(W, Q2);
-
   W_hist->Fill(W);
   Q2_hist->Fill(Q2);
-  Q2_vs_xb->Fill(xb, Q2);
 }
 
 void Histogram::Fill_pion_WQ2(double W, double Q2) {
@@ -136,6 +136,19 @@ void Histogram::Fill_pion_WQ2(double W, double Q2) {
 }
 
 void Histogram::WvsQ2_Write() {
+  WvsQ2_channel->SetXTitle("W (GeV)");
+  WvsQ2_channel->SetYTitle("Q^{2} (GeV^{2})");
+  WvsQ2_channel->SetOption("COLZ");
+  WvsQ2_channel->Write();
+
+  E_prime_hist->SetXTitle("Energy (GeV)");
+  E_prime_hist->Write();
+
+  Q2_vs_xb->SetXTitle("x_{b}");
+  Q2_vs_xb->SetYTitle("Q^{2}");
+  Q2_vs_xb->SetOption("COLZ");
+  Q2_vs_xb->Write();
+
   WvsQ2_hist->SetXTitle("W (GeV)");
   WvsQ2_hist->SetYTitle("Q^{2} (GeV^{2})");
   WvsQ2_hist->SetOption("COLZ");
@@ -151,14 +164,6 @@ void Histogram::WvsQ2_Write() {
 
   Q2_hist->SetXTitle("Q^{2} (GeV^{2})");
   Q2_hist->Write();
-
-  E_prime_hist->SetXTitle("Energy (GeV)");
-  E_prime_hist->Write();
-
-  Q2_vs_xb->SetXTitle("x_{b}");
-  Q2_vs_xb->SetYTitle("Q^{2}");
-  Q2_vs_xb->SetOption("COLZ");
-  Q2_vs_xb->Write();
 
   WvsQ2_proton->SetXTitle("W (GeV)");
   WvsQ2_proton->SetYTitle("Q^{2} (GeV^{2})");
@@ -192,11 +197,6 @@ void Histogram::WvsQ2_Write() {
 
   Q2_single_pi->SetXTitle("Q^{2} (GeV^{2})");
   Q2_single_pi->Write();
-
-  WvsQ2_channel->SetXTitle("W (GeV)");
-  WvsQ2_channel->SetYTitle("Q^{2} (GeV^{2})");
-  WvsQ2_channel->SetOption("COLZ");
-  WvsQ2_channel->Write();
 
   W_channel->SetXTitle("W (GeV)");
   W_channel->Write();
