@@ -64,7 +64,7 @@ void Skim::Strict() {
   std::cout << BLUE << "Skim file " << GREEN << fout << DEF << std::endl;
   getBranches(chain);
   num_of_events = (int)chain->GetEntries();
-  TTree *skim;
+  TTree *skim = chain->CloneTree(0);
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
@@ -124,10 +124,9 @@ void Skim::Strict() {
       MM_neutron->missing_mass(gamma_mu);
 
       mm_cut &= (MM_neutron->Get_MM() < 1.05);
-      mm_cut &= (MM_neutron->Get_MM() > 0.9);
+      mm_cut &= (MM_neutron->Get_MM() > 0.5);
 
       if (check->isElecctron() && mm_cut && num_proton == 0 && num_pip == 1) {
-        skim = chain->CloneTree(0);
         skim->Fill();  // Fill the banks after the skim
       }
     }
