@@ -141,6 +141,12 @@ void Histogram::WvsQ2_Write() {
   WvsQ2_channel->SetOption("COLZ");
   WvsQ2_channel->Write();
 
+  W_channel->SetXTitle("W (GeV)");
+  W_channel->Write();
+
+  Q2_channel->SetXTitle("Q^{2} (GeV^{2})");
+  Q2_channel->Write();
+
   E_prime_hist->SetXTitle("Energy (GeV)");
   E_prime_hist->Write();
 
@@ -153,11 +159,6 @@ void Histogram::WvsQ2_Write() {
   WvsQ2_hist->SetYTitle("Q^{2} (GeV^{2})");
   WvsQ2_hist->SetOption("COLZ");
   WvsQ2_hist->Write();
-
-  WvsQ2_binned->SetXTitle("W (GeV)");
-  WvsQ2_binned->SetYTitle("Q^{2} (GeV^{2})");
-  WvsQ2_binned->SetOption("COLZ");
-  WvsQ2_binned->Write();
 
   W_hist->SetXTitle("W (GeV)");
   W_hist->Write();
@@ -197,12 +198,6 @@ void Histogram::WvsQ2_Write() {
 
   Q2_single_pi->SetXTitle("Q^{2} (GeV^{2})");
   Q2_single_pi->Write();
-
-  W_channel->SetXTitle("W (GeV)");
-  W_channel->Write();
-
-  Q2_channel->SetXTitle("Q^{2} (GeV^{2})");
-  Q2_channel->Write();
 
   WvsQ2_single_proton->SetXTitle("W (GeV)");
   WvsQ2_single_proton->SetYTitle("Q^{2} (GeV^{2})");
