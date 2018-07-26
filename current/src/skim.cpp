@@ -113,21 +113,23 @@ void Skim::Strict() {
         num_proton++;
         particle.SetVectM(particle_3, MASS_P);
       }
-
       if (check->dt_Pip_cut(dt_pi[part_num], p[part_num])) {
         num_pip++;
         particle.SetVectM(particle_3, MASS_PIP);
+        MM_neutron->Set_4Vec(particle);
+        MM_neutron->missing_mass(gamma_mu);
       }
+    }
+    /* TODO:
+    Here's the problem:
+      What if I have two pions?
+      What if I have more than 3 particles?
+    mm_cut &= (MM_neutron->Get_MM() < 1.5);
+    mm_cut &= (MM_neutron->Get_MM() > 0.5);
+    */
 
-      MM_neutron->Set_4Vec(particle);
-      MM_neutron->missing_mass(gamma_mu);
-
-      mm_cut &= (MM_neutron->Get_MM() < 1.5);
-      mm_cut &= (MM_neutron->Get_MM() > 0.5);
-
-      if (check->isStrictElecctron() && num_pip >= 1 && mm_cut && num_PPIP == 0) {
-        skim->Fill();  // Fill the banks after the skim}
-      }
+    if (check->isStrictElecctron() && num_pip == 1 && num_PPIP == 0) {
+      skim->Fill();  // Fill the banks after the skim}
     }
     // delete dt;
     delete check;
