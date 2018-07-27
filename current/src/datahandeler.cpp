@@ -152,9 +152,11 @@ void DataHandeler::run() {
 
   for (i = 0; i < size; i++) {
     loadbar(i, size - 1);
+#ifndef __THREAD__
     file_handeler(input_files.at(i));
+#endif
 
-    /*
+#ifdef __THREAD__
     try {
       fh_thread[i] = new std::thread(std::mem_fn(&DataHandeler::file_handeler), this, input_files.at(i));
       fh_thread[i]->join();
@@ -162,7 +164,7 @@ void DataHandeler::run() {
       std::cerr << RED << "Error:\t" << e.what() << std::endl;
       std::cerr << CYAN << "Bad File: \t" << input_files.at(i) << DEF << std::endl;
     }
-    */
+#endif
   }
   ///// for (i = 0; i < size; i++) fh_thread[i]->join();
 }
@@ -251,7 +253,7 @@ void DataHandeler::file_handeler(std::string fin) {
         if (q[part_num] == POSITIVE) {
           if (check->dt_P_cut(dt_proton.at(part_num), p[part_num])) PID = PROTON;
           if (check->dt_Pip_cut(dt_proton.at(part_num), p[part_num])) PID = PIP;
-        } else if (q[part_num] == POSITIVE) {
+        } else if (q[part_num] == NEGATIVE) {
           if (check->dt_Pip_cut(dt_proton.at(part_num), p[part_num])) PID = PIM;
         }
         TLorentzVector Particle = physics::fourVec(p[part_num], cx[part_num], cy[part_num], cz[part_num], PID);
@@ -265,11 +267,11 @@ void DataHandeler::file_handeler(std::string fin) {
         hists->MomVsBeta_Fill(Particle.E(), p[part_num], b[part_num]);
         if (q[part_num] == POSITIVE) {
           hists->MomVsBeta_Fill_pos(p[part_num], b[part_num]);
-          if (check->dt_P_cut(dt_proton.at(part_num), p[part_num])) {
+          if (check->dt_P_cut(dt_proton.at(part_num), p[part_num]) && id[part_num] == PROTON) {
             num_of_proton++;
             hists->Fill_proton_WQ2(W, Q2);
             hists->Fill_proton_ID_P(p[part_num], b[part_num]);
-          } else if (check->dt_Pip_cut(dt_pi.at(part_num), p[part_num])) {
+          } else if (check->dt_Pip_cut(dt_pi.at(part_num), p[part_num]) && id[part_num] == PIP) {
             num_of_pis++;
             hists->Fill_pion_WQ2(W, Q2);
             hists->Fill_Pi_ID_P(p[part_num], b[part_num]);

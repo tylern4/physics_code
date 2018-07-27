@@ -140,11 +140,10 @@ class Histogram {
       new TH2D("delta_t_mass_electron_PID", "#Deltat assuming mass of e^{-} with PID e^{-}", bins, p_min, p_max, bins,
                Dt_min, Dt_max);
 
-  TH2D *delta_t_mass_positron =
-      new TH2D("delta_t_mass_postitron", "#Deltat assuming mass of e^{+}", bins, p_min, p_max, bins, Dt_min, Dt_max);
-  TH2D *delta_t_mass_positron_PID =
-      new TH2D("delta_t_mass_postitron_PID", "#Deltat assuming mass of e^{+} with PID e^{+}", bins, p_min, p_max, bins,
-               Dt_min, Dt_max);
+  TH2D *delta_t_mass_kp =
+      new TH2D("delta_t_mass_kp", "#Deltat assuming mass of k^{+}", bins, p_min, p_max, bins, Dt_min, Dt_max);
+  TH2D *delta_t_mass_kp_PID = new TH2D("delta_t_mass_kp_PID", "#Deltat assuming mass of k^{+} with PID k^{+}", bins,
+                                       p_min, p_max, bins, Dt_min, Dt_max);
   // Delta T
 
   // cc hist
@@ -270,8 +269,8 @@ class Histogram {
   void Fill_deltat_PIM_PID(double momentum, double delta_t);
   void Fill_deltat_electron(double momentum, double delta_t);
   void Fill_deltat_electron_PID(double momentum, double delta_t);
-  void Fill_deltat_positron(double momentum, double delta_t);
-  void Fill_deltat_positron_PID(double momentum, double delta_t);
+  void Fill_deltat_kp(double momentum, double delta_t);
+  void Fill_deltat_kp_PID(double momentum, double delta_t);
   void delta_t_slice_fit();
   void delta_t_Write();
   void delta_t_Fill(double momentum, int charge, double delta_t_proton, double delta_t_pip, double delta_t_electron);

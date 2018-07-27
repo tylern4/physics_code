@@ -50,8 +50,8 @@ Histogram::~Histogram() {
   delete delta_t_mass_PIP_PID;
   delete delta_t_mass_electron;
   delete delta_t_mass_electron_PID;
-  delete delta_t_mass_positron;
-  delete delta_t_mass_positron_PID;
+  delete delta_t_mass_kp;
+  delete delta_t_mass_kp_PID;
   delete electron_fid_hist;
   delete EC_sampling_fraction;
   delete EC_sampling_fraction_cut;
@@ -360,13 +360,9 @@ void Histogram::Fill_deltat_electron_PID(double momentum, double delta_t) {
   delta_t_mass_electron_PID->Fill(momentum, delta_t);
 }
 
-void Histogram::Fill_deltat_positron(double momentum, double delta_t) {
-  delta_t_mass_positron->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_kp(double momentum, double delta_t) { delta_t_mass_kp->Fill(momentum, delta_t); }
 
-void Histogram::Fill_deltat_positron_PID(double momentum, double delta_t) {
-  delta_t_mass_positron_PID->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_kp_PID(double momentum, double delta_t) { delta_t_mass_kp_PID->Fill(momentum, delta_t); }
 
 void Histogram::delta_t_slice_fit() {
   // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
@@ -543,12 +539,12 @@ void Histogram::delta_t_Write() {
   delta_t_mass_electron_PID->SetXTitle("Momentum (GeV)");
   delta_t_mass_electron_PID->SetYTitle("#Deltat");
   delta_t_mass_electron_PID->SetOption("COLZ");
-  delta_t_mass_positron->SetXTitle("Momentum (GeV)");
-  delta_t_mass_positron->SetYTitle("#Deltat");
-  delta_t_mass_positron->SetOption("COLZ");
-  delta_t_mass_positron_PID->SetXTitle("Momentum (GeV)");
-  delta_t_mass_positron_PID->SetYTitle("#Deltat");
-  delta_t_mass_positron_PID->SetOption("COLZ");
+  delta_t_mass_kp->SetXTitle("Momentum (GeV)");
+  delta_t_mass_kp->SetYTitle("#Deltat");
+  delta_t_mass_kp->SetOption("COLZ");
+  delta_t_mass_kp_PID->SetXTitle("Momentum (GeV)");
+  delta_t_mass_kp_PID->SetYTitle("#Deltat");
+  delta_t_mass_kp_PID->SetOption("COLZ");
 
   delta_t_slice_fit();
 
@@ -561,8 +557,8 @@ void Histogram::delta_t_Write() {
   delta_t_mass_PIM_PID->Write();
   delta_t_mass_electron->Write();
   delta_t_mass_electron_PID->Write();
-  delta_t_mass_positron->Write();
-  delta_t_mass_positron_PID->Write();
+  delta_t_mass_kp->Write();
+  delta_t_mass_kp_PID->Write();
 }
 
 void Histogram::delta_t_Fill(double momentum, int charge, double delta_t_proton, double delta_t_pip,

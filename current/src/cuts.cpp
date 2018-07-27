@@ -52,11 +52,7 @@ bool Cuts::isStrictElecctron() {
 
   samp_frac_cut = sf_cut(samp_frac, electron_p);
   _elec &= samp_frac_cut;
-  /*
-    _elec &= (abs(vz) < 2.0);
-    _elec &= (abs(vy) < 0.3);
-    _elec &= (vx > 0.2 && vx < 0.4);
-  */
+
   electron_cut = _elec;
   return _elec;
 }
@@ -97,4 +93,4 @@ double Cuts::dt_Pip_top_fit(double P) {
   double x[1] = {P};
   return func::dt_fit(x, par);
 }
-bool Cuts::dt_Pip_cut(double dt, double P) { return ((dt > dt_Pip_bot_fit(P)) && (dt < dt_Pip_top_fit(P))); }
+bool Cuts::dt_Pip_cut(double dt, double P) { return (P < 2.0 && (dt > dt_Pip_bot_fit(P)) && (dt < dt_Pip_top_fit(P))); }
