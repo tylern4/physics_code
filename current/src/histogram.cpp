@@ -376,7 +376,7 @@ void Histogram::delta_t_slice_fit() {
   // TF1 *peak = new TF1("peak", func::peak, -1, 1, 3);
   peak->SetParNames("constant", "mean", "#sigma");
   // Bin 50 = 0.5GeV, Bin 300 = 3 GeV
-  delta_t_mass_P->FitSlicesY(peak, 0, 300, 10, "QRG5");
+  delta_t_mass_P->FitSlicesY(peak, 50, 300, 10, "QRG5");
   TH1D *delta_t_mass_P_const = (TH1D *)gDirectory->Get("delta_t_mass_P_0");
   TH1D *delta_t_mass_P_mean = (TH1D *)gDirectory->Get("delta_t_mass_P_1");
   TH1D *delta_t_mass_P_sigma = (TH1D *)gDirectory->Get("delta_t_mass_P_2");
@@ -406,10 +406,10 @@ void Histogram::delta_t_slice_fit() {
   TGraph *M = new TGraph(num, x, y_minus);
   P->SetName("Proton_Pos_graph");
   M->SetName("Proton_Neg_graph");
-  TF1 *Proton_Pos_fit = new TF1("Proton_Pos_fit", func::dt_fit, 0.1, 3.0, 9);
-  TF1 *Proton_Neg_fit = new TF1("Proton_Neg_fit", func::dt_fit, 0.1, 3.0, 9);
-  P->Fit(Proton_Pos_fit, "QRG5", "", 0.2, 5);
-  M->Fit(Proton_Neg_fit, "QRG5", "", 0.2, 5);
+  TF1 *Proton_Pos_fit = new TF1("Proton_Pos_fit", func::dt_fit, 0.1, 3.0, 2);
+  TF1 *Proton_Neg_fit = new TF1("Proton_Neg_fit", func::dt_fit, 0.1, 3.0, 2);
+  P->Fit(Proton_Pos_fit, "QRG5", "", 0.2, 2);
+  M->Fit(Proton_Neg_fit, "QRG5", "", 0.2, 2);
   // P->Write();
   // M->Write();
   // Proton_Pos_fit->Write();
@@ -438,7 +438,7 @@ void Histogram::delta_t_slice_fit() {
   fit_functions->Set_Function(Proton_Neg_fit->GetExpFormula("P"));
   fit_functions->WriteFunction();
 
-  delta_t_mass_PIP->FitSlicesY(peak, 0, 300, 10, "QRG5");
+  delta_t_mass_PIP->FitSlicesY(peak, 50, 300, 10, "QRG5");
   TH1D *delta_t_mass_PIP_const = (TH1D *)gDirectory->Get("delta_t_mass_PIP_0");
   TH1D *delta_t_mass_PIP_mean = (TH1D *)gDirectory->Get("delta_t_mass_PIP_1");
   TH1D *delta_t_mass_PIP_sigma = (TH1D *)gDirectory->Get("delta_t_mass_PIP_2");
@@ -464,10 +464,10 @@ void Histogram::delta_t_slice_fit() {
   TGraph *M_pip = new TGraph(num, x_pip, y_minus_pip);
   P_pip->SetName("Pip_Pos_graph");
   M_pip->SetName("Pip_Neg_graph");
-  TF1 *Pip_Pos_fit = new TF1("Pip_Pos_fit", func::dt_fit, 0.1, 3.0, 9);
-  TF1 *Pip_Neg_fit = new TF1("Pip_Neg_fit", func::dt_fit, 0.1, 3.0, 9);
-  P_pip->Fit(Pip_Pos_fit, "QRG5", "", 0.1, 5);
-  M_pip->Fit(Pip_Neg_fit, "QRG5", "", 0.1, 5);
+  TF1 *Pip_Pos_fit = new TF1("Pip_Pos_fit", func::dt_fit, 0.1, 3.0, 2);
+  TF1 *Pip_Neg_fit = new TF1("Pip_Neg_fit", func::dt_fit, 0.1, 3.0, 2);
+  P_pip->Fit(Pip_Pos_fit, "QRG5", "", 0.1, 1.75);
+  M_pip->Fit(Pip_Neg_fit, "QRG5", "", 0.1, 1.75);
   // P_pip->Write();
   // M_pip->Write();
   // Pip_Pos_fit->Write();

@@ -92,10 +92,4 @@ double func::theta_cc_fit(double *x, double *par) {
   return par[0] + par[1] * x[0] + par[2] * TMath::Exp(par[3] * x[0]);
   // + TMath::Exp(x[0]) * (par[0] + par[1] * x[0] + par[2] * x[0] * x[0]);
 }
-double func::dt_fit(double *x, double *par) {
-  double out = 0;
-  for (int i = 0; i < 9; i++) {
-    out += par[i] * pow(x[0], i);
-  }
-  return out;
-}  //+ par[2] * TMath::Exp(x[0]); }
+double func::dt_fit(double *x, double *par) { return par[0] + par[1] * x[0]; }  //+ par[2] * TMath::Exp(x[0]); }
