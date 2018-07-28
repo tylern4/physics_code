@@ -193,7 +193,8 @@ void DataHandeler::file_handeler(std::string fin) {
   for (current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
     if (gpart >= 3) continue;
-    if (p[0] < 1.0) continue;
+    // if (p[0] < 1.0) continue;
+    if (abs((double)dc_vz[dc[0] - 1]) > 2) continue;
     Cuts *check = new Cuts();
 
     // electron cuts
