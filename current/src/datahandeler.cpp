@@ -32,22 +32,22 @@ DataHandeler::~DataHandeler() {
   MM_neutron_cut->Set_min(0.8);
   MM_neutron_cut->Set_max(1.2);
   MM_neutron_cut->FitBreitWigner(hists->Missing_Mass_strict);
-  MM_neutron_cut->FitGaus(hists->Missing_Mass_strict);
-  MM_neutron_cut->Fit2Gaus(hists->Missing_Mass_strict);
-  MM_neutron_cut->FitLandau(hists->Missing_Mass_strict);
+  // MM_neutron_cut->FitGaus(hists->Missing_Mass_strict);
+  // MM_neutron_cut->Fit2Gaus(hists->Missing_Mass_strict);
+  // MM_neutron_cut->FitLandau(hists->Missing_Mass_strict);
 
-  Header *MM_header = new Header("../src/missing_mass_gaussians.hpp", "MM");
-  MM_header->WriteGaussian("mm", 1, MM_neutron_cut->Get_mean(), MM_neutron_cut->Get_sigma());
+  // Header *MM_header = new Header("../src/missing_mass_gaussians.hpp", "MM");
+  // MM_header->WriteGaussian("mm", 1, MM_neutron_cut->Get_mean(), MM_neutron_cut->Get_sigma());
 
   Fits *MissingMassSquare_cut = new Fits();
   MissingMassSquare_cut->Set_min(0.5);
   MissingMassSquare_cut->Set_max(1.1);
   MissingMassSquare_cut->FitBreitWigner(hists->Missing_Mass_square_strict);
-  MissingMassSquare_cut->FitGaus(hists->Missing_Mass_square_strict);
-  MissingMassSquare_cut->Fit2Gaus(hists->Missing_Mass_square_strict);
-  MissingMassSquare_cut->FitLandau(hists->Missing_Mass_square_strict);
-  MM_header->WriteGaussian("mm_square", 1, MissingMassSquare_cut->Get_mean(), MissingMassSquare_cut->Get_sigma());
-  delete MM_header;
+  // MissingMassSquare_cut->FitGaus(hists->Missing_Mass_square_strict);
+  // MissingMassSquare_cut->Fit2Gaus(hists->Missing_Mass_square_strict);
+  // MissingMassSquare_cut->FitLandau(hists->Missing_Mass_square_strict);
+  // MM_header->WriteGaussian("mm_square", 1, MissingMassSquare_cut->Get_mean(), MissingMassSquare_cut->Get_sigma());
+  // delete MM_header;
   delete MM_neutron_cut;
 
   //
@@ -192,7 +192,8 @@ void DataHandeler::file_handeler(std::string fin) {
   int current_event = 0;
   for (current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
-    if (gpart > 4) continue;
+    if (gpart >= 3) continue;
+    if (p[0] < 1.0) continue;
     Cuts *check = new Cuts();
 
     // electron cuts
