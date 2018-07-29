@@ -8,6 +8,7 @@
 #include "../src/classes.hpp"
 #include "../src/constants.hpp"
 #include "../src/datahandeler.hpp"
+#include "../src/datahandeler_multi.hpp"
 #include "../src/glob_files.hpp"
 #include "../src/physics.hpp"
 #include "TStopwatch.h"
@@ -40,7 +41,8 @@ int main(int argc, char **argv) {
     outfilename = argv[2];
   }
 
-  DataHandeler *dh = new DataHandeler(files, outfilename);
+  // DataHandeler *dh = new DataHandeler(files, outfilename);
+  Datahandeler_multi *dh = new Datahandeler_multi(files, outfilename);
   dh->run();
   delete dh;
 

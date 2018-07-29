@@ -3,8 +3,8 @@
 /*	University Of South Carolina*/
 /************************************************************************/
 
-#ifndef DATAHANDELER_H_GUARD
-#define DATAHANDELER_H_GUARD
+#ifndef Datahandeler_multi_H_GUARD
+#define Datahandeler_multi_H_GUARD
 #include <TFile.h>
 #include <TLorentzVector.h>
 #include <cstring>
@@ -24,21 +24,22 @@
 
 // using vec4 = ROOT::Math::PxPyPzMVector;
 
-class DataHandeler {
+class Datahandeler_multi {
  private:
   int PID;
   Histogram *hists;
   TFile *RootOutputFile;
   TLorentzVector *e_mu;
+  TH1D *mm = new TH1D("mm", "mm", 500, 0.0, 10.0);
   std::vector<std::string> input_files;
   std::vector<std::vector<TLorentzVector>> All_events;
   MissingMass *MM_neutron;
   TCanvas *c1;
 
  public:
-  DataHandeler(std::vector<std::string> fin, std::string RootFile_output);
-  ~DataHandeler();
-  void file_handeler(std::string fin);
+  Datahandeler_multi(std::vector<std::string> fin, std::string RootFile_output);
+  ~Datahandeler_multi();
+  void load_files(std::string fin);
   void loadbar(long x, long n);
   void run();
 };

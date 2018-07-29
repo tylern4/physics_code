@@ -42,10 +42,10 @@ class Histogram {
   double q2_min = 0;
   double q2_max = 10;
 
-  static const int W_bins = 80;
-  static const int Q2_bins = 15;
-  double w_binned_min = 0.5;
-  double w_binned_max = 2.5;
+  static const int W_bins = 40;
+  static const int Q2_bins = 5;
+  double w_binned_min = 1.0;
+  double w_binned_max = 2.0;
   double q2_binned_min = 1.0;
   double q2_binned_max = 4.0;
 

@@ -171,6 +171,7 @@ void DataHandeler::run() {
 
 void DataHandeler::file_handeler(std::string fin) {
   // Load chain from branch h10
+  std::vector<TLorentzVector> Events;
   bool cuts, electron_cuts;
   int num_of_events;
   int total_events;
@@ -193,6 +194,7 @@ void DataHandeler::file_handeler(std::string fin) {
   for (current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
     if (gpart >= 3) continue;
+    Events.resize(gpart);
     // if (p[0] < 1.0) continue;
     if (abs((double)dc_vz[dc[0] - 1]) > 2) continue;
     Cuts *check = new Cuts();
@@ -229,6 +231,7 @@ void DataHandeler::file_handeler(std::string fin) {
 
       // Setup scattered electron 4 vector
       TLorentzVector e_mu_prime = physics::fourVec(p[0], cx[0], cy[0], cz[0], MASS_E);
+      Events[0] = e_mu_prime;
       // Set the vertex time (time of electron hit)
       Delta_T *dt = new Delta_T(sc_t[sc[0] - 1], sc_r[sc[0] - 1]);
       dt->delta_t_hists(hists);
@@ -259,6 +262,7 @@ void DataHandeler::file_handeler(std::string fin) {
           if (check->dt_Pip_cut(dt_proton.at(part_num), p[part_num])) PID = PIM;
         }
         TLorentzVector Particle = physics::fourVec(p[part_num], cx[part_num], cy[part_num], cz[part_num], PID);
+        Events[part_num] = Particle;
         hists->Fill_Target_Vertex((double)vx[part_num], (double)vy[part_num], (double)vz[part_num]);
 
         theta = physics::theta_calc(cz[part_num]);
@@ -300,9 +304,10 @@ void DataHandeler::file_handeler(std::string fin) {
       if (num_of_pis == 1 && mm_cut && num_of_proton == 0 && gpart <= 3)
         hists->Fill_channel_WQ2(W, Q2, e_mu_prime.E(), physics::xb_calc(Q2, e_mu_prime.E()));
       if (num_of_pis == 1 && num_of_proton == 0) hists->Fill_Missing_Mass_strict(MM_neutron);
+      All_events.emplace_back(Events);
+      Events.clear();
     }
     delete check;
   }
-
   chain->Reset();  // delete Tree object
 }
