@@ -41,8 +41,7 @@ int main(int argc, char **argv) {
     outfilename = argv[2];
   }
 
-  // DataHandeler *dh = new DataHandeler(files, outfilename);
-  Datahandeler_multi *dh = new Datahandeler_multi(files, outfilename);
+  DataHandeler *dh = new DataHandeler(files, outfilename);
   dh->run();
   delete dh;
 
