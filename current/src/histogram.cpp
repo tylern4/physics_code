@@ -1006,9 +1006,6 @@ void Histogram::EC_slice_fit() {
   Header *fit_functions = new Header("../src/EC_fit_functions.hpp", "FF");
 
   TF1 *peak = new TF1("peak", "gaus", 0.2, 0.4);
-  // TF1 *peak = new TF1("peak", func::peak, 0.2, 0.4, 3);
-  //[0]*exp(-[1]*x) +
-  // char *func = "[0]+[1]*x+[2]*x*x*x*x*x*x";
   EC_sampling_fraction->FitSlicesY(peak, 0, -1, 0, "QRG5");
   TH1D *EC_sampling_fraction_0 = (TH1D *)gDirectory->Get("EC_sampling_fraction_0");
   TH1D *EC_sampling_fraction_1 = (TH1D *)gDirectory->Get("EC_sampling_fraction_1");
@@ -1036,7 +1033,11 @@ void Histogram::EC_slice_fit() {
   EC_P->SetName("Positive_EC_graph");
   EC_M->SetName("Negative_EC_graph");
   TF1 *EC_P_fit = new TF1("EC_P_fit", func::ec_fit_func, 0.25, 4.0, 3);
+  EC_P_fit->SetParameters(0.3296, 0.002571, 4.8e-7);
+  EC_P_fit->SetParLimits(2, 1.0e-7, 5.0e-7);
   TF1 *EC_M_fit = new TF1("EC_M_fit", func::ec_fit_func, 0.25, 4.0, 3);
+  EC_M_fit->SetParameters(0.1715, 0.02044, -1.581e-5);
+  EC_M_fit->SetParLimits(2, -2.0e-5, -1.0e-5);
   EC_P->Fit(EC_P_fit, "QRG");
   EC_M->Fit(EC_M_fit, "QRG");
 
