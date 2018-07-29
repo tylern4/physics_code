@@ -81,9 +81,18 @@ double func::pol4(double *x, double *par) {
   result += (x[0] * x[0] * x[0] * x[0] * par[4]);
   return result;
 }
+
 double func::pol5(double *x, double *par) {
   double result = pol4(x, par);
   result += (x[0] * x[0] * x[0] * x[0] * x[0] * par[5]);
+  return result;
+}
+
+double func::fid(double *x, double *par) {
+  double result = 0;
+  for (int i = 0; i <= 2; i++) {
+    result += par[i] * TMath::Power(x[0], i);
+  }
   return result;
 }
 

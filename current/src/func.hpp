@@ -30,6 +30,7 @@ double pol2(double *x, double *par);
 double pol3(double *x, double *par);
 double pol4(double *x, double *par);
 double pol5(double *x, double *par);
+double fid(double *x, double *par);
 double dt_fit(double *x, double *par);
 double theta_cc_fit(double *x, double *par);
 }  // namespace func

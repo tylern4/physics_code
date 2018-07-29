@@ -98,3 +98,8 @@ double Cuts::dt_Pip_top_fit(double P) {
   return func::dt_fit(x, par);
 }
 bool Cuts::dt_Pip_cut(double dt, double P) { return (P < 2.0 && (dt > dt_Pip_bot_fit(P)) && (dt < dt_Pip_top_fit(P))); }
+
+bool Cuts::elec_fid_cut(double p, double theta, double phi, double sector) {
+  bool fid = true;
+  return fid;
+}

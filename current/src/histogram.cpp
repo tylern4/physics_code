@@ -936,7 +936,8 @@ void Histogram::Fid_Write() {
     FidGraph[sec_i] = new Fits();
     FidGraph[sec_i]->Set_min(min_phi[sec_i]);
     FidGraph[sec_i]->Set_max(max_phi[sec_i]);
-    //    FidGraph[sec_i]->FitFiducial(fid[sec_i]);
+    // FidGraph[sec_i]->FitFiducial(fid[sec_i]);
+    FidGraph[sec_i]->FitPoly_fid(fid[sec_i]);
 
     electron_fid_can[sec_i]->cd();
     electron_fid_sec_hist[sec_i]->SetYTitle("#theta");

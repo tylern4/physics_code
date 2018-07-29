@@ -218,24 +218,19 @@ TF1 *Fits::FitPoly_4D(TH1D *hist) {
   return fitFunc;
 }
 
-TF1 *Fits::FitPoly_fid(TH2D *hist) {
+TF1 *Fits::FitPoly_fid(TGraph *hist) {
   // if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
-  TF1 *fitFunc = new TF1("fitFunc", "pol8", min_value, max_value);
-  fitFunc->SetLineColor(42);
-  fitFunc->SetParNames("a", "b", "c", "d", "e", "f", "g", "h");
+  TF1 *fitFunc = new TF1("fitFunc", func::pol4, min_value, max_value, 5);
+  fitFunc->SetLineColor(46);
+  // fitFunc->SetParNames("a", "b", "c");
 
-  hist->Fit("fitFunc", "QM+", "", min_value, max_value);
+  hist->Fit("fitFunc", "QMR+", "", min_value, max_value);
 
-  fitFunc->SetParameter(0, fitFunc->GetParameter("a"));
-  fitFunc->SetParameter(1, fitFunc->GetParameter("b"));
-  fitFunc->SetParameter(2, fitFunc->GetParameter("c"));
-  fitFunc->SetParameter(3, fitFunc->GetParameter("d"));
-  fitFunc->SetParameter(4, fitFunc->GetParameter("e"));
-  fitFunc->SetParameter(5, fitFunc->GetParameter("f"));
-  fitFunc->SetParameter(6, fitFunc->GetParameter("g"));
-  fitFunc->SetParameter(7, fitFunc->GetParameter("h"));
+  // fitFunc->SetParameter(0, fitFunc->GetParameter("a"));
+  // fitFunc->SetParameter(1, fitFunc->GetParameter("b"));
+  // fitFunc->SetParameter(2, fitFunc->GetParameter("c"));
 
-  hist->Fit("fitFunc", "QM+", "", min_value, max_value);
+  hist->Fit("fitFunc", "QMR+", "", min_value, max_value);
   return fitFunc;
 }
 

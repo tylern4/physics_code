@@ -44,7 +44,7 @@ class Fits {
   TF1 *FitPoly_2D(TH1D *hist);
   TF1 *FitPoly_3D(TH1D *hist);
   TF1 *FitPoly_4D(TH1D *hist);
-  TF1 *FitPoly_fid(TH2D *hist);
+  TF1 *FitPoly_fid(TGraph *hist);
   // TF1 *FitFiducial_lo(TH2D *hist2d);
   TF1 *FitFiducial(TGraph *profile);
   TF1 *FitFiducial_hi(TH2D *hist2d);

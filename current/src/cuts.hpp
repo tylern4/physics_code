@@ -65,6 +65,8 @@ class Cuts {
   double dt_Pip_bot_fit(double P);
   double dt_Pip_top_fit(double P);
   bool dt_Pip_cut(double dt, double P);
+
+  bool elec_fid_cut(double p, double theta, double phi, double sector);
 };
 
 #endif
