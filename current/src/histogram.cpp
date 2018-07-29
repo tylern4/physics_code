@@ -934,9 +934,15 @@ void Histogram::Fid_Write() {
 
     fid[sec_i] = new TGraph(fid_slices * 2, x, y);
     FidGraph[sec_i] = new Fits();
+
     FidGraph[sec_i]->Set_min(min_phi[sec_i]);
     FidGraph[sec_i]->Set_max(max_phi[sec_i]);
     // FidGraph[sec_i]->FitFiducial(fid[sec_i]);
+
+    // FidGraph[sec_i]->Set_min(max_phi[sec_i] / 2);
+    // FidGraph[sec_i]->Set_max(max_phi[sec_i]);
+    // FidGraph[sec_i]->FitFiducial(fid[sec_i]);
+
     FidGraph[sec_i]->FitPoly_fid(fid[sec_i]);
 
     electron_fid_can[sec_i]->cd();
@@ -951,7 +957,6 @@ void Histogram::Fid_Write() {
 }
 
 void Histogram::fid_canvas() {
-  /*
   TCanvas *can[sector];
   char can_name[50];
 
@@ -959,13 +964,12 @@ void Histogram::fid_canvas() {
     sprintf(can_name, "Electron Fid Sector %d Slices", sec_i + 1);
     can[sec_i] = new TCanvas(can_name, can_name, 1600, 900);
     can[sec_i]->Divide(10, fid_slices / 10);
-    for (int slice = 12; slice < fid_slices; slice++) {
+    for (int slice = 13; slice < fid_slices; slice++) {
       can[sec_i]->cd((int)slice + 1);
       electron_fid_sec_slice[sec_i][slice]->Draw("same");
     }
     can[sec_i]->Write();
   }
-  */
 }
 
 void Histogram::makeHists_EC() {

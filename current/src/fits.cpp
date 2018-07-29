@@ -244,25 +244,11 @@ double Fits::fiducial_phi_hi(double theta_e, double theta_e_min, double k, doubl
 
 TF1 *Fits::FitFiducial(TGraph *profile) {
   // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
-  TF1 *fitFunc = new TF1("fitFunc", func::fiducial_phi, min_value, max_value, 10);
-
-  fitFunc->SetLineColor(7);
-
+  TF1 *fitFunc = new TF1("fitFunc", func::fiducial, -180, 180, 4);
+  fitFunc->SetLineColor(46);
   profile->Fit("fitFunc", "QM0+", "", min_value, max_value);
 
-  fitFunc->SetParameter(0, fitFunc->GetParameter(0));
-  fitFunc->SetParameter(1, fitFunc->GetParameter(1));
-  fitFunc->SetParameter(2, fitFunc->GetParameter(2));
-  fitFunc->SetParameter(3, fitFunc->GetParameter(3));
-  fitFunc->SetParameter(4, fitFunc->GetParameter(4));
-  fitFunc->SetParameter(5, fitFunc->GetParameter(5));
-  fitFunc->SetParameter(6, fitFunc->GetParameter(6));
-  fitFunc->SetParameter(7, fitFunc->GetParameter(7));
-  fitFunc->SetParameter(8, fitFunc->GetParameter(8));
-  fitFunc->SetParameter(9, fitFunc->GetParameter(9));
-  fitFunc->SetParameter(10, fitFunc->GetParameter(10));
-
-  profile->Fit("fitFunc", "QM+", "", min_value, max_value);
+  profile->Fit("fitFunc", "QM0+", "", min_value, max_value);
 
   return fitFunc;
 }
