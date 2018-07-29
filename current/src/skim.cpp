@@ -128,7 +128,7 @@ void Skim::Strict() {
     mm_cut &= (MM_neutron->Get_MM() > 0.5);
     */
 
-    if (check->isStrictElecctron() && num_pip == 1 && num_PPIP == 0) {
+    if (check->isStrictElecctron() && num_pip >= 1) {
       skim->Fill();  // Fill the banks after the skim}
     }
     // delete dt;

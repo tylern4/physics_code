@@ -62,14 +62,14 @@ bool Cuts::CheckElectron() { return electron_cut; }
 double Cuts::sf_top_fit(double P) {
   // Old fit for all p...
   // double par[3] = {0.363901, -0.00992778, 5.84749e-06};
-  double par[3] = {0.3296, 0.002571, 4.8e-7};
+  double par[3] = {0.335, 0.003358, -2.551e-6};
   double x[1] = {P};
   return func::ec_fit_func(x, par);
 }
 double Cuts::sf_bot_fit(double P) {
   // Old fit for all p...
   // double par[3] = {0.103964, 0.0524214, -3.64355e-05};
-  double par[3] = {0.1715, 0.02044, -1.581e-5};
+  double par[3] = {0.1542, 0.02947, -2.411e-5};
   double x[1] = {P};
   return func::ec_fit_func(x, par);
 }
