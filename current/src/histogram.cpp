@@ -910,7 +910,7 @@ void Histogram::Fid_Write() {
     sprintf(hname, "electron_fid_sector_%d", sec_i + 1);
     sprintf(htitle, "electron_fid_sector_%d", sec_i + 1);
     electron_fid_can[sec_i] = new TCanvas(hname, htitle, 1280, 720);
-    int start_slice = 12;
+    int start_slice = 13;
     for (int slice = start_slice; slice < fid_slices; slice++) {
       sprintf(hname, "electron_fid_sec_%d_%d", sec_i + 1, slice + 1);
       electron_fid_sec_slice[sec_i][slice] = electron_fid_sec_hist[sec_i]->ProjectionX(
@@ -951,6 +951,7 @@ void Histogram::Fid_Write() {
 }
 
 void Histogram::fid_canvas() {
+  /*
   TCanvas *can[sector];
   char can_name[50];
 
@@ -964,6 +965,7 @@ void Histogram::fid_canvas() {
     }
     can[sec_i]->Write();
   }
+  */
 }
 
 void Histogram::makeHists_EC() {
