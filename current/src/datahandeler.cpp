@@ -196,7 +196,7 @@ void DataHandeler::file_handeler(std::string fin) {
     if (gpart >= 3) continue;
     Events.resize(gpart);
     // if (p[0] < 1.0) continue;
-    if (abs((double)dc_vz[dc[0] - 1]) > 2) continue;
+    // if (abs((double)dc_vz[dc[0] - 1]) > 2) continue;
     Cuts *check = new Cuts();
 
     // electron cuts

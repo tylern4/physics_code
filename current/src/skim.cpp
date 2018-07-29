@@ -93,7 +93,7 @@ void Skim::Strict() {
     check->Set_num_phe((int)nphe[cc[0] - 1]);
     check->Set_BeamPosition((double)dc_vx[dc[0] - 1], (double)dc_vy[dc[0] - 1], (double)dc_vz[dc[0] - 1]);
 
-    if (!check->isStrictElecctron()) continue;
+    if (!check->isElecctron()) continue;
     e_mu_prime_3.SetXYZ(p[0] * cx[0], p[0] * cy[0], p[0] * cz[0]);
     e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
     TLorentzVector gamma_mu = (e_mu - e_mu_prime);
@@ -124,11 +124,11 @@ void Skim::Strict() {
     Here's the problem:
       What if I have two pions?
       What if I have more than 3 particles?
+    */
     mm_cut &= (MM_neutron->Get_MM() < 1.5);
     mm_cut &= (MM_neutron->Get_MM() > 0.5);
-    */
 
-    if (check->isStrictElecctron() && num_pip >= 1) {
+    if (check->isElecctron() && num_pip >= 1) {
       skim->Fill();  // Fill the banks after the skim}
     }
     // delete dt;
