@@ -937,12 +937,7 @@ void Histogram::Fid_Write() {
 
     FidGraph[sec_i]->Set_min(min_phi[sec_i]);
     FidGraph[sec_i]->Set_max(max_phi[sec_i]);
-    FidGraph[sec_i]->FitFiducial(fid[sec_i]);
-
-    // FidGraph[sec_i]->Set_min(max_phi[sec_i] / 2);
-    // FidGraph[sec_i]->Set_max(max_phi[sec_i]);
     // FidGraph[sec_i]->FitFiducial(fid[sec_i]);
-
     // FidGraph[sec_i]->FitPoly_fid(fid[sec_i]);
 
     electron_fid_can[sec_i]->cd();

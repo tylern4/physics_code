@@ -296,8 +296,8 @@ void DataHandeler::file_handeler(std::string fin) {
       }
 
       bool mm_cut = true;
-      mm_cut &= (MM_neutron->Get_MM() < 1.005);
-      mm_cut &= (MM_neutron->Get_MM() > 0.90);
+      mm_cut &= (MM_neutron->Get_MM() < 1.1);
+      mm_cut &= (MM_neutron->Get_MM() > 0.8);
 
       if (num_of_pis == 1 && gpart == 2) hists->Fill_single_pi_WQ2(W, Q2);
       if (num_of_proton == 1 && gpart == 2) hists->Fill_single_proton_WQ2(W, Q2);
