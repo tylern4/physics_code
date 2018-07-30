@@ -244,11 +244,11 @@ double Fits::fiducial_phi_hi(double theta_e, double theta_e_min, double k, doubl
 
 TF1 *Fits::FitFiducial(TGraph *profile) {
   // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
-  TF1 *fitFunc = new TF1("fitFunc", func::fiducial, -180, 180, 4);
-  fitFunc->SetLineColor(46);
-  profile->Fit("fitFunc", "QM0+", "", min_value, max_value);
+  TF1 *fitFunc = new TF1("f_spline4", func::fiducial, -180, 180, 8);  // npars = 2*nodes+2
 
-  profile->Fit("fitFunc", "QM0+", "", min_value, max_value);
+  fitFunc->SetLineColor(46);
+  profile->Fit("f_spline4", "QM0+", "", min_value, max_value);
+  profile->Fit("f_spline4", "QM0+", "", min_value, max_value);
 
   return fitFunc;
 }

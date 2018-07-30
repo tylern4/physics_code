@@ -7,6 +7,7 @@
 #ifndef FUNC_HPP
 #define FUNC_HPP
 #include "TMath.h"
+#include "TSpline.h"
 
 namespace func {
 double ec_fit_func(double *x, double *par);

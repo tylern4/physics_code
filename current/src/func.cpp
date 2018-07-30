@@ -37,13 +37,24 @@ double func::fiducial_phi(double *x, double *par) {
 }
 */
 
-double func::fiducial(double *x, double *par) {
-  // double theta_min = par[3] + par[4] / (x[1] + par[5]);
-  // double k = par[6] + par[7] * x[1];
-  // double m = par[8] + (par[9] * x[1]);
+double func::fiducial(Double_t *x, Double_t *par) {
+  // Spline Fit
+  /*Fit parameters:
+  par[0-3]=X of nodes (to be fixed in the fit!)
+  par[4-7]=Y of nodes
+  par[8-9]=first derivative at begin and end (to be fixed in the fit!)
+  */
+  Double_t xx = x[0];
 
-  return par[0] + x[0] * par[1] + x[0] * x[0] * par[2];  // * TMath::Power(TMath::Sin((x[0] - theta_min) * par[1]), (k +
-                                                         // (m / x[0]) + (par[2] / (x[0] * x[0]))));
+  Double_t xn[4] = {par[0], par[1], par[2], par[3]};
+  Double_t yn[4] = {par[4], par[5], par[6], par[7]};
+
+  Double_t b1 = par[8];
+  Double_t e1 = par[9];
+
+  TSpline3 sp3("sp3", xn, yn, 4, "b1e1", b1, e1);
+
+  return sp3.Eval(xx);
 }
 
 double func::breit_wigner(double *x, double *par) { return par[2] * TMath::BreitWigner(x[0], par[0], par[1]); }
