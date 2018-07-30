@@ -69,14 +69,14 @@ Histogram::~Histogram() {
 // W and Q^2
 void Histogram::makeHists_WvsQ2() {
   for (int y = 0; y < Q2_bins; y++) {
-    sprintf(hname, "W_%0.3f_%0.3f", Q2_width * y, Q2_width * (y + 1));
-    sprintf(htitle, "W hist\nQ^{2} %0.3f %0.3f", Q2_width * y, Q2_width * (y + 1));
-    W_binned[y] = new TH1D(hname, htitle, bins, w_min, w_max);
+    sprintf(hname, "W_%0.3f_%0.3f", q2_binned_min + (Q2_width * y), q2_binned_min + (Q2_width * (y + 1)));
+    sprintf(htitle, "W hist\nQ^{2} %0.3f %0.3f", q2_binned_min + (Q2_width * y), q2_binned_min + (Q2_width * (y + 1)));
+    W_binned[y] = new TH1D(hname, htitle, bins, w_binned_min, w_binned_max);
   }
   for (int x = 0; x < W_bins; x++) {
-    sprintf(hname, "Q2_%0.3f_%0.3f", W_width * x, W_width * (x + 1));
-    sprintf(htitle, "Q^{2} hist\nW %0.3f %0.3f", W_width * x, W_width * (x + 1));
-    Q2_binned[x] = new TH1D(hname, htitle, bins, q2_min, q2_max);
+    sprintf(hname, "Q2_%0.3f_%0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
+    sprintf(htitle, "Q^{2} hist\nW %0.3f %0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
+    Q2_binned[x] = new TH1D(hname, htitle, bins, q2_binned_min, q2_binned_max);
   }
 }
 
@@ -103,14 +103,14 @@ void Histogram::Fill_channel_WQ2(double W, double Q2, double e_prime, double xb)
   WvsQ2_binned->Fill(W, Q2);
 
   for (int y = 0; y < Q2_bins; y++) {
-    if ((Q2_width * y) <= Q2 && (Q2_width * (y + 1)) >= Q2) {
+    if (q2_binned_min + (Q2_width * y) <= Q2 && q2_binned_min + (Q2_width * (y + 1)) >= Q2) {
       W_binned[y]->Fill(W);
       continue;
     }
   }
 
   for (int x = 0; x < W_bins; x++) {
-    if ((W_width * x) <= W && (W_width * (x + 1)) >= W) {
+    if (w_binned_min + (W_width * x) <= W && w_binned_min + (W_width * (x + 1)) >= W) {
       Q2_binned[x]->Fill(Q2);
       continue;
     }
