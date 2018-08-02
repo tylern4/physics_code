@@ -253,14 +253,16 @@ void DataHandeler::file_handeler(std::string fin) {
       num_of_proton = num_of_pis = 0;
       for (int part_num = 1; part_num < gpart; part_num++) {
         if (p[part_num] == 0) continue;
-        PID = id[part_num];
-
+        PID = -99;
         if (q[part_num] == POSITIVE) {
-          if (check->dt_P_cut(dt_proton.at(part_num), p[part_num])) PID = PROTON;
-          if (check->dt_Pip_cut(dt_proton.at(part_num), p[part_num])) PID = PIP;
+          if (check->dt_P_cut(dt_proton.at(part_num), p[part_num]))
+            PID = PROTON;
+          else if (check->dt_Pip_cut(dt_proton.at(part_num), p[part_num]))
+            PID = PIP;
         } else if (q[part_num] == NEGATIVE) {
           if (check->dt_Pip_cut(dt_proton.at(part_num), p[part_num])) PID = PIM;
         }
+
         TLorentzVector Particle = physics::fourVec(p[part_num], cx[part_num], cy[part_num], cz[part_num], PID);
         Events[part_num] = Particle;
         hists->Fill_Target_Vertex((double)vx[part_num], (double)vy[part_num], (double)vz[part_num]);
@@ -273,11 +275,11 @@ void DataHandeler::file_handeler(std::string fin) {
         hists->MomVsBeta_Fill(Particle.E(), p[part_num], b[part_num]);
         if (q[part_num] == POSITIVE) {
           hists->MomVsBeta_Fill_pos(p[part_num], b[part_num]);
-          if (check->dt_P_cut(dt_proton.at(part_num), p[part_num]) && id[part_num] == PROTON) {
+          if (check->dt_P_cut(dt_proton.at(part_num), p[part_num])) {
             num_of_proton++;
             hists->Fill_proton_WQ2(W, Q2);
             hists->Fill_proton_ID_P(p[part_num], b[part_num]);
-          } else if (check->dt_Pip_cut(dt_pi.at(part_num), p[part_num]) && id[part_num] == PIP) {
+          } else if (check->dt_Pip_cut(dt_pi.at(part_num), p[part_num])) {
             num_of_pis++;
             hists->Fill_pion_WQ2(W, Q2);
             hists->Fill_Pi_ID_P(p[part_num], b[part_num]);
@@ -301,9 +303,11 @@ void DataHandeler::file_handeler(std::string fin) {
 
       if (num_of_pis == 1 && gpart == 2) hists->Fill_single_pi_WQ2(W, Q2);
       if (num_of_proton == 1 && gpart == 2) hists->Fill_single_proton_WQ2(W, Q2);
-      if (num_of_pis == 1 && mm_cut && num_of_proton == 0 && gpart <= 3)
+      if (num_of_pis == 1 && mm_cut && num_of_proton == 0 && gpart < 3) {
         hists->Fill_channel_WQ2(W, Q2, e_mu_prime.E(), physics::xb_calc(Q2, e_mu_prime.E()));
-      if (num_of_pis == 1 && num_of_proton == 0) hists->Fill_Missing_Mass_strict(MM_neutron);
+        hists->Fill_Missing_Mass_strict(MM_neutron);
+      }
+
       All_events.emplace_back(Events);
       Events.clear();
     }

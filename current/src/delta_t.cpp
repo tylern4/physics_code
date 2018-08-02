@@ -42,7 +42,6 @@ double Delta_T::Get_vertex() { return vertex; }
 
 void Delta_T::delta_t_hists(Histogram *hists) {
   Cuts *dt_cut = new Cuts();
-  double delta_t_P, delta_t_PIP, delta_t_ELECTRON;
   double sct, scr, mom;
   int ID, charge, sc_paddle, sc_sector;
   for (int event_number = 0; event_number < gpart; event_number++) {
@@ -56,26 +55,22 @@ void Delta_T::delta_t_hists(Histogram *hists) {
 
     deltat(mom, sct, scr);
 
-    delta_t_P = Get_dt_P();
-    delta_t_PIP = Get_dt_Pi();
-    delta_t_ELECTRON = Get_dt_E();
-
     if (charge == 1) {
-      hists->Fill_deltat_P(mom, delta_t_P);
-      hists->Fill_deltat_PIP(mom, delta_t_PIP);
-      hists->Fill_deltat_kp(mom, Get_dt_K());
-      if (dt_cut->dt_P_cut(delta_t_P, mom)) hists->Fill_deltat_P_PID(mom, delta_t_P);
-      if (dt_cut->dt_Pip_cut(delta_t_PIP, mom)) hists->Fill_deltat_PIP_PID(mom, delta_t_PIP);
-      if (dt_cut->dt_P_cut(Get_dt_K(), mom)) hists->Fill_deltat_kp_PID(mom, Get_dt_K());
+      hists->Fill_deltat_P(mom, dt_P);
+      hists->Fill_deltat_PIP(mom, dt_Pi);
+      hists->Fill_deltat_kp(mom, dt_K);
+      if (dt_cut->dt_P_cut(dt_P, mom)) hists->Fill_deltat_P_PID(mom, dt_P);
+      if (dt_cut->dt_Pip_cut(dt_Pi, mom)) hists->Fill_deltat_PIP_PID(mom, dt_Pi);
+      if (dt_cut->dt_P_cut(dt_K, mom)) hists->Fill_deltat_kp_PID(mom, dt_K);
     } else if (charge == -1) {
-      hists->Fill_deltat_electron(mom, delta_t_ELECTRON);
-      if (ID == ELECTRON) hists->Fill_deltat_electron_PID(mom, delta_t_ELECTRON);
-      hists->Fill_deltat_PIM(mom, delta_t_PIP);
-      if (dt_cut->dt_Pip_cut(delta_t_PIP, mom)) hists->Fill_deltat_PIM(mom, delta_t_PIP);
+      hists->Fill_deltat_electron(mom, dt_E);
+      if (ID == ELECTRON) hists->Fill_deltat_electron_PID(mom, dt_E);
+      hists->Fill_deltat_PIM(mom, dt_Pi);
+      if (dt_cut->dt_Pip_cut(dt_Pi, mom)) hists->Fill_deltat_PIM(mom, dt_Pi);
     }
 
-    hists->delta_t_Fill(mom, charge, delta_t_P, delta_t_PIP, delta_t_ELECTRON);
-    hists->delta_t_sec_pad(mom, charge, delta_t_P, delta_t_PIP, delta_t_ELECTRON, sc_sector, sc_paddle);
+    hists->delta_t_Fill(mom, charge, dt_P, dt_Pi, dt_E);
+    hists->delta_t_sec_pad(mom, charge, dt_P, dt_Pi, dt_E, sc_sector, sc_paddle);
   }
 }
 
@@ -86,7 +81,6 @@ double Delta_T::delta_t(double electron_vertex_time, double mass, double momentu
 
 double *Delta_T::delta_t_array(double *dt_array, double mass) {
   Delta_T *dt = new Delta_T(sc_t[sc[0] - 1], sc_r[sc[0] - 1]);
-  double delta_t_P;
   double electron_vertex = dt->Get_vertex();
   double sct, scr, mom;
   int ID, charge, sc_paddle, sc_sector;
@@ -109,7 +103,6 @@ double *Delta_T::delta_t_array(double *dt_array, double mass) {
 std::vector<double> Delta_T::delta_t_array(double mass, int num_parts) {
   Delta_T *dt = new Delta_T(sc_t[sc[0] - 1], sc_r[sc[0] - 1]);
   std::vector<double> dt_array(num_parts);
-  double delta_t_P;
   double electron_vertex = dt->Get_vertex();
   double sct, scr, mom;
   int ID, charge, sc_paddle, sc_sector;
