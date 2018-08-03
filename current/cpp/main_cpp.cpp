@@ -40,6 +40,10 @@ int main(int argc, char **argv) {
     outfilename = argv[2];
   }
 
+  // DataHandeler *dh = new DataHandeler(files, outfilename);
+  // dh->make_events();
+  // delete dh;
+
   DataHandeler *dh = new DataHandeler(files, outfilename);
   dh->run();
   delete dh;

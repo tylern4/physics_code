@@ -33,13 +33,15 @@ class DataHandeler {
   std::vector<std::string> input_files;
   std::vector<std::vector<TLorentzVector>> All_events;
   MissingMass *MM_neutron;
+  MissingMass *MM_pi0;
+  MissingMass *MM_from2pi;
   TCanvas *c1;
 
  public:
   DataHandeler(std::vector<std::string> fin, std::string RootFile_output);
   ~DataHandeler();
   void file_handeler(std::string fin);
-  void make_events(std::string fin);
+  void make_events();
   void loadbar(long x, long n);
   void run();
 };

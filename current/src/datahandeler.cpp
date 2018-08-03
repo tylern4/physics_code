@@ -151,8 +151,7 @@ void DataHandeler::run() {
   for (i = 0; i < size; i++) {
     loadbar(i, size - 1);
 #ifndef __THREAD__
-    // file_handeler(input_files.at(i));
-    make_events(input_files.at(i));
+    file_handeler(input_files.at(i));
 #else
     try {
       fh_thread[i] = new std::thread(std::mem_fn(&DataHandeler::file_handeler), this, input_files.at(i));
@@ -273,7 +272,9 @@ void DataHandeler::file_handeler(std::string fin) {
             hists->Fill_proton_ID_P(p[part_num], b[part_num]);
             MM_pi0->Set_4Vec(Particle);
             MM_pi0->missing_mass(gamma_mu);
-            hists->Fill_Missing_Mass_pi0(MM_pi0);
+            //
+            // hists->Fill_Missing_Mass_pi0(MM_pi0);
+            //
           } else if (check->dt_Pip_cut(dt_pi.at(part_num), p[part_num])) {
             num_of_pis++;
             hists->Fill_pion_WQ2(W, Q2);
@@ -302,16 +303,21 @@ void DataHandeler::file_handeler(std::string fin) {
         hists->Fill_channel_WQ2(W, Q2, e_mu_prime.E(), physics::xb_calc(Q2, e_mu_prime.E()));
         hists->Fill_Missing_Mass_strict(MM_neutron);
       }
+      if (num_of_pis > 1) {
+        //
+        // hists->Fill_Missing_Mass_twoPi(MM_from2pi);
+        //
+      }
     }
     delete check;
   }
   chain->Reset();  // delete Tree object
 }
 
-void DataHandeler::make_events(std::string fin) {
+void DataHandeler::make_events() {
   int num_of_events;
   TChain *chain = new TChain("h10");
-  chain->Add(fin.c_str());
+  for (auto fin : input_files) chain->Add(fin.c_str());
 
   getBranches(chain);
   num_of_events = (int)chain->GetEntries();
