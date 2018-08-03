@@ -3,43 +3,28 @@
 /*  Created by Nick Tyler             */
 /*	University Of South Carolina      */
 /**************************************/
-#include "event.hpp"
+#include "Event.hpp"
 
-Event::Event() {}
-Event::Event(double p, double cx, double cy, double cz, int pid, double mass) {
-  p_e = p;
-  cx_e = cx;
-  cy_e = cy;
-  cz_e = cz;
-  px_e = p * cx;
-  py_e = p * cy;
-  pz_e = p * cz;
-  pid_e = pid;
-
-  mass_e = mass;
-
-  theta_e = physics::theta_calc(cz_e);
-  phi_e = physics::phi_calc(cx_e, cy_e);
-  sector_e = physics::get_sector(phi_e);
-
-  vec = physics::fourVec(px_e, py_e, pz_e, physics::Get_Mass(pid_e));
-}
-Event::Event(double p, double cx, double cy, double cz, int pid) {
-  p_e = p;
-  cx_e = cx;
-  cy_e = cy;
-  cz_e = cz;
-  px_e = p * cx;
-  py_e = p * cy;
-  pz_e = p * cz;
-  pid_e = pid;
-
-  mass_e = physics::Get_Mass(pid_e);
-
-  theta_e = physics::theta_calc(cz_e);
-  phi_e = physics::phi_calc(cx_e, cy_e);
-  sector_e = physics::get_sector(phi_e);
-
-  vec = physics::fourVec(px_e, py_e, pz_e, physics::Get_Mass(pid_e));
+Event::Event(Particle Electron) {
+  _electron = Electron;
+  Add_Part(Electron);
 }
 Event::~Event() {}
+
+void Event::Add_Part(Particle p) {
+  _events.emplace_back(p);
+  _PID.emplace_back(p.PID());
+}
+
+std::vector<int> Event::Signiture() {
+  for (auto id : _PID) _event_sig.push_back(id);
+  std::sort(_event_sig.begin(), _event_sig.end());
+  return _event_sig;
+}
+
+void Event::PrintSigniture() {
+  std::vector<int> s = Signiture();
+  std::cout << "Event Signiture: ";
+  for (auto e : s) std::cout << e << "\t";
+  std::cout << std::endl;
+}

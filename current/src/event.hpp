@@ -6,19 +6,28 @@
 
 #ifndef EVENT_T_H
 #define EVENT_T_H
+
+#include <iostream>
+#include "Particle.hpp"
 #include "physics.hpp"
 
 class Event {
  private:
-  TLorentzVector vec;
-  double p_e, cx_e, cy_e, cz_e, px_e, py_e, pz_e, mass_e, theta_e, phi_e;
-  int sector_e, pid_e;
+  Particle _beam;
+  Particle _gamma;
+  Particle _electron;
+  std::vector<Particle> _events;
+  std::vector<int> _PID;
+  std::vector<int> _event_sig;
 
  public:
-  Event();
-  Event(double p, double cx, double cy, double cz, int pid, double mass);
-  Event(double p, double cx, double cy, double cz, int pid);
+  Event(Particle Electron);
   ~Event();
+
+  void Add_Part(Particle p);
+
+  std::vector<int> Signiture();
+  void PrintSigniture();
 };
 
 #endif

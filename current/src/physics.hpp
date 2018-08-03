@@ -7,12 +7,7 @@
 #ifndef PHYSICS_H_GUARD
 #define PHYSICS_H_GUARD
 #include <TLorentzVector.h>
-//#include "TROOT.h"
 #include "constants.hpp"
-
-//#include "Math/Vector3D.h"
-//#include "Math/Vector4D.h"
-//#include "ROOT/RVec.hxx"
 
 namespace physics {
 // Calcuating Q^2
@@ -23,7 +18,7 @@ double Q2_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime);
 //	Sqrt√[M_p^2 - Q^2 + 2 M_p gamma]
 double W_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime);
 double xb_calc(double Q2, double E_prime);
-// overload with 4 vectors instaed of otehr calculations
+// overload with 4 vectors instaed of other calculations
 double xb_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime);
 double theta_calc(double cosz);
 double phi_calc(double cosx, double cosy);

@@ -12,6 +12,8 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include "Event.hpp"
+#include "Particle.hpp"
 #include "TChain.h"
 #include "color.hpp"
 #include "constants.hpp"
@@ -21,8 +23,6 @@
 #include "missing_mass.hpp"
 #include "photon_flux.hpp"
 #include "physics.hpp"
-
-// using vec4 = ROOT::Math::PxPyPzMVector;
 
 class DataHandeler {
  private:
@@ -39,6 +39,7 @@ class DataHandeler {
   DataHandeler(std::vector<std::string> fin, std::string RootFile_output);
   ~DataHandeler();
   void file_handeler(std::string fin);
+  void make_events(std::string fin);
   void loadbar(long x, long n);
   void run();
 };

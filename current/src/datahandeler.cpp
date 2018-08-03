@@ -22,6 +22,8 @@ DataHandeler::DataHandeler(std::vector<std::string> fin, std::string RootFile_ou
   RootOutputFile = new TFile(RootFile_output.c_str(), "RECREATE");
   hists = new Histogram();
   MM_neutron = new MissingMass(MASS_P, 0.0);
+  MM_pi0 = new MissingMass(MASS_P, 0.0);
+  MM_from2pi = new MissingMass(MASS_P, 0.0);
 }
 
 DataHandeler::~DataHandeler() {
@@ -146,17 +148,12 @@ void DataHandeler::run() {
   int i = 0;
   std::thread *fh_thread[size];
 
-#ifdef __PID__
-  std::cerr << CYAN << "Using builtin PID" << DEF << std::endl;
-#endif
-
   for (i = 0; i < size; i++) {
     loadbar(i, size - 1);
 #ifndef __THREAD__
-    file_handeler(input_files.at(i));
-#endif
-
-#ifdef __THREAD__
+    // file_handeler(input_files.at(i));
+    make_events(input_files.at(i));
+#else
     try {
       fh_thread[i] = new std::thread(std::mem_fn(&DataHandeler::file_handeler), this, input_files.at(i));
       fh_thread[i]->join();
@@ -166,12 +163,10 @@ void DataHandeler::run() {
     }
 #endif
   }
-  ///// for (i = 0; i < size; i++) fh_thread[i]->join();
 }
 
 void DataHandeler::file_handeler(std::string fin) {
   // Load chain from branch h10
-  std::vector<TLorentzVector> Events;
   bool cuts, electron_cuts;
   int num_of_events;
   int total_events;
@@ -193,8 +188,7 @@ void DataHandeler::file_handeler(std::string fin) {
   int current_event = 0;
   for (current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
-    if (gpart >= 3) continue;
-    Events.resize(gpart);
+    // if (gpart >= 3) continue;
     // if (p[0] < 1.0) continue;
     // if (abs((double)dc_vz[dc[0] - 1]) > 2) continue;
     Cuts *check = new Cuts();
@@ -231,7 +225,6 @@ void DataHandeler::file_handeler(std::string fin) {
 
       // Setup scattered electron 4 vector
       TLorentzVector e_mu_prime = physics::fourVec(p[0], cx[0], cy[0], cz[0], MASS_E);
-      Events[0] = e_mu_prime;
       // Set the vertex time (time of electron hit)
       Delta_T *dt = new Delta_T(sc_t[sc[0] - 1], sc_r[sc[0] - 1]);
       dt->delta_t_hists(hists);
@@ -264,7 +257,6 @@ void DataHandeler::file_handeler(std::string fin) {
         }
 
         TLorentzVector Particle = physics::fourVec(p[part_num], cx[part_num], cy[part_num], cz[part_num], PID);
-        Events[part_num] = Particle;
         hists->Fill_Target_Vertex((double)vx[part_num], (double)vy[part_num], (double)vz[part_num]);
 
         theta = physics::theta_calc(cz[part_num]);
@@ -279,6 +271,9 @@ void DataHandeler::file_handeler(std::string fin) {
             num_of_proton++;
             hists->Fill_proton_WQ2(W, Q2);
             hists->Fill_proton_ID_P(p[part_num], b[part_num]);
+            MM_pi0->Set_4Vec(Particle);
+            MM_pi0->missing_mass(gamma_mu);
+            hists->Fill_Missing_Mass_pi0(MM_pi0);
           } else if (check->dt_Pip_cut(dt_pi.at(part_num), p[part_num])) {
             num_of_pis++;
             hists->Fill_pion_WQ2(W, Q2);
@@ -307,9 +302,66 @@ void DataHandeler::file_handeler(std::string fin) {
         hists->Fill_channel_WQ2(W, Q2, e_mu_prime.E(), physics::xb_calc(Q2, e_mu_prime.E()));
         hists->Fill_Missing_Mass_strict(MM_neutron);
       }
+    }
+    delete check;
+  }
+  chain->Reset();  // delete Tree object
+}
 
-      All_events.emplace_back(Events);
-      Events.clear();
+void DataHandeler::make_events(std::string fin) {
+  int num_of_events;
+  TChain *chain = new TChain("h10");
+  chain->Add(fin.c_str());
+
+  getBranches(chain);
+  num_of_events = (int)chain->GetEntries();
+
+  int current_event = 0;
+  for (current_event = 0; current_event < num_of_events; current_event++) {
+    chain->GetEntry(current_event);
+    Cuts *check = new Cuts();
+
+    // electron cuts
+    check->Set_charge((int)q[0]);
+    check->Set_ec_cut(ec[0] > 0);        // ``` ``` ``` ec
+    check->Set_electron_id((int)id[0]);  // First particle is electron
+    check->Set_gpart((int)gpart);        // Number of good particles is greater than 0
+    check->Set_cc_cut((int)cc[0] > 0);
+    check->Set_stat_cut((int)stat[0] > 0);  // First Particle hit stat
+    check->Set_sc_cut((int)sc[0] > 0);
+    check->Set_dc_cut((int)dc[0] > 0);
+    check->Set_dc_stat_cut((int)dc_stat[dc[0] - 1] > 0);
+    check->Set_p((double)p[0]);
+    check->Set_Sf((double)etot[ec[0] - 1] / (double)p[0]);
+    check->Set_num_phe((int)nphe[cc[0] - 1]);
+    // Beam position cut
+    check->Set_BeamPosition((double)dc_vx[dc[0] - 1], (double)dc_vy[dc[0] - 1], (double)dc_vz[dc[0] - 1]);
+
+    if (check->isStrictElecctron()) {
+      Delta_T *dt = new Delta_T(sc_t[sc[0] - 1], sc_r[sc[0] - 1]);
+      dt->delta_t_hists(hists);
+      std::vector<double> dt_proton = dt->delta_t_array(MASS_P, gpart);
+      std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, gpart);
+      delete dt;
+
+      Particle *elec = new Particle(p[0], cx[0], cy[0], cz[0], ELECTRON);
+      Event *events = new Event(*elec);
+
+      for (int part_num = 1; part_num < gpart; part_num++) {
+        if (q[part_num] == POSITIVE) {
+          if (check->dt_P_cut(dt_proton.at(part_num), p[part_num])) {
+            Particle part(p[part_num], cx[part_num], cy[part_num], cz[part_num], PROTON);
+            events->Add_Part(part);
+          } else if (check->dt_Pip_cut(dt_pi.at(part_num), p[part_num])) {
+            Particle part(p[part_num], cx[part_num], cy[part_num], cz[part_num], PIP);
+            events->Add_Part(part);
+          }
+        } else if (q[part_num] == NEGATIVE && check->dt_Pip_cut(dt_pi.at(part_num), p[part_num])) {
+          Particle part(p[part_num], cx[part_num], cy[part_num], cz[part_num], PIM);
+          events->Add_Part(part);
+        }
+      }
+      events->PrintSigniture();
     }
     delete check;
   }

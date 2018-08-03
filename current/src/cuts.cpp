@@ -31,7 +31,7 @@ void Cuts::Set_dc_stat_cut(bool set) { dc_stat_cut = set; }
 bool Cuts::isElecctron() {
   bool _elec = true;
   _elec &= (charge == NEGATIVE);
-  _elec &= (gpart > 0);
+  _elec &= (gpart > 1);
   _elec &= ec_cut;
   _elec &= cc_cut;
   _elec &= stat_cut;
