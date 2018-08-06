@@ -169,7 +169,7 @@ void DataHandeler::file_handeler(std::string fin) {
   bool cuts, electron_cuts;
   int num_of_events;
   int total_events;
-  int num_of_pis;
+  int num_of_pips, num_of_pims;
   int num_of_proton;
   double e_E;
   double theta;
@@ -242,8 +242,9 @@ void DataHandeler::file_handeler(std::string fin) {
       delete photon_flux;
       TLorentzVector gamma_mu = (*e_mu - e_mu_prime);
       hists->WvsQ2_Fill(W, Q2);
-      num_of_proton = num_of_pis = 0;
+      num_of_proton = num_of_pips = num_of_pims = 0;
       for (int part_num = 1; part_num < gpart; part_num++) {
+        if (gpart > 3) continue;
         if (p[part_num] == 0) continue;
         PID = -99;
         if (q[part_num] == POSITIVE) {
@@ -272,11 +273,9 @@ void DataHandeler::file_handeler(std::string fin) {
             hists->Fill_proton_ID_P(p[part_num], b[part_num]);
             MM_pi0->Set_4Vec(Particle);
             MM_pi0->missing_mass(gamma_mu);
-            //
-            // hists->Fill_Missing_Mass_pi0(MM_pi0);
-            //
+
           } else if (check->dt_Pip_cut(dt_pi.at(part_num), p[part_num])) {
-            num_of_pis++;
+            num_of_pips++;
             hists->Fill_pion_WQ2(W, Q2);
             hists->Fill_Pi_ID_P(p[part_num], b[part_num]);
             MM_neutron->Set_4Vec(Particle);
@@ -289,6 +288,11 @@ void DataHandeler::file_handeler(std::string fin) {
             hists->Fill_proton_Pi_ID_P(p[part_num], b[part_num]);
           }
         } else if (q[part_num] == NEGATIVE) {
+          if (check->dt_Pip_cut(dt_pi.at(part_num), p[part_num])) {
+            num_of_pims++;
+            MM_from2pi->missing_mass(gamma_mu);
+            MM_from2pi->Set_4Vec(Particle);
+          }
           hists->MomVsBeta_Fill_neg(p[part_num], b[part_num]);
         }
       }
@@ -297,17 +301,14 @@ void DataHandeler::file_handeler(std::string fin) {
       mm_cut &= (MM_neutron->Get_MM() < 1.1);
       mm_cut &= (MM_neutron->Get_MM() > 0.8);
 
-      if (num_of_pis == 1 && gpart == 2) hists->Fill_single_pi_WQ2(W, Q2);
+      if (num_of_pips == 1 && gpart == 2) hists->Fill_single_pi_WQ2(W, Q2);
       if (num_of_proton == 1 && gpart == 2) hists->Fill_single_proton_WQ2(W, Q2);
-      if (num_of_pis == 1 && mm_cut && num_of_proton == 0 && gpart < 3) {
+      if (num_of_pips == 1 && mm_cut && num_of_proton == 0 && gpart < 3) {
         hists->Fill_channel_WQ2(W, Q2, e_mu_prime.E(), physics::xb_calc(Q2, e_mu_prime.E()));
         hists->Fill_Missing_Mass_strict(MM_neutron);
       }
-      if (num_of_pis > 1) {
-        //
-        // hists->Fill_Missing_Mass_twoPi(MM_from2pi);
-        //
-      }
+      if (num_of_pips == 2) hists->Fill_Missing_Mass_twoPi(MM_from2pi);
+      if (num_of_proton == 1) hists->Fill_Missing_Mass_pi0(MM_pi0);
     }
     delete check;
   }

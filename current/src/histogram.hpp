@@ -232,6 +232,16 @@ class Histogram {
   TH1D *Missing_Mass_strict = new TH1D("Missing_Mass_strict", "Missing Mass", bins_MM, MM_min, MM_max);
   TH1D *Missing_Mass_square_strict =
       new TH1D("Missing_Mass_square_strict", "Missing Mass square", bins_MM, MM_min, MM_max *MM_max);
+
+  TH1D *Missing_Mass_pi0 = new TH1D("Missing_Mass_pi0", "Missing Mass #pi^{0}", bins_MM, -3, 3);
+  TH1D *Missing_Mass_square_pi0 = new TH1D("Missing_Mass_pi0_2", "Missing Mass^2 #pi^{0}", bins_MM, -3, 3);
+
+  TH1D *Missing_Mass_2pi = new TH1D("Missing_Mass_2pi", "Missing Mass 2 #pi", bins_MM, MM_min, MM_max);
+  TH1D *Missing_Mass_square_2pi =
+      new TH1D("Missing_Mass_square_2pi", "Missing Mass 2 #pi", bins_MM, MM_min, MM_max *MM_max);
+
+  TH1D *Missing_Mass_nutron_no2pi =
+      new TH1D("Missing_Mass_nutron_no2pi", "Missing Mass removing 2 #pi", bins_MM, MM_min, MM_max);
   // W and Q^2
   void Fill_proton_WQ2(double W, double Q2);
   void Fill_single_pi_WQ2(double W, double Q2);
@@ -259,6 +269,9 @@ class Histogram {
   // void Fill_Mass(double mass);
   void Fill_Missing_Mass_square(double miss_mass_2);
   void Write_Missing_Mass();
+
+  void Fill_Missing_Mass_pi0(MissingMass *miss_mass);
+  void Fill_Missing_Mass_twoPi(MissingMass *miss_mass);
 
   // Delta T
   void Fill_deltat_P(double momentum, double delta_t);

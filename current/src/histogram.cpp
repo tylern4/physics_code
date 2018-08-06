@@ -295,6 +295,16 @@ void Histogram::Fill_Missing_Mass_strict(MissingMass *miss_mass) {
   Missing_Mass_square_strict->Fill(miss_mass->Get_MM2());
 }
 
+void Histogram::Fill_Missing_Mass_pi0(MissingMass *miss_mass) {
+  Missing_Mass_pi0->Fill(miss_mass->Get_MM());
+  Missing_Mass_square_pi0->Fill(miss_mass->Get_MM2());
+}
+
+void Histogram::Fill_Missing_Mass_twoPi(MissingMass *miss_mass) {
+  Missing_Mass_2pi->Fill(miss_mass->Get_MM());
+  Missing_Mass_square_2pi->Fill(miss_mass->Get_MM2());
+}
+
 // void Histogram::Fill_Mass(double mass) { Mass->Fill(mass); }
 
 void Histogram::Fill_Missing_Mass_square(double miss_mass_2) { Missing_Mass_square->Fill(miss_mass_2); }
@@ -303,14 +313,29 @@ void Histogram::Write_Missing_Mass() {
   Missing_Mass->SetXTitle("Mass (GeV)");
   Missing_Mass->Write();
 
-  Missing_Mass_square->SetXTitle("Mass (GeV)");
+  Missing_Mass_square->SetXTitle("Mass^{2} (GeV^{2})");
   Missing_Mass_square->Write();
 
   Missing_Mass_strict->SetXTitle("Mass (GeV)");
   Missing_Mass_strict->Write();
 
-  Missing_Mass_square_strict->SetXTitle("Mass (GeV)");
+  Missing_Mass_square_strict->SetXTitle("Mass^{2} (GeV^{2})");
   Missing_Mass_square_strict->Write();
+
+  Missing_Mass_pi0->SetXTitle("Mass (GeV)");
+  Missing_Mass_pi0->Write();
+  Missing_Mass_square_pi0->SetXTitle("Mass^{2} (GeV^{2})");
+  Missing_Mass_square_pi0->Write();
+
+  Missing_Mass_2pi->SetXTitle("Mass (GeV)");
+  Missing_Mass_2pi->Write();
+  Missing_Mass_square_2pi->SetXTitle("Mass^{2} (GeV^{2})");
+  Missing_Mass_square_2pi->Write();
+
+  Missing_Mass_nutron_no2pi->Add(Missing_Mass, 1);
+  Missing_Mass_nutron_no2pi->Add(Missing_Mass_2pi, -1);
+  Missing_Mass_nutron_no2pi->SetXTitle("Mass (GeV)");
+  Missing_Mass_nutron_no2pi->Write();
 }
 
 void Histogram::makeHists_deltat() {
