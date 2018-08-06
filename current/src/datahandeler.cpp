@@ -280,7 +280,6 @@ void DataHandeler::file_handeler(std::string fin) {
             hists->Fill_Pi_ID_P(p[part_num], b[part_num]);
             MM_neutron->Set_4Vec(Particle);
             MM_neutron->missing_mass(gamma_mu);
-            hists->Fill_Missing_Mass(MM_neutron);
           }
 
           if (check->dt_Pip_cut(dt_pi.at(part_num), p[part_num]) &&
@@ -303,6 +302,7 @@ void DataHandeler::file_handeler(std::string fin) {
 
       if (num_of_pips == 1 && gpart == 2) hists->Fill_single_pi_WQ2(W, Q2);
       if (num_of_proton == 1 && gpart == 2) hists->Fill_single_proton_WQ2(W, Q2);
+      if (num_of_pips == 1) hists->Fill_Missing_Mass(MM_neutron);
       if (num_of_pips == 1 && mm_cut && num_of_proton == 0 && gpart < 3) {
         hists->Fill_channel_WQ2(W, Q2, e_mu_prime.E(), physics::xb_calc(Q2, e_mu_prime.E()));
         hists->Fill_Missing_Mass_strict(MM_neutron);
