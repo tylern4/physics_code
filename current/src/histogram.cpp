@@ -92,7 +92,7 @@ void Histogram::Fill_single_pi_WQ2(double W, double Q2) {
   Q2_single_pi->Fill(Q2);
 }
 
-void Histogram::Fill_channel_WQ2(double W, double Q2, TLorentzVector e_prime, MissingMass N, int sec) {
+void Histogram::Fill_channel_WQ2(double W, double Q2, TLorentzVector e_prime, int sec) {
   x_pip_N[0] = W;
   x_pip_N[1] = Q2;
   x_pip_N[2] = sec;

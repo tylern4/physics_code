@@ -248,7 +248,7 @@ class Histogram {
   // W and Q^2
   void Fill_proton_WQ2(double W, double Q2);
   void Fill_single_pi_WQ2(double W, double Q2);
-  void Fill_channel_WQ2(double W, double Q2, TLorentzVector e_prime, MissingMass N, int sec);
+  void Fill_channel_WQ2(double W, double Q2, TLorentzVector e_prime, int sec);
   void Fill_single_proton_WQ2(double W, double Q2);
   void WvsQ2_Fill(double W, double Q2);
   void Fill_pion_WQ2(double W, double Q2);
