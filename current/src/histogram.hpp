@@ -14,7 +14,7 @@
 #include "TH1.h"
 #include "TH2.h"
 #include "TH3.h"
-#include "THnSparse.h"
+#include "THn.h"
 #include "color.hpp"
 #include "fits.hpp"
 #include "makeHeader.hpp"
@@ -23,6 +23,8 @@
 class Histogram {
  private:
  public:
+  Histogram();
+  ~Histogram();
   Header *fit_functions;
   void makeHists_fid();
   void makeHists_deltat();
@@ -36,6 +38,12 @@ class Histogram {
 
   static const int sector = 6;
 
+  // Missing Mass
+  int bins_MM = 300;
+  double MM_min = 0.0;
+  double MM_max = 3.0;
+  // Missing Mass
+
   // W and Q^2
   double w_min = 0;
   double w_max = 3.25;
@@ -44,6 +52,8 @@ class Histogram {
 
   static const int W_bins = 40;
   static const int Q2_bins = 5;
+  static const int theta_bins = 100;
+  static const int phi_bins = 100;
   double w_binned_min = 1.0;
   double w_binned_max = 2.0;
   double q2_binned_min = 1.0;
@@ -79,6 +89,14 @@ class Histogram {
   TH1D *W_binned[Q2_bins];
   TH1D *Q2_binned[W_bins];
 
+  static const int ndims_pip_N = 5;
+  int bins_pip_N[ndims_pip_N] = {W_bins, Q2_bins, sector, theta_bins, phi_bins};           //, 500, 500};
+  double xmin_pip_N[ndims_pip_N] = {w_binned_min, q2_binned_min, 0.0, 0.0, -TMath::Pi()};  //, MM_min, MM_min};
+  double xmax_pip_N[ndims_pip_N] = {w_binned_max, q2_binned_max, sector, TMath::Pi() / 2.0,
+                                    TMath::Pi()};  //,  MM_max,        MM_max *MM_max};
+  double x_pip_N[ndims_pip_N];
+  THnD *pip_N = new THnD("pip_N", "WvsQ2_NPIP", ndims_pip_N, bins_pip_N, xmin_pip_N, xmax_pip_N);
+
   // W and Q^2
 
   // P and E
@@ -98,13 +116,6 @@ class Histogram {
   TH2D *MomVsBeta_proton_Pi_ID =
       new TH2D("MomVsBeta_proton_Pi_ID", "Momentum versus #beta P #pi^{+}", bins, p_min, p_max, bins, b_min, b_max);
   // P and E
-
-  // Missing Mass
-  int bins_MM = 300;
-  double MM_min = 0.0;
-  double MM_max = 3.0;
-  // TH1D *Mass = new TH1D("Mass", "Mass", 600, 0, 6);
-  // Missing Mass
 
   // Delta T
   // Histogram declarations, fills, and write
@@ -156,13 +167,12 @@ class Histogram {
 
   TH1D *cc_hist[sector][segment][PMT];
   TH1D *cc_hist_allSeg[sector][PMT];
-  static const Int_t ndims_cc_sparse = 4;
-  Int_t bins_cc_sparse[ndims_cc_sparse] = {sector, segment, PMT, bins_CC};
-  Double_t xmin_cc_sparse[ndims_cc_sparse] = {0.0, 0.0, -2.0, CC_min};
-  Double_t xmax_cc_sparse[ndims_cc_sparse] = {sector + 1.0, segment + 1.0, 1.0, CC_max};
-  Double_t x_cc_sparse[ndims_cc_sparse];
-  THnSparse *cc_sparse =
-      new THnSparseD("cc_sparse", "Histogram", ndims_cc_sparse, bins_cc_sparse, xmin_cc_sparse, xmax_cc_sparse);
+  static const int ndims_cc_sparse = 4;
+  int bins_cc_sparse[ndims_cc_sparse] = {sector, segment, PMT, bins_CC};
+  double xmin_cc_sparse[ndims_cc_sparse] = {0.0, 0.0, -2.0, CC_min};
+  double xmax_cc_sparse[ndims_cc_sparse] = {sector + 1.0, segment + 1.0, 1.0, CC_max};
+  double x_cc_sparse[ndims_cc_sparse];
+  THnD *cc_sparse = new THnD("cc_sparse", "Histogram", ndims_cc_sparse, bins_cc_sparse, xmin_cc_sparse, xmax_cc_sparse);
 
   TH2D *Theta_CC = new TH2D("Theta_CC", "Theta_CC", 20, 0.0, 20.0, 60, 0.0, 60.0);
   TH2D *Theta_CC_Sec[sector];
@@ -218,14 +228,6 @@ class Histogram {
   TH2D *target_vertex_zy = new TH2D("Target_vertex_zy", "Target_vertex_zy", bins, -6.0, 6.0, bins, -6.0, 6.0);
   TH2D *target_vertex_zx = new TH2D("Target_vertex_zx", "Target_vertex_zx", bins, -6.0, 6.0, bins, -6.0, 6.0);
 
-  // TH3D *target_vertex_3d =
-  //      new TH3D("Target_vertex_3d", "Target_vertex_3d", bins, -5.0, 5.0, bins, -5.0, 5.0, bins, -5.0, 5.0);
-
-  // Vertex
-
-  // public:
-  Histogram();
-  ~Histogram();
   TH1D *Missing_Mass = new TH1D("Missing_Mass", "Missing Mass", bins_MM, MM_min, MM_max);
   TH1D *Missing_Mass_square = new TH1D("Missing_Mass_square", "Missing Mass square", bins_MM, MM_min, MM_max *MM_max);
 
@@ -242,10 +244,11 @@ class Histogram {
 
   TH1D *Missing_Mass_nutron_no2pi =
       new TH1D("Missing_Mass_nutron_no2pi", "Missing Mass removing 2 #pi", bins_MM, MM_min, MM_max);
+
   // W and Q^2
   void Fill_proton_WQ2(double W, double Q2);
   void Fill_single_pi_WQ2(double W, double Q2);
-  void Fill_channel_WQ2(double W, double Q2, double e_prime, double xb);
+  void Fill_channel_WQ2(double W, double Q2, TLorentzVector e_prime, MissingMass N, int sec);
   void Fill_single_proton_WQ2(double W, double Q2);
   void WvsQ2_Fill(double W, double Q2);
   void Fill_pion_WQ2(double W, double Q2);

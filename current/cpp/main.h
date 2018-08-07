@@ -21,7 +21,7 @@
 #include "TChain.h"
 #include "TF1.h"
 #include "TH2.h"
-#include "THnSparse.h"
+#include "THn.h"
 #include "TLeaf.h"
 #include "TMath.h"
 #include "TStyle.h"

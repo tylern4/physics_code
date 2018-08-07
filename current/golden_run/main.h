@@ -11,7 +11,7 @@
 #include <TFile.h>
 #include "TMath.h"
 #include <TGraph.h>
-#include "THnSparse.h"
+#include "THn.h"
 #include "TTree.h"
 #include "TROOT.h"
 #include <TLorentzVector.h>

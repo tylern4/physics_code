@@ -92,9 +92,18 @@ void Histogram::Fill_single_pi_WQ2(double W, double Q2) {
   Q2_single_pi->Fill(Q2);
 }
 
-void Histogram::Fill_channel_WQ2(double W, double Q2, double e_prime, double xb) {
-  E_prime_hist->Fill(e_prime);
-  Q2_vs_xb->Fill(xb, Q2);
+void Histogram::Fill_channel_WQ2(double W, double Q2, TLorentzVector e_prime, MissingMass N, int sec) {
+  x_pip_N[0] = W;
+  x_pip_N[1] = Q2;
+  x_pip_N[2] = sec;
+  x_pip_N[3] = e_prime.Theta();
+  x_pip_N[4] = e_prime.Phi();
+  // x_pip_N[5] = 0;  // N->Get_MM();
+  // x_pip_N[6] = 0;  // N->Get_MM2();
+  pip_N->Fill(x_pip_N);
+
+  E_prime_hist->Fill(e_prime.E());
+  Q2_vs_xb->Fill(physics::xb_calc(Q2, e_prime.E()), Q2);
 
   WvsQ2_channel->Fill(W, Q2);
   W_channel->Fill(W);
@@ -136,6 +145,12 @@ void Histogram::Fill_pion_WQ2(double W, double Q2) {
 }
 
 void Histogram::WvsQ2_Write() {
+  pip_N->GetAxis(0)->SetTitle("W");
+  pip_N->GetAxis(1)->SetTitle("Q^{2}");
+  pip_N->GetAxis(2)->SetTitle("sector");
+  pip_N->GetAxis(3)->SetTitle("#theta");
+  pip_N->GetAxis(4)->SetTitle("#phi");
+  pip_N->Write();
   WvsQ2_channel->SetXTitle("W (GeV)");
   WvsQ2_channel->SetYTitle("Q^{2} (GeV^{2})");
   WvsQ2_channel->SetOption("COLZ");
@@ -296,8 +311,10 @@ void Histogram::Fill_Missing_Mass_strict(MissingMass *miss_mass) {
 }
 
 void Histogram::Fill_Missing_Mass_pi0(MissingMass *miss_mass) {
-  Missing_Mass_pi0->Fill(miss_mass->Get_MM());
-  Missing_Mass_square_pi0->Fill(miss_mass->Get_MM2());
+  if (miss_mass->Get_MM() != 0) {
+    Missing_Mass_pi0->Fill(miss_mass->Get_MM());
+    Missing_Mass_square_pi0->Fill(miss_mass->Get_MM2());
+  }
 }
 
 void Histogram::Fill_Missing_Mass_twoPi(MissingMass *miss_mass) {

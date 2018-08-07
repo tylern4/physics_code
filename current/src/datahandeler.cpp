@@ -297,14 +297,14 @@ void DataHandeler::file_handeler(std::string fin) {
       }
 
       bool mm_cut = true;
-      mm_cut &= (MM_neutron->Get_MM() < 1.1);
-      mm_cut &= (MM_neutron->Get_MM() > 0.8);
+      // mm_cut &= (MM_neutron->Get_MM() < 1.1);
+      // mm_cut &= (MM_neutron->Get_MM() > 0.8);
 
       if (num_of_pips == 1 && gpart == 2) hists->Fill_single_pi_WQ2(W, Q2);
       if (num_of_proton == 1 && gpart == 2) hists->Fill_single_proton_WQ2(W, Q2);
       if (num_of_pips == 1) hists->Fill_Missing_Mass(MM_neutron);
       if (num_of_pips == 1 && mm_cut && num_of_proton == 0 && gpart < 3) {
-        hists->Fill_channel_WQ2(W, Q2, e_mu_prime.E(), physics::xb_calc(Q2, e_mu_prime.E()));
+        hists->Fill_channel_WQ2(W, Q2, e_mu_prime, *MM_neutron, sector);
         hists->Fill_Missing_Mass_strict(MM_neutron);
       }
       if (num_of_pips == 2) hists->Fill_Missing_Mass_twoPi(MM_from2pi);
