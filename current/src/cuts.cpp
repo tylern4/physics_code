@@ -18,6 +18,10 @@ void Cuts::Set_BeamPosition(double x, double y, double z) {
   vy = y;
   vz = z;
 }
+void Cuts::Set_elec_fid(double theta, double phi) {
+  _theta = theta;
+  _phi = phi;
+}
 void Cuts::Set_p(double set) { electron_p = set; }
 void Cuts::Set_Sf(double set) { samp_frac = set; }
 
@@ -99,7 +103,7 @@ double Cuts::dt_Pip_top_fit(double P) {
 }
 bool Cuts::dt_Pip_cut(double dt, double P) { return (dt > dt_Pip_bot_fit(P)) && (dt < dt_Pip_top_fit(P)); }
 
-bool Cuts::elec_fid_cut(double p, double theta, double phi, double sector) {
+bool Cuts::elec_fid_cut() {
   bool fid = true;
   return fid;
 }

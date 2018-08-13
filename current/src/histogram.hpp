@@ -90,10 +90,10 @@ class Histogram {
   TH1D *Q2_binned[W_bins];
 
   static const int ndims_pip_N = 5;
-  int bins_pip_N[ndims_pip_N] = {W_bins, Q2_bins, sector, theta_bins, phi_bins};           //, 500, 500};
-  double xmin_pip_N[ndims_pip_N] = {w_binned_min, q2_binned_min, 0.0, 0.0, -TMath::Pi()};  //, MM_min, MM_min};
-  double xmax_pip_N[ndims_pip_N] = {w_binned_max, q2_binned_max, sector, TMath::Pi() / 2.0,
-                                    TMath::Pi()};  //,  MM_max,        MM_max *MM_max};
+  int bins_pip_N[ndims_pip_N] = {W_bins, Q2_bins, sector, bins, bins};                  // theta_bins, phi_bins, };
+  double xmin_pip_N[ndims_pip_N] = {w_binned_min, q2_binned_min, 0.0, MM_min, MM_min};  // 0.0, -TMath::Pi(), };
+  double xmax_pip_N[ndims_pip_N] = {w_binned_max, q2_binned_max, sector, MM_max,
+                                    MM_max *MM_max};  // TMath::Pi() / 2.0,TMath::Pi(),  };
   double x_pip_N[ndims_pip_N];
   THnD *pip_N = new THnD("pip_N", "WvsQ2_NPIP", ndims_pip_N, bins_pip_N, xmin_pip_N, xmax_pip_N);
 
@@ -248,7 +248,7 @@ class Histogram {
   // W and Q^2
   void Fill_proton_WQ2(double W, double Q2);
   void Fill_single_pi_WQ2(double W, double Q2);
-  void Fill_channel_WQ2(double W, double Q2, TLorentzVector e_prime, int sec);
+  void Fill_channel_WQ2(double W, double Q2, TLorentzVector e_prime, double mm, double mm2, int sec);
   void Fill_single_proton_WQ2(double W, double Q2);
   void WvsQ2_Fill(double W, double Q2);
   void Fill_pion_WQ2(double W, double Q2);

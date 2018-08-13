@@ -14,8 +14,8 @@ Histogram::Histogram() {
   makeHists_CC();
   makeHists_fid();
   hadron_fid_hist[0] = new TH2D("hadron_fid", "hadron_fid", bins, phi_min, phi_max, bins, theta_min, theta_max);
-  hadron_fid_hist[1] = new TH2D("proton_fid", "hadron_fid", bins, phi_min, phi_max, bins, theta_min, theta_max);
-  hadron_fid_hist[2] = new TH2D("pip_fid", "hadron_fid", bins, phi_min, phi_max, bins, theta_min, theta_max);
+  hadron_fid_hist[1] = new TH2D("proton_fid", "proton_fid", bins, phi_min, phi_max, bins, theta_min, theta_max);
+  hadron_fid_hist[2] = new TH2D("pip_fid", "pip_fid", bins, phi_min, phi_max, bins, theta_min, theta_max);
 }
 
 Histogram::~Histogram() {
@@ -92,14 +92,12 @@ void Histogram::Fill_single_pi_WQ2(double W, double Q2) {
   Q2_single_pi->Fill(Q2);
 }
 
-void Histogram::Fill_channel_WQ2(double W, double Q2, TLorentzVector e_prime, int sec) {
+void Histogram::Fill_channel_WQ2(double W, double Q2, TLorentzVector e_prime, double mm, double mm2, int sec) {
   x_pip_N[0] = W;
   x_pip_N[1] = Q2;
   x_pip_N[2] = sec;
-  x_pip_N[3] = e_prime.Theta();
-  x_pip_N[4] = e_prime.Phi();
-  // x_pip_N[5] = 0;  // N->Get_MM();
-  // x_pip_N[6] = 0;  // N->Get_MM2();
+  x_pip_N[3] = 0.0;  // mm;
+  x_pip_N[4] = 0.0;  // mm2;
   pip_N->Fill(x_pip_N);
 
   E_prime_hist->Fill(e_prime.E());
@@ -150,7 +148,7 @@ void Histogram::WvsQ2_Write() {
   pip_N->GetAxis(2)->SetTitle("sector");
   pip_N->GetAxis(3)->SetTitle("#theta");
   pip_N->GetAxis(4)->SetTitle("#phi");
-  pip_N->Write();
+  // pip_N->Write();
   WvsQ2_channel->SetXTitle("W (GeV)");
   WvsQ2_channel->SetYTitle("Q^{2} (GeV^{2})");
   WvsQ2_channel->SetOption("COLZ");
@@ -349,7 +347,7 @@ void Histogram::Write_Missing_Mass() {
   Missing_Mass_square_2pi->SetXTitle("Mass^{2} (GeV^{2})");
   Missing_Mass_square_2pi->Write();
 
-  Missing_Mass_nutron_no2pi->Add(Missing_Mass, 1);
+  Missing_Mass_nutron_no2pi->Add(Missing_Mass_strict, 1);
   Missing_Mass_nutron_no2pi->Add(Missing_Mass_2pi, -1);
   Missing_Mass_nutron_no2pi->SetXTitle("Mass (GeV)");
   Missing_Mass_nutron_no2pi->Write();
@@ -909,12 +907,14 @@ void Histogram::Fill_electron_fid(double theta, double phi, int sector) {
 }
 
 void Histogram::Fill_hadron_fid(double theta, double phi, int sector, int id) {
-  hadron_fid_hist[0]->Fill(phi, theta);
-  hadron_fid_sec_hist[0][sector]->Fill(phi, theta);
   if (id == PROTON) {
+    hadron_fid_hist[0]->Fill(phi, theta);
+    hadron_fid_sec_hist[0][sector]->Fill(phi, theta);
     hadron_fid_hist[1]->Fill(phi, theta);
     hadron_fid_sec_hist[1][sector]->Fill(phi, theta);
   } else if (id == PIP) {
+    hadron_fid_hist[0]->Fill(phi, theta);
+    hadron_fid_sec_hist[0][sector]->Fill(phi, theta);
     hadron_fid_hist[2]->Fill(phi, theta);
     hadron_fid_sec_hist[2][sector]->Fill(phi, theta);
   }
@@ -942,6 +942,7 @@ void Histogram::Fid_Write() {
     hadron_fid_hist[t]->Write();
   }
 
+  std::cout << "Sec,X,Y" << std::endl;
   for (int sec_i = 0; sec_i < sector; sec_i++) {
     for (int t = 0; t < 3; t++) {
       hadron_fid_sec_hist[t][sec_i]->SetYTitle("#theta");
@@ -967,8 +968,10 @@ void Histogram::Fid_Write() {
           SliceFit[sec_i][slice]->Get_right_edge() == SliceFit[sec_i][slice]->Get_right_edge()) {
         y[slice + fid_slices] = y_width * slice_width * slice;
         x[slice + fid_slices] = SliceFit[sec_i][slice]->Get_left_edge();
+        std::cout << sec_i + 1 << "," << x[slice + fid_slices] << "," << y[slice + fid_slices] << std::endl;
         y[slice] = y_width * slice_width * slice;
         x[slice] = SliceFit[sec_i][slice]->Get_right_edge();
+        std::cout << sec_i + 1 << "," << x[slice] << "," << y[slice] << std::endl;
       }
 
       delete SliceFit[sec_i][slice];

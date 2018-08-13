@@ -22,6 +22,8 @@ class Cuts {
   double vx = 0;
   double vy = 0;
   double vz = 0.3;
+  double _theta = 0.0;
+  double _phi = 0.0;
 
   bool ec_cut = false;
   bool cc_cut = false;
@@ -42,6 +44,7 @@ class Cuts {
   void Set_p(double set);
   void Set_Sf(double set);
   void Set_BeamPosition(double x, double y, double z);
+  void Set_elec_fid(double theta, double phi);
 
   void Set_ec_cut(bool set);
   void Set_cc_cut(bool set);
@@ -66,7 +69,7 @@ class Cuts {
   double dt_Pip_top_fit(double P);
   bool dt_Pip_cut(double dt, double P);
 
-  bool elec_fid_cut(double p, double theta, double phi, double sector);
+  bool elec_fid_cut();
 };
 
 #endif
