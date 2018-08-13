@@ -23,18 +23,25 @@ void Cuts::Set_elec_fid(double theta, double phi, int sec) {
   _phi = phi;
   _sec = sec + 1;
 
-  if (_sec == 1) {
-    _phi_cent = phi - 30;
-  } else if (_sec == 2) {
-    _phi_cent = phi - 90;
-  } else if (_sec == 3) {
-    _phi_cent = phi - 150;
-  } else if (_sec == 4) {
-    _phi_cent = phi + 150;
-  } else if (_sec == 5) {
-    _phi_cent = phi + 90;
-  } else if (_sec == 6) {
-    _phi_cent = phi + 30;
+  switch (_sec) {
+    case 1:
+      _phi_cent = _phi - 30;
+      break;
+    case 2:
+      _phi_cent = _phi - 90;
+      break;
+    case 3:
+      _phi_cent = _phi - 150;
+      break;
+    case 4:
+      _phi_cent = _phi + 150;
+      break;
+    case 5:
+      _phi_cent = _phi + 90;
+      break;
+    case 6:
+      _phi_cent = _phi + 30;
+      break;
   }
 }
 void Cuts::Set_p(double set) { electron_p = set; }
