@@ -18,9 +18,24 @@ void Cuts::Set_BeamPosition(double x, double y, double z) {
   vy = y;
   vz = z;
 }
-void Cuts::Set_elec_fid(double theta, double phi) {
+void Cuts::Set_elec_fid(double theta, double phi, int sec) {
   _theta = theta;
   _phi = phi;
+  _sec = sec + 1;
+
+  if (_sec == 1) {
+    _phi_cent = phi - 30;
+  } else if (_sec == 2) {
+    _phi_cent = phi - 90;
+  } else if (_sec == 3) {
+    _phi_cent = phi - 150;
+  } else if (_sec == 4) {
+    _phi_cent = phi + 150;
+  } else if (_sec == 5) {
+    _phi_cent = phi + 90;
+  } else if (_sec == 6) {
+    _phi_cent = phi + 30;
+  }
 }
 void Cuts::Set_p(double set) { electron_p = set; }
 void Cuts::Set_Sf(double set) { samp_frac = set; }
@@ -56,6 +71,8 @@ bool Cuts::isStrictElecctron() {
 
   samp_frac_cut = sf_cut(samp_frac, electron_p);
   _elec &= samp_frac_cut;
+
+  _elec &= elec_fid_cut();
 
   electron_cut = _elec;
   return _elec;
@@ -104,6 +121,7 @@ double Cuts::dt_Pip_top_fit(double P) {
 bool Cuts::dt_Pip_cut(double dt, double P) { return (dt > dt_Pip_bot_fit(P)) && (dt < dt_Pip_top_fit(P)); }
 
 bool Cuts::elec_fid_cut() {
-  bool fid = true;
-  return fid;
+  double c[4] = {0.04587, -0.19061, 16.46335, 0.10299};
+  double y = c[0] * _phi_cent * _phi_cent + c[1] * _phi_cent + c[2] + TMath::Exp(c[3] * _phi_cent);
+  return _theta >= y;
 }

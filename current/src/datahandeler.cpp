@@ -203,12 +203,17 @@ void DataHandeler::file_handeler(std::string fin) {
     check->Set_dc_cut((int)dc[0] > 0);
     check->Set_dc_stat_cut((int)dc_stat[dc[0] - 1] > 0);
     check->Set_p((double)p[0]);
+
     if (check->isElecctron()) hists->EC_fill(etot[ec[0] - 1], p[0]);
     if (check->isElecctron()) hists->TM_Fill(p[0], physics::theta_calc(cz[0]));
     check->Set_Sf((double)etot[ec[0] - 1] / (double)p[0]);
     check->Set_num_phe((int)nphe[cc[0] - 1]);
     // Beam position cut
     check->Set_BeamPosition((double)dc_vx[dc[0] - 1], (double)dc_vy[dc[0] - 1], (double)dc_vz[dc[0] - 1]);
+    theta = physics::theta_calc(cz[0]);
+    phi = physics::phi_calc(cx[0], cy[0]);
+    sector = physics::get_sector(phi);
+    check->Set_elec_fid(theta, phi, sector);
     if (check->isStrictElecctron()) {
       int cc_sector = cc_sect[cc[0] - 1];
       int cc_segment = (cc_segm[0] % 1000) / 10;
@@ -230,9 +235,6 @@ void DataHandeler::file_handeler(std::string fin) {
       std::vector<double> dt_proton = dt->delta_t_array(MASS_P, gpart);
       std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, gpart);
       delete dt;
-      theta = physics::theta_calc(cz[0]);
-      phi = physics::phi_calc(cx[0], cy[0]);
-      sector = physics::get_sector(phi);
       hists->Fill_electron_fid(theta, phi, sector);
       W = physics::W_calc(*e_mu, e_mu_prime);
       Q2 = physics::Q2_calc(*e_mu, e_mu_prime);

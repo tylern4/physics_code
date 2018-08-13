@@ -23,7 +23,8 @@ class Cuts {
   double vy = 0;
   double vz = 0.3;
   double _theta = 0.0;
-  double _phi = 0.0;
+  double _phi, _phi_cent = 0.0;
+  int _sec = 0;
 
   bool ec_cut = false;
   bool cc_cut = false;
@@ -44,7 +45,7 @@ class Cuts {
   void Set_p(double set);
   void Set_Sf(double set);
   void Set_BeamPosition(double x, double y, double z);
-  void Set_elec_fid(double theta, double phi);
+  void Set_elec_fid(double theta, double phi, int sec);
 
   void Set_ec_cut(bool set);
   void Set_cc_cut(bool set);
