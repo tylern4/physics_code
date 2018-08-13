@@ -121,7 +121,8 @@ double Cuts::dt_Pip_top_fit(double P) {
 bool Cuts::dt_Pip_cut(double dt, double P) { return (dt > dt_Pip_bot_fit(P)) && (dt < dt_Pip_top_fit(P)); }
 
 bool Cuts::elec_fid_cut() {
-  double c[4] = {0.04587, -0.19061, 16.46335, 0.10299};
-  double y = c[0] * _phi_cent * _phi_cent + c[1] * _phi_cent + c[2] + TMath::Exp(c[3] * _phi_cent);
+  double c[4] = {0.0548311203, 0.0327878012, 17.0683287374};
+  double y = c[0] * _phi_cent * _phi_cent + c[1] * _phi_cent + c[2];
+
   return _theta >= y;
 }
