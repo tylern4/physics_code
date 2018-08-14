@@ -45,7 +45,6 @@ int main(int argc, char **argv) {
   delete dh;
 
   Watch->Stop();
-  cout << RED << Watch->RealTime() << "sec" << DEF << endl;
 
   return 0;
 }

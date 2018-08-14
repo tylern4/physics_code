@@ -394,7 +394,6 @@ void DataHandeler::BinnedCSV() {
 
   TChain *chain = new TChain("h10");
   for (auto f : input_files) {
-    std::cout << "Adding File: " << f << std::endl;
     chain->Add(f.c_str());
   }
   std::cout << "W,Q2,mm_N,elec_theta,elec_phi,elec_sector" << std::endl;
