@@ -19,9 +19,9 @@ class Cuts {
   int electron_id = 0;
   double electron_p = 0;
   double samp_frac = 0;
-  double vx = 0;
-  double vy = 0;
-  double vz = 0.3;
+  double _vx = 0;
+  double _vy = 0;
+  double _vz = 0.3;
   double _theta = 0.0;
   double _phi, _phi_cent = 0.0;
   int _sec = 0;

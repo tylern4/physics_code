@@ -189,9 +189,6 @@ void DataHandeler::file_handeler(std::string fin) {
   int current_event = 0;
   for (current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
-    // if (gpart >= 3) continue;
-    // if (p[0] < 1.0) continue;
-    // if (abs((double)dc_vz[dc[0] - 1]) > 2) continue;
     Cuts *check = new Cuts();
 
     // electron cuts
@@ -249,8 +246,6 @@ void DataHandeler::file_handeler(std::string fin) {
       hists->WvsQ2_Fill(W, Q2);
       num_of_proton = num_of_pips = num_of_pims = 0;
       for (int part_num = 1; part_num < gpart; part_num++) {
-        if (gpart > 3) continue;
-        if (p[part_num] == 0) continue;
         PID = -99;
         if (q[part_num] == POSITIVE) {
           if (check->dt_P_cut(dt_proton.at(part_num), p[part_num]))
@@ -472,7 +467,7 @@ void DataHandeler::BinnedCSV() {
         }
       }
 
-      if (num_of_pips == 1 && num_of_proton == 0 && gpart < 3) {
+      if (num_of_pips == 1 && num_of_proton == 0) {
         std::cout << W << "," << Q2 << "," << MM_neutron->Get_MM() << "," << elec_theta << "," << elec_phi << ","
                   << elec_sector << std::endl;
       }
