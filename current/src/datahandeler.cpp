@@ -214,6 +214,7 @@ void DataHandeler::file_handeler(std::string fin) {
     phi = physics::phi_calc(cx[0], cy[0]);
     sector = physics::get_sector(phi);
     check->Set_elec_fid(theta, phi, sector);
+
     if (check->isStrictElecctron()) {
       int cc_sector = cc_sect[cc[0] - 1];
       int cc_segment = (cc_segm[0] % 1000) / 10;
