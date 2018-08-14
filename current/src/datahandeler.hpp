@@ -27,8 +27,9 @@
 class DataHandeler {
  private:
   int PID;
-  Histogram *hists;
+  Histogram *hists = NULL;
   TFile *RootOutputFile;
+  std::string output_file;
   TLorentzVector *e_mu;
   std::vector<std::string> input_files;
   std::vector<std::vector<TLorentzVector>> All_events;
@@ -38,10 +39,12 @@ class DataHandeler {
   TCanvas *c1;
 
  public:
-  DataHandeler(std::vector<std::string> fin, std::string RootFile_output);
+  DataHandeler(std::vector<std::string> fin, std::string output);
   ~DataHandeler();
   void file_handeler(std::string fin);
   void make_events();
+  void BinnedCSV();
+  void Setup_fh();
   void loadbar(long x, long n);
   void run();
 };
