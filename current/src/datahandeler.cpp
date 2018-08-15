@@ -215,6 +215,9 @@ void DataHandeler::file_handeler(std::string fin) {
     check->Set_elec_fid(theta, phi, sector);
 
     if (check->isStrictElecctron()) {
+      // Setup scattered electron 4 vector
+      TLorentzVector e_mu_prime = physics::fourVec(p[0], cx[0], cy[0], cz[0], MASS_E);
+
       int cc_sector = cc_sect[cc[0] - 1];
       int cc_segment = (cc_segm[0] % 1000) / 10;
       int cc_pmt = cc_segm[0] / 1000 - 1;
@@ -227,8 +230,6 @@ void DataHandeler::file_handeler(std::string fin) {
       hists->EC_cut_fill(etot[ec[0] - 1], p[0]);
       hists->Fill_Beam_Position((double)dc_vx[dc[0] - 1], (double)dc_vy[dc[0] - 1], (double)dc_vz[dc[0] - 1]);
 
-      // Setup scattered electron 4 vector
-      TLorentzVector e_mu_prime = physics::fourVec(p[0], cx[0], cy[0], cz[0], MASS_E);
       // Set the vertex time (time of electron hit)
       Delta_T *dt = new Delta_T(sc_t[sc[0] - 1], sc_r[sc[0] - 1]);
       dt->delta_t_hists(hists);
@@ -381,7 +382,7 @@ void DataHandeler::BinnedCSV() {
   int num_of_events;
   int total_events;
   int num_of_pips, num_of_pims;
-  int num_of_proton;
+  int num_of_proton, num_of_N;
   double e_E;
   double theta;
   double phi;
@@ -391,7 +392,7 @@ void DataHandeler::BinnedCSV() {
   for (auto f : input_files) {
     chain->Add(f.c_str());
   }
-  std::cout << "W,Q2,mm_N,elec_theta,elec_phi,elec_sector" << std::endl;
+  std::cout << "W,Q2,mm_N,elec_theta,elec_phi,elec_sector,num_of_N,num_of_pip" << std::endl;
 
   getBranches(chain);
   num_of_events = (int)chain->GetEntries();
@@ -433,7 +434,7 @@ void DataHandeler::BinnedCSV() {
       Q2 = physics::Q2_calc(*e_mu, e_mu_prime);
       TLorentzVector gamma_mu = (*e_mu - e_mu_prime);
 
-      num_of_proton = num_of_pips = num_of_pims = 0;
+      num_of_proton = num_of_pips = num_of_pims = num_of_N = 0;
       for (int part_num = 1; part_num < gpart; part_num++) {
         PID = -99;
         if (q[part_num] == POSITIVE) {
@@ -443,8 +444,11 @@ void DataHandeler::BinnedCSV() {
             PID = PIP;
         } else if (q[part_num] == NEGATIVE) {
           if (check->dt_Pip_cut(dt_proton.at(part_num), p[part_num])) PID = PIM;
+        } else if (q[part_num] == 0 && id[part_num] == NEUTRON) {
+          num_of_N++;
+          PID = NEUTRON;
         }
-
+        if (PID == -99) continue;
         TLorentzVector Particle = physics::fourVec(p[part_num], cx[part_num], cy[part_num], cz[part_num], PID);
 
         if (q[part_num] == POSITIVE) {
@@ -467,9 +471,9 @@ void DataHandeler::BinnedCSV() {
         }
       }
 
-      if (num_of_pips == 1 && num_of_proton == 0) {
+      if (num_of_pips > 0) {
         std::cout << W << "," << Q2 << "," << MM_neutron->Get_MM() << "," << elec_theta << "," << elec_phi << ","
-                  << elec_sector << std::endl;
+                  << elec_sector << "," << num_of_N << "," << num_of_pips << std::endl;
       }
     }
     delete check;
