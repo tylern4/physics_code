@@ -392,7 +392,8 @@ void DataHandeler::BinnedCSV() {
   for (auto f : input_files) {
     chain->Add(f.c_str());
   }
-  std::cout << "W,Q2,mm_N,elec_theta,elec_phi,elec_sector,num_of_N,num_of_pip" << std::endl;
+  csv_output.open(output_file);
+  csv_output << "W,Q2,mm_N,elec_theta,elec_phi,elec_sector,num_of_N,num_of_pip" << std::endl;
 
   getBranches(chain);
   num_of_events = (int)chain->GetEntries();
@@ -448,15 +449,12 @@ void DataHandeler::BinnedCSV() {
           num_of_N++;
           PID = NEUTRON;
         }
-        if (PID == -99) continue;
+
         TLorentzVector Particle = physics::fourVec(p[part_num], cx[part_num], cy[part_num], cz[part_num], PID);
 
         if (q[part_num] == POSITIVE) {
           if (check->dt_P_cut(dt_proton.at(part_num), p[part_num])) {
             num_of_proton++;
-            // MM_pi0->Set_4Vec(Particle);
-            // MM_pi0->missing_mass(gamma_mu);
-
           } else if (check->dt_Pip_cut(dt_pi.at(part_num), p[part_num])) {
             num_of_pips++;
             MM_neutron->Set_4Vec(Particle);
@@ -465,18 +463,17 @@ void DataHandeler::BinnedCSV() {
         } else if (q[part_num] == NEGATIVE) {
           if (check->dt_Pip_cut(dt_pi.at(part_num), p[part_num])) {
             num_of_pims++;
-            // MM_from2pi->missing_mass(gamma_mu);
-            // MM_from2pi->Set_4Vec(Particle);
           }
         }
       }
 
       if (num_of_pips > 0) {
-        std::cout << W << "," << Q2 << "," << MM_neutron->Get_MM() << "," << elec_theta << "," << elec_phi << ","
-                  << elec_sector << "," << num_of_N << "," << num_of_pips << std::endl;
+        csv_output << W << "," << Q2 << "," << MM_neutron->Get_MM() << "," << elec_theta << "," << elec_phi << ","
+                   << elec_sector << "," << num_of_N << "," << num_of_pips << std::endl;
       }
     }
     delete check;
   }
+  csv_output.close();
   chain->Reset();  // delete Tree object
 }

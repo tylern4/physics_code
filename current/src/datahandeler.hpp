@@ -30,6 +30,7 @@ class DataHandeler {
   Histogram *hists = NULL;
   TFile *RootOutputFile;
   std::string output_file;
+  std::ofstream csv_output;
   TLorentzVector *e_mu;
   std::vector<std::string> input_files;
   std::vector<std::vector<TLorentzVector>> All_events;
