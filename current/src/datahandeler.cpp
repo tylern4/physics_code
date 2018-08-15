@@ -454,8 +454,8 @@ void DataHandeler::BinnedCSV() {
         if (q[part_num] == POSITIVE) {
           if (check->dt_P_cut(dt_proton.at(part_num), p[part_num])) {
             num_of_proton++;
-            MM_pi0->Set_4Vec(Particle);
-            MM_pi0->missing_mass(gamma_mu);
+            // MM_pi0->Set_4Vec(Particle);
+            // MM_pi0->missing_mass(gamma_mu);
 
           } else if (check->dt_Pip_cut(dt_pi.at(part_num), p[part_num])) {
             num_of_pips++;
@@ -465,8 +465,8 @@ void DataHandeler::BinnedCSV() {
         } else if (q[part_num] == NEGATIVE) {
           if (check->dt_Pip_cut(dt_pi.at(part_num), p[part_num])) {
             num_of_pims++;
-            MM_from2pi->missing_mass(gamma_mu);
-            MM_from2pi->Set_4Vec(Particle);
+            // MM_from2pi->missing_mass(gamma_mu);
+            // MM_from2pi->Set_4Vec(Particle);
           }
         }
       }
