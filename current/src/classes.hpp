@@ -7,7 +7,6 @@
 #ifndef CLASSES_H
 #define CLASSES_H
 #include "delta_t.hpp"
-#include "event.hpp"
 #include "fits.hpp"
 #include "histogram.hpp"
 #include "makeHeader.hpp"
