@@ -227,7 +227,7 @@ void DataHandeler::file_handeler(std::string fin) {
       theta_cc = theta_cc / D2R;
       hists->CC_fill(cc_sector, cc_segment, cc_pmt, cc_nphe, theta_cc);
 
-      hists->EC_cut_fill(etot[ec[0] - 1], p[0]);
+      // hists->EC_cut_fill(etot[ec[0] - 1], p[0]);
       hists->Fill_Beam_Position((double)dc_vx[dc[0] - 1], (double)dc_vy[dc[0] - 1], (double)dc_vz[dc[0] - 1]);
 
       // Set the vertex time (time of electron hit)
@@ -307,6 +307,7 @@ void DataHandeler::file_handeler(std::string fin) {
       if (num_of_pips == 1 && mm_cut && num_of_proton == 0 && gpart < 3) {
         hists->Fill_channel_WQ2(W, Q2, e_mu_prime, MM_neutron->Get_MM(), MM_neutron->Get_MM2(), sector);
         hists->Fill_Missing_Mass_strict(MM_neutron);
+        hists->EC_cut_fill(etot[ec[0] - 1], p[0]);
       }
       if (num_of_pips == 2) hists->Fill_Missing_Mass_twoPi(MM_from2pi);
       if (num_of_proton == 1) hists->Fill_Missing_Mass_pi0(MM_pi0);

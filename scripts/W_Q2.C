@@ -63,6 +63,23 @@ int W_Q2() {
   q2_sub->SetLineColor(kRed);
   q2_sub->Draw("same");
 
+  TCanvas *c1 = new TCanvas("c1", "c1", 1600, 900);
+
+  c1->Divide(0, 3);
+
+  TH2D *fid_noFid = (TH2D *)f_noFid->Get("Fid_cuts/electron_fid");
+  TH2D *fid_wFid = (TH2D *)f_wFid->Get("Fid_cuts/electron_fid");
+  TH2D *fid_sub = (TH2D *)fid_noFid->Clone(); 
+  fid_sub->Add(fid_wFid, -1);
+
+  c1->cd(1);
+  fid_noFid->Draw("same");
+  c1->cd(2);
+  fid_wFid->Draw();
+  c1->cd(3);
+  fid_sub->Draw();
+
+
   return 0;
 }
 
