@@ -98,7 +98,7 @@ void Histogram::Fill_channel_WQ2(double W, double Q2, TLorentzVector e_prime, do
   x_pip_N[2] = sec;
   x_pip_N[3] = 0.0;  // mm;
   x_pip_N[4] = 0.0;  // mm2;
-  pip_N->Fill(x_pip_N);
+  // pip_N->Fill(x_pip_N);
 
   E_prime_hist->Fill(e_prime.E());
   Q2_vs_xb->Fill(physics::xb_calc(Q2, e_prime.E()), Q2);
