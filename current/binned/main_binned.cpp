@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
 
   std::string outfilename;
   if (argc == 2) {
-    outfilename = "out.root";
+    outfilename = "out.csv";
   } else if (argc == 3) {
     outfilename = argv[2];
   }

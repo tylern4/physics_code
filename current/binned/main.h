@@ -33,6 +33,4 @@
 #define MAX(a, b) ((a > b) ? a : b)
 #define Square(a) (a * a)
 
-// double Square(double a) { return a * a; }
-
 #endif
