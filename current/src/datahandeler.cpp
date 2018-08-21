@@ -468,7 +468,7 @@ void DataHandeler::BinnedCSV() {
         }
       }
 
-      if (num_of_pips > 0) {
+      if (W > 0 && Q2 > 0) {
         csv_output << W << "," << Q2 << "," << MM_neutron->Get_MM() << "," << elec_theta << "," << elec_phi << ","
                    << elec_sector << "," << num_of_N << "," << num_of_pips << std::endl;
       }
