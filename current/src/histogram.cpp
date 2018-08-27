@@ -347,7 +347,7 @@ void Histogram::Write_Missing_Mass() {
   Missing_Mass_square_2pi->SetXTitle("Mass^{2} (GeV^{2})");
   Missing_Mass_square_2pi->Write();
 
-  Missing_Mass_nutron_no2pi->Add(Missing_Mass_strict, 1);
+  Missing_Mass_nutron_no2pi->Add(Missing_Mass, 1);
   Missing_Mass_nutron_no2pi->Add(Missing_Mass_2pi, -1);
   Missing_Mass_nutron_no2pi->SetXTitle("Mass (GeV)");
   Missing_Mass_nutron_no2pi->Write();
