@@ -74,7 +74,7 @@ bool Cuts::isStrictElecctron() {
   _elec &= isElecctron();
   //_elec &= (electron_p > MIN_P_CUT);
 
-  _elec &= (num_phe > 10);
+  _elec &= (num_phe > 30);
   //_elec &= sf_cut(samp_frac, electron_p);
   _elec &= elec_fid_cut();
 
