@@ -400,6 +400,7 @@ void DataHandeler::BinnedCSV() {
   num_of_events = (int)chain->GetEntries();
   int current_event = 0;
   for (current_event = 0; current_event < num_of_events; current_event++) {
+    loadbar(current_event, num_of_events - 1);
     chain->GetEntry(current_event);
     Cuts *check = new Cuts();
 
@@ -470,10 +471,13 @@ void DataHandeler::BinnedCSV() {
             num_of_pims++;
           }
         }
-        particle.Boost(0.0, 0.0, -reaction.Beta());
+        particle.Boost(reaction.BoostVector());
+        // std::cout << reaction.BoostVector()[0] << '\t' << reaction.BoostVector()[1] << '\t' <<
+        // reaction.BoostVector()[2]
+        //          << '\n';
       }
 
-      if (W > 0 && Q2 > 0 && MM_neutron->Get_MM() > 0 && particle.Theta() > 0) {
+      if (W > 0 && Q2 > 0 && MM_neutron->Get_MM() > 0 && particle.Theta() > 0 && num_of_pips == 1) {
         csv_output << W << "," << Q2 << "," << MM_neutron->Get_MM() << "," << particle.Theta() << "," << particle.Phi()
                    << "," << elec_sector << "," << num_of_N << "," << num_of_pips << std::endl;
       }
