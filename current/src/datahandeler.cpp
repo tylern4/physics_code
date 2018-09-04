@@ -471,7 +471,7 @@ void DataHandeler::BinnedCSV() {
             num_of_pims++;
           }
         }
-        particle.Boost(reaction.BoostVector());
+        particle.Boost(0.0, 0.0, -reaction.Beta());
         // std::cout << reaction.BoostVector()[0] << '\t' << reaction.BoostVector()[1] << '\t' <<
         // reaction.BoostVector()[2]
         //          << '\n';
