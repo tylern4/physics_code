@@ -1,4 +1,4 @@
-SUBDIRS = cpp csv_maker golden_run skim
+SUBDIRS = cpp skim binned
 #python skim
 
 all: lib $(SUBDIRS)
