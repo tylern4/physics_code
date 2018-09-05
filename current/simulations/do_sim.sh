@@ -10,7 +10,6 @@ export CLAS_CALDB_HOST=$CLASDB_PORT_3306_TCP_ADDR
 
 aao_rad < aao_rad.inp >/dev/null 2>&1
 
-#gsim_bat -nomcdata -ffread gsim.inp -mcin aao_rad.evt -kine 1 -bosout gsim.bos >/dev/null 2>&1
 gsim_bat -nomcdata -ffread gsim.inp -mcin aao_rad.evt -bosout gsim.bos >/dev/null 2>&1
 
 gpp -ouncooked.bos -a2.35 -b2.35 -c2.35 -f0.97 -P0x1b -R36557 gsim.bos >/dev/null 2>&1

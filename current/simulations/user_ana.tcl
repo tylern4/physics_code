@@ -11,8 +11,8 @@ setc log_file_name logfile;
 
 #
 #
-set torus_current      2250;
-set mini_torus_current 6000;
+set torus_current      3375;
+set mini_torus_current 5996;
 setc outbanknames(1) "HEADHEVTEVNTECPBSCPBDCPBCCPBLCPBPARTMCEVTRGSTBIDMCTKMCVX";
 setc prlink_file_name "prlink_NEW_60_75.bos";
 setc bfield_file_name "bgrid_T67to33.fpk";
