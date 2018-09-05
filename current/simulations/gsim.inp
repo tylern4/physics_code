@@ -20,7 +20,7 @@ c ------------------ target ------------------
 CHAMBER 2
 TARGET  'e1d'
 TGMATE  'PROT'
-TGPOS   0.  0.  0.
+TGPOS   -0.2  0.05  0.
 ZTAR 1
 ATAR 1
 RHOT 0.169
