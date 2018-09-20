@@ -135,7 +135,7 @@ void DataHandeler::loadbar(long x, long n) {
   int w = 50;
   if ((x != n) && (x % (n / 100 + 1) != 0)) return;
 
-  double ratio = x / n;
+  double ratio = x / (double)n;
   int c = ratio * w;
 
   std::cout << BLUE << " [";
@@ -148,12 +148,12 @@ void DataHandeler::loadbar(long x, long n) {
 void DataHandeler::run() {
   int size = input_files.size();
   int i = 0;
-  // std::thread *fh_thread[size];
+  std::thread *fh_thread[size];
   Setup_fh();
   for (i = 0; i < size; i++) {
     loadbar(i, size - 1);
-    file_handeler(input_files.at(i));
-    /*
+    // file_handeler(input_files.at(i));
+
     try {
       fh_thread[i] = new std::thread(std::mem_fn(&DataHandeler::file_handeler), this, input_files.at(i));
       fh_thread[i]->join();
@@ -161,11 +161,11 @@ void DataHandeler::run() {
       std::cerr << RED << "Error:\t" << e.what() << std::endl;
       std::cerr << CYAN << "Bad File: \t" << input_files.at(i) << DEF << std::endl;
     }
-    */
   }
 }
 
 void DataHandeler::file_handeler(std::string fin) {
+  // Histogram *hists = new Histogram();
   // Load chain from branch h10
   bool cuts, electron_cuts;
   int num_of_events;
