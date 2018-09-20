@@ -43,8 +43,6 @@ class DataHandeler {
   DataHandeler(std::vector<std::string> fin, std::string output);
   ~DataHandeler();
   void file_handeler(std::string fin);
-  void make_events();
-  void BinnedCSV();
   void Setup_fh();
   void loadbar(long x, long n);
   void run();

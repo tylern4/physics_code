@@ -10,7 +10,6 @@
 #include "constants.hpp"
 #include "cuts.hpp"
 #include "histogram.hpp"
-#include "skim.hpp"
 
 class Delta_T {
  private:
@@ -38,8 +37,8 @@ class Delta_T {
   double Get_vertex();
 
   double delta_t(double electron_vertex_time, double mass, double momentum, double sc_t, double sc_r);
-  void delta_t_hists(Histogram *hists);
-  double *delta_t_array(double *dt_array, double mass);
-  std::vector<double> delta_t_array(double mass, int num_parts);
+  void delta_t_hists(Histogram *hists, Branches *data);
+  double *delta_t_array(double *dt_array, double mass, Branches *data);
+  std::vector<double> delta_t_array(double mass, Branches *data);
 };
 #endif

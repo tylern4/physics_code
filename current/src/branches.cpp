@@ -6,12 +6,12 @@
 
 #include "branches.hpp"
 
-Branches::Branches(TChain *tree) {
+Branches::Branches(TChain* tree) {
   myTree = tree;
   init();
 }
 
-Branches::Branches(const Branches &b) {
+Branches::Branches(const Branches& b) {
   myTree = b.myTree;
   init();
 }
@@ -141,24 +141,458 @@ int Branches::cc_part() { return _cc_part; }
 int Branches::lac_part() { return _lac_part; }
 int Branches::st_part() { return _st_part; }
 
-int Branches::id(int i) { return _id[i]; }
-int Branches::stat(int i) { return _stat[i]; }
-int Branches::dc(int i) { return _dc[i]; }
-int Branches::cc(int i) { return _cc[i]; }
-int Branches::sc(int i) { return _sc[i]; }
-int Branches::ec(int i) { return _ec[i]; }
-int Branches::lec(int i) { return _lec[i]; }
-int Branches::ccst(int i) { return _ccst[i]; }
-float Branches::p(int i) { return _p[i]; }
-float Branches::m(int i) { return _m[i]; }
-int Branches::q(int i) { return _q[i]; }
-float Branches::b(int i) { return _b[i]; }
-float Branches::cx(int i) { return _cx[i]; }
-float Branches::cy(int i) { return _cy[i]; }
-float Branches::cz(int i) { return _cz[i]; }
-float Branches::vx(int i) { return _vx[i]; }
-float Branches::vy(int i) { return _vy[i]; }
-float Branches::vz(int i) { return _vz[i]; }
+int Branches::id(int i) {
+  try {
+    return _id[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  // [gpart]
+int Branches::stat(int i) {
+  try {
+    return _stat[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  // [gpart]
+int Branches::dc(int i) {
+  try {
+    return _dc[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  // [gpart]
+int Branches::cc(int i) {
+  try {
+    return _cc[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  // [gpart]
+int Branches::sc(int i) {
+  try {
+    return _sc[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  // [gpart]
+int Branches::ec(int i) {
+  try {
+    return _ec[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  // [gpart]
+int Branches::lec(int i) {
+  try {
+    return _lec[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  // [gpart]
+int Branches::ccst(int i) {
+  try {
+    return _ccst[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  // [gpart]
+float Branches::p(int i) {
+  try {
+    return _p[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  // [gpart]
+float Branches::m(int i) {
+  try {
+    return _m[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  // [gpart]
+int Branches::q(int i) {
+  try {
+    return _q[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  // [gpart]
+float Branches::b(int i) {
+  try {
+    return _b[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  // [gpart]
+float Branches::cx(int i) {
+  try {
+    return _cx[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  // [gpart]
+float Branches::cy(int i) {
+  try {
+    return _cy[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  // [gpart]
+float Branches::cz(int i) {
+  try {
+    return _cz[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  // [gpart]
+float Branches::vx(int i) {
+  try {
+    return _vx[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  // [gpart]
+float Branches::vy(int i) {
+  try {
+    return _vy[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  // [gpart]
+float Branches::vz(int i) {
+  try {
+    return _vz[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  // [gpart]
+
+int Branches::dc_sect(int i) {
+  try {
+    return _dc_sect[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[dc_part]
+int Branches::dc_trk(int i) {
+  try {
+    return _dc_trk[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[dc_part]
+int Branches::dc_stat(int i) {
+  try {
+    return _dc_stat[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[dc_part]
+float Branches::dc_vx(int i) {
+  try {
+    return _dc_vx[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[dc_part]
+float Branches::dc_vy(int i) {
+  try {
+    return _dc_vy[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[dc_part]
+float Branches::dc_vz(int i) {
+  try {
+    return _dc_vz[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[dc_part]
+float Branches::dc_vr(int i) {
+  try {
+    return _dc_vr[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[dc_part]
+float Branches::dc_xsc(int i) {
+  try {
+    return _dc_xsc[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[dc_part]
+float Branches::dc_ysc(int i) {
+  try {
+    return _dc_ysc[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[dc_part]
+float Branches::dc_zsc(int i) {
+  try {
+    return _dc_zsc[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[dc_part]
+float Branches::dc_cxsc(int i) {
+  try {
+    return _dc_cxsc[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[dc_part]
+float Branches::dc_cysc(int i) {
+  try {
+    return _dc_cysc[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[dc_part]
+float Branches::dc_czsc(int i) {
+  try {
+    return _dc_czsc[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[dc_part]
+float Branches::dc_c2(int i) {
+  try {
+    return _dc_c2[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[dc_part]
+
+int Branches::ec_stat(int i) {
+  try {
+    return _ec_stat[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[ec_part]
+int Branches::ec_sect(int i) {
+  try {
+    return _ec_sect[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[ec_part]
+int Branches::ec_whol(int i) {
+  try {
+    return _ec_whol[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[ec_part]
+int Branches::ec_inst(int i) {
+  try {
+    return _ec_inst[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[ec_part]
+int Branches::ec_oust(int i) {
+  try {
+    return _ec_oust[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[ec_part]
+float Branches::etot(int i) {
+  try {
+    return _etot[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[ec_part]
+float Branches::ec_ei(int i) {
+  try {
+    return _ec_ei[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[ec_part]
+float Branches::ec_eo(int i) {
+  try {
+    return _ec_eo[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[ec_part]
+float Branches::ec_t(int i) {
+  try {
+    return _ec_t[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[ec_part]
+float Branches::ec_r(int i) {
+  try {
+    return _ec_r[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[ec_part]
+float Branches::ech_x(int i) {
+  try {
+    return _ech_x[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[ec_part]
+float Branches::ech_y(int i) {
+  try {
+    return _ech_y[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[ec_part]
+float Branches::ech_z(int i) {
+  try {
+    return _ech_z[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[ec_part]
+float Branches::ec_m2(int i) {
+  try {
+    return _ec_m2[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[ec_part]
+float Branches::ec_m3(int i) {
+  try {
+    return _ec_m3[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[ec_part]
+float Branches::ec_m4(int i) {
+  try {
+    return _ec_m4[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[ec_part]
+float Branches::ec_c2(int i) {
+  try {
+    return _ec_c2[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[ec_part]
+
+int Branches::sc_sect(int i) {
+  try {
+    return _sc_sect[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[sc_part]
+int Branches::sc_hit(int i) {
+  try {
+    return _sc_hit[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[sc_part]
+int Branches::sc_pd(int i) {
+  try {
+    return _sc_pd[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[sc_part]
+int Branches::sc_stat(int i) {
+  try {
+    return _sc_stat[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[sc_part]
+float Branches::edep(int i) {
+  try {
+    return _edep[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[sc_part]
+float Branches::sc_t(int i) {
+  try {
+    return _sc_t[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[sc_part]
+float Branches::sc_r(int i) {
+  try {
+    return _sc_r[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[sc_part]
+float Branches::sc_c2(int i) {
+  try {
+    return _sc_c2[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[sc_part]
+
+int Branches::cc_sect(int i) {
+  try {
+    return _cc_sect[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[cc_part]
+int Branches::cc_hit(int i) {
+  try {
+    return _cc_hit[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[cc_part]
+int Branches::cc_segm(int i) {
+  try {
+    return _cc_segm[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[cc_part]
+int Branches::nphe(int i) {
+  try {
+    return _nphe[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[cc_part]
+float Branches::cc_t(int i) {
+  try {
+    return _cc_t[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[cc_part]
+float Branches::cc_r(int i) {
+  try {
+    return _cc_r[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[cc_part]
+float Branches::cc_c2(int i) {
+  try {
+    return _cc_c2[i];
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+  }
+}  //[cc_part]
 
 std::vector<int> Branches::id() {
   // [gpart]
@@ -268,56 +702,6 @@ std::vector<float> Branches::vz() {
   for (int i = 0; i < _gpart; i++) v.emplace_back(_vz[i]);
   return v;
 }
-
-int Branches::dc_sect(int i) { return _dc_sect[i]; }    //[dc_part]
-int Branches::dc_trk(int i) { return _dc_trk[i]; }      //[dc_part]
-int Branches::dc_stat(int i) { return _dc_stat[i]; }    //[dc_part]
-float Branches::dc_vx(int i) { return _dc_vx[i]; }      //[dc_part]
-float Branches::dc_vy(int i) { return _dc_vy[i]; }      //[dc_part]
-float Branches::dc_vz(int i) { return _dc_vz[i]; }      //[dc_part]
-float Branches::dc_vr(int i) { return _dc_vr[i]; }      //[dc_part]
-float Branches::dc_xsc(int i) { return _dc_xsc[i]; }    //[dc_part]
-float Branches::dc_ysc(int i) { return _dc_ysc[i]; }    //[dc_part]
-float Branches::dc_zsc(int i) { return _dc_zsc[i]; }    //[dc_part]
-float Branches::dc_cxsc(int i) { return _dc_cxsc[i]; }  //[dc_part]
-float Branches::dc_cysc(int i) { return _dc_cysc[i]; }  //[dc_part]
-float Branches::dc_czsc(int i) { return _dc_czsc[i]; }  //[dc_part]
-float Branches::dc_c2(int i) { return _dc_c2[i]; }      //[dc_part]
-
-int Branches::ec_stat(int i) { return _ec_stat[i]; }  //[ec_part]
-int Branches::ec_sect(int i) { return _ec_sect[i]; }  //[ec_part]
-int Branches::ec_whol(int i) { return _ec_whol[i]; }  //[ec_part]
-int Branches::ec_inst(int i) { return _ec_inst[i]; }  //[ec_part]
-int Branches::ec_oust(int i) { return _ec_oust[i]; }  //[ec_part]
-float Branches::etot(int i) { return _etot[i]; }      //[ec_part]
-float Branches::ec_ei(int i) { return _ec_ei[i]; }    //[ec_part]
-float Branches::ec_eo(int i) { return _ec_eo[i]; }    //[ec_part]
-float Branches::ec_t(int i) { return _ec_t[i]; }      //[ec_part]
-float Branches::ec_r(int i) { return _ec_r[i]; }      //[ec_part]
-float Branches::ech_x(int i) { return _ech_x[i]; }    //[ec_part]
-float Branches::ech_y(int i) { return _ech_y[i]; }    //[ec_part]
-float Branches::ech_z(int i) { return _ech_z[i]; }    //[ec_part]
-float Branches::ec_m2(int i) { return _ec_m2[i]; }    //[ec_part]
-float Branches::ec_m3(int i) { return _ec_m3[i]; }    //[ec_part]
-float Branches::ec_m4(int i) { return _ec_m4[i]; }    //[ec_part]
-float Branches::ec_c2(int i) { return _ec_c2[i]; }    //[ec_part]
-
-int Branches::sc_sect(int i) { return _sc_sect[i]; }  //[sc_part]
-int Branches::sc_hit(int i) { return _sc_hit[i]; }    //[sc_part]
-int Branches::sc_pd(int i) { return _sc_pd[i]; }      //[sc_part]
-int Branches::sc_stat(int i) { return _sc_stat[i]; }  //[sc_part]
-float Branches::edep(int i) { return _edep[i]; }      //[sc_part]
-float Branches::sc_t(int i) { return _sc_t[i]; }      //[sc_part]
-float Branches::sc_r(int i) { return _sc_r[i]; }      //[sc_part]
-float Branches::sc_c2(int i) { return _sc_c2[i]; }    //[sc_part]
-
-int Branches::cc_sect(int i) { return _cc_sect[i]; }  //[cc_part]
-int Branches::cc_hit(int i) { return _cc_hit[i]; }    //[cc_part]
-int Branches::cc_segm(int i) { return _cc_segm[i]; }  //[cc_part]
-int Branches::nphe(int i) { return _nphe[i]; }        //[cc_part]
-float Branches::cc_t(int i) { return _cc_t[i]; }      //[cc_part]
-float Branches::cc_r(int i) { return _cc_r[i]; }      //[cc_part]
-float Branches::cc_c2(int i) { return _cc_c2[i]; }    //[cc_part]
 
 /*
 int Branches::lec_sect(i) { return _; }    //[lac_part]

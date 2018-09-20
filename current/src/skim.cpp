@@ -4,7 +4,7 @@
 /*	University Of South Carolina      */
 /**************************************/
 #include "skim.hpp"
-
+/*
 Skim::Skim(std::vector<std::string> input, std::string output) {
   fin = input;
   fout = output;
@@ -124,7 +124,7 @@ void Skim::Strict() {
     Here's the problem:
       What if I have two pions?
       What if I have more than 3 particles?
-    */
+
     mm_cut &= (MM_neutron->Get_MM() < 1.5);
     mm_cut &= (MM_neutron->Get_MM() > 0.5);
 
@@ -176,3 +176,4 @@ double Skim::dt_Pip_top_fit(double P) {
   return func::dt_fit(x, par);
 }
 bool Skim::dt_Pip_cut(double dt, double P) { return ((dt > dt_Pip_bot_fit(P)) && (dt < dt_Pip_top_fit(P))); }
+*/

@@ -148,10 +148,12 @@ void DataHandeler::loadbar(long x, long n) {
 void DataHandeler::run() {
   int size = input_files.size();
   int i = 0;
-  std::thread *fh_thread[size];
+  // std::thread *fh_thread[size];
   Setup_fh();
   for (i = 0; i < size; i++) {
-    loadbar(i + 1, size);
+    loadbar(i, size - 1);
+    file_handeler(input_files.at(i));
+    /*
     try {
       fh_thread[i] = new std::thread(std::mem_fn(&DataHandeler::file_handeler), this, input_files.at(i));
       fh_thread[i]->join();
@@ -159,6 +161,7 @@ void DataHandeler::run() {
       std::cerr << RED << "Error:\t" << e.what() << std::endl;
       std::cerr << CYAN << "Bad File: \t" << input_files.at(i) << DEF << std::endl;
     }
+    */
   }
 }
 
@@ -178,9 +181,7 @@ void DataHandeler::file_handeler(std::string fin) {
   TChain *chain = new TChain("h10");
   chain->Add(fin.c_str());
   Branches *data = new Branches(chain);
-  // if (!first_run) getMorebranchs(chain);
   num_of_events = (int)chain->GetEntries();
-
   int current_event = 0;
   for (current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
@@ -228,9 +229,9 @@ void DataHandeler::file_handeler(std::string fin) {
 
       // Set the vertex time (time of electron hit)
       Delta_T *dt = new Delta_T(data->sc_t(data->sc(0) - 1), data->sc_r(data->sc(0) - 1));
-      dt->delta_t_hists(hists);
-      std::vector<double> dt_proton = dt->delta_t_array(MASS_P, data->gpart());
-      std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, data->gpart());
+      dt->delta_t_hists(hists, data);
+      std::vector<double> dt_proton = dt->delta_t_array(MASS_P, data);
+      std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, data);
       delete dt;
       hists->Fill_electron_fid(theta, phi, sector);
       W = physics::W_calc(*e_mu, e_mu_prime);
@@ -242,54 +243,55 @@ void DataHandeler::file_handeler(std::string fin) {
       TLorentzVector gamma_mu = (*e_mu - e_mu_prime);
       hists->WvsQ2_Fill(W, Q2);
       num_of_proton = num_of_pips = num_of_pims = 0;
-      for (int part_num = 1; part_num < gpart; part_num++) {
+      for (int part_num = 1; part_num < data->gpart(); part_num++) {
         PID = -99;
-        if (q[part_num] == POSITIVE) {
-          if (check->dt_P_cut(dt_proton.at(part_num), p[part_num]))
+        if (data->q(part_num) == POSITIVE) {
+          if (check->dt_P_cut(dt_proton.at(part_num), data->p(part_num)))
             PID = PROTON;
-          else if (check->dt_Pip_cut(dt_proton.at(part_num), p[part_num]))
+          else if (check->dt_Pip_cut(dt_proton.at(part_num), data->p(part_num)))
             PID = PIP;
-        } else if (q[part_num] == NEGATIVE) {
-          if (check->dt_Pip_cut(dt_proton.at(part_num), p[part_num])) PID = PIM;
+        } else if (data->q(part_num) == NEGATIVE) {
+          if (check->dt_Pip_cut(dt_proton.at(part_num), data->p(part_num))) PID = PIM;
         }
 
-        TLorentzVector particle = physics::fourVec(p[part_num], cx[part_num], cy[part_num], cz[part_num], PID);
-        hists->Fill_Target_Vertex(vx[part_num], vy[part_num], vz[part_num]);
+        TLorentzVector particle =
+            physics::fourVec(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num), PID);
+        hists->Fill_Target_Vertex(data->vx(part_num), data->vy(part_num), data->vz(part_num));
 
-        theta = physics::theta_calc(cz[part_num]);
-        phi = physics::phi_calc(cx[part_num], cy[part_num]);
+        theta = physics::theta_calc(data->cz(part_num));
+        phi = physics::phi_calc(data->cx(part_num), data->cy(part_num));
 
         sector = physics::get_sector(phi);
         hists->Fill_hadron_fid(theta, phi, sector, PID);
-        hists->MomVsBeta_Fill(particle.E(), p[part_num], b[part_num]);
-        if (q[part_num] == POSITIVE) {
-          hists->MomVsBeta_Fill_pos(p[part_num], b[part_num]);
-          if (check->dt_P_cut(dt_proton.at(part_num), p[part_num])) {
+        hists->MomVsBeta_Fill(particle.E(), data->p(part_num), data->b(part_num));
+        if (data->q(part_num) == POSITIVE) {
+          hists->MomVsBeta_Fill_pos(data->p(part_num), data->b(part_num));
+          if (check->dt_P_cut(dt_proton.at(part_num), data->p(part_num))) {
             num_of_proton++;
             hists->Fill_proton_WQ2(W, Q2);
-            hists->Fill_proton_ID_P(p[part_num], b[part_num]);
+            hists->Fill_proton_ID_P(data->p(part_num), data->b(part_num));
             MM_pi0->Set_4Vec(particle);
             MM_pi0->missing_mass(gamma_mu);
 
-          } else if (check->dt_Pip_cut(dt_pi.at(part_num), p[part_num])) {
+          } else if (check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num))) {
             num_of_pips++;
             hists->Fill_pion_WQ2(W, Q2);
-            hists->Fill_Pi_ID_P(p[part_num], b[part_num]);
+            hists->Fill_Pi_ID_P(data->p(part_num), data->b(part_num));
             MM_neutron->Set_4Vec(particle);
             MM_neutron->missing_mass(gamma_mu);
           }
 
-          if (check->dt_Pip_cut(dt_pi.at(part_num), p[part_num]) &&
-              check->dt_P_cut(dt_proton.at(part_num), p[part_num])) {
-            hists->Fill_proton_Pi_ID_P(p[part_num], b[part_num]);
+          if (check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num)) &&
+              check->dt_P_cut(dt_proton.at(part_num), data->p(part_num))) {
+            hists->Fill_proton_Pi_ID_P(data->p(part_num), data->b(part_num));
           }
-        } else if (q[part_num] == NEGATIVE) {
-          if (check->dt_Pip_cut(dt_pi.at(part_num), p[part_num])) {
+        } else if (data->q(part_num) == NEGATIVE) {
+          if (check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num))) {
             num_of_pims++;
             MM_from2pi->missing_mass(gamma_mu);
             MM_from2pi->Set_4Vec(particle);
           }
-          hists->MomVsBeta_Fill_neg(p[part_num], b[part_num]);
+          hists->MomVsBeta_Fill_neg(data->p(part_num), data->b(part_num));
         }
       }
 
@@ -297,189 +299,18 @@ void DataHandeler::file_handeler(std::string fin) {
       mm_cut &= (MM_neutron->Get_MM() < 1.1);
       mm_cut &= (MM_neutron->Get_MM() > 0.8);
 
-      if (num_of_pips == 1 && gpart == 2) hists->Fill_single_pi_WQ2(W, Q2);
-      if (num_of_proton == 1 && gpart == 2) hists->Fill_single_proton_WQ2(W, Q2);
+      if (num_of_pips == 1 && data->gpart() == 2) hists->Fill_single_pi_WQ2(W, Q2);
+      if (num_of_proton == 1 && data->gpart() == 2) hists->Fill_single_proton_WQ2(W, Q2);
       if (num_of_pips == 1) hists->Fill_Missing_Mass(MM_neutron);
-      if (num_of_pips == 1 && mm_cut && num_of_proton == 0 && gpart < 3) {
+      if (num_of_pips == 1 && mm_cut && num_of_proton == 0 && data->gpart() < 3) {
         hists->Fill_channel_WQ2(W, Q2, e_mu_prime, MM_neutron->Get_MM(), MM_neutron->Get_MM2(), sector);
         hists->Fill_Missing_Mass_strict(MM_neutron);
-        hists->EC_cut_fill(etot[ec[0] - 1], p[0]);
+        hists->EC_cut_fill(data->etot(data->ec(0) - 1), data->p(0));
       }
       if (num_of_pips == 2) hists->Fill_Missing_Mass_twoPi(MM_from2pi);
       if (num_of_proton == 1) hists->Fill_Missing_Mass_pi0(MM_pi0);
     }
     delete check;
   }
-  chain->Reset();  // delete Tree object
-}
-
-void DataHandeler::make_events() {
-  int num_of_events;
-  TChain *chain = new TChain("h10");
-  for (auto fin : input_files) chain->Add(fin.c_str());
-
-  getBranches(chain);
-  num_of_events = (int)chain->GetEntries();
-
-  int current_event = 0;
-  for (current_event = 0; current_event < num_of_events; current_event++) {
-    chain->GetEntry(current_event);
-    Cuts *check = new Cuts();
-
-    // electron cuts
-    check->Set_charge((int)q[0]);
-    check->Set_ec_cut(ec[0] > 0);        // ``` ``` ``` ec
-    check->Set_electron_id((int)id[0]);  // First particle is electron
-    check->Set_gpart((int)gpart);        // Number of good particles is greater than 0
-    check->Set_cc_cut((int)cc[0] > 0);
-    check->Set_stat_cut((int)stat[0] > 0);  // First Particle hit stat
-    check->Set_sc_cut((int)sc[0] > 0);
-    check->Set_dc_cut((int)dc[0] > 0);
-    check->Set_dc_stat_cut((int)dc_stat[dc[0] - 1] > 0);
-    check->Set_p(p[0]);
-    check->Set_Sf(etot[ec[0] - 1] / p[0]);
-    check->Set_num_phe((int)nphe[cc[0] - 1]);
-    // Beam position cut
-    check->Set_BeamPosition(dc_vx[dc[0] - 1], dc_vy[dc[0] - 1], dc_vz[dc[0] - 1]);
-
-    if (check->isStrictElecctron()) {
-      Delta_T *dt = new Delta_T(sc_t[sc[0] - 1], sc_r[sc[0] - 1]);
-      dt->delta_t_hists(hists);
-      std::vector<double> dt_proton = dt->delta_t_array(MASS_P, gpart);
-      std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, gpart);
-      delete dt;
-
-      Particle *elec = new Particle(p[0], cx[0], cy[0], cz[0], ELECTRON);
-      Event *events = new Event(*elec);
-
-      for (int part_num = 1; part_num < gpart; part_num++) {
-        if (q[part_num] == POSITIVE) {
-          if (check->dt_P_cut(dt_proton.at(part_num), p[part_num])) {
-            Particle part(p[part_num], cx[part_num], cy[part_num], cz[part_num], PROTON);
-            events->Add_Part(part);
-          } else if (check->dt_Pip_cut(dt_pi.at(part_num), p[part_num])) {
-            Particle part(p[part_num], cx[part_num], cy[part_num], cz[part_num], PIP);
-            events->Add_Part(part);
-          }
-        } else if (q[part_num] == NEGATIVE && check->dt_Pip_cut(dt_pi.at(part_num), p[part_num])) {
-          Particle part(p[part_num], cx[part_num], cy[part_num], cz[part_num], PIM);
-          events->Add_Part(part);
-        }
-      }
-      events->PrintSigniture();
-    }
-    delete check;
-  }
-  chain->Reset();  // delete Tree object
-}
-
-void DataHandeler::BinnedCSV() {
-  // Load chain from branch h10
-  bool cuts, electron_cuts;
-  int num_of_events;
-  int total_events;
-  int num_of_pips, num_of_pims;
-  int num_of_proton, num_of_N;
-  double e_E;
-  double theta;
-  double phi;
-  int sector;
-
-  TChain *chain = new TChain("h10");
-  for (auto f : input_files) {
-    chain->Add(f.c_str());
-  }
-  csv_output.open(output_file);
-  csv_output << "W,Q2,mm_N,pi_theta,pi_phi,elec_sector,num_of_N,num_of_pip" << std::endl;
-
-  getBranches(chain);
-  num_of_events = (int)chain->GetEntries();
-  int current_event = 0;
-  for (current_event = 0; current_event < num_of_events; current_event++) {
-    loadbar(current_event, num_of_events - 1);
-    chain->GetEntry(current_event);
-    Cuts *check = new Cuts();
-
-    // electron cuts
-    check->Set_charge((int)q[0]);
-    check->Set_ec_cut(ec[0] > 0);        // ``` ``` ``` ec
-    check->Set_electron_id((int)id[0]);  // First particle is electron
-    check->Set_gpart((int)gpart);        // Number of good particles is greater than 0
-    check->Set_cc_cut((int)cc[0] > 0);
-    check->Set_stat_cut((int)stat[0] > 0);  // First Particle hit stat
-    check->Set_sc_cut((int)sc[0] > 0);
-    check->Set_dc_cut((int)dc[0] > 0);
-    check->Set_dc_stat_cut((int)dc_stat[dc[0] - 1] > 0);
-    check->Set_p(p[0]);
-    check->Set_Sf(etot[ec[0] - 1] / p[0]);
-    check->Set_num_phe((int)nphe[cc[0] - 1]);
-    // Beam position cut
-    check->Set_BeamPosition(dc_vx[dc[0] - 1], dc_vy[dc[0] - 1], dc_vz[dc[0] - 1]);
-    double elec_theta = physics::theta_calc(cz[0]);
-    double elec_phi = physics::phi_calc(cx[0], cy[0]);
-    int elec_sector = physics::get_sector(phi);
-    check->Set_elec_fid(elec_theta, elec_phi, elec_sector);
-
-    if (check->isStrictElecctron()) {
-      // Setup scattered electron 4 vector
-      TLorentzVector particle, reaction;
-      TLorentzVector e_mu_prime = physics::fourVec(p[0], cx[0], cy[0], cz[0], MASS_E);
-      // Set the vertex time (time of electron hit)
-      Delta_T *dt = new Delta_T(sc_t[sc[0] - 1], sc_r[sc[0] - 1]);
-      std::vector<double> dt_proton = dt->delta_t_array(MASS_P, gpart);
-      std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, gpart);
-      delete dt;
-
-      W = physics::W_calc(*e_mu, e_mu_prime);
-      Q2 = physics::Q2_calc(*e_mu, e_mu_prime);
-      TLorentzVector gamma_mu = (*e_mu - e_mu_prime);
-      reaction = TLorentzVector(0.0, 0.0, 0.0, MASS_P) + gamma_mu;
-
-      num_of_proton = num_of_pips = num_of_pims = num_of_N = 0;
-      for (int part_num = 1; part_num < gpart; part_num++) {
-        PID = -99;
-        if (q[part_num] == POSITIVE) {
-          if (check->dt_P_cut(dt_proton.at(part_num), p[part_num]))
-            PID = PROTON;
-          else if (check->dt_Pip_cut(dt_proton.at(part_num), p[part_num]))
-            PID = PIP;
-        } else if (q[part_num] == NEGATIVE) {
-          if (check->dt_Pip_cut(dt_proton.at(part_num), p[part_num])) PID = PIM;
-        } else if (q[part_num] == 0 && id[part_num] == NEUTRON) {
-          num_of_N++;
-          PID = NEUTRON;
-        }
-
-        particle = physics::fourVec(p[part_num], cx[part_num], cy[part_num], cz[part_num], PID);
-
-        if (q[part_num] == POSITIVE) {
-          if (check->dt_P_cut(dt_proton.at(part_num), p[part_num])) {
-            MM_pi0->Set_4Vec(particle);
-            MM_pi0->missing_mass(gamma_mu);
-            num_of_proton++;
-          } else if (check->dt_Pip_cut(dt_pi.at(part_num), p[part_num])) {
-            num_of_pips++;
-            MM_neutron->Set_4Vec(particle);
-            MM_neutron->missing_mass(gamma_mu);
-          }
-        } else if (q[part_num] == NEGATIVE) {
-          if (check->dt_Pip_cut(dt_pi.at(part_num), p[part_num])) {
-            num_of_pims++;
-          }
-        }
-        particle.Boost(0.0, 0.0, -reaction.Beta());
-        // std::cout << reaction.BoostVector()[0] << '\t' << reaction.BoostVector()[1] << '\t' <<
-        // reaction.BoostVector()[2]
-        //          << '\n';
-      }
-
-      if (W > 0 && Q2 > 0 && MM_neutron->Get_MM() > 0 && particle.Theta() > 0 && num_of_pips == 1) {
-        csv_output << W << "," << Q2 << "," << MM_neutron->Get_MM() << "," << particle.Theta() << "," << particle.Phi()
-                   << "," << elec_sector << "," << num_of_N << "," << num_of_pips << std::endl;
-      }
-    }
-    delete check;
-  }
-  csv_output.close();
   chain->Reset();  // delete Tree object
 }
