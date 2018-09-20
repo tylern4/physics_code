@@ -135,7 +135,7 @@ void DataHandeler::loadbar(long x, long n) {
   int w = 50;
   if ((x != n) && (x % (n / 100 + 1) != 0)) return;
 
-  double ratio = x / (double)n;
+  double ratio = x / n;
   int c = ratio * w;
 
   std::cout << BLUE << " [";
@@ -151,10 +151,7 @@ void DataHandeler::run() {
   std::thread *fh_thread[size];
   Setup_fh();
   for (i = 0; i < size; i++) {
-    loadbar(i, size - 1);
-#ifndef __THREAD__
-    file_handeler(input_files.at(i));
-#else
+    loadbar(i + 1, size);
     try {
       fh_thread[i] = new std::thread(std::mem_fn(&DataHandeler::file_handeler), this, input_files.at(i));
       fh_thread[i]->join();
@@ -162,7 +159,6 @@ void DataHandeler::run() {
       std::cerr << RED << "Error:\t" << e.what() << std::endl;
       std::cerr << CYAN << "Bad File: \t" << input_files.at(i) << DEF << std::endl;
     }
-#endif
   }
 }
 
@@ -173,16 +169,15 @@ void DataHandeler::file_handeler(std::string fin) {
   int total_events;
   int num_of_pips, num_of_pims;
   int num_of_proton;
+  double W, Q2;
   double e_E;
   double theta;
   double phi;
   int sector;
   // bool first_run = true;
-
   TChain *chain = new TChain("h10");
   chain->Add(fin.c_str());
-
-  getBranches(chain);
+  Branches *data = new Branches(chain);
   // if (!first_run) getMorebranchs(chain);
   num_of_events = (int)chain->GetEntries();
 
@@ -192,49 +187,50 @@ void DataHandeler::file_handeler(std::string fin) {
     Cuts *check = new Cuts();
 
     // electron cuts
-    check->Set_charge((int)q[0]);
-    check->Set_ec_cut(ec[0] > 0);        // ``` ``` ``` ec
-    check->Set_electron_id((int)id[0]);  // First particle is electron
-    check->Set_gpart((int)gpart);        // Number of good particles is greater than 0
-    check->Set_cc_cut((int)cc[0] > 0);
-    check->Set_stat_cut((int)stat[0] > 0);  // First Particle hit stat
-    check->Set_sc_cut((int)sc[0] > 0);
-    check->Set_dc_cut((int)dc[0] > 0);
-    check->Set_dc_stat_cut((int)dc_stat[dc[0] - 1] > 0);
-    check->Set_p((double)p[0]);
+    check->Set_charge(data->q(0));
+    check->Set_ec_cut(data->ec(0) > 0);   // ``` ``` ``` ec
+    check->Set_electron_id(data->id(0));  // First particle is electron
+    check->Set_gpart(data->gpart());      // Number of good particles is greater than 0
+    check->Set_cc_cut(data->cc(0) > 0);
+    check->Set_stat_cut(data->stat(0) > 0);  // First Particle hit stat
+    check->Set_sc_cut(data->sc(0) > 0);
+    check->Set_dc_cut(data->dc(0) > 0);
+    check->Set_dc_stat_cut(data->dc_stat(data->dc(0) - 1) > 0);
+    check->Set_p(data->p(0));
 
-    if (check->isElecctron()) hists->EC_fill(etot[ec[0] - 1], p[0]);
-    if (check->isElecctron()) hists->TM_Fill(p[0], physics::theta_calc(cz[0]));
-    check->Set_Sf((double)etot[ec[0] - 1] / (double)p[0]);
-    check->Set_num_phe((int)nphe[cc[0] - 1]);
+    if (check->isElecctron()) hists->EC_fill(data->etot(data->ec(0) - 1), data->p(0));
+    if (check->isElecctron()) hists->TM_Fill(data->p(0), physics::theta_calc(data->cz(0)));
+    check->Set_Sf(data->etot(data->ec(0) - 1) / data->p(0));
+    check->Set_num_phe(data->nphe(data->cc(0) - 1));
     // Beam position cut
-    check->Set_BeamPosition((double)dc_vx[dc[0] - 1], (double)dc_vy[dc[0] - 1], (double)dc_vz[dc[0] - 1]);
-    theta = physics::theta_calc(cz[0]);
-    phi = physics::phi_calc(cx[0], cy[0]);
+    check->Set_BeamPosition(data->dc_vx(data->dc(0) - 1), data->dc_vy(data->dc(0) - 1), data->dc_vz(data->dc(0) - 1));
+    theta = physics::theta_calc(data->cz(0));
+    phi = physics::phi_calc(data->cx(0), data->cy(0));
     sector = physics::get_sector(phi);
     check->Set_elec_fid(theta, phi, sector);
 
     if (check->isStrictElecctron()) {
       // Setup scattered electron 4 vector
-      TLorentzVector e_mu_prime = physics::fourVec(p[0], cx[0], cy[0], cz[0], MASS_E);
+      TLorentzVector e_mu_prime = physics::fourVec(data->p(0), data->cx(0), data->cy(0), data->cz(0), MASS_E);
 
-      int cc_sector = cc_sect[cc[0] - 1];
-      int cc_segment = (cc_segm[0] % 1000) / 10;
-      int cc_pmt = cc_segm[0] / 1000 - 1;
-      int cc_nphe = nphe[cc[0] - 1];
-      double theta_cc = TMath::ACos(TMath::Abs(p[0] * cz[0]) / TMath::Abs(p[0]));
+      int cc_sector = data->cc_sect(data->cc(0) - 1);
+      int cc_segment = (data->cc_segm(0) % 1000) / 10;
+      int cc_pmt = data->cc_segm(0) / 1000 - 1;
+      int cc_nphe = data->nphe(data->cc(0) - 1);
+      double theta_cc = TMath::ACos(TMath::Abs(data->p(0) * data->cz(0)) / TMath::Abs(data->p(0)));
 
       theta_cc = theta_cc / D2R;
       hists->CC_fill(cc_sector, cc_segment, cc_pmt, cc_nphe, theta_cc);
 
       // hists->EC_cut_fill(etot[ec[0] - 1], p[0]);
-      hists->Fill_Beam_Position((double)dc_vx[dc[0] - 1], (double)dc_vy[dc[0] - 1], (double)dc_vz[dc[0] - 1]);
+      hists->Fill_Beam_Position(data->dc_vx(data->dc(0) - 1), data->dc_vy(data->dc(0) - 1),
+                                data->dc_vz(data->dc(0) - 1));
 
       // Set the vertex time (time of electron hit)
-      Delta_T *dt = new Delta_T(sc_t[sc[0] - 1], sc_r[sc[0] - 1]);
+      Delta_T *dt = new Delta_T(data->sc_t(data->sc(0) - 1), data->sc_r(data->sc(0) - 1));
       dt->delta_t_hists(hists);
-      std::vector<double> dt_proton = dt->delta_t_array(MASS_P, gpart);
-      std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, gpart);
+      std::vector<double> dt_proton = dt->delta_t_array(MASS_P, data->gpart());
+      std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, data->gpart());
       delete dt;
       hists->Fill_electron_fid(theta, phi, sector);
       W = physics::W_calc(*e_mu, e_mu_prime);
@@ -258,7 +254,7 @@ void DataHandeler::file_handeler(std::string fin) {
         }
 
         TLorentzVector particle = physics::fourVec(p[part_num], cx[part_num], cy[part_num], cz[part_num], PID);
-        hists->Fill_Target_Vertex((double)vx[part_num], (double)vy[part_num], (double)vz[part_num]);
+        hists->Fill_Target_Vertex(vx[part_num], vy[part_num], vz[part_num]);
 
         theta = physics::theta_calc(cz[part_num]);
         phi = physics::phi_calc(cx[part_num], cy[part_num]);
@@ -340,11 +336,11 @@ void DataHandeler::make_events() {
     check->Set_sc_cut((int)sc[0] > 0);
     check->Set_dc_cut((int)dc[0] > 0);
     check->Set_dc_stat_cut((int)dc_stat[dc[0] - 1] > 0);
-    check->Set_p((double)p[0]);
-    check->Set_Sf((double)etot[ec[0] - 1] / (double)p[0]);
+    check->Set_p(p[0]);
+    check->Set_Sf(etot[ec[0] - 1] / p[0]);
     check->Set_num_phe((int)nphe[cc[0] - 1]);
     // Beam position cut
-    check->Set_BeamPosition((double)dc_vx[dc[0] - 1], (double)dc_vy[dc[0] - 1], (double)dc_vz[dc[0] - 1]);
+    check->Set_BeamPosition(dc_vx[dc[0] - 1], dc_vy[dc[0] - 1], dc_vz[dc[0] - 1]);
 
     if (check->isStrictElecctron()) {
       Delta_T *dt = new Delta_T(sc_t[sc[0] - 1], sc_r[sc[0] - 1]);
@@ -414,11 +410,11 @@ void DataHandeler::BinnedCSV() {
     check->Set_sc_cut((int)sc[0] > 0);
     check->Set_dc_cut((int)dc[0] > 0);
     check->Set_dc_stat_cut((int)dc_stat[dc[0] - 1] > 0);
-    check->Set_p((double)p[0]);
-    check->Set_Sf((double)etot[ec[0] - 1] / (double)p[0]);
+    check->Set_p(p[0]);
+    check->Set_Sf(etot[ec[0] - 1] / p[0]);
     check->Set_num_phe((int)nphe[cc[0] - 1]);
     // Beam position cut
-    check->Set_BeamPosition((double)dc_vx[dc[0] - 1], (double)dc_vy[dc[0] - 1], (double)dc_vz[dc[0] - 1]);
+    check->Set_BeamPosition(dc_vx[dc[0] - 1], dc_vy[dc[0] - 1], dc_vz[dc[0] - 1]);
     double elec_theta = physics::theta_calc(cz[0]);
     double elec_phi = physics::phi_calc(cx[0], cy[0]);
     int elec_sector = physics::get_sector(phi);
