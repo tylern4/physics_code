@@ -16,11 +16,11 @@ void DataHandeler::Run(std::string fin /*, Histogram *hists*/) {
   } else {
     BEAM_ENERGY = E1D_E0;
   }
-  e_mu = new TLorentzVector(0.0, 0.0, sqrt(BEAM_ENERGY * BEAM_ENERGY - MASS_E * MASS_E), BEAM_ENERGY);
+  TLorentzVector *e_mu = new TLorentzVector(0.0, 0.0, sqrt(BEAM_ENERGY * BEAM_ENERGY - MASS_E * MASS_E), BEAM_ENERGY);
 
-  MM_neutron = new MissingMass(MASS_P, 0.0);
-  MM_pi0 = new MissingMass(MASS_P, 0.0);
-  MM_from2pi = new MissingMass(MASS_P, 0.0);
+  MissingMass *MM_neutron = new MissingMass(MASS_P, 0.0);
+  MissingMass *MM_pi0 = new MissingMass(MASS_P, 0.0);
+  MissingMass *MM_from2pi = new MissingMass(MASS_P, 0.0);
   // End declrare variables
 
   // hists = new Histogram();

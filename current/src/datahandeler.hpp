@@ -31,12 +31,8 @@ class DataHandeler {
   TFile *RootOutputFile;
   std::string output_file;
   std::ofstream csv_output;
-  TLorentzVector *e_mu;
   std::vector<std::string> input_files;
   std::vector<std::vector<TLorentzVector>> All_events;
-  MissingMass *MM_neutron;
-  MissingMass *MM_pi0;
-  MissingMass *MM_from2pi;
   // TCanvas *c1;
 
  public:
