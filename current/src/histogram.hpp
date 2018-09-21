@@ -10,6 +10,7 @@
 #include <fstream>
 #include "TDirectory.h"
 #include "TF1.h"
+#include "TFile.h"
 #include "TGraph.h"
 #include "TH1.h"
 #include "TH2.h"
@@ -23,9 +24,11 @@
 class Histogram {
  private:
  public:
-  Histogram();
+  Histogram(std::string output_file);
   ~Histogram();
   Header *fit_functions;
+  TFile *RootOutputFile;
+  TCanvas *def;
   void makeHists_fid();
   void makeHists_deltat();
   void makeHists_CC();

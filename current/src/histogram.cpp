@@ -7,7 +7,9 @@
 
 // using namespace std;
 
-Histogram::Histogram() {
+Histogram::Histogram(std::string output_file) {
+  RootOutputFile = new TFile(output_file.c_str(), "RECREATE");
+  def = new TCanvas("def");
   makeHists_WvsQ2();
   makeHists_deltat();
   makeHists_EC();
@@ -19,51 +21,100 @@ Histogram::Histogram() {
 }
 
 Histogram::~Histogram() {
-  delete WvsQ2_hist;
-  delete W_hist;
-  delete Q2_hist;
-  delete E_prime_hist;
-  delete Q2_vs_xb;
-  delete WvsQ2_proton;
-  delete W_proton;
-  delete Q2_proton;
-  delete WvsQ2_pion;
-  delete W_pion;
-  delete Q2_pion;
-  delete WvsQ2_single_pi;
-  delete W_single_pi;
-  delete Q2_single_pi;
-  delete WvsQ2_single_proton;
-  delete W_single_proton;
-  delete Q2_single_proton;
-  delete MomVsBeta_hist;
-  delete MomVsBeta_hist_pos;
-  delete MomVsBeta_hist_neg;
-  delete Mom;
-  delete Energy_hist;
-  delete MomVsBeta_proton_ID;
-  delete MomVsBeta_Pi_ID;
-  delete MomVsBeta_proton_Pi_ID;
-  delete delta_t_mass_P;
-  delete delta_t_mass_P_PID;
-  delete delta_t_mass_PIP;
-  delete delta_t_mass_PIP_PID;
-  delete delta_t_mass_electron;
-  delete delta_t_mass_electron_PID;
-  delete delta_t_mass_kp;
-  delete delta_t_mass_kp_PID;
-  delete electron_fid_hist;
-  delete EC_sampling_fraction;
-  delete EC_sampling_fraction_cut;
-  delete Missing_Mass;
-  delete Missing_Mass_square;
-  delete Theta_CC;
+  std::cout << GREEN << "\nFitting" << DEF << std::endl;
+  // Start of cuts
+  Fits *MM_neutron_cut = new Fits();
+  MM_neutron_cut->Set_min(0.8);
+  MM_neutron_cut->Set_max(1.2);
+  MM_neutron_cut->FitBreitWigner(Missing_Mass_strict);
+  // MM_neutron_cut->FitGaus(Missing_Mass_strict);
+  // MM_neutron_cut->Fit2Gaus(Missing_Mass_strict);
+  // MM_neutron_cut->FitLandau(Missing_Mass_strict);
 
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < num_points; j++) delete delta_t_hist[i][j];
-    for (int j = 0; j < sector; j++)
-      for (int k = 0; k < sc_paddle_num; k++) delete delta_t_sec_pad_hist[i][j][k];
-  }
+  // Header *MM_header = new Header("../src/missing_mass_gaussians.hpp", "MM");
+  // MM_header->WriteGaussian("mm", 1, MM_neutron_cut->Get_mean(), MM_neutron_cut->Get_sigma());
+
+  Fits *MissingMassSquare_cut = new Fits();
+  MissingMassSquare_cut->Set_min(0.5);
+  MissingMassSquare_cut->Set_max(1.1);
+  MissingMassSquare_cut->FitBreitWigner(Missing_Mass_square_strict);
+  // MissingMassSquare_cut->FitGaus(Missing_Mass_square_strict);
+  // MissingMassSquare_cut->Fit2Gaus(Missing_Mass_square_strict);
+  // MissingMassSquare_cut->FitLandau(Missing_Mass_square_strict);
+  // MM_header->WriteGaussian("mm_square", 1, MissingMassSquare_cut->Get_mean(),
+  MissingMassSquare_cut->Get_sigma();
+  // delete MM_header;
+  delete MM_neutron_cut;
+
+  RootOutputFile->cd();
+  std::cerr << BOLDBLUE << "EC_Write()" << DEF << std::endl;
+  TDirectory *EC_folder = RootOutputFile->mkdir("EC_hists");
+  EC_folder->cd();
+  EC_Write();
+  std::cerr << BOLDBLUE << "EC_slices()" << DEF << std::endl;
+  TDirectory *EC_slices = RootOutputFile->mkdir("EC_slices");
+  EC_slices->cd();
+  EC_slices_Write();
+  std::cerr << BOLDBLUE << "Beam_Position()" << DEF << std::endl;
+  TDirectory *Beam_Folder = RootOutputFile->mkdir("Beam Position");
+  Beam_Folder->cd();
+  Beam_Position_Write();
+  Target_Vertex_Write();
+  std::cerr << BOLDBLUE << "WvsQ2()" << DEF << std::endl;
+  TDirectory *WvsQ2_folder = RootOutputFile->mkdir("W vs Q2");
+  WvsQ2_folder->cd();
+  WvsQ2_Write();
+  TDirectory *W_Q2_binned = RootOutputFile->mkdir("W_Q2_binned");
+  W_Q2_binned->cd();
+  WvsQ2_binned_Write();
+  std::cerr << BOLDBLUE << "MomVsBeta_Fill()" << DEF << std::endl;
+  TDirectory *MomVsBeta_folder = RootOutputFile->mkdir("Momentum vs beta");
+  MomVsBeta_folder->cd();
+  MomVsBeta_Write();
+  std::cerr << BOLDBLUE << "Write_Missing_Mass()" << DEF << std::endl;
+  // Missing Mass Write
+  TDirectory *MissMass = RootOutputFile->mkdir("Missing_Mass");
+  MissMass->cd();
+  Write_Missing_Mass();
+  std::cerr << BOLDBLUE << "delta_t_Write()" << DEF << std::endl;
+  // Delta T Write
+  TDirectory *DeltaT = RootOutputFile->mkdir("Delta_T");
+  DeltaT->cd();
+  delta_t_Write();
+  std::cerr << BOLDBLUE << "delta_t_slices_Write()" << DEF << std::endl;
+  TDirectory *DeltaT_slices = RootOutputFile->mkdir("Delta_T_slices");
+  DeltaT_slices->cd();
+  delta_t_slices_Write();
+  std::cerr << BOLDBLUE << "delta_t_sec_pad_Write()" << DEF << std::endl;
+  TDirectory *DeltaT_sec_pad = RootOutputFile->mkdir("Delta_T_sec_pad");
+  DeltaT_sec_pad->cd();
+  delta_t_sec_pad_Write();
+  std::cerr << BOLDBLUE << "delta_T_canvas()" << DEF << std::endl;
+  TDirectory *Delta_T_canvases = RootOutputFile->mkdir("Delta_T_canvases");
+  Delta_T_canvases->cd();
+  delta_T_canvas();
+  std::cerr << BOLDBLUE << "Theta_CC_Write()" << DEF << std::endl;
+  TDirectory *Theta_CC_hists = RootOutputFile->mkdir("Theta_CC_hists");
+  Theta_CC_hists->cd();
+  Theta_CC_Write();
+  std::cerr << BOLDBLUE << "CC_Write()" << DEF << std::endl;
+  TDirectory *CC_hists = RootOutputFile->mkdir("CC_hists");
+  CC_hists->cd();
+  CC_Write();
+  std::cerr << BOLDBLUE << "CC_canvas()" << DEF << std::endl;
+  TDirectory *CC_canvases = RootOutputFile->mkdir("CC_canvases");
+  CC_canvases->cd();
+  CC_canvas();
+  std::cerr << BOLDBLUE << "Fid_Write()" << DEF << std::endl;
+  TDirectory *Fid_cuts = RootOutputFile->mkdir("Fid_cuts");
+  Fid_cuts->cd();
+  Fid_Write();
+  std::cerr << BOLDBLUE << "fid_canvas()" << DEF << std::endl;
+  TDirectory *Fid_canvas = RootOutputFile->mkdir("Fid_canvas");
+  Fid_canvas->cd();
+  fid_canvas();
+  RootOutputFile->Close();
+  std::cerr << BOLDBLUE << "Done!!!" << DEF << std::endl;
 }
 
 // W and Q^2

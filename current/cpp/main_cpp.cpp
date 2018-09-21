@@ -39,21 +39,18 @@ int main(int argc, char **argv) {
   } else if (argc == 3) {
     outfilename = argv[2];
   }
-  DataHandeler *dh[files.size()];
-  Histogram *hist[files.size()];
-  int i = 0;
-  for (i = 0; i < files.size(); i++) {
-    // hist[i] = new Histogram();
-    dh[i] = new DataHandeler();
+
+  DataHandeler *dh = new DataHandeler();
+  Histogram *hist = new Histogram(outfilename);
+
+#pragma omp parallel for
+  for (int i = 0; i < files.size(); i++) {
+    loadbar(i, files.size() - 1);
+#pragma single nowait
+    dh->Run(files.at(i), hist);
   }
 
-#pragma omp parallel for private(i, dh[i])
-  for (i = 0; i < files.size(); i++) {
-    std::cout << i << "\t" << files.at(i) << '\n';
-    // hist[i] = new Histogram();
-    dh[i]->Run(files.at(i));
-  }
-
+  delete hist;
   Watch->Stop();
   cout << RED << Watch->RealTime() << "sec" << DEF << endl;
 

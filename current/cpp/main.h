@@ -33,6 +33,19 @@
 #define MAX(a, b) ((a > b) ? a : b)
 #define Square(a) (a * a)
 
+void loadbar(long x, long n) {
+  int w = 50;
+  if ((x != n) && (x % (n / 100 + 1) != 0)) return;
+
+  double ratio = x / (double)n;
+  int c = ratio * w;
+
+  std::cout << BLUE << " [";
+  for (int x = 0; x < c; x++) std::cout << GREEN << "=" << DEF;
+  std::cout << GREEN << ">" << DEF;
+  for (int x = c; x < w; x++) std::cout << " ";
+  std::cout << BLUE << (int)(ratio * 100) << "%]\r" << DEF << std::flush;
+}
 // double Square(double a) { return a * a; }
 
 #endif

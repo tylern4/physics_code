@@ -27,17 +27,13 @@
 class DataHandeler {
  private:
   int PID;
-  // Histogram *hists = NULL;
-  TFile *RootOutputFile;
-  std::string output_file;
   std::ofstream csv_output;
   std::vector<std::string> input_files;
   std::vector<std::vector<TLorentzVector>> All_events;
-  // TCanvas *c1;
 
  public:
   DataHandeler();
-  void Run(std::string fin);
+  void Run(std::string fin, Histogram *hists);
   ~DataHandeler();
   void loadbar(long x, long n);
 };
