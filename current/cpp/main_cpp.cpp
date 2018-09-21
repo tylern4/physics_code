@@ -43,10 +43,8 @@ int main(int argc, char **argv) {
   DataHandeler *dh = new DataHandeler();
   Histogram *hist = new Histogram(outfilename);
 
-#pragma omp parallel for
   for (int i = 0; i < files.size(); i++) {
     loadbar(i, files.size() - 1);
-#pragma single nowait
     dh->Run(files.at(i), hist);
   }
 
