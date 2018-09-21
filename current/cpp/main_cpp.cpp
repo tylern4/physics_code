@@ -41,13 +41,17 @@ int main(int argc, char **argv) {
   }
   DataHandeler *dh[files.size()];
   Histogram *hist[files.size()];
-
   int i = 0;
-#pragma omp parallel for private(i, hist, dh)
   for (i = 0; i < files.size(); i++) {
-    std::cout << i << "\t" << files.at(i) << std::endl;
     // hist[i] = new Histogram();
-    // dh[i] = new DataHandeler(files.at(i), hist[i]);
+    dh[i] = new DataHandeler();
+  }
+
+#pragma omp parallel for private(i, dh[i])
+  for (i = 0; i < files.size(); i++) {
+    std::cout << i << "\t" << files.at(i) << '\n';
+    // hist[i] = new Histogram();
+    dh[i]->Run(files.at(i));
   }
 
   Watch->Stop();

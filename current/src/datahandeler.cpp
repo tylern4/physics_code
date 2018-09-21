@@ -5,8 +5,10 @@
 
 #include "datahandeler.hpp"
 
-DataHandeler::DataHandeler(std::string fin /*, Histogram *hists*/) {
-  c1 = new TCanvas("c1", "c1", 100, 100);
+DataHandeler::DataHandeler() {}
+
+void DataHandeler::Run(std::string fin /*, Histogram *hists*/) {
+  // c1 = new TCanvas("c1", "c1", 100, 100);
 
   double BEAM_ENERGY;
   if (getenv("BEAM_E") != NULL) {

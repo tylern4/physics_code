@@ -1,10 +1,14 @@
 UNAME := $(shell uname)
 ifeq ($(UNAME), Linux)
     FOPENMP = -fopenmp
+		CXX = $(shell root-config --cxx)
+endif
+
+ifeq ($(UNAME), Darwin)
+		CXX = llvm-g++
 endif
 
 ROOTLIBS	= $(shell root-config --libs)
-CXX = $(shell root-config --cxx)
 CXXFLAGS = -O3 -march=native -fPIC -w -g $(FOPENMP) $(shell root-config --cflags)
 TARGET =	    e1d
 SRCDIR   = ../src

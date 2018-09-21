@@ -37,10 +37,11 @@ class DataHandeler {
   MissingMass *MM_neutron;
   MissingMass *MM_pi0;
   MissingMass *MM_from2pi;
-  TCanvas *c1;
+  // TCanvas *c1;
 
  public:
-  DataHandeler(std::string fin);
+  DataHandeler();
+  void Run(std::string fin);
   ~DataHandeler();
   void loadbar(long x, long n);
 };
