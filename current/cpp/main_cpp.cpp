@@ -39,14 +39,15 @@ int main(int argc, char **argv) {
   } else if (argc == 3) {
     outfilename = argv[2];
   }
+  DataHandeler *dh[files.size()];
+  Histogram *hist[files.size()];
 
-  // DataHandeler *dh = new DataHandeler(files, outfilename);
-  // dh->make_events();
-  // delete dh;
-
-  DataHandeler *dh = new DataHandeler(files, outfilename);
-  dh->run();
-  delete dh;
+  int i = 0;
+#pragma omp parallel for private(i)
+  for (i = 0; i < files.size(); i++) {
+    hist[i] = new Histogram();
+    dh[i] = new DataHandeler(files.at(i), hist[i]);
+  }
 
   Watch->Stop();
   cout << RED << Watch->RealTime() << "sec" << DEF << endl;

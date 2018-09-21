@@ -27,7 +27,7 @@
 class DataHandeler {
  private:
   int PID;
-  Histogram *hists = NULL;
+  // Histogram *hists = NULL;
   TFile *RootOutputFile;
   std::string output_file;
   std::ofstream csv_output;
@@ -40,12 +40,9 @@ class DataHandeler {
   TCanvas *c1;
 
  public:
-  DataHandeler(std::vector<std::string> fin, std::string output);
+  DataHandeler(std::string fin, Histogram *hists);
   ~DataHandeler();
-  void file_handeler(std::string fin);
-  void Setup_fh();
   void loadbar(long x, long n);
-  void run();
 };
 
 #endif

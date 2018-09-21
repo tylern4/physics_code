@@ -5,9 +5,7 @@
 
 #include "datahandeler.hpp"
 
-DataHandeler::DataHandeler(std::vector<std::string> fin, std::string output) {
-  input_files = fin;
-  output_file = output;
+DataHandeler::DataHandeler(std::string fin, Histogram *hists) {
   c1 = new TCanvas("c1", "c1", 100, 100);
 
   double BEAM_ENERGY;
@@ -22,150 +20,8 @@ DataHandeler::DataHandeler(std::vector<std::string> fin, std::string output) {
   MM_pi0 = new MissingMass(MASS_P, 0.0);
   MM_from2pi = new MissingMass(MASS_P, 0.0);
   // End declrare variables
-}
 
-void DataHandeler::Setup_fh() {  // Open outputfile
-  RootOutputFile = new TFile(output_file.c_str(), "RECREATE");
-  hists = new Histogram();
-}
-
-DataHandeler::~DataHandeler() {
-  if (hists != NULL) {
-    delete MM_neutron;
-    std::cout << GREEN << "\nFitting" << DEF << std::endl;
-    // Start of cuts
-    Fits *MM_neutron_cut = new Fits();
-    MM_neutron_cut->Set_min(0.8);
-    MM_neutron_cut->Set_max(1.2);
-    MM_neutron_cut->FitBreitWigner(hists->Missing_Mass_strict);
-    // MM_neutron_cut->FitGaus(hists->Missing_Mass_strict);
-    // MM_neutron_cut->Fit2Gaus(hists->Missing_Mass_strict);
-    // MM_neutron_cut->FitLandau(hists->Missing_Mass_strict);
-
-    // Header *MM_header = new Header("../src/missing_mass_gaussians.hpp", "MM");
-    // MM_header->WriteGaussian("mm", 1, MM_neutron_cut->Get_mean(), MM_neutron_cut->Get_sigma());
-
-    Fits *MissingMassSquare_cut = new Fits();
-    MissingMassSquare_cut->Set_min(0.5);
-    MissingMassSquare_cut->Set_max(1.1);
-    MissingMassSquare_cut->FitBreitWigner(hists->Missing_Mass_square_strict);
-    // MissingMassSquare_cut->FitGaus(hists->Missing_Mass_square_strict);
-    // MissingMassSquare_cut->Fit2Gaus(hists->Missing_Mass_square_strict);
-    // MissingMassSquare_cut->FitLandau(hists->Missing_Mass_square_strict);
-    // MM_header->WriteGaussian("mm_square", 1, MissingMassSquare_cut->Get_mean(), MissingMassSquare_cut->Get_sigma());
-    // delete MM_header;
-    delete MM_neutron_cut;
-
-    RootOutputFile->cd();
-    std::cerr << BOLDBLUE << "EC_Write()" << DEF << std::endl;
-    TDirectory *EC_folder = RootOutputFile->mkdir("EC_hists");
-    EC_folder->cd();
-    hists->EC_Write();
-    std::cerr << BOLDBLUE << "EC_slices()" << DEF << std::endl;
-    TDirectory *EC_slices = RootOutputFile->mkdir("EC_slices");
-    EC_slices->cd();
-    hists->EC_slices_Write();
-    std::cerr << BOLDBLUE << "Beam_Position()" << DEF << std::endl;
-    TDirectory *Beam_Folder = RootOutputFile->mkdir("Beam Position");
-    Beam_Folder->cd();
-    hists->Beam_Position_Write();
-    hists->Target_Vertex_Write();
-    std::cerr << BOLDBLUE << "WvsQ2()" << DEF << std::endl;
-    TDirectory *WvsQ2_folder = RootOutputFile->mkdir("W vs Q2");
-    WvsQ2_folder->cd();
-    hists->WvsQ2_Write();
-    TDirectory *W_Q2_binned = RootOutputFile->mkdir("W_Q2_binned");
-    W_Q2_binned->cd();
-    hists->WvsQ2_binned_Write();
-    std::cerr << BOLDBLUE << "MomVsBeta_Fill()" << DEF << std::endl;
-    TDirectory *MomVsBeta_folder = RootOutputFile->mkdir("Momentum vs beta");
-    MomVsBeta_folder->cd();
-    hists->MomVsBeta_Write();
-    std::cerr << BOLDBLUE << "Write_Missing_Mass()" << DEF << std::endl;
-    // Missing Mass Write
-    TDirectory *MissMass = RootOutputFile->mkdir("Missing_Mass");
-    MissMass->cd();
-    hists->Write_Missing_Mass();
-    std::cerr << BOLDBLUE << "delta_t_Write()" << DEF << std::endl;
-    // Delta T Write
-    TDirectory *DeltaT = RootOutputFile->mkdir("Delta_T");
-    DeltaT->cd();
-    hists->delta_t_Write();
-    std::cerr << BOLDBLUE << "delta_t_slices_Write()" << DEF << std::endl;
-    TDirectory *DeltaT_slices = RootOutputFile->mkdir("Delta_T_slices");
-    DeltaT_slices->cd();
-    hists->delta_t_slices_Write();
-    std::cerr << BOLDBLUE << "delta_t_sec_pad_Write()" << DEF << std::endl;
-    TDirectory *DeltaT_sec_pad = RootOutputFile->mkdir("Delta_T_sec_pad");
-    DeltaT_sec_pad->cd();
-    hists->delta_t_sec_pad_Write();
-    std::cerr << BOLDBLUE << "delta_T_canvas()" << DEF << std::endl;
-    TDirectory *Delta_T_canvases = RootOutputFile->mkdir("Delta_T_canvases");
-    Delta_T_canvases->cd();
-    hists->delta_T_canvas();
-    std::cerr << BOLDBLUE << "Theta_CC_Write()" << DEF << std::endl;
-    TDirectory *Theta_CC_hists = RootOutputFile->mkdir("Theta_CC_hists");
-    Theta_CC_hists->cd();
-    hists->Theta_CC_Write();
-    std::cerr << BOLDBLUE << "CC_Write()" << DEF << std::endl;
-    TDirectory *CC_hists = RootOutputFile->mkdir("CC_hists");
-    CC_hists->cd();
-    hists->CC_Write();
-    std::cerr << BOLDBLUE << "CC_canvas()" << DEF << std::endl;
-    TDirectory *CC_canvases = RootOutputFile->mkdir("CC_canvases");
-    CC_canvases->cd();
-    hists->CC_canvas();
-    std::cerr << BOLDBLUE << "Fid_Write()" << DEF << std::endl;
-    TDirectory *Fid_cuts = RootOutputFile->mkdir("Fid_cuts");
-    Fid_cuts->cd();
-    hists->Fid_Write();
-    std::cerr << BOLDBLUE << "fid_canvas()" << DEF << std::endl;
-    TDirectory *Fid_canvas = RootOutputFile->mkdir("Fid_canvas");
-    Fid_canvas->cd();
-    hists->fid_canvas();
-    std::cerr << BOLDBLUE << "Done!!!" << DEF << std::endl;
-    delete hists;
-    // RootOutputFile->Write();
-    RootOutputFile->Close();
-    // cut_outputs.close();
-  }
-}
-
-void DataHandeler::loadbar(long x, long n) {
-  int w = 50;
-  if ((x != n) && (x % (n / 100 + 1) != 0)) return;
-
-  double ratio = x / (double)n;
-  int c = ratio * w;
-
-  std::cout << BLUE << " [";
-  for (int x = 0; x < c; x++) std::cout << GREEN << "=" << DEF;
-  std::cout << GREEN << ">" << DEF;
-  for (int x = c; x < w; x++) std::cout << " ";
-  std::cout << BLUE << (int)(ratio * 100) << "%]\r" << DEF << std::flush;
-}
-
-void DataHandeler::run() {
-  int size = input_files.size();
-  int i = 0;
-  std::thread *fh_thread[size];
-  Setup_fh();
-  for (i = 0; i < size; i++) {
-    loadbar(i, size - 1);
-    // file_handeler(input_files.at(i));
-
-    try {
-      fh_thread[i] = new std::thread(std::mem_fn(&DataHandeler::file_handeler), this, input_files.at(i));
-      fh_thread[i]->join();
-    } catch (const std::exception &e) {
-      std::cerr << RED << "Error:\t" << e.what() << std::endl;
-      std::cerr << CYAN << "Bad File: \t" << input_files.at(i) << DEF << std::endl;
-    }
-  }
-}
-
-void DataHandeler::file_handeler(std::string fin) {
-  // Histogram *hists = new Histogram();
+  // hists = new Histogram();
   // Load chain from branch h10
   bool cuts, electron_cuts;
   int num_of_events;
@@ -313,4 +169,127 @@ void DataHandeler::file_handeler(std::string fin) {
     delete check;
   }
   chain->Reset();  // delete Tree object
+}
+
+DataHandeler::~DataHandeler() {
+  // delete RootOutputFile;
+  // delete MM_neutron;
+  // delete MM_pi0;
+  // delete MM_from2pi;
+  // delete c1;
+  /*
+  if (hists != NULL) {
+    delete MM_neutron;
+    std::cout << GREEN << "\nFitting" << DEF << std::endl;
+    // Start of cuts
+    Fits *MM_neutron_cut = new Fits();
+    MM_neutron_cut->Set_min(0.8);
+    MM_neutron_cut->Set_max(1.2);
+    MM_neutron_cut->FitBreitWigner(hists->Missing_Mass_strict);
+    // MM_neutron_cut->FitGaus(hists->Missing_Mass_strict);
+    // MM_neutron_cut->Fit2Gaus(hists->Missing_Mass_strict);
+    // MM_neutron_cut->FitLandau(hists->Missing_Mass_strict);
+
+    // Header *MM_header = new Header("../src/missing_mass_gaussians.hpp", "MM");
+    // MM_header->WriteGaussian("mm", 1, MM_neutron_cut->Get_mean(), MM_neutron_cut->Get_sigma());
+
+    Fits *MissingMassSquare_cut = new Fits();
+    MissingMassSquare_cut->Set_min(0.5);
+    MissingMassSquare_cut->Set_max(1.1);
+    MissingMassSquare_cut->FitBreitWigner(hists->Missing_Mass_square_strict);
+    // MissingMassSquare_cut->FitGaus(hists->Missing_Mass_square_strict);
+    // MissingMassSquare_cut->Fit2Gaus(hists->Missing_Mass_square_strict);
+    // MissingMassSquare_cut->FitLandau(hists->Missing_Mass_square_strict);
+    // MM_header->WriteGaussian("mm_square", 1, MissingMassSquare_cut->Get_mean(), MissingMassSquare_cut->Get_sigma());
+    // delete MM_header;
+    delete MM_neutron_cut;
+
+    RootOutputFile->cd();
+    std::cerr << BOLDBLUE << "EC_Write()" << DEF << std::endl;
+    TDirectory *EC_folder = RootOutputFile->mkdir("EC_hists");
+    EC_folder->cd();
+    hists->EC_Write();
+    std::cerr << BOLDBLUE << "EC_slices()" << DEF << std::endl;
+    TDirectory *EC_slices = RootOutputFile->mkdir("EC_slices");
+    EC_slices->cd();
+    hists->EC_slices_Write();
+    std::cerr << BOLDBLUE << "Beam_Position()" << DEF << std::endl;
+    TDirectory *Beam_Folder = RootOutputFile->mkdir("Beam Position");
+    Beam_Folder->cd();
+    hists->Beam_Position_Write();
+    hists->Target_Vertex_Write();
+    std::cerr << BOLDBLUE << "WvsQ2()" << DEF << std::endl;
+    TDirectory *WvsQ2_folder = RootOutputFile->mkdir("W vs Q2");
+    WvsQ2_folder->cd();
+    hists->WvsQ2_Write();
+    TDirectory *W_Q2_binned = RootOutputFile->mkdir("W_Q2_binned");
+    W_Q2_binned->cd();
+    hists->WvsQ2_binned_Write();
+    std::cerr << BOLDBLUE << "MomVsBeta_Fill()" << DEF << std::endl;
+    TDirectory *MomVsBeta_folder = RootOutputFile->mkdir("Momentum vs beta");
+    MomVsBeta_folder->cd();
+    hists->MomVsBeta_Write();
+    std::cerr << BOLDBLUE << "Write_Missing_Mass()" << DEF << std::endl;
+    // Missing Mass Write
+    TDirectory *MissMass = RootOutputFile->mkdir("Missing_Mass");
+    MissMass->cd();
+    hists->Write_Missing_Mass();
+    std::cerr << BOLDBLUE << "delta_t_Write()" << DEF << std::endl;
+    // Delta T Write
+    TDirectory *DeltaT = RootOutputFile->mkdir("Delta_T");
+    DeltaT->cd();
+    hists->delta_t_Write();
+    std::cerr << BOLDBLUE << "delta_t_slices_Write()" << DEF << std::endl;
+    TDirectory *DeltaT_slices = RootOutputFile->mkdir("Delta_T_slices");
+    DeltaT_slices->cd();
+    hists->delta_t_slices_Write();
+    std::cerr << BOLDBLUE << "delta_t_sec_pad_Write()" << DEF << std::endl;
+    TDirectory *DeltaT_sec_pad = RootOutputFile->mkdir("Delta_T_sec_pad");
+    DeltaT_sec_pad->cd();
+    hists->delta_t_sec_pad_Write();
+    std::cerr << BOLDBLUE << "delta_T_canvas()" << DEF << std::endl;
+    TDirectory *Delta_T_canvases = RootOutputFile->mkdir("Delta_T_canvases");
+    Delta_T_canvases->cd();
+    hists->delta_T_canvas();
+    std::cerr << BOLDBLUE << "Theta_CC_Write()" << DEF << std::endl;
+    TDirectory *Theta_CC_hists = RootOutputFile->mkdir("Theta_CC_hists");
+    Theta_CC_hists->cd();
+    hists->Theta_CC_Write();
+    std::cerr << BOLDBLUE << "CC_Write()" << DEF << std::endl;
+    TDirectory *CC_hists = RootOutputFile->mkdir("CC_hists");
+    CC_hists->cd();
+    hists->CC_Write();
+    std::cerr << BOLDBLUE << "CC_canvas()" << DEF << std::endl;
+    TDirectory *CC_canvases = RootOutputFile->mkdir("CC_canvases");
+    CC_canvases->cd();
+    hists->CC_canvas();
+    std::cerr << BOLDBLUE << "Fid_Write()" << DEF << std::endl;
+    TDirectory *Fid_cuts = RootOutputFile->mkdir("Fid_cuts");
+    Fid_cuts->cd();
+    hists->Fid_Write();
+    std::cerr << BOLDBLUE << "fid_canvas()" << DEF << std::endl;
+    TDirectory *Fid_canvas = RootOutputFile->mkdir("Fid_canvas");
+    Fid_canvas->cd();
+    hists->fid_canvas();
+    std::cerr << BOLDBLUE << "Done!!!" << DEF << std::endl;
+    delete hists;
+    // RootOutputFile->Write();
+    RootOutputFile->Close();
+    // cut_outputs.close();
+  }
+  */
+}
+
+void DataHandeler::loadbar(long x, long n) {
+  int w = 50;
+  if ((x != n) && (x % (n / 100 + 1) != 0)) return;
+
+  double ratio = x / (double)n;
+  int c = ratio * w;
+
+  std::cout << BLUE << " [";
+  for (int x = 0; x < c; x++) std::cout << GREEN << "=" << DEF;
+  std::cout << GREEN << ">" << DEF;
+  for (int x = c; x < w; x++) std::cout << " ";
+  std::cout << BLUE << (int)(ratio * 100) << "%]\r" << DEF << std::flush;
 }
