@@ -45,5 +45,5 @@ install(
     DESTINATION
     include
     FILES_MATCHING
-    PATTERN "*.h"
+    PATTERN "*.hpp"
 )

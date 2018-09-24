@@ -8,18 +8,19 @@ import glob
 
 cdef extern from "skim.hpp":
     cdef cppclass Skim:
-      Skim(string) except +
-      void Process()
+      Skim(vector[string], string) except +
+      void Basic()
+      void Strict()
 
 cdef class py_skim:
   cdef Skim*c_skim
-  cdef string f
-  def __cinit__(self, filename):
-    self.f = filename
-    self.c_skim = new Skim(filename)
-    self.c_skim.Process()
-  def __reduce__(self):
-    return (self.__class__, (self.f, ))
+  cdef vector[string] f
+  cdef string output
+  def __cinit__(self, list_files, output):
+    self.f = list_files
+    self.output = output
+    self.c_skim = new Skim(self.f, self.output)
+    self.c_skim.Basic()
 
 class skim_files:
   def __init__(self, input):
