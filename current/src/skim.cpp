@@ -120,7 +120,7 @@ void Skim::Strict() {
         MM_neutron->missing_mass(gamma_mu);
       }
     }
-    /* TODO:
+    TODO:
     Here's the problem:
       What if I have two pions?
       What if I have more than 3 particles?

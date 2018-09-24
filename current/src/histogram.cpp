@@ -6,6 +6,17 @@
 #include "histogram.hpp"
 
 // using namespace std;
+Histogram::Histogram() {
+  def = new TCanvas("def");
+  makeHists_WvsQ2();
+  makeHists_deltat();
+  makeHists_EC();
+  makeHists_CC();
+  makeHists_fid();
+  hadron_fid_hist[0] = new TH2D("hadron_fid", "hadron_fid", bins, phi_min, phi_max, bins, theta_min, theta_max);
+  hadron_fid_hist[1] = new TH2D("proton_fid", "proton_fid", bins, phi_min, phi_max, bins, theta_min, theta_max);
+  hadron_fid_hist[2] = new TH2D("pip_fid", "pip_fid", bins, phi_min, phi_max, bins, theta_min, theta_max);
+}
 
 Histogram::Histogram(std::string output_file) {
   RootOutputFile = new TFile(output_file.c_str(), "RECREATE");
@@ -20,7 +31,10 @@ Histogram::Histogram(std::string output_file) {
   hadron_fid_hist[2] = new TH2D("pip_fid", "pip_fid", bins, phi_min, phi_max, bins, theta_min, theta_max);
 }
 
-Histogram::~Histogram() {
+Histogram::~Histogram() {}
+
+void Histogram::Write(std::string output_file) {
+  RootOutputFile = new TFile(output_file.c_str(), "RECREATE");
   std::cout << GREEN << "\nFitting" << DEF << std::endl;
   // Start of cuts
   Fits *MM_neutron_cut = new Fits();
@@ -713,7 +727,7 @@ void Histogram::delta_t_sec_pad_Write() {
 void Histogram::delta_T_canvas() {
   TCanvas *can_dt[sector][3];
   char can_name[50];
-  char *P_PIP_E;
+  std::string P_PIP_E;
   for (int particle_i = 0; particle_i < 3; particle_i++) {
     for (int sec_i = 0; sec_i < sector; sec_i++) {
       if (particle_i == 0)
@@ -723,7 +737,7 @@ void Histogram::delta_T_canvas() {
       else if (particle_i == 2)
         P_PIP_E = "Electron";
 
-      sprintf(can_name, "Sector %d %s", sec_i + 1, P_PIP_E);
+      sprintf(can_name, "Sector %d %s", sec_i + 1, P_PIP_E.c_str());
       can_dt[sec_i][particle_i] = new TCanvas(can_name, can_name, 1200, 800);
       can_dt[sec_i][particle_i]->Divide(6, 8);
       for (int pad_i = 0; pad_i < sc_paddle_num; pad_i++) {
@@ -770,12 +784,12 @@ void Histogram::makeHists_CC() {
       if (pmt_i == 0) L_R_C = "both";
       if (pmt_i == 1) L_R_C = "right";
       if (pmt_i == 2) L_R_C = "left";
-      sprintf(hname, "CC_sec%d_%s", sec_i + 1, L_R_C);
-      sprintf(htitle, "CC sector %d %s", sec_i + 1, L_R_C);
+      sprintf(hname, "CC_sec%d_%s", sec_i + 1, L_R_C.c_str());
+      sprintf(htitle, "CC sector %d %s", sec_i + 1, L_R_C.c_str());
       cc_hist_allSeg[sec_i][pmt_i] = new TH1D(hname, htitle, bins_CC, CC_min, CC_max);
       for (int seg_i = 0; seg_i < segment; seg_i++) {
-        sprintf(hname, "CC_sec%d_seg%d_%s", sec_i + 1, seg_i + 1, L_R_C);
-        sprintf(htitle, "CC sector %d segment %d %s", sec_i + 1, seg_i + 1, L_R_C);
+        sprintf(hname, "CC_sec%d_seg%d_%s", sec_i + 1, seg_i + 1, L_R_C.c_str());
+        sprintf(htitle, "CC sector %d segment %d %s", sec_i + 1, seg_i + 1, L_R_C.c_str());
         cc_hist[sec_i][seg_i][pmt_i] = new TH1D(hname, htitle, bins_CC, CC_min, CC_max);
       }
     }
@@ -922,7 +936,7 @@ void Histogram::CC_canvas() {
       if (pmt_i == 1) L_R_C = "right";
       if (pmt_i == 2) L_R_C = "left";
 
-      sprintf(can_name, "Sector %d %s", sec_i + 1, L_R_C);
+      sprintf(can_name, "Sector %d %s", sec_i + 1, L_R_C.c_str());
       can[sec_i][pmt_i] = new TCanvas(can_name, can_name, 1200, 800);
       can[sec_i][pmt_i]->Divide(6, 3);
       for (int seg_i = 0; seg_i < segment; seg_i++) {

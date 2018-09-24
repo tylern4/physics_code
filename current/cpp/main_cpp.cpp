@@ -4,6 +4,7 @@
 /************************************************************************/
 
 // Only My Includes. All others in main.h
+#include <memory>
 #include "../src/branches.hpp"
 #include "../src/classes.hpp"
 #include "../src/constants.hpp"

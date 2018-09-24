@@ -20,7 +20,6 @@ class Delta_T {
   double dt_P = 0.0;
   double dt_Pi = 0.0;
   double dt_K = 0.0;
-  bool first_run = true;
 
   double vertex_time(double sc_time, double sc_pathlength, double relatavistic_beta);
 

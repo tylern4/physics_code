@@ -6,6 +6,13 @@
 #include "datahandeler.hpp"
 
 DataHandeler::DataHandeler() {}
+DataHandeler::~DataHandeler() {}
+
+Histogram *DataHandeler::Run(std::string fin) {
+  Histogram *temp = new Histogram();
+  Run(fin, temp);
+  return temp;
+}
 
 void DataHandeler::Run(std::string fin, Histogram *hists) {
   // c1 = new TCanvas("c1", "c1", 100, 100);
@@ -172,8 +179,6 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
   }
   chain->Reset();  // delete Tree object
 }
-
-DataHandeler::~DataHandeler() {}
 
 void DataHandeler::loadbar(long x, long n) {
   int w = 50;

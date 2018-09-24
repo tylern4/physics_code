@@ -34,7 +34,6 @@ cdef extern from "branches.hpp":
       float rf_time1()
       float rf_time2()
       int gpart()
-
       vector[int] id()
       vector[int] dc()
       vector[int] cc()
@@ -137,19 +136,3 @@ cdef class h10:
   @property
   def ec(self):
     return self.c_branches.ec()
-
-
-cdef extern from "delta_t.cpp":
-  pass
-
-cdef extern from "delta_t.hpp":
-    cdef cppclass Delta_T:
-      Delta_T(double sc_time, double sc_pathlength) except +
-      double deltat(double momentum, double sc_t, double sc_r, double mass)
-
-cdef class Dt:
-  cdef Delta_T*c_Dt
-  def __cinit__(Dt self, double sc_time, double sc_pathlength):
-    self.c_Dt = new Delta_T(sc_time, sc_pathlength)
-  def deltat(Dt self, double momentum, double sc_t, double sc_r, double mass):
-    return self.c_Dt.deltat(momentum, sc_t, sc_r, mass)

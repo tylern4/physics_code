@@ -24,8 +24,10 @@
 class Histogram {
  private:
  public:
+  Histogram();
   Histogram(std::string output_file);
   ~Histogram();
+  void Write(std::string output_file);
   Header *fit_functions;
   TFile *RootOutputFile;
   TCanvas *def;
@@ -164,7 +166,7 @@ class Histogram {
   int bins_CC = 50;
   double CC_min = 0;
   double CC_max = 250;
-  char *L_R_C;
+  std::string L_R_C;
   static const int segment = 18;
   static const int PMT = 3;
 
