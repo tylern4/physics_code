@@ -19,8 +19,14 @@ find_package(PythonLibs)
 find_package(PythonExtensions)
 find_package(Cython REQUIRED)
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if(${PYTHON_VERSION_MAJOR} STREQUAL "2")
+  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+else()
+  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+endif()
 
 add_cython_target(handeler src/handeler.pyx CXX PY2 OUTPUT_VAR _handeler)
 include_directories(${PYTHON_INCLUDE_DIRS})
