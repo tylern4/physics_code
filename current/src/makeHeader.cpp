@@ -59,12 +59,13 @@ void Header::WriteFunction() {
     if (c_text.length() > 0) header_file << "\t// " << c_text << "\n";
     if (a_text.length() > 0) header_file << "\t" << a_text << "\n";
     if (lines.size() > 0)
-      for (auto &l : lines)
+      for (auto &l : lines) {
         if (!l.empty() && end) {
           header_file << "\t" << l << ";\n";
         } else {
           header_file << "\t" << l;
         }
+      }
 
     header_file << "\treturn " << func;
     header_file << ";\n}\n\n";

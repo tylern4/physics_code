@@ -4,6 +4,7 @@
 /************************************************************************/
 
 // Only My Includes. All others in main.h
+#include <memory>
 #include "../src/branches.hpp"
 #include "../src/classes.hpp"
 #include "../src/constants.hpp"
@@ -40,14 +41,15 @@ int main(int argc, char **argv) {
     outfilename = argv[2];
   }
 
-  // DataHandeler *dh = new DataHandeler(files, outfilename);
-  // dh->make_events();
-  // delete dh;
+  DataHandeler *dh = new DataHandeler();
+  Histogram *hist = new Histogram();
 
-  DataHandeler *dh = new DataHandeler(files, outfilename);
-  dh->run();
-  delete dh;
+  for (int i = 0; i < files.size(); i++) {
+    loadbar(i, files.size() - 1);
+    dh->Run(files.at(i), hist);
+  }
 
+  hist->Write(outfilename);
   Watch->Stop();
   cout << RED << Watch->RealTime() << "sec" << DEF << endl;
 

@@ -3,8 +3,9 @@ ifeq ($(UNAME), Linux)
     FOPENMP = -fopenmp
 endif
 
-ROOTLIBS	= $(shell root-config --libs)
+
 CXX = $(shell root-config --cxx)
+ROOTLIBS	= $(shell root-config --libs)
 CXXFLAGS = -O3 -march=native -fPIC -w -g $(FOPENMP) $(shell root-config --cflags)
 TARGET =	    e1d
 SRCDIR   = ../src

@@ -27,27 +27,16 @@
 class DataHandeler {
  private:
   int PID;
-  Histogram *hists = NULL;
-  TFile *RootOutputFile;
-  std::string output_file;
   std::ofstream csv_output;
-  TLorentzVector *e_mu;
   std::vector<std::string> input_files;
   std::vector<std::vector<TLorentzVector>> All_events;
-  MissingMass *MM_neutron;
-  MissingMass *MM_pi0;
-  MissingMass *MM_from2pi;
-  TCanvas *c1;
 
  public:
-  DataHandeler(std::vector<std::string> fin, std::string output);
+  DataHandeler();
   ~DataHandeler();
-  void file_handeler(std::string fin);
-  void make_events();
-  void BinnedCSV();
-  void Setup_fh();
+  void Run(std::string fin, Histogram *hists);
+  void Run(std::vector<std::string> fin, Histogram *hists);
   void loadbar(long x, long n);
-  void run();
 };
 
 #endif

@@ -55,6 +55,7 @@ TF1 *Fits::FitGaus(TH1D *hist) {
 
     return fitFunc;
   }
+  return NULL;
 }
 
 TF1 *Fits::FitLandauGaus(TH1D *hist) {
@@ -90,6 +91,7 @@ TF1 *Fits::FitLandauGaus(TH1D *hist) {
     delete fitFuncLandau;
     return total;
   }
+  return NULL;
 }
 
 TF1 *Fits::Fit2Gaus(TH1D *hist) {
@@ -119,6 +121,7 @@ TF1 *Fits::Fit2Gaus(TH1D *hist) {
     sigma = fitFunc->GetParameter("FWHM") / (2 * sqrt(2 * log(2)));  // 2.35482004503;
     return fitFunc;
   }
+  return NULL;
 }
 
 TF1 *Fits::FitLandau(TH1D *hist) {
@@ -132,6 +135,7 @@ TF1 *Fits::FitLandau(TH1D *hist) {
 
     return fitFunc;
   }
+  return NULL;
 }
 
 TF1 *Fits::FitPoly_1D(TH1D *hist) {

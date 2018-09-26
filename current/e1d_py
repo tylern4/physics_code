@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+from __future__ import print_function
+
+import glob
+import multiprocessing as mp
+import sys
+import time
+from multiprocessing import Pool, cpu_count
+
+from tqdm import tqdm
+
+import handeler as dh
+import skim
+
+bar_format = dh.colors.BLUE + "{bar}" + dh.colors.GREEN + "{percentage:3.0f}%" + dh.colors.ENDC
+
+
+def parallel_skim(files):
+    skimmed = files[:-5] + "_skim.root".encode("utf-8")
+    skim.py_skim([files], skimmed).strict()
+    return skimmed
+
+
+USAGE = """
+{} /path/to/input/files/ output.root
+"""
+
+if len(sys.argv) == 1:
+    print(dh.colors.WARNING + "No inputs given: " + dh.colors.BLUE + USAGE.format(sys.argv[0]) + dh.colors.ENDC)
+    sys.exit(2)
+elif len(sys.argv) == 2:
+    input_files = sys.argv[1]
+    output_file = "out.root"
+elif len(sys.argv) == 3:
+    input_files = sys.argv[1]
+    output_file = sys.argv[2]
+
+files = glob.glob(input_files + "*.root")
+
+if sys.version_info[0] == 3:
+    files = [f.encode("utf-8") for f in files]
+    output_file = str.encode(output_file)
+
+skim_start = time.time()
+
+num_cores = cpu_count()
+pool = Pool(processes=num_cores)
+skimmed = pool.map(parallel_skim, (files))
+pool.close()
+skim_end = time.time()
+print(dh.colors.FAIL + "Skim Time: {} Sec".format(skim_end - skim_start) + dh.colors.ENDC)
+
+data = dh.handeler()
+for f in tqdm(skimmed, bar_format=bar_format):
+    data.run(f)
+data.write(output_file)
+
+end = time.time()
+print(dh.colors.FAIL + "Total: {} Sec".format(end - skim_start) + dh.colors.ENDC)
