@@ -19,8 +19,12 @@ cdef class py_skim:
   def __cinit__(self, list_files, output):
     self.f = list_files
     self.output = output
+  def basic(self):
     self.c_skim = new Skim(self.f, self.output)
     self.c_skim.Basic()
+  def strict(self):
+    self.c_skim = new Skim(self.f, self.output)
+    self.c_skim.Strict()
 
 class skim_files:
   def __init__(self, input):
