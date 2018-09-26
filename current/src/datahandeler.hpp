@@ -35,7 +35,7 @@ class DataHandeler {
   DataHandeler();
   ~DataHandeler();
   void Run(std::string fin, Histogram *hists);
-  Histogram *Run(std::string fin);
+  void Run(std::vector<std::string> fin, Histogram *hists);
   void loadbar(long x, long n);
 };
 

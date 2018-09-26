@@ -7,8 +7,16 @@ import array
 from cython.parallel import prange
 from multiprocessing import Pool
 
-ctypedef vector[DataHandeler*] dh_vec
-ctypedef vector[Histogram] hist_vec
+
+class colors:
+    HEADER = '\033[95m'
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 
 cdef extern from "histogram.cpp":
   pass
@@ -16,7 +24,6 @@ cdef extern from "histogram.cpp":
 cdef extern from "histogram.hpp":
   cdef cppclass Histogram:
     Histogram() except +
-    Histogram(string) except +
     void Write(string)
 
 cdef extern from "datahandeler.cpp":
@@ -28,20 +35,16 @@ cdef extern from "datahandeler.hpp":
     void Run(string, Histogram*)
 
 cdef class handeler:
-  cdef dh_vec c_handeler
+  cdef DataHandeler*c_handeler
   cdef Histogram*hists
   cdef list file_names
-  cdef string output_file
-  def __cinit__(self, list file_names, string output_file):
-    self.file_names = file_names
-    self.output_file = output_file
-    self.c_handeler = dh_vec(len(self.file_names))
+  cdef string output_file, input_file
+  def __cinit__(self):
+    self.c_handeler = new DataHandeler()
     self.hists = new Histogram()
-    for i in range(0, len(self.file_names)):
-      self.c_handeler[i] = new DataHandeler()
-  def run(self):
-    cdef i = 0
-    cdef l = len(self.file_names)
-    for i in range(l):
-      self.c_handeler[i].Run(self.file_names[i], self.hists)
+  def run(self, string input_file):
+    self.input_file = input_file
+    self.c_handeler.Run(self.input_file, self.hists)
+  def write(self, string output_file):
+    self.output_file = output_file
     self.hists.Write(self.output_file)

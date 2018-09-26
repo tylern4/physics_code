@@ -8,10 +8,8 @@
 DataHandeler::DataHandeler() {}
 DataHandeler::~DataHandeler() {}
 
-Histogram *DataHandeler::Run(std::string fin) {
-  Histogram *temp = new Histogram();
-  Run(fin, temp);
-  return temp;
+void DataHandeler::Run(std::vector<std::string> fin, Histogram *hists) {
+  for (auto f : fin) Run(f, hists);
 }
 
 void DataHandeler::Run(std::string fin, Histogram *hists) {

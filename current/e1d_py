@@ -1,0 +1,26 @@
+#!/usr/bin/env python
+from __future__ import print_function
+
+import glob
+import multiprocessing as mp
+import sys
+import time
+from multiprocessing import Pool, cpu_count
+
+from tqdm import tqdm
+
+import handeler as dh
+
+bar_format = dh.colors.BLUE + "{bar}" + dh.colors.GREEN + "{percentage:3.0f}%" + dh.colors.ENDC
+
+start = time.time()
+files = glob.glob(sys.argv[1] + "*.root")
+files = [f.encode("utf-8") for f in files]
+data = dh.handeler()
+
+for f in tqdm(files, bar_format=bar_format):
+    data.run(f)
+
+data.write("new_test.root".encode("utf-8"))
+end = time.time()
+print(dh.colors.FAIL + "{} Sec".format(end - start) + dh.colors.ENDC)

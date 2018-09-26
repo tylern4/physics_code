@@ -1,2 +1,2 @@
-cmd: make clean && make -j4
-cwd: /Users/tylern/physics_code/current/cpp
+cmd: cmake .. && make
+cwd: /Users/tylern/physics_code/current/build

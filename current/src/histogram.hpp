@@ -35,9 +35,9 @@ class Histogram {
   void makeHists_deltat();
   void makeHists_CC();
   void makeHists_WvsQ2();
-  const int bins = 500;
-  const double p_min = 0.0;
-  const double p_max = 5.0;
+  int bins = 500;
+  double p_min = 0.0;
+  double p_max = 5.0;
   char hname[50];
   char htitle[500];
 
@@ -55,10 +55,10 @@ class Histogram {
   double q2_min = 0;
   double q2_max = 5;
 
-  static const int W_bins = 40;
-  static const int Q2_bins = 5;
-  static const int theta_bins = 100;
-  static const int phi_bins = 100;
+  static constexpr int W_bins = 40;
+  static constexpr int Q2_bins = 5;
+  static constexpr int theta_bins = 100;
+  static constexpr int phi_bins = 100;
   double w_binned_min = 1.0;
   double w_binned_max = 2.0;
   double q2_binned_min = 1.0;
@@ -131,9 +131,9 @@ class Histogram {
   double Dt_max = 10;
   static const int num_points = 20;
   TH1D *delta_t_hist[3][num_points];
-  const double bin_width = (p_max - p_min) / num_points;
+  double bin_width = (p_max - p_min) / num_points;
 
-  static const int sc_paddle_num = 48;
+  static constexpr int sc_paddle_num = 48;
   TH2D *delta_t_sec_pad_hist[3][sector][sc_paddle_num];
   TH2D *delta_t_mass_P =
       new TH2D("delta_t_mass_P", "#Deltat assuming mass of proton", bins, p_min, p_max, bins, Dt_min, Dt_max);

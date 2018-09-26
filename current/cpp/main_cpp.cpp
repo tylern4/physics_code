@@ -42,14 +42,14 @@ int main(int argc, char **argv) {
   }
 
   DataHandeler *dh = new DataHandeler();
-  Histogram *hist = new Histogram(outfilename);
+  Histogram *hist = new Histogram();
 
   for (int i = 0; i < files.size(); i++) {
     loadbar(i, files.size() - 1);
     dh->Run(files.at(i), hist);
   }
 
-  delete hist;
+  hist->Write(outfilename);
   Watch->Stop();
   cout << RED << Watch->RealTime() << "sec" << DEF << endl;
 

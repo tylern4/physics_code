@@ -5,7 +5,6 @@
 /**************************************/
 #include "histogram.hpp"
 
-// using namespace std;
 Histogram::Histogram() {
   def = new TCanvas("def");
   makeHists_WvsQ2();
