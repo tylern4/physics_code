@@ -16,8 +16,8 @@ bar_format = dh.colors.BLUE + "{bar}" + dh.colors.GREEN + "{percentage:3.0f}%" +
 
 
 def parallel_skim(files):
-    skimmed = files[:-5] + "_skim.root"
-    skim.py_skim([files], files[:-5] + "_skim.root").strict()
+    skimmed = files[:-5] + "_skim.root".encode("utf-8")
+    skim.py_skim([files], skimmed).strict()
     return skimmed
 
 
@@ -37,10 +37,9 @@ elif len(sys.argv) == 3:
 
 files = glob.glob(input_files + "*.root")
 
-if sys.version_info[0] > 3:
-    map(str.encode, files)
+if sys.version_info[0] == 3:
+    files = [f.encode("utf-8") for f in files]
     output_file = str.encode(output_file)
-
 
 skim_start = time.time()
 
