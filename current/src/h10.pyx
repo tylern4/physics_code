@@ -378,6 +378,15 @@ cdef class h10:
   def cz(self):
     return self.c_branches.cz()
   @property
+  def px(self):
+    return np.array(self.c_branches.cx()) * np.array(self.c_branches.p())
+  @property
+  def py(self):
+    return np.array(self.c_branches.cy()) * np.array(self.c_branches.p())
+  @property
+  def pz(self):
+    return np.array(self.c_branches.cz()) * np.array(self.c_branches.p())
+  @property
   def vx(self):
     return self.c_branches.vx()
   @property
@@ -386,9 +395,6 @@ cdef class h10:
   @property
   def vz(self):
     return self.c_branches.vz()
-  @property
-  def cx(self):
-    return self.c_branches.cx()
   @property
   def id(self):
     return self.c_branches.id()
