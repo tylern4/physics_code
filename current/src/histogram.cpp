@@ -12,12 +12,9 @@ Histogram::Histogram() {
   makeHists_EC();
   makeHists_CC();
   makeHists_fid();
-  hadron_fid_hist[0] = new TH2D("hadron_fid", "hadron_fid", bins, phi_min,
-                                phi_max, bins, theta_min, theta_max);
-  hadron_fid_hist[1] = new TH2D("proton_fid", "proton_fid", bins, phi_min,
-                                phi_max, bins, theta_min, theta_max);
-  hadron_fid_hist[2] = new TH2D("pip_fid", "pip_fid", bins, phi_min, phi_max,
-                                bins, theta_min, theta_max);
+  hadron_fid_hist[0] = new TH2D("hadron_fid", "hadron_fid", bins, phi_min, phi_max, bins, theta_min, theta_max);
+  hadron_fid_hist[1] = new TH2D("proton_fid", "proton_fid", bins, phi_min, phi_max, bins, theta_min, theta_max);
+  hadron_fid_hist[2] = new TH2D("pip_fid", "pip_fid", bins, phi_min, phi_max, bins, theta_min, theta_max);
 }
 
 Histogram::Histogram(std::string output_file) {
@@ -28,12 +25,9 @@ Histogram::Histogram(std::string output_file) {
   makeHists_EC();
   makeHists_CC();
   makeHists_fid();
-  hadron_fid_hist[0] = new TH2D("hadron_fid", "hadron_fid", bins, phi_min,
-                                phi_max, bins, theta_min, theta_max);
-  hadron_fid_hist[1] = new TH2D("proton_fid", "proton_fid", bins, phi_min,
-                                phi_max, bins, theta_min, theta_max);
-  hadron_fid_hist[2] = new TH2D("pip_fid", "pip_fid", bins, phi_min, phi_max,
-                                bins, theta_min, theta_max);
+  hadron_fid_hist[0] = new TH2D("hadron_fid", "hadron_fid", bins, phi_min, phi_max, bins, theta_min, theta_max);
+  hadron_fid_hist[1] = new TH2D("proton_fid", "proton_fid", bins, phi_min, phi_max, bins, theta_min, theta_max);
+  hadron_fid_hist[2] = new TH2D("pip_fid", "pip_fid", bins, phi_min, phi_max, bins, theta_min, theta_max);
 }
 
 Histogram::~Histogram() {}
@@ -140,17 +134,13 @@ void Histogram::Write(std::string output_file) {
 // W and Q^2
 void Histogram::makeHists_WvsQ2() {
   for (int y = 0; y < Q2_bins; y++) {
-    sprintf(hname, "W_%0.3f_%0.3f", q2_binned_min + (Q2_width * y),
-            q2_binned_min + (Q2_width * (y + 1)));
-    sprintf(htitle, "W hist\nQ^{2} %0.3f %0.3f", q2_binned_min + (Q2_width * y),
-            q2_binned_min + (Q2_width * (y + 1)));
+    sprintf(hname, "W_%0.3f_%0.3f", q2_binned_min + (Q2_width * y), q2_binned_min + (Q2_width * (y + 1)));
+    sprintf(htitle, "W hist\nQ^{2} %0.3f %0.3f", q2_binned_min + (Q2_width * y), q2_binned_min + (Q2_width * (y + 1)));
     W_binned[y] = new TH1D(hname, htitle, bins, w_binned_min, w_binned_max);
   }
   for (int x = 0; x < W_bins; x++) {
-    sprintf(hname, "Q2_%0.3f_%0.3f", w_binned_min + (W_width * x),
-            w_binned_min + (W_width * (x + 1)));
-    sprintf(htitle, "Q^{2} hist\nW %0.3f %0.3f", w_binned_min + (W_width * x),
-            w_binned_min + (W_width * (x + 1)));
+    sprintf(hname, "Q2_%0.3f_%0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
+    sprintf(htitle, "Q^{2} hist\nW %0.3f %0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
     Q2_binned[x] = new TH1D(hname, htitle, bins, q2_binned_min, q2_binned_max);
   }
 }
@@ -167,13 +157,12 @@ void Histogram::Fill_single_pi_WQ2(double W, double Q2) {
   Q2_single_pi->Fill(Q2);
 }
 
-void Histogram::Fill_channel_WQ2(double W, double Q2, TLorentzVector e_prime,
-                                 double mm, double mm2, int sec) {
+void Histogram::Fill_channel_WQ2(double W, double Q2, TLorentzVector e_prime, double mm, double mm2, int sec) {
   x_pip_N[0] = W;
   x_pip_N[1] = Q2;
   x_pip_N[2] = sec;
-  x_pip_N[3] = 0.0; // mm;
-  x_pip_N[4] = 0.0; // mm2;
+  x_pip_N[3] = 0.0;  // mm;
+  x_pip_N[4] = 0.0;  // mm2;
   // pip_N->Fill(x_pip_N);
 
   E_prime_hist->Fill(e_prime.E());
@@ -186,16 +175,14 @@ void Histogram::Fill_channel_WQ2(double W, double Q2, TLorentzVector e_prime,
   WvsQ2_binned->Fill(W, Q2);
 
   for (int y = 0; y < Q2_bins; y++) {
-    if (q2_binned_min + (Q2_width * y) <= Q2 &&
-        q2_binned_min + (Q2_width * (y + 1)) >= Q2) {
+    if (q2_binned_min + (Q2_width * y) <= Q2 && q2_binned_min + (Q2_width * (y + 1)) >= Q2) {
       W_binned[y]->Fill(W);
       continue;
     }
   }
 
   for (int x = 0; x < W_bins; x++) {
-    if (w_binned_min + (W_width * x) <= W &&
-        w_binned_min + (W_width * (x + 1)) >= W) {
+    if (w_binned_min + (W_width * x) <= W && w_binned_min + (W_width * (x + 1)) >= W) {
       Q2_binned[x]->Fill(Q2);
       continue;
     }
@@ -320,25 +307,15 @@ void Histogram::WvsQ2_binned_Write() {
 // W and Q^2
 
 // P and E
-void Histogram::MomVsBeta_Fill_pos(double P, double Beta) {
-  MomVsBeta_hist_pos->Fill(P, Beta);
-}
+void Histogram::MomVsBeta_Fill_pos(double P, double Beta) { MomVsBeta_hist_pos->Fill(P, Beta); }
 
-void Histogram::MomVsBeta_Fill_neg(double P, double Beta) {
-  MomVsBeta_hist_neg->Fill(P, Beta);
-}
+void Histogram::MomVsBeta_Fill_neg(double P, double Beta) { MomVsBeta_hist_neg->Fill(P, Beta); }
 
-void Histogram::Fill_proton_ID_P(double p, double beta) {
-  MomVsBeta_proton_ID->Fill(p, beta);
-}
+void Histogram::Fill_proton_ID_P(double p, double beta) { MomVsBeta_proton_ID->Fill(p, beta); }
 
-void Histogram::Fill_Pi_ID_P(double p, double beta) {
-  MomVsBeta_Pi_ID->Fill(p, beta);
-}
+void Histogram::Fill_Pi_ID_P(double p, double beta) { MomVsBeta_Pi_ID->Fill(p, beta); }
 
-void Histogram::Fill_proton_Pi_ID_P(double p, double beta) {
-  MomVsBeta_proton_Pi_ID->Fill(p, beta);
-}
+void Histogram::Fill_proton_Pi_ID_P(double p, double beta) { MomVsBeta_proton_Pi_ID->Fill(p, beta); }
 
 void Histogram::MomVsBeta_Fill(double Energy, double P, double Beta) {
   Energy_hist->Fill(Energy);
@@ -346,9 +323,7 @@ void Histogram::MomVsBeta_Fill(double Energy, double P, double Beta) {
   Mom->Fill(P);
 }
 
-void Histogram::Photon_flux_Fill(double photon_flux) {
-  photon_flux_hist->Fill(photon_flux);
-}
+void Histogram::Photon_flux_Fill(double photon_flux) { photon_flux_hist->Fill(photon_flux); }
 
 void Histogram::MomVsBeta_Write() {
   MomVsBeta_hist->SetXTitle("Momentum (GeV)");
@@ -387,9 +362,7 @@ void Histogram::MomVsBeta_Write() {
 }
 
 // Missing Mass
-void Histogram::Fill_Missing_Mass(double miss_mass) {
-  Missing_Mass->Fill(miss_mass);
-}
+void Histogram::Fill_Missing_Mass(double miss_mass) { Missing_Mass->Fill(miss_mass); }
 
 void Histogram::Fill_Missing_Mass(MissingMass *miss_mass) {
   Missing_Mass->Fill(miss_mass->Get_MM());
@@ -414,9 +387,7 @@ void Histogram::Fill_Missing_Mass_twoPi(MissingMass *miss_mass) {
 
 // void Histogram::Fill_Mass(double mass) { Mass->Fill(mass); }
 
-void Histogram::Fill_Missing_Mass_square(double miss_mass_2) {
-  Missing_Mass_square->Fill(miss_mass_2);
-}
+void Histogram::Fill_Missing_Mass_square(double miss_mass_2) { Missing_Mass_square->Fill(miss_mass_2); }
 
 void Histogram::Write_Missing_Mass() {
   Missing_Mass->SetXTitle("Mass (GeV)");
@@ -466,45 +437,30 @@ void Histogram::makeHists_deltat() {
     for (int jjj = 0; jjj < sc_paddle_num; jjj++) {
       sprintf(hname, "delta_t_p_sec%d_pad%d", jj + 1, jjj + 1);
       sprintf(htitle, "#Deltat P Sector %d Paddle %d", jj + 1, jjj + 1);
-      delta_t_sec_pad_hist[0][jj][jjj] = new TH2D(
-          hname, htitle, bins / 2, p_min, p_max, bins / 2, Dt_min, Dt_max);
+      delta_t_sec_pad_hist[0][jj][jjj] = new TH2D(hname, htitle, bins / 2, p_min, p_max, bins / 2, Dt_min, Dt_max);
 
       sprintf(hname, "delta_t_pip_sec%d_pad%d", jj + 1, jjj + 1);
       sprintf(htitle, "#Deltat #pi^{+} Sector %d Paddle %d", jj + 1, jjj + 1);
-      delta_t_sec_pad_hist[1][jj][jjj] = new TH2D(
-          hname, htitle, bins / 2, p_min, p_max, bins / 2, Dt_min, Dt_max);
+      delta_t_sec_pad_hist[1][jj][jjj] = new TH2D(hname, htitle, bins / 2, p_min, p_max, bins / 2, Dt_min, Dt_max);
 
       sprintf(hname, "delta_t_electron_sec%d_pad%d", jj + 1, jjj + 1);
       sprintf(htitle, "#Deltat electron Sector %d Paddle %d", jj + 1, jjj + 1);
-      delta_t_sec_pad_hist[2][jj][jjj] = new TH2D(
-          hname, htitle, bins / 2, p_min, p_max, bins / 2, Dt_min, Dt_max);
+      delta_t_sec_pad_hist[2][jj][jjj] = new TH2D(hname, htitle, bins / 2, p_min, p_max, bins / 2, Dt_min, Dt_max);
     }
   }
 }
 
-void Histogram::Fill_deltat_P(double momentum, double delta_t) {
-  delta_t_mass_P->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_P(double momentum, double delta_t) { delta_t_mass_P->Fill(momentum, delta_t); }
 
-void Histogram::Fill_deltat_P_PID(double momentum, double delta_t) {
-  delta_t_mass_P_PID->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_P_PID(double momentum, double delta_t) { delta_t_mass_P_PID->Fill(momentum, delta_t); }
 
-void Histogram::Fill_deltat_PIP(double momentum, double delta_t) {
-  delta_t_mass_PIP->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_PIP(double momentum, double delta_t) { delta_t_mass_PIP->Fill(momentum, delta_t); }
 
-void Histogram::Fill_deltat_PIP_PID(double momentum, double delta_t) {
-  delta_t_mass_PIP_PID->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_PIP_PID(double momentum, double delta_t) { delta_t_mass_PIP_PID->Fill(momentum, delta_t); }
 
-void Histogram::Fill_deltat_PIM(double momentum, double delta_t) {
-  delta_t_mass_PIM->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_PIM(double momentum, double delta_t) { delta_t_mass_PIM->Fill(momentum, delta_t); }
 
-void Histogram::Fill_deltat_PIM_PID(double momentum, double delta_t) {
-  delta_t_mass_PIM_PID->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_PIM_PID(double momentum, double delta_t) { delta_t_mass_PIM_PID->Fill(momentum, delta_t); }
 
 void Histogram::Fill_deltat_electron(double momentum, double delta_t) {
   delta_t_mass_electron->Fill(momentum, delta_t);
@@ -514,13 +470,9 @@ void Histogram::Fill_deltat_electron_PID(double momentum, double delta_t) {
   delta_t_mass_electron_PID->Fill(momentum, delta_t);
 }
 
-void Histogram::Fill_deltat_kp(double momentum, double delta_t) {
-  delta_t_mass_kp->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_kp(double momentum, double delta_t) { delta_t_mass_kp->Fill(momentum, delta_t); }
 
-void Histogram::Fill_deltat_kp_PID(double momentum, double delta_t) {
-  delta_t_mass_kp_PID->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_kp_PID(double momentum, double delta_t) { delta_t_mass_kp_PID->Fill(momentum, delta_t); }
 
 void Histogram::delta_t_slice_fit() {
   // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
@@ -546,11 +498,11 @@ void Histogram::delta_t_slice_fit() {
       // Get momentum from bin center
       x[num] = (double)delta_t_mass_P_mean->GetBinCenter(i);
       // mean + 3sigma
-      y_plus[num] = (double)delta_t_mass_P_mean->GetBinContent(i) +
-                    N_SIGMA * (double)delta_t_mass_P_sigma->GetBinContent(i);
+      y_plus[num] =
+          (double)delta_t_mass_P_mean->GetBinContent(i) + N_SIGMA * (double)delta_t_mass_P_sigma->GetBinContent(i);
       // mean - 3simga
-      y_minus[num] = (double)delta_t_mass_P_mean->GetBinContent(i) -
-                     N_SIGMA * (double)delta_t_mass_P_sigma->GetBinContent(i);
+      y_minus[num] =
+          (double)delta_t_mass_P_mean->GetBinContent(i) - N_SIGMA * (double)delta_t_mass_P_sigma->GetBinContent(i);
       num++;
     }
   }
@@ -568,8 +520,7 @@ void Histogram::delta_t_slice_fit() {
   // Proton_Pos_fit->Write();
   // Proton_Neg_fit->Write();
 
-  TCanvas *dt_proton_canvas =
-      new TCanvas("dt_proton_canvas", "#dt Proton", 1280, 720);
+  TCanvas *dt_proton_canvas = new TCanvas("dt_proton_canvas", "#dt Proton", 1280, 720);
   dt_proton_canvas->cd();
   delta_t_mass_P->Draw();
   Proton_Pos_fit->Draw("same");
@@ -606,12 +557,10 @@ void Histogram::delta_t_slice_fit() {
       x_pip[num] = (double)delta_t_mass_PIP_mean->GetBinCenter(i);
       // mean + 3sigma
       y_plus_pip[num] =
-          (double)delta_t_mass_PIP_mean->GetBinContent(i) +
-          N_SIGMA * (double)delta_t_mass_PIP_sigma->GetBinContent(i);
+          (double)delta_t_mass_PIP_mean->GetBinContent(i) + N_SIGMA * (double)delta_t_mass_PIP_sigma->GetBinContent(i);
       // mean - 3simga
       y_minus_pip[num] =
-          (double)delta_t_mass_PIP_mean->GetBinContent(i) -
-          N_SIGMA * (double)delta_t_mass_PIP_sigma->GetBinContent(i);
+          (double)delta_t_mass_PIP_mean->GetBinContent(i) - N_SIGMA * (double)delta_t_mass_PIP_sigma->GetBinContent(i);
       num++;
     }
   }
@@ -722,17 +671,15 @@ void Histogram::delta_t_Write() {
   delta_t_mass_kp_PID->Write();
 }
 
-void Histogram::delta_t_Fill(double momentum, int charge, double delta_t_proton,
-                             double delta_t_pip, double delta_t_electron) {
+void Histogram::delta_t_Fill(double momentum, int charge, double delta_t_proton, double delta_t_pip,
+                             double delta_t_electron) {
   for (int jj = 0; jj < num_points; jj++) {
     if (momentum > jj * bin_width && momentum <= (jj + 1) * bin_width) {
-      if (charge == 1 && !std::isnan(delta_t_proton) &&
-          !std::isnan(delta_t_pip)) {
+      if (charge == 1 && !std::isnan(delta_t_proton) && !std::isnan(delta_t_pip)) {
         delta_t_hist[0][jj]->Fill(delta_t_proton);
         delta_t_hist[1][jj]->Fill(delta_t_pip);
       }
-      if (charge == -1)
-        delta_t_hist[2][jj]->Fill(delta_t_electron);
+      if (charge == -1) delta_t_hist[2][jj]->Fill(delta_t_electron);
     }
   }
 }
@@ -757,19 +704,13 @@ void Histogram::delta_t_slices_Write() {
   }
 }
 
-void Histogram::delta_t_sec_pad(double momentum, int charge,
-                                double delta_t_proton, double delta_t_pip,
-                                double delta_t_electron, int sc_sector,
-                                int sc_paddle) {
+void Histogram::delta_t_sec_pad(double momentum, int charge, double delta_t_proton, double delta_t_pip,
+                                double delta_t_electron, int sc_sector, int sc_paddle) {
   if (charge == 1) {
-    delta_t_sec_pad_hist[0][sc_sector - 1][sc_paddle - 1]->Fill(momentum,
-                                                                delta_t_proton);
-    delta_t_sec_pad_hist[1][sc_sector - 1][sc_paddle - 1]->Fill(momentum,
-                                                                delta_t_pip);
+    delta_t_sec_pad_hist[0][sc_sector - 1][sc_paddle - 1]->Fill(momentum, delta_t_proton);
+    delta_t_sec_pad_hist[1][sc_sector - 1][sc_paddle - 1]->Fill(momentum, delta_t_pip);
   }
-  if (charge == -1)
-    delta_t_sec_pad_hist[2][sc_sector - 1][sc_paddle - 1]->Fill(
-        momentum, delta_t_electron);
+  if (charge == -1) delta_t_sec_pad_hist[2][sc_sector - 1][sc_paddle - 1]->Fill(momentum, delta_t_electron);
 }
 
 void Histogram::delta_t_sec_pad_Write() {
@@ -801,18 +742,17 @@ void Histogram::delta_T_canvas() {
       can_dt[sec_i][particle_i]->Divide(6, 8);
       for (int pad_i = 0; pad_i < sc_paddle_num; pad_i++) {
         can_dt[sec_i][particle_i]->cd((int)pad_i + 1);
-        delta_t_sec_pad_hist[particle_i][sec_i][pad_i]->Draw("same"
-                                                             "COLZ");
+        delta_t_sec_pad_hist[particle_i][sec_i][pad_i]->Draw(
+            "same"
+            "COLZ");
       }
       can_dt[sec_i][particle_i]->Write();
     }
   }
 }
 
-void Histogram::CC_fill(int cc_sector, int cc_segment, int cc_pmt, int cc_nphe,
-                        double theta_cc) {
-  if (cc_pmt == -1)
-    cc_pmt = 2;
+void Histogram::CC_fill(int cc_sector, int cc_segment, int cc_pmt, int cc_nphe, double theta_cc) {
+  if (cc_pmt == -1) cc_pmt = 2;
   x_cc_sparse[0] = cc_sector;
   x_cc_sparse[1] = cc_segment;
   x_cc_sparse[2] = cc_pmt;
@@ -820,7 +760,6 @@ void Histogram::CC_fill(int cc_sector, int cc_segment, int cc_pmt, int cc_nphe,
   cc_sparse->Fill(x_cc_sparse);
 
   if (cc_sector <= sector && cc_segment <= segment && cc_pmt < PMT) {
-
     cc_hist[cc_sector - 1][cc_segment - 1][cc_pmt]->Fill(cc_nphe);
     cc_hist_allSeg[cc_sector - 1][cc_pmt]->Fill(cc_nphe);
 
@@ -842,26 +781,18 @@ void Histogram::makeHists_CC() {
     Theta_CC_Sec[sec_i] = new TH2D(hname, htitle, 20, 0.0, 20.0, 60, 0.0, 60.0);
     sprintf(hname, "Theta_CC_sec_cut%d", sec_i + 1);
     sprintf(htitle, "Theta CC sector cut %d", sec_i + 1);
-    Theta_CC_Sec_cut[sec_i] =
-        new TH2D(hname, htitle, 20, 0.0, 20.0, 60, 0.0, 60.0);
+    Theta_CC_Sec_cut[sec_i] = new TH2D(hname, htitle, 20, 0.0, 20.0, 60, 0.0, 60.0);
     for (int pmt_i = 0; pmt_i < PMT; pmt_i++) {
-      if (pmt_i == 0)
-        L_R_C = "both";
-      if (pmt_i == 1)
-        L_R_C = "right";
-      if (pmt_i == 2)
-        L_R_C = "left";
+      if (pmt_i == 0) L_R_C = "both";
+      if (pmt_i == 1) L_R_C = "right";
+      if (pmt_i == 2) L_R_C = "left";
       sprintf(hname, "CC_sec%d_%s", sec_i + 1, L_R_C.c_str());
       sprintf(htitle, "CC sector %d %s", sec_i + 1, L_R_C.c_str());
-      cc_hist_allSeg[sec_i][pmt_i] =
-          new TH1D(hname, htitle, bins_CC, CC_min, CC_max);
+      cc_hist_allSeg[sec_i][pmt_i] = new TH1D(hname, htitle, bins_CC, CC_min, CC_max);
       for (int seg_i = 0; seg_i < segment; seg_i++) {
-        sprintf(hname, "CC_sec%d_seg%d_%s", sec_i + 1, seg_i + 1,
-                L_R_C.c_str());
-        sprintf(htitle, "CC sector %d segment %d %s", sec_i + 1, seg_i + 1,
-                L_R_C.c_str());
-        cc_hist[sec_i][seg_i][pmt_i] =
-            new TH1D(hname, htitle, bins_CC, CC_min, CC_max);
+        sprintf(hname, "CC_sec%d_seg%d_%s", sec_i + 1, seg_i + 1, L_R_C.c_str());
+        sprintf(htitle, "CC sector %d segment %d %s", sec_i + 1, seg_i + 1, L_R_C.c_str());
+        cc_hist[sec_i][seg_i][pmt_i] = new TH1D(hname, htitle, bins_CC, CC_min, CC_max);
       }
     }
   }
@@ -955,13 +886,11 @@ void Histogram::theta_cc_slice_fit() {
         // Get momentum from bin center
         x[num] = (double)Theta_CC_1[sec_i]->GetBinCenter(i);
         // mean + 3sigma
-        y_plus[num] =
-            (double)Theta_CC_1[sec_i]->GetBinContent(i) +
-            (3 * (double)Theta_CC_2[sec_i]->GetBinContent(i)); //(N_SIGMA)
+        y_plus[num] = (double)Theta_CC_1[sec_i]->GetBinContent(i) +
+                      (3 * (double)Theta_CC_2[sec_i]->GetBinContent(i));  //(N_SIGMA)
         // mean - 3simga
-        y_minus[num] =
-            (double)Theta_CC_1[sec_i]->GetBinContent(i) -
-            (3 * (double)Theta_CC_2[sec_i]->GetBinContent(i)); //(N_SIGMA)
+        y_minus[num] = (double)Theta_CC_1[sec_i]->GetBinContent(i) -
+                       (3 * (double)Theta_CC_2[sec_i]->GetBinContent(i));  //(N_SIGMA)
         num++;
       }
     }
@@ -1005,12 +934,9 @@ void Histogram::CC_canvas() {
   char can_name[50];
   for (int pmt_i = 0; pmt_i < PMT; pmt_i++) {
     for (int sec_i = 0; sec_i < sector; sec_i++) {
-      if (pmt_i == 0)
-        L_R_C = "both";
-      if (pmt_i == 1)
-        L_R_C = "right";
-      if (pmt_i == 2)
-        L_R_C = "left";
+      if (pmt_i == 0) L_R_C = "both";
+      if (pmt_i == 1) L_R_C = "right";
+      if (pmt_i == 2) L_R_C = "left";
 
       sprintf(can_name, "Sector %d %s", sec_i + 1, L_R_C.c_str());
       can[sec_i][pmt_i] = new TCanvas(can_name, can_name, 1200, 800);
@@ -1031,15 +957,13 @@ void Histogram::makeHists_fid() {
     sprintf(hname, "electron_fid_sec%d", sec_i + 1);
     sprintf(htitle, "electron_fid_sec%d", sec_i + 1);
     electron_fid_sec_hist[sec_i] =
-        new TH2D(hname, htitle, bins, min_phi[sec_i], max_phi[sec_i], bins,
-                 theta_min, theta_max);
+        new TH2D(hname, htitle, bins, min_phi[sec_i], max_phi[sec_i], bins, theta_min, theta_max);
 
     for (int t = 0; t < 3; t++) {
       sprintf(hname, "hadron_fid_sec%d_%d", sec_i + 1, t);
       sprintf(htitle, "hadron_fid_sec%d_%d", sec_i + 1, t);
       hadron_fid_sec_hist[t][sec_i] =
-          new TH2D(hname, htitle, bins, min_phi[sec_i], max_phi[sec_i], bins,
-                   theta_min, theta_max);
+          new TH2D(hname, htitle, bins, min_phi[sec_i], max_phi[sec_i], bins, theta_min, theta_max);
     }
   }
 }
@@ -1098,21 +1022,16 @@ void Histogram::Fid_Write() {
     int start_slice = 13;
     for (int slice = start_slice; slice < fid_slices; slice++) {
       sprintf(hname, "electron_fid_sec_%d_%d", sec_i + 1, slice + 1);
-      electron_fid_sec_slice[sec_i][slice] =
-          electron_fid_sec_hist[sec_i]->ProjectionX(hname, slice_width * slice,
-                                                    slice_width * slice +
-                                                        (slice_width - 1));
+      electron_fid_sec_slice[sec_i][slice] = electron_fid_sec_hist[sec_i]->ProjectionX(
+          hname, slice_width * slice, slice_width * slice + (slice_width - 1));
       electron_fid_sec_slice[sec_i][slice]->Rebin(10);
       SliceFit[sec_i][slice] = new Fits();
       SliceFit[sec_i][slice]->Set_min(min_phi[sec_i]);
       SliceFit[sec_i][slice]->Set_max(max_phi[sec_i]);
-      SliceFit[sec_i][slice]->FitGenNormal(
-          electron_fid_sec_slice[sec_i][slice]);
+      SliceFit[sec_i][slice]->FitGenNormal(electron_fid_sec_slice[sec_i][slice]);
 
-      if (SliceFit[sec_i][slice]->Get_left_edge() ==
-              SliceFit[sec_i][slice]->Get_left_edge() &&
-          SliceFit[sec_i][slice]->Get_right_edge() ==
-              SliceFit[sec_i][slice]->Get_right_edge()) {
+      if (SliceFit[sec_i][slice]->Get_left_edge() == SliceFit[sec_i][slice]->Get_left_edge() &&
+          SliceFit[sec_i][slice]->Get_right_edge() == SliceFit[sec_i][slice]->Get_right_edge()) {
         y[slice + fid_slices] = y_width * slice_width * slice;
         x[slice + fid_slices] = SliceFit[sec_i][slice]->Get_left_edge();
         y[slice] = y_width * slice_width * slice;
@@ -1180,9 +1099,7 @@ void Histogram::EC_fill(double etot, double momentum) {
   }
 }
 
-void Histogram::TM_Fill(double momentum, double theta) {
-  Theta_vs_mom->Fill(momentum, theta);
-}
+void Histogram::TM_Fill(double momentum, double theta) { Theta_vs_mom->Fill(momentum, theta); }
 
 void Histogram::EC_cut_fill(double etot, double momentum) {
   double sampling_frac = etot / momentum;
@@ -1201,12 +1118,9 @@ void Histogram::EC_slice_fit() {
 
   TF1 *peak = new TF1("peak", "gaus", 0.2, 0.4);
   EC_sampling_fraction->FitSlicesY(peak, 0, -1, 0, "QRG5");
-  TH1D *EC_sampling_fraction_0 =
-      (TH1D *)gDirectory->Get("EC_sampling_fraction_0");
-  TH1D *EC_sampling_fraction_1 =
-      (TH1D *)gDirectory->Get("EC_sampling_fraction_1");
-  TH1D *EC_sampling_fraction_2 =
-      (TH1D *)gDirectory->Get("EC_sampling_fraction_2");
+  TH1D *EC_sampling_fraction_0 = (TH1D *)gDirectory->Get("EC_sampling_fraction_0");
+  TH1D *EC_sampling_fraction_1 = (TH1D *)gDirectory->Get("EC_sampling_fraction_1");
+  TH1D *EC_sampling_fraction_2 = (TH1D *)gDirectory->Get("EC_sampling_fraction_2");
   double x[bins];
   double y_plus[bins];
   double y_minus[bins];
@@ -1216,11 +1130,11 @@ void Histogram::EC_slice_fit() {
       // Get momentum from bin center
       x[num] = (double)EC_sampling_fraction_1->GetBinCenter(i);
       // mean + 3sigma
-      y_plus[num] = (double)EC_sampling_fraction_1->GetBinContent(i) +
-                    2.0 * (double)EC_sampling_fraction_2->GetBinContent(i);
+      y_plus[num] =
+          (double)EC_sampling_fraction_1->GetBinContent(i) + 2.0 * (double)EC_sampling_fraction_2->GetBinContent(i);
       // mean - 3simga
-      y_minus[num] = (double)EC_sampling_fraction_1->GetBinContent(i) -
-                     2.0 * (double)EC_sampling_fraction_2->GetBinContent(i);
+      y_minus[num] =
+          (double)EC_sampling_fraction_1->GetBinContent(i) - 2.0 * (double)EC_sampling_fraction_2->GetBinContent(i);
       num++;
     }
   }
@@ -1309,8 +1223,7 @@ void Histogram::EC_Write() {
   Theta_vs_mom->Write();
 }
 
-void Histogram::Fill_Beam_Position(double vertex_x, double vertex_y,
-                                   double vertex_z) {
+void Histogram::Fill_Beam_Position(double vertex_x, double vertex_y, double vertex_z) {
   Beam_Position->Fill(vertex_x, vertex_y);
   Beam_Position_X->Fill(vertex_x);
   Beam_Position_Y->Fill(vertex_y);
@@ -1335,12 +1248,9 @@ void Histogram::Beam_Position_Write() {
   Beam_Position_Z->Write();
 }
 
-void Histogram::Fill_Target_Vertex(double vertex_x, double vertex_y,
-                                   double vertex_z) {
-  if (0 == vertex_x)
-    return;
-  if (0 == vertex_y && 0 == vertex_z)
-    return;
+void Histogram::Fill_Target_Vertex(double vertex_x, double vertex_y, double vertex_z) {
+  if (0 == vertex_x) return;
+  if (0 == vertex_y && 0 == vertex_z) return;
   target_vertex_X->Fill(vertex_x);
   target_vertex_Y->Fill(vertex_y);
   target_vertex_Z->Fill(vertex_z);

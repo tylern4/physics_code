@@ -28,8 +28,8 @@ else()
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif()
 
-add_cython_target(handeler src/handeler.pyx CXX PY2 OUTPUT_VAR _handeler)
-include_directories(${PYTHON_INCLUDE_DIRS})
+add_cython_target(handeler src/handeler.pyx CXX PY3 OUTPUT_VAR _handeler)
+include_directories(${PYTHON_INCLUDE_DIRS} ${PYTHON_NUMPY_INCLUDE_DIR} ${NumPy_INCLUDE_DIR})
 
 
 set(EXTRA_FLAGS "-pthread -m64 -Wno-deprecated-register")
@@ -43,11 +43,19 @@ install(TARGETS handeler
         LIBRARY DESTINATION lib)
 
 # Python Skim
-add_cython_target(skim src/skim.pyx CXX PY2 OUTPUT_VAR _skim)
+add_cython_target(skim src/skim.pyx CXX PY3 OUTPUT_VAR _skim)
 add_library(skim MODULE ${_skim})
 python_extension_module(skim)
 target_link_libraries(skim physics ${PYTHON_LIBRARIES} ${ROOT_LIBRARIES})
 install(TARGETS skim
+        LIBRARY DESTINATION lib)
+
+# Python h10
+add_cython_target(h10 src/h10.pyx CXX PY3 OUTPUT_VAR _h10)
+add_library(h10 MODULE ${_h10})
+python_extension_module(h10)
+target_link_libraries(h10 physics ${PYTHON_LIBRARIES} ${ROOT_LIBRARIES})
+install(TARGETS h10
         LIBRARY DESTINATION lib)
 
 # e1d
