@@ -11,6 +11,7 @@ cdef extern from "skim.hpp":
       Skim(vector[string], string) except +
       void Basic()
       void Strict()
+      void Final()
 
 cdef class py_skim:
   cdef Skim*c_skim
@@ -25,6 +26,9 @@ cdef class py_skim:
   def strict(self):
     self.c_skim = new Skim(self.f, self.output)
     self.c_skim.Strict()
+  def final(self):
+    self.c_skim = new Skim(self.f, self.output)
+    self.c_skim.Final()
 
 class skim_files:
   def __init__(self, input):

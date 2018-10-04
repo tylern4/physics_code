@@ -17,7 +17,7 @@ bar_format = dh.colors.BLUE + "{bar}" + dh.colors.GREEN + "{percentage:3.0f}%" +
 
 def parallel_skim(files):
     skimmed = files[:-5] + "_skim.root".encode("utf-8")
-    skim.py_skim([files], skimmed).strict()
+    skim.py_skim([files], skimmed).final()
     return skimmed
 
 
@@ -47,7 +47,7 @@ num_cores = cpu_count()
 pool = Pool(processes=num_cores)
 skimmed = pool.map(parallel_skim, (files))
 #skimmed = pool.map_async(parallel_skim, (files))
-#pool.join()
+# pool.join()
 pool.close()
 skim_end = time.time()
 print(dh.colors.FAIL + "Skim Time: {} Sec".format(skim_end - skim_start) + dh.colors.ENDC)
