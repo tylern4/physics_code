@@ -186,66 +186,67 @@ void Skim::Final() {
     sector = physics::get_sector(phi);
     check->Set_elec_fid(theta, phi, sector);
 
-    if (check->isStrictElecctron()) {
-      // Setup scattered electron 4 vector
-      TLorentzVector e_mu_prime = physics::fourVec(data->p(0), data->cx(0), data->cy(0), data->cz(0), MASS_E);
-
-      Delta_T *dt = new Delta_T(data->sc_t(data->sc(0) - 1), data->sc_r(data->sc(0) - 1));
-      std::vector<double> dt_proton = dt->delta_t_array(MASS_P, data);
-      std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, data);
-      delete dt;
-
-      // W = physics::W_calc(*e_mu, e_mu_prime);
-      // Q2 = physics::Q2_calc(*e_mu, e_mu_prime);
-
-      TLorentzVector gamma_mu = (e_mu - e_mu_prime);
-
-      num_of_proton = num_of_pips = num_of_pims = 0;
-      for (int part_num = 1; part_num < data->gpart(); part_num++) {
-        PID = -99;
-        if (data->q(part_num) == POSITIVE) {
-          if (check->dt_P_cut(dt_proton.at(part_num), data->p(part_num)))
-            PID = PROTON;
-          else if (check->dt_Pip_cut(dt_proton.at(part_num), data->p(part_num)))
-            PID = PIP;
-        } else if (data->q(part_num) == NEGATIVE) {
-          if (check->dt_Pip_cut(dt_proton.at(part_num), data->p(part_num))) PID = PIM;
-        }
-
-        TLorentzVector particle =
-            physics::fourVec(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num), PID);
-
-        if (data->q(part_num) == POSITIVE) {
-          if (check->dt_P_cut(dt_proton.at(part_num), data->p(part_num))) {
-            num_of_proton++;
-          } else if (check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num))) {
-            num_of_pips++;
-
-            MM_neutron->Set_4Vec(particle);
-            MM_neutron->missing_mass(gamma_mu);
-          }
-        } else if (data->q(part_num) == NEGATIVE && check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num))) {
-          num_of_pims++;
-        }
-      }
-
-      bool mm_cut = true;
-      mm_cut &= (MM_neutron->Get_MM() < 1.1);
-      mm_cut &= (MM_neutron->Get_MM() > 0.8);
-
-      if (num_of_pips == 1 && mm_cut && num_of_proton == 0 && data->gpart() < 3) {
-        skim->Fill();
-      }
-
+    if (!check->isStrictElecctron()) {
       delete check;
+      continue;
     }
-    chain->Reset();  // delete Tree object
-    delete chain;
-    RootOutputFile->cd();
-    RootOutputFile->Write();
-    RootOutputFile->Close();
-    delete RootOutputFile;
+    // Setup scattered electron 4 vector
+    TLorentzVector e_mu_prime = physics::fourVec(data->p(0), data->cx(0), data->cy(0), data->cz(0), MASS_E);
+
+    Delta_T *dt = new Delta_T(data->sc_t(data->sc(0) - 1), data->sc_r(data->sc(0) - 1));
+    std::vector<double> dt_proton = dt->delta_t_array(MASS_P, data);
+    std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, data);
+    delete dt;
+
+    // W = physics::W_calc(*e_mu, e_mu_prime);
+    // Q2 = physics::Q2_calc(*e_mu, e_mu_prime);
+
+    TLorentzVector gamma_mu = (e_mu - e_mu_prime);
+
+    num_of_proton = num_of_pips = num_of_pims = 0;
+    for (int part_num = 1; part_num < data->gpart(); part_num++) {
+      PID = -99;
+      if (data->q(part_num) == POSITIVE) {
+        if (check->dt_P_cut(dt_proton.at(part_num), data->p(part_num)))
+          PID = PROTON;
+        else if (check->dt_Pip_cut(dt_proton.at(part_num), data->p(part_num)))
+          PID = PIP;
+      } else if (data->q(part_num) == NEGATIVE) {
+        if (check->dt_Pip_cut(dt_proton.at(part_num), data->p(part_num))) PID = PIM;
+      }
+
+      TLorentzVector particle =
+          physics::fourVec(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num), PID);
+
+      if (data->q(part_num) == POSITIVE) {
+        if (check->dt_P_cut(dt_proton.at(part_num), data->p(part_num))) {
+          num_of_proton++;
+        } else if (check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num))) {
+          num_of_pips++;
+
+          MM_neutron->Set_4Vec(particle);
+          MM_neutron->missing_mass(gamma_mu);
+        }
+      } else if (data->q(part_num) == NEGATIVE && check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num))) {
+        num_of_pims++;
+      }
+    }
+
+    bool mm_cut = true;
+    mm_cut &= (MM_neutron->Get_MM() < 1.1);
+    mm_cut &= (MM_neutron->Get_MM() > 0.8);
+
+    if (num_of_pips == 1 && mm_cut && num_of_proton == 0 && data->gpart() < 3) {
+      skim->Fill();
+    }
+
+    delete check;
   }
+  delete chain;
+  RootOutputFile->cd();
+  RootOutputFile->Write();
+  RootOutputFile->Close();
+  delete RootOutputFile;
 }
 
 double Skim::sf_top_fit(double P) {
