@@ -27,7 +27,7 @@ else()
   set(CMAKE_CXX_STANDARD 17)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif()
-set(EXTRA_FLAGS "-pthread -W#warnings -Wwritable-strings -m64 -Wno-deprecated-register")
+set(EXTRA_FLAGS "-pthread -m64 -Wno-deprecated-register")
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${EXTRA_FLAGS}" )
 include_directories(${PYTHON_INCLUDE_DIRS} ${PYTHON_NUMPY_INCLUDE_DIR} ${NumPy_INCLUDE_DIR})
 
