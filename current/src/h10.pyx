@@ -290,9 +290,18 @@ cdef extern from "physics.hpp" namespace "physics":
   double phi_calc(double cosx, double cosy)
   double center_phi_calc(double cosx, double cosy)
   int get_sector(double phi)
-  double Get_Mass(int ID)
   double fiducial_phi(double theta_e, double e_p)
 
+def physics_theta_calc(cosz):
+  return theta_calc(cosz)
+def physics_phi_calc(cosx, cosy):
+  return phi_calc(cosx, cosy)
+def physics_center_phi_calc(cosx, cosy):
+  return center_phi_calc(cosx, cosy)
+def physics_get_sector(phi):
+  return get_sector(phi)
+def physics_fiducial_phi(theta_e, e_p):
+  return fiducial_phi(theta_e, e_p)
 
 cdef extern from "branches.cpp":
   pass
