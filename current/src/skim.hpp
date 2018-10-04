@@ -39,6 +39,7 @@ class Skim {
   Skim(std::vector<std::string> input, std::string output);
   void Basic();
   void Strict();
+  void Final();
   ~Skim();
   double sf_top_fit(double P);
   double sf_bot_fit(double P);

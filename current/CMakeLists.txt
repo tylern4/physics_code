@@ -27,15 +27,12 @@ else()
   set(CMAKE_CXX_STANDARD 17)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif()
-
-add_cython_target(handeler src/handeler.pyx CXX PY3 OUTPUT_VAR _handeler)
+set(EXTRA_FLAGS "-pthread -W#warnings -Wwritable-strings -m64 -Wno-deprecated-register")
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${EXTRA_FLAGS}" )
 include_directories(${PYTHON_INCLUDE_DIRS} ${PYTHON_NUMPY_INCLUDE_DIR} ${NumPy_INCLUDE_DIR})
 
-
-set(EXTRA_FLAGS "-pthread -m64 -Wno-deprecated-register")
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${EXTRA_FLAGS}" )
-
 # Python DataHandeler
+add_cython_target(handeler src/handeler.pyx CXX PY3 OUTPUT_VAR _handeler)
 add_library(handeler MODULE ${_handeler})
 python_extension_module(handeler)
 target_link_libraries(handeler physics ${PYTHON_LIBRARIES} ${ROOT_LIBRARIES})
@@ -62,4 +59,10 @@ install(TARGETS h10
 add_executable(e1d cpp/main_cpp.cpp)
 target_link_libraries(e1d physics ${ROOT_LIBRARIES})
 install(TARGETS e1d
+  RUNTIME DESTINATION bin)
+
+#Skim
+add_executable(e1d_skim skim/main_skim.cpp)
+target_link_libraries(e1d_skim physics ${ROOT_LIBRARIES})
+install(TARGETS e1d_skim
   RUNTIME DESTINATION bin)

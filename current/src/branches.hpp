@@ -131,6 +131,13 @@ class Branches {
   float rf_time1();
   float rf_time2();
   int gpart();
+  int dc_part();
+  int ec_part();
+  int sc_part();
+  int cc_part();
+  int lac_part();
+  int st_part();
+
   std::vector<int> id();
   std::vector<int> stat();
   std::vector<int> dc();
@@ -149,13 +156,52 @@ class Branches {
   std::vector<float> vx();
   std::vector<float> vy();
   std::vector<float> vz();
-
-  int dc_part();
-  int ec_part();
-  int sc_part();
-  int cc_part();
-  int lac_part();
-  int st_part();
+  std::vector<int> dc_sect();
+  std::vector<int> dc_trk();
+  std::vector<int> dc_stat();
+  std::vector<float> dc_vx();
+  std::vector<float> dc_vy();
+  std::vector<float> dc_vz();
+  std::vector<float> dc_vr();
+  std::vector<float> dc_xsc();
+  std::vector<float> dc_ysc();
+  std::vector<float> dc_zsc();
+  std::vector<float> dc_cxsc();
+  std::vector<float> dc_cysc();
+  std::vector<float> dc_czsc();
+  std::vector<float> dc_c2();
+  std::vector<int> ec_stat();
+  std::vector<int> ec_sect();
+  std::vector<int> ec_whol();
+  std::vector<int> ec_inst();
+  std::vector<int> ec_oust();
+  std::vector<float> etot();
+  std::vector<float> ec_ei();
+  std::vector<float> ec_eo();
+  std::vector<float> ec_t();
+  std::vector<float> ec_r();
+  std::vector<float> ech_x();
+  std::vector<float> ech_y();
+  std::vector<float> ech_z();
+  std::vector<float> ec_m2();
+  std::vector<float> ec_m3();
+  std::vector<float> ec_m4();
+  std::vector<float> ec_c2();
+  std::vector<int> sc_sect();
+  std::vector<int> sc_hit();
+  std::vector<int> sc_pd();
+  std::vector<int> sc_stat();
+  std::vector<float> edep();
+  std::vector<float> sc_t();
+  std::vector<float> sc_r();
+  std::vector<float> sc_c2();
+  std::vector<int> cc_sect();
+  std::vector<int> cc_hit();
+  std::vector<int> cc_segm();
+  std::vector<int> nphe();
+  std::vector<float> cc_t();
+  std::vector<float> cc_r();
+  std::vector<float> cc_c2();
 
   int id(int i);
   int stat(int i);
@@ -206,7 +252,6 @@ class Branches {
   float ec_m3(int i);
   float ec_m4(int i);
   float ec_c2(int i);
-
   int sc_sect(int i);
   int sc_hit(int i);
   int sc_pd(int i);
@@ -215,7 +260,6 @@ class Branches {
   float sc_t(int i);
   float sc_r(int i);
   float sc_c2(int i);
-
   int cc_sect(int i);
   int cc_hit(int i);
   int cc_segm(int i);

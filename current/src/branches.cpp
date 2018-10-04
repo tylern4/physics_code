@@ -596,127 +596,389 @@ float Branches::cc_c2(int i) {
 
 std::vector<int> Branches::id() {
   // [gpart]
-  std::vector<int> v;
-  for (int i = 0; i < _gpart; i++) v.emplace_back(_id[i]);
+  std::vector<int> v(_gpart);
+  for (int i = 0; i < _gpart; i++) v[i] = _id[i];
   return v;
 }
 std::vector<int> Branches::stat() {
   // [gpart]
-  std::vector<int> v;
-  for (int i = 0; i < _gpart; i++) v.emplace_back(_stat[i]);
+  std::vector<int> v(_gpart);
+  for (int i = 0; i < _gpart; i++) v[i] = _stat[i];
   return v;
 }
 std::vector<int> Branches::dc() {
   // [gpart]
-  std::vector<int> v;
-  for (int i = 0; i < _gpart; i++) v.emplace_back(_dc[i]);
+  std::vector<int> v(_gpart);
+  for (int i = 0; i < _gpart; i++) v[i] = _dc[i];
   return v;
 }
 std::vector<int> Branches::cc() {
   // [gpart]
-  std::vector<int> v;
-  for (int i = 0; i < _gpart; i++) v.emplace_back(_cc[i]);
+  std::vector<int> v(_gpart);
+  for (int i = 0; i < _gpart; i++) v[i] = _cc[i];
   return v;
 }
 std::vector<int> Branches::sc() {
   // [gpart]
-  std::vector<int> v;
-  for (int i = 0; i < _gpart; i++) v.emplace_back(_sc[i]);
+  std::vector<int> v(_gpart);
+  for (int i = 0; i < _gpart; i++) v[i] = _sc[i];
   return v;
 }
 std::vector<int> Branches::ec() {
   // [gpart]
-  std::vector<int> v;
-  for (int i = 0; i < _gpart; i++) v.emplace_back(_ec[i]);
+  std::vector<int> v(_gpart);
+  for (int i = 0; i < _gpart; i++) v[i] = _ec[i];
   return v;
 }
 std::vector<int> Branches::lec() {
   // [gpart]
-  std::vector<int> v;
-  for (int i = 0; i < _gpart; i++) v.emplace_back(_lec[i]);
+  std::vector<int> v(_gpart);
+  for (int i = 0; i < _gpart; i++) v[i] = _lec[i];
   return v;
 }
 std::vector<int> Branches::ccst() {
   // [gpart]
-  std::vector<int> v;
-  for (int i = 0; i < _gpart; i++) v.emplace_back(_ccst[i]);
+  std::vector<int> v(_gpart);
+  for (int i = 0; i < _gpart; i++) v[i] = _ccst[i];
   return v;
 }
 std::vector<float> Branches::p() {
   // [gpart]
-  std::vector<float> v;
-  for (int i = 0; i < _gpart; i++) v.emplace_back(_p[i]);
+  std::vector<float> v(_gpart);
+  for (int i = 0; i < _gpart; i++) v[i] = _p[i];
   return v;
 }
 std::vector<float> Branches::m() {
   // [gpart]
-  std::vector<float> v;
-  for (int i = 0; i < _gpart; i++) v.emplace_back(_m[i]);
+  std::vector<float> v(_gpart);
+  for (int i = 0; i < _gpart; i++) v[i] = _m[i];
   return v;
 }
 std::vector<int> Branches::q() {
   // [gpart]
-  std::vector<int> v;
-  for (int i = 0; i < _gpart; i++) v.emplace_back(_q[i]);
+  std::vector<int> v(_gpart);
+  for (int i = 0; i < _gpart; i++) v[i] = _q[i];
   return v;
 }
 std::vector<float> Branches::b() {
   // [gpart]
-  std::vector<float> v;
-  for (int i = 0; i < _gpart; i++) v.emplace_back(_b[i]);
+  std::vector<float> v(_gpart);
+  for (int i = 0; i < _gpart; i++) v[i] = _b[i];
   return v;
 }
 std::vector<float> Branches::cx() {
   // [gpart]
-  std::vector<float> v;
-  for (int i = 0; i < _gpart; i++) v.emplace_back(_cx[i]);
+  std::vector<float> v(_gpart);
+  for (int i = 0; i < _gpart; i++) v[i] = _cx[i];
   return v;
 }
 std::vector<float> Branches::cy() {
   // [gpart]
-  std::vector<float> v;
-  for (int i = 0; i < _gpart; i++) v.emplace_back(_cy[i]);
+  std::vector<float> v(_gpart);
+  for (int i = 0; i < _gpart; i++) v[i] = _cy[i];
   return v;
 }
 std::vector<float> Branches::cz() {
   // [gpart]
-  std::vector<float> v;
-  for (int i = 0; i < _gpart; i++) v.emplace_back(_cz[i]);
+  std::vector<float> v(_gpart);
+  for (int i = 0; i < _gpart; i++) v[i] = _cz[i];
   return v;
 }
 std::vector<float> Branches::vx() {
   // [gpart]
-  std::vector<float> v;
-  for (int i = 0; i < _gpart; i++) v.emplace_back(_vx[i]);
+  std::vector<float> v(_gpart);
+  for (int i = 0; i < _gpart; i++) v[i] = _vx[i];
   return v;
 }
 std::vector<float> Branches::vy() {
   // [gpart]
-  std::vector<float> v;
-  for (int i = 0; i < _gpart; i++) v.emplace_back(_vy[i]);
+  std::vector<float> v(_gpart);
+  for (int i = 0; i < _gpart; i++) v[i] = _vy[i];
   return v;
 }
 std::vector<float> Branches::vz() {
   // [gpart]
-  std::vector<float> v;
-  for (int i = 0; i < _gpart; i++) v.emplace_back(_vz[i]);
+  std::vector<float> v(_gpart);
+  for (int i = 0; i < _gpart; i++) v[i] = _vz[i];
   return v;
 }
 
-/*
-int Branches::lec_sect(i) { return _; }    //[lac_part]
-int Branches::lec_hit(i) { return _; }     //[lac_part]
-int Branches::lec_stat(i) { return _; }    //[lac_part]
-float Branches::lec_etot(i) { return _; }  //[lac_part]
-float Branches::lec_ein(i) { return _; }   //[lac_part]
-float Branches::lec_t(i) { return _; }     //[lac_part]
-float Branches::lec_r(i) { return _; }     //[lac_part]
-float Branches::lec_x(i) { return _; }     //[lac_part]
-float Branches::lec_y(i) { return _; }     //[lac_part]
-float Branches::lec_z(i) { return _; }     //[lac_part]
-float Branches::lec_c2(i) { return _; }    //[lac_part]
+std::vector<int> Branches::dc_sect() {
+  // [dcpart]
+  std::vector<int> v(_dc_part);
+  for (int i = 0; i < _dc_part; i++) v[i] = _dc_sect[i];
+  return v;
+}
+std::vector<int> Branches::dc_trk() {
+  // [dcpart]
+  std::vector<int> v(_dc_part);
+  for (int i = 0; i < _dc_part; i++) v[i] = _dc_trk[i];
+  return v;
+}
+std::vector<int> Branches::dc_stat() {
+  // [dcpart]
+  std::vector<int> v(_dc_part);
+  for (int i = 0; i < _dc_part; i++) v[i] = _dc_stat[i];
+  return v;
+}
+std::vector<float> Branches::dc_vx() {
+  // [dcpart]
+  std::vector<float> v(_dc_part);
+  for (int i = 0; i < _dc_part; i++) v[i] = _dc_vx[i];
+  return v;
+}
+std::vector<float> Branches::dc_vy() {
+  // [dcpart]
+  std::vector<float> v(_dc_part);
+  for (int i = 0; i < _dc_part; i++) v[i] = _dc_vy[i];
+  return v;
+}
+std::vector<float> Branches::dc_vz() {
+  // [dcpart]
+  std::vector<float> v(_dc_part);
+  for (int i = 0; i < _dc_part; i++) v[i] = _dc_vz[i];
+  return v;
+}
+std::vector<float> Branches::dc_vr() {
+  // [dcpart]
+  std::vector<float> v(_dc_part);
+  for (int i = 0; i < _dc_part; i++) v[i] = _dc_vr[i];
+  return v;
+}
+std::vector<float> Branches::dc_xsc() {
+  // [dcpart]
+  std::vector<float> v(_dc_part);
+  for (int i = 0; i < _dc_part; i++) v[i] = _dc_xsc[i];
+  return v;
+}
+std::vector<float> Branches::dc_ysc() {
+  // [dcpart]
+  std::vector<float> v(_dc_part);
+  for (int i = 0; i < _dc_part; i++) v[i] = _dc_ysc[i];
+  return v;
+}
+std::vector<float> Branches::dc_zsc() {
+  // [dcpart]
+  std::vector<float> v(_dc_part);
+  for (int i = 0; i < _dc_part; i++) v[i] = _dc_zsc[i];
+  return v;
+}
+std::vector<float> Branches::dc_cxsc() {
+  // [dcpart]
+  std::vector<float> v(_dc_part);
+  for (int i = 0; i < _dc_part; i++) v[i] = _dc_cxsc[i];
+  return v;
+}
+std::vector<float> Branches::dc_cysc() {
+  // [dcpart]
+  std::vector<float> v(_dc_part);
+  for (int i = 0; i < _dc_part; i++) v[i] = _dc_cysc[i];
+  return v;
+}
+std::vector<float> Branches::dc_czsc() {
+  // [dcpart]
+  std::vector<float> v(_dc_part);
+  for (int i = 0; i < _dc_part; i++) v[i] = _dc_czsc[i];
+  return v;
+}
+std::vector<float> Branches::dc_c2() {
+  // [dcpart]
+  std::vector<float> v(_dc_part);
+  for (int i = 0; i < _dc_part; i++) v[i] = _dc_c2[i];
+  return v;
+}
 
-int Branches::st_status(i) { return _; }  //[st_part]
-float Branches::st_time(i) { return _; }  //[st_part]
-float Branches::st_rtrk(i) { return _; }  //[st_part]
-*/
+std::vector<int> Branches::ec_stat() {
+  // [ec_part]
+  std::vector<int> v(_ec_part);
+  for (int i = 0; i < _ec_part; i++) v[i] = _ec_stat[i];
+  return v;
+}
+std::vector<int> Branches::ec_sect() {
+  // [ec_part]
+  std::vector<int> v(_ec_part);
+  for (int i = 0; i < _ec_part; i++) v[i] = _ec_sect[i];
+  return v;
+}
+std::vector<int> Branches::ec_whol() {
+  // [ec_part]
+  std::vector<int> v(_ec_part);
+  for (int i = 0; i < _ec_part; i++) v[i] = _ec_whol[i];
+  return v;
+}
+std::vector<int> Branches::ec_inst() {
+  // [ec_part]
+  std::vector<int> v(_ec_part);
+  for (int i = 0; i < _ec_part; i++) v[i] = _ec_inst[i];
+  return v;
+}
+std::vector<int> Branches::ec_oust() {
+  // [ec_part]
+  std::vector<int> v(_ec_part);
+  for (int i = 0; i < _ec_part; i++) v[i] = _ec_oust[i];
+  return v;
+}
+std::vector<float> Branches::etot() {
+  // [ec_part]
+  std::vector<float> v(_ec_part);
+  for (int i = 0; i < _ec_part; i++) v[i] = _etot[i];
+  return v;
+}
+std::vector<float> Branches::ec_ei() {
+  // [ec_part]
+  std::vector<float> v(_ec_part);
+  for (int i = 0; i < _ec_part; i++) v[i] = _ec_ei[i];
+  return v;
+}
+std::vector<float> Branches::ec_eo() {
+  // [ec_part]
+  std::vector<float> v(_ec_part);
+  for (int i = 0; i < _ec_part; i++) v[i] = _ec_eo[i];
+  return v;
+}
+std::vector<float> Branches::ec_t() {
+  // [ec_part]
+  std::vector<float> v(_ec_part);
+  for (int i = 0; i < _ec_part; i++) v[i] = _ec_t[i];
+  return v;
+}
+std::vector<float> Branches::ec_r() {
+  // [ec_part]
+  std::vector<float> v(_ec_part);
+  for (int i = 0; i < _ec_part; i++) v[i] = _ec_r[i];
+  return v;
+}
+std::vector<float> Branches::ech_x() {
+  // [ec_part]
+  std::vector<float> v(_ec_part);
+  for (int i = 0; i < _ec_part; i++) v[i] = _ech_x[i];
+  return v;
+}
+std::vector<float> Branches::ech_y() {
+  // [ec_part]
+  std::vector<float> v(_ec_part);
+  for (int i = 0; i < _ec_part; i++) v[i] = _ech_y[i];
+  return v;
+}
+std::vector<float> Branches::ech_z() {
+  // [ec_part]
+  std::vector<float> v(_ec_part);
+  for (int i = 0; i < _ec_part; i++) v[i] = _ech_z[i];
+  return v;
+}
+std::vector<float> Branches::ec_m2() {
+  // [ec_part]
+  std::vector<float> v(_ec_part);
+  for (int i = 0; i < _ec_part; i++) v[i] = _ec_m2[i];
+  return v;
+}
+std::vector<float> Branches::ec_m3() {
+  // [ec_part]
+  std::vector<float> v(_ec_part);
+  for (int i = 0; i < _ec_part; i++) v[i] = _ec_m3[i];
+  return v;
+}
+std::vector<float> Branches::ec_m4() {
+  // [ec_part]
+  std::vector<float> v(_ec_part);
+  for (int i = 0; i < _ec_part; i++) v[i] = _ec_m4[i];
+  return v;
+}
+std::vector<float> Branches::ec_c2() {
+  // [ec_part]
+  std::vector<float> v(_ec_part);
+  for (int i = 0; i < _ec_part; i++) v[i] = _ec_c2[i];
+  return v;
+}
+
+std::vector<int> Branches::sc_sect() {
+  // [sc_part]
+  std::vector<int> v(_sc_part);
+  for (int i = 0; i < _sc_part; i++) v[i] = _sc_sect[i];
+  return v;
+}
+std::vector<int> Branches::sc_hit() {
+  // [sc_part]
+  std::vector<int> v(_sc_part);
+  for (int i = 0; i < _sc_part; i++) v[i] = _sc_hit[i];
+  return v;
+}
+std::vector<int> Branches::sc_pd() {
+  // [sc_part]
+  std::vector<int> v(_sc_part);
+  for (int i = 0; i < _sc_part; i++) v[i] = _sc_pd[i];
+  return v;
+}
+std::vector<int> Branches::sc_stat() {
+  // [sc_part]
+  std::vector<int> v(_sc_part);
+  for (int i = 0; i < _sc_part; i++) v[i] = _sc_stat[i];
+  return v;
+}
+std::vector<float> Branches::edep() {
+  // [sc_part]
+  std::vector<float> v(_sc_part);
+  for (int i = 0; i < _sc_part; i++) v[i] = _edep[i];
+  return v;
+}
+std::vector<float> Branches::sc_t() {
+  // [sc_part]
+  std::vector<float> v(_sc_part);
+  for (int i = 0; i < _sc_part; i++) v[i] = _sc_t[i];
+  return v;
+}
+std::vector<float> Branches::sc_r() {
+  // [sc_part]
+  std::vector<float> v(_sc_part);
+  for (int i = 0; i < _sc_part; i++) v[i] = _sc_r[i];
+  return v;
+}
+std::vector<float> Branches::sc_c2() {
+  // [sc_part]
+  std::vector<float> v(_sc_part);
+  for (int i = 0; i < _sc_part; i++) v[i] = _sc_c2[i];
+  return v;
+}
+
+std::vector<int> Branches::cc_sect() {
+  // [cc_part]
+  std::vector<int> v(_cc_part);
+  for (int i = 0; i < _cc_part; i++) v[i] = _cc_sect[i];
+  return v;
+}
+std::vector<int> Branches::cc_hit() {
+  // [cc_part]
+  std::vector<int> v(_cc_part);
+  for (int i = 0; i < _cc_part; i++) v[i] = _cc_hit[i];
+  return v;
+}
+std::vector<int> Branches::cc_segm() {
+  // [cc_part]
+  std::vector<int> v(_cc_part);
+  for (int i = 0; i < _cc_part; i++) v[i] = _cc_segm[i];
+  return v;
+}
+std::vector<int> Branches::nphe() {
+  // [cc_part]
+  std::vector<int> v(_cc_part);
+  for (int i = 0; i < _cc_part; i++) v[i] = _nphe[i];
+  return v;
+}
+std::vector<float> Branches::cc_t() {
+  // [cc_part]
+  std::vector<float> v(_cc_part);
+  for (int i = 0; i < _cc_part; i++) v[i] = _cc_t[i];
+  return v;
+}
+std::vector<float> Branches::cc_r() {
+  // [cc_part]
+  std::vector<float> v(_cc_part);
+  for (int i = 0; i < _cc_part; i++) v[i] = _cc_r[i];
+  return v;
+}
+std::vector<float> Branches::cc_c2() {
+  // [cc_part]
+  std::vector<float> v(_cc_part);
+  for (int i = 0; i < _cc_part; i++) v[i] = _cc_c2[i];
+  return v;
+}

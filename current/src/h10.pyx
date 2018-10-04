@@ -282,6 +282,18 @@ cdef class ThreeVector:
   def Eta (ThreeVector self):
     return self.c_TVector3.Eta()
 
+cdef extern from "physics.cpp":
+  pass
+
+cdef extern from "physics.hpp" namespace "physics":
+  double theta_calc(double cosz)
+  double phi_calc(double cosx, double cosy)
+  double center_phi_calc(double cosx, double cosy)
+  int get_sector(double phi)
+  double Get_Mass(int ID)
+  double fiducial_phi(double theta_e, double e_p)
+
+
 cdef extern from "branches.cpp":
   pass
 
@@ -316,6 +328,52 @@ cdef extern from "branches.hpp":
       vector[float] vx()
       vector[float] vy()
       vector[float] vz()
+      vector[int] dc_sect()
+      vector[int] dc_trk()
+      vector[int] dc_stat()
+      vector[float] dc_vx()
+      vector[float] dc_vy()
+      vector[float] dc_vz()
+      vector[float] dc_vr()
+      vector[float] dc_xsc()
+      vector[float] dc_ysc()
+      vector[float] dc_zsc()
+      vector[float] dc_cxsc()
+      vector[float] dc_cysc()
+      vector[float] dc_czsc()
+      vector[float] dc_c2()
+      vector[int] ec_stat()
+      vector[int] ec_sect()
+      vector[int] ec_whol()
+      vector[int] ec_inst()
+      vector[int] ec_oust()
+      vector[float] etot()
+      vector[float] ec_ei()
+      vector[float] ec_eo()
+      vector[float] ec_t()
+      vector[float] ec_r()
+      vector[float] ech_x()
+      vector[float] ech_y()
+      vector[float] ech_z()
+      vector[float] ec_m2()
+      vector[float] ec_m3()
+      vector[float] ec_m4()
+      vector[float] ec_c2()
+      vector[int] sc_sect()
+      vector[int] sc_hit()
+      vector[int] sc_pd()
+      vector[int] sc_stat()
+      vector[float] edep()
+      vector[float] sc_t()
+      vector[float] sc_r()
+      vector[float] sc_c2()
+      vector[int] cc_sect()
+      vector[int] cc_hit()
+      vector[int] cc_segm()
+      vector[int] nphe()
+      vector[float] cc_t()
+      vector[float] cc_r()
+      vector[float] cc_c2()
 
 cdef char* str_to_char(str name):
   """Convert python string to char*"""
@@ -358,25 +416,25 @@ cdef class h10:
       raise StopIteration
   @property
   def gpart(self):
-    return self.c_branches.gpart()
+    return np.array(self.c_branches.gpart())
   @property
   def p(self):
-    return self.c_branches.p()
+    return np.array(self.c_branches.p())
   @property
   def b(self):
-    return self.c_branches.b()
+    return np.array(self.c_branches.b())
   @property
   def q(self):
-    return self.c_branches.q()
+    return np.array(self.c_branches.q())
   @property
   def cx(self):
-    return self.c_branches.cx()
+    return np.array(self.c_branches.cx())
   @property
   def cy(self):
-    return self.c_branches.cy()
+    return np.array(self.c_branches.cy())
   @property
   def cz(self):
-    return self.c_branches.cz()
+    return np.array(self.c_branches.cz())
   @property
   def px(self):
     return np.array(self.c_branches.cx()) * np.array(self.c_branches.p())
@@ -388,25 +446,163 @@ cdef class h10:
     return np.array(self.c_branches.cz()) * np.array(self.c_branches.p())
   @property
   def vx(self):
-    return self.c_branches.vx()
+    return np.array(self.c_branches.vx())
   @property
   def vy(self):
-    return self.c_branches.vy()
+    return np.array(self.c_branches.vy())
   @property
   def vz(self):
-    return self.c_branches.vz()
+    return np.array(self.c_branches.vz())
   @property
   def id(self):
-    return self.c_branches.id()
+    return np.array(self.c_branches.id())
   @property
   def dc(self):
-    return self.c_branches.dc()
+    return np.array(self.c_branches.dc())
   @property
   def cc(self):
-    return self.c_branches.cc()
+    return np.array(self.c_branches.cc())
   @property
   def sc(self):
-    return self.c_branches.sc()
+    return np.array(self.c_branches.sc())
   @property
   def ec(self):
-    return self.c_branches.ec()
+    return np.array(self.c_branches.ec())
+  @property
+  def dc_sect(self):
+    return np.array(self.c_branches.dc_sect())
+  @property
+  def dc_trk(self):
+    return np.array(self.c_branches.dc_trk())
+  @property
+  def dc_stat(self):
+    return np.array(self.c_branches.dc_stat())
+  @property
+  def dc_vx(self):
+    return np.array(self.c_branches.dc_vx())
+  @property
+  def dc_vy(self):
+    return np.array(self.c_branches.dc_vy())
+  @property
+  def dc_vz(self):
+    return np.array(self.c_branches.dc_vz())
+  @property
+  def dc_vr(self):
+    return np.array(self.c_branches.dc_vr())
+  @property
+  def dc_xsc(self):
+    return np.array(self.c_branches.dc_xsc())
+  @property
+  def dc_ysc(self):
+    return np.array(self.c_branches.dc_ysc())
+  @property
+  def dc_zsc(self):
+    return np.array(self.c_branches.dc_zsc())
+  @property
+  def dc_cxsc(self):
+    return np.array(self.c_branches.dc_cxsc())
+  @property
+  def dc_cysc(self):
+    return np.array(self.c_branches.dc_cysc())
+  @property
+  def dc_czsc(self):
+    return np.array(self.c_branches.dc_czsc())
+  @property
+  def dc_c2(self):
+    return np.array(self.c_branches.dc_c2())
+  @property
+  def ec_stat(self):
+    return np.array(self.c_branches.ec_stat())
+  @property
+  def ec_sect(self):
+    return np.array(self.c_branches.ec_sect())
+  @property
+  def ec_whol(self):
+    return np.array(self.c_branches.ec_whol())
+  @property
+  def ec_inst(self):
+    return np.array(self.c_branches.ec_inst())
+  @property
+  def ec_oust(self):
+    return np.array(self.c_branches.ec_oust())
+  @property
+  def etot(self):
+    return np.array(self.c_branches.etot())
+  @property
+  def ec_ei(self):
+    return np.array(self.c_branches.ec_ei())
+  @property
+  def ec_eo(self):
+    return np.array(self.c_branches.ec_eo())
+  @property
+  def ec_t(self):
+    return np.array(self.c_branches.ec_t())
+  @property
+  def ec_r(self):
+    return np.array(self.c_branches.ec_r())
+  @property
+  def ech_x(self):
+    return np.array(self.c_branches.ech_x())
+  @property
+  def ech_y(self):
+    return np.array(self.c_branches.ech_y())
+  @property
+  def ech_z(self):
+    return np.array(self.c_branches.ech_z())
+  @property
+  def ec_m2(self):
+    return np.array(self.c_branches.ec_m2())
+  @property
+  def ec_m3(self):
+    return np.array(self.c_branches.ec_m3())
+  @property
+  def ec_m4(self):
+    return np.array(self.c_branches.ec_m4())
+  @property
+  def ec_c2(self):
+    return np.array(self.c_branches.ec_c2())
+  @property
+  def sc_sect(self):
+    return np.array(self.c_branches.sc_sect())
+  @property
+  def sc_hit(self):
+    return np.array(self.c_branches.sc_hit())
+  @property
+  def sc_pd(self):
+    return np.array(self.c_branches.sc_pd())
+  @property
+  def sc_stat(self):
+    return np.array(self.c_branches.sc_stat())
+  @property
+  def edep(self):
+    return np.array(self.c_branches.edep())
+  @property
+  def sc_t(self):
+    return np.array(self.c_branches.sc_t())
+  @property
+  def sc_r(self):
+    return np.array(self.c_branches.sc_r())
+  @property
+  def sc_c2(self):
+    return np.array(self.c_branches.sc_c2())
+  @property
+  def cc_sect(self):
+    return np.array(self.c_branches.cc_sect())
+  @property
+  def cc_hit(self):
+    return np.array(self.c_branches.cc_hit())
+  @property
+  def cc_segm(self):
+    return np.array(self.c_branches.cc_segm())
+  @property
+  def nphe(self):
+    return np.array(self.c_branches.nphe())
+  @property
+  def cc_t(self):
+    return np.array(self.c_branches.cc_t())
+  @property
+  def cc_r(self):
+    return np.array(self.c_branches.cc_r())
+  @property
+  def cc_c2(self):
+    return np.array(self.c_branches.cc_c2())
