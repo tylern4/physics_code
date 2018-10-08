@@ -34,6 +34,7 @@ class Skim {
   TVector3 Particle3;
   TLorentzVector Particle4;
   MissingMass *MM_neutron;
+  double BEAM_ENERGY = E1D_E0;
 
  public:
   Skim(std::vector<std::string> input, std::string output);

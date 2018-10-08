@@ -582,7 +582,7 @@ void Histogram::delta_t_slice_fit() {
   // Pip_Pos_fit->Write();
   // Pip_Neg_fit->Write();
 
-  TCanvas *dt_Pip_canvas = new TCanvas("dt_Pip_canvas", "#dt #pi^+", 1280, 720);
+  TCanvas *dt_Pip_canvas = new TCanvas("dt_Pip_canvas", "#dt #pi^{+}", 1280, 720);
   dt_Pip_canvas->cd();
   delta_t_mass_PIP->Draw();
   Pip_Pos_fit->Draw("same");

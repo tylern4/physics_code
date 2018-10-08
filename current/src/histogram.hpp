@@ -253,7 +253,7 @@ class Histogram {
   TH1D *energy_no_cuts = new TH1D("Energy_no_cuts", "Scattered electron energy", 500, 0.0, 5.0);
   TH1D *energy_fid_cuts = new TH1D("Energy_fid_cuts", "Scattered electron energy after fiducial cuts", 500, 0.0, 5.0);
   TH1D *energy_channel_cuts =
-      new TH1D("Energy_channel_cuts", "Scattered electron energy for N #pi^+ events", 500, 0.0, 5.0);
+      new TH1D("Energy_channel_cuts", "Scattered electron energy for N #pi^{+} events", 500, 0.0, 5.0);
 
   // W and Q^2
   void Fill_proton_WQ2(double W, double Q2);

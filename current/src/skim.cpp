@@ -12,8 +12,12 @@ Skim::Skim(std::vector<std::string> input, std::string output) {
   for (auto f : fin) chain->AddFile(f.c_str());
   data = new Branches(chain);
   RootOutputFile = new TFile(fout.c_str(), "RECREATE");
+  if (getenv("BEAM_E") != NULL) {
+    BEAM_ENERGY = atof(getenv("BEAM_E"));
+    std::cout << RED << "Beam energy set to: " << BEAM_ENERGY << DEF << std::endl;
+  }
 
-  e_mu.SetPxPyPzE(0.0, 0.0, sqrt((E1D_E0 * E1D_E0) - (MASS_E * MASS_E)), E1D_E0);
+  e_mu.SetPxPyPzE(0.0, 0.0, sqrt((BEAM_ENERGY * BEAM_ENERGY) - (MASS_E * MASS_E)), BEAM_ENERGY);
   MM_neutron = new MissingMass(MASS_P, 0.0);
 }
 Skim::~Skim() {}

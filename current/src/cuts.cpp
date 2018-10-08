@@ -69,14 +69,22 @@ bool Cuts::isElecctron() {
   return _elec;
 }
 
+bool Cuts::Fid_cut() {
+  bool _elec = true;
+  _elec &= isElecctron();
+  _elec &= elec_fid_cut();
+  electron_cut = _elec;
+  return _elec;
+}
+
 bool Cuts::isStrictElecctron() {
   bool _elec = true;
   _elec &= isElecctron();
-  //_elec &= (electron_p > MIN_P_CUT);
+  _elec &= Fid_cut();
+  _elec &= (electron_p > MIN_P_CUT);
 
-  _elec &= (num_phe > 30);
+  _elec &= (num_phe > 20);
   //_elec &= sf_cut(samp_frac, electron_p);
-  _elec &= elec_fid_cut();
 
   //_elec &= (_vx > 0.2);
   //_elec &= (_vx < 0.4);
