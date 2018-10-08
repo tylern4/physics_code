@@ -61,6 +61,9 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
     check->Set_dc_stat_cut(data->dc_stat(data->dc(0) - 1) > 0);
     check->Set_p(data->p(0));
 
+    TLorentzVector e_mu_prime = physics::fourVec(data->p(0), data->cx(0), data->cy(0), data->cz(0), MASS_E);
+    hists->Fill_E_Prime(e_mu_prime);
+
     if (check->isElecctron()) hists->EC_fill(data->etot(data->ec(0) - 1), data->p(0));
     if (check->isElecctron()) hists->TM_Fill(data->p(0), physics::theta_calc(data->cz(0)));
     check->Set_Sf(data->etot(data->ec(0) - 1) / data->p(0));
@@ -74,8 +77,7 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
 
     if (check->isStrictElecctron()) {
       // Setup scattered electron 4 vector
-      TLorentzVector e_mu_prime = physics::fourVec(data->p(0), data->cx(0), data->cy(0), data->cz(0), MASS_E);
-
+      hists->Fill_E_Prime_fid(e_mu_prime);
       int cc_sector = data->cc_sect(data->cc(0) - 1);
       int cc_segment = (data->cc_segm(0) % 1000) / 10;
       int cc_pmt = data->cc_segm(0) / 1000 - 1;
@@ -168,6 +170,7 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
         hists->Fill_channel_WQ2(W, Q2, e_mu_prime, MM_neutron->Get_MM(), MM_neutron->Get_MM2(), sector);
         hists->Fill_Missing_Mass_strict(MM_neutron);
         hists->EC_cut_fill(data->etot(data->ec(0) - 1), data->p(0));
+        hists->Fill_E_Prime_channel(e_mu_prime);
       }
       if (num_of_pips == 2) hists->Fill_Missing_Mass_twoPi(MM_from2pi);
       if (num_of_proton == 1) hists->Fill_Missing_Mass_pi0(MM_pi0);
@@ -180,6 +183,7 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
 
 void DataHandeler::loadbar(long x, long n) {
   int w = 50;
+  if (x <= n) return;
   if ((x != n) && (x % (n / 100 + 1) != 0)) return;
 
   double ratio = x / (double)n;

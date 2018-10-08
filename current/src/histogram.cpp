@@ -127,6 +127,10 @@ void Histogram::Write(std::string output_file) {
   TDirectory *Fid_canvas = RootOutputFile->mkdir("Fid_canvas");
   Fid_canvas->cd();
   fid_canvas();
+  std::cerr << BOLDBLUE << "E_Prime_Write()" << DEF << std::endl;
+  TDirectory *E_Prime = RootOutputFile->mkdir("E_Prime");
+  E_Prime->cd();
+  E_Prime_Write();
   RootOutputFile->Close();
   std::cerr << BOLDBLUE << "Done!!!" << DEF << std::endl;
 }
@@ -1257,7 +1261,6 @@ void Histogram::Fill_Target_Vertex(double vertex_x, double vertex_y, double vert
   target_vertex_xy->Fill(vertex_x, vertex_y);
   target_vertex_zy->Fill(vertex_z, vertex_y);
   target_vertex_zx->Fill(vertex_z, vertex_x);
-  // target_vertex_3d->Fill(vertex_x, vertex_y, vertex_x);
 }
 
 void Histogram::Target_Vertex_Write() {
@@ -1284,11 +1287,25 @@ void Histogram::Target_Vertex_Write() {
   target_vertex_zx->SetYTitle("X");
   target_vertex_zx->SetOption("COLZ");
   target_vertex_zx->Write();
-  /*
-    target_vertex_3d->SetXTitle("X");
-    target_vertex_3d->SetYTitle("Y");
-    target_vertex_3d->SetZTitle("Z");
-    target_vertex_3d->SetOption("COLZ");
-    target_vertex_3d->Write();
-    */
+}
+
+void Histogram::Fill_E_Prime(TLorentzVector e_prime) {
+  if (e_prime.E() > 0.1) energy_no_cuts->Fill(e_prime.E());
+}
+void Histogram::Fill_E_Prime_fid(TLorentzVector e_prime) {
+  if (e_prime.E() > 0.1) energy_fid_cuts->Fill(e_prime.E());
+}
+void Histogram::Fill_E_Prime_channel(TLorentzVector e_prime) {
+  if (e_prime.E() > 0.1) energy_channel_cuts->Fill(e_prime.E());
+}
+
+void Histogram::E_Prime_Write() {
+  energy_no_cuts->SetXTitle("Energy (GeV)");
+  energy_no_cuts->Write();
+
+  energy_fid_cuts->SetXTitle("Energy (GeV)");
+  energy_fid_cuts->Write();
+
+  energy_channel_cuts->SetXTitle("Energy (GeV)");
+  energy_channel_cuts->Write();
 }

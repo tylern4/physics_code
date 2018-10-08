@@ -250,6 +250,11 @@ class Histogram {
   TH1D *Missing_Mass_nutron_no2pi =
       new TH1D("Missing_Mass_nutron_no2pi", "Missing Mass removing 2 #pi", bins_MM, MM_min, MM_max);
 
+  TH1D *energy_no_cuts = new TH1D("Energy_no_cuts", "Scattered electron energy", 500, 0.0, 5.0);
+  TH1D *energy_fid_cuts = new TH1D("Energy_fid_cuts", "Scattered electron energy after fiducial cuts", 500, 0.0, 5.0);
+  TH1D *energy_channel_cuts =
+      new TH1D("Energy_channel_cuts", "Scattered electron energy for N #pi^+ events", 500, 0.0, 5.0);
+
   // W and Q^2
   void Fill_proton_WQ2(double W, double Q2);
   void Fill_single_pi_WQ2(double W, double Q2);
@@ -330,6 +335,11 @@ class Histogram {
 
   void Fill_Target_Vertex(double vertex_x, double vertex_y, double vertex_z);
   void Target_Vertex_Write();
+
+  void Fill_E_Prime(TLorentzVector e_prime);
+  void Fill_E_Prime_fid(TLorentzVector e_prime);
+  void Fill_E_Prime_channel(TLorentzVector e_prime);
+  void E_Prime_Write();
 };
 
 #endif

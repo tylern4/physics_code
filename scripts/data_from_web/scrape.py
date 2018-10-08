@@ -3,7 +3,7 @@ from __future__ import print_function
 from lxml.html import fromstring
 import lxml.html as PARSER
 
-data = open('Selected Runs.htm').read()
+data = open('e1d_all_runs.htm').read()
 root = PARSER.fromstring(data)
 
 trs = []
