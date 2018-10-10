@@ -2,8 +2,9 @@
 from __future__ import print_function
 from lxml.html import fromstring
 import lxml.html as PARSER
+import sys
 
-data = open('e1d_all_runs.htm').read()
+data = open(sys.argv[1]).read()
 root = PARSER.fromstring(data)
 
 trs = []
