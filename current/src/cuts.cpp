@@ -58,12 +58,12 @@ bool Cuts::isElecctron() {
   bool _elec = true;
   _elec &= (charge == NEGATIVE);
   _elec &= (gpart > 1);
-  _elec &= ec_cut;
-  _elec &= cc_cut;
-  _elec &= stat_cut;
-  _elec &= sc_cut;
-  _elec &= dc_cut;
-  _elec &= dc_stat_cut;
+  //_elec &= ec_cut;
+  //_elec &= cc_cut;
+  //_elec &= stat_cut;
+  //_elec &= sc_cut;
+  //_elec &= dc_cut;
+  //_elec &= dc_stat_cut;
 
   electron_cut = _elec;
   return _elec;
@@ -80,10 +80,10 @@ bool Cuts::Fid_cut() {
 bool Cuts::isStrictElecctron() {
   bool _elec = true;
   _elec &= isElecctron();
-  _elec &= Fid_cut();
-  _elec &= (electron_p > MIN_P_CUT);
+  //_elec &= Fid_cut();
+  //_elec &= (electron_p > MIN_P_CUT);
 
-  _elec &= (num_phe > 20);
+  //_elec &= (num_phe > 20);
   //_elec &= sf_cut(samp_frac, electron_p);
 
   //_elec &= (_vx > 0.2);

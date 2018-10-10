@@ -96,22 +96,6 @@ class Branches {
   float _cc_t[MAX_PARTS];   //[cc_part]
   float _cc_r[MAX_PARTS];   //[cc_part]
   float _cc_c2[MAX_PARTS];  //[cc_part]
-  int _lac_part;
-  int _lec_sect[MAX_PARTS];    //[lac_part]
-  int _lec_hit[MAX_PARTS];     //[lac_part]
-  int _lec_stat[MAX_PARTS];    //[lac_part]
-  float _lec_etot[MAX_PARTS];  //[lac_part]
-  float _lec_ein[MAX_PARTS];   //[lac_part]
-  float _lec_t[MAX_PARTS];     //[lac_part]
-  float _lec_r[MAX_PARTS];     //[lac_part]
-  float _lec_x[MAX_PARTS];     //[lac_part]
-  float _lec_y[MAX_PARTS];     //[lac_part]
-  float _lec_z[MAX_PARTS];     //[lac_part]
-  float _lec_c2[MAX_PARTS];    //[lac_part]
-  int _st_part;
-  int _st_status[MAX_PARTS];  //[st_part]
-  float _st_time[MAX_PARTS];  //[st_part]
-  float _st_rtrk[MAX_PARTS];  //[st_part]
  public:
   Branches(TChain* tree);
   Branches(const Branches& b);

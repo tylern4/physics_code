@@ -99,23 +99,6 @@ void Branches::init() {
   myTree->SetBranchAddress("cc_t", _cc_t);
   myTree->SetBranchAddress("cc_r", _cc_r);
   myTree->SetBranchAddress("cc_c2", _cc_c2);
-  myTree->SetBranchAddress("lac_part", &_lac_part);
-  myTree->SetBranchAddress("lec_sect", &_lec_sect);
-  myTree->SetBranchAddress("lec_hit", &_lec_hit);
-  myTree->SetBranchAddress("lec_stat", &_lec_stat);
-  myTree->SetBranchAddress("lec_etot", &_lec_etot);
-  myTree->SetBranchAddress("lec_ein", &_lec_ein);
-  myTree->SetBranchAddress("lec_t", &_lec_t);
-  myTree->SetBranchAddress("lec_r", &_lec_r);
-  myTree->SetBranchAddress("lec_x", &_lec_x);
-  myTree->SetBranchAddress("lec_y", &_lec_y);
-  myTree->SetBranchAddress("lec_z", &_lec_z);
-  myTree->SetBranchAddress("lec_c2", &_lec_c2);
-  myTree->SetBranchAddress("st_part", &_st_part);
-  myTree->SetBranchAddress("st_status", &_st_status);
-  myTree->SetBranchAddress("st_time", &_st_time);
-  myTree->SetBranchAddress("st_rtrk", &_st_rtrk);
-
   myTree->SetBranchStatus("*", 1);
 }
 
@@ -138,8 +121,6 @@ int Branches::dc_part() { return _dc_part; }
 int Branches::ec_part() { return _ec_part; }
 int Branches::sc_part() { return _sc_part; }
 int Branches::cc_part() { return _cc_part; }
-int Branches::lac_part() { return _lac_part; }
-int Branches::st_part() { return _st_part; }
 
 int Branches::id(int i) {
   if (i < _gpart) {

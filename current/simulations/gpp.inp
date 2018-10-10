@@ -10,7 +10,7 @@
 #
 # Initial settings:
 #
-# -ogpp_out.bos -a2.35 -b2.35 -c2.35 -f0.97 -P0x1b -R36557 gpp_in.bos
+# -ogpp_out.bos -a2.35 -b2.35 -c2.35 -f0.97 -P0x1b -R22717 gpp_in.bos
 #
 # OPTIONS:
 
@@ -44,7 +44,7 @@
 # 0x100   Smear IC values
 -P0x1b
 # -R: Run number
--R36557
+-R22717
 
 # Input file (MUST BE THE FINAL ARGUMENT)
 gpp_in.bos

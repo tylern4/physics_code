@@ -64,11 +64,11 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
     phi = physics::phi_calc(data->cx(0), data->cy(0));
     sector = physics::get_sector(phi);
     check->Set_elec_fid(theta, phi, sector);
-
+    // Setup scattered electron 4 vector
     TLorentzVector e_mu_prime = physics::fourVec(data->p(0), data->cx(0), data->cy(0), data->cz(0), MASS_E);
     hists->Fill_E_Prime(e_mu_prime);
 
-    if (check->isElecctron() && check->Fid_cut()) {
+    if (check->isElecctron()) {
       hists->EC_fill(data->etot(data->ec(0) - 1), data->p(0));
       hists->Fill_E_Prime_fid(e_mu_prime);
     }
@@ -79,8 +79,6 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
     check->Set_BeamPosition(data->dc_vx(data->dc(0) - 1), data->dc_vy(data->dc(0) - 1), data->dc_vz(data->dc(0) - 1));
 
     if (check->isStrictElecctron()) {
-      // Setup scattered electron 4 vector
-
       int cc_sector = data->cc_sect(data->cc(0) - 1);
       int cc_segment = (data->cc_segm(0) % 1000) / 10;
       int cc_pmt = data->cc_segm(0) / 1000 - 1;
