@@ -6,10 +6,8 @@
 #include "physics.hpp"
 
 TLorentzVector physics::fourVec(double px, double py, double pz, double mass) {
-  TVector3 Particle3(0.0, 0.0, 0.0);
   TLorentzVector Particle4(0.0, 0.0, 0.0, 0.0);
-  Particle3.SetXYZ(px, py, pz);
-  Particle4.SetVectM(Particle3, mass);
+  Particle4.SetXYZM(px, py, pz, mass);
   return Particle4;
 }
 TLorentzVector physics::fourVec(double px, double py, double pz, int pid) {

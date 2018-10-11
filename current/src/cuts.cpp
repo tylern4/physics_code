@@ -71,9 +71,16 @@ bool Cuts::isElecctron() {
 
 bool Cuts::Fid_cut() {
   bool _elec = true;
-  _elec &= isElecctron();
   _elec &= elec_fid_cut();
-  electron_cut = _elec;
+  return _elec;
+}
+
+bool Cuts::Beam_cut() {
+  bool _elec = true;
+  _elec &= (_vx > 0.2);
+  _elec &= (_vx < 0.4);
+  _elec &= (abs(_vy) < 0.1);
+  _elec &= (abs(_vz) < 3);
   return _elec;
 }
 
@@ -85,11 +92,6 @@ bool Cuts::isStrictElecctron() {
 
   //_elec &= (num_phe > 20);
   //_elec &= sf_cut(samp_frac, electron_p);
-
-  //_elec &= (_vx > 0.2);
-  //_elec &= (_vx < 0.4);
-  //_elec &= (abs(_vy) < 0.2);
-  //_elec &= (abs(_vz) < 3);
 
   electron_cut = _elec;
   return _elec;

@@ -58,6 +58,7 @@ class Cuts {
   bool isStrictElecctron();
   bool CheckElectron();
   bool Fid_cut();
+  bool Beam_cut();
 
   double sf_top_fit(double P);
   double sf_bot_fit(double P);

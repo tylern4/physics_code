@@ -47,23 +47,29 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
   for (current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
     Cuts *check = new Cuts();
-
     theta = physics::theta_calc(data->cz(0));
     phi = physics::phi_calc(data->cx(0), data->cy(0));
     sector = physics::get_sector(phi);
+    check->Set_elec_fid(theta, phi, sector);
+    check->Set_BeamPosition(data->dc_vx(data->dc(0) - 1), data->dc_vy(data->dc(0) - 1), data->dc_vz(data->dc(0) - 1));
+
     // Setup scattered electron 4 vector
     TLorentzVector e_mu_prime = physics::fourVec(data->p(0), data->cx(0), data->cy(0), data->cz(0), MASS_E);
     hists->Fill_E_Prime(e_mu_prime);
 
-    check->Set_elec_fid(theta, phi, sector);
-
-    if (check->elec_fid_cut()) {
+    if (check->Fid_cut()) {
       hists->EC_fill(data->etot(data->ec(0) - 1), data->p(0));
       hists->Fill_E_Prime_fid(e_mu_prime);
       hists->TM_Fill(data->p(0), physics::theta_calc(data->cz(0)));
     }
 
-    if (check->elec_fid_cut()) {
+    if (getenv("CUTS") != NULL && atoi(getenv("CUTS")) == true) {
+      CUTS = (check->Fid_cut() && check->Beam_cut());
+    } else {
+      CUTS = true;
+    }
+
+    if (CUTS) {
       int cc_sector = data->cc_sect(data->cc(0) - 1);
       int cc_segment = (data->cc_segm(0) % 1000) / 10;
       int cc_pmt = data->cc_segm(0) / 1000 - 1;
@@ -102,15 +108,15 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
         if (data->q(part_num) == POSITIVE && check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num))) {
           hists->Fill_hadron_fid(theta, phi, sector, PIP);
           particle =
-              physics::fourVec(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num), PIP);
+              physics::fourVec(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num), MASS_PIP);
         } else if (data->q(part_num) == POSITIVE && check->dt_P_cut(dt_proton.at(part_num), data->p(part_num))) {
           hists->Fill_hadron_fid(theta, phi, sector, PROTON);
           particle =
-              physics::fourVec(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num), PROTON);
+              physics::fourVec(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num), MASS_P);
         } else if (data->q(part_num) == NEGATIVE && check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num))) {
           hists->Fill_hadron_fid(theta, phi, sector, PIM);
           particle =
-              physics::fourVec(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num), PIM);
+              physics::fourVec(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num), MASS_PIM);
         } else {
           continue;
         }

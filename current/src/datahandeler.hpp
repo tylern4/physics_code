@@ -31,6 +31,7 @@ class DataHandeler {
   std::vector<std::string> input_files;
   std::vector<std::vector<TLorentzVector>> All_events;
   double BEAM_ENERGY = E1D_E0;
+  bool CUTS = true;
 
  public:
   DataHandeler();
