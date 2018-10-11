@@ -63,7 +63,7 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
       hists->TM_Fill(data->p(0), physics::theta_calc(data->cz(0)));
     }
 
-    if (true) {
+    if (check->elec_fid_cut()) {
       int cc_sector = data->cc_sect(data->cc(0) - 1);
       int cc_segment = (data->cc_segm(0) % 1000) / 10;
       int cc_pmt = data->cc_segm(0) / 1000 - 1;

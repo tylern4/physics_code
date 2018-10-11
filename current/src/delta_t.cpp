@@ -19,19 +19,19 @@ void Delta_T::deltat(double momentum, double sc_t, double sc_r) {
   double beta = 0.0;
   double mp = (masses.at(0) / momentum);
   beta = 1.0 / sqrt(1.0 + (mp * mp));
-  dt_E = vertex - vertex_time(sc_t, sc_r, beta);
+  this->dt_E = this->vertex - vertex_time(sc_t, sc_r, beta);
 
   mp = (masses.at(1) / momentum);
   beta = 1.0 / sqrt(1.0 + (mp * mp));
-  dt_P = vertex - vertex_time(sc_t, sc_r, beta);
+  this->dt_P = this->vertex - vertex_time(sc_t, sc_r, beta);
 
   mp = (masses.at(2) / momentum);
   beta = 1.0 / sqrt(1.0 + (mp * mp));
-  dt_Pi = vertex - vertex_time(sc_t, sc_r, beta);
+  this->dt_Pi = this->vertex - vertex_time(sc_t, sc_r, beta);
 
   mp = (masses.at(3) / momentum);
   beta = 1.0 / sqrt(1.0 + (mp * mp));
-  dt_K = vertex - vertex_time(sc_t, sc_r, beta);
+  this->dt_K = this->vertex - vertex_time(sc_t, sc_r, beta);
 }
 
 double Delta_T::Get_dt_E() { return dt_E; }
