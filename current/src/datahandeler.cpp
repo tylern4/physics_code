@@ -94,25 +94,28 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
       TLorentzVector gamma_mu = (*e_mu - e_mu_prime);
       hists->WvsQ2_Fill(W, Q2);
       num_of_proton = num_of_pips = num_of_pims = bad = 0;
+      TLorentzVector particle;
       for (int part_num = 1; part_num < data->gpart(); part_num++) {
-        PID = -99;
-        if (data->q(part_num) == POSITIVE && check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num)))
-          PID = PIP;
-        else if (data->q(part_num) == POSITIVE && check->dt_P_cut(dt_proton.at(part_num), data->p(part_num)))
-          PID = PROTON;
-        else if (data->q(part_num) == NEGATIVE && check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num)))
-          PID = PIM;
-        if (PID == -99) bad++;  // continue;
-
-        TLorentzVector particle =
-            physics::fourVec(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num), PID);
-        hists->Fill_Target_Vertex(data->vx(part_num), data->vy(part_num), data->vz(part_num));
-
         theta = physics::theta_calc(data->cz(part_num));
         phi = physics::phi_calc(data->cx(part_num), data->cy(part_num));
-
         sector = physics::get_sector(phi);
-        hists->Fill_hadron_fid(theta, phi, sector, PID);
+        if (data->q(part_num) == POSITIVE && check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num))) {
+          hists->Fill_hadron_fid(theta, phi, sector, PIP);
+          particle =
+              physics::fourVec(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num), PIP);
+        } else if (data->q(part_num) == POSITIVE && check->dt_P_cut(dt_proton.at(part_num), data->p(part_num))) {
+          hists->Fill_hadron_fid(theta, phi, sector, PROTON);
+          particle =
+              physics::fourVec(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num), PROTON);
+        } else if (data->q(part_num) == NEGATIVE && check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num))) {
+          hists->Fill_hadron_fid(theta, phi, sector, PIM);
+          particle =
+              physics::fourVec(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num), PIM);
+        } else {
+          continue;
+        }
+
+        hists->Fill_Target_Vertex(data->vx(part_num), data->vy(part_num), data->vz(part_num));
         hists->MomVsBeta_Fill(particle.E(), data->p(part_num), data->b(part_num));
         if (data->q(part_num) == POSITIVE) {
           hists->MomVsBeta_Fill_pos(data->p(part_num), data->b(part_num));
@@ -123,6 +126,8 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
             MM_neutron->Set_4Vec(particle);
             MM_neutron->missing_mass(gamma_mu);
           } else if (check->dt_P_cut(dt_proton.at(part_num), data->p(part_num))) {
+            particle =
+                physics::fourVec(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num), PROTON);
             num_of_proton++;
             hists->Fill_proton_WQ2(W, Q2);
             hists->Fill_proton_ID_P(data->p(part_num), data->b(part_num));
@@ -136,9 +141,11 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
         } else if (data->q(part_num) == NEGATIVE) {
           hists->MomVsBeta_Fill_neg(data->p(part_num), data->b(part_num));
           if (check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num))) {
+            particle =
+                physics::fourVec(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num), PIM);
             num_of_pims++;
-            MM_from2pi->missing_mass(gamma_mu);
             MM_from2pi->Set_4Vec(particle);
+            MM_from2pi->missing_mass(gamma_mu);
           }
         }
       }

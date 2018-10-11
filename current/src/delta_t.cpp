@@ -45,7 +45,7 @@ void Delta_T::delta_t_hists(Histogram *hists, Branches *data) {
   double sct, scr, mom;
   int ID, charge, sc_paddle, sc_sector;
 
-  for (int event_number = 0; event_number < data->gpart(); event_number++) {
+  for (int event_number = 1; event_number < data->gpart(); event_number++) {
     sct = data->sc_t(data->sc(event_number) - 1);
     scr = data->sc_r(data->sc(event_number) - 1);
     mom = data->p(event_number);
@@ -56,20 +56,21 @@ void Delta_T::delta_t_hists(Histogram *hists, Branches *data) {
 
     deltat(mom, sct, scr);
 
-    if (charge == 1) {
+    if (charge == POSITIVE) {
       hists->Fill_deltat_P(mom, dt_P);
       hists->Fill_deltat_PIP(mom, dt_Pi);
       hists->Fill_deltat_kp(mom, dt_K);
       if (dt_cut->dt_P_cut(dt_P, mom)) hists->Fill_deltat_P_PID(mom, dt_P);
       if (dt_cut->dt_Pip_cut(dt_Pi, mom)) hists->Fill_deltat_PIP_PID(mom, dt_Pi);
       if (dt_cut->dt_P_cut(dt_K, mom)) hists->Fill_deltat_kp_PID(mom, dt_K);
-    }
-
-    if (charge == -1) {
-      hists->Fill_deltat_PIM(mom, dt_Pi);
-      if (dt_cut->dt_Pip_cut(dt_Pi, mom)) hists->Fill_deltat_PIM(mom, dt_Pi);
+    } else {
       hists->Fill_deltat_electron(mom, dt_E);
-      if (ID == ELECTRON) hists->Fill_deltat_electron_PID(mom, dt_E);
+      if (abs(dt_E) < 0.04)
+        hists->Fill_deltat_electron_PID(mom, dt_E);
+      else {
+        hists->Fill_deltat_PIM(mom, dt_Pi);
+        if (dt_cut->dt_Pip_cut(dt_Pi, mom)) hists->Fill_deltat_PIM_PID(mom, dt_Pi);
+      }
     }
 
     hists->delta_t_Fill(mom, charge, dt_P, dt_Pi, dt_E);
