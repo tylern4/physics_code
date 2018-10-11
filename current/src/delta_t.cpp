@@ -63,11 +63,13 @@ void Delta_T::delta_t_hists(Histogram *hists, Branches *data) {
       if (dt_cut->dt_P_cut(dt_P, mom)) hists->Fill_deltat_P_PID(mom, dt_P);
       if (dt_cut->dt_Pip_cut(dt_Pi, mom)) hists->Fill_deltat_PIP_PID(mom, dt_Pi);
       if (dt_cut->dt_P_cut(dt_K, mom)) hists->Fill_deltat_kp_PID(mom, dt_K);
-    } else if (charge == -1) {
-      hists->Fill_deltat_electron(mom, dt_E);
-      if (ID == ELECTRON) hists->Fill_deltat_electron_PID(mom, dt_E);
+    }
+
+    if (charge == -1) {
       hists->Fill_deltat_PIM(mom, dt_Pi);
       if (dt_cut->dt_Pip_cut(dt_Pi, mom)) hists->Fill_deltat_PIM(mom, dt_Pi);
+      hists->Fill_deltat_electron(mom, dt_E);
+      if (ID == ELECTRON) hists->Fill_deltat_electron_PID(mom, dt_E);
     }
 
     hists->delta_t_Fill(mom, charge, dt_P, dt_Pi, dt_E);

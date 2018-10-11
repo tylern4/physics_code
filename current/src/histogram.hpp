@@ -82,6 +82,9 @@ class Histogram {
   TH2D *WvsQ2_single_pi = new TH2D("WvsQ2_single_pi", "W vs Q^{2} #pi^{+}", bins, w_min, w_max, bins, q2_min, q2_max);
   TH1D *W_single_pi = new TH1D("W_single_pi", "W #pi^{+}", bins, w_min, w_max);
   TH1D *Q2_single_pi = new TH1D("Q2_single_pi", "Q^{2} #pi^{+}", bins, q2_min, q2_max);
+  TH2D *WvsQ2_MM = new TH2D("WvsQ2_MM", "W vs Q^{2} mm N cut", bins, w_min, w_max, bins, q2_min, q2_max);
+  TH1D *W_MM = new TH1D("W_MM", "W mm N cut", bins, w_min, w_max);
+  TH1D *Q2_MM = new TH1D("Q2_MM", "Q^{2} mm N cut", bins, q2_min, q2_max);
   TH2D *WvsQ2_channel = new TH2D("WvsQ2_channel", "W vs Q^{2} #pi^{+} N", bins, w_min, w_max, bins, q2_min, q2_max);
   TH1D *W_channel = new TH1D("W_channel", "W #pi^{+} N", bins, w_min, w_max);
   TH1D *Q2_channel = new TH1D("Q2_channel", "Q^{2} #pi^{+} N", bins, q2_min, q2_max);
@@ -258,6 +261,7 @@ class Histogram {
   // W and Q^2
   void Fill_proton_WQ2(double W, double Q2);
   void Fill_single_pi_WQ2(double W, double Q2);
+  void Fill_MM_WQ2(double W, double Q2);
   void Fill_channel_WQ2(double W, double Q2, TLorentzVector e_prime, double mm, double mm2, int sec);
   void Fill_single_proton_WQ2(double W, double Q2);
   void WvsQ2_Fill(double W, double Q2);
