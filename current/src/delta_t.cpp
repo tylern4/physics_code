@@ -76,6 +76,7 @@ void Delta_T::delta_t_hists(Histogram *hists, Branches *data) {
     hists->delta_t_Fill(mom, charge, dt_P, dt_Pi, dt_E);
     // hists->delta_t_sec_pad(mom, charge, dt_P, dt_Pi, dt_E, sc_sector, sc_paddle);
   }
+  delete dt_cut;
 }
 
 double Delta_T::delta_t(double electron_vertex_time, double mass, double momentum, double sc_t, double sc_r) {
