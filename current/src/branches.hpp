@@ -14,6 +14,7 @@
 class Branches {
  private:
   TChain* myTree;
+  bool _MC = false;
   int _npart;
   int _evstat;
   int _intt;
@@ -111,10 +112,10 @@ class Branches {
 
  public:
   Branches(TChain* tree);
+  Branches(TChain* tree, bool MC);
   Branches(const Branches& b);
   ~Branches();
   void init();
-  void init(bool MC);
   int npart();
   int evstat();
   int intt();

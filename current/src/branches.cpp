@@ -11,14 +11,19 @@ Branches::Branches(TChain* tree) {
   init();
 }
 
-Branches::Branches(const Branches& b) {
-  myTree = b.myTree;
+Branches::Branches(TChain* tree, bool MC) {
+  _MC = MC;
+  myTree = tree;
   init();
 }
 
-void Branches::init() { this->init(false); }
+Branches::Branches(const Branches& b) {
+  myTree = b.myTree;
+  _MC = b._MC;
+  init();
+}
 
-void Branches::init(bool MC) {
+void Branches::init() {
   myTree->SetBranchAddress("npart", &_npart);
   myTree->SetBranchAddress("evstat", &_evstat);
   myTree->SetBranchAddress("intt", &_intt);
@@ -101,7 +106,7 @@ void Branches::init(bool MC) {
   myTree->SetBranchAddress("cc_t", _cc_t);
   myTree->SetBranchAddress("cc_r", _cc_r);
   myTree->SetBranchAddress("cc_c2", _cc_c2);
-  if (MC) {
+  if (_MC) {
     myTree->SetBranchAddress("nprt", &_nprt);
     myTree->SetBranchAddress("pidpart", _pidpart);
     myTree->SetBranchAddress("xpart", _xpart);
