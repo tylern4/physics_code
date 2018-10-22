@@ -96,11 +96,25 @@ class Branches {
   float _cc_t[MAX_PARTS];   //[cc_part]
   float _cc_r[MAX_PARTS];   //[cc_part]
   float _cc_c2[MAX_PARTS];  //[cc_part]
+  ////////////
+  int _nprt;
+  int _pidpart[MAX_PARTS];    //[nprt]
+  float _xpart[MAX_PARTS];    //[nprt]
+  float _ypart[MAX_PARTS];    //[nprt]
+  float _zpart[MAX_PARTS];    //[nprt]
+  float _epart[MAX_PARTS];    //[nprt]
+  float _pxpart[MAX_PARTS];   //[nprt]
+  float _pypart[MAX_PARTS];   //[nprt]
+  float _pzpart[MAX_PARTS];   //[nprt]
+  float _qpart[MAX_PARTS];    //[nprt]
+  int _flagspart[MAX_PARTS];  //[nprt]
+
  public:
   Branches(TChain* tree);
   Branches(const Branches& b);
   ~Branches();
   void init();
+  void init(bool MC);
   int npart();
   int evstat();
   int intt();
@@ -121,6 +135,7 @@ class Branches {
   int cc_part();
   int lac_part();
   int st_part();
+  int nprt();
 
   std::vector<int> id();
   std::vector<int> stat();
@@ -186,6 +201,16 @@ class Branches {
   std::vector<float> cc_t();
   std::vector<float> cc_r();
   std::vector<float> cc_c2();
+  //////////
+  std::vector<int> pidpart();
+  std::vector<float> xpart();
+  std::vector<float> ypart();
+  std::vector<float> zpart();
+  std::vector<float> epart();
+  std::vector<float> pxpart();
+  std::vector<float> pypart();
+  std::vector<float> pzpart();
+  std::vector<float> qpart();
 
   int id(int i);
   int stat(int i);
@@ -251,6 +276,16 @@ class Branches {
   float cc_t(int i);
   float cc_r(int i);
   float cc_c2(int i);
+  //////////
+  int pidpart(int i);
+  float xpart(int i);
+  float ypart(int i);
+  float zpart(int i);
+  float epart(int i);
+  float pxpart(int i);
+  float pypart(int i);
+  float pzpart(int i);
+  float qpart(int i);
 };
 
 #endif

@@ -16,7 +16,9 @@ Branches::Branches(const Branches& b) {
   init();
 }
 
-void Branches::init() {
+void Branches::init() { this->init(false); }
+
+void Branches::init(bool MC) {
   myTree->SetBranchAddress("npart", &_npart);
   myTree->SetBranchAddress("evstat", &_evstat);
   myTree->SetBranchAddress("intt", &_intt);
@@ -99,7 +101,18 @@ void Branches::init() {
   myTree->SetBranchAddress("cc_t", _cc_t);
   myTree->SetBranchAddress("cc_r", _cc_r);
   myTree->SetBranchAddress("cc_c2", _cc_c2);
-  myTree->SetBranchStatus("*", 1);
+  if (MC) {
+    myTree->SetBranchAddress("nprt", &_nprt);
+    myTree->SetBranchAddress("pidpart", _pidpart);
+    myTree->SetBranchAddress("xpart", _xpart);
+    myTree->SetBranchAddress("ypart", _ypart);
+    myTree->SetBranchAddress("zpart", _zpart);
+    myTree->SetBranchAddress("epart", _epart);
+    myTree->SetBranchAddress("pxpart", _pxpart);
+    myTree->SetBranchAddress("pypart", _pypart);
+    myTree->SetBranchAddress("pzpart", _pzpart);
+    myTree->SetBranchAddress("qpart", _qpart);
+  }
 }
 
 int Branches::npart() { return _npart; }
@@ -121,6 +134,8 @@ int Branches::dc_part() { return _dc_part; }
 int Branches::ec_part() { return _ec_part; }
 int Branches::sc_part() { return _sc_part; }
 int Branches::cc_part() { return _cc_part; }
+
+int Branches::nprt() { return _nprt; }
 
 int Branches::id(int i) {
   if (i < _gpart) {
@@ -575,6 +590,78 @@ float Branches::cc_c2(int i) {
   }
 }  //[cc_part]
 
+int Branches::pidpart(int i) {
+  if (i < _nprt) {
+    return _pidpart[i];
+  } else {
+    return (int)NULL;
+  }
+}  //[nprt]
+
+float Branches::xpart(int i) {
+  if (i < _nprt) {
+    return _xpart[i];
+  } else {
+    return (float)NULL;
+  }
+}  //[nprt]
+
+float Branches::ypart(int i) {
+  if (i < _nprt) {
+    return _ypart[i];
+  } else {
+    return (float)NULL;
+  }
+}  //[nprt]
+
+float Branches::zpart(int i) {
+  if (i < _nprt) {
+    return _zpart[i];
+  } else {
+    return (float)NULL;
+  }
+}  //[nprt]
+
+float Branches::epart(int i) {
+  if (i < _nprt) {
+    return _epart[i];
+  } else {
+    return (float)NULL;
+  }
+}  //[nprt]
+
+float Branches::pxpart(int i) {
+  if (i < _nprt) {
+    return _pxpart[i];
+  } else {
+    return (float)NULL;
+  }
+}  //[nprt]
+
+float Branches::pypart(int i) {
+  if (i < _nprt) {
+    return _pypart[i];
+  } else {
+    return (float)NULL;
+  }
+}  //[nprt]
+
+float Branches::pzpart(int i) {
+  if (i < _nprt) {
+    return _pzpart[i];
+  } else {
+    return (float)NULL;
+  }
+}  //[nprt]
+
+float Branches::qpart(int i) {
+  if (i < _nprt) {
+    return _qpart[i];
+  } else {
+    return (float)NULL;
+  }
+}  //[nprt]
+
 std::vector<int> Branches::id() {
   // [gpart]
   std::vector<int> v(_gpart);
@@ -961,5 +1048,68 @@ std::vector<float> Branches::cc_c2() {
   // [cc_part]
   std::vector<float> v(_cc_part);
   for (int i = 0; i < _cc_part; i++) v[i] = _cc_c2[i];
+  return v;
+}
+
+std::vector<int> Branches::pidpart() {
+  //[nprt]
+  std::vector<int> v(_nprt);
+  for (int i = 0; i < _nprt; i++) v[i] = _pidpart[i];
+  return v;
+}
+
+std::vector<float> Branches::xpart() {
+  //[nprt]
+  std::vector<float> v(_nprt);
+  for (int i = 0; i < _nprt; i++) v[i] = _xpart[i];
+  return v;
+}
+
+std::vector<float> Branches::ypart() {
+  //[nprt]
+  std::vector<float> v(_nprt);
+  for (int i = 0; i < _nprt; i++) v[i] = _ypart[i];
+  return v;
+}
+
+std::vector<float> Branches::zpart() {
+  //[nprt]
+  std::vector<float> v(_nprt);
+  for (int i = 0; i < _nprt; i++) v[i] = _zpart[i];
+  return v;
+}
+
+std::vector<float> Branches::epart() {
+  //[nprt]
+  std::vector<float> v(_nprt);
+  for (int i = 0; i < _nprt; i++) v[i] = _epart[i];
+  return v;
+}
+
+std::vector<float> Branches::pxpart() {
+  //[nprt]
+  std::vector<float> v(_nprt);
+  for (int i = 0; i < _nprt; i++) v[i] = _pxpart[i];
+  return v;
+}
+
+std::vector<float> Branches::pypart() {
+  //[nprt]
+  std::vector<float> v(_nprt);
+  for (int i = 0; i < _nprt; i++) v[i] = _pypart[i];
+  return v;
+}
+
+std::vector<float> Branches::pzpart() {
+  //[nprt]
+  std::vector<float> v(_nprt);
+  for (int i = 0; i < _nprt; i++) v[i] = _pzpart[i];
+  return v;
+}
+
+std::vector<float> Branches::qpart() {
+  //[nprt]
+  std::vector<float> v(_nprt);
+  for (int i = 0; i < _nprt; i++) v[i] = _qpart[i];
   return v;
 }

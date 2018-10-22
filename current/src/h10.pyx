@@ -362,6 +362,16 @@ cdef extern from "branches.hpp":
       vector[float] cc_t()
       vector[float] cc_r()
       vector[float] cc_c2()
+      ####################
+      vector[int] pidpart()
+      vector[float] xpart()
+      vector[float] ypart()
+      vector[float] zpart()
+      vector[float] epart()
+      vector[float] pxpart()
+      vector[float] pypart()
+      vector[float] pzpart()
+      vector[float] qpart()
 
 cdef char* str_to_char(str name):
   """Convert python string to char*"""
@@ -402,6 +412,8 @@ cdef class h10:
       return self
     else:
       raise StopIteration
+  def __len__(self):
+    return self.c_branches.gpart()
   @property
   def gpart(self):
     return np.array(self.c_branches.gpart())
@@ -594,3 +606,30 @@ cdef class h10:
   @property
   def cc_c2(self):
     return np.array(self.c_branches.cc_c2())
+  @property
+  def pidpart(self):
+    return np.array(self.c_branches.pidpart())
+  @property
+  def xpart(self):
+    return np.array(self.c_branches.xpart())
+  @property
+  def ypart(self):
+    return np.array(self.c_branches.ypart())
+  @property
+  def zpart(self):
+    return np.array(self.c_branches.zpart())
+  @property
+  def epart(self):
+    return np.array(self.c_branches.epart())
+  @property
+  def pxpart(self):
+    return np.array(self.c_branches.pxpart())
+  @property
+  def pypart(self):
+    return np.array(self.c_branches.pypart())
+  @property
+  def pzpart(self):
+    return np.array(self.c_branches.pzpart())
+  @property
+  def qpart(self):
+    return np.array(self.c_branches.qpart())
