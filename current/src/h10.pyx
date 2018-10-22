@@ -288,6 +288,7 @@ cdef extern from "branches.cpp":
 cdef extern from "branches.hpp":
     cdef cppclass Branches:
       Branches(TChain*) except +
+      Branches(TChain*, bool) except +
       int npart()
       int evstat()
       int intt()
@@ -389,6 +390,11 @@ cdef class h10:
     self.c_chain = new TChain(str_to_char(branch_name))
     self.c_chain.Add(str_to_char(file_name))
     self.c_branches = new Branches(self.c_chain)
+  def __cinit__(h10 self, str branch_name, str file_name, bool MC):
+    self.entry = 0
+    self.c_chain = new TChain(str_to_char(branch_name))
+    self.c_chain.Add(str_to_char(file_name))
+    self.c_branches = new Branches(self.c_chain, MC)
   def add(self, file_name):
     self.c_chain.Add(str_to_char(file_name))
   @property
