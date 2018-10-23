@@ -12,31 +12,27 @@
 #include <string>
 #include <thread>
 #include <vector>
-#include "Event.hpp"
-#include "Particle.hpp"
 #include "TChain.h"
+#include "branches.hpp"
 #include "color.hpp"
 #include "constants.hpp"
-#include "cuts.hpp"
-#include "delta_t.hpp"
-#include "histogram.hpp"
+#include "histogram_mc.hpp"
 #include "missing_mass.hpp"
-#include "photon_flux.hpp"
 #include "physics.hpp"
 
-class DataHandeler {
+class mcHandeler {
  private:
   int PID;
-  std::ofstream csv_output;
   std::vector<std::string> input_files;
   double BEAM_ENERGY = E1D_E0;
   bool CUTS = true;
+  TLorentzVector *e_mu;
 
  public:
-  DataHandeler();
-  ~DataHandeler();
-  void Run(std::string fin, Histogram *hists);
-  void Run(std::vector<std::string> fin, Histogram *hists);
+  mcHandeler();
+  ~mcHandeler();
+  void Run(std::string fin, mcHistogram *hists);
+  void Run(std::vector<std::string> fin, mcHistogram *hists);
   void loadbar(long x, long n);
 };
 

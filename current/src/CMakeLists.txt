@@ -21,9 +21,11 @@ add_library(physics SHARED
   Particle.cpp
   func.cpp
   datahandeler.cpp
+  datahandeler_mc.cpp
   cuts.cpp
   skim.cpp
   histogram.cpp
+  histogram_mc.cpp
   physics.cpp
   fits.cpp
   glob_files.cpp

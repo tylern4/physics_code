@@ -20,6 +20,12 @@ target_link_libraries(e1d physics ${ROOT_LIBRARIES})
 install(TARGETS e1d
   RUNTIME DESTINATION bin)
 
+# e1d_mc
+add_executable(e1d_mc monteCarlo/main_mc.cpp)
+target_link_libraries(e1d_mc physics ${ROOT_LIBRARIES})
+install(TARGETS e1d_mc
+    RUNTIME DESTINATION bin)
+
 #Skim
 add_executable(e1d_skim skim/main_skim.cpp)
 target_link_libraries(e1d_skim physics ${ROOT_LIBRARIES})
