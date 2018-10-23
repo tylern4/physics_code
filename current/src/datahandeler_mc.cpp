@@ -60,8 +60,9 @@ void mcHandeler::Run(std::string fin, mcHistogram *hists) {
     hists->Fill_WQ2_MC(W, Q2);
 
     TLorentzVector particle;
-    for (int part_num = 1; part_num < data->npart(); part_num++) {
-      particle = physics::fourVec(data->pxpart(part_num), data->pypart(part_num), data->pzpart(part_num), MASS_PIP);
+    for (int part_num = 1; part_num < data->gpart(); part_num++) {
+      particle =
+          physics::fourVec(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num), MASS_PIP);
       MM_neutron->Set_4Vec(particle);
       MM_neutron->missing_mass(gamma_mu_mc);
       hists->Fill_Missing_Mass(MM_neutron);
@@ -72,7 +73,7 @@ void mcHandeler::Run(std::string fin, mcHistogram *hists) {
 
 void mcHandeler::loadbar(long x, long n) {
   int w = 50;
-  if (x > n) return;
+  if ((x > n) || n == 1) return;
   if ((x != n) && (x % (n / 100 + 1) != 0)) return;
 
   double ratio = x / (double)n;

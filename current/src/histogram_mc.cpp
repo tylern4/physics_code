@@ -12,7 +12,7 @@ mcHistogram::mcHistogram(std::string output_file) {
 }
 
 mcHistogram::~mcHistogram() {
-  std::cout << GREEN << "\nWriting" << DEF << std::endl;
+  std::cerr << GREEN << "\nWriting" << DEF << std::endl;
   RootOutputFile->cd();
   // Start of cuts
   Fits *MM_neutron_cut = new Fits();
