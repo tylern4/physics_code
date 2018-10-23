@@ -17,7 +17,11 @@ mcHandeler::mcHandeler() {
 mcHandeler::~mcHandeler() {}
 
 void mcHandeler::Run(std::vector<std::string> fin, mcHistogram *hists) {
-  for (auto f : fin) Run(f, hists);
+  int i = 1;
+  for (auto f : fin) {
+    this->loadbar(i++, fin.size());
+    Run(f, hists);
+  }
 }
 
 void mcHandeler::Run(std::string fin, mcHistogram *hists) {
@@ -68,7 +72,7 @@ void mcHandeler::Run(std::string fin, mcHistogram *hists) {
 
 void mcHandeler::loadbar(long x, long n) {
   int w = 50;
-  if (x <= n) return;
+  if (x > n) return;
   if ((x != n) && (x % (n / 100 + 1) != 0)) return;
 
   double ratio = x / (double)n;
