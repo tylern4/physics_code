@@ -8,6 +8,15 @@
 #define HISTOGRAM_H
 #include <cmath>
 #include <fstream>
+#include "RooDataHist.h"
+#include "RooDataSet.h"
+#include "RooFFTConvPdf.h"
+#include "RooGaussian.h"
+#include "RooPlot.h"
+#include "RooRealVar.h"
+#include "RooWorkspace.h"
+#include "TAxis.h"
+#include "TCanvas.h"
 #include "TDirectory.h"
 #include "TF1.h"
 #include "TFile.h"
@@ -16,9 +25,11 @@
 #include "TH2.h"
 #include "TH3.h"
 #include "THn.h"
+#include "branches.hpp"
 #include "color.hpp"
 #include "fits.hpp"
 #include "missing_mass.hpp"
+using namespace RooFit;
 
 class mcHistogram {
  private:
@@ -75,8 +86,10 @@ class mcHistogram {
   TH1D *Missing_Mass = new TH1D("Missing_Mass", "Missing Mass", bins_MM, MM_min, MM_max);
   TH1D *Missing_Mass_square = new TH1D("Missing_Mass_square", "Missing Mass^2", bins_MM, MM_min, MM_max);
 
+  TH1D *delta_p[4];
+
   // W and Q^2
-  void makeHists_W();
+  void makeHists();
   void Fill_WQ2(double W, double Q2);
   void Fill_WQ2_MC(double W, double Q2);
   void WvsQ2_Write();
@@ -85,6 +98,9 @@ class mcHistogram {
   // Missing Mass
   void Fill_Missing_Mass(MissingMass *miss_mass);
   void Write_Missing_Mass();
+
+  void Fill_P(Branches *d);
+  void Write_DeltaP();
 };
 
 #endif

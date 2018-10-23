@@ -3,7 +3,14 @@ project(DataHandeler)
 set(VERSION 0.0.1)
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
-find_package(ROOT REQUIRED COMPONENTS RIO Net)
+find_package(ROOT REQUIRED COMPONENTS
+  Core
+  RIO
+  RooFit
+  RooFitCore
+  RooStats
+  RootAuth)
+
 include(${ROOT_USE_FILE})
 
 set(CMAKE_MODULE_PATH
@@ -46,7 +53,7 @@ IF(Cython_FOUND)
     set(CMAKE_CXX_STANDARD 17)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
   endif()
-  set(EXTRA_FLAGS "-pthread -m64 -Wno-deprecated-register")
+  set(EXTRA_FLAGS "-pthread -m64 -Wno-deprecated-register -D__ROOFIT_NOBANNER")
   set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${EXTRA_FLAGS}" )
   include_directories(${PYTHON_INCLUDE_DIRS} ${PYTHON_NUMPY_INCLUDE_DIR} ${NumPy_INCLUDE_DIR})
 

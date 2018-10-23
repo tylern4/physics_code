@@ -12,7 +12,10 @@ else()
 endif()
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
-find_package(ROOT REQUIRED COMPONENTS RIO Net)
+find_package(ROOT REQUIRED COMPONENTS RIO Net RooFit
+  RooFitCore
+  RooStats
+  RootAuth)
 include(${ROOT_USE_FILE})
 
 add_library(physics SHARED
@@ -35,7 +38,7 @@ add_library(physics SHARED
   makeHeader.cpp
   )
 
-set(EXTRA_FLAGS "-pthread -m64 -Wno-return-type -Wno-writable-strings -Wno-dangling-else -Wno-comment")
+set(EXTRA_FLAGS "-pthread -m64 -Wno-return-type -Wno-writable-strings -Wno-dangling-else -Wno-comment -D__ROOFIT_NOBANNER")
 target_link_libraries(physics ${ROOT_LIBRARIES})
 
 target_include_directories(physics

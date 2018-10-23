@@ -44,6 +44,7 @@ void mcHandeler::Run(std::string fin, mcHistogram *hists) {
     electron_cuts &= (data->sc(0) > 0);
     electron_cuts &= (data->dc(0) > 0);
     if (!electron_cuts) continue;
+    hists->Fill_P(data);
     // Setup scattered electron 4 vector
     TLorentzVector e_mu_prime = physics::fourVec(data->p(0), data->cx(0), data->cy(0), data->cz(0), MASS_E);
     TLorentzVector gamma_mu = (*e_mu - e_mu_prime);
