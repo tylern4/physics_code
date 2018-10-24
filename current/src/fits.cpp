@@ -22,7 +22,7 @@ double Fits::Get_FWHM() { return FWHM; }
 
 TF1 *Fits::FitGaus(TH1D *hist) {
   if (hist->GetEntries() > 100) {
-    // if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+    if (hist->GetEntries() > 1000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
     TF1 *fitFunc = new TF1("fitFunc", func::gausian, -100.0, 100.0, 3);
     // TF1 *fitFunc = new TF1("fitFunc", "gaus", min_value, max_value);
     fitFunc->SetLineColor(color);

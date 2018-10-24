@@ -8,13 +8,7 @@
 #define HISTOGRAM_H
 #include <cmath>
 #include <fstream>
-#include "RooDataHist.h"
-#include "RooDataSet.h"
-#include "RooFFTConvPdf.h"
-#include "RooGaussian.h"
-#include "RooPlot.h"
-#include "RooRealVar.h"
-#include "RooWorkspace.h"
+
 #include "TAxis.h"
 #include "TCanvas.h"
 #include "TDirectory.h"
@@ -25,11 +19,11 @@
 #include "TH2.h"
 #include "TH3.h"
 #include "THn.h"
+
 #include "branches.hpp"
 #include "color.hpp"
 #include "fits.hpp"
 #include "missing_mass.hpp"
-using namespace RooFit;
 
 class mcHistogram {
  private:

@@ -42,7 +42,7 @@ void mcHistogram::makeHists() {
   std::string xyz[4] = {"X", "Y", "Z", "all"};
   for (int i = 0; i < 4; i++) {
     sprintf(hname, "dPvsP_%s", xyz[i].c_str());
-    sprintf(htitle, "#Delta P vs P_{%s}", xyz[i].c_str());
+    sprintf(htitle, "#DeltaP/P_{rec} vs P_{%s}", xyz[i].c_str());
     delta_p[i] = new TH1D(hname, htitle, 500, -0.5, 0.5);
   }
 
@@ -86,14 +86,14 @@ void mcHistogram::Fill_P(Branches *d) {
   double P = 0;
   for (int part_num = 0; part_num < d->gpart(); part_num++) {
     double px = d->p(part_num) * d->cx(part_num);
-    delta_p[0]->Fill(px - d->pxpart(part_num));
+    delta_p[0]->Fill((px - d->pxpart(part_num)) / px);
     double py = d->p(part_num) * d->cy(part_num);
-    delta_p[1]->Fill(py - d->pypart(part_num));
+    delta_p[1]->Fill((py - d->pypart(part_num)) / py);
     double pz = d->p(part_num) * d->cz(part_num);
-    delta_p[2]->Fill(pz - d->pzpart(part_num));
+    delta_p[2]->Fill((pz - d->pzpart(part_num)) / pz);
     P = TMath::Sqrt(d->pxpart(part_num) * d->pxpart(part_num) + d->pypart(part_num) * d->pypart(part_num) +
                     d->pzpart(part_num) * d->pzpart(part_num));
-    delta_p[3]->Fill(d->p(part_num) - P);
+    delta_p[3]->Fill((d->p(part_num) - P) / d->p(part_num));
   }
 }
 
@@ -155,23 +155,11 @@ void mcHistogram::Write_DeltaP() {
   TCanvas *dp_canvas = new TCanvas("dp_canvas", "#Delta P", 1280, 720);
   dp_canvas->Divide(2, 2);
   for (int i = 0; i < 4; i++) {
-    RooRealVar x("x", "Momentum #Delta P", -0.5, 0.5);
-    RooRealVar mean("mean", "mean of gaussian", 1, -0.01, 0.01);
-    RooRealVar sigma("sigma", "width of gaussian", 1, 0.0, 1.0);
-    RooGaussian gauss("gauss", "gaussian PDF", x, mean, sigma);
-    RooDataHist data("data", "data", x, Import(*delta_p[i]));
-
-    RooPlot *xframe = x.frame(Title("#Delta P"));
-    data.plotOn(xframe);
-    gauss.fitTo(data);
-    gauss.plotOn(xframe);
-
     dp_canvas->cd(i + 1);
     delta_p[i]->SetXTitle("#Delta P (GeV)");
-    delta_p[i]->Fit("gaus", "QM+", "QM+");
-    delta_p[i]->Write();
-    xframe->Draw();
+    delta_p[i]->Fit("gaus", "QM+", "", -0.1, 0.1);
     delta_p[i]->Draw("same");
+    delta_p[i]->Write();
   }
   dp_canvas->Write();
 }

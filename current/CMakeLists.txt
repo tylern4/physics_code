@@ -3,14 +3,7 @@ project(DataHandeler)
 set(VERSION 0.0.1)
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
-find_package(ROOT REQUIRED COMPONENTS
-  Core
-  RIO
-  RooFit
-  RooFitCore
-  RooStats
-  RootAuth)
-
+find_package(ROOT REQUIRED COMPONENTS RIO Net) #RooFit RooFitCore RooStats RootAuth
 include(${ROOT_USE_FILE})
 
 set(CMAKE_MODULE_PATH
