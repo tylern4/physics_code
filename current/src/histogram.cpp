@@ -146,6 +146,15 @@ void Histogram::makeHists_WvsQ2() {
     sprintf(hname, "Q2_%0.3f_%0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
     sprintf(htitle, "Q^{2} hist\nW %0.3f %0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
     Q2_binned[x] = new TH1D(hname, htitle, bins, q2_binned_min, q2_binned_max);
+
+    sprintf(hname, "MM_W_%0.3f_%0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
+    sprintf(htitle, "Missing Mass\nW %0.3f %0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
+    Missing_Mass_WBinned[x] = new TH1D(hname, htitle, bins, MM_min, MM_max);
+
+    sprintf(hname, "MM2_W_%0.3f_%0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
+    sprintf(htitle, "Missing Mass^{2}\nW %0.3f %0.3f", w_binned_min + (W_width * x),
+            w_binned_min + (W_width * (x + 1)));
+    Missing_Mass_WBinned_square[x] = new TH1D(hname, htitle, bins, MM_min * MM_min, MM_max * MM_max);
   }
 }
 
@@ -421,6 +430,16 @@ void Histogram::Fill_Missing_Mass_twoPi(MissingMass *miss_mass) {
   Missing_Mass_square_2pi->Fill(miss_mass->Get_MM2());
 }
 
+void Histogram::Fill_W_Missing_Mass(double W, MissingMass *miss_mass) {
+  for (int x = 0; x < W_bins; x++) {
+    if (w_binned_min + (W_width * x) <= W && w_binned_min + (W_width * (x + 1)) >= W) {
+      Missing_Mass_WBinned[x]->Fill(miss_mass->Get_MM());
+      Missing_Mass_WBinned_square[x]->Fill(miss_mass->Get_MM2());
+      continue;
+    }
+  }
+}
+
 // void Histogram::Fill_Mass(double mass) { Mass->Fill(mass); }
 
 void Histogram::Fill_Missing_Mass_square(double miss_mass_2) { Missing_Mass_square->Fill(miss_mass_2); }
@@ -452,6 +471,18 @@ void Histogram::Write_Missing_Mass() {
   Missing_Mass_nutron_no2pi->Add(Missing_Mass_2pi, -1);
   Missing_Mass_nutron_no2pi->SetXTitle("Mass (GeV)");
   Missing_Mass_nutron_no2pi->Write();
+  TDirectory *mm_binned = RootOutputFile->mkdir("MM_binned");
+  mm_binned->cd();
+  for (int y = 0; y < W_bins; y++) {
+    Missing_Mass_WBinned[y]->SetXTitle("Mass (GeV)");
+    Missing_Mass_WBinned[y]->Write();
+  }
+  TDirectory *mm2_binned = RootOutputFile->mkdir("MM2_binned");
+  mm2_binned->cd();
+  for (int y = 0; y < W_bins; y++) {
+    Missing_Mass_WBinned_square[y]->SetXTitle("Mass^{2} (GeV^{2})");
+    Missing_Mass_WBinned_square[y]->Write();
+  }
 }
 
 void Histogram::makeHists_deltat() {

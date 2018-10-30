@@ -168,6 +168,7 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
       if (mm_cut) hists->Fill_MM_WQ2(W, Q2);
       if (num_of_pips == 1 && num_of_proton == 0 && num_of_pims == 0) {
         hists->Fill_Missing_Mass(MM_neutron);
+        hists->Fill_W_Missing_Mass(W, MM_neutron);
       }
       if (num_of_pips == 1 && num_of_proton == 0 && num_of_pims == 0 && mm_cut && neg == 0) {
         hists->Fill_channel_WQ2(W, Q2, e_mu_prime, MM_neutron->Get_MM(), MM_neutron->Get_MM2(), sector);

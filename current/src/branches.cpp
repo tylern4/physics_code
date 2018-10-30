@@ -47,7 +47,6 @@ void Branches::init() {
   myTree->SetBranchAddress("lec", _lec);
   myTree->SetBranchAddress("ccst", _ccst);
   myTree->SetBranchAddress("p", _p);
-  myTree->SetBranchAddress("m", _m);
   myTree->SetBranchAddress("q", _q);
   myTree->SetBranchAddress("b", _b);
   myTree->SetBranchAddress("cx", _cx);
@@ -120,7 +119,6 @@ void Branches::init() {
   }
 
   myTree->AddBranchToCache("p");
-  myTree->AddBranchToCache("m");
   myTree->AddBranchToCache("q");
   myTree->AddBranchToCache("b");
   myTree->AddBranchToCache("cx");

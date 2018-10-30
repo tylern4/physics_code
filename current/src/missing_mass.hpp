@@ -10,7 +10,7 @@
 #include "constants.hpp"
 
 class MissingMass {
-private:
+ private:
   double PX, PY, PZ;
   double target_mass, target_px, target_py, target_pz;
   double out_mass = MASS_PIP;
@@ -18,7 +18,7 @@ private:
   TLorentzVector reaction;
   TLorentzVector vec_4_out;
 
-public:
+ public:
   MissingMass();
   MissingMass(double t_mass, double t_p);
   ~MissingMass();
@@ -30,6 +30,8 @@ public:
   void Set_target_PxPyPz(double t_px, double t_py, double t_pz);
   void Set_target_P_cos(double t_p, double t_cx, double t_cy, double t_cz);
   void Set_4Vec(TLorentzVector event_p);
+  void Add_4Vec(TLorentzVector event_p);
+  void Reset();
 
   void missing_mass(TLorentzVector gamma_mu);
   double Get_MM();

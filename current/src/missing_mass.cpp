@@ -3,11 +3,13 @@
 /*  Created by Nick Tyler             */
 /*	University Of South Carolina      */
 /**************************************/
+#include <iostream>
 #include "missing_mass.hpp"
 
 MissingMass::MissingMass() {
   Set_target_mass(MASS_P);
   Set_target_PxPyPz(0);
+  vec_4_out.SetXYZM(0, 0, 0, 0);
 }
 MissingMass::MissingMass(double t_mass, double t_p) {
   Set_target_mass(t_mass);
@@ -23,14 +25,14 @@ void MissingMass::Set_PxPyPz(double px, double py, double pz) {
   PX = px;
   PY = py;
   PZ = pz;
-  vec_3_out.SetXYZ(PX, PY, PZ);
-  vec_4_out.SetVectM(vec_3_out, out_mass);
+  vec_4_out.SetXYZM(PX, PY, PZ, out_mass);
 }
 
 void MissingMass::Set_4Vec(TLorentzVector event_p) { vec_4_out = event_p; }
+void MissingMass::Add_4Vec(TLorentzVector event_p) { vec_4_out += event_p; }
+void MissingMass::Reset() { vec_4_out.SetXYZM(0, 0, 0, 0); }
 
-void MissingMass::Set_P_cos(double p_out, double cx_out, double cy_out,
-                            double cz_out) {
+void MissingMass::Set_P_cos(double p_out, double cx_out, double cy_out, double cz_out) {
   PX = p_out * cx_out;
   PY = p_out * cy_out;
   PZ = p_out * cz_out;
@@ -50,8 +52,7 @@ void MissingMass::Set_target_PxPyPz(double t_px, double t_py, double t_pz) {
   target_pz = t_pz;
 }
 
-void MissingMass::Set_target_P_cos(double t_p, double t_cx, double t_cy,
-                                   double t_cz) {
+void MissingMass::Set_target_P_cos(double t_p, double t_cx, double t_cy, double t_cz) {
   target_px = t_p * t_cx;
   target_py = t_p * t_cy;
   target_pz = t_p * t_cz;

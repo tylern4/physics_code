@@ -55,14 +55,14 @@ class Histogram {
   double q2_min = 0;
   double q2_max = 5;
 
-  static constexpr int W_bins = 40;
-  static constexpr int Q2_bins = 5;
+  static constexpr int W_bins = 20;
+  static constexpr int Q2_bins = 10;
   static constexpr int theta_bins = 100;
   static constexpr int phi_bins = 100;
   double w_binned_min = 1.0;
-  double w_binned_max = 2.0;
+  double w_binned_max = 3.0;
   double q2_binned_min = 1.0;
-  double q2_binned_max = 4.0;
+  double q2_binned_max = 3.0;
 
   double W_width = (w_binned_max - w_binned_min) / (double)W_bins;
   double Q2_width = (q2_binned_max - q2_binned_min) / (double)Q2_bins;
@@ -99,6 +99,9 @@ class Histogram {
 
   TH1D *W_binned[Q2_bins];
   TH1D *Q2_binned[W_bins];
+
+  TH1D *Missing_Mass_WBinned[W_bins];
+  TH1D *Missing_Mass_WBinned_square[W_bins];
 
   static const int ndims_pip_N = 5;
   int bins_pip_N[ndims_pip_N] = {W_bins, Q2_bins, sector, bins, bins};                  // theta_bins, phi_bins, };
@@ -293,6 +296,7 @@ class Histogram {
 
   void Fill_Missing_Mass_pi0(MissingMass *miss_mass);
   void Fill_Missing_Mass_twoPi(MissingMass *miss_mass);
+  void Fill_W_Missing_Mass(double W, MissingMass *miss_mass);
 
   // Delta T
   void Fill_deltat_P(double momentum, double delta_t);
