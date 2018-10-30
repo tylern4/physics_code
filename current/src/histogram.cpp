@@ -154,7 +154,11 @@ void Histogram::Fill_proton_WQ2(double W, double Q2) {
   W_proton->Fill(W);
   Q2_proton->Fill(Q2);
 }
-
+void Histogram::Fill_P_PI0(double W, double Q2) {
+  WvsQ2_Ppi0->Fill(W, Q2);
+  W_Ppi0->Fill(W);
+  Q2_Ppi0->Fill(Q2);
+}
 void Histogram::Fill_single_pi_WQ2(double W, double Q2) {
   WvsQ2_single_pi->Fill(W, Q2);
   W_single_pi->Fill(W);
@@ -297,6 +301,17 @@ void Histogram::WvsQ2_Write() {
 
   Q2_single_proton->SetXTitle("Q^{2} (GeV^{2})");
   Q2_single_proton->Write();
+
+  WvsQ2_Ppi0->SetXTitle("W (GeV)");
+  WvsQ2_Ppi0->SetYTitle("Q^{2} (GeV^{2})");
+  WvsQ2_Ppi0->SetOption("COLZ");
+  WvsQ2_Ppi0->Write();
+
+  W_Ppi0->SetXTitle("W (GeV)");
+  W_Ppi0->Write();
+
+  Q2_Ppi0->SetXTitle("Q^{2} (GeV^{2})");
+  Q2_Ppi0->Write();
 
   WvsQ2_MM->SetXTitle("W (GeV)");
   WvsQ2_MM->SetYTitle("Q^{2} (GeV^{2})");

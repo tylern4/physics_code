@@ -25,13 +25,15 @@ Skim::~Skim() {}
 void Skim::Basic() {
   int num_of_events;
   bool electron_cuts, mm_cut;
-  int num_proton, num_pi;
+  int bad, num_pi;
   std::cout << BLUE << "Skim file " << GREEN << fout << DEF << std::endl;
 
   num_of_events = (int)chain->GetEntries();
   TTree *skim = chain->CloneTree(0);
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
+    num_pi = 0;
+    bad = 0;
     chain->GetEntry(current_event);
     Cuts *check = new Cuts();
 
@@ -47,9 +49,18 @@ void Skim::Basic() {
     check->Set_dc_cut(data->dc(0) > 0);
     check->Set_dc_stat_cut(data->dc_stat(data->dc(0) - 1) > 0);
 
-    if (check->isElecctron()) {
-      skim->Fill();  // Fill the banks after the skim
-    }
+    Delta_T *dt = new Delta_T(data->sc_t(data->sc(0) - 1), data->sc_r(data->sc(0) - 1));
+    std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, data);
+    delete dt;
+
+    for (int part_num = 1; part_num < data->gpart(); part_num++)
+      if (data->q(part_num) == POSITIVE && check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num)))
+        num_pi++;
+      else
+        bad++;
+
+    if (check->isElecctron() && num_pi == 1 && bad == 0) skim->Fill();  // Fill the banks after the skim
+
     delete check;
   }
   chain->Reset();  // delete Tree object

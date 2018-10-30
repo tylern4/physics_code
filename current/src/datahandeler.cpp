@@ -32,7 +32,7 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
   int num_of_events;
   int total_events;
   int num_of_pips, num_of_pims;
-  int num_of_proton, bad;
+  int num_of_proton, neg;
   double W, Q2;
   double e_E;
   double theta;
@@ -55,6 +55,9 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
 
     // Setup scattered electron 4 vector
     TLorentzVector e_mu_prime = physics::fourVec(data->p(0), data->cx(0), data->cy(0), data->cz(0), MASS_E);
+    W = physics::W_calc(*e_mu, e_mu_prime);
+    Q2 = physics::Q2_calc(*e_mu, e_mu_prime);
+
     hists->Fill_E_Prime(e_mu_prime);
 
     if (check->Fid_cut()) {
@@ -78,8 +81,6 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
 
       theta_cc = theta_cc / D2R;
       hists->CC_fill(cc_sector, cc_segment, cc_pmt, cc_nphe, theta_cc);
-
-      // hists->EC_cut_fill(etot[ec[0] - 1], p[0]);
       hists->Fill_Beam_Position(data->dc_vx(data->dc(0) - 1), data->dc_vy(data->dc(0) - 1),
                                 data->dc_vz(data->dc(0) - 1));
 
@@ -90,8 +91,6 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
       std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, data);
       delete dt;
       hists->Fill_electron_fid(theta, phi, sector);
-      W = physics::W_calc(*e_mu, e_mu_prime);
-      Q2 = physics::Q2_calc(*e_mu, e_mu_prime);
 
       e_E = e_mu_prime.E();
       PhotonFlux *photon_flux = new PhotonFlux(*e_mu, e_mu_prime);
@@ -99,12 +98,13 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
       delete photon_flux;
       TLorentzVector gamma_mu = (*e_mu - e_mu_prime);
       hists->WvsQ2_Fill(W, Q2);
-      num_of_proton = num_of_pips = num_of_pims = bad = 0;
+      num_of_proton = num_of_pips = num_of_pims = neg = 0;
       TLorentzVector particle;
       for (int part_num = 1; part_num < data->gpart(); part_num++) {
         theta = physics::theta_calc(data->cz(part_num));
         phi = physics::phi_calc(data->cx(part_num), data->cy(part_num));
         sector = physics::get_sector(phi);
+
         if (data->q(part_num) == POSITIVE && check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num))) {
           hists->Fill_hadron_fid(theta, phi, sector, PIP);
           particle =
@@ -125,6 +125,10 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
         hists->MomVsBeta_Fill(particle.E(), data->p(part_num), data->b(part_num));
         if (data->q(part_num) == POSITIVE) {
           hists->MomVsBeta_Fill_pos(data->p(part_num), data->b(part_num));
+          if (check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num)) &&
+              check->dt_P_cut(dt_proton.at(part_num), data->p(part_num)))
+            hists->Fill_proton_Pi_ID_P(data->p(part_num), data->b(part_num));
+
           if (check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num))) {
             num_of_pips++;
             hists->Fill_pion_WQ2(W, Q2);
@@ -140,11 +144,8 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
             MM_pi0->Set_4Vec(particle);
             MM_pi0->missing_mass(gamma_mu);
           }
-          if (check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num)) &&
-              check->dt_P_cut(dt_proton.at(part_num), data->p(part_num))) {
-            hists->Fill_proton_Pi_ID_P(data->p(part_num), data->b(part_num));
-          }
         } else if (data->q(part_num) == NEGATIVE) {
+          neg++;
           hists->MomVsBeta_Fill_neg(data->p(part_num), data->b(part_num));
           if (check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num))) {
             particle =
@@ -159,11 +160,16 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
       bool mm_cut = true;
       mm_cut &= (MM_neutron->Get_MM() < 1.1);
       mm_cut &= (MM_neutron->Get_MM() > 0.8);
+
+      if (num_of_proton == 1 && num_of_pips == 0 && num_of_pims == 0 && MM_pi0->Get_MM() >= 0.1 &&
+          MM_pi0->Get_MM() <= 0.2)
+        hists->Fill_P_PI0(W, Q2);
+
       if (mm_cut) hists->Fill_MM_WQ2(W, Q2);
       if (num_of_pips == 1 && num_of_proton == 0 && num_of_pims == 0) {
         hists->Fill_Missing_Mass(MM_neutron);
       }
-      if (num_of_pips == 1 && num_of_proton == 0 && num_of_pims == 0 && mm_cut) {
+      if (num_of_pips == 1 && num_of_proton == 0 && num_of_pims == 0 && mm_cut && neg == 0) {
         hists->Fill_channel_WQ2(W, Q2, e_mu_prime, MM_neutron->Get_MM(), MM_neutron->Get_MM2(), sector);
         hists->Fill_Missing_Mass_strict(MM_neutron);
         hists->EC_cut_fill(data->etot(data->ec(0) - 1), data->p(0));
@@ -172,7 +178,7 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
       if (num_of_pips == 1 && num_of_proton == 0 && num_of_pims == 0) hists->Fill_single_pi_WQ2(W, Q2);
       if (num_of_pips == 0 && num_of_proton == 1 && num_of_pims == 0) hists->Fill_single_proton_WQ2(W, Q2);
       if (num_of_proton == 1) hists->Fill_Missing_Mass_pi0(MM_pi0);
-      if (num_of_pips == 1 && num_of_proton == 0 && num_of_pims == 0) hists->Fill_Missing_Mass_twoPi(MM_from2pi);
+      if (num_of_pips == 1 && num_of_pims == 1) hists->Fill_Missing_Mass_twoPi(MM_from2pi);
     }
     delete check;
   }

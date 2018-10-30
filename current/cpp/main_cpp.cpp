@@ -48,7 +48,6 @@ int main(int argc, char **argv) {
     loadbar(i, files.size() - 1);
     dh->Run(files.at(i), hist);
   }
-
   hist->Write(outfilename);
   Watch->Stop();
   cout << RED << Watch->RealTime() << "sec" << DEF << endl;

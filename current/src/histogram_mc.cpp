@@ -159,7 +159,8 @@ void mcHistogram::Write_DeltaP() {
     delta_p[i]->SetXTitle("#Delta P (GeV)");
     delta_p[i]->Fit("gaus", "QM+", "", -0.1, 0.1);
     delta_p[i]->Draw("same");
-    delta_p[i]->Write();
   }
   dp_canvas->Write();
+
+  for (int i = 0; i < 4; i++) delta_p[i]->Write();
 }

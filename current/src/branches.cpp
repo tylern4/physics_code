@@ -118,6 +118,19 @@ void Branches::init() {
     myTree->SetBranchAddress("pzpart", _pzpart);
     myTree->SetBranchAddress("qpart", _qpart);
   }
+
+  myTree->AddBranchToCache("p");
+  myTree->AddBranchToCache("m");
+  myTree->AddBranchToCache("q");
+  myTree->AddBranchToCache("b");
+  myTree->AddBranchToCache("cx");
+  myTree->AddBranchToCache("cy");
+  myTree->AddBranchToCache("cz");
+  myTree->AddBranchToCache("vx");
+  myTree->AddBranchToCache("vy");
+  myTree->AddBranchToCache("vz");
+  myTree->AddBranchToCache("sc_t");
+  myTree->AddBranchToCache("sc_r");
 }
 
 int Branches::npart() { return _npart; }

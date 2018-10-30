@@ -88,6 +88,9 @@ class Histogram {
   TH2D *WvsQ2_channel = new TH2D("WvsQ2_channel", "W vs Q^{2} #pi^{+} N", bins, w_min, w_max, bins, q2_min, q2_max);
   TH1D *W_channel = new TH1D("W_channel", "W #pi^{+} N", bins, w_min, w_max);
   TH1D *Q2_channel = new TH1D("Q2_channel", "Q^{2} #pi^{+} N", bins, q2_min, q2_max);
+  TH2D *WvsQ2_Ppi0 = new TH2D("WvsQ2_Ppi0", "W vs Q^{2} P #pi^{0}", bins, w_min, w_max, bins, q2_min, q2_max);
+  TH1D *W_Ppi0 = new TH1D("W_Ppi0", "W P #pi^{0}", bins, w_min, w_max);
+  TH1D *Q2_Ppi0 = new TH1D("Q2_Ppi0", "Q^{2} P #pi^{0}", bins, q2_min, q2_max);
   TH2D *WvsQ2_single_proton = new TH2D("WvsQ2_single_proton", "W vs Q^{2} P", bins, w_min, w_max, bins, q2_min, q2_max);
   TH1D *W_single_proton = new TH1D("W_single_proton", "W P", bins, w_min, w_max);
   TH1D *Q2_single_proton = new TH1D("Q2_single_proton", "Q^{2} P", bins, q2_min, q2_max);
@@ -244,7 +247,7 @@ class Histogram {
       new TH1D("Missing_Mass_square_strict", "Missing Mass square", bins_MM, MM_min, MM_max *MM_max);
 
   TH1D *Missing_Mass_pi0 = new TH1D("Missing_Mass_pi0", "Missing Mass #pi^{0}", bins_MM, -3, 3);
-  TH1D *Missing_Mass_square_pi0 = new TH1D("Missing_Mass_pi0_2", "Missing Mass^2 #pi^{0}", bins_MM, -3, 3);
+  TH1D *Missing_Mass_square_pi0 = new TH1D("Missing_Mass_pi0_2", "MM^{2} #pi^{0}", bins_MM, -3, 3);
 
   TH1D *Missing_Mass_2pi = new TH1D("Missing_Mass_2pi", "Missing Mass 2 #pi", bins_MM, MM_min, MM_max);
   TH1D *Missing_Mass_square_2pi =
@@ -260,6 +263,7 @@ class Histogram {
 
   // W and Q^2
   void Fill_proton_WQ2(double W, double Q2);
+  void Fill_P_PI0(double W, double Q2);
   void Fill_single_pi_WQ2(double W, double Q2);
   void Fill_MM_WQ2(double W, double Q2);
   void Fill_channel_WQ2(double W, double Q2, TLorentzVector e_prime, double mm, double mm2, int sec);
