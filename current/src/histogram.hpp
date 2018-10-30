@@ -101,6 +101,7 @@ class Histogram {
   TH1D *Q2_binned[W_bins];
 
   TH1D *Missing_Mass_WBinned[W_bins];
+  Fits *Fit_Missing_Mass_WBinned[W_bins];
   TH1D *Missing_Mass_WBinned_square[W_bins];
 
   static const int ndims_pip_N = 5;

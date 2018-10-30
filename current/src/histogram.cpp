@@ -474,8 +474,13 @@ void Histogram::Write_Missing_Mass() {
   TDirectory *mm_binned = RootOutputFile->mkdir("MM_binned");
   mm_binned->cd();
   for (int y = 0; y < W_bins; y++) {
+    Fit_Missing_Mass_WBinned[y] = new Fits();
+    Fit_Missing_Mass_WBinned[y]->Set_min(0.8);
+    Fit_Missing_Mass_WBinned[y]->Set_max(1.2);
+    Fit_Missing_Mass_WBinned[y]->FitBreitWigner(Missing_Mass_WBinned[y]);
     Missing_Mass_WBinned[y]->SetXTitle("Mass (GeV)");
     Missing_Mass_WBinned[y]->Write();
+    delete Fit_Missing_Mass_WBinned[y];
   }
   TDirectory *mm2_binned = RootOutputFile->mkdir("MM2_binned");
   mm2_binned->cd();
