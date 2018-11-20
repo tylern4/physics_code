@@ -6,14 +6,15 @@ double w_binned_max = 3.0;
 double W_width = (w_binned_max - w_binned_min) / (double)W_bins;
 TH1D *Missing_Mass_WBinned[W_bins];
 
-void dynamic() {
+void WvsMM(string name = "v2_all.root") {
   // Create a new canvas.
   TCanvas *c1 = new TCanvas("c1", "Dynamic Slice Example", 10, 10, 700, 500);
-  TFile *f = new TFile("v3.root");
+  TFile *f = new TFile(name.c_str());
 
   char hname[80];
   for (int x = 0; x < W_bins; x++) {
-    sprintf(hname, "MM_binned/MM_W_%0.3f_%0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
+    sprintf(hname, "MM_binned/MM_W_%0.3f_%0.3f", w_binned_min + (W_width * x),
+            w_binned_min + (W_width * (x + 1)));
     Missing_Mass_WBinned[x] = (TH1D *)f->Get(hname);
   }
 
@@ -28,7 +29,8 @@ void dynamic() {
 
 void DynamicExec() {
   TObject *select = gPad->GetSelected();
-  if (!select) return;
+  if (!select)
+    return;
   if (!select->InheritsFrom(TH2::Class())) {
     gPad->SetUniqueID(0);
     return;
@@ -44,7 +46,8 @@ void DynamicExec() {
   float uxmax = gPad->GetUxmax();
   int pxmin = gPad->XtoAbsPixel(uxmin);
   int pxmax = gPad->XtoAbsPixel(uxmax);
-  if (pyold) gVirtualX->DrawLine(pxmin, pyold, pxmax, pyold);
+  if (pyold)
+    gVirtualX->DrawLine(pxmin, pyold, pxmax, pyold);
   gVirtualX->DrawLine(pxmin, py, pxmax, py);
   gPad->SetUniqueID(py);
 
@@ -67,8 +70,10 @@ void DynamicExec() {
   // draw slice corresponding to mouse position
   char title[80];
   for (int i = 0; i < W_bins; i++) {
-    if (w_binned_min + (W_width * i) <= W && w_binned_min + (W_width * (i + 1)) >= W) {
-      sprintf(title, "MM for W = %0.3f -> %0.3f", w_binned_min + (W_width * i), w_binned_min + (W_width * (i + 1)));
+    if (w_binned_min + (W_width * i) <= W &&
+        w_binned_min + (W_width * (i + 1)) >= W) {
+      sprintf(title, "MM for W = %0.3f -> %0.3f", w_binned_min + (W_width * i),
+              w_binned_min + (W_width * (i + 1)));
       Missing_Mass_WBinned[i]->SetFillColor(38);
       Missing_Mass_WBinned[i]->SetTitle(title);
       Missing_Mass_WBinned[i]->Draw();

@@ -1,5 +1,5 @@
-{
-  TFile *f = new TFile("v2_all.root");
+void mm_canvas(char *name = "v2_all.root") {
+  TFile *f = new TFile(name);
 
   TCanvas *c1 = new TCanvas("c1", "c1", 1600, 900);
 

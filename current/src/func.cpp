@@ -37,24 +37,12 @@ double func::fiducial_phi(double *x, double *par) {
 }
 */
 
-double func::fiducial(Double_t *x, Double_t *par) {
-  // Spline Fit
-  /*Fit parameters:
-  par[0-3]=X of nodes (to be fixed in the fit!)
-  par[4-7]=Y of nodes
-  par[8-9]=first derivative at begin and end (to be fixed in the fit!)
-  */
-  Double_t xx = x[0];
+double func::fiducial(double *x, double *par) {
+  double func = 0.0;
 
-  Double_t xn[4] = {par[0], par[1], par[2], par[3]};
-  Double_t yn[4] = {par[4], par[5], par[6], par[7]};
+  func = x[0] * x[0] * par[2] + x[0] * par[1] + par[0];
 
-  Double_t b1 = par[8];
-  Double_t e1 = par[9];
-
-  TSpline3 sp3("sp3", xn, yn, 4, "b1e1", b1, e1);
-
-  return sp3.Eval(xx);
+  return func;
 }
 
 double func::breit_wigner(double *x, double *par) { return par[2] * TMath::BreitWigner(x[0], par[0], par[1]); }
@@ -79,7 +67,7 @@ double func::landau(double *x, double *par) { return par[2] * TMath::Landau(x[0]
 
 double func::horizontal(double *x, double *par) { return par[0]; }
 double func::line(double *x, double *par) { return x[0] * par[1] + par[0]; }
-double func::quad(double *x, double *par) { return x[0] * x[0] * par[1] + x[0] * par[1] + par[0]; }
+double func::quad(double *x, double *par) { return x[0] * x[0] * par[2] + x[0] * par[1] + par[0]; }
 
 double func::pol0(double *x, double *par) { return par[0]; }
 double func::pol1(double *x, double *par) {

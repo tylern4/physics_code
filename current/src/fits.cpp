@@ -246,13 +246,13 @@ double Fits::fiducial_phi_hi(double theta_e, double theta_e_min, double k, doubl
   return c * pow(sin((theta_e - theta_e_min) * 0.01745), k + m / theta_e + 1500. / (theta_e * theta_e));
 }
 
-TF1 *Fits::FitFiducial(TGraph *profile) {
-  // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
-  TF1 *fitFunc = new TF1("f_spline4", func::fiducial, -180, 180, 8);  // npars = 2*nodes+2
+TF1 *Fits::FitFiducial(TGraph *profile, int sec) {
+  ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
 
-  fitFunc->SetLineColor(46);
-  profile->Fit("f_spline4", "QM0+", "", min_value, max_value);
-  profile->Fit("f_spline4", "QM0+", "", min_value, max_value);
+  TF1 *fitFunc = new TF1("fit_fid", func::fiducial, min_phi[sec], max_phi[sec], 3);
+
+  fitFunc->SetLineColor(48);
+  profile->Fit("fit_fid", "QM0+", "", min_value, max_value);
 
   return fitFunc;
 }
@@ -314,36 +314,34 @@ TF1 *Fits::FitFiducial(TH2D *hist2d) {
 TF1 *Fits::FitGenNormal(TH1D *hist) {
   TF1 *fitFunc = new TF1("genNormal", func::genNormal, min_value, max_value, 4);
   double min, max, val, min_m, max_m;
-  if (hist->GetEntries() > 1000) {
-    // if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  if (hist->GetEntries() < 100) return NULL;
+  // if (hist->GetEntries() > 5000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
 
-    // fitFunc->SetParLimits(1, 5.0, 200.0);
-    fitFunc->SetParLimits(1, 2.0, 200.0);
+  fitFunc->SetParLimits(1, 2.0, 200.0);
+  fitFunc->SetParameter(0, 15.0);
+  fitFunc->SetParameter(1, 10.0);
+  fitFunc->SetParameter(2, (min_value + max_value) / 2.0);
+  fitFunc->SetParameter(3, 3000.0);
+  fitFunc->SetParNames("alpha", "beta", "mu", "weight");
 
-    fitFunc->SetParameter(0, 15.0);
-    fitFunc->SetParameter(1, 10.0);
-    fitFunc->SetParameter(2, (min_value + max_value) / 2.0);
-    fitFunc->SetParameter(3, 3000.0);
-    fitFunc->SetParNames("alpha", "beta", "mu", "weight");
+  // for (int i = 0; i < 10; i++) hist->Fit("genNormal", "QMR0+", "", min_value, max_value);
+  hist->Fit("genNormal", "QMR+", "", min_value, max_value);
 
-    // for (int i = 0; i < 10; i++) hist->Fit("genNormal", "QMR0+", "", min_value, max_value);
-    hist->Fit("genNormal", "QMR+", "", min_value, max_value);
+  for (double m = min_value; m < max_value; m = m + 0.005) {
+    val = fitFunc->Derivative3(m);
 
-    for (double m = min_value; m < max_value; m = m + 0.005) {
-      val = fitFunc->Derivative(m);
-
-      if (max < val) {
-        max = val;
-        max_m = m;
-      }
-      if (val < min) {
-        min = val;
-        min_m = m;
-      }
+    if (max < val) {
+      max = val;
+      max_m = m;
     }
-    left_edge_x = min_m;
-    right_edge_x = max_m;
+    if (val < min) {
+      min = val;
+      min_m = m;
+    }
   }
+  left_edge_x = min_m;
+  right_edge_x = max_m;
+
   return fitFunc;
 }
 
