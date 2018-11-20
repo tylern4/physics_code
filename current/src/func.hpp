@@ -1,16 +1,18 @@
 /**************************************/
-/*																		*/
 /*  Created by Nick Tyler             */
 /*	University Of South Carolina      */
 /**************************************/
 
 #ifndef FUNC_HPP
 #define FUNC_HPP
+#include <cmath>
 #include "TMath.h"
 #include "TSpline.h"
 
 namespace func {
 double ec_fit_func(double *x, double *par);
+double ec_fit_func_arjun(double *x, double *par);
+double ec_fit_func_invert(double *x, double *par);
 double genNormal(double *x, double *par);
 double breit_wigner(double *x, double *par);
 double fiducial_phi(double theta, double e_p);

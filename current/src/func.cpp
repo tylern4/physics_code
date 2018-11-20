@@ -1,5 +1,4 @@
 /**************************************/
-/*																		*/
 /*  Created by Nick Tyler             */
 /*	University Of South Carolina      */
 /**************************************/
@@ -18,6 +17,7 @@ double func::ec_fit_func(double *x, double *par) {
   double func = par[0] + par[1] * x[0] + par[2] * x[0] * x[0] * x[0] * x[0] * x[0] * x[0];
   return func;
 }
+
 /*
 double func::fiducial_phi(double theta, double e_p) {
   /////////// NOTE: Definitly just magic numbers here......... :(

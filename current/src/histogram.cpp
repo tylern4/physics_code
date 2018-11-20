@@ -1186,7 +1186,7 @@ void Histogram::EC_cut_fill(double etot, double momentum) {
 
 void Histogram::EC_slice_fit() {
   // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
-  Header *fit_functions = new Header("../src/EC_fit_functions.hpp", "FF");
+  // Header *fit_functions = new Header("EC_fit_functions.hpp", "FF");
 
   TF1 *peak = new TF1("peak", "gaus", 0.2, 0.4);
   EC_sampling_fraction_cut->FitSlicesY(peak, 0, -1, 0, "QRG5");
@@ -1215,9 +1215,10 @@ void Histogram::EC_slice_fit() {
   TGraph *EC_M = new TGraph(num, x, y_minus);
   EC_P->SetName("Positive_EC_graph");
   EC_M->SetName("Negative_EC_graph");
-  TF1 *EC_P_fit = new TF1("EC_P_fit", func::ec_fit_func, 0.25, 4.0, 3);
 
+  TF1 *EC_P_fit = new TF1("EC_P_fit", func::ec_fit_func, 0.25, 4.0, 3);
   TF1 *EC_M_fit = new TF1("EC_M_fit", func::ec_fit_func, 0.25, 4.0, 3);
+
   /*
     EC_P_fit->SetParameters(0.3296, 0.002571, 4.8e-7);
     EC_M_fit->SetParameters(0.1715, 0.02044, -1.581e-5);
@@ -1228,10 +1229,10 @@ void Histogram::EC_slice_fit() {
   EC_P->Fit(EC_P_fit, "QMRG+", "", 0.75, 3.75);
   EC_M->Fit(EC_M_fit, "QMRG+", "", 0.75, 3.75);
 
-  // EC_P_fit->Write();
-  // EC_M_fit->Write();
-  // EC_P->Write();
-  // EC_M->Write();
+  EC_P_fit->Write();
+  EC_M_fit->Write();
+  EC_P->Write();
+  EC_M->Write();
 
   TCanvas *EC_canvas = new TCanvas("EC_canvas", "EC canvas", 1280, 720);
   EC_canvas->cd();
@@ -1241,22 +1242,23 @@ void Histogram::EC_slice_fit() {
   EC_P->Draw("*same");
   EC_M->Draw("*same");
   EC_canvas->Write();
+  /*
+    fit_functions->NewFunction();
+    fit_functions->Set_RetrunType("double");
+    fit_functions->Set_FuncName("EC_P_fit");
+    fit_functions->Set_FuncInputs("double x");
+    fit_functions->Set_Function(EC_P_fit->GetExpFormula("P"));
+    fit_functions->WriteFunction();
 
-  fit_functions->NewFunction();
-  fit_functions->Set_RetrunType("double");
-  fit_functions->Set_FuncName("EC_P_fit");
-  fit_functions->Set_FuncInputs("double x");
-  fit_functions->Set_Function(EC_P_fit->GetExpFormula("P"));
-  fit_functions->WriteFunction();
+    fit_functions->NewFunction();
+    fit_functions->Set_RetrunType("double");
+    fit_functions->Set_FuncName("EC_M_fit");
+    fit_functions->Set_FuncInputs("double x");
+    fit_functions->Set_Function(EC_M_fit->GetExpFormula("P"));
+    fit_functions->WriteFunction();
 
-  fit_functions->NewFunction();
-  fit_functions->Set_RetrunType("double");
-  fit_functions->Set_FuncName("EC_M_fit");
-  fit_functions->Set_FuncInputs("double x");
-  fit_functions->Set_Function(EC_M_fit->GetExpFormula("P"));
-  fit_functions->WriteFunction();
-
-  delete fit_functions;
+    delete fit_functions;
+  */
 }
 
 void Histogram::EC_slices_Write() {

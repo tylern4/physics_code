@@ -43,3 +43,6 @@ current/skim/build
 current/bin/binnedCSV
 build
 current/cython/h10.cpp
+
+.idea
+current/cmake-build-debug

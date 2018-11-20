@@ -25,13 +25,13 @@ void mcHandeler::Run(std::vector<std::string> fin, mcHistogram *hists) {
 }
 
 void mcHandeler::Run(std::string fin, mcHistogram *hists) {
-  MissingMass *MM_neutron = new MissingMass(MASS_P, 0.0);
+  auto *MM_neutron = new MissingMass(MASS_P, 0.0);
   double W, Q2;
   bool electron_cuts;
 
-  TChain *chain = new TChain("h10");
+  auto *chain = new TChain("h10");
   chain->Add(fin.c_str());
-  Branches *data = new Branches(chain, true);
+  auto *data = new Branches(chain, true);
   int num_of_events = (int)chain->GetEntries();
 
   int current_event = 0;
@@ -78,11 +78,11 @@ void mcHandeler::loadbar(long x, long n) {
   if ((x != n) && (x % (n / 100 + 1) != 0)) return;
 
   double ratio = x / (double)n;
-  int c = ratio * w;
+  int c = (int)ratio * w;
 
   std::cout << BLUE << " [";
-  for (int x = 0; x < c; x++) std::cout << GREEN << "=" << DEF;
+  for (int z = 0; z < c; z++) std::cout << GREEN << "=" << DEF;
   std::cout << GREEN << ">" << DEF;
-  for (int x = c; x < w; x++) std::cout << " ";
+  for (int y = c; y < w; y++) std::cout << " ";
   std::cout << BLUE << (int)(ratio * 100) << "%]\r" << DEF << std::flush;
 }
