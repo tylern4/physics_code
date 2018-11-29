@@ -118,7 +118,7 @@ void Skim::Strict() {
     bool cuts = true;
 
     cuts &= check->Beam_cut();
-    cuts &= check->isElecctron();
+    cuts &= check->isStrictElecctron();
     cuts &= (Q2 >= 1.0);
     cuts &= (W >= 0.8);
     cuts &= (W <= 2.0);
