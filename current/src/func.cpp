@@ -2,6 +2,7 @@
 /*  Created by Nick Tyler             */
 /*	University Of South Carolina      */
 /**************************************/
+#include <iostream>
 #include "func.hpp"
 
 double func::genNormal(double *x, double *par) {
@@ -39,8 +40,12 @@ double func::fiducial_phi(double *x, double *par) {
 
 double func::fiducial(double *x, double *par) {
   double func = 0.0;
-
-  func = x[0] * x[0] * par[2] + x[0] * par[1] + par[0];
+  func += par[0] * x[0] * x[0] * x[0] * x[0];
+  func += par[1] * x[0] * x[0] * x[0];
+  func += par[2] * x[0] * x[0];
+  func += par[3] * x[0];
+  func += par[4];
+  func += TMath::Exp(x[0] * par[5]);
 
   return func;
 }

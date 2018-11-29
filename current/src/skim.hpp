@@ -22,7 +22,7 @@
 class Skim {
  private:
   TChain *chain;
-  Branches *data;
+  std::shared_ptr<Branches> data;
   std::string fout;
   std::vector<std::string> fin;
   TFile *RootOutputFile;

@@ -10,7 +10,7 @@ Skim::Skim(std::vector<std::string> input, std::string output) {
   fout = output;
   chain = new TChain("h10");
   for (auto f : fin) chain->AddFile(f.c_str());
-  data = new Branches(chain);
+  data = std::make_shared<Branches>(chain);
   RootOutputFile = new TFile(fout.c_str(), "RECREATE");
   if (getenv("BEAM_E") != NULL) {
     BEAM_ENERGY = atof(getenv("BEAM_E"));
@@ -50,7 +50,7 @@ void Skim::Basic() {
     check->Set_dc_stat_cut(data->dc_stat(data->dc(0) - 1) > 0);
 
     Delta_T *dt = new Delta_T(data->sc_t(data->sc(0) - 1), data->sc_r(data->sc(0) - 1));
-    std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, data);
+    std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, data.get());
     delete dt;
 
     for (int part_num = 1; part_num < data->gpart(); part_num++)
@@ -84,8 +84,11 @@ void Skim::Strict() {
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
-    if (data->gpart() > 4) continue;
-    Cuts *check = new Cuts();
+    if (data->gpart() > 5) continue;
+    auto check = std::make_shared<Cuts>();
+    double theta = 0.0;
+    double phi = 0.0;
+    double sector = 0.0;
 
     num_proton = 0;
     num_pip = 0;
@@ -102,55 +105,28 @@ void Skim::Strict() {
     check->Set_dc_cut(data->dc(0) > 0);
     check->Set_dc_stat_cut(data->dc_stat(data->dc(0) - 1) > 0);
 
+    theta = physics::theta_calc(data->cz(0));
+    phi = physics::phi_calc(data->cx(0), data->cy(0));
+    sector = physics::get_sector(phi);
+    check->Set_elec_fid(theta, phi, sector);
+
     // isStrictElecctron
     check->Set_p(data->p(0));
     check->Set_Sf(data->etot(data->ec(0) - 1) / data->p(0));
     check->Set_num_phe(data->nphe(data->cc(0) - 1));
     check->Set_BeamPosition(data->dc_vx(data->dc(0) - 1), data->dc_vy(data->dc(0) - 1), data->dc_vz(data->dc(0) - 1));
 
+    // if (!check->Fid_cut()) continue;
+    if (!check->Beam_cut()) continue;
     if (!check->isElecctron()) continue;
+
     e_mu_prime_3.SetXYZ(data->p(0) * data->cx(0), data->p(0) * data->cy(0), data->p(0) * data->cz(0));
     e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
-    TLorentzVector gamma_mu = (e_mu - e_mu_prime);
+    double W = physics::W_calc(e_mu, e_mu_prime);
 
-    Delta_T *dt = new Delta_T(data->sc_t(data->sc(0) - 1), data->sc_r(data->sc(0) - 1));
-    std::vector<double> dt_proton = dt->delta_t_array(MASS_P, data);
-    std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, data);
-
-    mm_cut = true;
-    for (int part_num = 0; part_num < data->gpart(); part_num++) {
-      if (data->q(part_num) == NEGATIVE) continue;
-      particle_3.SetXYZ(data->p(part_num) * data->cx(part_num), data->p(part_num) * data->cy(part_num),
-                        data->p(part_num) * data->cz(part_num));
-      if (check->dt_P_cut(dt_proton[part_num], data->p(part_num)) &&
-          check->dt_Pip_cut(dt_pi[part_num], data->p(part_num)))
-        num_PPIP++;
-
-      if (check->dt_P_cut(dt_proton[part_num], data->p(part_num))) {
-        num_proton++;
-        particle.SetVectM(particle_3, MASS_P);
-      }
-      if (check->dt_Pip_cut(dt_pi[part_num], data->p(part_num))) {
-        num_pip++;
-        particle.SetVectM(particle_3, MASS_PIP);
-        MM_neutron->Set_4Vec(particle);
-        MM_neutron->missing_mass(gamma_mu);
-      }
+    if (W >= 1.0 && W <= 2.0) {
+      skim->Fill();  // Fill the banks after the skim
     }
-    /*
-    TODO:
-    Here's the problem:
-      What if I have two pions?
-      What if I have more than 3 particles?
-    */
-    mm_cut &= (MM_neutron->Get_MM() < 1.5);
-    mm_cut &= (MM_neutron->Get_MM() > 0.5);
-
-    if (check->isElecctron() && num_pip >= 1) {
-      skim->Fill();  // Fill the banks after the skim}
-    }
-    // delete dt;
-    delete check;
   }
   chain->Reset();  // delete Tree object
   delete chain;
@@ -209,8 +185,8 @@ void Skim::Final() {
     TLorentzVector e_mu_prime = physics::fourVec(data->p(0), data->cx(0), data->cy(0), data->cz(0), MASS_E);
 
     Delta_T *dt = new Delta_T(data->sc_t(data->sc(0) - 1), data->sc_r(data->sc(0) - 1));
-    std::vector<double> dt_proton = dt->delta_t_array(MASS_P, data);
-    std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, data);
+    std::vector<double> dt_proton = dt->delta_t_array(MASS_P, data.get());
+    std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, data.get());
     delete dt;
 
     // W = physics::W_calc(*e_mu, e_mu_prime);

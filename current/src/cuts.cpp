@@ -69,11 +69,7 @@ bool Cuts::isElecctron() {
   return _elec;
 }
 
-bool Cuts::Fid_cut() {
-  bool _elec = true;
-  _elec &= elec_fid_cut();
-  return _elec;
-}
+bool Cuts::Fid_cut() { return elec_fid_cut(); }
 
 bool Cuts::Beam_cut() {
   bool _elec = true;

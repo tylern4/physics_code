@@ -249,10 +249,26 @@ double Fits::fiducial_phi_hi(double theta_e, double theta_e_min, double k, doubl
 TF1 *Fits::FitFiducial(TGraph *profile, int sec) {
   ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
 
-  TF1 *fitFunc = new TF1("fit_fid", func::fiducial, min_phi[sec], max_phi[sec], 3);
+  TF1 *fitFunc = new TF1("fit_fid", func::fiducial, min_phi[sec], max_phi[sec], 6);
+  fitFunc->SetParameters(1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+  fitFunc->SetParLimits(0, -10, 10);
+  fitFunc->SetParLimits(1, -10, 10);
+  fitFunc->SetParLimits(2, -10, 10);
+  fitFunc->SetParLimits(3, -10, 10);
+  fitFunc->SetParLimits(4, -10, 10);
+  fitFunc->SetParLimits(5, -10, 10);
 
   fitFunc->SetLineColor(48);
-  profile->Fit("fit_fid", "QM0+", "", min_value, max_value);
+  for (size_t i = 0; i < 10; i++) {
+    fitFunc->SetParameter(0, fitFunc->GetParameter(0));
+    fitFunc->SetParameter(1, fitFunc->GetParameter(1));
+    fitFunc->SetParameter(2, fitFunc->GetParameter(2));
+    fitFunc->SetParameter(3, fitFunc->GetParameter(3));
+    fitFunc->SetParameter(4, fitFunc->GetParameter(4));
+    fitFunc->SetParameter(5, fitFunc->GetParameter(5));
+
+    profile->Fit("fit_fid", "QM0+", "", min_phi[sec], max_phi[sec]);
+  }
 
   return fitFunc;
 }
@@ -315,7 +331,7 @@ TF1 *Fits::FitGenNormal(TH1D *hist) {
   TF1 *fitFunc = new TF1("genNormal", func::genNormal, min_value, max_value, 4);
   double min, max, val, min_m, max_m;
   if (hist->GetEntries() < 100) return NULL;
-  // if (hist->GetEntries() > 5000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  if (hist->GetEntries() > 100) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
 
   fitFunc->SetParLimits(1, 2.0, 200.0);
   fitFunc->SetParameter(0, 15.0);
@@ -327,8 +343,9 @@ TF1 *Fits::FitGenNormal(TH1D *hist) {
   // for (int i = 0; i < 10; i++) hist->Fit("genNormal", "QMR0+", "", min_value, max_value);
   hist->Fit("genNormal", "QMR+", "", min_value, max_value);
 
-  for (double m = min_value; m < max_value; m = m + 0.005) {
-    val = fitFunc->Derivative3(m);
+  for (double m = min_value; m < max_value; m = m + 0.001) {
+    // val = fitFunc->Derivative3(m);
+    val = fitFunc->Derivative(m);
 
     if (max < val) {
       max = val;

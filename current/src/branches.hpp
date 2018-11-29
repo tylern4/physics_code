@@ -114,7 +114,7 @@ class Branches {
   Branches(TChain* tree);
   Branches(TChain* tree, bool MC);
   Branches(const Branches& b);
-  ~Branches();
+  ~Branches(){};
   void init();
   int npart();
   int evstat();
