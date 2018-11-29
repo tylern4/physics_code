@@ -16,11 +16,11 @@
 using namespace std;
 
 int main(int argc, char **argv) {
-  bool _mc;
-  bool _basic;
-  bool _strict;
-  bool _final;
-  bool print_help;
+  bool _mc = false;
+  bool _basic = false;
+  bool _strict = false;
+  bool _final = false;
+  bool print_help = false;
   std::vector<std::string> infile;
   std::string outfile;
   auto cli =
