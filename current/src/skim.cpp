@@ -75,9 +75,7 @@ void Skim::Basic() {
 void Skim::Strict() {
   int num_of_events;
   bool electron_cuts, mm_cut;
-  int num_proton, num_pip;
-  int num_PPIP = 0;
-  std::cout << BLUE << "Skim file " << GREEN << fout << DEF << std::endl;
+  std::cout << BLUE << "Strict Skim file " << GREEN << fout << DEF << std::endl;
 
   num_of_events = (int)chain->GetEntries();
   TTree *skim = chain->CloneTree(0);
@@ -90,10 +88,6 @@ void Skim::Strict() {
     double phi = 0.0;
     double sector = 0.0;
 
-    num_proton = 0;
-    num_pip = 0;
-    // num_PPIP = 0;
-    // Not Used
     check->Set_electron_id(data->id(0));  // First particle is electron
     // electron cuts
     check->Set_charge(data->q(0));
@@ -116,15 +110,20 @@ void Skim::Strict() {
     check->Set_num_phe(data->nphe(data->cc(0) - 1));
     check->Set_BeamPosition(data->dc_vx(data->dc(0) - 1), data->dc_vy(data->dc(0) - 1), data->dc_vz(data->dc(0) - 1));
 
-    // if (!check->Fid_cut()) continue;
-    if (!check->Beam_cut()) continue;
-    if (!check->isElecctron()) continue;
-
     e_mu_prime_3.SetXYZ(data->p(0) * data->cx(0), data->p(0) * data->cy(0), data->p(0) * data->cz(0));
     e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
     double W = physics::W_calc(e_mu, e_mu_prime);
+    double Q2 = physics::Q2_calc(e_mu, e_mu_prime);
 
-    if (W >= 1.0 && W <= 2.0) {
+    bool cuts = true;
+
+    cuts &= check->Beam_cut();
+    cuts &= check->isElecctron();
+    cuts &= (Q2 >= 1.0);
+    cuts &= (W >= 0.8);
+    cuts &= (W <= 2.0);
+
+    if (cuts) {
       skim->Fill();  // Fill the banks after the skim
     }
   }

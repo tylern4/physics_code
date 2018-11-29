@@ -32,7 +32,6 @@ int main(int argc, char **argv) {
 
   clipp::parse(argc, argv, cli);
   if (print_help) {
-    for (auto f : infile) std::cout << f << std::endl;
     std::cout << clipp::make_man_page(cli, argv[0]);
     exit(-1);
   }
