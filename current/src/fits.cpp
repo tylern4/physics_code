@@ -380,3 +380,50 @@ TF1 *Fits::FitBreitWigner(TH1D *hist) {
   hist->Fit("bw", "QM+", "", min_value, max_value);
   return fitbw;
 }
+
+TF1 *Fits::FitMissMass(TH1D *hist) {
+  if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit");
+
+  float fit_min = 0.5;
+  float fit_max = 2.5;
+  static const int max_par = 15;
+  TF1 *total = new TF1("total", func::missMassfitFunction, fit_min, fit_max, max_par);
+  TF1 *back_fit = new TF1("back_fit", func::missMassbackground, fit_min, fit_max, 6);
+  TF1 *back_peak_fit = new TF1("back_peak_fit", func::missMasspeak, fit_min, fit_max, 3);
+  back_peak_fit->SetParameters(1.0, 1.0, 1.0);
+
+  TF1 *back_peak2_fit = new TF1("back_peak2_fit", func::missMasspeak, fit_min, fit_max, 3);
+  back_peak2_fit->SetParameters(1.0, 1.0, 1.0);
+
+  TF1 *peak_fit = new TF1("peak_fit", func::missMasspeak, fit_min, fit_max, 3);
+  peak_fit->SetParameters(1.0, 1.0, 1.0);
+
+  Double_t par[max_par];
+
+  for (size_t i = 0; i < 10; i++) hist->Fit(peak_fit, "RNQM+", "", 0.9, 1);
+  for (size_t i = 0; i < 50; i++) hist->Fit(back_fit, "RNQM+", "", 0.5, 2.3);
+  for (size_t i = 0; i < 10; i++) hist->Fit(back_peak_fit, "RNQM+", "", 1.1, 1.3);
+  for (size_t i = 0; i < 10; i++) hist->Fit(back_peak2_fit, "RNQM+", "", 1.3, 1.6);
+
+  peak_fit->GetParameters(&par[0]);
+  back_peak_fit->GetParameters(&par[3]);
+  back_peak2_fit->GetParameters(&par[6]);
+  back_fit->GetParameters(&par[9]);
+
+  total->SetParameters(par);
+  total->SetParName(0, "N Const");
+  total->SetParName(1, "N #Gamma");
+  total->SetParName(2, "N #mu");
+
+  total->SetParName(3, "#Delta^{0} Const");
+  total->SetParName(4, "#Delta^{0} #Gamma");
+  total->SetParName(5, "#Delta^{0} #mu");
+
+  for (size_t i = 0; i < 10; i++) hist->Fit(total, "RQNM+");
+
+  hist->Fit(total, "RQM+");
+
+  sigma = total->GetParameter("N #Gamma") / (2 * sqrt(2 * log(2)));
+
+  return total;
+}

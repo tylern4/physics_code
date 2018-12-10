@@ -37,25 +37,11 @@ void Histogram::Write(std::string output_file) {
   std::cout << GREEN << "\nFitting" << DEF << std::endl;
   // Start of cuts
   Fits *MM_neutron_cut = new Fits();
-  MM_neutron_cut->Set_min(0.8);
-  MM_neutron_cut->Set_max(1.2);
-  MM_neutron_cut->FitBreitWigner(Missing_Mass_strict);
-  // MM_neutron_cut->FitGaus(Missing_Mass_strict);
-  // MM_neutron_cut->Fit2Gaus(Missing_Mass_strict);
-  // MM_neutron_cut->FitLandau(Missing_Mass_strict);
-
-  // Header *MM_header = new Header("../src/missing_mass_gaussians.hpp", "MM");
-  // MM_header->WriteGaussian("mm", 1, MM_neutron_cut->Get_mean(),
-  // MM_neutron_cut->Get_sigma());
+  MM_neutron_cut->FitMissMass(Missing_Mass);
 
   Fits *MissingMassSquare_cut = new Fits();
-  MissingMassSquare_cut->Set_min(0.5);
-  MissingMassSquare_cut->Set_max(1.1);
-  MissingMassSquare_cut->FitBreitWigner(Missing_Mass_square_strict);
-  // MissingMassSquare_cut->FitGaus(Missing_Mass_square_strict);
-  // MissingMassSquare_cut->Fit2Gaus(Missing_Mass_square_strict);
-  // MissingMassSquare_cut->FitLandau(Missing_Mass_square_strict);
-  // MM_header->WriteGaussian("mm_square", 1, MissingMassSquare_cut->Get_mean(),
+  MissingMassSquare_cut->FitMissMass(Missing_Mass_square);
+
   MissingMassSquare_cut->Get_sigma();
   // delete MM_header;
   delete MM_neutron_cut;
@@ -475,9 +461,7 @@ void Histogram::Write_Missing_Mass() {
   mm_binned->cd();
   for (int y = 0; y < W_bins; y++) {
     Fit_Missing_Mass_WBinned[y] = new Fits();
-    Fit_Missing_Mass_WBinned[y]->Set_min(0.8);
-    Fit_Missing_Mass_WBinned[y]->Set_max(1.2);
-    Fit_Missing_Mass_WBinned[y]->FitBreitWigner(Missing_Mass_WBinned[y]);
+    Fit_Missing_Mass_WBinned[y]->FitMissMass(Missing_Mass_WBinned[y]);
     Missing_Mass_WBinned[y]->SetXTitle("Mass (GeV)");
     Missing_Mass_WBinned[y]->Write();
     delete Fit_Missing_Mass_WBinned[y];

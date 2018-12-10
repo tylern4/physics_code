@@ -116,3 +116,22 @@ double func::theta_cc_fit(double *x, double *par) {
   // + TMath::Exp(x[0]) * (par[0] + par[1] * x[0] + par[2] * x[0] * x[0]);
 }
 double func::dt_fit(double *x, double *par) { return par[0] + par[1] * x[0]; }  //+ par[2] * TMath::Exp(x[0]); }
+
+// Lorentzian Peak function
+double func::missMasspeak(double *x, double *par) {
+  double arg1 = 2 / TMath::Pi();                    // 2 over pi
+  double arg2 = par[1] * par[1] * par[2] * par[2];  // Gamma=par[1]  M=par[2]
+  double arg3 = ((x[0] * x[0]) - (par[2] * par[2])) * ((x[0] * x[0]) - (par[2] * par[2]));
+  double arg4 = x[0] * x[0] * x[0] * x[0] * ((par[1] * par[1]) / (par[2] * par[2]));
+  return par[0] * arg1 * arg2 / (arg3 + arg4);
+}
+
+double func::missMassbackground(double *x, double *par) {
+  return par[0] + par[1] * x[0] + par[2] * x[0] * x[0] + par[3] * x[0] * x[0] * x[0] +
+         par[4] * x[0] * x[0] * x[0] * x[0];
+}
+
+// Sum of background and peak function
+double func::missMassfitFunction(double *x, double *par) {
+  return missMasspeak(x, par) + missMasspeak(x, &par[3]) + missMasspeak(x, &par[6]) + missMassbackground(x, &par[9]);
+}
