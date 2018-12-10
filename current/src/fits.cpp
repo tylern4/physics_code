@@ -385,7 +385,7 @@ TF1 *Fits::FitMissMass(TH1D *hist) {
   if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit");
 
   float fit_min = 0.5;
-  float fit_max = 2.5;
+  float fit_max = 1.8;
   static const int max_par = 15;
   TF1 *total = new TF1("total", func::missMassfitFunction, fit_min, fit_max, max_par);
   TF1 *back_fit = new TF1("back_fit", func::missMassbackground, fit_min, fit_max, 6);
@@ -400,8 +400,8 @@ TF1 *Fits::FitMissMass(TH1D *hist) {
 
   Double_t par[max_par];
 
-  for (size_t i = 0; i < 10; i++) hist->Fit(peak_fit, "RNQM+", "", 0.9, 1);
-  for (size_t i = 0; i < 50; i++) hist->Fit(back_fit, "RNQM+", "", 0.5, 2.3);
+  for (size_t i = 0; i < 10; i++) hist->Fit(peak_fit, "RNQM+", "", 0.9, 1.0);  // Peak of N at 0.939
+  for (size_t i = 0; i < 50; i++) hist->Fit(back_fit, "RNQM+", "", 0.5, fit_max);
   for (size_t i = 0; i < 10; i++) hist->Fit(back_peak_fit, "RNQM+", "", 1.1, 1.3);
   for (size_t i = 0; i < 10; i++) hist->Fit(back_peak2_fit, "RNQM+", "", 1.3, 1.6);
 
@@ -411,13 +411,24 @@ TF1 *Fits::FitMissMass(TH1D *hist) {
   back_fit->GetParameters(&par[9]);
 
   total->SetParameters(par);
-  total->SetParName(0, "N Const");
-  total->SetParName(1, "N #Gamma");
-  total->SetParName(2, "N #mu");
+  total->SetParName(0, "C_{N}");
+  total->SetParName(1, "#Gamma_{N}");
+  total->SetParName(2, "#mu_{N}");
 
-  total->SetParName(3, "#Delta^{0} Const");
-  total->SetParName(4, "#Delta^{0} #Gamma");
-  total->SetParName(5, "#Delta^{0} #mu");
+  total->SetParName(3, "C_{#Delta^{0}}");
+  total->SetParName(4, "#Gamma_{#Delta^{0}}");
+  total->SetParName(5, "#mu_{#Delta^{0}}");
+
+  total->SetParName(6, "C_{?}");
+  total->SetParName(7, "#Gamma_{?}");
+  total->SetParName(8, "#mu_{?}");
+
+  total->SetParName(9, "C_{0}");
+  total->SetParName(10, "C_{1}");
+  total->SetParName(11, "C_{2}");
+  total->SetParName(12, "C_{3}");
+  total->SetParName(13, "C_{4}");
+  total->SetParName(14, "C_{5}");
 
   for (size_t i = 0; i < 10; i++) hist->Fit(total, "RQNM+");
 
