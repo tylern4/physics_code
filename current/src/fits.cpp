@@ -434,7 +434,8 @@ TF1 *Fits::FitMissMass(TH1D *hist) {
 
   hist->Fit(total, "RQM+");
 
-  sigma = total->GetParameter("N #Gamma") / (2 * sqrt(2 * log(2)));
+  sigma = total->GetParameter("#Gamma_{N}") / (2 * sqrt(2 * log(2)));
+  mean = total->GetParameter("#mu_{N}");
 
   return total;
 }

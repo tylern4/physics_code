@@ -158,8 +158,14 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
       }
 
       bool mm_cut = true;
+      // 0.996809,0.916818
+      /*
       mm_cut &= (MM_neutron->Get_MM() < 1.1);
       mm_cut &= (MM_neutron->Get_MM() > 0.8);
+      */
+
+      mm_cut &= (MM_neutron->Get_MM() < 0.996809);
+      mm_cut &= (MM_neutron->Get_MM() > 0.916818);
 
       if (num_of_proton == 1 && num_of_pips == 0 && num_of_pims == 0 && MM_pi0->Get_MM() >= 0.1 &&
           MM_pi0->Get_MM() <= 0.2)

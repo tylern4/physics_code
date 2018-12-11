@@ -36,15 +36,14 @@ void Histogram::Write(std::string output_file) {
   RootOutputFile = new TFile(output_file.c_str(), "RECREATE");
   std::cout << GREEN << "\nFitting" << DEF << std::endl;
   // Start of cuts
-  Fits *MM_neutron_cut = new Fits();
+  auto MM_neutron_cut = std::make_shared<Fits>();
   MM_neutron_cut->FitMissMass(Missing_Mass);
 
-  Fits *MissingMassSquare_cut = new Fits();
-  MissingMassSquare_cut->FitMissMass(Missing_Mass_square);
-
+  auto MissingMassSquare_cut = std::make_shared<Fits>();
+  MissingMassSquare_cut->FitBreitWigner(Missing_Mass_square);
   MissingMassSquare_cut->Get_sigma();
   // delete MM_header;
-  delete MM_neutron_cut;
+  // delete MM_neutron_cut;
 
   RootOutputFile->cd();
   std::cerr << BOLDBLUE << "EC_Write()" << DEF << std::endl;
@@ -118,6 +117,12 @@ void Histogram::Write(std::string output_file) {
   E_Prime->cd();
   E_Prime_Write();
   RootOutputFile->Close();
+
+  std::cerr << "MM:mean,+3,-3" << std::endl;
+  std::cerr << MM_neutron_cut->Get_mean() << ",";
+  std::cerr << MM_neutron_cut->Get_mean() + 3 * MM_neutron_cut->Get_sigma() << ",";
+  std::cerr << MM_neutron_cut->Get_mean() - 3 * MM_neutron_cut->Get_sigma() << std::endl;
+
   std::cerr << BOLDBLUE << "Done!!!" << DEF << std::endl;
 }
 
