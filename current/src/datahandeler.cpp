@@ -46,26 +46,26 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
   int current_event = 0;
   for (current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
-    Cuts *check = new Cuts();
+    auto check = std::make_unique<Cuts>();
     theta = physics::theta_calc(data->cz(0));
     phi = physics::phi_calc(data->cx(0), data->cy(0));
     sector = physics::get_sector(phi);
     check->Set_elec_fid(theta, phi, sector);
     check->Set_BeamPosition(data->dc_vx(data->dc(0) - 1), data->dc_vy(data->dc(0) - 1), data->dc_vz(data->dc(0) - 1));
-
+    if (data->ec_ei(data->ec(0) - 1) < 0.01 || data->ec_eo(data->ec(0) - 1) < 0.01) continue;
     // Setup scattered electron 4 vector
     TLorentzVector e_mu_prime = physics::fourVec(data->p(0), data->cx(0), data->cy(0), data->cz(0), MASS_E);
     W = physics::W_calc(*e_mu, e_mu_prime);
     Q2 = physics::Q2_calc(*e_mu, e_mu_prime);
 
-    hists->Fill_E_Prime(e_mu_prime);
-    hists->EC_inout(data->ec_ei(data->ec(0) - 1), data->ec_eo(data->ec(0) - 1));
     if (check->Fid_cut()) {
+      hists->Fill_E_Prime(e_mu_prime);
+      hists->EC_inout(data->ec_ei(data->ec(0) - 1), data->ec_eo(data->ec(0) - 1));
       hists->EC_fill(data->etot(data->ec(0) - 1), data->p(0));
       hists->Fill_E_Prime_fid(e_mu_prime);
       hists->TM_Fill(data->p(0), physics::theta_calc(data->cz(0)));
     }
-
+    if (data->ec_ei(data->ec(0) - 1) < 0.05) continue;
     if (getenv("CUTS") != NULL && atoi(getenv("CUTS")) == true) {
       CUTS = (check->Fid_cut() && check->Beam_cut());
     } else {
@@ -85,17 +85,17 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
                                 data->dc_vz(data->dc(0) - 1));
 
       // Set the vertex time (time of electron hit)
-      Delta_T *dt = new Delta_T(data->sc_t(data->sc(0) - 1), data->sc_r(data->sc(0) - 1));
+      auto dt = std::make_unique<Delta_T>(data->sc_t(data->sc(0) - 1), data->sc_r(data->sc(0) - 1));
       dt->delta_t_hists(hists, data);
       std::vector<double> dt_proton = dt->delta_t_array(MASS_P, data);
       std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, data);
-      delete dt;
+
       hists->Fill_electron_fid(theta, phi, sector);
 
       e_E = e_mu_prime.E();
-      PhotonFlux *photon_flux = new PhotonFlux(*e_mu, e_mu_prime);
+      auto photon_flux = std::make_unique<PhotonFlux>(*e_mu, e_mu_prime);
       hists->Photon_flux_Fill(photon_flux->GetVirtualPhotonFlux());
-      delete photon_flux;
+
       TLorentzVector gamma_mu = (*e_mu - e_mu_prime);
       hists->WvsQ2_Fill(W, Q2);
       num_of_proton = num_of_pips = num_of_pims = neg = 0;
@@ -187,7 +187,6 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
       if (num_of_proton == 1) hists->Fill_Missing_Mass_pi0(MM_pi0);
       if (num_of_pips == 1 && num_of_pims == 1) hists->Fill_Missing_Mass_twoPi(MM_from2pi);
     }
-    delete check;
   }
   chain->Reset();  // delete Tree object
 }
