@@ -222,6 +222,7 @@ class Histogram {
   TH1D *EC_hist[num_points];
   TH1D *EC_hist_cut[num_points];
   TH2D *Theta_vs_mom = new TH2D("Theta_vs_mom", "Theta_vs_mom", bins, p_min, p_max, bins, 0, 100);
+  std::unique_ptr<TH2D> ECin_ECout = std::make_unique<TH2D>("ECin_ECout", "ECin_ECout", bins, 0.0, 0.5, bins, 0.0, 0.5);
   // EC hists
 
   // Beam Position
@@ -337,6 +338,7 @@ class Histogram {
   void makeHists_EC();
   void EC_slices_Write();
   void EC_fill(double etot, double momentum);
+  void EC_inout(double Ein, double Eout);
   void EC_cut_fill(double etot, double momentum);
   void EC_slice_fit();
   void EC_Write();

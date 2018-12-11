@@ -1163,6 +1163,8 @@ void Histogram::EC_fill(double etot, double momentum) {
   }
 }
 
+void Histogram::EC_inout(double Ein, double Eout) { ECin_ECout->Fill(Ein, Eout); }
+
 void Histogram::TM_Fill(double momentum, double theta) { Theta_vs_mom->Fill(momentum, theta); }
 
 void Histogram::EC_cut_fill(double etot, double momentum) {
@@ -1287,6 +1289,11 @@ void Histogram::EC_Write() {
   Theta_vs_mom->SetYTitle("Theta #theta");
   Theta_vs_mom->SetOption("COLZ");
   Theta_vs_mom->Write();
+
+  ECin_ECout->SetXTitle("EC_{inner}");
+  ECin_ECout->SetYTitle("EC_{outer}");
+  ECin_ECout->SetOption("COLZ");
+  ECin_ECout->Write();
 }
 
 void Histogram::Fill_Beam_Position(double vertex_x, double vertex_y, double vertex_z) {

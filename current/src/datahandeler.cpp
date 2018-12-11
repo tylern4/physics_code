@@ -59,7 +59,7 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
     Q2 = physics::Q2_calc(*e_mu, e_mu_prime);
 
     hists->Fill_E_Prime(e_mu_prime);
-
+    hists->EC_inout(data->ec_ei(data->ec(0) - 1), data->ec_eo(data->ec(0) - 1));
     if (check->Fid_cut()) {
       hists->EC_fill(data->etot(data->ec(0) - 1), data->p(0));
       hists->Fill_E_Prime_fid(e_mu_prime);
