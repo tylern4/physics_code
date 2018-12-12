@@ -87,11 +87,11 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
       // std::cout << "Threads: " << std::thread::hardware_concurrency() << '\n';
       auto dt = std::make_shared<Delta_T>(data->sc_t(0), data->sc_r(0));
 
-      // dt->delta_t_hists(hists, data);
-      std::thread dt_hist_thread(&Delta_T::delta_t_hists, dt, hists, data);
+      dt->delta_t_hists(hists, data);
       std::vector<double> dt_proton = dt->delta_t_array(MASS_P, data);
       std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, data);
-      dt_hist_thread.join();
+      // std::thread dt_hist_thread(&Delta_T::delta_t_hists, dt, hists, data);
+      // dt_hist_thread.join();
 
       hists->Fill_electron_fid(theta, phi, sector);
 
