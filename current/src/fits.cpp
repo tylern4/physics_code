@@ -21,6 +21,7 @@ double Fits::Get_mean() { return mean; }
 double Fits::Get_FWHM() { return FWHM; }
 
 TF1 *Fits::FitGaus(TH1D *hist) {
+  if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   if (hist->GetEntries() > 100) {
     if (hist->GetEntries() > 1000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
     TF1 *fitFunc = new TF1("fitFunc", func::gausian, -100.0, 100.0, 3);
@@ -59,6 +60,7 @@ TF1 *Fits::FitGaus(TH1D *hist) {
 }
 
 TF1 *Fits::FitLandauGaus(TH1D *hist) {
+  if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   if (hist->GetEntries() > 1000) {
     double par[6];
     // TF1 *fitFuncGaus = new TF1("fitFuncGaus", func::gausian, 30.0, 250.0, 3);
@@ -95,6 +97,7 @@ TF1 *Fits::FitLandauGaus(TH1D *hist) {
 }
 
 TF1 *Fits::Fit2Gaus(TH1D *hist) {
+  if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   if (hist->GetEntries() > 1000) {
     // if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
     TF1 *fitFunc = new TF1("fitFunc", func::gausian2, min_value, max_value, 6);
@@ -125,6 +128,7 @@ TF1 *Fits::Fit2Gaus(TH1D *hist) {
 }
 
 TF1 *Fits::FitLandau(TH1D *hist) {
+  if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   if (hist->GetEntries() > 1000) {
     // if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
 
@@ -139,6 +143,7 @@ TF1 *Fits::FitLandau(TH1D *hist) {
 }
 
 TF1 *Fits::FitPoly_1D(TH1D *hist) {
+  if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   // if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   TF1 *fitFunc = new TF1("fitFunc", func::pol1, min_value, max_value);
   fitFunc->SetLineColor(9);
@@ -157,6 +162,7 @@ TF1 *Fits::FitPoly_1D(TH1D *hist) {
 }
 
 TF1 *Fits::FitPoly_2D(TH1D *hist) {
+  if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   // if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   TF1 *fitFunc = new TF1("fitFunc", func::pol2, min_value, max_value);
   fitFunc->SetLineColor(30);
@@ -177,6 +183,7 @@ TF1 *Fits::FitPoly_2D(TH1D *hist) {
 }
 
 TF1 *Fits::FitPoly_3D(TH1D *hist) {
+  if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   // if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   TF1 *fitFunc = new TF1("fitFunc", func::pol3, min_value, max_value);
   fitFunc->SetLineColor(46);
@@ -199,6 +206,7 @@ TF1 *Fits::FitPoly_3D(TH1D *hist) {
 }
 
 TF1 *Fits::FitPoly_4D(TH1D *hist) {
+  if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   // if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   TF1 *fitFunc = new TF1("fitFunc", func::pol4, min_value, max_value);
   fitFunc->SetLineColor(42);
@@ -223,6 +231,7 @@ TF1 *Fits::FitPoly_4D(TH1D *hist) {
 }
 
 TF1 *Fits::FitPoly_fid(TGraph *hist) {
+  ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   // if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   TF1 *fitFunc = new TF1("fitFunc", func::pol4, min_value, max_value, 5);
   fitFunc->SetLineColor(46);
@@ -274,6 +283,7 @@ TF1 *Fits::FitFiducial(TGraph *profile, int sec) {
 }
 
 TF1 *Fits::FitFiducial_hi(TH2D *hist2d) {
+  if (hist2d->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   a = b = c = d = 0.5;
   TF1 *fitFunc_hi = new TF1("fitFunc_hi",
@@ -301,6 +311,7 @@ TF1 *Fits::FitFiducial_hi(TH2D *hist2d) {
 }
 
 TF1 *Fits::FitFiducial(TH2D *hist2d) {
+  if (hist2d->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   a = b = c = d = 0.5;
   TF1 *fitFunc = new TF1("fitFunc",
@@ -328,6 +339,7 @@ TF1 *Fits::FitFiducial(TH2D *hist2d) {
 }
 
 TF1 *Fits::FitGenNormal(TH1D *hist) {
+  if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   TF1 *fitFunc = new TF1("genNormal", func::genNormal, min_value, max_value, 4);
   double min, max, val, min_m, max_m;
   if (hist->GetEntries() < 100) return NULL;
@@ -340,7 +352,8 @@ TF1 *Fits::FitGenNormal(TH1D *hist) {
   fitFunc->SetParameter(3, 3000.0);
   fitFunc->SetParNames("alpha", "beta", "mu", "weight");
 
-  // for (int i = 0; i < 10; i++) hist->Fit("genNormal", "QMR0+", "", min_value, max_value);
+  for (int i = 0; i < 10; i++) hist->Fit("genNormal", "QMR0+", "", min_value, max_value);
+
   hist->Fit("genNormal", "QMR+", "", min_value, max_value);
 
   for (double m = min_value; m < max_value; m = m + 0.001) {
@@ -363,7 +376,7 @@ TF1 *Fits::FitGenNormal(TH1D *hist) {
 }
 
 TF1 *Fits::FitBreitWigner(TH1D *hist) {
-  // if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit");
+  if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
 
   TF1 *fitbw = new TF1("bw", func::breit_wigner, min_value, max_value, 3);
   par_max = std::isnan(hist->GetMaximum()) ? 0 : hist->GetMaximum();
@@ -382,7 +395,8 @@ TF1 *Fits::FitBreitWigner(TH1D *hist) {
 }
 
 TF1 *Fits::FitMissMass(TH1D *hist) {
-  if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit");
+  if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  if (hist->GetEntries() < 1000) return NULL;
 
   float fit_min = 0.5;
   float fit_max = 1.8;

@@ -51,8 +51,8 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
     phi = physics::phi_calc(data->cx(0), data->cy(0));
     sector = physics::get_sector(phi);
     check->Set_elec_fid(theta, phi, sector);
-    check->Set_BeamPosition(data->dc_vx(data->dc(0) - 1), data->dc_vy(data->dc(0) - 1), data->dc_vz(data->dc(0) - 1));
-    if (data->ec_ei(data->ec(0) - 1) < 0.01 || data->ec_eo(data->ec(0) - 1) < 0.01) continue;
+    check->Set_BeamPosition(data->dc_vx(0), data->dc_vy(0), data->dc_vz(0));
+    if (data->ec_ei(0) < 0.01 || data->ec_eo(0) < 0.01) continue;
     // Setup scattered electron 4 vector
     TLorentzVector e_mu_prime = physics::fourVec(data->p(0), data->cx(0), data->cy(0), data->cz(0), MASS_E);
     W = physics::W_calc(*e_mu, e_mu_prime);
@@ -60,12 +60,12 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
 
     if (check->Fid_cut()) {
       hists->Fill_E_Prime(e_mu_prime);
-      hists->EC_inout(data->ec_ei(data->ec(0) - 1), data->ec_eo(data->ec(0) - 1));
-      hists->EC_fill(data->etot(data->ec(0) - 1), data->p(0));
+      hists->EC_inout(data->ec_ei(0), data->ec_eo(0));
+      hists->EC_fill(data->etot(0), data->p(0));
       hists->Fill_E_Prime_fid(e_mu_prime);
       hists->TM_Fill(data->p(0), physics::theta_calc(data->cz(0)));
     }
-    if (data->ec_ei(data->ec(0) - 1) < 0.05) continue;
+
     if (getenv("CUTS") != NULL && atoi(getenv("CUTS")) == true) {
       CUTS = (check->Fid_cut() && check->Beam_cut());
     } else {
@@ -81,11 +81,10 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
 
       theta_cc = theta_cc / D2R;
       hists->CC_fill(cc_sector, cc_segment, cc_pmt, cc_nphe, theta_cc);
-      hists->Fill_Beam_Position(data->dc_vx(data->dc(0) - 1), data->dc_vy(data->dc(0) - 1),
-                                data->dc_vz(data->dc(0) - 1));
+      hists->Fill_Beam_Position(data->dc_vx(0), data->dc_vy(0), data->dc_vz(0));
 
       // Set the vertex time (time of electron hit)
-      auto dt = std::make_unique<Delta_T>(data->sc_t(data->sc(0) - 1), data->sc_r(data->sc(0) - 1));
+      auto dt = std::make_unique<Delta_T>(data->sc_t(0), data->sc_r(0));
       dt->delta_t_hists(hists, data);
       std::vector<double> dt_proton = dt->delta_t_array(MASS_P, data);
       std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, data);
@@ -179,7 +178,7 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
       if (num_of_pips == 1 && num_of_proton == 0 && num_of_pims == 0 && mm_cut && neg == 0) {
         hists->Fill_channel_WQ2(W, Q2, e_mu_prime, MM_neutron->Get_MM(), MM_neutron->Get_MM2(), sector);
         hists->Fill_Missing_Mass_strict(MM_neutron);
-        hists->EC_cut_fill(data->etot(data->ec(0) - 1), data->p(0));
+        hists->EC_cut_fill(data->etot(0), data->p(0));
         hists->Fill_E_Prime_channel(e_mu_prime);
       }
       if (num_of_pips == 1 && num_of_proton == 0 && num_of_pims == 0) hists->Fill_single_pi_WQ2(W, Q2);

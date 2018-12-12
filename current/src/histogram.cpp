@@ -40,6 +40,8 @@ void Histogram::Write(std::string output_file) {
   MM_neutron_cut->FitMissMass(Missing_Mass);
 
   auto MissingMassSquare_cut = std::make_shared<Fits>();
+  MissingMassSquare_cut->Set_max(1.1);
+  MissingMassSquare_cut->Set_min(0.7);
   MissingMassSquare_cut->FitBreitWigner(Missing_Mass_square);
   MissingMassSquare_cut->Get_sigma();
   // delete MM_header;
@@ -117,6 +119,7 @@ void Histogram::Write(std::string output_file) {
   E_Prime->cd();
   E_Prime_Write();
   RootOutputFile->Close();
+  delete RootOutputFile;
 
   std::cerr << "MM:mean,+3,-3" << std::endl;
   std::cerr << MM_neutron_cut->Get_mean() << ",";
@@ -779,6 +782,7 @@ void Histogram::delta_t_sec_pad_Write() {
     for (int jj = 0; jj < sector; jj++) {
       for (int jjj = 0; jjj < sc_paddle_num; jjj++) {
         delta_t_sec_pad_hist[j][jj][jjj]->SetYTitle("#Deltat");
+        delta_t_sec_pad_hist[j][jj][jjj]->SetOption("COLZ");
         delta_t_sec_pad_hist[j][jj][jjj]->Write();
       }
     }
@@ -803,9 +807,7 @@ void Histogram::delta_T_canvas() {
       can_dt[sec_i][particle_i]->Divide(6, 8);
       for (int pad_i = 0; pad_i < sc_paddle_num; pad_i++) {
         can_dt[sec_i][particle_i]->cd((int)pad_i + 1);
-        delta_t_sec_pad_hist[particle_i][sec_i][pad_i]->Draw(
-            "same"
-            "COLZ");
+        delta_t_sec_pad_hist[particle_i][sec_i][pad_i]->Draw("sameCOLZ");
       }
       can_dt[sec_i][particle_i]->Write();
     }
@@ -1179,7 +1181,7 @@ void Histogram::EC_cut_fill(double etot, double momentum) {
 }
 
 void Histogram::EC_slice_fit() {
-  // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  // if (EC_sampling_fraction_cut->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   // Header *fit_functions = new Header("EC_fit_functions.hpp", "FF");
 
   TF1 *peak = new TF1("peak", "gaus", 0.2, 0.4);

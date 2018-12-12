@@ -41,20 +41,20 @@ double Delta_T::Get_dt_K() { return dt_K; }
 double Delta_T::Get_vertex() { return vertex; }
 
 void Delta_T::delta_t_hists(Histogram *hists, Branches *data) {
-  Cuts *dt_cut = new Cuts();
+  auto dt_cut = std::make_unique<Cuts>();
   double sct, scr, mom;
   int ID, charge, sc_paddle, sc_sector;
 
   for (int event_number = 1; event_number < data->gpart(); event_number++) {
-    sct = data->sc_t(data->sc(event_number) - 1);
-    scr = data->sc_r(data->sc(event_number) - 1);
+    sct = data->sc_t(event_number);
+    scr = data->sc_r(event_number);
     mom = data->p(event_number);
     ID = data->id(event_number);
     charge = data->q(event_number);
-    sc_paddle = data->sc_pd(data->sc(event_number) - 1);
-    sc_sector = data->sc_sect(data->sc(event_number) - 1);
+    sc_paddle = data->sc_pd(event_number);
+    sc_sector = data->sc_sect(event_number);
 
-    deltat(mom, sct, scr);
+    this->deltat(mom, sct, scr);
 
     if (charge == POSITIVE) {
       hists->Fill_deltat_P(mom, dt_P);
@@ -74,9 +74,8 @@ void Delta_T::delta_t_hists(Histogram *hists, Branches *data) {
     }
 
     hists->delta_t_Fill(mom, charge, dt_P, dt_Pi, dt_E);
-    // hists->delta_t_sec_pad(mom, charge, dt_P, dt_Pi, dt_E, sc_sector, sc_paddle);
+    if (sc_sector <= 6 && sc_paddle <= 48) hists->delta_t_sec_pad(mom, charge, dt_P, dt_Pi, dt_E, sc_sector, sc_paddle);
   }
-  delete dt_cut;
 }
 
 double Delta_T::delta_t(double electron_vertex_time, double mass, double momentum, double sc_t, double sc_r) {
@@ -85,44 +84,40 @@ double Delta_T::delta_t(double electron_vertex_time, double mass, double momentu
 }
 
 double *Delta_T::delta_t_array(double *dt_array, double mass, Branches *data) {
-  Delta_T *dt = new Delta_T(data->sc_t(data->sc(0) - 1), data->sc_r(data->sc(0) - 1));
-  double electron_vertex = dt->Get_vertex();
+  double electron_vertex = this->Get_vertex();
   double sct, scr, mom;
   int ID, charge, sc_paddle, sc_sector;
 
   for (int event_number = 0; event_number < data->gpart(); event_number++) {
-    sct = data->sc_t(data->sc(event_number) - 1);
-    scr = data->sc_r(data->sc(event_number) - 1);
+    sct = data->sc_t(event_number);
+    scr = data->sc_r(event_number);
     mom = data->p(event_number);
     ID = data->id(event_number);
     charge = data->q(event_number);
-    sc_paddle = data->sc_pd(data->sc(event_number) - 1);
-    sc_sector = data->sc_sect(data->sc(event_number) - 1);
+    sc_paddle = data->sc_pd(event_number);
+    sc_sector = data->sc_sect(event_number);
 
     dt_array[event_number] = delta_t(electron_vertex, mass, mom, sct, scr);
   }
-  delete dt;
   return dt_array;
 }
 
 std::vector<double> Delta_T::delta_t_array(double mass, Branches *data) {
-  Delta_T *dt = new Delta_T(data->sc_t(data->sc(0) - 1), data->sc_r(data->sc(0) - 1));
   std::vector<double> dt_array(data->gpart());
-  double electron_vertex = dt->Get_vertex();
+  double electron_vertex = this->Get_vertex();
   double sct, scr, mom;
   int ID, charge, sc_paddle, sc_sector;
 
   for (int event_number = 0; event_number < data->gpart(); event_number++) {
-    sct = data->sc_t(data->sc(event_number) - 1);
-    scr = data->sc_r(data->sc(event_number) - 1);
+    sct = data->sc_t(event_number);
+    scr = data->sc_r(event_number);
     mom = data->p(event_number);
     ID = data->id(event_number);
     charge = data->q(event_number);
-    sc_paddle = data->sc_pd(data->sc(event_number) - 1);
-    sc_sector = data->sc_sect(data->sc(event_number) - 1);
+    sc_paddle = data->sc_pd(event_number);
+    sc_sector = data->sc_sect(event_number);
 
     dt_array[event_number] = delta_t(electron_vertex, mass, mom, sct, scr);
   }
-  delete dt;
   return dt_array;
 }
