@@ -86,10 +86,12 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
       // Set the vertex time (time of electron hit)
       // std::cout << "Threads: " << std::thread::hardware_concurrency() << '\n';
       auto dt = std::make_shared<Delta_T>(data->sc_t(0), data->sc_r(0));
+
       // dt->delta_t_hists(hists, data);
       std::thread dt_hist_thread(&Delta_T::delta_t_hists, dt, hists, data);
       std::vector<double> dt_proton = dt->delta_t_array(MASS_P, data);
       std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, data);
+      dt_hist_thread.join();
 
       hists->Fill_electron_fid(theta, phi, sector);
 
@@ -99,7 +101,7 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
 
       TLorentzVector gamma_mu = (*e_mu - e_mu_prime);
       hists->WvsQ2_Fill(W, Q2);
-      dt_hist_thread.join();
+
       num_of_proton = num_of_pips = num_of_pims = neg = 0;
       TLorentzVector particle;
       for (int part_num = 1; part_num < data->gpart(); part_num++) {

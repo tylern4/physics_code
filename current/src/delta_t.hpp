@@ -35,9 +35,10 @@ class Delta_T {
   double Get_dt_K();
   double Get_vertex();
 
-  double delta_t(double electron_vertex_time, double mass, double momentum, double sc_t, double sc_r);
+  double delta_t(double mass, double momentum, double sc_t, double sc_r);
   void delta_t_hists(Histogram *hists, Branches *data);
   double *delta_t_array(double *dt_array, double mass, Branches *data);
   std::vector<double> delta_t_array(double mass, Branches *data);
+  void _delta_t_array(double mass, Branches *data, std::vector<double> *dt_array);
 };
 #endif

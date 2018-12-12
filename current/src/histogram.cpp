@@ -1071,7 +1071,7 @@ void Histogram::Fid_Write() {
     hadron_fid_hist[t]->SetOption("COLZ");
     hadron_fid_hist[t]->Write();
   }
-  std::cout << "sec,y,x" << '\n';
+  // std::cout << "sec,y,x" << '\n';
   for (int sec_i = 0; sec_i < sector; sec_i++) {
     for (int t = 0; t < 3; t++) {
       hadron_fid_sec_hist[t][sec_i]->SetYTitle("#theta");
@@ -1099,8 +1099,8 @@ void Histogram::Fid_Write() {
         x[slice] = y_width * slice_width * slice;
         y[slice] = SliceFit[sec_i][slice]->Get_right_edge();
 
-        std::cout << sec_i + 1 << "," << y[slice] << "," << x[slice + fid_slices] << '\n';
-        std::cout << sec_i + 1 << "," << y[slice] << "," << x[slice] << '\n';
+        // std::cout << sec_i + 1 << "," << y[slice] << "," << x[slice + fid_slices] << '\n';
+        // std::cout << sec_i + 1 << "," << y[slice] << "," << x[slice] << '\n';
       }
 
       delete SliceFit[sec_i][slice];
