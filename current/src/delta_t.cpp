@@ -74,8 +74,7 @@ void Delta_T::delta_t_hists(Histogram *hists, Branches *data) {
     }
 
     hists->delta_t_Fill(mom, charge, dt_P, dt_Pi, dt_E);
-    if (sc_sector <= 6 && sc_paddle <= 48) {
-      std::cerr << sc_sector << "\t" << sc_paddle << '\n';
+    if (sc_sector <= 6 && sc_sector != 0 && sc_paddle <= 48 && sc_paddle != 0) {
       hists->delta_t_sec_pad(mom, charge, dt_P, dt_Pi, dt_E, sc_sector, sc_paddle);
     }
   }
