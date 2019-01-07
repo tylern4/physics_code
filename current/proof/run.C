@@ -1,11 +1,10 @@
 
 {  // set up a TChain
   TChain *ch = new TChain("h10", "My Chain");
-  // r22853
-  ch->Add("/Volumes/LaCiE/physics/e1d/v2/root/*.root");
+  ch->Add("~/Data/e1d/new_cook/clas_*.root");
 
   plite = TProof::Open("");
   ch->SetProof();
-  ch->Process("MySelector.C+");
-  gROOT->ProcessLine(".q;");
+  ch->Process("MySelector.cxx+");
+  // gROOT->ProcessLine(".q;");
 }
