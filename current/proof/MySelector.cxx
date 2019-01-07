@@ -25,7 +25,7 @@
 
 #include <TH2.h>
 #include <TStyle.h>
-#include "MySelector.h"
+#include "MySelector.hh"
 void MySelector::Begin(TTree* /*tree*/) {
   // The Begin() function is called at the start of the query.
   // When running with PROOF Begin() is only called on the client.
@@ -41,16 +41,22 @@ void MySelector::SlaveBegin(TTree* /*tree*/) {
 
   TString option = GetOption();
 
-  fWq2 = new TH2D("fWq2", "W vs Q^{2}", 500, 0.0, 2.0, 500, 0.0, 5.0);
+  fWq2 = new TH2D("fWq2", "W vs Q^{2}", 500, 0.0, 3.0, 500, 0.0, 5.0);
   fWq2->SetDirectory(0);
   fWq2->GetXaxis()->SetTitle("W");
   fWq2->GetYaxis()->SetTitle("Q^{2}");
   fOutput->Add(fWq2);
 
-  fW = new TH1D("fW", "W", 500, 0.0, 2.0);
+  fW = new TH1D("fW", "W", 500, 0.0, 3.0);
   fW->SetDirectory(0);
   fW->GetXaxis()->SetTitle("W");
   fOutput->Add(fW);
+
+  fSf = new TH2D("fSf", "Sampling Fraction", 500, 0.0, 5.0, 500, 0.0, 0.5);
+  fSf->SetDirectory(0);
+  fSf->GetXaxis()->SetTitle("P GeV");
+  fSf->GetYaxis()->SetTitle("Sampling Fraction");
+  fOutput->Add(fSf);
 }
 
 Bool_t MySelector::Process(Long64_t entry) {
@@ -71,10 +77,10 @@ Bool_t MySelector::Process(Long64_t entry) {
   // The return value is currently not used.
 
   fReader.SetEntry(entry);
-
+  TLorentzVector e_mu_prime;
   bool electron_cuts = true;
   // electron cuts
-  electron_cuts &= (id[0] == 11);             // First particle is electron
+  // electron_cuts &= (id[0] == 11);             // First particle is electron
   electron_cuts &= (stat[0] > 0);             // First Particle hit stat
   electron_cuts &= ((int)q[0] == -1);         // First particle is negative Q
   electron_cuts &= (sc[0] > 0);               // First Particle hit sc
@@ -83,16 +89,15 @@ Bool_t MySelector::Process(Long64_t entry) {
   electron_cuts &= (dc_stat[dc[0] - 1] > 0);  //??
   electron_cuts &= (etot[ec[0] - 1] / p[0]) < 0.4;
   electron_cuts &= (etot[ec[0] - 1] / p[0]) > 0.2;
+  e_mu_prime.SetXYZM(p[0] * cx[0], p[0] * cy[0], p[0] * cz[0], 0.000511);
 
   if (electron_cuts) {
-    TLorentzVector e_mu_prime;
-    e_mu_prime.SetXYZM(p[0] * cx[0], p[0] * cy[0], p[0] * cz[0], 0.000511);
     fWq2->Fill(W_calc(e_mu_prime), Q2_calc(e_mu_prime));
     fW->Fill(W_calc(e_mu_prime));
-    return kTRUE;
-  } else {
-    return kFALSE;
+    fSf->Fill(p[0], etot[ec[0] - 1] / p[0]);
   }
+
+  return kTRUE;
 }
 
 void MySelector::SlaveTerminate() {
@@ -105,15 +110,27 @@ void MySelector::Terminate() {
   // The Terminate() function is the last function to be called during
   // a query. It always runs on the client, it can be used to present
   // the results graphically or save the results to file.
+
   TCanvas* c1 = new TCanvas("c1", "WvsQ2 Canvas", 1600, 900);
   c1->Divide(2);
   TH2D* hf_wq2 = dynamic_cast<TH2D*>(fOutput->FindObject("fWq2"));
   c1->cd(1);
   hf_wq2->Draw("colz");
-  c1->Update();
 
   TH1D* hf_w = dynamic_cast<TH1D*>(fOutput->FindObject("fW"));
   c1->cd(2);
   hf_w->Draw();
-  c1->Update();
+
+  TCanvas* c2 = new TCanvas("c2", "WvsQ2 Canvas", 1600, 900);
+  TH2D* hf = dynamic_cast<TH2D*>(fOutput->FindObject("fSf"));
+  c2->cd(1);
+  hf->Draw("colz");
+
+  TFile* MyFile = new TFile("out.root", "RECREATE");
+  MyFile->cd();
+  hf_wq2->Write();
+  hf_w->Write();
+  hf->Write();
+  c1->Write();
+  c2->Write();
 }
