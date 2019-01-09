@@ -48,6 +48,17 @@ void sim::SlaveBegin(TTree* /*tree*/) {
       fOutput->Add(mom_sec[i][j]);
     }
   }
+
+  fWq2 = new TH2D("fWq2", "W vs Q^{2}", 500, 0.0, 3.0, 500, 0.0, 5.0);
+  fWq2->SetDirectory(0);
+  fWq2->GetXaxis()->SetTitle("W");
+  fWq2->GetYaxis()->SetTitle("Q^{2}");
+  fOutput->Add(fWq2);
+
+  fW = new TH1D("fW", "W", 500, 0.0, 3.0);
+  fW->SetDirectory(0);
+  fW->GetXaxis()->SetTitle("W");
+  fOutput->Add(fW);
 }
 
 Bool_t sim::Process(Long64_t entry) {
@@ -68,21 +79,23 @@ Bool_t sim::Process(Long64_t entry) {
   // The return value is currently not used.
 
   fReader.SetEntry(entry);
-
   TLorentzVector e_mu_prime;
   bool electron_cuts = true;
   // electron cuts
   // electron_cuts &= (id[0] == 11);             // First particle is electron
-  electron_cuts &= (stat[0] > 0);      // First Particle hit stat
-  electron_cuts &= ((int)q[0] == -1);  // First particle is negative Q
-  electron_cuts &= (sc[0] > 0);        // First Particle hit sc
-  electron_cuts &= (dc[0] > 0);        // ``` ``` ``` d
-  electron_cuts &= (ec[0] > 0);        // ``` ``` ``` ec
-  // electron_cuts &= (dc_stat[dc[0] - 1] > 0);  //??
+  electron_cuts &= (stat[0] > 0);             // First Particle hit stat
+  electron_cuts &= ((int)q[0] == -1);         // First particle is negative Q
+  electron_cuts &= (sc[0] > 0);               // First Particle hit sc
+  electron_cuts &= (dc[0] > 0);               // ``` ``` ``` d
+  electron_cuts &= (ec[0] > 0);               // ``` ``` ``` ec
+  electron_cuts &= (dc_stat[dc[0] - 1] > 0);  //??
 
   e_mu_prime.SetXYZM(p[0] * cx[0], p[0] * cy[0], p[0] * cz[0], 0.000511);
 
   if (electron_cuts) {
+    fWq2->Fill(W_calc(e_mu_prime), Q2_calc(e_mu_prime));
+    fW->Fill(W_calc(e_mu_prime));
+
     mom_sec[0][0]->Fill((pxpart[0] - p[0] * cx[0]) / pxpart[0]);
     mom_sec[0][1]->Fill((pypart[0] - p[0] * cy[0]) / pypart[0]);
     mom_sec[0][2]->Fill((pzpart[0] - p[0] * cz[0]) / pzpart[0]);
@@ -122,4 +135,18 @@ void sim::Terminate() {
       hf->Write();
     }
   }
+
+  TCanvas* c1 = new TCanvas("wq2", "WvsQ2 Canvas", 1600, 900);
+  c1->Divide(2);
+  TH2D* hf_wq2 = dynamic_cast<TH2D*>(fOutput->FindObject("fWq2"));
+  c1->cd(1);
+  hf_wq2->Draw("colz");
+
+  TH1D* hf_w = dynamic_cast<TH1D*>(fOutput->FindObject("fW"));
+  c1->cd(2);
+  hf_w->Draw();
+
+  hf_wq2->Write();
+  hf_w->Write();
+  c1->Write();
 }

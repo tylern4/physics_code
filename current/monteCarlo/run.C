@@ -6,5 +6,5 @@ void run(std::string file = "~/Data/sim/*.root") {  // set up a TChain
   auto plite = TProof::Open("workers=4");
   ch->SetProof();
   ch->Process("sim.cxx+");
-  gROOT->ProcessLine(".q;");
+  // gROOT->ProcessLine(".q;");
 }

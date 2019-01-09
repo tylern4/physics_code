@@ -8,6 +8,7 @@
 #ifndef sim_h
 #define sim_h
 
+#include <TCanvas.h>
 #include <TChain.h>
 #include <TFile.h>
 #include <TLorentzVector.h>
@@ -19,6 +20,24 @@
 
 // Headers needed by this particular selector
 
+// Calcuating Q^2
+//	Gotten from t channel
+// -q^mu^2 = -(e^mu - e^mu')^2 = Q^2
+double Q2_calc(TLorentzVector e_mu_prime) {
+  TLorentzVector e_mu(0.0, 0.0, 4.81726, 4.81726);
+  TLorentzVector q_mu = (e_mu - e_mu_prime);
+  return -q_mu.Mag2();
+}
+//	Calcualting W
+//	Gotten from s channel [(gamma + P)^2 == s == w^2]
+//	Sqrt√[M_p^2 - Q^2 + 2 M_p gamma]
+double W_calc(TLorentzVector e_mu_prime) {
+  TLorentzVector e_mu(0.0, 0.0, 4.81726, 4.81726);
+  TLorentzVector q_mu = (e_mu - e_mu_prime);
+  TLorentzVector p_mu(0.0, 0.0, 0.0, 0.93827203);
+  return (p_mu + q_mu).Mag();
+}
+
 class sim : public TSelector {
  public:
   TTreeReader fReader;  //! the tree reader
@@ -26,6 +45,8 @@ class sim : public TSelector {
 
   std::vector<char> xyz = {'x', 'y', 'z', 'a'};
   TH1D *mom_sec[7][4];
+  TH2D *fWq2;
+  TH1D *fW;
 
   // Readers to access the data (delete the ones you do not need).
   TTreeReaderValue<Int_t> nprt = {fReader, "nprt"};
@@ -150,7 +171,15 @@ class sim : public TSelector {
   TTreeReaderArray<Float_t> st_time = {fReader, "st_time"};
   TTreeReaderArray<Float_t> st_rtrk = {fReader, "st_rtrk"};
 
-  sim(TTree * /*tree*/ = 0) {}
+  sim(TTree * /*tree*/ = 0) {
+    fWq2 = 0;
+    fW = 0;
+    for (int i = 0; i < 7; i++) {
+      for (int j = 0; j < 4; j++) {
+        mom_sec[i][j] = 0;
+      }
+    }
+  }
   virtual ~sim() {}
   virtual Int_t Version() const { return 2; }
   virtual void Begin(TTree *tree);
