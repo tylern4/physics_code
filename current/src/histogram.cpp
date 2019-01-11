@@ -44,8 +44,6 @@ void Histogram::Write(std::string output_file) {
   MissingMassSquare_cut->Set_min(0.7);
   MissingMassSquare_cut->FitBreitWigner(Missing_Mass_square);
   MissingMassSquare_cut->Get_sigma();
-  // delete MM_header;
-  // delete MM_neutron_cut;
 
   RootOutputFile->cd();
   std::cerr << BOLDBLUE << "EC_Write()" << DEF << std::endl;

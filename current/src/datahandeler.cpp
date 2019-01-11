@@ -13,39 +13,33 @@ void DataHandeler::Run(std::vector<std::string> fin, Histogram *hists) {
 }
 
 void DataHandeler::Run(std::string fin, Histogram *hists) {
-  // Load chain from branch h10
-  int num_of_events;
-  int total_events;
-  int num_of_pips, num_of_pims;
-  int num_of_proton, neg;
-
   double theta;
   double phi;
   int sector;
-  // bool first_run = true;
+
   TChain *chain = new TChain("h10");
   chain->Add(fin.c_str());
   Branches *data = new Branches(chain);
-  num_of_events = (int)chain->GetEntries();
-  int current_event = 0;
-  for (current_event = 0; current_event < num_of_events; current_event++) {
-    auto event = std::make_unique<Reaction>();
+  int num_of_events = (int)chain->GetEntries();
+
+  for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
-    auto check = std::make_unique<Cuts>(data);
+    if (data->ec_ei(0) < 0.01 || data->ec_eo(0) < 0.01) continue;
+    hists->EC_inout(data->ec_ei(0), data->ec_eo(0));
+    hists->EC_fill(data->etot(0), data->p(0));
+    hists->TM_Fill(data->p(0), physics::theta_calc(data->cz(0)));
+
+    auto check = std::make_shared<Cuts>(data);
+    if (!check->isElecctron()) continue;
+
+    auto event = std::make_shared<Reaction>();
+    event->SetElec(data->p(0), data->cx(0), data->cy(0), data->cz(0));
+    hists->Fill_E_Prime_fid(event->e_mu_prime());
+    hists->Fill_E_Prime(event->e_mu_prime());
+
     theta = physics::theta_calc(data->cz(0));
     phi = physics::phi_calc(data->cx(0), data->cy(0));
     sector = physics::get_sector(phi);
-    if (check->Fid_cut()) {
-      hists->Fill_E_Prime(event->e_mu_prime());
-      hists->EC_inout(data->ec_ei(0), data->ec_eo(0));
-      hists->EC_fill(data->etot(0), data->p(0));
-      hists->Fill_E_Prime_fid(event->e_mu_prime());
-      hists->TM_Fill(data->p(0), physics::theta_calc(data->cz(0)));
-    }
-
-    if (data->ec_ei(0) < 0.01 || data->ec_eo(0) < 0.01) continue;
-    if (!check->isElecctron()) continue;
-    event->SetElec(data->p(0), data->cx(0), data->cy(0), data->cz(0));
 
     if (getenv("CUTS") != NULL && atoi(getenv("CUTS")) == true) {
       check->Set_elec_fid(theta, phi, sector);
@@ -74,7 +68,7 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
 
       hists->Fill_electron_fid(theta, phi, sector);
 
-      auto photon_flux = std::make_unique<PhotonFlux>(event->e_mu(), event->e_mu_prime());
+      auto photon_flux = std::make_shared<PhotonFlux>(event->e_mu(), event->e_mu_prime());
       hists->Photon_flux_Fill(photon_flux->GetVirtualPhotonFlux());
 
       hists->WvsQ2_Fill(event->W(), event->Q2());

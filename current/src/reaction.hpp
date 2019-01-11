@@ -41,6 +41,7 @@ class Reaction {
 
  public:
   Reaction();
+  Reaction(float p, float cx, float cy, float cz);
   ~Reaction();
 
   void SetElec(float p, float cx, float cy, float cz);

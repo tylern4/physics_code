@@ -28,7 +28,7 @@ class Histogram {
   Histogram(std::string output_file);
   ~Histogram();
   void Write(std::string output_file);
-  Header *fit_functions;
+
   TFile *RootOutputFile;
   TCanvas *def;
   void makeHists_fid();

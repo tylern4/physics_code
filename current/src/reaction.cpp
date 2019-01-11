@@ -18,6 +18,20 @@ Reaction::Reaction() {
   _pim = std::make_unique<TLorentzVector>();
 }
 
+Reaction::Reaction(float p, float cx, float cy, float cz) {
+  _beam = std::make_unique<TLorentzVector>();
+  if (getenv("BEAM_E") != NULL) _beam_energy = atof(getenv("BEAM_E"));
+  _beam->SetPxPyPzE(0.0, 0.0, sqrt(_beam_energy * _beam_energy - MASS_E * MASS_E), _beam_energy);
+
+  _gamma = std::make_unique<TLorentzVector>();
+  _target = std::make_unique<TLorentzVector>(0.0, 0.0, 0.0, MASS_P);
+  _elec = std::make_unique<TLorentzVector>();
+  SetElec(p, cx, cy, cz);
+  _prot = std::make_unique<TLorentzVector>();
+  _pip = std::make_unique<TLorentzVector>();
+  _pim = std::make_unique<TLorentzVector>();
+}
+
 Reaction::~Reaction() {}
 
 void Reaction::SetElec(float p, float cx, float cy, float cz) {
