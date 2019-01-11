@@ -33,6 +33,7 @@ add_library(physics SHARED
   Event.cpp
   delta_t.cpp
   makeHeader.cpp
+  reaction.cpp
   )
 
 set(EXTRA_FLAGS "-pthread -m64 -Wno-return-type -Wno-writable-strings -Wno-dangling-else -Wno-comment -D__ROOFIT_NOBANNER")

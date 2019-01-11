@@ -356,8 +356,8 @@ void Histogram::Fill_Pi_ID_P(double p, double beta) { MomVsBeta_Pi_ID->Fill(p, b
 
 void Histogram::Fill_proton_Pi_ID_P(double p, double beta) { MomVsBeta_proton_Pi_ID->Fill(p, beta); }
 
-void Histogram::MomVsBeta_Fill(double Energy, double P, double Beta) {
-  Energy_hist->Fill(Energy);
+void Histogram::MomVsBeta_Fill(double P, double Beta) {
+  // Energy_hist->Fill(Energy);
   MomVsBeta_hist->Fill(P, Beta);
   Mom->Fill(P);
 }
@@ -403,32 +403,32 @@ void Histogram::MomVsBeta_Write() {
 // Missing Mass
 void Histogram::Fill_Missing_Mass(double miss_mass) { Missing_Mass->Fill(miss_mass); }
 
-void Histogram::Fill_Missing_Mass(MissingMass *miss_mass) {
-  Missing_Mass->Fill(miss_mass->Get_MM());
-  Missing_Mass_square->Fill(miss_mass->Get_MM2());
+void Histogram::Fill_Missing_Mass(float mm, float mm2) {
+  Missing_Mass->Fill(mm);
+  Missing_Mass_square->Fill(mm2);
 }
-void Histogram::Fill_Missing_Mass_strict(MissingMass *miss_mass) {
-  Missing_Mass_strict->Fill(miss_mass->Get_MM());
-  Missing_Mass_square_strict->Fill(miss_mass->Get_MM2());
+void Histogram::Fill_Missing_Mass_strict(float mm, float mm2) {
+  Missing_Mass_strict->Fill(mm);
+  Missing_Mass_square_strict->Fill(mm2);
 }
 
-void Histogram::Fill_Missing_Mass_pi0(MissingMass *miss_mass) {
-  if (miss_mass->Get_MM() != 0) {
-    Missing_Mass_pi0->Fill(miss_mass->Get_MM());
-    Missing_Mass_square_pi0->Fill(miss_mass->Get_MM2());
+void Histogram::Fill_Missing_Mass_pi0(float mm, float mm2) {
+  if (mm != 0) {
+    Missing_Mass_pi0->Fill(mm);
+    Missing_Mass_square_pi0->Fill(mm2);
   }
 }
 
-void Histogram::Fill_Missing_Mass_twoPi(MissingMass *miss_mass) {
-  Missing_Mass_2pi->Fill(miss_mass->Get_MM());
-  Missing_Mass_square_2pi->Fill(miss_mass->Get_MM2());
+void Histogram::Fill_Missing_Mass_twoPi(float mm, float mm2) {
+  Missing_Mass_2pi->Fill(mm);
+  Missing_Mass_square_2pi->Fill(mm2);
 }
 
-void Histogram::Fill_W_Missing_Mass(double W, MissingMass *miss_mass) {
+void Histogram::Fill_W_Missing_Mass(double W, float mm, float mm2) {
   for (int x = 0; x < W_bins; x++) {
     if (w_binned_min + (W_width * x) <= W && w_binned_min + (W_width * (x + 1)) >= W) {
-      Missing_Mass_WBinned[x]->Fill(miss_mass->Get_MM());
-      Missing_Mass_WBinned_square[x]->Fill(miss_mass->Get_MM2());
+      Missing_Mass_WBinned[x]->Fill(mm);
+      Missing_Mass_WBinned_square[x]->Fill(mm2);
       continue;
     }
   }

@@ -6,12 +6,14 @@
 
 #ifndef CUTS_H_GUARD
 #define CUTS_H_GUARD
+#include "branches.hpp"
 #include "constants.hpp"
 #include "func.hpp"
 
 class Cuts {
  private:
   bool electron_cut = false;
+  Branches* _data;
 
   int num_phe = 0;
   int gpart = 0;
@@ -37,6 +39,7 @@ class Cuts {
 
  public:
   Cuts();
+  Cuts(Branches* data);
   ~Cuts();
   void Set_num_phe(int set);
   void Set_charge(int set);

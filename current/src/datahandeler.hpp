@@ -24,13 +24,13 @@
 #include "missing_mass.hpp"
 #include "photon_flux.hpp"
 #include "physics.hpp"
+#include "reaction.hpp"
 
 class DataHandeler {
  private:
   int PID;
   std::ofstream csv_output;
   std::vector<std::string> input_files;
-  double BEAM_ENERGY = E1D_E0;
   bool CUTS = true;
 
  public:

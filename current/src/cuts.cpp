@@ -5,8 +5,8 @@
 /**************************************/
 #include <iostream>
 #include "cuts.hpp"
-
 Cuts::Cuts() {}
+Cuts::Cuts(Branches* data) { _data = data; }
 Cuts::~Cuts() {}
 
 void Cuts::Set_num_phe(int set) { num_phe = set; }
@@ -56,38 +56,37 @@ void Cuts::Set_dc_stat_cut(bool set) { dc_stat_cut = set; }
 
 bool Cuts::isElecctron() {
   bool _elec = true;
-  _elec &= (charge == NEGATIVE);
-  _elec &= (gpart > 1);
-  //_elec &= ec_cut;
-  //_elec &= cc_cut;
-  //_elec &= stat_cut;
-  //_elec &= sc_cut;
-  //_elec &= dc_cut;
-  //_elec &= dc_stat_cut;
+  _elec &= (_data->q(0) == NEGATIVE);
+  _elec &= (_data->ec(0) > 0);    // ``` ``` ``` ec
+  _elec &= (_data->gpart() > 0);  // Number of good particles is greater than 0
+  _elec &= (_data->cc(0) > 0);
+  _elec &= (_data->stat(0) > 0);  // First Particle hit stat
+  _elec &= (_data->sc(0) > 0);
+  _elec &= (_data->dc(0) > 0);
+  //_elec &= (_data->dc_stat(_data->dc(0) - 1) > 0);
 
-  electron_cut = _elec;
   return _elec;
 }
 
 bool Cuts::Fid_cut() { return elec_fid_cut(); }
 
 bool Cuts::Beam_cut() {
-  bool _elec = true;
-  _elec &= (_vx > 0.2);
-  _elec &= (_vx < 0.4);
-  _elec &= (abs(_vy) < 0.1);
-  _elec &= (abs(_vz) < 3);
-  return _elec;
+  bool _beam = true;
+  _beam &= (_vx > 0.2);
+  _beam &= (_vx < 0.4);
+  _beam &= (abs(_vy) < 0.1);
+  _beam &= (abs(_vz) < 3);
+  return (isElecctron() && _beam);
 }
 
 bool Cuts::isStrictElecctron() {
   bool _elec = true;
   _elec &= isElecctron();
-  //_elec &= Fid_cut();
-  //_elec &= (electron_p > MIN_P_CUT);
+  _elec &= Fid_cut();
+  _elec &= (electron_p > MIN_P_CUT);
 
-  //_elec &= (num_phe > 20);
-  //_elec &= sf_cut(samp_frac, electron_p);
+  _elec &= (num_phe > 20);
+  _elec &= sf_cut(samp_frac, electron_p);
 
   electron_cut = _elec;
   return _elec;

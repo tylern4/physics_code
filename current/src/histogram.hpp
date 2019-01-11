@@ -285,21 +285,21 @@ class Histogram {
   void Fill_proton_ID_P(double p, double beta);
   void Fill_Pi_ID_P(double p, double beta);
   void Fill_proton_Pi_ID_P(double p, double beta);
-  void MomVsBeta_Fill(double Energy, double P, double Beta);
+  void MomVsBeta_Fill(double P, double Beta);
   void Photon_flux_Fill(double photon_flux);
   void MomVsBeta_Write();
 
   // Missing Mass
   void Fill_Missing_Mass(double miss_mass);
-  void Fill_Missing_Mass(MissingMass *miss_mass);
-  void Fill_Missing_Mass_strict(MissingMass *miss_mass);
+  void Fill_Missing_Mass(float mm, float mm2);
+  void Fill_Missing_Mass_strict(float mm, float mm2);
   // void Fill_Mass(double mass);
   void Fill_Missing_Mass_square(double miss_mass_2);
   void Write_Missing_Mass();
 
-  void Fill_Missing_Mass_pi0(MissingMass *miss_mass);
-  void Fill_Missing_Mass_twoPi(MissingMass *miss_mass);
-  void Fill_W_Missing_Mass(double W, MissingMass *miss_mass);
+  void Fill_Missing_Mass_pi0(float mm, float mm2);
+  void Fill_Missing_Mass_twoPi(float mm, float mm2);
+  void Fill_W_Missing_Mass(double W, float mm, float mm2);
 
   // Delta T
   void Fill_deltat_P(double momentum, double delta_t);
