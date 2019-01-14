@@ -114,8 +114,8 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
         hists->Fill_W_Missing_Mass(event->W(), event->MM(), event->MM2());
       }
       bool mm_cut = true;
-      mm_cut &= (event->MM() < 0.996809);
-      mm_cut &= (event->MM() > 0.916818);
+      mm_cut &= (event->MM() < 1.00091);
+      mm_cut &= (event->MM() > 0.911698);
       if (mm_cut) hists->Fill_MM_WQ2(event->W(), event->Q2());
       if (event->SinglePip() && mm_cut) {
         hists->Fill_channel_WQ2(event->W(), event->Q2(), event->e_mu_prime(), event->MM(), event->MM2(), sector);
