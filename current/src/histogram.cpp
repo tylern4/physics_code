@@ -40,10 +40,10 @@ void Histogram::Write(std::string output_file) {
   RootOutputFile = new TFile(output_file.c_str(), "RECREATE");
   std::cout << GREEN << "\nFitting" << DEF << std::endl;
   // Start of cuts
-  auto MM_neutron_cut = std::make_shared<Fits>();
+  auto MM_neutron_cut = std::make_unique<Fits>();
   MM_neutron_cut->FitMissMass(Missing_Mass.get());
 
-  auto MissingMassSquare_cut = std::make_shared<Fits>();
+  auto MissingMassSquare_cut = std::make_unique<Fits>();
   MissingMassSquare_cut->Set_max(1.1);
   MissingMassSquare_cut->Set_min(0.7);
   MissingMassSquare_cut->FitBreitWigner(Missing_Mass_square.get());

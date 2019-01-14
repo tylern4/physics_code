@@ -29,10 +29,10 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
     hists->EC_fill(data->etot(0), data->p(0));
     hists->TM_Fill(data->p(0), physics::theta_calc(data->cz(0)));
 
-    auto check = std::make_shared<Cuts>(data);
+    auto check = std::make_unique<Cuts>(data);
     if (!check->isElecctron()) continue;
 
-    auto event = std::make_shared<Reaction>();
+    auto event = std::make_unique<Reaction>();
     event->SetElec(data->p(0), data->cx(0), data->cy(0), data->cz(0));
     hists->Fill_E_Prime_fid(event->e_mu_prime());
     hists->Fill_E_Prime(event->e_mu_prime());
@@ -58,7 +58,7 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
       hists->CC_fill(cc_sector, cc_segment, cc_pmt, cc_nphe, theta_cc);
       hists->Fill_Beam_Position(data->dc_vx(0), data->dc_vy(0), data->dc_vz(0));
 
-      auto dt = std::make_shared<Delta_T>(data->sc_t(0), data->sc_r(0));
+      auto dt = std::make_unique<Delta_T>(data->sc_t(0), data->sc_r(0));
 
       dt->delta_t_hists(hists, data);
       std::vector<double> dt_proton = dt->delta_t_array(MASS_P, data);
@@ -66,7 +66,7 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
 
       hists->Fill_electron_fid(theta, phi, sector);
 
-      auto photon_flux = std::make_shared<PhotonFlux>(event->e_mu(), event->e_mu_prime());
+      auto photon_flux = std::make_unique<PhotonFlux>(event->e_mu(), event->e_mu_prime());
       hists->Photon_flux_Fill(photon_flux->GetVirtualPhotonFlux());
 
       hists->WvsQ2_Fill(event->W(), event->Q2());

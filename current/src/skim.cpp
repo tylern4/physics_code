@@ -10,7 +10,7 @@ Skim::Skim(std::vector<std::string> input, std::string output) {
   fout = output;
   chain = new TChain("h10");
   for (auto f : fin) chain->AddFile(f.c_str());
-  data = std::make_shared<Branches>(chain);
+  data = std::make_unique<Branches>(chain);
   RootOutputFile = new TFile(fout.c_str(), "RECREATE");
   if (getenv("BEAM_E") != NULL) {
     BEAM_ENERGY = atof(getenv("BEAM_E"));
@@ -31,7 +31,7 @@ void Skim::Basic() {
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
-    auto check = std::make_shared<Cuts>(data);
+    auto check = std::make_unique<Cuts>(data);
     if (check->isElecctron()) skim->Fill();
   }
 
@@ -52,8 +52,8 @@ void Skim::Strict() {
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
     if (data->gpart() > 5) continue;
-    auto check = std::make_shared<Cuts>();
-    auto event = std::make_shared<Reaction>();
+    auto check = std::make_unique<Cuts>();
+    auto event = std::make_unique<Reaction>();
     event->SetElec(data->p(0), data->cx(0), data->cy(0), data->cz(0));
 
     bool cuts = true;
@@ -84,14 +84,14 @@ void Skim::Final() {
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
     if (data->ec_ei(0) < 0.01 || data->ec_eo(0) < 0.01) continue;
-    auto check = std::make_shared<Cuts>(data);
+    auto check = std::make_unique<Cuts>(data);
     if (!check->isElecctron()) continue;
 
-    auto event = std::make_shared<Reaction>();
+    auto event = std::make_unique<Reaction>();
     event->SetElec(data->p(0), data->cx(0), data->cy(0), data->cz(0));
 
     if (check->isElecctron()) {
-      auto dt = std::make_shared<Delta_T>(data->sc_t(0), data->sc_r(0));
+      auto dt = std::make_unique<Delta_T>(data->sc_t(0), data->sc_r(0));
       std::vector<double> dt_proton = dt->delta_t_array(MASS_P, data);
       std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, data);
 

@@ -33,11 +33,11 @@ void mcHandeler::Run(std::string fin, mcHistogram *hists) {
   int current_event = 0;
   for (current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
-    auto check = std::make_shared<Cuts>(data);
+    auto check = std::make_unique<Cuts>(data);
     if (!check->isElecctron()) continue;
 
-    auto event = std::make_shared<Reaction>();
-    auto mc_event = std::make_shared<Reaction>();
+    auto event = std::make_unique<Reaction>();
+    auto mc_event = std::make_unique<Reaction>();
     event->SetElec(data->p(0), data->cx(0), data->cy(0), data->cz(0));
     mc_event->SetElec(data->p(0), data->cx(0), data->cy(0), data->cz(0));
     hists->Fill_P(data);
