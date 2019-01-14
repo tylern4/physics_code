@@ -231,7 +231,7 @@ TF1 *Fits::FitPoly_4D(TH1D *hist) {
 }
 
 TF1 *Fits::FitPoly_fid(TGraph *hist) {
-  ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   // if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   TF1 *fitFunc = new TF1("fitFunc", func::pol4, min_value, max_value, 5);
   fitFunc->SetLineColor(46);
@@ -256,7 +256,7 @@ double Fits::fiducial_phi_hi(double theta_e, double theta_e_min, double k, doubl
 }
 
 TF1 *Fits::FitFiducial(TGraph *profile, int sec) {
-  ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
 
   TF1 *fitFunc = new TF1("fit_fid", func::fiducial, min_phi[sec], max_phi[sec], 6);
   fitFunc->SetParameters(1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
