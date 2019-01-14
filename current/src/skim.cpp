@@ -23,49 +23,19 @@ Skim::Skim(std::vector<std::string> input, std::string output) {
 Skim::~Skim() {}
 
 void Skim::Basic() {
-  int num_of_events;
-  bool electron_cuts, mm_cut;
-  int bad, num_pi;
-  std::cout << BLUE << "Skim file " << GREEN << fout << DEF << std::endl;
+  std::cout << BLUE << "Basic Skim " << GREEN << fout << DEF << std::endl;
 
-  num_of_events = (int)chain->GetEntries();
+  int num_of_events = (int)chain->GetEntries();
   TTree *skim = chain->CloneTree(0);
+  Branches *data = new Branches(chain);
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
-    num_pi = 0;
-    bad = 0;
     chain->GetEntry(current_event);
-    Cuts *check = new Cuts();
-
-    // Not Used
-    check->Set_electron_id(data->id(0));  // First particle is electron
-    // electron cuts
-    check->Set_charge(data->q(0));
-    check->Set_ec_cut(data->ec(0) > 0);  // ``` ``` ``` ec
-    check->Set_gpart(data->gpart());     // Number of good particles is greater than 0
-    check->Set_cc_cut(data->cc(0) > 0);
-    check->Set_stat_cut(data->stat(0) > 0);  // First Particle hit stat
-    check->Set_sc_cut(data->sc(0) > 0);
-    check->Set_dc_cut(data->dc(0) > 0);
-    check->Set_dc_stat_cut(data->dc_stat(data->dc(0) - 1) > 0);
-
-    Delta_T *dt = new Delta_T(data->sc_t(data->sc(0) - 1), data->sc_r(data->sc(0) - 1));
-    std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, data.get());
-    delete dt;
-
-    for (int part_num = 1; part_num < data->gpart(); part_num++)
-      if (data->q(part_num) == POSITIVE && check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num)))
-        num_pi++;
-      else
-        bad++;
-
-    if (check->isElecctron() && num_pi == 1 && bad == 0) skim->Fill();  // Fill the banks after the skim
-
-    delete check;
+    auto check = std::make_shared<Cuts>(data);
+    if (check->isElecctron()) skim->Fill();
   }
-  chain->Reset();  // delete Tree object
-  delete chain;
 
+  delete chain;
   RootOutputFile->cd();
   RootOutputFile->Write();
   RootOutputFile->Close();
@@ -136,102 +106,47 @@ void Skim::Strict() {
 }
 
 void Skim::Final() {
-  int num_of_events;
-  bool electron_cuts, mm_cut;
-  bool cuts;
-  int total_events;
-  int num_of_pips, num_of_pims, num_of_proton, PID;
-  double theta;
-  double phi;
-  int sector;
-  MissingMass *MM_neutron = new MissingMass(MASS_P, 0.0);
-  std::cout << BLUE << "Skim file " << GREEN << fout << DEF << std::endl;
+  std::cout << BLUE << "Event selection of file " << GREEN << fout << DEF << std::endl;
 
-  num_of_events = (int)chain->GetEntries();
+  int num_of_events = (int)chain->GetEntries();
   TTree *skim = chain->CloneTree(0);
+  Branches *data = new Branches(chain);
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
-    if (data->gpart() > 4) continue;
-    Cuts *check = new Cuts();
+    if (data->ec_ei(0) < 0.01 || data->ec_eo(0) < 0.01) continue;
+    auto check = std::make_shared<Cuts>(data);
+    if (!check->isElecctron()) continue;
 
-    // electron cuts
-    check->Set_charge(data->q(0));
-    check->Set_ec_cut(data->ec(0) > 0);   // ``` ``` ``` ec
-    check->Set_electron_id(data->id(0));  // First particle is electron
-    check->Set_gpart(data->gpart());      // Number of good particles is greater than 0
-    check->Set_cc_cut(data->cc(0) > 0);
-    check->Set_stat_cut(data->stat(0) > 0);  // First Particle hit stat
-    check->Set_sc_cut(data->sc(0) > 0);
-    check->Set_dc_cut(data->dc(0) > 0);
-    check->Set_dc_stat_cut(data->dc_stat(data->dc(0) - 1) > 0);
-    check->Set_p(data->p(0));
-    check->Set_Sf(data->etot(data->ec(0) - 1) / data->p(0));
-    check->Set_num_phe(data->nphe(data->cc(0) - 1));
-    // Beam position cut
-    check->Set_BeamPosition(data->dc_vx(data->dc(0) - 1), data->dc_vy(data->dc(0) - 1), data->dc_vz(data->dc(0) - 1));
+    auto event = std::make_shared<Reaction>();
+    event->SetElec(data->p(0), data->cx(0), data->cy(0), data->cz(0));
 
-    theta = physics::theta_calc(data->cz(0));
-    phi = physics::phi_calc(data->cx(0), data->cy(0));
-    sector = physics::get_sector(phi);
-    check->Set_elec_fid(theta, phi, sector);
+    if (check->isElecctron()) {
+      auto dt = std::make_shared<Delta_T>(data->sc_t(0), data->sc_r(0));
+      std::vector<double> dt_proton = dt->delta_t_array(MASS_P, data);
+      std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, data);
 
-    if (!check->isStrictElecctron()) {
-      delete check;
-      continue;
-    }
-    // Setup scattered electron 4 vector
-    TLorentzVector e_mu_prime = physics::fourVec(data->p(0), data->cx(0), data->cy(0), data->cz(0), MASS_E);
-
-    Delta_T *dt = new Delta_T(data->sc_t(data->sc(0) - 1), data->sc_r(data->sc(0) - 1));
-    std::vector<double> dt_proton = dt->delta_t_array(MASS_P, data.get());
-    std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, data.get());
-    delete dt;
-
-    // W = physics::W_calc(*e_mu, e_mu_prime);
-    // Q2 = physics::Q2_calc(*e_mu, e_mu_prime);
-
-    TLorentzVector gamma_mu = (e_mu - e_mu_prime);
-
-    num_of_proton = num_of_pips = num_of_pims = 0;
-    for (int part_num = 1; part_num < data->gpart(); part_num++) {
-      PID = -99;
-      if (data->q(part_num) == POSITIVE) {
-        if (check->dt_P_cut(dt_proton.at(part_num), data->p(part_num)))
-          PID = PROTON;
-        else if (check->dt_Pip_cut(dt_proton.at(part_num), data->p(part_num)))
-          PID = PIP;
-      } else if (data->q(part_num) == NEGATIVE) {
-        if (check->dt_Pip_cut(dt_proton.at(part_num), data->p(part_num))) PID = PIM;
-      }
-
-      TLorentzVector particle =
-          physics::fourVec(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num), PID);
-
-      if (data->q(part_num) == POSITIVE) {
-        if (check->dt_P_cut(dt_proton.at(part_num), data->p(part_num))) {
-          num_of_proton++;
-        } else if (check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num))) {
-          num_of_pips++;
-
-          MM_neutron->Set_4Vec(particle);
-          MM_neutron->missing_mass(gamma_mu);
+      for (int part_num = 1; part_num < data->gpart(); part_num++) {
+        if (data->q(part_num) == POSITIVE) {
+          if (check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num))) {
+            event->SetPip(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num));
+          } else if (check->dt_P_cut(dt_proton.at(part_num), data->p(part_num))) {
+            event->SetProton(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num));
+          }
+        } else if (data->q(part_num) == NEGATIVE) {
+          if (check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num))) {
+            event->SetPim(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num));
+          }
         }
-      } else if (data->q(part_num) == NEGATIVE && check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num))) {
-        num_of_pims++;
       }
+
+      bool mm_cut = true;
+      mm_cut &= (event->MM() < 1.00091);
+      mm_cut &= (event->MM() > 0.911698);
+      if (event->SinglePip() && mm_cut) skim->Fill();
     }
-
-    bool mm_cut = true;
-    mm_cut &= (MM_neutron->Get_MM() < 1.1);
-    mm_cut &= (MM_neutron->Get_MM() > 0.8);
-
-    if (num_of_pips == 1 && mm_cut && num_of_proton == 0 && data->gpart() < 3) {
-      skim->Fill();
-    }
-
-    delete check;
   }
+
   delete chain;
   RootOutputFile->cd();
   RootOutputFile->Write();

@@ -18,6 +18,7 @@
 #include "func.hpp"
 #include "glob_files.hpp"
 #include "missing_mass.hpp"
+#include "reaction.hpp"
 
 class Skim {
  private:

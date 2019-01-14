@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
       (clipp::option("-h", "--help").set(print_help) % "print help", clipp::option("-mc", "--MC").set(_mc) % "mc Skim",
        clipp::option("-b", "--basic").set(_basic) % "basic skim",
        clipp::option("-s", "--strict").set(_strict) % "strict skim",
-       clipp::option("-f", "--final").set(_mc) % "final skim", clipp::value("skim.root", outfile),
+       clipp::option("-f", "--final").set(_final) % "final skim", clipp::value("skim.root", outfile),
        clipp::values("inputFile.root", infile));
 
   clipp::parse(argc, argv, cli);
