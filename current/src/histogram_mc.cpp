@@ -18,7 +18,7 @@ mcHistogram::~mcHistogram() {
   Fits *MM_neutron_cut = new Fits();
   MM_neutron_cut->Set_min(0.8);
   MM_neutron_cut->Set_max(1.2);
-  MM_neutron_cut->FitBreitWigner(Missing_Mass);
+  MM_neutron_cut->FitBreitWigner(Missing_Mass.get());
 
   std::cerr << BOLDBLUE << "WvsQ2()" << DEF << std::endl;
   TDirectory *WvsQ2_folder = RootOutputFile->mkdir("W vs Q2");
@@ -43,18 +43,18 @@ void mcHistogram::makeHists() {
   for (int i = 0; i < 4; i++) {
     sprintf(hname, "dPvsP_%s", xyz[i].c_str());
     sprintf(htitle, "#DeltaP/P_{rec} vs P_{%s}", xyz[i].c_str());
-    delta_p[i] = new TH1D(hname, htitle, 500, -0.5, 0.5);
+    delta_p[i] = std::make_unique<TH1D>(hname, htitle, 500, -0.5, 0.5);
   }
 
   for (int y = 0; y < Q2_bins; y++) {
     sprintf(hname, "W_%0.3f_%0.3f", q2_binned_min + (Q2_width * y), q2_binned_min + (Q2_width * (y + 1)));
     sprintf(htitle, "W hist\nQ^{2} %0.3f %0.3f", q2_binned_min + (Q2_width * y), q2_binned_min + (Q2_width * (y + 1)));
-    W_binned[y] = new TH1D(hname, htitle, bins, w_binned_min, w_binned_max);
+    W_binned[y] = std::make_unique<TH1D>(hname, htitle, bins, w_binned_min, w_binned_max);
 
     sprintf(hname, "W_MC_%0.3f_%0.3f", q2_binned_min + (Q2_width * y), q2_binned_min + (Q2_width * (y + 1)));
     sprintf(htitle, "W hist from true MC\nQ^{2} %0.3f %0.3f", q2_binned_min + (Q2_width * y),
             q2_binned_min + (Q2_width * (y + 1)));
-    W_binned_MC[y] = new TH1D(hname, htitle, bins, w_binned_min, w_binned_max);
+    W_binned_MC[y] = std::make_unique<TH1D>(hname, htitle, bins, w_binned_min, w_binned_max);
   }
 }
 
@@ -138,9 +138,9 @@ void mcHistogram::WvsQ2_binned_Write() {
 // W and Q^2
 
 // Missing Mass
-void mcHistogram::Fill_Missing_Mass(MissingMass *miss_mass) {
-  Missing_Mass->Fill(miss_mass->Get_MM());
-  Missing_Mass_square->Fill(miss_mass->Get_MM2());
+void mcHistogram::Fill_Missing_Mass(double mm, double mm2) {
+  Missing_Mass->Fill(mm);
+  Missing_Mass_square->Fill(mm2);
 }
 
 void mcHistogram::Write_Missing_Mass() {

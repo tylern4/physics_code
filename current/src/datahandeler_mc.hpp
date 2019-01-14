@@ -16,9 +16,11 @@
 #include "branches.hpp"
 #include "color.hpp"
 #include "constants.hpp"
+#include "cuts.hpp"
 #include "histogram_mc.hpp"
 #include "missing_mass.hpp"
 #include "physics.hpp"
+#include "reaction.hpp"
 
 class mcHandeler {
  private:

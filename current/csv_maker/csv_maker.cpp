@@ -4,13 +4,12 @@
 /************************************************************************/
 
 // Only My Includes. All others in main.h
-#include "main.h"
-#include "../src/classes.hpp"
-#include "../src/constants.hpp"
-#include "../src/branches.hpp"
 #include "TStopwatch.h"
-#include "../src/physics.hpp"
+#include "branches.hpp"
+#include "constants.hpp"
 #include "csv_maker.hpp"
+#include "main.h"
+#include "physics.hpp"
 
 using namespace std;
 

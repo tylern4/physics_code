@@ -25,10 +25,6 @@ void mcHandeler::Run(std::vector<std::string> fin, mcHistogram *hists) {
 }
 
 void mcHandeler::Run(std::string fin, mcHistogram *hists) {
-  auto *MM_neutron = new MissingMass(MASS_P, 0.0);
-  double W, Q2;
-  bool electron_cuts;
-
   auto *chain = new TChain("h10");
   chain->Add(fin.c_str());
   auto *data = new Branches(chain, true);
@@ -37,37 +33,22 @@ void mcHandeler::Run(std::string fin, mcHistogram *hists) {
   int current_event = 0;
   for (current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
-    electron_cuts = true;
-    electron_cuts &= (data->q(0) == -1);
-    electron_cuts &= (data->ec(0) > 0);
-    electron_cuts &= (data->cc(0) > 0);
-    electron_cuts &= (data->sc(0) > 0);
-    electron_cuts &= (data->dc(0) > 0);
-    if (!electron_cuts) continue;
+    auto check = std::make_shared<Cuts>(data);
+    if (!check->isElecctron()) continue;
+
+    auto event = std::make_shared<Reaction>();
+    auto mc_event = std::make_shared<Reaction>();
+    event->SetElec(data->p(0), data->cx(0), data->cy(0), data->cz(0));
+    mc_event->SetElec(data->p(0), data->cx(0), data->cy(0), data->cz(0));
     hists->Fill_P(data);
-    // Setup scattered electron 4 vector
-    TLorentzVector e_mu_prime = physics::fourVec(data->p(0), data->cx(0), data->cy(0), data->cz(0), MASS_E);
-    TLorentzVector gamma_mu = (*e_mu - e_mu_prime);
+    hists->Fill_WQ2(event->W(), event->Q2());
+    hists->Fill_WQ2_MC(mc_event->W(), mc_event->Q2());
 
-    TLorentzVector e_mu_prime_mc = physics::fourVec(data->pxpart(0), data->pypart(0), data->pzpart(0), MASS_E);
-    TLorentzVector gamma_mu_mc = (*e_mu - e_mu_prime_mc);
-
-    W = physics::W_calc(*e_mu, e_mu_prime);
-    Q2 = physics::Q2_calc(*e_mu, e_mu_prime);
-    hists->Fill_WQ2(W, Q2);
-
-    W = physics::W_calc(*e_mu, e_mu_prime_mc);
-    Q2 = physics::Q2_calc(*e_mu, e_mu_prime_mc);
-    hists->Fill_WQ2_MC(W, Q2);
-
-    TLorentzVector particle;
     for (int part_num = 1; part_num < data->gpart(); part_num++) {
-      particle =
-          physics::fourVec(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num), MASS_PIP);
-      MM_neutron->Set_4Vec(particle);
-      MM_neutron->missing_mass(gamma_mu_mc);
-      hists->Fill_Missing_Mass(MM_neutron);
+      if (data->pidpart(part_num) == PIP)
+        event->SetPip(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num));
     }
+    hists->Fill_Missing_Mass(event->MM(), event->MM2());
   }
   chain->Reset();  // delete Tree object
 }

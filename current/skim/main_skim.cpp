@@ -6,12 +6,11 @@
 /**************************************/
 
 // Only My Includes. All others in main.h
-#include "../src/classes.hpp"
-#include "../src/clipp.h"
-#include "../src/glob_files.hpp"
-#include "../src/physics.hpp"
-#include "../src/skim.hpp"
 #include "TStopwatch.h"
+#include "clipp.h"
+#include "glob_files.hpp"
+#include "physics.hpp"
+#include "skim.hpp"
 
 using namespace std;
 

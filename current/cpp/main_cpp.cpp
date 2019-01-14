@@ -5,14 +5,13 @@
 
 // Only My Includes. All others in main.h
 #include <memory>
-#include "../src/branches.hpp"
-#include "../src/classes.hpp"
-#include "../src/constants.hpp"
-#include "../src/datahandeler.hpp"
-#include "../src/glob_files.hpp"
-#include "../src/physics.hpp"
 #include "TStopwatch.h"
+#include "branches.hpp"
+#include "constants.hpp"
+#include "datahandeler.hpp"
+#include "glob_files.hpp"
 #include "main.h"
+#include "physics.hpp"
 
 using namespace std;
 

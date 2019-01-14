@@ -16,8 +16,6 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include "../src/color.hpp"
-#include "../src/constants.hpp"
 #include "TChain.h"
 #include "TF1.h"
 #include "TH2.h"
@@ -27,6 +25,8 @@
 #include "TStyle.h"
 #include "TSystem.h"
 #include "TTree.h"
+#include "color.hpp"
+#include "constants.hpp"
 #include "time.h"
 
 #define MIN(a, b) ((a < b) ? a : b)
@@ -46,6 +46,5 @@ void loadbar(long x, long n) {
   for (int x = c; x < w; x++) std::cout << " ";
   std::cout << BLUE << (int)(ratio * 100) << "%]\r" << DEF << std::flush;
 }
-// double Square(double a) { return a * a; }
 
 #endif
