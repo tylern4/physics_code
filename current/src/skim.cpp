@@ -44,7 +44,6 @@ void Skim::Basic() {
 
 void Skim::Strict() {
   int num_of_events;
-  bool electron_cuts, mm_cut;
   std::cout << BLUE << "Strict Skim file " << GREEN << fout << DEF << std::endl;
 
   num_of_events = (int)chain->GetEntries();
@@ -54,48 +53,18 @@ void Skim::Strict() {
     chain->GetEntry(current_event);
     if (data->gpart() > 5) continue;
     auto check = std::make_shared<Cuts>();
-    double theta = 0.0;
-    double phi = 0.0;
-    double sector = 0.0;
-
-    check->Set_electron_id(data->id(0));  // First particle is electron
-    // electron cuts
-    check->Set_charge(data->q(0));
-    check->Set_ec_cut(data->ec(0) > 0);  // ``` ``` ``` ec
-    check->Set_gpart(data->gpart());     // Number of good particles is greater than 0
-    check->Set_cc_cut(data->cc(0) > 0);
-    check->Set_stat_cut(data->stat(0) > 0);  // First Particle hit stat
-    check->Set_sc_cut(data->sc(0) > 0);
-    check->Set_dc_cut(data->dc(0) > 0);
-    check->Set_dc_stat_cut(data->dc_stat(data->dc(0) - 1) > 0);
-
-    theta = physics::theta_calc(data->cz(0));
-    phi = physics::phi_calc(data->cx(0), data->cy(0));
-    sector = physics::get_sector(phi);
-    check->Set_elec_fid(theta, phi, sector);
-
-    // isStrictElecctron
-    check->Set_p(data->p(0));
-    check->Set_Sf(data->etot(data->ec(0) - 1) / data->p(0));
-    check->Set_num_phe(data->nphe(data->cc(0) - 1));
-    check->Set_BeamPosition(data->dc_vx(data->dc(0) - 1), data->dc_vy(data->dc(0) - 1), data->dc_vz(data->dc(0) - 1));
-
-    e_mu_prime_3.SetXYZ(data->p(0) * data->cx(0), data->p(0) * data->cy(0), data->p(0) * data->cz(0));
-    e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
-    double W = physics::W_calc(e_mu, e_mu_prime);
-    double Q2 = physics::Q2_calc(e_mu, e_mu_prime);
+    auto event = std::make_shared<Reaction>();
+    event->SetElec(data->p(0), data->cx(0), data->cy(0), data->cz(0));
 
     bool cuts = true;
 
     cuts &= check->Beam_cut();
     cuts &= check->isStrictElecctron();
-    cuts &= (Q2 >= 1.0);
-    cuts &= (W >= 0.8);
-    cuts &= (W <= 2.0);
+    cuts &= (event->Q2() >= 1.0);
+    cuts &= (event->W() >= 0.8);
+    cuts &= (event->W() <= 2.0);
 
-    if (cuts) {
-      skim->Fill();  // Fill the banks after the skim
-    }
+    if (cuts) skim->Fill();  // Fill the banks after the skim
   }
   chain->Reset();  // delete Tree object
   delete chain;

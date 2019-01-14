@@ -9,6 +9,7 @@
 #include "branches.hpp"
 #include "constants.hpp"
 #include "func.hpp"
+#include "physics.hpp"
 
 class Cuts {
  private:
@@ -21,6 +22,7 @@ class Cuts {
   int electron_id = 0;
   double electron_p = 0;
   double samp_frac = 0;
+  int _sector = 0;
   double _vx = 0;
   double _vy = 0;
   double _vz = 0.3;
@@ -41,21 +43,7 @@ class Cuts {
   Cuts();
   Cuts(Branches* data);
   ~Cuts();
-  void Set_num_phe(int set);
-  void Set_charge(int set);
-  void Set_electron_id(int set);
-  void Set_gpart(int set);
-  void Set_p(double set);
-  void Set_Sf(double set);
-  void Set_BeamPosition(double x, double y, double z);
-  void Set_elec_fid(double theta, double phi, int sec);
-
-  void Set_ec_cut(bool set);
-  void Set_cc_cut(bool set);
-  void Set_stat_cut(bool set);
-  void Set_sc_cut(bool set);
-  void Set_dc_cut(bool set);
-  void Set_dc_stat_cut(bool set);
+  void Set_elec_fid();
 
   bool isElecctron();
   bool isStrictElecctron();

@@ -42,8 +42,6 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
     sector = physics::get_sector(phi);
 
     if (getenv("CUTS") != NULL && atoi(getenv("CUTS")) == true) {
-      check->Set_elec_fid(theta, phi, sector);
-      check->Set_BeamPosition(data->dc_vx(0), data->dc_vy(0), data->dc_vz(0));
       CUTS = (check->isElecctron() && check->Fid_cut() && check->Beam_cut());
     } else {
       CUTS = check->isElecctron();

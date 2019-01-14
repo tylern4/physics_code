@@ -9,19 +9,10 @@ Cuts::Cuts() {}
 Cuts::Cuts(Branches* data) { _data = data; }
 Cuts::~Cuts() {}
 
-void Cuts::Set_num_phe(int set) { num_phe = set; }
-void Cuts::Set_charge(int set) { charge = set; }
-void Cuts::Set_electron_id(int set) { electron_id = set; }
-void Cuts::Set_gpart(int set) { gpart = set; }
-void Cuts::Set_BeamPosition(double x, double y, double z) {
-  _vx = x;
-  _vy = y;
-  _vz = z;
-}
-void Cuts::Set_elec_fid(double theta, double phi, int sec) {
-  _theta = theta;
-  _phi = phi;
-  _sec = sec + 1;
+void Cuts::Set_elec_fid() {
+  _theta = physics::theta_calc(_data->cz(0));
+  _phi = physics::phi_calc(_data->cx(0), _data->cy(0));
+  _sector = physics::get_sector(_phi) + 1;
 
   switch (_sec) {
     case 1:
@@ -44,15 +35,6 @@ void Cuts::Set_elec_fid(double theta, double phi, int sec) {
       break;
   }
 }
-void Cuts::Set_p(double set) { electron_p = set; }
-void Cuts::Set_Sf(double set) { samp_frac = set; }
-
-void Cuts::Set_ec_cut(bool set) { ec_cut = set; }
-void Cuts::Set_cc_cut(bool set) { cc_cut = set; }
-void Cuts::Set_stat_cut(bool set) { stat_cut = set; }
-void Cuts::Set_sc_cut(bool set) { sc_cut = set; }
-void Cuts::Set_dc_cut(bool set) { dc_cut = set; }
-void Cuts::Set_dc_stat_cut(bool set) { dc_stat_cut = set; }
 
 bool Cuts::isElecctron() {
   bool _elec = true;
@@ -63,19 +45,23 @@ bool Cuts::isElecctron() {
   _elec &= (_data->stat(0) > 0);  // First Particle hit stat
   _elec &= (_data->sc(0) > 0);
   _elec &= (_data->dc(0) > 0);
-  //_elec &= (_data->dc_stat(_data->dc(0) - 1) > 0);
+  _elec &= (_data->nphe(0) > 30);
+  _elec &= (_data->dc_stat(0) > 0);
 
   return _elec;
 }
 
-bool Cuts::Fid_cut() { return elec_fid_cut(); }
+bool Cuts::Fid_cut() {
+  Set_elec_fid();
+  return elec_fid_cut();
+}
 
 bool Cuts::Beam_cut() {
   bool _beam = true;
-  _beam &= (_vx > 0.2);
-  _beam &= (_vx < 0.4);
-  _beam &= (abs(_vy) < 0.1);
-  _beam &= (abs(_vz) < 3);
+  _beam &= (_data->vx(0) > 0.2);
+  _beam &= (_data->vx(0) < 0.4);
+  _beam &= (abs(_data->vy(0)) < 0.1);
+  _beam &= (abs(_data->vz(0)) < 3);
   return (isElecctron() && _beam);
 }
 
@@ -85,7 +71,7 @@ bool Cuts::isStrictElecctron() {
   _elec &= Fid_cut();
   _elec &= (electron_p > MIN_P_CUT);
 
-  _elec &= (num_phe > 20);
+  _elec &= (_data->nphe(0) > 30);
   _elec &= sf_cut(samp_frac, electron_p);
 
   electron_cut = _elec;

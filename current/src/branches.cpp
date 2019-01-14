@@ -201,14 +201,14 @@ float Branches::p(int i) {
   if (i < _gpart) {
     return _p[i];
   } else {
-    return float(NULL);
+    return std::nanf("NULL");
   }
 }  // [gpart]
 float Branches::m(int i) {
   if (i < _gpart) {
     return _m[i];
   } else {
-    return float(NULL);
+    return std::nanf("NULL");
   }
 }  // [gpart]
 int Branches::q(int i) {
@@ -222,49 +222,49 @@ float Branches::b(int i) {
   if (i < _gpart) {
     return _b[i];
   } else {
-    return float(NULL);
+    return std::nanf("NULL");
   }
 }  // [gpart]
 float Branches::cx(int i) {
   if (i < _gpart) {
     return _cx[i];
   } else {
-    return float(NULL);
+    return std::nanf("NULL");
   }
 }  // [gpart]
 float Branches::cy(int i) {
   if (i < _gpart) {
     return _cy[i];
   } else {
-    return float(NULL);
+    return std::nanf("NULL");
   }
 }  // [gpart]
 float Branches::cz(int i) {
   if (i < _gpart) {
     return _cz[i];
   } else {
-    return float(NULL);
+    return std::nanf("NULL");
   }
 }  // [gpart]
 float Branches::vx(int i) {
   if (i < _gpart) {
     return _vx[i];
   } else {
-    return float(NULL);
+    return std::nanf("NULL");
   }
 }  // [gpart]
 float Branches::vy(int i) {
   if (i < _gpart) {
     return _vy[i];
   } else {
-    return float(NULL);
+    return std::nanf("NULL");
   }
 }  // [gpart]
 float Branches::vz(int i) {
   if (i < _gpart) {
     return _vz[i];
   } else {
-    return float(NULL);
+    return std::nanf("NULL");
   }
 }  // [gpart]
 
@@ -293,77 +293,77 @@ float Branches::dc_vx(int i) {
   if (i < _dc_part) {
     return _dc_vx[_dc[i] - 1];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[dc_part]
 float Branches::dc_vy(int i) {
   if (i < _dc_part) {
     return _dc_vy[_dc[i] - 1];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[dc_part]
 float Branches::dc_vz(int i) {
   if (i < _dc_part) {
     return _dc_vz[_dc[i] - 1];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[dc_part]
 float Branches::dc_vr(int i) {
   if (i < _dc_part) {
     return _dc_vr[_dc[i] - 1];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[dc_part]
 float Branches::dc_xsc(int i) {
   if (i < _dc_part) {
     return _dc_xsc[_dc[i] - 1];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[dc_part]
 float Branches::dc_ysc(int i) {
   if (i < _dc_part) {
     return _dc_ysc[_dc[i] - 1];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[dc_part]
 float Branches::dc_zsc(int i) {
   if (i < _dc_part) {
     return _dc_zsc[_dc[i] - 1];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[dc_part]
 float Branches::dc_cxsc(int i) {
   if (i < _dc_part) {
     return _dc_cxsc[_dc[i] - 1];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[dc_part]
 float Branches::dc_cysc(int i) {
   if (i < _dc_part) {
     return _dc_cysc[_dc[i] - 1];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[dc_part]
 float Branches::dc_czsc(int i) {
   if (i < _dc_part) {
     return _dc_czsc[_dc[i] - 1];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[dc_part]
 float Branches::dc_c2(int i) {
   if (i < _dc_part) {
     return _dc_c2[_dc[i] - 1];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[dc_part]
 
@@ -406,84 +406,84 @@ float Branches::etot(int i) {
   if (i < _ec_part) {
     return _etot[_ec[i] - 1];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[ec_part]
 float Branches::ec_ei(int i) {
   if (i < _ec_part) {
     return _ec_ei[_ec[i] - 1];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[ec_part]
 float Branches::ec_eo(int i) {
   if (i < _ec_part) {
     return _ec_eo[_ec[i] - 1];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[ec_part]
 float Branches::ec_t(int i) {
   if (i < _ec_part) {
     return _ec_t[_ec[i] - 1];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[ec_part]
 float Branches::ec_r(int i) {
   if (i < _ec_part) {
     return _ec_r[_ec[i] - 1];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[ec_part]
 float Branches::ech_x(int i) {
   if (i < _ec_part) {
     return _ech_x[_ec[i] - 1];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[ec_part]
 float Branches::ech_y(int i) {
   if (i < _ec_part) {
     return _ech_y[_ec[i] - 1];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[ec_part]
 float Branches::ech_z(int i) {
   if (i < _ec_part) {
     return _ech_z[_ec[i] - 1];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[ec_part]
 float Branches::ec_m2(int i) {
   if (i < _ec_part) {
     return _ec_m2[_ec[i] - 1];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[ec_part]
 float Branches::ec_m3(int i) {
   if (i < _ec_part) {
     return _ec_m3[_ec[i] - 1];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[ec_part]
 float Branches::ec_m4(int i) {
   if (i < _ec_part) {
     return _ec_m4[_ec[i] - 1];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[ec_part]
 float Branches::ec_c2(int i) {
   if (i < _ec_part) {
     return _ec_c2[_ec[i] - 1];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[ec_part]
 
@@ -519,28 +519,28 @@ float Branches::edep(int i) {
   if (i < _sc_part) {
     return _edep[_sc[i] - 1];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[sc_part]
 float Branches::sc_t(int i) {
   if (i < _sc_part) {
     return _sc_t[_sc[i] - 1];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[sc_part]
 float Branches::sc_r(int i) {
   if (i < _sc_part) {
     return _sc_r[_sc[i] - 1];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[sc_part]
 float Branches::sc_c2(int i) {
   if (i < _sc_part) {
     return _sc_c2[_sc[i] - 1];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[sc_part]
 
@@ -576,21 +576,21 @@ float Branches::cc_t(int i) {
   if (i < _cc_part) {
     return _cc_t[i];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[cc_part]
 float Branches::cc_r(int i) {
   if (i < _cc_part) {
     return _cc_r[i];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[cc_part]
 float Branches::cc_c2(int i) {
   if (i < _cc_part) {
     return _cc_c2[i];
   } else {
-    return std::nanf("-99");
+    return std::nanf("NULL");
   }
 }  //[cc_part]
 
