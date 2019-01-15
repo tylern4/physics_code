@@ -47,7 +47,7 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
       CUTS = check->isElecctron();
     }
 
-    if (CUTS) {
+    if (check->isElecctron() && check->Fid_cut() && check->Beam_cut()) {
       int cc_sector = data->cc_sect(data->cc(0) - 1);
       int cc_segment = (data->cc_segm(0) % 1000) / 10;
       int cc_pmt = data->cc_segm(0) / 1000 - 1;
