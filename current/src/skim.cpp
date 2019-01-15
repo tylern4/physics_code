@@ -10,7 +10,7 @@ Skim::Skim(std::vector<std::string> input, std::string output) {
   fout = output;
   chain = new TChain("h10");
   for (auto f : fin) chain->AddFile(f.c_str());
-  data = std::make_unique<Branches>(chain);
+
   RootOutputFile = new TFile(fout.c_str(), "RECREATE");
   if (getenv("BEAM_E") != NULL) {
     BEAM_ENERGY = atof(getenv("BEAM_E"));
@@ -32,7 +32,7 @@ void Skim::Basic() {
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
     auto check = std::make_unique<Cuts>(data);
-    if (check->isElecctron()) skim->Fill();
+    if (check->isElecctron() && check->Beam_cut()) skim->Fill();
   }
 
   delete chain;
@@ -48,11 +48,12 @@ void Skim::Strict() {
 
   num_of_events = (int)chain->GetEntries();
   TTree *skim = chain->CloneTree(0);
+  Branches *data = new Branches(chain);
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
     if (data->gpart() > 5) continue;
-    auto check = std::make_unique<Cuts>();
+    auto check = std::make_unique<Cuts>(data);
     auto event = std::make_unique<Reaction>();
     event->SetElec(data->p(0), data->cx(0), data->cy(0), data->cz(0));
 

@@ -546,49 +546,49 @@ float Branches::sc_c2(int i) {
 
 int Branches::cc_sect(int i) {
   if (i < _cc_part) {
-    return _cc_sect[i];
+    return _cc_sect[_cc[i] - 1];
   } else {
     return int(NULL);
   }
 }  //[cc_part]
 int Branches::cc_hit(int i) {
   if (i < _cc_part) {
-    return _cc_hit[i];
+    return _cc_hit[_cc[i] - 1];
   } else {
     return int(NULL);
   }
 }  //[cc_part]
 int Branches::cc_segm(int i) {
   if (i < _cc_part) {
-    return _cc_segm[i];
+    return _cc_segm[_cc[i] - 1];
   } else {
     return int(NULL);
   }
 }  //[cc_part]
 int Branches::nphe(int i) {
   if (i < _cc_part) {
-    return _nphe[i];
+    return _nphe[_cc[i] - 1];
   } else {
     return int(NULL);
   }
 }  //[cc_part]
 float Branches::cc_t(int i) {
   if (i < _cc_part) {
-    return _cc_t[i];
+    return _cc_t[_cc[i] - 1];
   } else {
     return std::nanf("NULL");
   }
 }  //[cc_part]
 float Branches::cc_r(int i) {
   if (i < _cc_part) {
-    return _cc_r[i];
+    return _cc_r[_cc[i] - 1];
   } else {
     return std::nanf("NULL");
   }
 }  //[cc_part]
 float Branches::cc_c2(int i) {
   if (i < _cc_part) {
-    return _cc_c2[i];
+    return _cc_c2[_cc[i] - 1];
   } else {
     return std::nanf("NULL");
   }

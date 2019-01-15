@@ -5,14 +5,14 @@
 /**************************************/
 #include <iostream>
 #include "cuts.hpp"
-Cuts::Cuts() {}
+
 Cuts::Cuts(Branches* data) { _data = data; }
 Cuts::~Cuts() {}
 
 void Cuts::Set_elec_fid() {
   _theta = physics::theta_calc(_data->cz(0));
   _phi = physics::phi_calc(_data->cx(0), _data->cy(0));
-  _sector = physics::get_sector(_phi) + 1;
+  _sec = physics::get_sector(_phi) + 1;
 
   switch (_sec) {
     case 1:
@@ -58,21 +58,25 @@ bool Cuts::Fid_cut() {
 
 bool Cuts::Beam_cut() {
   bool _beam = true;
-  _beam &= (_data->vx(0) > 0.2);
-  _beam &= (_data->vx(0) < 0.4);
-  _beam &= (abs(_data->vy(0)) < 0.1);
-  _beam &= (abs(_data->vz(0)) < 3);
-  return (isElecctron() && _beam);
+
+  _beam &= (_data->dc_vx(0) > 0.2 && _data->dc_vx(0) < 0.4);
+  _beam &= (_data->dc_vy(0) > -0.2 && _data->dc_vy(0) < 0.2);
+  _beam &= (_data->dc_vz(0) > -3.0 && _data->dc_vz(0) < 3.0);
+
+  for (short i = 0; i < _data->gpart(); i++) {
+    _beam &= (_data->vz(i) > -2.0 && _data->vz(i) < 2.0);
+    _beam &= (_data->vy(i) > -0.5 && _data->vy(i) < 0.5);
+  }
+
+  return _beam;
 }
 
 bool Cuts::isStrictElecctron() {
   bool _elec = true;
   _elec &= isElecctron();
   _elec &= Fid_cut();
-  _elec &= (electron_p > MIN_P_CUT);
-
-  _elec &= (_data->nphe(0) > 30);
-  _elec &= sf_cut(samp_frac, electron_p);
+  _elec &= (_data->p(0) > MIN_P_CUT);
+  _elec &= sf_cut(_data->etot(0) / _data->p(0), _data->p(0));
 
   electron_cut = _elec;
   return _elec;
@@ -81,16 +85,12 @@ bool Cuts::isStrictElecctron() {
 bool Cuts::CheckElectron() { return electron_cut; }
 
 double Cuts::sf_top_fit(double P) {
-  // Old fit for all p...
-  // double par[3] = {0.363901, -0.00992778, 5.84749e-06};
-  double par[3] = {0.335, 0.003358, -2.551e-6};
+  double par[3] = {0.3269, 0.000336, 7.731e-7};
   double x[1] = {P};
   return func::ec_fit_func(x, par);
 }
 double Cuts::sf_bot_fit(double P) {
-  // Old fit for all p...
-  // double par[3] = {0.103964, 0.0524214, -3.64355e-05};
-  double par[3] = {0.1542, 0.02947, -2.411e-5};
+  double par[3] = {0.1787, 0.02032, -2.726e-6};
   double x[1] = {P};
   return func::ec_fit_func(x, par);
 }
@@ -121,7 +121,7 @@ double Cuts::dt_Pip_top_fit(double P) {
 bool Cuts::dt_Pip_cut(double dt, double P) { return (dt > dt_Pip_bot_fit(P)) && (dt < dt_Pip_top_fit(P)); }
 
 bool Cuts::elec_fid_cut() {
-  double c[4] = {0.0548311203, 0.0327878012, 17.0683287374};
+  double c[3] = {0.0548311203, 0.0327878012, 17.0683287374};
   double y = c[0] * _phi_cent * _phi_cent + c[1] * _phi_cent + c[2];
 
   return _theta >= y;

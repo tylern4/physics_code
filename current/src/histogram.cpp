@@ -1136,28 +1136,28 @@ void Histogram::EC_cut_fill(float etot, float momentum) {
 }
 
 void Histogram::EC_slice_fit() {
-  // if (EC_sampling_fraction_cut->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  if (EC_sampling_fraction->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   // Header *fit_functions = new Header("EC_fit_functions.hpp", "FF");
 
   TF1 *peak = new TF1("peak", "gaus", 0.2, 0.4);
-  EC_sampling_fraction_cut->FitSlicesY(peak, 0, -1, 0, "QRG5");
-  TH1D *EC_sampling_fraction_cut_0 = (TH1D *)gDirectory->Get("EC_sampling_fraction_cut_0");
-  TH1D *EC_sampling_fraction_cut_1 = (TH1D *)gDirectory->Get("EC_sampling_fraction_cut_1");
-  TH1D *EC_sampling_fraction_cut_2 = (TH1D *)gDirectory->Get("EC_sampling_fraction_cut_2");
+  EC_sampling_fraction->FitSlicesY(peak, 0, -1, 0, "QRG5");
+  TH1D *EC_sampling_fraction_0 = (TH1D *)gDirectory->Get("EC_sampling_fraction_0");
+  TH1D *EC_sampling_fraction_1 = (TH1D *)gDirectory->Get("EC_sampling_fraction_1");
+  TH1D *EC_sampling_fraction_2 = (TH1D *)gDirectory->Get("EC_sampling_fraction_2");
   float x[BINS];
   float y_plus[BINS];
   float y_minus[BINS];
   int num = 0;
   for (int i = 0; i < BINS; i++) {
-    if (EC_sampling_fraction_cut_1->GetBinContent(i) != 0) {
+    if (EC_sampling_fraction_1->GetBinContent(i) != 0) {
       // Get momentum from bin center
-      x[num] = (float)EC_sampling_fraction_cut_1->GetBinCenter(i);
+      x[num] = (float)EC_sampling_fraction_1->GetBinCenter(i);
       // mean + 3sigma
-      y_plus[num] = (float)EC_sampling_fraction_cut_1->GetBinContent(i) +
-                    2.0 * (float)EC_sampling_fraction_cut_2->GetBinContent(i);
+      y_plus[num] =
+          (float)EC_sampling_fraction_1->GetBinContent(i) + 2.0 * (float)EC_sampling_fraction_2->GetBinContent(i);
       // mean - 3simga
-      y_minus[num] = (float)EC_sampling_fraction_cut_1->GetBinContent(i) -
-                     2.0 * (float)EC_sampling_fraction_cut_2->GetBinContent(i);
+      y_minus[num] =
+          (float)EC_sampling_fraction_1->GetBinContent(i) - 2.0 * (float)EC_sampling_fraction_2->GetBinContent(i);
       num++;
     }
   }
@@ -1187,7 +1187,7 @@ void Histogram::EC_slice_fit() {
 
   TCanvas *EC_canvas = new TCanvas("EC_canvas", "EC canvas", 1280, 720);
   EC_canvas->cd();
-  EC_sampling_fraction_cut->Draw();
+  EC_sampling_fraction->Draw();
   EC_P_fit->Draw("same");
   EC_M_fit->Draw("same");
   EC_P->Draw("*same");

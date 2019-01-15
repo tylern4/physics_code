@@ -22,7 +22,6 @@ class Cuts {
   int electron_id = 0;
   double electron_p = 0;
   double samp_frac = 0;
-  int _sector = 0;
   double _vx = 0;
   double _vy = 0;
   double _vz = 0.3;
@@ -40,7 +39,6 @@ class Cuts {
   bool samp_frac_cut = false;
 
  public:
-  Cuts();
   Cuts(Branches* data);
   ~Cuts();
   void Set_elec_fid();

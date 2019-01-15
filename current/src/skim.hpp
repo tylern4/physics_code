@@ -23,7 +23,6 @@
 class Skim {
  private:
   TChain *chain;
-  std::shared_ptr<Branches> data;
   std::string fout;
   std::vector<std::string> fin;
   TFile *RootOutputFile;
@@ -39,10 +38,12 @@ class Skim {
 
  public:
   Skim(std::vector<std::string> input, std::string output);
+  ~Skim();
+
   void Basic();
   void Strict();
   void Final();
-  ~Skim();
+
   double sf_top_fit(double P);
   double sf_bot_fit(double P);
   bool sf_cut(double sf, double P);

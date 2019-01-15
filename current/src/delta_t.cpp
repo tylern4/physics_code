@@ -40,7 +40,7 @@ double Delta_T::Get_dt_K() { return dt_K; }
 double Delta_T::Get_vertex() { return vertex; }
 
 void Delta_T::delta_t_hists(Histogram *hists, Branches *data) {
-  auto dt_cut = std::make_unique<Cuts>();
+  auto dt_cut = std::make_unique<Cuts>(data);
   double sct, scr, mom;
   int ID, charge, sc_paddle, sc_sector;
 

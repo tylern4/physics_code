@@ -13,10 +13,6 @@ void DataHandeler::Run(std::vector<std::string> fin, Histogram *hists) {
 }
 
 void DataHandeler::Run(std::string fin, Histogram *hists) {
-  double theta;
-  double phi;
-  int sector;
-
   TChain *chain = new TChain("h10");
   chain->Add(fin.c_str());
   Branches *data = new Branches(chain);
@@ -24,22 +20,20 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
-    if (data->ec_ei(0) < 0.01 || data->ec_eo(0) < 0.01) continue;
+    auto check = std::make_unique<Cuts>(data);
+    if (!check->isElecctron()) continue;
+
     hists->EC_inout(data->ec_ei(0), data->ec_eo(0));
     hists->EC_fill(data->etot(0), data->p(0));
     hists->TM_Fill(data->p(0), physics::theta_calc(data->cz(0)));
-
-    auto check = std::make_unique<Cuts>(data);
-    if (!check->isElecctron()) continue;
+    double theta_cc = TMath::ACos(TMath::Abs(data->p(0) * data->cz(0)) / TMath::Abs(data->p(0))) / D2R;
+    hists->CC_fill(data->cc_sect(0), (data->cc_segm(0) % 1000) / 10, data->cc_segm(0) / 1000 - 1, data->nphe(0),
+                   theta_cc);
 
     auto event = std::make_unique<Reaction>();
     event->SetElec(data->p(0), data->cx(0), data->cy(0), data->cz(0));
     hists->Fill_E_Prime_fid(event->e_mu_prime());
     hists->Fill_E_Prime(event->e_mu_prime());
-
-    theta = physics::theta_calc(data->cz(0));
-    phi = physics::phi_calc(data->cx(0), data->cy(0));
-    sector = physics::get_sector(phi);
 
     if (getenv("CUTS") != NULL && atoi(getenv("CUTS")) == true) {
       CUTS = (check->isElecctron() && check->Fid_cut() && check->Beam_cut());
@@ -47,15 +41,7 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
       CUTS = check->isElecctron();
     }
 
-    if (check->isElecctron() && check->Fid_cut() && check->Beam_cut()) {
-      int cc_sector = data->cc_sect(data->cc(0) - 1);
-      int cc_segment = (data->cc_segm(0) % 1000) / 10;
-      int cc_pmt = data->cc_segm(0) / 1000 - 1;
-      int cc_nphe = data->nphe(data->cc(0) - 1);
-      double theta_cc = TMath::ACos(TMath::Abs(data->p(0) * data->cz(0)) / TMath::Abs(data->p(0)));
-
-      theta_cc = theta_cc / D2R;
-      hists->CC_fill(cc_sector, cc_segment, cc_pmt, cc_nphe, theta_cc);
+    if (check->isElecctron() && check->Beam_cut()) {
       hists->Fill_Beam_Position(data->dc_vx(0), data->dc_vy(0), data->dc_vz(0));
 
       auto dt = std::make_unique<Delta_T>(data->sc_t(0), data->sc_r(0));
@@ -64,6 +50,9 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
       std::vector<double> dt_proton = dt->delta_t_array(MASS_P, data);
       std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, data);
 
+      float theta = physics::theta_calc(data->cz(0));
+      float phi = physics::phi_calc(data->cx(0), data->cy(0));
+      int sector = physics::get_sector(phi);
       hists->Fill_electron_fid(theta, phi, sector);
 
       auto photon_flux = std::make_unique<PhotonFlux>(event->e_mu(), event->e_mu_prime());
