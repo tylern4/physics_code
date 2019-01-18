@@ -16,6 +16,8 @@ Reaction::Reaction() {
   _prot = std::make_unique<TLorentzVector>();
   _pip = std::make_unique<TLorentzVector>();
   _pim = std::make_unique<TLorentzVector>();
+  _other = std::make_unique<TLorentzVector>();
+  _neutron = std::make_unique<TLorentzVector>();
 }
 
 Reaction::Reaction(float p, float cx, float cy, float cz) {
@@ -30,6 +32,8 @@ Reaction::Reaction(float p, float cx, float cy, float cz) {
   _prot = std::make_unique<TLorentzVector>();
   _pip = std::make_unique<TLorentzVector>();
   _pim = std::make_unique<TLorentzVector>();
+  _other = std::make_unique<TLorentzVector>();
+  _neutron = std::make_unique<TLorentzVector>();
 }
 
 Reaction::~Reaction() {}
@@ -46,7 +50,7 @@ void Reaction::SetElec(float p, float cx, float cy, float cz) {
 }
 
 void Reaction::SetProton(float p, float cx, float cy, float cz) {
-  _numP++;
+  _numProt++;
   _numPos++;
   _hasP = true;
   _prot->SetXYZM(p * cx, p * cy, p * cz, MASS_P);
@@ -62,6 +66,22 @@ void Reaction::SetPim(float p, float cx, float cy, float cz) {
   _numNeg++;
   _hasPim = true;
   _pim->SetXYZM(p * cx, p * cy, p * cz, MASS_PIM);
+}
+
+void Reaction::SetNeutron(float p, float cx, float cy, float cz) {
+  _numNeutral++;
+  _hasNeutron = true;
+  _neutron->SetXYZM(p * cx, p * cy, p * cz, MASS_N);
+}
+
+void Reaction::SetOther(float p, float cx, float cy, float cz, int pid) {
+  if (pid == NEUTRON)
+    SetNeutron(p, cx, cy, cz);
+  else {
+    _numOther++;
+    _hasOther = true;
+    _other->SetXYZM(p * cx, p * cy, p * cz, _mass_map[pid]);
+  }
 }
 
 void Reaction::CalcMissMass() {

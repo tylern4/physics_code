@@ -7,12 +7,16 @@
 #define REACTION_H_GUARD
 
 #include <iostream>
+#include <map>
 #include "TLorentzVector.h"
 #include "constants.hpp"
 #include "physics.hpp"
 
 class Reaction {
  private:
+  std::map<int, double> _mass_map = {{PROTON, MASS_P}, {-PROTON, MASS_P},  {NEUTRON, MASS_N},  {PIP, MASS_PIP},
+                                     {PIM, MASS_PIM},  {PI0, MASS_PI0},    {KP, MASS_KP},      {KM, MASS_KM},
+                                     {PHOTON, MASS_G}, {ELECTRON, MASS_E}, {-ELECTRON, MASS_E}};
   double _beam_energy = E1D_E0;
   std::unique_ptr<TLorentzVector> _beam;
   std::unique_ptr<TLorentzVector> _elec;
@@ -21,17 +25,23 @@ class Reaction {
   std::unique_ptr<TLorentzVector> _prot;
   std::unique_ptr<TLorentzVector> _pip;
   std::unique_ptr<TLorentzVector> _pim;
+  std::unique_ptr<TLorentzVector> _other;
+  std::unique_ptr<TLorentzVector> _neutron;
 
   bool _hasE = false;
   bool _hasP = false;
   bool _hasPip = false;
   bool _hasPim = false;
+  bool _hasOther = false;
+  bool _hasNeutron = false;
 
-  short _numP = 0;
+  short _numProt = 0;
   short _numPip = 0;
   short _numPim = 0;
   short _numPos = 0;
   short _numNeg = 0;
+  short _numNeutral = 0;
+  short _numOther = 0;
 
   float _MM = std::nanf("-99");
   float _MM2 = std::nanf("-99");
@@ -48,6 +58,8 @@ class Reaction {
   void SetProton(float p, float cx, float cy, float cz);
   void SetPip(float p, float cx, float cy, float cz);
   void SetPim(float p, float cx, float cy, float cz);
+  void SetOther(float p, float cx, float cy, float cz, int pid);
+  void SetNeutron(float p, float cx, float cy, float cz);
 
   void CalcMissMass();
   float MM();
@@ -56,11 +68,22 @@ class Reaction {
   inline float W() { return _W; }
   inline float Q2() { return _Q2; }
 
-  inline bool TwoPion() { return (_hasE && _hasP && _hasPip && _hasPim); }
-  inline bool ProtonPim() { return (_hasE && _hasP && _hasPim && !_hasPip); }
-  inline bool SinglePip() { return (_hasE && _hasPip && !_hasP && !_hasPim); }
-  inline bool SingleP() { return (_hasE && _hasP && !_hasPip && !_hasPim); }
-  inline bool Single_pi() { return ((_numPip + _numPim) == 1 && _numP == 0); }
+  inline bool TwoPion() {
+    return ((_numPip == 1 && _numPim == 1) && (_hasE && !_hasP && _hasPip && _hasPim && !_hasNeutron && !_hasOther));
+  }
+  inline bool ProtonPim() {
+    return ((_numProt == 1 && _numPim == 1) && (_hasE && _hasP && !_hasPip && _hasPim && !_hasNeutron && !_hasOther));
+  }
+  inline bool SinglePip() {
+    return ((_numPip == 1) && (_hasE && !_hasP && _hasPip && !_hasPim && !_hasNeutron && !_hasOther));
+  }
+  inline bool SingleP() {
+    return ((_numProt == 1) && (_hasE && _hasP && !_hasPip && !_hasPim && !_hasNeutron && !_hasOther));
+  }
+  inline bool NeutronPip() {
+    return ((_numPip == 1 && _numNeutral == 1) &&
+            (_hasE && !_hasP && _hasPip && !_hasPim && _hasNeutron && !_hasOther));
+  }
 
   inline TLorentzVector e_mu() { return *_beam; }
   inline TLorentzVector e_mu_prime() { return *_elec; }

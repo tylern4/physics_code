@@ -147,6 +147,9 @@ class Branches {
   std::vector<int> lec();
   std::vector<int> ccst();
   std::vector<float> p();
+  std::vector<float> px();
+  std::vector<float> py();
+  std::vector<float> pz();
   std::vector<float> m();
   std::vector<int> q();
   std::vector<float> b();
@@ -222,6 +225,9 @@ class Branches {
   int lec(int i);
   int ccst(int i);
   float p(int i);
+  float px(int i);
+  float py(int i);
+  float pz(int i);
   float m(int i);
   int q(int i);
   float b(int i);

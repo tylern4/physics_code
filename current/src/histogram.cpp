@@ -159,10 +159,10 @@ void Histogram::Fill_P_PI0(float W, float Q2) {
   W_Ppi0->Fill(W);
   Q2_Ppi0->Fill(Q2);
 }
-void Histogram::Fill_single_pi_WQ2(float W, float Q2) {
-  WvsQ2_single_pi->Fill(W, Q2);
-  W_single_pi->Fill(W);
-  Q2_single_pi->Fill(Q2);
+void Histogram::Fill_NeutronPip_WQ2(float W, float Q2) {
+  WvsQ2_NeutronPip->Fill(W, Q2);
+  W_NeutronPip->Fill(W);
+  Q2_NeutronPip->Fill(Q2);
 }
 
 void Histogram::Fill_MM_WQ2(float W, float Q2) {
@@ -291,16 +291,16 @@ void Histogram::WvsQ2_Write() {
   Q2_pion->SetXTitle("Q^{2} (GeV^{2})");
   Q2_pion->Write();
 
-  WvsQ2_single_pi->SetXTitle("W (GeV)");
-  WvsQ2_single_pi->SetYTitle("Q^{2} (GeV^{2})");
-  WvsQ2_single_pi->SetOption("COLZ");
-  WvsQ2_single_pi->Write();
+  WvsQ2_NeutronPip->SetXTitle("W (GeV)");
+  WvsQ2_NeutronPip->SetYTitle("Q^{2} (GeV^{2})");
+  WvsQ2_NeutronPip->SetOption("COLZ");
+  WvsQ2_NeutronPip->Write();
 
-  W_single_pi->SetXTitle("W (GeV)");
-  W_single_pi->Write();
+  W_NeutronPip->SetXTitle("W (GeV)");
+  W_NeutronPip->Write();
 
-  Q2_single_pi->SetXTitle("Q^{2} (GeV^{2})");
-  Q2_single_pi->Write();
+  Q2_NeutronPip->SetXTitle("Q^{2} (GeV^{2})");
+  Q2_NeutronPip->Write();
 
   WvsQ2_single_proton->SetXTitle("W (GeV)");
   WvsQ2_single_proton->SetYTitle("Q^{2} (GeV^{2})");
@@ -358,6 +358,8 @@ void Histogram::MomVsBeta_Fill_pos(float P, float Beta) { MomVsBeta_hist_pos->Fi
 
 void Histogram::MomVsBeta_Fill_neg(float P, float Beta) { MomVsBeta_hist_neg->Fill(P, Beta); }
 
+void Histogram::MomVsBeta_Fill_neutral(float P, float Beta) { MomVsBeta_hist_neutral->Fill(P, Beta); }
+
 void Histogram::Fill_proton_ID_P(float p, float beta) { MomVsBeta_proton_ID->Fill(p, beta); }
 
 void Histogram::Fill_Pi_ID_P(float p, float beta) { MomVsBeta_Pi_ID->Fill(p, beta); }
@@ -365,7 +367,6 @@ void Histogram::Fill_Pi_ID_P(float p, float beta) { MomVsBeta_Pi_ID->Fill(p, bet
 void Histogram::Fill_proton_Pi_ID_P(float p, float beta) { MomVsBeta_proton_Pi_ID->Fill(p, beta); }
 
 void Histogram::MomVsBeta_Fill(float P, float Beta) {
-  // Energy_hist->Fill(Energy);
   MomVsBeta_hist->Fill(P, Beta);
   Mom->Fill(P);
 }
@@ -382,6 +383,10 @@ void Histogram::MomVsBeta_Write() {
   MomVsBeta_hist_neg->SetXTitle("Momentum (GeV)");
   MomVsBeta_hist_neg->SetYTitle("#beta");
   MomVsBeta_hist_neg->SetOption("COLZ");
+
+  MomVsBeta_hist_neutral->SetXTitle("Momentum (GeV)");
+  MomVsBeta_hist_neutral->SetYTitle("#beta");
+  MomVsBeta_hist_neutral->SetOption("COLZ");
   Mom->SetXTitle("Momentum (GeV)");
 
   MomVsBeta_proton_ID->SetXTitle("Momentum (GeV)");
@@ -403,6 +408,7 @@ void Histogram::MomVsBeta_Write() {
   MomVsBeta_hist->Write();
   MomVsBeta_hist_pos->Write();
   MomVsBeta_hist_neg->Write();
+  MomVsBeta_hist_neutral->Write();
   Mom->Write();
 
   photon_flux_hist->Write();

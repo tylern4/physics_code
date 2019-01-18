@@ -82,9 +82,10 @@ class Histogram {
   TH2D* WvsQ2_pion = new TH2D("WvsQ2_pion", "W vs Q^{2} #pi^{+} only", BINS, w_min, w_max, BINS, q2_min, q2_max);
   TH1D* W_pion = new TH1D("W_pion", "W #pi^{+} only", BINS, w_min, w_max);
   TH1D* Q2_pion = new TH1D("Q2_pion", "Q^{2} #pi^{+} only", BINS, q2_min, q2_max);
-  TH2D* WvsQ2_single_pi = new TH2D("WvsQ2_single_pi", "W vs Q^{2} #pi^{+}", BINS, w_min, w_max, BINS, q2_min, q2_max);
-  TH1D* W_single_pi = new TH1D("W_single_pi", "W #pi^{+}", BINS, w_min, w_max);
-  TH1D* Q2_single_pi = new TH1D("Q2_single_pi", "Q^{2} #pi^{+}", BINS, q2_min, q2_max);
+  TH2D* WvsQ2_NeutronPip =
+      new TH2D("WvsQ2_NeutronPip", "W vs Q^{2} N #pi^{+}", BINS, w_min, w_max, BINS, q2_min, q2_max);
+  TH1D* W_NeutronPip = new TH1D("W_NeutronPip", "W N #pi^{+}", BINS, w_min, w_max);
+  TH1D* Q2_NeutronPip = new TH1D("Q2_NeutronPip", "Q^{2} N #pi^{+}", BINS, q2_min, q2_max);
   TH2D* WvsQ2_MM = new TH2D("WvsQ2_MM", "W vs Q^{2} mm N cut", BINS, w_min, w_max, BINS, q2_min, q2_max);
   TH1D* W_MM = new TH1D("W_MM", "W mm N cut", BINS, w_min, w_max);
   TH1D* Q2_MM = new TH1D("Q2_MM", "Q^{2} mm N cut", BINS, q2_min, q2_max);
@@ -126,6 +127,8 @@ class Histogram {
       new TH2D("MomVsBeta_pos", "Momentum versus #beta Positive", BINS, p_min, p_max, BINS, b_min, b_max);
   TH2D* MomVsBeta_hist_neg =
       new TH2D("MomVsBeta_neg", "Momentum versus #beta Negative", BINS, p_min, p_max, BINS, b_min, b_max);
+  TH2D* MomVsBeta_hist_neutral =
+      new TH2D("MomVsBeta_Fill_neutral", "Momentum versus #beta neutral", BINS, p_min, p_max, BINS, b_min, b_max);
   TH1D* Mom = new TH1D("Momentum", "Momentum", BINS, 0, 2.5);
   TH1D* Energy_hist = new TH1D("Energy_hist", "Energy_hist", BINS, 0.0, 2.5);
   TH2D* MomVsBeta_proton_ID =
@@ -275,7 +278,7 @@ class Histogram {
   // W and Q^2
   void Fill_proton_WQ2(float W, float Q2);
   void Fill_P_PI0(float W, float Q2);
-  void Fill_single_pi_WQ2(float W, float Q2);
+  void Fill_NeutronPip_WQ2(float W, float Q2);
   void Fill_MM_WQ2(float W, float Q2);
   void Fill_channel_WQ2(float W, float Q2, TLorentzVector e_prime, float mm, float mm2, int sec);
   void Fill_single_proton_WQ2(float W, float Q2);
@@ -287,6 +290,7 @@ class Histogram {
   // P and E
   void MomVsBeta_Fill_pos(float P, float Beta);
   void MomVsBeta_Fill_neg(float P, float Beta);
+  void MomVsBeta_Fill_neutral(float P, float Beta);
   void Fill_proton_ID_P(float p, float beta);
   void Fill_Pi_ID_P(float p, float beta);
   void Fill_proton_Pi_ID_P(float p, float beta);

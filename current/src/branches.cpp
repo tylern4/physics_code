@@ -204,6 +204,27 @@ float Branches::p(int i) {
     return std::nanf("NULL");
   }
 }  // [gpart]
+float Branches::px(int i) {
+  if (i < _gpart) {
+    return _p[i] * _cx[i];
+  } else {
+    return std::nanf("NULL");
+  }
+}  // [gpart]
+float Branches::py(int i) {
+  if (i < _gpart) {
+    return _p[i] * _cy[i];
+  } else {
+    return std::nanf("NULL");
+  }
+}  // [gpart]
+float Branches::pz(int i) {
+  if (i < _gpart) {
+    return _p[i] * _cz[i];
+  } else {
+    return std::nanf("NULL");
+  }
+}  // [gpart]
 float Branches::m(int i) {
   if (i < _gpart) {
     return _m[i];
@@ -718,6 +739,24 @@ std::vector<float> Branches::p() {
   // [gpart]
   std::vector<float> v(_gpart);
   for (int i = 0; i < _gpart; i++) v[i] = _p[i];
+  return v;
+}
+std::vector<float> Branches::px() {
+  // [gpart]
+  std::vector<float> v(_gpart);
+  for (int i = 0; i < _gpart; i++) v[i] = _p[i] * _cx[i];
+  return v;
+}
+std::vector<float> Branches::py() {
+  // [gpart]
+  std::vector<float> v(_gpart);
+  for (int i = 0; i < _gpart; i++) v[i] = _p[i] * _cy[i];
+  return v;
+}
+std::vector<float> Branches::pz() {
+  // [gpart]
+  std::vector<float> v(_gpart);
+  for (int i = 0; i < _gpart; i++) v[i] = _p[i] * _cz[i];
   return v;
 }
 std::vector<float> Branches::m() {

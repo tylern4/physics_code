@@ -22,6 +22,7 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
     chain->GetEntry(current_event);
     auto check = std::make_unique<Cuts>(data);
     if (!check->isElecctron()) continue;
+    if (data->ec_ei(0) < 0.01 || data->ec_eo(0) < 0.01) continue;
 
     hists->EC_inout(data->ec_ei(0), data->ec_eo(0));
     hists->EC_fill(data->etot(0), data->p(0));
@@ -83,14 +84,22 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
             hists->Fill_hadron_fid(theta, phi, sector, PROTON);
             hists->Fill_proton_WQ2(event->W(), event->Q2());
             hists->Fill_proton_ID_P(data->p(part_num), data->b(part_num));
-          }
+          } else
+            event->SetOther(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num),
+                            data->id(part_num));
 
         } else if (data->q(part_num) == NEGATIVE) {
           hists->MomVsBeta_Fill_neg(data->p(part_num), data->b(part_num));
           if (check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num))) {
             hists->Fill_hadron_fid(theta, phi, sector, PIM);
             event->SetPim(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num));
-          }
+          } else
+            event->SetOther(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num),
+                            data->id(part_num));
+        } else if (data->q(part_num) == 0) {
+          hists->MomVsBeta_Fill_neutral(data->p(part_num), data->b(part_num));
+          event->SetOther(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num),
+                          data->id(part_num));
         }
       }
 
@@ -110,7 +119,7 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
         hists->EC_cut_fill(data->etot(0), data->p(0));
         hists->Fill_E_Prime_channel(event->e_mu_prime());
       }
-      if (event->Single_pi()) hists->Fill_single_pi_WQ2(event->W(), event->Q2());
+      if (event->NeutronPip()) hists->Fill_NeutronPip_WQ2(event->W(), event->Q2());
       if (event->SingleP()) {
         hists->Fill_single_proton_WQ2(event->W(), event->Q2());
         hists->Fill_Missing_Mass_pi0(event->MM(), event->MM2());
