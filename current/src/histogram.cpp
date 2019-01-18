@@ -63,6 +63,9 @@ void Histogram::Write(std::string output_file) {
   TDirectory *WvsQ2_folder = RootOutputFile->mkdir("W vs Q2");
   WvsQ2_folder->cd();
   WvsQ2_Write();
+  TDirectory *WvsQ2_sec_folder = RootOutputFile->mkdir("W_vs_Q2_sec");
+  WvsQ2_sec_folder->cd();
+  WvsQ2_sec_Write();
   TDirectory *W_Q2_binned = RootOutputFile->mkdir("W_Q2_binned");
   W_Q2_binned->cd();
   WvsQ2_binned_Write();
@@ -128,12 +131,32 @@ void Histogram::Write(std::string output_file) {
 
 // W and Q^2
 void Histogram::makeHists_WvsQ2() {
-  for (int y = 0; y < Q2_BINS; y++) {
+  for (short sec = 0; sec < NUM_SECTORS; sec++) {
+    sprintf(hname, "W_vs_Q2_sec_%d", sec + 1);
+    sprintf(htitle, "W vs Q^{2} Sector: %d", sec + 1);
+    WvsQ2_sec[sec] = new TH2D(hname, htitle, BINS, w_min, w_max, BINS, q2_min, q2_max);
+
+    sprintf(hname, "W_sec_%d", sec + 1);
+    sprintf(htitle, "W Sector: %d", sec + 1);
+    W_sec[sec] = new TH1D(hname, htitle, BINS, w_min, w_max);
+  }
+
+  for (short sec = 0; sec < NUM_SECTORS; sec++) {
+    sprintf(hname, "W_vs_Q2_channel_sec_%d", sec + 1);
+    sprintf(htitle, "W vs Q^{2} N #pi^{+} Sector: %d", sec + 1);
+    WvsQ2_channel_sec[sec] = new TH2D(hname, htitle, BINS, w_min, w_max, BINS, q2_min, q2_max);
+
+    sprintf(hname, "W_channel_sec_%d", sec + 1);
+    sprintf(htitle, "W N #pi^{+} Sector: %d", sec + 1);
+    W_channel_sec[sec] = new TH1D(hname, htitle, BINS, w_min, w_max);
+  }
+
+  for (short y = 0; y < Q2_BINS; y++) {
     sprintf(hname, "W_%0.3f_%0.3f", q2_binned_min + (Q2_width * y), q2_binned_min + (Q2_width * (y + 1)));
     sprintf(htitle, "W hist\nQ^{2} %0.3f %0.3f", q2_binned_min + (Q2_width * y), q2_binned_min + (Q2_width * (y + 1)));
     W_binned[y] = new TH1D(hname, htitle, BINS, w_binned_min, w_binned_max);
   }
-  for (int x = 0; x < W_BINS; x++) {
+  for (short x = 0; x < W_BINS; x++) {
     sprintf(hname, "Q2_%0.3f_%0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
     sprintf(htitle, "Q^{2} hist\nW %0.3f %0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
     Q2_binned[x] = new TH1D(hname, htitle, BINS, q2_binned_min, q2_binned_max);
@@ -171,7 +194,7 @@ void Histogram::Fill_MM_WQ2(float W, float Q2) {
   Q2_MM->Fill(Q2);
 }
 
-void Histogram::Fill_channel_WQ2(float W, float Q2, TLorentzVector e_prime, float mm, float mm2, int sec) {
+void Histogram::Fill_channel_WQ2(float W, float Q2, int sector, TLorentzVector e_prime, float mm, float mm2) {
   /*
   float x_pip_N[NDIMS_PIP_N];
   x_pip_N[0] = W;
@@ -192,6 +215,9 @@ void Histogram::Fill_channel_WQ2(float W, float Q2, TLorentzVector e_prime, floa
   WvsQ2_channel->Fill(W, Q2);
   W_channel->Fill(W);
   Q2_channel->Fill(Q2);
+
+  WvsQ2_channel_sec[sector - 1]->Fill(W, Q2);
+  W_channel_sec[sector - 1]->Fill(W);
 
   WvsQ2_binned->Fill(W, Q2);
 
@@ -216,10 +242,12 @@ void Histogram::Fill_single_proton_WQ2(float W, float Q2) {
   Q2_single_proton->Fill(Q2);
 }
 
-void Histogram::WvsQ2_Fill(float W, float Q2) {
+void Histogram::WvsQ2_Fill(float W, float Q2, int sector) {
   WvsQ2_hist->Fill(W, Q2);
   W_hist->Fill(W);
   Q2_hist->Fill(Q2);
+  WvsQ2_sec[sector - 1]->Fill(W, Q2);
+  W_sec[sector - 1]->Fill(W);
 }
 
 void Histogram::Fill_pion_WQ2(float W, float Q2) {
@@ -334,6 +362,71 @@ void Histogram::WvsQ2_Write() {
 
   Q2_MM->SetXTitle("Q^{2} (GeV^{2})");
   Q2_MM->Write();
+}
+
+void Histogram::WvsQ2_sec_Write() {
+  for (short sec = 0; sec < NUM_SECTORS; sec++) {
+    WvsQ2_channel_sec[sec]->SetXTitle("W (GeV)");
+    WvsQ2_channel_sec[sec]->SetYTitle("Q^{2} (GeV^{2})");
+    WvsQ2_channel_sec[sec]->SetOption("COLZ");
+    WvsQ2_channel_sec[sec]->Write();
+  }
+  for (short sec = 0; sec < NUM_SECTORS; sec++) {
+    W_channel_sec[sec]->SetXTitle("W (GeV)");
+    W_channel_sec[sec]->Write();
+  }
+
+  auto canWQ2_channel = std::make_unique<TCanvas>("w_q2_sec_channel_can", "W vs Q2 N #pi^{+} Sec", 1600, 900);
+  canWQ2_channel->Divide(2, 3);
+  for (short sec = 0; sec < NUM_SECTORS; sec++) {
+    canWQ2_channel->cd(sec + 1);
+    WvsQ2_channel_sec[sec]->SetXTitle("W (GeV)");
+    WvsQ2_channel_sec[sec]->SetYTitle("Q^{2} (GeV^{2})");
+    WvsQ2_channel_sec[sec]->SetOption("COLZ");
+    WvsQ2_channel_sec[sec]->Draw();
+  }
+  canWQ2_channel->Write();
+
+  auto canW_channel = std::make_unique<TCanvas>("w_channel_sec_can", "W Sec", 1600, 900);
+  canW_channel->Divide(2, 3);
+  for (short sec = 0; sec < NUM_SECTORS; sec++) {
+    canW_channel->cd(sec + 1);
+    W_channel_sec[sec]->SetXTitle("W (GeV)");
+    W_channel_sec[sec]->Draw();
+  }
+  canW_channel->Write();
+
+  for (short sec = 0; sec < NUM_SECTORS; sec++) {
+    WvsQ2_sec[sec]->SetXTitle("W (GeV)");
+    WvsQ2_sec[sec]->SetYTitle("Q^{2} (GeV^{2})");
+    WvsQ2_sec[sec]->SetOption("COLZ");
+    WvsQ2_sec[sec]->Write();
+  }
+
+  for (short sec = 0; sec < NUM_SECTORS; sec++) {
+    W_sec[sec]->SetXTitle("W (GeV)");
+    W_sec[sec]->Write();
+  }
+
+  auto canWQ2 = std::make_unique<TCanvas>("w_q2_sec_can", "W vs Q2 Sec", 1600, 900);
+  canWQ2->Divide(2, 3);
+  for (short sec = 0; sec < NUM_SECTORS; sec++) {
+    canWQ2->cd(sec + 1);
+    WvsQ2_sec[sec]->SetXTitle("W (GeV)");
+    WvsQ2_sec[sec]->SetYTitle("Q^{2} (GeV^{2})");
+    WvsQ2_sec[sec]->SetOption("COLZ");
+    WvsQ2_sec[sec]->Draw();
+  }
+  canWQ2->Write();
+
+  auto canW = std::make_unique<TCanvas>("w_sec_can", "W Sec", 1600, 900);
+  canW->Divide(2, 3);
+  for (short sec = 0; sec < NUM_SECTORS; sec++) {
+    canW->cd(sec + 1);
+    W_sec[sec]->SetXTitle("W (GeV)");
+    W_sec[sec]->Draw();
+  }
+  canW->Write();
 }
 
 void Histogram::WvsQ2_binned_Write() {

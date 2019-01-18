@@ -72,6 +72,13 @@ class Histogram {
 
   TH2D* WvsQ2_hist = new TH2D("WvsQ2_hist", "W vs Q^{2}", BINS, w_min, w_max, BINS, q2_min, q2_max);
   TH1D* W_hist = new TH1D("W", "W", BINS, w_min, w_max);
+
+  TH2D* WvsQ2_sec[NUM_SECTORS];
+  TH1D* W_sec[NUM_SECTORS];
+
+  TH2D* WvsQ2_channel_sec[NUM_SECTORS];
+  TH1D* W_channel_sec[NUM_SECTORS];
+
   TH1D* Q2_hist = new TH1D("Q2", "Q^{2}", BINS, q2_min, q2_max);
   TH1D* E_prime_hist = new TH1D("E_prime", "Scattered Electron Energy", BINS, 0.0, 5.0);
   TH1D* photon_flux_hist = new TH1D("photon_flux", "Photon Flux", BINS, -0.1, 0.1);
@@ -280,11 +287,12 @@ class Histogram {
   void Fill_P_PI0(float W, float Q2);
   void Fill_NeutronPip_WQ2(float W, float Q2);
   void Fill_MM_WQ2(float W, float Q2);
-  void Fill_channel_WQ2(float W, float Q2, TLorentzVector e_prime, float mm, float mm2, int sec);
+  void Fill_channel_WQ2(float W, float Q2, int sector, TLorentzVector e_prime, float mm, float mm2);
   void Fill_single_proton_WQ2(float W, float Q2);
-  void WvsQ2_Fill(float W, float Q2);
+  void WvsQ2_Fill(float W, float Q2, int sector);
   void Fill_pion_WQ2(float W, float Q2);
   void WvsQ2_Write();
+  void WvsQ2_sec_Write();
   void WvsQ2_binned_Write();
 
   // P and E

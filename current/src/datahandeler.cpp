@@ -31,8 +31,8 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
     hists->CC_fill(data->cc_sect(0), (data->cc_segm(0) % 1000) / 10, data->cc_segm(0) / 1000 - 1, data->nphe(0),
                    theta_cc);
 
-    auto event = std::make_unique<Reaction>();
-    event->SetElec(data->p(0), data->cx(0), data->cy(0), data->cz(0));
+    auto event = std::make_unique<Reaction>(data->p(0), data->cx(0), data->cy(0), data->cz(0));
+
     hists->Fill_E_Prime_fid(event->e_mu_prime());
     hists->Fill_E_Prime(event->e_mu_prime());
 
@@ -59,7 +59,7 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
       auto photon_flux = std::make_unique<PhotonFlux>(event->e_mu(), event->e_mu_prime());
       hists->Photon_flux_Fill(photon_flux->GetVirtualPhotonFlux());
 
-      hists->WvsQ2_Fill(event->W(), event->Q2());
+      hists->WvsQ2_Fill(event->W(), event->Q2(), data->ec_sect(0));
 
       for (int part_num = 1; part_num < data->gpart(); part_num++) {
         theta = physics::theta_calc(data->cz(part_num));
@@ -114,7 +114,8 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
       mm_cut &= (event->MM() > 0.911698);
       if (mm_cut) hists->Fill_MM_WQ2(event->W(), event->Q2());
       if (event->SinglePip() && mm_cut) {
-        hists->Fill_channel_WQ2(event->W(), event->Q2(), event->e_mu_prime(), event->MM(), event->MM2(), sector);
+        hists->Fill_channel_WQ2(event->W(), event->Q2(), data->ec_sect(0), event->e_mu_prime(), event->MM(),
+                                event->MM2());
         hists->Fill_Missing_Mass_strict(event->MM(), event->MM2());
         hists->EC_cut_fill(data->etot(0), data->p(0));
         hists->Fill_E_Prime_channel(event->e_mu_prime());
