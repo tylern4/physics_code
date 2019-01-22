@@ -55,7 +55,10 @@ static const double MASS_OMEGA = 0.78265;
 // p_min(in MeV) = 214 + 2.47 × EC_threshold(in mV)
 static const double MIN_P_CUT = 0.005000;
 
-const double min_phi[6] = {0, 60, 120, -180, -120, -60};
-const double max_phi[6] = {60, 120, 180, -120, -60, 0};
+// const double min_phi[6] = {0, 60, 120, -180, -120, -60};
+// const double max_phi[6] = {60, 120, 180, -120, -60, 0};
+
+const double min_phi[6] = {60, 0, -60, -120, -180, 120};
+const double max_phi[6] = {120, 60, 0, -60, -120, 180};
 
 #endif

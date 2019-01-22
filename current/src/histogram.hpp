@@ -31,6 +31,8 @@
 #define BINS 500
 #define BINS_MM 300
 
+#define FID_SLICES 10
+
 class Histogram {
  private:
  public:
@@ -215,15 +217,14 @@ class Histogram {
   float phi_min = -360 / 2.0;
   float phi_max = 360 / 2.0;
 
-  static const int fid_slices = 10;
   static const int start_slice = 0;
-  std::vector<TH2D*> electron_fid_sec_hist;
-  TH1D* electron_fid_sec_slice[NUM_SECTORS][fid_slices];
+  TH2D* electron_fid_sec_hist[NUM_SECTORS];
+  TH1D* electron_fid_sec_slice[NUM_SECTORS][FID_SLICES];
   TH2D* electron_fid_hist =
       new TH2D("electron_fid", "electron_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
 
   TH2D* hadron_fid_sec_hist[3][NUM_SECTORS];
-  TH1D* hadron_fid_sec_slice[NUM_SECTORS][fid_slices];
+  TH1D* hadron_fid_sec_slice[NUM_SECTORS][FID_SLICES];
   TH2D* hadron_fid_hist[3];
   // fiducial
 

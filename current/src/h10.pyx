@@ -3,12 +3,12 @@ from libcpp.vector cimport vector
 from libcpp.string cimport string
 from libcpp cimport bool
 from cpython cimport array
+from libc.stdlib cimport free
 import numpy as np
 cimport numpy as np
 import array
 
 cdef dict get_id = {'PROTON': 2212, 'NEUTRON': 2112, 'PIP': 211, 'PIM': -211, 'PI0': 111, 'KP': 321, 'KM': -321, 'PHOTON': 22, 'ELECTRON': 11}
-
 cdef dict part_mass = {11: 0.000511, 211: 0.13957, -211: 0.13957, 2212: 0.93827, 2112: 0.939565, 321: 0.493667, -321: 0.493667, 22: 0}
 
 cdef extern from "TChain.h":
@@ -24,7 +24,7 @@ cdef extern from "TLorentzVector.h":
     TLorentzVector(double x, double y, double z, double t) except +
     void Boost(double, double, double)
     void SetXYZM(double x, double y, double z, double m)
-    void SetXYZT (double x, double y, double z, double t)
+    void SetXYZT(double x, double y, double z, double t)
     double Px()
     double Py()
     double Pz()
@@ -96,7 +96,7 @@ cdef class LorentzVector:
     else:
       self.c_TLorentzVector = new TLorentzVector(px, py, pz, 0)
   def __dealloc__(self):
-    del self.c_TLorentzVector
+    free(self.c_TLorentzVector)
   def __add__(LorentzVector self, LorentzVector other):
     cdef double X = self.c_TLorentzVector.Px() + other.c_TLorentzVector.Px()
     cdef double Y = self.c_TLorentzVector.Py() + other.c_TLorentzVector.Py()
@@ -395,6 +395,9 @@ cdef class h10:
     self.c_chain = new TChain(str_to_char(branch_name))
     self.c_chain.Add(str_to_char(file_name))
     self.c_branches = new Branches(self.c_chain, MC)
+  def __dealloc__(self):
+    free(self.c_chain)
+    free(self.c_branches)
   def add(self, file_name):
     self.c_chain.Add(str_to_char(file_name))
   @property
@@ -639,3 +642,6 @@ cdef class h10:
   @property
   def qpart(self):
     return np.array(self.c_branches.qpart())
+
+
+#class Event:

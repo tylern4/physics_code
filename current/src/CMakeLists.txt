@@ -18,7 +18,7 @@ include(${ROOT_USE_FILE})
 add_library(physics SHARED
   photon_flux.cpp
   branches.cpp
-  Particle.cpp
+  particle.cpp
   func.cpp
   datahandeler.cpp
   datahandeler_mc.cpp
@@ -30,9 +30,7 @@ add_library(physics SHARED
   fits.cpp
   glob_files.cpp
   missing_mass.cpp
-  Event.cpp
   delta_t.cpp
-  #makeHeader.cpp
   reaction.cpp
   )
 

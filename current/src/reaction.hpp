@@ -10,6 +10,7 @@
 #include <map>
 #include "TLorentzVector.h"
 #include "constants.hpp"
+#include "particle.hpp"
 #include "physics.hpp"
 
 class Reaction {
@@ -27,6 +28,16 @@ class Reaction {
   std::unique_ptr<TLorentzVector> _pim;
   std::unique_ptr<TLorentzVector> _other;
   std::unique_ptr<TLorentzVector> _neutron;
+
+  std::unique_ptr<Particle> _beam_particle;
+  std::unique_ptr<Particle> _elec_particle;
+  std::unique_ptr<Particle> _gamma_particle;
+  std::unique_ptr<Particle> _target_particle;
+  std::unique_ptr<Particle> _prot_particle;
+  std::unique_ptr<Particle> _pip_particle;
+  std::unique_ptr<Particle> _pim_particle;
+  std::unique_ptr<Particle> _other_particle;
+  std::unique_ptr<Particle> _neutron_particle;
 
   bool _hasE = false;
   bool _hasP = false;

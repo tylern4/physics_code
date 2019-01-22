@@ -65,20 +65,20 @@ double physics::center_phi_calc(double cosx, double cosy) {
 }
 
 int physics::get_sector(double phi) {
-  if (phi >= 0 && phi < 60) {
-    return 0;
-  } else if (phi >= 60 && phi < 120) {
+  if (phi >= 60 && phi < 120) {
     return 1;
-  } else if (phi >= 120 && phi <= 180) {
+  } else if (phi >= 0 && phi < 60) {
     return 2;
-  } else if (phi >= -180 && phi < -120) {
+  } else if (phi >= -60 && phi < 0) {
     return 3;
   } else if (phi >= -120 && phi < -60) {
     return 4;
-  } else if (phi >= -60 && phi < 0) {
+  } else if (phi >= -180 && phi < -120) {
     return 5;
+  } else if (phi >= 120 && phi < 180) {
+    return 6;
   } else {
-    return (int)std::nan("0");
+    return (int)NULL;
   }
 }
 

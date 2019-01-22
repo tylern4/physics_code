@@ -13,8 +13,6 @@
 #include <string>
 #include <thread>
 #include <vector>
-#include "Event.hpp"
-#include "Particle.hpp"
 #include "TChain.h"
 #include "color.hpp"
 #include "constants.hpp"
@@ -22,6 +20,7 @@
 #include "delta_t.hpp"
 #include "histogram.hpp"
 #include "missing_mass.hpp"
+#include "particle.hpp"
 #include "photon_flux.hpp"
 #include "physics.hpp"
 #include "reaction.hpp"

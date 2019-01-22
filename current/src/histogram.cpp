@@ -1071,12 +1071,11 @@ void Histogram::CC_canvas() {
 }
 
 void Histogram::makeHists_fid() {
-  electron_fid_sec_hist.reserve(NUM_SECTORS);
   for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
     sprintf(hname, "electron_fid_sec%d", sec_i + 1);
     sprintf(htitle, "electron_fid_sec%d", sec_i + 1);
     electron_fid_sec_hist[sec_i] =
-        new TH2D(hname, htitle, 100, theta_min, theta_max, 100, min_phi[sec_i], max_phi[sec_i]);
+        new TH2D(hname, htitle, 100, min_phi[sec_i], max_phi[sec_i], 100, theta_min, theta_max);
 
     for (int t = 0; t < 3; t++) {
       sprintf(hname, "hadron_fid_sec%d_%d", sec_i + 1, t);
@@ -1089,33 +1088,33 @@ void Histogram::makeHists_fid() {
 
 void Histogram::Fill_electron_fid(float theta, float phi, int sector) {
   electron_fid_hist->Fill(phi, theta);
-  electron_fid_sec_hist[sector]->Fill(theta, phi);
+  electron_fid_sec_hist[sector - 1]->Fill(phi, theta);
 }
 
 void Histogram::Fill_hadron_fid(float theta, float phi, int sector, int id) {
   if (id == PROTON) {
     hadron_fid_hist[0]->Fill(phi, theta);
-    hadron_fid_sec_hist[0][sector]->Fill(phi, theta);
+    hadron_fid_sec_hist[0][sector - 1]->Fill(phi, theta);
     hadron_fid_hist[1]->Fill(phi, theta);
-    hadron_fid_sec_hist[1][sector]->Fill(phi, theta);
+    hadron_fid_sec_hist[1][sector - 1]->Fill(phi, theta);
   } else if (id == PIP) {
     hadron_fid_hist[0]->Fill(phi, theta);
-    hadron_fid_sec_hist[0][sector]->Fill(phi, theta);
+    hadron_fid_sec_hist[0][sector - 1]->Fill(phi, theta);
     hadron_fid_hist[2]->Fill(phi, theta);
-    hadron_fid_sec_hist[2][sector]->Fill(phi, theta);
+    hadron_fid_sec_hist[2][sector - 1]->Fill(phi, theta);
   }
 }
 
 void Histogram::Fid_Write() {
-  float slice_width = ((float)100 / (float)fid_slices);
+  float slice_width = ((float)100 / (float)FID_SLICES);
   float y_width = (60.0 / (float)100);
-  std::unique_ptr<Fits> SliceFit[NUM_SECTORS][fid_slices];
+  std::unique_ptr<Fits> SliceFit[NUM_SECTORS][FID_SLICES];
   TGraph *fid[NUM_SECTORS];
   std::unique_ptr<Fits> FidGraph[NUM_SECTORS];
 
   TCanvas *electron_fid_can[NUM_SECTORS];
-  float x[fid_slices * 2];
-  float y[fid_slices * 2];
+  float x[FID_SLICES * 2];
+  float y[FID_SLICES * 2];
 
   electron_fid_hist->SetYTitle("#theta");
   electron_fid_hist->SetXTitle("#phi");
@@ -1138,7 +1137,7 @@ void Histogram::Fid_Write() {
     sprintf(hname, "electron_fid_sector_%d", sec_i + 1);
     sprintf(htitle, "electron_fid_sector_%d", sec_i + 1);
     electron_fid_can[sec_i] = new TCanvas(hname, htitle, 1280, 720);
-    for (int slice = start_slice; slice < fid_slices; slice++) {
+    for (int slice = start_slice; slice < FID_SLICES; slice++) {
       sprintf(hname, "electron_fid_sec_%d_%d", sec_i + 1, slice + 1);
       electron_fid_sec_slice[sec_i][slice] = (TH1D *)electron_fid_sec_hist[sec_i]->ProjectionY(
           hname, slice_width * slice, slice_width * slice + (slice_width - 1));
@@ -1150,17 +1149,17 @@ void Histogram::Fid_Write() {
 
       if (SliceFit[sec_i][slice]->Get_left_edge() == SliceFit[sec_i][slice]->Get_left_edge() &&
           SliceFit[sec_i][slice]->Get_right_edge() == SliceFit[sec_i][slice]->Get_right_edge()) {
-        x[slice + fid_slices] = y_width * slice_width * slice;
-        y[slice + fid_slices] = SliceFit[sec_i][slice]->Get_left_edge();
+        x[slice + FID_SLICES] = y_width * slice_width * slice;
+        y[slice + FID_SLICES] = SliceFit[sec_i][slice]->Get_left_edge();
         x[slice] = y_width * slice_width * slice;
         y[slice] = SliceFit[sec_i][slice]->Get_right_edge();
 
-        // std::cout << sec_i + 1 << "," << y[slice] << "," << x[slice + fid_slices] << '\n';
+        // std::cout << sec_i + 1 << "," << y[slice] << "," << x[slice + FID_SLICES] << '\n';
         // std::cout << sec_i + 1 << "," << y[slice] << "," << x[slice] << '\n';
       }
     }
 
-    fid[sec_i] = new TGraph(fid_slices * 2, x, y);
+    fid[sec_i] = new TGraph(FID_SLICES * 2, x, y);
     FidGraph[sec_i] = std::make_unique<Fits>();
 
     FidGraph[sec_i]->Set_min(min_phi[sec_i]);
@@ -1169,8 +1168,8 @@ void Histogram::Fid_Write() {
     // FidGraph[sec_i]->FitPoly_fid(fid[sec_i]);
 
     electron_fid_can[sec_i]->cd();
-    electron_fid_sec_hist[sec_i]->SetYTitle("#phi");
-    electron_fid_sec_hist[sec_i]->SetXTitle("#theta");
+    electron_fid_sec_hist[sec_i]->SetXTitle("#phi");
+    electron_fid_sec_hist[sec_i]->SetYTitle("#theta");
     electron_fid_sec_hist[sec_i]->SetOption("COLZ");
     electron_fid_sec_hist[sec_i]->Draw();
     fid[sec_i]->Draw("*same");
@@ -1186,9 +1185,9 @@ void Histogram::fid_canvas() {
   for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
     sprintf(can_name, "Electron Fid Sector %d Slices", sec_i + 1);
     can[sec_i] = new TCanvas(can_name, can_name, 1600, 900);
-    can[sec_i]->Divide(10, (fid_slices - 10) / 10);
+    can[sec_i]->Divide(10, (FID_SLICES - 10) / 10);
     int x = 1;
-    for (int slice = start_slice; slice < fid_slices; slice++) {
+    for (int slice = start_slice; slice < FID_SLICES; slice++) {
       can[sec_i]->cd(x++);
       electron_fid_sec_slice[sec_i][slice]->Draw("same");
     }

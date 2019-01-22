@@ -53,7 +53,7 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
 
       float theta = physics::theta_calc(data->cz(0));
       float phi = physics::phi_calc(data->cx(0), data->cy(0));
-      int sector = physics::get_sector(phi);
+      int sector = data->dc_sect(0);
       hists->Fill_electron_fid(theta, phi, sector);
 
       auto photon_flux = std::make_unique<PhotonFlux>(event->e_mu(), event->e_mu_prime());
@@ -64,7 +64,8 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
       for (int part_num = 1; part_num < data->gpart(); part_num++) {
         theta = physics::theta_calc(data->cz(part_num));
         phi = physics::phi_calc(data->cx(part_num), data->cy(part_num));
-        sector = physics::get_sector(phi);
+        sector = data->dc_sect(part_num);
+
         hists->Fill_Target_Vertex(data->vx(part_num), data->vy(part_num), data->vz(part_num));
         hists->MomVsBeta_Fill(data->p(part_num), data->b(part_num));
 
@@ -110,17 +111,20 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
         hists->Fill_W_Missing_Mass(event->W(), event->MM(), event->MM2());
       }
       bool mm_cut = true;
-      mm_cut &= (event->MM() < 1.00091);
-      mm_cut &= (event->MM() > 0.911698);
+      // mm_cut &= (event->MM() < 1.2);
+      // mm_cut &= (event->MM() > 0.8);
+
+      mm_cut &= (event->MM() < 0.987669);
+      mm_cut &= (event->MM() > 0.923374);
       if (mm_cut) hists->Fill_MM_WQ2(event->W(), event->Q2());
-      if (event->SinglePip() && mm_cut) {
+      if ((event->SinglePip() || event->NeutronPip()) && mm_cut) {
         hists->Fill_channel_WQ2(event->W(), event->Q2(), data->ec_sect(0), event->e_mu_prime(), event->MM(),
                                 event->MM2());
         hists->Fill_Missing_Mass_strict(event->MM(), event->MM2());
         hists->EC_cut_fill(data->etot(0), data->p(0));
         hists->Fill_E_Prime_channel(event->e_mu_prime());
       }
-      if (event->NeutronPip()) hists->Fill_NeutronPip_WQ2(event->W(), event->Q2());
+      if ((event->SinglePip() || event->NeutronPip())) hists->Fill_NeutronPip_WQ2(event->W(), event->Q2());
       if (event->SingleP()) {
         hists->Fill_single_proton_WQ2(event->W(), event->Q2());
         hists->Fill_Missing_Mass_pi0(event->MM(), event->MM2());

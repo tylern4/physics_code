@@ -50,14 +50,6 @@ IF(Cython_FOUND)
   set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${EXTRA_FLAGS}" )
   include_directories(${PYTHON_INCLUDE_DIRS} ${PYTHON_NUMPY_INCLUDE_DIR} ${NumPy_INCLUDE_DIR})
 
-  # Python DataHandeler
-  add_cython_target(handeler src/handeler.pyx CXX PY3 OUTPUT_VAR _handeler)
-  add_library(handeler MODULE ${_handeler})
-  python_extension_module(handeler)
-  target_link_libraries(handeler physics ${PYTHON_LIBRARIES} ${ROOT_LIBRARIES})
-  install(TARGETS handeler
-          LIBRARY DESTINATION lib)
-
   # Python Skim
   add_cython_target(skim src/skim.pyx CXX PY3 OUTPUT_VAR _skim)
   add_library(skim MODULE ${_skim})
