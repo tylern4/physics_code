@@ -36,17 +36,14 @@ void mcHandeler::Run(std::string fin, mcHistogram *hists) {
     auto check = std::make_unique<Cuts>(data);
     if (!check->isElecctron()) continue;
 
-    auto event = std::make_unique<Reaction>();
-    auto mc_event = std::make_unique<Reaction>();
-    event->SetElec(data->p(0), data->cx(0), data->cy(0), data->cz(0));
-    mc_event->SetElec(data->p(0), data->cx(0), data->cy(0), data->cz(0));
+    auto event = std::make_unique<Reaction>(data);
+    auto mc_event = std::make_unique<Reaction>(data);
     hists->Fill_P(data);
     hists->Fill_WQ2(event->W(), event->Q2());
     hists->Fill_WQ2_MC(mc_event->W(), mc_event->Q2());
 
     for (int part_num = 1; part_num < data->gpart(); part_num++) {
-      if (data->pidpart(part_num) == PIP)
-        event->SetPip(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num));
+      if (data->pidpart(part_num) == PIP) event->SetPip(part_num);
     }
     hists->Fill_Missing_Mass(event->MM(), event->MM2());
   }

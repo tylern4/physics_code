@@ -9,6 +9,7 @@
 #include <iostream>
 #include <map>
 #include "TLorentzVector.h"
+#include "branches.hpp"
 #include "constants.hpp"
 #include "particle.hpp"
 #include "physics.hpp"
@@ -29,15 +30,18 @@ class Reaction {
   std::unique_ptr<TLorentzVector> _other;
   std::unique_ptr<TLorentzVector> _neutron;
 
-  std::unique_ptr<Particle> _beam_particle;
-  std::unique_ptr<Particle> _elec_particle;
-  std::unique_ptr<Particle> _gamma_particle;
-  std::unique_ptr<Particle> _target_particle;
-  std::unique_ptr<Particle> _prot_particle;
-  std::unique_ptr<Particle> _pip_particle;
-  std::unique_ptr<Particle> _pim_particle;
-  std::unique_ptr<Particle> _other_particle;
-  std::unique_ptr<Particle> _neutron_particle;
+  /*
+    std::unique_ptr<Particle> _beam_particle;
+    std::unique_ptr<Particle> _elec_particle;
+    std::unique_ptr<Particle> _gamma_particle;
+    std::unique_ptr<Particle> _target_particle;
+    std::unique_ptr<Particle> _prot_particle;
+    std::unique_ptr<Particle> _pip_particle;
+    std::unique_ptr<Particle> _pim_particle;
+    std::unique_ptr<Particle> _other_particle;
+    std::unique_ptr<Particle> _neutron_particle;
+  */
+  Branches *_data;
 
   bool _hasE = false;
   bool _hasP = false;
@@ -61,16 +65,14 @@ class Reaction {
   float _Q2 = std::nanf("-99");
 
  public:
-  Reaction();
-  Reaction(float p, float cx, float cy, float cz);
+  Reaction(Branches *data);
   ~Reaction();
 
-  void SetElec(float p, float cx, float cy, float cz);
-  void SetProton(float p, float cx, float cy, float cz);
-  void SetPip(float p, float cx, float cy, float cz);
-  void SetPim(float p, float cx, float cy, float cz);
-  void SetOther(float p, float cx, float cy, float cz, int pid);
-  void SetNeutron(float p, float cx, float cy, float cz);
+  void SetProton(int i);
+  void SetPip(int i);
+  void SetPim(int i);
+  void SetOther(int i);
+  void SetNeutron(int i);
 
   void CalcMissMass();
   float MM();

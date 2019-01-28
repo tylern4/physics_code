@@ -47,24 +47,21 @@ void Skim::Strict() {
   std::cout << BLUE << "Strict Skim file " << GREEN << fout << DEF << std::endl;
 
   num_of_events = (int)chain->GetEntries();
-  TTree *skim = chain->CloneTree(0);
-  Branches *data = new Branches(chain);
+  auto skim = chain->CloneTree(0);
+  auto data = new Branches(chain);
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
     if (data->gpart() > 5) continue;
     auto check = std::make_unique<Cuts>(data);
-    auto event = std::make_unique<Reaction>();
-    event->SetElec(data->p(0), data->cx(0), data->cy(0), data->cz(0));
+    auto event = std::make_unique<Reaction>(data);
 
     bool cuts = true;
-
+    cuts &= check->isElecctron();
     cuts &= check->Beam_cut();
-    cuts &= check->isStrictElecctron();
     cuts &= (event->Q2() >= 1.0);
     cuts &= (event->W() >= 0.8);
     cuts &= (event->W() <= 2.0);
-
     if (cuts) skim->Fill();  // Fill the banks after the skim
   }
   chain->Reset();  // delete Tree object
@@ -88,33 +85,30 @@ void Skim::Final() {
     auto check = std::make_unique<Cuts>(data);
     if (!check->isElecctron()) continue;
 
-    auto event = std::make_unique<Reaction>();
-    event->SetElec(data->p(0), data->cx(0), data->cy(0), data->cz(0));
+    auto event = std::make_unique<Reaction>(data);
 
-    if (check->isElecctron()) {
-      auto dt = std::make_unique<Delta_T>(data->sc_t(0), data->sc_r(0));
-      std::vector<double> dt_proton = dt->delta_t_array(MASS_P, data);
-      std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, data);
+    auto dt = std::make_unique<Delta_T>(data->sc_t(0), data->sc_r(0));
+    std::vector<double> dt_proton = dt->delta_t_array(MASS_P, data);
+    std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, data);
 
-      for (int part_num = 1; part_num < data->gpart(); part_num++) {
-        if (data->q(part_num) == POSITIVE) {
-          if (check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num))) {
-            event->SetPip(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num));
-          } else if (check->dt_P_cut(dt_proton.at(part_num), data->p(part_num))) {
-            event->SetProton(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num));
-          }
-        } else if (data->q(part_num) == NEGATIVE) {
-          if (check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num))) {
-            event->SetPim(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num));
-          }
+    for (int part_num = 1; part_num < data->gpart(); part_num++) {
+      if (data->q(part_num) == POSITIVE) {
+        if (check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num))) {
+          event->SetPip(part_num);
+        } else if (check->dt_P_cut(dt_proton.at(part_num), data->p(part_num))) {
+          event->SetProton(part_num);
+        }
+      } else if (data->q(part_num) == NEGATIVE) {
+        if (check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num))) {
+          event->SetPim(part_num);
         }
       }
-
-      bool mm_cut = true;
-      mm_cut &= (event->MM() < 1.00091);
-      mm_cut &= (event->MM() > 0.911698);
-      if (event->SinglePip() && mm_cut) skim->Fill();
     }
+
+    bool mm_cut = true;
+    mm_cut &= (event->MM() < 1.5);
+    mm_cut &= (event->MM() > 0.7);
+    if ((event->SinglePip() || event->NeutronPip()) && mm_cut) skim->Fill();
   }
 
   delete chain;

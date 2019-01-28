@@ -31,7 +31,7 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
     hists->CC_fill(data->cc_sect(0), (data->cc_segm(0) % 1000) / 10, data->cc_segm(0) / 1000 - 1, data->nphe(0),
                    theta_cc);
 
-    auto event = std::make_unique<Reaction>(data->p(0), data->cx(0), data->cy(0), data->cz(0));
+    auto event = std::make_unique<Reaction>(data);
 
     hists->Fill_E_Prime_fid(event->e_mu_prime());
     hists->Fill_E_Prime(event->e_mu_prime());
@@ -42,7 +42,7 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
       CUTS = check->isElecctron();
     }
 
-    if (check->isElecctron() && check->Beam_cut()) {
+    if (check->isElecctron()) {
       hists->Fill_Beam_Position(data->dc_vx(0), data->dc_vy(0), data->dc_vz(0));
 
       auto dt = std::make_unique<Delta_T>(data->sc_t(0), data->sc_r(0));
@@ -76,31 +76,28 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
             hists->Fill_proton_Pi_ID_P(data->p(part_num), data->b(part_num));
 
           if (check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num))) {
-            event->SetPip(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num));
+            event->SetPip(part_num);
             hists->Fill_hadron_fid(theta, phi, sector, PIP);
             hists->Fill_pion_WQ2(event->W(), event->Q2());
             hists->Fill_Pi_ID_P(data->p(part_num), data->b(part_num));
           } else if (check->dt_P_cut(dt_proton.at(part_num), data->p(part_num))) {
-            event->SetProton(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num));
+            event->SetProton(part_num);
             hists->Fill_hadron_fid(theta, phi, sector, PROTON);
             hists->Fill_proton_WQ2(event->W(), event->Q2());
             hists->Fill_proton_ID_P(data->p(part_num), data->b(part_num));
           } else
-            event->SetOther(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num),
-                            data->id(part_num));
+            event->SetOther(part_num);
 
         } else if (data->q(part_num) == NEGATIVE) {
           hists->MomVsBeta_Fill_neg(data->p(part_num), data->b(part_num));
           if (check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num))) {
             hists->Fill_hadron_fid(theta, phi, sector, PIM);
-            event->SetPim(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num));
+            event->SetPim(part_num);
           } else
-            event->SetOther(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num),
-                            data->id(part_num));
+            event->SetOther(part_num);
         } else if (data->q(part_num) == 0) {
           hists->MomVsBeta_Fill_neutral(data->p(part_num), data->b(part_num));
-          event->SetOther(data->p(part_num), data->cx(part_num), data->cy(part_num), data->cz(part_num),
-                          data->id(part_num));
+          event->SetOther(part_num);
         }
       }
 

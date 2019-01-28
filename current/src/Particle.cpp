@@ -3,7 +3,7 @@
 /*  Created by Nick Tyler             */
 /*	University Of South Carolina      */
 /**************************************/
-#include "Particle.hpp"
+#include "particle.hpp"
 // Constructor and destructor methods
 Particle::Particle() {
   _vec4 = TLorentzVector(-99.0, -99.0, -99.0, -99.0);
