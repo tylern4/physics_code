@@ -66,6 +66,9 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
         phi = physics::phi_calc(data->cx(part_num), data->cy(part_num));
         sector = data->dc_sect(part_num);
 
+        hists->delta_t_sec_pad(data->p(part_num), data->q(part_num), dt->Get_dt_P(), dt->Get_dt_Pi(), dt->Get_dt_E(),
+                               data->sc_sect(part_num), data->sc_pd(part_num));
+
         hists->Fill_Target_Vertex(data->vx(part_num), data->vy(part_num), data->vz(part_num));
         hists->MomVsBeta_Fill(data->p(part_num), data->b(part_num));
 

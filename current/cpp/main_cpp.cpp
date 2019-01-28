@@ -43,11 +43,16 @@ int main(int argc, char **argv) {
   DataHandeler *dh = new DataHandeler();
   Histogram *hist = new Histogram();
 
-  for (int i = 0; i < files.size(); i++) {
-    loadbar(i, files.size() - 1);
-    dh->Run(files.at(i), hist);
+  if (files.size() > 1) {
+    for (int i = 0; i < files.size(); i++) {
+      loadbar(i, files.size() - 1);
+      dh->Run(files.at(i), hist);
+    }
+    hist->Write(outfilename);
+  } else {
+    dh->Run(files.at(0), hist);
+    hist->Write(outfilename, true);
   }
-  hist->Write(outfilename);
   Watch->Stop();
   cout << RED << Watch->RealTime() << "sec" << DEF << endl;
 

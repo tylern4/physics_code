@@ -40,6 +40,8 @@ class Histogram {
   Histogram(std::string output_file);
   ~Histogram();
   void Write(std::string output_file);
+  void Write(std::string output_file, bool multi);
+  bool _multi = false;
 
   TFile* RootOutputFile;
   TCanvas* def;
@@ -274,9 +276,6 @@ class Histogram {
   TH1D* Missing_Mass_2pi = new TH1D("Missing_Mass_2pi", "Missing Mass 2 #pi", BINS_MM, MM_min, MM_max);
   TH1D* Missing_Mass_square_2pi =
       new TH1D("Missing_Mass_square_2pi", "Missing Mass 2 #pi", BINS_MM, MM_min, MM_max* MM_max);
-
-  TH1D* Missing_Mass_nutron_no2pi =
-      new TH1D("Missing_Mass_nutron_no2pi", "Missing Mass removing 2 #pi", BINS_MM, MM_min, MM_max);
 
   TH1D* energy_no_cuts = new TH1D("Energy_no_cuts", "Scattered electron energy", 500, 0.0, 5.0);
   TH1D* energy_fid_cuts = new TH1D("Energy_fid_cuts", "Scattered electron energy after fiducial cuts", 500, 0.0, 5.0);
