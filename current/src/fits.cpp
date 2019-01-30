@@ -23,9 +23,8 @@ double Fits::Get_FWHM() { return FWHM; }
 TF1 *Fits::FitGaus(TH1D *hist) {
   if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   if (hist->GetEntries() > 100) {
-    if (hist->GetEntries() > 1000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
     TF1 *fitFunc = new TF1("fitFunc", func::gausian, -100.0, 100.0, 3);
-    // TF1 *fitFunc = new TF1("fitFunc", "gaus", min_value, max_value);
+
     fitFunc->SetLineColor(color);
     par_max = std::isnan(hist->GetMaximum()) ? 0 : hist->GetMaximum();
     par_mean = std::isnan(hist->GetMean()) ? 0 : hist->GetMean();
@@ -63,7 +62,7 @@ TF1 *Fits::FitLandauGaus(TH1D *hist) {
   if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   if (hist->GetEntries() > 1000) {
     double par[6];
-    // TF1 *fitFuncGaus = new TF1("fitFuncGaus", func::gausian, 30.0, 250.0, 3);
+
     TF1 *fitFuncGaus = new TF1("gaus", "gaus", 30.0, 250.0);
     TF1 *fitFuncLandau = new TF1("landau", "landau", 0.0, 30.0);
     TF1 *total = new TF1("total", "landau(0)+gaus(3)", 0.0, 250.0);
@@ -99,7 +98,6 @@ TF1 *Fits::FitLandauGaus(TH1D *hist) {
 TF1 *Fits::Fit2Gaus(TH1D *hist) {
   if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   if (hist->GetEntries() > 1000) {
-    // if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
     TF1 *fitFunc = new TF1("fitFunc", func::gausian2, min_value, max_value, 6);
     fitFunc->SetLineColor(2);
     par_max = std::isnan(hist->GetMaximum()) ? 0 : hist->GetMaximum();
@@ -130,8 +128,6 @@ TF1 *Fits::Fit2Gaus(TH1D *hist) {
 TF1 *Fits::FitLandau(TH1D *hist) {
   if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   if (hist->GetEntries() > 1000) {
-    // if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
-
     TF1 *fitFunc = new TF1("fitFunc", "landau", -100.0, 100.0);
     fitFunc->SetLineColor(color);
     hist->Fit("fitFunc", "QM+", "", min_value, max_value);
@@ -144,7 +140,7 @@ TF1 *Fits::FitLandau(TH1D *hist) {
 
 TF1 *Fits::FitPoly_1D(TH1D *hist) {
   if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
-  // if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+
   TF1 *fitFunc = new TF1("fitFunc", func::pol1, min_value, max_value);
   fitFunc->SetLineColor(9);
   fitFunc->SetParNames("intercept", "slope");
@@ -163,7 +159,7 @@ TF1 *Fits::FitPoly_1D(TH1D *hist) {
 
 TF1 *Fits::FitPoly_2D(TH1D *hist) {
   if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
-  // if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+
   TF1 *fitFunc = new TF1("fitFunc", func::pol2, min_value, max_value);
   fitFunc->SetLineColor(30);
   fitFunc->SetParNames("a", "b", "c");
@@ -184,7 +180,7 @@ TF1 *Fits::FitPoly_2D(TH1D *hist) {
 
 TF1 *Fits::FitPoly_3D(TH1D *hist) {
   if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
-  // if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+
   TF1 *fitFunc = new TF1("fitFunc", func::pol3, min_value, max_value);
   fitFunc->SetLineColor(46);
   fitFunc->SetParNames("a", "b", "c", "d");
@@ -207,7 +203,7 @@ TF1 *Fits::FitPoly_3D(TH1D *hist) {
 
 TF1 *Fits::FitPoly_4D(TH1D *hist) {
   if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
-  // if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+
   TF1 *fitFunc = new TF1("fitFunc", func::pol4, min_value, max_value);
   fitFunc->SetLineColor(42);
   fitFunc->SetParNames("a", "b", "c", "d", "e");
@@ -231,17 +227,10 @@ TF1 *Fits::FitPoly_4D(TH1D *hist) {
 }
 
 TF1 *Fits::FitPoly_fid(TGraph *hist) {
-  // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
-  // if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   TF1 *fitFunc = new TF1("fitFunc", func::pol4, min_value, max_value, 5);
   fitFunc->SetLineColor(46);
-  // fitFunc->SetParNames("a", "b", "c");
 
   hist->Fit("fitFunc", "QMR+", "", min_value, max_value);
-
-  // fitFunc->SetParameter(0, fitFunc->GetParameter("a"));
-  // fitFunc->SetParameter(1, fitFunc->GetParameter("b"));
-  // fitFunc->SetParameter(2, fitFunc->GetParameter("c"));
 
   hist->Fit("fitFunc", "QMR+", "", min_value, max_value);
   return fitFunc;
@@ -256,8 +245,6 @@ double Fits::fiducial_phi_hi(double theta_e, double theta_e_min, double k, doubl
 }
 
 TF1 *Fits::FitFiducial(TGraph *profile, int sec) {
-  // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
-
   TF1 *fitFunc = new TF1("fit_fid", func::fiducial, min_phi[sec], max_phi[sec], 6);
   fitFunc->SetParameters(1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
   fitFunc->SetParLimits(0, -10, 10);
@@ -284,7 +271,7 @@ TF1 *Fits::FitFiducial(TGraph *profile, int sec) {
 
 TF1 *Fits::FitFiducial_hi(TH2D *hist2d) {
   if (hist2d->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
-  // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+
   a = b = c = d = 0.5;
   TF1 *fitFunc_hi = new TF1("fitFunc_hi",
                             "[0]*TMath::Power(TMath::Sin((x-[1])*"
@@ -312,7 +299,7 @@ TF1 *Fits::FitFiducial_hi(TH2D *hist2d) {
 
 TF1 *Fits::FitFiducial(TH2D *hist2d) {
   if (hist2d->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
-  // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+
   a = b = c = d = 0.5;
   TF1 *fitFunc = new TF1("fitFunc",
                          "[0]*TMath::Power(TMath::Sin((x-[1])*"
@@ -343,7 +330,6 @@ TF1 *Fits::FitGenNormal(TH1D *hist) {
   TF1 *fitFunc = new TF1("genNormal", func::genNormal, min_value, max_value, 4);
   double min, max, val, min_m, max_m;
   if (hist->GetEntries() < 100) return NULL;
-  if (hist->GetEntries() > 100) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
 
   fitFunc->SetParLimits(1, 2.0, 200.0);
   fitFunc->SetParameter(0, 15.0);

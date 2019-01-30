@@ -49,12 +49,12 @@ int main(int argc, char **argv) {
       dh->Run(files.at(i), hist);
     }
     hist->Write(outfilename);
+    Watch->Stop();
+    cout << RED << Watch->RealTime() << "sec" << DEF << endl;
   } else {
     dh->Run(files.at(0), hist);
     hist->Write(outfilename, true);
   }
-  Watch->Stop();
-  cout << RED << Watch->RealTime() << "sec" << DEF << endl;
 
   return 0;
 }

@@ -1137,7 +1137,7 @@ void Histogram::makeHists_fid() {
     sprintf(hname, "electron_fid_sec%d", sec_i + 1);
     sprintf(htitle, "electron_fid_sec%d", sec_i + 1);
     electron_fid_sec_hist[sec_i] =
-        new TH2D(hname, htitle, 100, min_phi[sec_i], max_phi[sec_i], 100, theta_min, theta_max);
+        new TH2D(hname, htitle, BINS, min_phi[sec_i], max_phi[sec_i], BINS, theta_min, theta_max);
 
     for (int t = 0; t < 3; t++) {
       sprintf(hname, "hadron_fid_sec%d_%d", sec_i + 1, t);
