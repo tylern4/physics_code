@@ -8,7 +8,7 @@
 #define PHI_BINS 100
 
 #define NUM_SECTORS 6
-#define FID_SLICES 20
+#define FID_SLICES 40
 
 const double min_phi[6] = {60, 0, -60, -120, -180, 120};
 const double max_phi[6] = {120, 60, 0, -60, -120, 180};
@@ -38,7 +38,7 @@ FitsData FitGenNormal(TH1D *hist, int slice, int sec_i) {
   out->cd();
   can->cd();
 
-  hist->Rebin(5);
+  hist->Rebin(2);
   TF1 *fitFunc = new TF1("genNormal", genNormal, min_value, max_value, 4);
   double min, max, val, min_m, max_m;
 
@@ -53,7 +53,7 @@ FitsData FitGenNormal(TH1D *hist, int slice, int sec_i) {
 
   hist->Fit("genNormal", "QMR+", "", min_value, max_value);
 
-  for (double m = min_value; m < max_value; m = m + 0.001) {
+  for (double m = min_value; m < max_value; m = m + 0.0005) {
     val = fitFunc->Derivative(m);
 
     if (max < val) {
@@ -96,20 +96,30 @@ double poly(double *x, double *par) {
   func += par[2] * x[0] * x[0];
   func += par[3] * x[0] * x[0] * x[0];
   func += par[4] * x[0] * x[0] * x[0] * x[0];
-  // func += par[5] * x[0] * x[0] * x[0] * x[0] * x[0];
-  // func += par[6] * x[0] * x[0] * x[0] * x[0] * x[0] * x[0];
+  // func += TMath::Log(par[6] + x[0]) + par[5];
   return func;
 }
 
-FitsData FitTheFit(TGraph *hist, int sec) {
+FitsData FitTheFit(TGraph *hist, int sec, bool lr) {
   double min_value = min_phi[sec];
   double max_value = max_phi[sec];
 
+  if (lr) {
+    min_value = min_phi[sec];
+    max_value = (min_value + max_value) / 2.0;
+  } else {
+    min_value = (min_value + max_value) / 2.0;
+    max_value = max_phi[sec];
+  }
+
   TF1 *fitFunc = new TF1("poly", poly, min_value, max_value, 5);
+  if (lr) fitFunc->SetLineColor(kGreen);
   double min, max, val, min_m, max_m;
 
   fitFunc->SetParameter(1, (min_value + max_value) / 2.0);
   fitFunc->SetParameter(0, 15);
+
+  fitFunc->SetParameter(6, 25);
 
   fitFunc->SetParNames("a", "b", "c", "d", "e");
 
@@ -147,7 +157,8 @@ int fit_EC(std::string file = "e1d_all.root") {
   for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
     std::vector<double> x;
     std::vector<double> y;
-    for (int slice = 7; slice < FID_SLICES; slice++) {
+
+    for (int slice = 14; slice < FID_SLICES; slice++) {
       electron_fid_sec_slice[sec_i][slice] =
           (TH1D *)elec_fid[sec_i]->ProjectionX(Form("electron_fid_sec_%d_%d", sec_i + 1, slice + 1),
                                                slice_width * slice, slice_width * slice + (slice_width - 1));
@@ -170,7 +181,8 @@ int fit_EC(std::string file = "e1d_all.root") {
     fid_can->cd(i + 1);
     elec_fid[i]->Draw("colz");
     fid_graph[i]->Draw("same*");
-    FitTheFit(fid_graph[i], i).fit->Draw("same");
+    FitTheFit(fid_graph[i], i, true).fit->Draw("same");
+    FitTheFit(fid_graph[i], i, false).fit->Draw("same");
   }
   fid_can->Write();
   out->Write();
