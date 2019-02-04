@@ -11,8 +11,8 @@ Reaction::Reaction(Branches* data) : _data(data) {
   _beam->SetPxPyPzE(0.0, 0.0, sqrt(_beam_energy * _beam_energy - MASS_E * MASS_E), _beam_energy);
 
   _gamma = std::make_unique<TLorentzVector>();
-  _reaction = std::make_unique<TLorentzVector>();
-  _boost = std::make_unique<TLorentzVector>();
+  _com = std::make_unique<TLorentzVector>();
+  _elec_com = std::make_unique<TLorentzVector>();
   _target = std::make_unique<TLorentzVector>(0.0, 0.0, 0.0, MASS_P);
   _elec = std::make_unique<TLorentzVector>();
   _prot = std::make_unique<TLorentzVector>();
@@ -27,15 +27,12 @@ Reaction::Reaction(Branches* data) : _data(data) {
   _W = physics::W_calc(*_gamma);
   _Q2 = physics::Q2_calc(*_gamma);
 
-  ////// Math is probably wrong need to change
-  *_reaction += *_beam + *_target - *_elec;
-  double bx = _gamma->Px() / (_gamma->E() + _target->E());
-  double by = _gamma->Py() / (_gamma->E() + _target->E());
-  double bz = _gamma->Pz() / (_gamma->E() + _target->E());
-  _reaction->Boost(-bx, -by, -bz);
-  _theta_star = _reaction->Theta() * TMath::RadToDeg();
-  _phi_star = _reaction->Phi() * TMath::RadToDeg();
-  _phi_star = _phi_star < -30 ? _phi_star + 360 : _phi_star;
+  *_com += (*_beam - *_elec) + *_target;
+  _elec_com->SetXYZM(_data->px(0), _data->py(0), _data->pz(0), MASS_E);
+  _elec_com->Boost(-_com->BoostVector());
+  _theta_star = _elec_com->Theta() * TMath::RadToDeg();
+  _phi_star = _elec_com->Phi() * TMath::RadToDeg();
+  //_phi_star = _phi_star < -30 ? _phi_star + 360 : _phi_star;
 }
 
 Reaction::~Reaction() {}

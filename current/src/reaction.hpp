@@ -24,8 +24,8 @@ class Reaction {
   std::unique_ptr<TLorentzVector> _beam;
   std::unique_ptr<TLorentzVector> _elec;
   std::unique_ptr<TLorentzVector> _gamma;
-  std::unique_ptr<TLorentzVector> _reaction;
-  std::unique_ptr<TLorentzVector> _boost;
+  std::unique_ptr<TLorentzVector> _com;
+  std::unique_ptr<TLorentzVector> _elec_com;
   std::unique_ptr<TLorentzVector> _target;
   std::unique_ptr<TLorentzVector> _prot;
   std::unique_ptr<TLorentzVector> _pip;
