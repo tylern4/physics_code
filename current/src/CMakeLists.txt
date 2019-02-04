@@ -32,6 +32,7 @@ add_library(physics SHARED
   missing_mass.cpp
   delta_t.cpp
   reaction.cpp
+  yeilds.cpp
   )
 
 set(EXTRA_FLAGS "-pthread -m64 -Wno-return-type -Wno-writable-strings -Wno-dangling-else -Wno-comment -D__ROOFIT_NOBANNER")

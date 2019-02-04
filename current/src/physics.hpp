@@ -18,6 +18,8 @@ double Q2_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime);
 //	Sqrt√[M_p^2 - Q^2 + 2 M_p gamma]
 double W_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime);
 double xb_calc(double Q2, double E_prime);
+double Q2_calc(TLorentzVector gamma_mu);
+double W_calc(TLorentzVector gamma_mu);
 // overload with 4 vectors instaed of other calculations
 double xb_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime);
 double theta_calc(double cosz);

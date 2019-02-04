@@ -25,18 +25,21 @@
 #include "physics.hpp"
 #include "reaction.hpp"
 
-class DataHandeler {
+class Yeilds {
  private:
   int PID;
+  std::ofstream csv_output;
   std::vector<std::string> input_files;
   bool CUTS = true;
 
  public:
-  DataHandeler();
-  ~DataHandeler();
-  void Run(std::string fin, Histogram *hists);
-  void Run(std::vector<std::string> fin, Histogram *hists);
-  void loadbar(long x, long n);
+  Yeilds();
+  Yeilds(std::string output_file_name);
+  ~Yeilds();
+  void OpenFile(std::string output_file_name);
+  void WriteHeader();
+  int Run(std::string fin);
+  void Run(std::vector<std::string> fin);
 };
 
 #endif

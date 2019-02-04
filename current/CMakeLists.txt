@@ -65,4 +65,11 @@ IF(Cython_FOUND)
   target_link_libraries(h10 physics ${PYTHON_LIBRARIES} ${ROOT_LIBRARIES})
   install(TARGETS h10
           LIBRARY DESTINATION lib)
+
+  # Python h10
+  add_cython_target(yeilds src/yeilds.pyx CXX PY3 OUTPUT_VAR _yeilds)
+  add_library(yeilds MODULE ${_yeilds})
+  python_extension_module(yeilds)
+  target_link_libraries(yeilds physics ${PYTHON_LIBRARIES} ${ROOT_LIBRARIES})
+  install(TARGETS yeilds LIBRARY DESTINATION lib)
 ENDIF()

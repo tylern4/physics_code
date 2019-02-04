@@ -6,6 +6,7 @@
 #ifndef REACTION_H_GUARD
 #define REACTION_H_GUARD
 
+#include <iomanip>
 #include <iostream>
 #include <map>
 #include "TLorentzVector.h"
@@ -23,6 +24,8 @@ class Reaction {
   std::unique_ptr<TLorentzVector> _beam;
   std::unique_ptr<TLorentzVector> _elec;
   std::unique_ptr<TLorentzVector> _gamma;
+  std::unique_ptr<TLorentzVector> _reaction;
+  std::unique_ptr<TLorentzVector> _boost;
   std::unique_ptr<TLorentzVector> _target;
   std::unique_ptr<TLorentzVector> _prot;
   std::unique_ptr<TLorentzVector> _pip;
@@ -30,17 +33,6 @@ class Reaction {
   std::unique_ptr<TLorentzVector> _other;
   std::unique_ptr<TLorentzVector> _neutron;
 
-  /*
-    std::unique_ptr<Particle> _beam_particle;
-    std::unique_ptr<Particle> _elec_particle;
-    std::unique_ptr<Particle> _gamma_particle;
-    std::unique_ptr<Particle> _target_particle;
-    std::unique_ptr<Particle> _prot_particle;
-    std::unique_ptr<Particle> _pip_particle;
-    std::unique_ptr<Particle> _pim_particle;
-    std::unique_ptr<Particle> _other_particle;
-    std::unique_ptr<Particle> _neutron_particle;
-  */
   Branches *_data;
 
   bool _hasE = false;
@@ -58,11 +50,14 @@ class Reaction {
   short _numNeutral = 0;
   short _numOther = 0;
 
-  float _MM = std::nanf("-99");
-  float _MM2 = std::nanf("-99");
+  double _MM = NAN;
+  double _MM2 = NAN;
 
-  float _W = std::nanf("-99");
-  float _Q2 = std::nanf("-99");
+  double _W = NAN;
+  double _Q2 = NAN;
+
+  double _theta_star = NAN;
+  double _phi_star = NAN;
 
  public:
   Reaction(Branches *data);
@@ -75,11 +70,14 @@ class Reaction {
   void SetNeutron(int i);
 
   void CalcMissMass();
-  float MM();
-  float MM2();
+  double MM();
+  double MM2();
 
-  inline float W() { return _W; }
-  inline float Q2() { return _Q2; }
+  inline double W() { return _W; }
+  inline double Q2() { return _Q2; }
+
+  inline double Theta_star() { return _theta_star; }
+  inline double Phi_star() { return _phi_star; }
 
   inline bool TwoPion() {
     return ((_numPip == 1 && _numPim == 1) && (_hasE && !_hasP && _hasPip && _hasPim && !_hasNeutron && !_hasOther));

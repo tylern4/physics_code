@@ -39,6 +39,12 @@ double physics::W_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime) {
   return (p_mu + q_mu).Mag();
 }
 
+double physics::Q2_calc(TLorentzVector gamma_mu) { return -gamma_mu.Mag2(); }
+double physics::W_calc(TLorentzVector gamma_mu) {
+  TLorentzVector p_mu(0.0, 0.0, 0.0, MASS_P);
+  return (p_mu + gamma_mu).Mag();
+}
+
 double physics::xb_calc(double Q2, double E_prime) {
   double gamma = E1D_E0 - E_prime;
   double xb = (Q2 / (2 * MASS_P * gamma));

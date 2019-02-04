@@ -5,25 +5,37 @@
 /**************************************/
 #include "reaction.hpp"
 
-Reaction::Reaction(Branches* data) {
-  _data = data;
+Reaction::Reaction(Branches* data) : _data(data) {
   _beam = std::make_unique<TLorentzVector>();
   if (getenv("BEAM_E") != NULL) _beam_energy = atof(getenv("BEAM_E"));
   _beam->SetPxPyPzE(0.0, 0.0, sqrt(_beam_energy * _beam_energy - MASS_E * MASS_E), _beam_energy);
 
   _gamma = std::make_unique<TLorentzVector>();
+  _reaction = std::make_unique<TLorentzVector>();
+  _boost = std::make_unique<TLorentzVector>();
   _target = std::make_unique<TLorentzVector>(0.0, 0.0, 0.0, MASS_P);
   _elec = std::make_unique<TLorentzVector>();
-  _hasE = true;
-  _elec->SetXYZM(_data->px(0), _data->py(0), _data->pz(0), MASS_E);
-  *_gamma += *_beam - *_elec;
-  _W = physics::W_calc(*_beam, *_elec);
-  _Q2 = physics::Q2_calc(*_beam, *_elec);
   _prot = std::make_unique<TLorentzVector>();
   _pip = std::make_unique<TLorentzVector>();
   _pim = std::make_unique<TLorentzVector>();
   _other = std::make_unique<TLorentzVector>();
   _neutron = std::make_unique<TLorentzVector>();
+
+  _hasE = true;
+  _elec->SetXYZM(_data->px(0), _data->py(0), _data->pz(0), MASS_E);
+  *_gamma += *_beam - *_elec;
+  _W = physics::W_calc(*_gamma);
+  _Q2 = physics::Q2_calc(*_gamma);
+
+  ////// Math is probably wrong need to change
+  *_reaction += *_beam + *_target - *_elec;
+  double bx = _gamma->Px() / (_gamma->E() + _target->E());
+  double by = _gamma->Py() / (_gamma->E() + _target->E());
+  double bz = _gamma->Pz() / (_gamma->E() + _target->E());
+  _reaction->Boost(-bx, -by, -bz);
+  _theta_star = _reaction->Theta() * TMath::RadToDeg();
+  _phi_star = _reaction->Phi() * TMath::RadToDeg();
+  _phi_star = _phi_star < -30 ? _phi_star + 360 : _phi_star;
 }
 
 Reaction::~Reaction() {}
@@ -88,11 +100,11 @@ void Reaction::CalcMissMass() {
   }
 }
 
-float Reaction::MM() {
+double Reaction::MM() {
   if (_MM != _MM) CalcMissMass();
   return _MM;
 }
-float Reaction::MM2() {
+double Reaction::MM2() {
   if (_MM2 != _MM2) CalcMissMass();
   return _MM2;
 }

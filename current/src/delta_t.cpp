@@ -111,6 +111,20 @@ std::vector<double> Delta_T::delta_t_array(double mass, Branches *data) {
   return dt_array;
 }
 
+std::vector<double> Delta_T::delta_t_array(double mass, std::unique_ptr<Branches> data) {
+  std::vector<double> dt_array(data->gpart());
+  double sct, scr, mom;
+
+  for (int event_number = 0; event_number < data->gpart(); event_number++) {
+    sct = data->sc_t(event_number);
+    scr = data->sc_r(event_number);
+    mom = data->p(event_number);
+
+    dt_array[event_number] = delta_t(mass, mom, sct, scr);
+  }
+  return dt_array;
+}
+
 void Delta_T::_delta_t_array(double mass, Branches *data, std::vector<double> *dt_array) {
   dt_array->reserve(data->gpart());
   double sct, scr, mom;
