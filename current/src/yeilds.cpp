@@ -24,8 +24,8 @@ void Yeilds::Run(std::vector<std::string> fin) {
     std::cout << BOLDGREEN << "\tEvents/Sec: " << total_num / elapsed.count() << " Hz\r\r" << RESET << std::flush;
   }
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start_full);
-  std::cout << BOLDGREEN << "Events/Sec: " << total_num / elapsed_full.count() << " Hz\t" << elapsed_full.count()
-            << " Sec" << RESET << std::endl;
+  // std::cout << BOLDGREEN << "Events/Sec: " << total_num / elapsed_full.count() << " Hz\t\t" << elapsed_full.count()
+  //          << " Sec" << RESET << std::endl;
 }
 
 int Yeilds::Run(std::string root_file) {
