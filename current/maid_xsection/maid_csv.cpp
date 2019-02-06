@@ -20,7 +20,7 @@ int main() {
   int c_size = 10;
   int p_size = 10;
 
-  std::cout << "W,Q2,cos,phi,dsigma\n";
+  std::cout << "W,Q2,cos_theta,phi,dsigma\n";
 
   for (int w = 0; w < w_size; w++) {
     for (int q = 0; q < q2_size; q++) {

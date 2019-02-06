@@ -1,11 +1,4 @@
 #!/usr/bin/env python
-import ROOT
-from ROOT import gROOT, gBenchmark
-
-import matplotlib
-
-matplotlib.use("pgf")
-import matplotlib.pyplot as plt
 import numpy as np
 
 import glob
@@ -33,6 +26,7 @@ def main(args):
     base = files[0][: files[0].rfind("/") + 1]
     files = [f[f.rfind("/") + 1 :] for f in files]
     files = [f[: f.rfind(".A")] for f in files]
+    files = [f[: f.rfind("_")] for f in files]
     files = set(files)
     files = [base + f for f in files]
 

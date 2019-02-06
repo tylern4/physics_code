@@ -16,35 +16,15 @@
 
 */
 extern "C" {
-  //Function which only returns the full cross section (not individual
-  //terms):
-  float maid_dsigma(float beam_energy,
-                    float W,
-                    float Q2,
-                    float costheta,
-                    float phi,
-                    int helicity,
-                    int model_opt,
-                    int channel_opt,
-                    int resonance_opt);
+// Function which only returns the full cross section (not individual
+// terms):
+float maid_dsigma(float beam_energy, float W, float Q2, float costheta, float phi, int helicity, int model_opt,
+                  int channel_opt, int resonance_opt);
 
-  //Function which accesses all terms of the cross section:
-  void maid_dsigma_all(//Inputs:
-                       float beam_energy,
-                       float W,
-                       float Q2,
-                       float costheta,
-                       float phi,
-                       int helicity,
-                       int model_opt,
-                       int channel_opt,
-                       int resonance_opt,
-                       //Returns:
-                       float* sigma0,
-                       float* sigma_t,
-                       float* sigma_tt,
-                       float* sigma_l,
-                       float* sigma_lt,
-                       float* sigma_ltp,
-                       float* asym_p);
+// Function which accesses all terms of the cross section:
+void maid_dsigma_all(  // Inputs:
+    float beam_energy, float W, float Q2, float costheta, float phi, int helicity, int model_opt, int channel_opt,
+    int resonance_opt,
+    // Returns:
+    float* sigma0, float* sigma_t, float* sigma_tt, float* sigma_l, float* sigma_lt, float* sigma_ltp, float* asym_p);
 }
