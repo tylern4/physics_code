@@ -1,1 +1,3 @@
 docker
+*.root
+.git

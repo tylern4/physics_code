@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(DataHandeler)
 set(VERSION 0.0.1)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 find_package(ROOT REQUIRED COMPONENTS RIO Net) #RooFit RooFitCore RooStats RootAuth
@@ -40,7 +41,6 @@ find_package(Cython)
 
 IF(Cython_FOUND)
   if(${PYTHON_VERSION_MAJOR} STREQUAL "2")
-    set(CMAKE_CXX_STANDARD 14)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
   else()
     set(CMAKE_CXX_STANDARD 17)
@@ -72,4 +72,5 @@ IF(Cython_FOUND)
   python_extension_module(yeilds)
   target_link_libraries(yeilds physics ${PYTHON_LIBRARIES} ${ROOT_LIBRARIES})
   install(TARGETS yeilds LIBRARY DESTINATION lib)
+  SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 ENDIF()
