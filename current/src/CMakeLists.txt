@@ -15,7 +15,7 @@ list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 find_package(ROOT REQUIRED COMPONENTS RIO Net) #RooFit RooFitCore RooStats RootAuth
 include(${ROOT_USE_FILE})
 
-add_library(physics SHARED
+add_library(physics STATIC
   photon_flux.cpp
   branches.cpp
   particle.cpp
@@ -44,7 +44,7 @@ target_include_directories(physics
 
 install(TARGETS physics
   EXPORT PhysicsTargets
-    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
     PUBLIC_HEADER DESTINATION .
     )
 

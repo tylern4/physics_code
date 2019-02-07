@@ -884,11 +884,9 @@ void Histogram::delta_t_sec_pad(float momentum, int charge, float delta_t_proton
   if (std::isinf(delta_t_proton) || std::isnan(delta_t_proton)) return;
   if (std::isinf(delta_t_pip) || std::isnan(delta_t_pip)) return;
   if (std::isinf(delta_t_electron) || std::isnan(delta_t_electron)) return;
-  if (sc_sector == 0 || sc_sector > NUM_SECTORS || sc_paddle == 0 || sc_paddle > SC_PADDLE_NUM) return;
-  /*
-  std::cout << momentum << ", " << charge << ", " << delta_t_proton << ", " << delta_t_pip << "," << delta_t_electron
-            << ", " << sc_sector << ", " << sc_paddle << '\n';
-  */
+  if (sc_sector == 0 || sc_sector > NUM_SECTORS || sc_sector < 0) return;
+  if (sc_paddle == 0 || sc_paddle > SC_PADDLE_NUM || sc_paddle < 0) return;
+
   if (charge == 1) {
     delta_t_sec_pad_hist[0][sc_sector - 1][sc_paddle - 1]->Fill(momentum, delta_t_proton);
     delta_t_sec_pad_hist[1][sc_sector - 1][sc_paddle - 1]->Fill(momentum, delta_t_pip);
