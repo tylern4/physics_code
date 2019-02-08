@@ -18,7 +18,7 @@ Reaction::Reaction(Branches* data) : _data(data) {
   _prot = std::make_unique<TLorentzVector>();
   _pip = std::make_unique<TLorentzVector>();
   _pim = std::make_unique<TLorentzVector>();
-  _other = std::make_unique<TLorentzVector>();
+  //_other = std::make_unique<TLorentzVector>();
   _neutron = std::make_unique<TLorentzVector>();
 
   _hasE = true;
@@ -68,7 +68,8 @@ void Reaction::SetOther(int i) {
   else {
     _numOther++;
     _hasOther = true;
-    _other->SetXYZM(_data->px(i), _data->py(i), _data->pz(i), _mass_map[_data->id(i)]);
+    //_other->push_back(std::make_unique<TLorentzVector>());
+    //_other->at(_other->size() - 1)->SetXYZM(_data->px(i), _data->py(i), _data->pz(i), _mass_map[_data->id(i)]);
   }
 }
 

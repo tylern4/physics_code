@@ -12,7 +12,6 @@
 #include "TLorentzVector.h"
 #include "branches.hpp"
 #include "constants.hpp"
-#include "particle.hpp"
 #include "physics.hpp"
 
 class Reaction {
@@ -30,7 +29,7 @@ class Reaction {
   std::unique_ptr<TLorentzVector> _prot;
   std::unique_ptr<TLorentzVector> _pip;
   std::unique_ptr<TLorentzVector> _pim;
-  std::unique_ptr<TLorentzVector> _other;
+  // std::vector<std::unique_ptr<TLorentzVector>> *_other;
   std::unique_ptr<TLorentzVector> _neutron;
 
   Branches *_data;

@@ -1,7 +1,7 @@
+# distutils: language = c++
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
-from timeit import default_timer as timer
 import glob
 
 

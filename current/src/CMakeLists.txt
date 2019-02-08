@@ -18,7 +18,6 @@ include(${ROOT_USE_FILE})
 add_library(physics STATIC
   photon_flux.cpp
   branches.cpp
-  particle.cpp
   func.cpp
   datahandeler.cpp
   datahandeler_mc.cpp

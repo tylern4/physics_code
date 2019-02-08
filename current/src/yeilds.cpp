@@ -19,13 +19,11 @@ void Yeilds::Run(std::vector<std::string> fin) {
   auto start_full = std::chrono::high_resolution_clock::now();
   for (auto f : fin) {
     total_num += Run(f);
-
-    std::chrono::duration<double> elapsed = (std::chrono::high_resolution_clock::now() - start_full);
-    std::cout << BOLDGREEN << "\tEvents/Sec: " << total_num / elapsed.count() << " Hz\r\r" << RESET << std::flush;
+    if (getenv("YEILDPROG") != NULL) {
+      std::chrono::duration<double> elapsed = (std::chrono::high_resolution_clock::now() - start_full);
+      std::cout << BOLDGREEN << "\tEvents/Sec: " << total_num / elapsed.count() << " Hz\r\r" << RESET << std::flush;
+    }
   }
-  std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start_full);
-  // std::cout << BOLDGREEN << "Events/Sec: " << total_num / elapsed_full.count() << " Hz\t\t" << elapsed_full.count()
-  //          << " Sec" << RESET << std::endl;
 }
 
 int Yeilds::Run(std::string root_file) {
@@ -74,8 +72,9 @@ int Yeilds::Run(std::string root_file) {
       }
 
       if ((event->SinglePip() || event->NeutronPip()))
-        csv_output << event->W() << "," << event->Q2() << "," << event->MM() << "," << event->MM2() << ","
-                   << event->Theta_star() << "," << event->Phi_star() << "," << sector << std::endl;
+        csv_output << std::setprecision(15) << event->W() << "," << event->Q2() << "," << event->MM() << ","
+                   << event->MM2() << "," << event->Theta_star() << "," << event->Phi_star() << "," << sector
+                   << std::endl;
     }
   }
   chain->Reset();  // delete Tree object

@@ -20,7 +20,6 @@
 #include "delta_t.hpp"
 #include "histogram.hpp"
 #include "missing_mass.hpp"
-#include "particle.hpp"
 #include "photon_flux.hpp"
 #include "physics.hpp"
 #include "reaction.hpp"
