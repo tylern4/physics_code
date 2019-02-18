@@ -124,7 +124,8 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
         hists->EC_cut_fill(data->etot(0), data->p(0));
         hists->Fill_E_Prime_channel(event->e_mu_prime());
       }
-      if ((event->SinglePip() || event->NeutronPip())) hists->Fill_NeutronPip_WQ2(event->W(), event->Q2());
+      if ((event->SinglePip() || event->NeutronPip()))
+        hists->Fill_NeutronPip_WQ2(event->W(), event->Q2(), event->MM(), event->MM2());
       if (event->SingleP()) {
         hists->Fill_single_proton_WQ2(event->W(), event->Q2());
         hists->Fill_Missing_Mass_pi0(event->MM(), event->MM2());

@@ -95,6 +95,9 @@ class Histogram {
   TH1D* Q2_pion = new TH1D("Q2_pion", "Q^{2} #pi^{+} only", BINS, q2_min, q2_max);
   TH2D* WvsQ2_NeutronPip =
       new TH2D("WvsQ2_NeutronPip", "W vs Q^{2} N #pi^{+}", BINS, w_min, w_max, BINS, q2_min, q2_max);
+  TH2D* WvsMM_NeutronPip = new TH2D("WvsMM_NeutronPip", "W vs MM N #pi^{+}", BINS, w_min, w_max, BINS, -q2_min, q2_max);
+  TH2D* WvsMM2_NeutronPip =
+      new TH2D("WvsMM2_NeutronPip", "W vs MM^{2} N #pi^{+}", BINS, w_min, w_max, BINS, -q2_min, q2_max);
   TH1D* W_NeutronPip = new TH1D("W_NeutronPip", "W N #pi^{+}", BINS, w_min, w_max);
   TH1D* Q2_NeutronPip = new TH1D("Q2_NeutronPip", "Q^{2} N #pi^{+}", BINS, q2_min, q2_max);
   TH2D* WvsQ2_MM = new TH2D("WvsQ2_MM", "W vs Q^{2} mm N cut", BINS, w_min, w_max, BINS, q2_min, q2_max);
@@ -285,7 +288,7 @@ class Histogram {
   // W and Q^2
   void Fill_proton_WQ2(float W, float Q2);
   void Fill_P_PI0(float W, float Q2);
-  void Fill_NeutronPip_WQ2(float W, float Q2);
+  void Fill_NeutronPip_WQ2(float W, float Q2, float MM, float MM2);
   void Fill_MM_WQ2(float W, float Q2);
   void Fill_channel_WQ2(float W, float Q2, int sector, TLorentzVector e_prime, float mm, float mm2);
   void Fill_single_proton_WQ2(float W, float Q2);

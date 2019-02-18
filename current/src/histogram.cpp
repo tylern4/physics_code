@@ -238,10 +238,13 @@ void Histogram::Fill_P_PI0(float W, float Q2) {
   W_Ppi0->Fill(W);
   Q2_Ppi0->Fill(Q2);
 }
-void Histogram::Fill_NeutronPip_WQ2(float W, float Q2) {
+void Histogram::Fill_NeutronPip_WQ2(float W, float Q2, float MM, float MM2) {
   WvsQ2_NeutronPip->Fill(W, Q2);
   W_NeutronPip->Fill(W);
   Q2_NeutronPip->Fill(Q2);
+
+  WvsMM_NeutronPip->Fill(W, MM);
+  WvsMM2_NeutronPip->Fill(W, MM2);
 }
 
 void Histogram::Fill_MM_WQ2(float W, float Q2) {
@@ -379,6 +382,16 @@ void Histogram::WvsQ2_Write() {
   WvsQ2_NeutronPip->SetYTitle("Q^{2} (GeV^{2})");
   WvsQ2_NeutronPip->SetOption("COLZ");
   WvsQ2_NeutronPip->Write();
+
+  WvsMM_NeutronPip->SetXTitle("W (GeV)");
+  WvsMM_NeutronPip->SetYTitle("MM (GeV)");
+  WvsMM_NeutronPip->SetOption("COLZ");
+  WvsMM_NeutronPip->Write();
+
+  WvsMM2_NeutronPip->SetXTitle("W (GeV)");
+  WvsMM2_NeutronPip->SetYTitle("MM^{2} (GeV^{2})");
+  WvsMM2_NeutronPip->SetOption("COLZ");
+  WvsMM2_NeutronPip->Write();
 
   W_NeutronPip->SetXTitle("W (GeV)");
   W_NeutronPip->Write();
