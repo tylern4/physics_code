@@ -190,6 +190,14 @@ void Histogram::Write(std::string output_file, bool multi) {
 
 // W and Q^2
 void Histogram::makeHists_WvsQ2() {
+  WvsQ2_sec.reserve(NUM_SECTORS);
+  WvsQ2_channel_sec.reserve(NUM_SECTORS);
+  W_sec.reserve(NUM_SECTORS);
+  W_channel_sec.reserve(NUM_SECTORS);
+  W_binned.reserve(Q2_BINS);
+  Q2_binned.reserve(W_BINS);
+  Missing_Mass_WBinned.reserve(W_BINS);
+  Missing_Mass_WBinned_square.reserve(W_BINS);
   for (short sec = 0; sec < NUM_SECTORS; sec++) {
     sprintf(hname, "W_vs_Q2_sec_%d", sec + 1);
     sprintf(htitle, "W vs Q^{2} Sector: %d", sec + 1);

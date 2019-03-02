@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
     }
     Watch->Stop();
     cout << BOLDGREEN << "\n\n" << events / Watch->RealTime() << "Hz" << DEF << endl;
-    hist->Write(outfilename);
+    hist->Write(outfilename, true);
     cout << RED << Watch->RealTime() << "sec" << DEF << endl;
     cout << BOLDYELLOW << "\n\n" << events / Watch->RealTime() << "Hz" << DEF << endl;
 

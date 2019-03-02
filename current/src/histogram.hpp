@@ -87,11 +87,11 @@ class Histogram {
   TH2D_ptr WvsQ2_hist = std::make_shared<TH2D>("WvsQ2_hist", "W vs Q^{2}", BINS, w_min, w_max, BINS, q2_min, q2_max);
   TH1D_ptr W_hist = std::make_shared<TH1D>("W", "W", BINS, w_min, w_max);
 
-  TH2D_ptr WvsQ2_sec[NUM_SECTORS];
-  TH1D_ptr W_sec[NUM_SECTORS];
+  std::vector<TH2D_ptr> WvsQ2_sec;
+  std::vector<TH1D_ptr> W_sec;
 
-  TH2D_ptr WvsQ2_channel_sec[NUM_SECTORS];
-  TH1D_ptr W_channel_sec[NUM_SECTORS];
+  std::vector<TH2D_ptr> WvsQ2_channel_sec;
+  std::vector<TH1D_ptr> W_channel_sec;
 
   TH1D_ptr Q2_hist = std::make_shared<TH1D>("Q2", "Q^{2}", BINS, q2_min, q2_max);
   TH1D_ptr E_prime_hist = std::make_shared<TH1D>("E_prime", "Scattered Electron Energy", BINS, 0.0, 5.0);
@@ -132,12 +132,12 @@ class Histogram {
   TH2D_ptr WvsQ2_binned = std::make_shared<TH2D>("WvsQ2_hist_binned", "W vs Q^{2} binned", W_BINS, w_binned_min,
                                                  w_binned_max, Q2_BINS, q2_binned_min, q2_binned_max);
 
-  TH1D_ptr W_binned[Q2_BINS];
-  TH1D_ptr Q2_binned[W_BINS];
+  std::vector<TH1D_ptr> W_binned;
+  std::vector<TH1D_ptr> Q2_binned;
+  std::vector<TH1D_ptr> Missing_Mass_WBinned;
+  std::vector<TH1D_ptr> Missing_Mass_WBinned_square;
 
-  TH1D_ptr Missing_Mass_WBinned[W_BINS];
   Fits* Fit_Missing_Mass_WBinned[W_BINS];
-  TH1D_ptr Missing_Mass_WBinned_square[W_BINS];
 
   /*
     int bins_pip_N[NDIMS_PIP_N] = {W_BINS, Q2_BINS, NUM_SECTORS, BINS_MM, BINS_MM, THETA_BINS, PHI_BINS};
