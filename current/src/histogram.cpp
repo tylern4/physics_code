@@ -12,9 +12,11 @@ Histogram::Histogram() {
   makeHists_EC();
   makeHists_CC();
   makeHists_fid();
-  hadron_fid_hist[0] = new TH2D("hadron_fid", "hadron_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
-  hadron_fid_hist[1] = new TH2D("proton_fid", "proton_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
-  hadron_fid_hist[2] = new TH2D("pip_fid", "pip_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
+  hadron_fid_hist[0] =
+      std::make_shared<TH2D>("hadron_fid", "hadron_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
+  hadron_fid_hist[1] =
+      std::make_shared<TH2D>("proton_fid", "proton_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
+  hadron_fid_hist[2] = std::make_shared<TH2D>("pip_fid", "pip_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
 }
 
 Histogram::Histogram(std::string output_file) {
@@ -25,9 +27,11 @@ Histogram::Histogram(std::string output_file) {
   makeHists_EC();
   makeHists_CC();
   makeHists_fid();
-  hadron_fid_hist[0] = new TH2D("hadron_fid", "hadron_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
-  hadron_fid_hist[1] = new TH2D("proton_fid", "proton_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
-  hadron_fid_hist[2] = new TH2D("pip_fid", "pip_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
+  hadron_fid_hist[0] =
+      std::make_shared<TH2D>("hadron_fid", "hadron_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
+  hadron_fid_hist[1] =
+      std::make_shared<TH2D>("proton_fid", "proton_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
+  hadron_fid_hist[2] = std::make_shared<TH2D>("pip_fid", "pip_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
 }
 
 Histogram::~Histogram() {}
@@ -125,8 +129,7 @@ void Histogram::Write(std::string output_file) {
   std::cerr << MM_neutron_cut->Get_mean() << ",";
   std::cerr << MM_neutron_cut->Get_mean() + 3 * MM_neutron_cut->Get_sigma() << ",";
   std::cerr << MM_neutron_cut->Get_mean() - 3 * MM_neutron_cut->Get_sigma() << std::endl;
-
-  std::cerr << BOLDBLUE << "Done!!!" << DEF << std::endl;
+  std::cerr << BOLDBLUE << "Done Writing!!!" << DEF << std::endl;
 }
 
 void Histogram::Write(std::string output_file, bool multi) {
@@ -190,41 +193,41 @@ void Histogram::makeHists_WvsQ2() {
   for (short sec = 0; sec < NUM_SECTORS; sec++) {
     sprintf(hname, "W_vs_Q2_sec_%d", sec + 1);
     sprintf(htitle, "W vs Q^{2} Sector: %d", sec + 1);
-    WvsQ2_sec[sec] = new TH2D(hname, htitle, BINS, w_min, w_max, BINS, q2_min, q2_max);
+    WvsQ2_sec[sec] = std::make_shared<TH2D>(hname, htitle, BINS, w_min, w_max, BINS, q2_min, q2_max);
 
     sprintf(hname, "W_sec_%d", sec + 1);
     sprintf(htitle, "W Sector: %d", sec + 1);
-    W_sec[sec] = new TH1D(hname, htitle, BINS, w_min, w_max);
+    W_sec[sec] = std::make_shared<TH1D>(hname, htitle, BINS, w_min, w_max);
   }
 
   for (short sec = 0; sec < NUM_SECTORS; sec++) {
     sprintf(hname, "W_vs_Q2_channel_sec_%d", sec + 1);
     sprintf(htitle, "W vs Q^{2} N #pi^{+} Sector: %d", sec + 1);
-    WvsQ2_channel_sec[sec] = new TH2D(hname, htitle, BINS, w_min, w_max, BINS, q2_min, q2_max);
+    WvsQ2_channel_sec[sec] = std::make_shared<TH2D>(hname, htitle, BINS, w_min, w_max, BINS, q2_min, q2_max);
 
     sprintf(hname, "W_channel_sec_%d", sec + 1);
     sprintf(htitle, "W N #pi^{+} Sector: %d", sec + 1);
-    W_channel_sec[sec] = new TH1D(hname, htitle, BINS, w_min, w_max);
+    W_channel_sec[sec] = std::make_shared<TH1D>(hname, htitle, BINS, w_min, w_max);
   }
 
   for (short y = 0; y < Q2_BINS; y++) {
     sprintf(hname, "W_%0.3f_%0.3f", q2_binned_min + (Q2_width * y), q2_binned_min + (Q2_width * (y + 1)));
     sprintf(htitle, "W hist\nQ^{2} %0.3f %0.3f", q2_binned_min + (Q2_width * y), q2_binned_min + (Q2_width * (y + 1)));
-    W_binned[y] = new TH1D(hname, htitle, BINS, w_binned_min, w_binned_max);
+    W_binned[y] = std::make_shared<TH1D>(hname, htitle, BINS, w_binned_min, w_binned_max);
   }
   for (short x = 0; x < W_BINS; x++) {
     sprintf(hname, "Q2_%0.3f_%0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
     sprintf(htitle, "Q^{2} hist\nW %0.3f %0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
-    Q2_binned[x] = new TH1D(hname, htitle, BINS, q2_binned_min, q2_binned_max);
+    Q2_binned[x] = std::make_shared<TH1D>(hname, htitle, BINS, q2_binned_min, q2_binned_max);
 
     sprintf(hname, "MM_W_%0.3f_%0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
     sprintf(htitle, "Missing Mass\nW %0.3f %0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
-    Missing_Mass_WBinned[x] = new TH1D(hname, htitle, BINS, MM_min, MM_max);
+    Missing_Mass_WBinned[x] = std::make_shared<TH1D>(hname, htitle, BINS, MM_min, MM_max);
 
     sprintf(hname, "MM2_W_%0.3f_%0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
     sprintf(htitle, "Missing Mass^{2}\nW %0.3f %0.3f", w_binned_min + (W_width * x),
             w_binned_min + (W_width * (x + 1)));
-    Missing_Mass_WBinned_square[x] = new TH1D(hname, htitle, BINS, MM_min * MM_min, MM_max * MM_max);
+    Missing_Mass_WBinned_square[x] = std::make_shared<TH1D>(hname, htitle, BINS, MM_min * MM_min, MM_max * MM_max);
   }
 }
 
@@ -296,12 +299,14 @@ void Histogram::Fill_channel_WQ2(float W, float Q2, int sector, TLorentzVector e
 }
 
 void Histogram::Fill_single_proton_WQ2(float W, float Q2) {
+  std::lock_guard<std::mutex> lock(_mutex);
   WvsQ2_single_proton->Fill(W, Q2);
   W_single_proton->Fill(W);
   Q2_single_proton->Fill(Q2);
 }
 
 void Histogram::WvsQ2_Fill(float W, float Q2, int sector) {
+  std::lock_guard<std::mutex> lock(_mutex);
   WvsQ2_hist->Fill(W, Q2);
   W_hist->Fill(W);
   Q2_hist->Fill(Q2);
@@ -310,6 +315,7 @@ void Histogram::WvsQ2_Fill(float W, float Q2, int sector) {
 }
 
 void Histogram::Fill_pion_WQ2(float W, float Q2) {
+  std::lock_guard<std::mutex> lock(_mutex);
   WvsQ2_pion->Fill(W, Q2);
   W_pion->Fill(W);
   Q2_pion->Fill(Q2);
@@ -520,24 +526,46 @@ void Histogram::WvsQ2_binned_Write() {
 // W and Q^2
 
 // P and E
-void Histogram::MomVsBeta_Fill_pos(float P, float Beta) { MomVsBeta_hist_pos->Fill(P, Beta); }
+void Histogram::MomVsBeta_Fill_pos(float P, float Beta) {
+  std::lock_guard<std::mutex> lock(_mutex);
+  MomVsBeta_hist_pos->Fill(P, Beta);
+}
 
-void Histogram::MomVsBeta_Fill_neg(float P, float Beta) { MomVsBeta_hist_neg->Fill(P, Beta); }
+void Histogram::MomVsBeta_Fill_neg(float P, float Beta) {
+  std::lock_guard<std::mutex> lock(_mutex);
+  MomVsBeta_hist_neg->Fill(P, Beta);
+}
 
-void Histogram::MomVsBeta_Fill_neutral(float P, float Beta) { MomVsBeta_hist_neutral->Fill(P, Beta); }
+void Histogram::MomVsBeta_Fill_neutral(float P, float Beta) {
+  std::lock_guard<std::mutex> lock(_mutex);
+  MomVsBeta_hist_neutral->Fill(P, Beta);
+}
 
-void Histogram::Fill_proton_ID_P(float p, float beta) { MomVsBeta_proton_ID->Fill(p, beta); }
+void Histogram::Fill_proton_ID_P(float p, float beta) {
+  std::lock_guard<std::mutex> lock(_mutex);
+  MomVsBeta_proton_ID->Fill(p, beta);
+}
 
-void Histogram::Fill_Pi_ID_P(float p, float beta) { MomVsBeta_Pi_ID->Fill(p, beta); }
+void Histogram::Fill_Pi_ID_P(float p, float beta) {
+  std::lock_guard<std::mutex> lock(_mutex);
+  MomVsBeta_Pi_ID->Fill(p, beta);
+}
 
-void Histogram::Fill_proton_Pi_ID_P(float p, float beta) { MomVsBeta_proton_Pi_ID->Fill(p, beta); }
+void Histogram::Fill_proton_Pi_ID_P(float p, float beta) {
+  std::lock_guard<std::mutex> lock(_mutex);
+  MomVsBeta_proton_Pi_ID->Fill(p, beta);
+}
 
 void Histogram::MomVsBeta_Fill(float P, float Beta) {
+  std::lock_guard<std::mutex> lock(_mutex);
   MomVsBeta_hist->Fill(P, Beta);
   Mom->Fill(P);
 }
 
-void Histogram::Photon_flux_Fill(float photon_flux) { photon_flux_hist->Fill(photon_flux); }
+void Histogram::Photon_flux_Fill(float photon_flux) {
+  std::lock_guard<std::mutex> lock(_mutex);
+  photon_flux_hist->Fill(photon_flux);
+}
 
 void Histogram::MomVsBeta_Write() {
   MomVsBeta_hist->SetXTitle("Momentum (GeV)");
@@ -581,18 +609,24 @@ void Histogram::MomVsBeta_Write() {
 }
 
 // Missing Mass
-void Histogram::Fill_Missing_Mass(float miss_mass) { Missing_Mass->Fill(miss_mass); }
+void Histogram::Fill_Missing_Mass(float miss_mass) {
+  std::lock_guard<std::mutex> lock(_mutex);
+  Missing_Mass->Fill(miss_mass);
+}
 
 void Histogram::Fill_Missing_Mass(float mm, float mm2) {
+  std::lock_guard<std::mutex> lock(_mutex);
   Missing_Mass->Fill(mm);
   Missing_Mass_square->Fill(mm2);
 }
 void Histogram::Fill_Missing_Mass_strict(float mm, float mm2) {
+  std::lock_guard<std::mutex> lock(_mutex);
   Missing_Mass_strict->Fill(mm);
   Missing_Mass_square_strict->Fill(mm2);
 }
 
 void Histogram::Fill_Missing_Mass_pi0(float mm, float mm2) {
+  std::lock_guard<std::mutex> lock(_mutex);
   if (mm != 0) {
     Missing_Mass_pi0->Fill(mm);
     Missing_Mass_square_pi0->Fill(mm2);
@@ -600,11 +634,13 @@ void Histogram::Fill_Missing_Mass_pi0(float mm, float mm2) {
 }
 
 void Histogram::Fill_Missing_Mass_twoPi(float mm, float mm2) {
+  std::lock_guard<std::mutex> lock(_mutex);
   Missing_Mass_2pi->Fill(mm);
   Missing_Mass_square_2pi->Fill(mm2);
 }
 
 void Histogram::Fill_W_Missing_Mass(float W, float mm, float mm2) {
+  std::lock_guard<std::mutex> lock(_mutex);
   for (int x = 0; x < W_BINS; x++) {
     if (w_binned_min + (W_width * x) <= W && w_binned_min + (W_width * (x + 1)) >= W) {
       Missing_Mass_WBinned[x]->Fill(mm);
@@ -616,7 +652,10 @@ void Histogram::Fill_W_Missing_Mass(float W, float mm, float mm2) {
 
 // void Histogram::Fill_Mass(float mass) { Mass->Fill(mass); }
 
-void Histogram::Fill_Missing_Mass_square(float miss_mass_2) { Missing_Mass_square->Fill(miss_mass_2); }
+void Histogram::Fill_Missing_Mass_square(float miss_mass_2) {
+  std::lock_guard<std::mutex> lock(_mutex);
+  Missing_Mass_square->Fill(miss_mass_2);
+}
 
 void Histogram::Write_Missing_Mass() {
   Missing_Mass->SetXTitle("Mass (GeV)");
@@ -660,58 +699,88 @@ void Histogram::Write_Missing_Mass() {
 }
 
 void Histogram::makeHists_deltat() {
-  for (int jj = 0; jj < num_points; jj++) {
+  for (int jj = 0; jj < NUM_POINTS; jj++) {
     sprintf(hname, "delta_t_p_%d", jj);
     sprintf(htitle, "#Deltat P %d", jj);
-    delta_t_hist[0][jj] = new TH1D(hname, htitle, BINS, Dt_min, Dt_max);
+    delta_t_hist[0][jj] = std::make_shared<TH1D>(hname, htitle, BINS, Dt_min, Dt_max);
 
     sprintf(hname, "delta_t_pip_%d", jj);
     sprintf(htitle, "#Deltat #pi^{+} %d", jj);
-    delta_t_hist[1][jj] = new TH1D(hname, htitle, BINS, Dt_min, Dt_max);
+    delta_t_hist[1][jj] = std::make_shared<TH1D>(hname, htitle, BINS, Dt_min, Dt_max);
 
     sprintf(hname, "delta_t_electron_%d", jj);
     sprintf(htitle, "#Deltat electron %d", jj);
-    delta_t_hist[2][jj] = new TH1D(hname, htitle, BINS, Dt_min, Dt_max);
+    delta_t_hist[2][jj] = std::make_shared<TH1D>(hname, htitle, BINS, Dt_min, Dt_max);
   }
 
   for (int jj = 0; jj < NUM_SECTORS; jj++) {
     for (int jjj = 0; jjj < SC_PADDLE_NUM; jjj++) {
       sprintf(hname, "delta_t_p_sec%d_pad%d", jj + 1, jjj + 1);
       sprintf(htitle, "#Deltat P Sector %d Paddle %d", jj + 1, jjj + 1);
-      delta_t_sec_pad_hist[0][jj][jjj] = new TH2D(hname, htitle, BINS / 2, p_min, p_max, BINS / 2, Dt_min, Dt_max);
+      delta_t_sec_pad_hist[0][jj][jjj] =
+          std::make_shared<TH2D>(hname, htitle, BINS / 2, p_min, p_max, BINS / 2, Dt_min, Dt_max);
 
       sprintf(hname, "delta_t_pip_sec%d_pad%d", jj + 1, jjj + 1);
       sprintf(htitle, "#Deltat #pi^{+} Sector %d Paddle %d", jj + 1, jjj + 1);
-      delta_t_sec_pad_hist[1][jj][jjj] = new TH2D(hname, htitle, BINS / 2, p_min, p_max, BINS / 2, Dt_min, Dt_max);
+      delta_t_sec_pad_hist[1][jj][jjj] =
+          std::make_shared<TH2D>(hname, htitle, BINS / 2, p_min, p_max, BINS / 2, Dt_min, Dt_max);
 
       sprintf(hname, "delta_t_electron_sec%d_pad%d", jj + 1, jjj + 1);
       sprintf(htitle, "#Deltat electron Sector %d Paddle %d", jj + 1, jjj + 1);
-      delta_t_sec_pad_hist[2][jj][jjj] = new TH2D(hname, htitle, BINS / 2, p_min, p_max, BINS / 2, Dt_min, Dt_max);
+      delta_t_sec_pad_hist[2][jj][jjj] =
+          std::make_shared<TH2D>(hname, htitle, BINS / 2, p_min, p_max, BINS / 2, Dt_min, Dt_max);
     }
   }
 }
 
-void Histogram::Fill_deltat_P(float momentum, float delta_t) { delta_t_mass_P->Fill(momentum, delta_t); }
+void Histogram::Fill_deltat_P(float momentum, float delta_t) {
+  std::lock_guard<std::mutex> lock(_mutex);
+  delta_t_mass_P->Fill(momentum, delta_t);
+}
 
-void Histogram::Fill_deltat_P_PID(float momentum, float delta_t) { delta_t_mass_P_PID->Fill(momentum, delta_t); }
+void Histogram::Fill_deltat_P_PID(float momentum, float delta_t) {
+  std::lock_guard<std::mutex> lock(_mutex);
+  delta_t_mass_P_PID->Fill(momentum, delta_t);
+}
 
-void Histogram::Fill_deltat_PIP(float momentum, float delta_t) { delta_t_mass_PIP->Fill(momentum, delta_t); }
+void Histogram::Fill_deltat_PIP(float momentum, float delta_t) {
+  std::lock_guard<std::mutex> lock(_mutex);
+  delta_t_mass_PIP->Fill(momentum, delta_t);
+}
 
-void Histogram::Fill_deltat_PIP_PID(float momentum, float delta_t) { delta_t_mass_PIP_PID->Fill(momentum, delta_t); }
+void Histogram::Fill_deltat_PIP_PID(float momentum, float delta_t) {
+  std::lock_guard<std::mutex> lock(_mutex);
+  delta_t_mass_PIP_PID->Fill(momentum, delta_t);
+}
 
-void Histogram::Fill_deltat_PIM(float momentum, float delta_t) { delta_t_mass_PIM->Fill(momentum, delta_t); }
+void Histogram::Fill_deltat_PIM(float momentum, float delta_t) {
+  std::lock_guard<std::mutex> lock(_mutex);
+  delta_t_mass_PIM->Fill(momentum, delta_t);
+}
 
-void Histogram::Fill_deltat_PIM_PID(float momentum, float delta_t) { delta_t_mass_PIM_PID->Fill(momentum, delta_t); }
+void Histogram::Fill_deltat_PIM_PID(float momentum, float delta_t) {
+  std::lock_guard<std::mutex> lock(_mutex);
+  delta_t_mass_PIM_PID->Fill(momentum, delta_t);
+}
 
-void Histogram::Fill_deltat_electron(float momentum, float delta_t) { delta_t_mass_electron->Fill(momentum, delta_t); }
+void Histogram::Fill_deltat_electron(float momentum, float delta_t) {
+  std::lock_guard<std::mutex> lock(_mutex);
+  delta_t_mass_electron->Fill(momentum, delta_t);
+}
 
 void Histogram::Fill_deltat_electron_PID(float momentum, float delta_t) {
   delta_t_mass_electron_PID->Fill(momentum, delta_t);
 }
 
-void Histogram::Fill_deltat_kp(float momentum, float delta_t) { delta_t_mass_kp->Fill(momentum, delta_t); }
+void Histogram::Fill_deltat_kp(float momentum, float delta_t) {
+  std::lock_guard<std::mutex> lock(_mutex);
+  delta_t_mass_kp->Fill(momentum, delta_t);
+}
 
-void Histogram::Fill_deltat_kp_PID(float momentum, float delta_t) { delta_t_mass_kp_PID->Fill(momentum, delta_t); }
+void Histogram::Fill_deltat_kp_PID(float momentum, float delta_t) {
+  std::lock_guard<std::mutex> lock(_mutex);
+  delta_t_mass_kp_PID->Fill(momentum, delta_t);
+}
 
 void Histogram::delta_t_slice_fit() {
   // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
@@ -862,7 +931,8 @@ void Histogram::delta_t_Write() {
 
 void Histogram::delta_t_Fill(float momentum, int charge, float delta_t_proton, float delta_t_pip,
                              float delta_t_electron) {
-  for (int jj = 0; jj < num_points; jj++) {
+  std::lock_guard<std::mutex> lock(_mutex);
+  for (int jj = 0; jj < NUM_POINTS; jj++) {
     if (momentum > jj * bin_width && momentum <= (jj + 1) * bin_width) {
       if (charge == 1 && !std::isnan(delta_t_proton) && !std::isnan(delta_t_pip)) {
         delta_t_hist[0][jj]->Fill(delta_t_proton);
@@ -874,11 +944,11 @@ void Histogram::delta_t_Fill(float momentum, int charge, float delta_t_proton, f
 }
 
 void Histogram::delta_t_slices_Write() {
-  std::unique_ptr<Fits> delta_t_cut[3][num_points];
+  std::unique_ptr<Fits> delta_t_cut[3][NUM_POINTS];
   float fit_dt_min = -1.0;
   float fit_dt_max = 1.0;
   for (int j = 0; j < 3; j++) {
-    for (int jj = 0; jj < num_points; jj++) {
+    for (int jj = 0; jj < NUM_POINTS; jj++) {
       if (j != 2 && !_multi) {
         delta_t_cut[j][jj] = std::make_unique<Fits>();
         delta_t_cut[j][jj]->Set_min(fit_dt_min);
@@ -945,6 +1015,7 @@ void Histogram::delta_T_canvas() {
 }
 
 void Histogram::CC_fill(int cc_sector, int cc_segment, int cc_pmt, int cc_nphe, float theta_cc) {
+  std::lock_guard<std::mutex> lock(_mutex);
   if (cc_pmt == -1) cc_pmt = 2;
   /*
   x_cc_sparse[0] = cc_sector;
@@ -975,21 +1046,21 @@ void Histogram::makeHists_CC() {
   for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
     sprintf(hname, "Theta_CC_sec%d", sec_i + 1);
     sprintf(htitle, "Theta CC sector %d", sec_i + 1);
-    Theta_CC_Sec[sec_i] = new TH2D(hname, htitle, 20, 0.0, 20.0, 60, 0.0, 60.0);
+    Theta_CC_Sec[sec_i] = std::make_shared<TH2D>(hname, htitle, 20, 0.0, 20.0, 60, 0.0, 60.0);
     sprintf(hname, "Theta_CC_sec_cut%d", sec_i + 1);
     sprintf(htitle, "Theta CC sector cut %d", sec_i + 1);
-    Theta_CC_Sec_cut[sec_i] = new TH2D(hname, htitle, 20, 0.0, 20.0, 60, 0.0, 60.0);
+    Theta_CC_Sec_cut[sec_i] = std::make_shared<TH2D>(hname, htitle, 20, 0.0, 20.0, 60, 0.0, 60.0);
     for (int pmt_i = 0; pmt_i < PMT; pmt_i++) {
       if (pmt_i == 0) L_R_C = "both";
       if (pmt_i == 1) L_R_C = "right";
       if (pmt_i == 2) L_R_C = "left";
       sprintf(hname, "CC_sec%d_%s", sec_i + 1, L_R_C.c_str());
       sprintf(htitle, "CC sector %d %s", sec_i + 1, L_R_C.c_str());
-      cc_hist_allSeg[sec_i][pmt_i] = new TH1D(hname, htitle, bins_CC, CC_min, CC_max);
+      cc_hist_allSeg[sec_i][pmt_i] = std::make_shared<TH1D>(hname, htitle, bins_CC, CC_min, CC_max);
       for (int seg_i = 0; seg_i < segment; seg_i++) {
         sprintf(hname, "CC_sec%d_seg%d_%s", sec_i + 1, seg_i + 1, L_R_C.c_str());
         sprintf(htitle, "CC sector %d segment %d %s", sec_i + 1, seg_i + 1, L_R_C.c_str());
-        cc_hist[sec_i][seg_i][pmt_i] = new TH1D(hname, htitle, bins_CC, CC_min, CC_max);
+        cc_hist[sec_i][seg_i][pmt_i] = std::make_shared<TH1D>(hname, htitle, bins_CC, CC_min, CC_max);
       }
     }
   }
@@ -1154,23 +1225,25 @@ void Histogram::makeHists_fid() {
     sprintf(hname, "electron_fid_sec%d", sec_i + 1);
     sprintf(htitle, "electron_fid_sec%d", sec_i + 1);
     electron_fid_sec_hist[sec_i] =
-        new TH2D(hname, htitle, BINS, min_phi[sec_i], max_phi[sec_i], BINS, theta_min, theta_max);
+        std::make_shared<TH2D>(hname, htitle, BINS, min_phi[sec_i], max_phi[sec_i], BINS, theta_min, theta_max);
 
     for (int t = 0; t < 3; t++) {
       sprintf(hname, "hadron_fid_sec%d_%d", sec_i + 1, t);
       sprintf(htitle, "hadron_fid_sec%d_%d", sec_i + 1, t);
       hadron_fid_sec_hist[t][sec_i] =
-          new TH2D(hname, htitle, BINS, min_phi[sec_i], max_phi[sec_i], BINS, theta_min, theta_max);
+          std::make_shared<TH2D>(hname, htitle, BINS, min_phi[sec_i], max_phi[sec_i], BINS, theta_min, theta_max);
     }
   }
 }
 
 void Histogram::Fill_electron_fid(float theta, float phi, int sector) {
+  std::lock_guard<std::mutex> lock(_mutex);
   electron_fid_hist->Fill(phi, theta);
   electron_fid_sec_hist[sector - 1]->Fill(phi, theta);
 }
 
 void Histogram::Fill_hadron_fid(float theta, float phi, int sector, int id) {
+  std::lock_guard<std::mutex> lock(_mutex);
   if (id == PROTON) {
     hadron_fid_hist[0]->Fill(phi, theta);
     hadron_fid_sec_hist[0][sector - 1]->Fill(phi, theta);
@@ -1227,7 +1300,7 @@ void Histogram::Fid_Write() {
       electron_fid_can[sec_i] = new TCanvas(hname, htitle, 1280, 720);
       for (int slice = start_slice; slice < FID_SLICES; slice++) {
         sprintf(hname, "electron_fid_sec_%d_%d", sec_i + 1, slice + 1);
-        electron_fid_sec_slice[sec_i][slice] = (TH1D *)electron_fid_sec_hist[sec_i]->ProjectionY(
+        electron_fid_sec_slice[sec_i][slice] = (TH1D_ptr)electron_fid_sec_hist[sec_i]->ProjectionY(
             hname, slice_width * slice, slice_width * slice + (slice_width - 1));
         electron_fid_sec_slice[sec_i][slice]->Rebin(4);
         SliceFit[sec_i][slice] = std::make_unique<Fits>();
@@ -1282,37 +1355,45 @@ void Histogram::fid_canvas() {
 }
 
 void Histogram::makeHists_EC() {
-  for (int n = 0; n < num_points; n++) {
+  for (int n = 0; n < NUM_POINTS; n++) {
     sprintf(hname, "ec_%d", n);
     sprintf(htitle, "Sampling Fraction %d", n);
-    EC_hist[n] = new TH1D(hname, htitle, BINS, EC_min, EC_max);
+    EC_hist[n] = std::make_shared<TH1D>(hname, htitle, BINS, EC_min, EC_max);
 
     sprintf(hname, "ec_cut_%d", n);
     sprintf(htitle, "Sampling Fraction cut %d", n);
-    EC_hist_cut[n] = new TH1D(hname, htitle, BINS, EC_min, EC_max);
+    EC_hist_cut[n] = std::make_shared<TH1D>(hname, htitle, BINS, EC_min, EC_max);
   }
 }
 
 void Histogram::EC_fill(float etot, float momentum) {
+  std::lock_guard<std::mutex> lock(_mutex);
   float sampling_frac = etot / momentum;
   EC_sampling_fraction->Fill(momentum, sampling_frac);
 
-  for (int n = 0; n < num_points; n++) {
+  for (int n = 0; n < NUM_POINTS; n++) {
     if (momentum > n * bin_width && momentum <= (n + 1) * bin_width) {
       EC_hist[n]->Fill(sampling_frac);
     }
   }
 }
 
-void Histogram::EC_inout(float Ein, float Eout) { ECin_ECout->Fill(Ein, Eout); }
+void Histogram::EC_inout(float Ein, float Eout) {
+  std::lock_guard<std::mutex> lock(_mutex);
+  ECin_ECout->Fill(Ein, Eout);
+}
 
-void Histogram::TM_Fill(float momentum, float theta) { Theta_vs_mom->Fill(momentum, theta); }
+void Histogram::TM_Fill(float momentum, float theta) {
+  std::lock_guard<std::mutex> lock(_mutex);
+  Theta_vs_mom->Fill(momentum, theta);
+}
 
 void Histogram::EC_cut_fill(float etot, float momentum) {
+  std::lock_guard<std::mutex> lock(_mutex);
   float sampling_frac = etot / momentum;
   EC_sampling_fraction_cut->Fill(momentum, sampling_frac);
 
-  for (int n = 0; n < num_points; n++) {
+  for (int n = 0; n < NUM_POINTS; n++) {
     if (momentum > n * bin_width && momentum <= (n + 1) * bin_width) {
       EC_hist_cut[n]->Fill(sampling_frac);
     }
@@ -1397,10 +1478,10 @@ void Histogram::EC_slice_fit() {
 }
 
 void Histogram::EC_slices_Write() {
-  std::unique_ptr<Fits> EC_fit[num_points];
+  std::unique_ptr<Fits> EC_fit[NUM_POINTS];
   float fit_ec_min = 0.2;
   float fit_ec_max = 0.4;
-  for (int n = 0; n < num_points; n++) {
+  for (int n = 0; n < NUM_POINTS; n++) {
     EC_fit[n] = std::make_unique<Fits>();
     EC_fit[n]->Set_min(fit_ec_min);
     EC_fit[n]->Set_max(fit_ec_max);
@@ -1436,6 +1517,7 @@ void Histogram::EC_Write() {
 }
 
 void Histogram::Fill_Beam_Position(float vertex_x, float vertex_y, float vertex_z) {
+  std::lock_guard<std::mutex> lock(_mutex);
   Beam_Position->Fill(vertex_x, vertex_y);
   Beam_Position_X->Fill(vertex_x);
   Beam_Position_Y->Fill(vertex_y);
@@ -1461,6 +1543,7 @@ void Histogram::Beam_Position_Write() {
 }
 
 void Histogram::Fill_Target_Vertex(float vertex_x, float vertex_y, float vertex_z) {
+  std::lock_guard<std::mutex> lock(_mutex);
   if (0 == vertex_x) return;
   if (0 == vertex_y && 0 == vertex_z) return;
   target_vertex_X->Fill(vertex_x);
@@ -1498,12 +1581,15 @@ void Histogram::Target_Vertex_Write() {
 }
 
 void Histogram::Fill_E_Prime(TLorentzVector e_prime) {
+  std::lock_guard<std::mutex> lock(_mutex);
   if (e_prime.E() > 0.1) energy_no_cuts->Fill(e_prime.E());
 }
 void Histogram::Fill_E_Prime_fid(TLorentzVector e_prime) {
+  std::lock_guard<std::mutex> lock(_mutex);
   if (e_prime.E() > 0.1) energy_fid_cuts->Fill(e_prime.E());
 }
 void Histogram::Fill_E_Prime_channel(TLorentzVector e_prime) {
+  std::lock_guard<std::mutex> lock(_mutex);
   if (e_prime.E() > 0.1) energy_channel_cuts->Fill(e_prime.E());
 }
 

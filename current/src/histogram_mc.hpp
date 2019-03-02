@@ -30,6 +30,9 @@
 #define theta_bins 100
 #define phi_bins 100
 
+using TH2D_ptr = std::shared_ptr<TH2D>;
+using TH1D_ptr = std::shared_ptr<TH1D>;
+
 class mcHistogram {
  private:
  public:
@@ -65,28 +68,25 @@ class mcHistogram {
   double W_width = (w_binned_max - w_binned_min) / (double)W_bins;
   double Q2_width = (q2_binned_max - q2_binned_min) / (double)Q2_bins;
 
-  std::unique_ptr<TH2D> WvsQ2_hist =
-      std::make_unique<TH2D>("WvsQ2_hist", "W vs Q^{2}", bins, w_min, w_max, bins, q2_min, q2_max);
-  std::unique_ptr<TH1D> W_hist = std::make_unique<TH1D>("W", "W", bins, w_min, w_max);
+  TH2D_ptr WvsQ2_hist = std::make_shared<TH2D>("WvsQ2_hist", "W vs Q^{2}", bins, w_min, w_max, bins, q2_min, q2_max);
+  TH1D_ptr W_hist = std::make_shared<TH1D>("W", "W", bins, w_min, w_max);
 
-  std::unique_ptr<TH2D> WvsQ2_MC =
-      std::make_unique<TH2D>("WvsQ2_MC", "W vs Q^{2} #pi^{+} N", bins, w_min, w_max, bins, q2_min, q2_max);
-  std::unique_ptr<TH1D> W_MC = std::make_unique<TH1D>("W_MC", "W #pi^{+} N", bins, w_min, w_max);
+  TH2D_ptr WvsQ2_MC =
+      std::make_shared<TH2D>("WvsQ2_MC", "W vs Q^{2} #pi^{+} N", bins, w_min, w_max, bins, q2_min, q2_max);
+  TH1D_ptr W_MC = std::make_shared<TH1D>("W_MC", "W #pi^{+} N", bins, w_min, w_max);
 
-  std::unique_ptr<TH2D> WvsQ2_binned =
-      std::make_unique<TH2D>("WvsQ2_hist_binned", "W vs Q^{2} binned", W_bins, w_binned_min, w_binned_max, Q2_bins,
-                             q2_binned_min, q2_binned_max);
-  std::unique_ptr<TH2D> WvsQ2_binned_MC =
-      std::make_unique<TH2D>("WvsQ2_hist_binned_MC", "W vs Q^{2} binned", W_bins, w_binned_min, w_binned_max, Q2_bins,
-                             q2_binned_min, q2_binned_max);
+  TH2D_ptr WvsQ2_binned = std::make_shared<TH2D>("WvsQ2_hist_binned", "W vs Q^{2} binned", W_bins, w_binned_min,
+                                                 w_binned_max, Q2_bins, q2_binned_min, q2_binned_max);
+  TH2D_ptr WvsQ2_binned_MC = std::make_shared<TH2D>("WvsQ2_hist_binned_MC", "W vs Q^{2} binned", W_bins, w_binned_min,
+                                                    w_binned_max, Q2_bins, q2_binned_min, q2_binned_max);
 
-  std::unique_ptr<TH1D> W_binned[Q2_bins];
-  std::unique_ptr<TH1D> W_binned_MC[Q2_bins];
-  std::unique_ptr<TH1D> Missing_Mass = std::make_unique<TH1D>("Missing_Mass", "Missing Mass", bins_MM, MM_min, MM_max);
-  std::unique_ptr<TH1D> Missing_Mass_square =
-      std::make_unique<TH1D>("Missing_Mass_square", "Missing Mass^{2}", bins_MM, MM_min, MM_max);
+  TH1D_ptr W_binned[Q2_bins];
+  TH1D_ptr W_binned_MC[Q2_bins];
+  TH1D_ptr Missing_Mass = std::make_shared<TH1D>("Missing_Mass", "Missing Mass", bins_MM, MM_min, MM_max);
+  TH1D_ptr Missing_Mass_square =
+      std::make_shared<TH1D>("Missing_Mass_square", "Missing Mass^{2}", bins_MM, MM_min, MM_max);
 
-  std::unique_ptr<TH1D> delta_p[4];
+  TH1D_ptr delta_p[4];
 
   // W and Q^2
   void makeHists();

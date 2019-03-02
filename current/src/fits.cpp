@@ -20,7 +20,7 @@ double Fits::Get_sigma() { return sigma; }
 double Fits::Get_mean() { return mean; }
 double Fits::Get_FWHM() { return FWHM; }
 
-TF1 *Fits::FitGaus(TH1D *hist) {
+TF1 *Fits::FitGaus(std::shared_ptr<TH1D> hist) {
   if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   if (hist->GetEntries() > 100) {
     TF1 *fitFunc = new TF1("fitFunc", func::gausian, -100.0, 100.0, 3);
@@ -58,7 +58,7 @@ TF1 *Fits::FitGaus(TH1D *hist) {
   return NULL;
 }
 
-TF1 *Fits::FitLandauGaus(TH1D *hist) {
+TF1 *Fits::FitLandauGaus(std::shared_ptr<TH1D> hist) {
   if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   if (hist->GetEntries() > 1000) {
     double par[6];
@@ -95,7 +95,7 @@ TF1 *Fits::FitLandauGaus(TH1D *hist) {
   return NULL;
 }
 
-TF1 *Fits::Fit2Gaus(TH1D *hist) {
+TF1 *Fits::Fit2Gaus(std::shared_ptr<TH1D> hist) {
   if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   if (hist->GetEntries() > 1000) {
     TF1 *fitFunc = new TF1("fitFunc", func::gausian2, min_value, max_value, 6);
@@ -125,7 +125,7 @@ TF1 *Fits::Fit2Gaus(TH1D *hist) {
   return NULL;
 }
 
-TF1 *Fits::FitLandau(TH1D *hist) {
+TF1 *Fits::FitLandau(std::shared_ptr<TH1D> hist) {
   if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   if (hist->GetEntries() > 1000) {
     TF1 *fitFunc = new TF1("fitFunc", "landau", -100.0, 100.0);
@@ -138,7 +138,7 @@ TF1 *Fits::FitLandau(TH1D *hist) {
   return NULL;
 }
 
-TF1 *Fits::FitPoly_1D(TH1D *hist) {
+TF1 *Fits::FitPoly_1D(std::shared_ptr<TH1D> hist) {
   if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
 
   TF1 *fitFunc = new TF1("fitFunc", func::pol1, min_value, max_value);
@@ -157,7 +157,7 @@ TF1 *Fits::FitPoly_1D(TH1D *hist) {
   return fitFunc;
 }
 
-TF1 *Fits::FitPoly_2D(TH1D *hist) {
+TF1 *Fits::FitPoly_2D(std::shared_ptr<TH1D> hist) {
   if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
 
   TF1 *fitFunc = new TF1("fitFunc", func::pol2, min_value, max_value);
@@ -178,7 +178,7 @@ TF1 *Fits::FitPoly_2D(TH1D *hist) {
   return fitFunc;
 }
 
-TF1 *Fits::FitPoly_3D(TH1D *hist) {
+TF1 *Fits::FitPoly_3D(std::shared_ptr<TH1D> hist) {
   if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
 
   TF1 *fitFunc = new TF1("fitFunc", func::pol3, min_value, max_value);
@@ -201,7 +201,7 @@ TF1 *Fits::FitPoly_3D(TH1D *hist) {
   return fitFunc;
 }
 
-TF1 *Fits::FitPoly_4D(TH1D *hist) {
+TF1 *Fits::FitPoly_4D(std::shared_ptr<TH1D> hist) {
   if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
 
   TF1 *fitFunc = new TF1("fitFunc", func::pol4, min_value, max_value);
@@ -269,7 +269,7 @@ TF1 *Fits::FitFiducial(TGraph *profile, int sec) {
   return fitFunc;
 }
 
-TF1 *Fits::FitFiducial_hi(TH2D *hist2d) {
+TF1 *Fits::FitFiducial_hi(std::shared_ptr<TH2D> hist2d) {
   if (hist2d->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
 
   a = b = c = d = 0.5;
@@ -297,7 +297,7 @@ TF1 *Fits::FitFiducial_hi(TH2D *hist2d) {
   return fitFunc_hi;
 }
 
-TF1 *Fits::FitFiducial(TH2D *hist2d) {
+TF1 *Fits::FitFiducial(std::shared_ptr<TH2D> hist2d) {
   if (hist2d->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
 
   a = b = c = d = 0.5;
@@ -325,7 +325,7 @@ TF1 *Fits::FitFiducial(TH2D *hist2d) {
   return fitFunc;
 }
 
-TF1 *Fits::FitGenNormal(TH1D *hist) {
+TF1 *Fits::FitGenNormal(std::shared_ptr<TH1D> hist) {
   if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   TF1 *fitFunc = new TF1("genNormal", func::genNormal, min_value, max_value, 4);
   double min, max, val, min_m, max_m;
@@ -361,7 +361,7 @@ TF1 *Fits::FitGenNormal(TH1D *hist) {
   return fitFunc;
 }
 
-TF1 *Fits::FitBreitWigner(TH1D *hist) {
+TF1 *Fits::FitBreitWigner(std::shared_ptr<TH1D> hist) {
   if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
 
   TF1 *fitbw = new TF1("bw", func::breit_wigner, min_value, max_value, 3);
@@ -380,7 +380,7 @@ TF1 *Fits::FitBreitWigner(TH1D *hist) {
   return fitbw;
 }
 
-TF1 *Fits::FitMissMass(TH1D *hist) {
+TF1 *Fits::FitMissMass(std::shared_ptr<TH1D> hist) {
   if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   if (hist->GetEntries() < 1000) return NULL;
 

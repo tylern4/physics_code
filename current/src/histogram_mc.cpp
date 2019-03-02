@@ -18,7 +18,7 @@ mcHistogram::~mcHistogram() {
   Fits *MM_neutron_cut = new Fits();
   MM_neutron_cut->Set_min(0.8);
   MM_neutron_cut->Set_max(1.2);
-  MM_neutron_cut->FitBreitWigner(Missing_Mass.get());
+  MM_neutron_cut->FitBreitWigner(Missing_Mass);
 
   std::cerr << BOLDBLUE << "WvsQ2()" << DEF << std::endl;
   TDirectory *WvsQ2_folder = RootOutputFile->mkdir("W vs Q2");
