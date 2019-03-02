@@ -12,11 +12,9 @@ Histogram::Histogram() {
   makeHists_EC();
   makeHists_CC();
   makeHists_fid();
-  hadron_fid_hist[0] =
-      std::make_shared<TH2D>("hadron_fid", "hadron_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
-  hadron_fid_hist[1] =
-      std::make_shared<TH2D>("proton_fid", "proton_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
-  hadron_fid_hist[2] = std::make_shared<TH2D>("pip_fid", "pip_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
+  hadron_fid_hist[0] = new TH2D("hadron_fid", "hadron_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
+  hadron_fid_hist[1] = new TH2D("proton_fid", "proton_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
+  hadron_fid_hist[2] = new TH2D("pip_fid", "pip_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
 }
 
 Histogram::Histogram(std::string output_file) {
@@ -27,11 +25,9 @@ Histogram::Histogram(std::string output_file) {
   makeHists_EC();
   makeHists_CC();
   makeHists_fid();
-  hadron_fid_hist[0] =
-      std::make_shared<TH2D>("hadron_fid", "hadron_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
-  hadron_fid_hist[1] =
-      std::make_shared<TH2D>("proton_fid", "proton_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
-  hadron_fid_hist[2] = std::make_shared<TH2D>("pip_fid", "pip_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
+  hadron_fid_hist[0] = new TH2D("hadron_fid", "hadron_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
+  hadron_fid_hist[1] = new TH2D("proton_fid", "proton_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
+  hadron_fid_hist[2] = new TH2D("pip_fid", "pip_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
 }
 
 Histogram::~Histogram() {}
@@ -41,12 +37,12 @@ void Histogram::Write(std::string output_file) {
   std::cout << GREEN << "\nFitting" << DEF << std::endl;
   // Start of cuts
   auto MM_neutron_cut = std::make_unique<Fits>();
-  MM_neutron_cut->FitMissMass(Missing_Mass);
+  MM_neutron_cut->FitMissMass(Missing_Mass.get());
 
   auto MissingMassSquare_cut = std::make_unique<Fits>();
   MissingMassSquare_cut->Set_max(1.1);
   MissingMassSquare_cut->Set_min(0.7);
-  MissingMassSquare_cut->FitBreitWigner(Missing_Mass_square);
+  MissingMassSquare_cut->FitBreitWigner(Missing_Mass_square.get());
   MissingMassSquare_cut->Get_sigma();
 
   RootOutputFile->cd();
@@ -190,52 +186,44 @@ void Histogram::Write(std::string output_file, bool multi) {
 
 // W and Q^2
 void Histogram::makeHists_WvsQ2() {
-  WvsQ2_sec.reserve(NUM_SECTORS);
-  WvsQ2_channel_sec.reserve(NUM_SECTORS);
-  W_sec.reserve(NUM_SECTORS);
-  W_channel_sec.reserve(NUM_SECTORS);
-  W_binned.reserve(Q2_BINS);
-  Q2_binned.reserve(W_BINS);
-  Missing_Mass_WBinned.reserve(W_BINS);
-  Missing_Mass_WBinned_square.reserve(W_BINS);
   for (short sec = 0; sec < NUM_SECTORS; sec++) {
     sprintf(hname, "W_vs_Q2_sec_%d", sec + 1);
     sprintf(htitle, "W vs Q^{2} Sector: %d", sec + 1);
-    WvsQ2_sec[sec] = std::make_shared<TH2D>(hname, htitle, BINS, w_min, w_max, BINS, q2_min, q2_max);
+    WvsQ2_sec[sec] = new TH2D(hname, htitle, BINS, w_min, w_max, BINS, q2_min, q2_max);
 
     sprintf(hname, "W_sec_%d", sec + 1);
     sprintf(htitle, "W Sector: %d", sec + 1);
-    W_sec[sec] = std::make_shared<TH1D>(hname, htitle, BINS, w_min, w_max);
+    W_sec[sec] = new TH1D(hname, htitle, BINS, w_min, w_max);
   }
 
   for (short sec = 0; sec < NUM_SECTORS; sec++) {
     sprintf(hname, "W_vs_Q2_channel_sec_%d", sec + 1);
     sprintf(htitle, "W vs Q^{2} N #pi^{+} Sector: %d", sec + 1);
-    WvsQ2_channel_sec[sec] = std::make_shared<TH2D>(hname, htitle, BINS, w_min, w_max, BINS, q2_min, q2_max);
+    WvsQ2_channel_sec[sec] = new TH2D(hname, htitle, BINS, w_min, w_max, BINS, q2_min, q2_max);
 
     sprintf(hname, "W_channel_sec_%d", sec + 1);
     sprintf(htitle, "W N #pi^{+} Sector: %d", sec + 1);
-    W_channel_sec[sec] = std::make_shared<TH1D>(hname, htitle, BINS, w_min, w_max);
+    W_channel_sec[sec] = new TH1D(hname, htitle, BINS, w_min, w_max);
   }
 
   for (short y = 0; y < Q2_BINS; y++) {
     sprintf(hname, "W_%0.3f_%0.3f", q2_binned_min + (Q2_width * y), q2_binned_min + (Q2_width * (y + 1)));
     sprintf(htitle, "W hist\nQ^{2} %0.3f %0.3f", q2_binned_min + (Q2_width * y), q2_binned_min + (Q2_width * (y + 1)));
-    W_binned[y] = std::make_shared<TH1D>(hname, htitle, BINS, w_binned_min, w_binned_max);
+    W_binned[y] = new TH1D(hname, htitle, BINS, w_binned_min, w_binned_max);
   }
   for (short x = 0; x < W_BINS; x++) {
     sprintf(hname, "Q2_%0.3f_%0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
     sprintf(htitle, "Q^{2} hist\nW %0.3f %0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
-    Q2_binned[x] = std::make_shared<TH1D>(hname, htitle, BINS, q2_binned_min, q2_binned_max);
+    Q2_binned[x] = new TH1D(hname, htitle, BINS, q2_binned_min, q2_binned_max);
 
     sprintf(hname, "MM_W_%0.3f_%0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
     sprintf(htitle, "Missing Mass\nW %0.3f %0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
-    Missing_Mass_WBinned[x] = std::make_shared<TH1D>(hname, htitle, BINS, MM_min, MM_max);
+    Missing_Mass_WBinned[x] = new TH1D(hname, htitle, BINS, MM_min, MM_max);
 
     sprintf(hname, "MM2_W_%0.3f_%0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
     sprintf(htitle, "Missing Mass^{2}\nW %0.3f %0.3f", w_binned_min + (W_width * x),
             w_binned_min + (W_width * (x + 1)));
-    Missing_Mass_WBinned_square[x] = std::make_shared<TH1D>(hname, htitle, BINS, MM_min * MM_min, MM_max * MM_max);
+    Missing_Mass_WBinned_square[x] = new TH1D(hname, htitle, BINS, MM_min * MM_min, MM_max * MM_max);
   }
 }
 
@@ -710,33 +698,30 @@ void Histogram::makeHists_deltat() {
   for (int jj = 0; jj < NUM_POINTS; jj++) {
     sprintf(hname, "delta_t_p_%d", jj);
     sprintf(htitle, "#Deltat P %d", jj);
-    delta_t_hist[0][jj] = std::make_shared<TH1D>(hname, htitle, BINS, Dt_min, Dt_max);
+    delta_t_hist[0][jj] = new TH1D(hname, htitle, BINS, Dt_min, Dt_max);
 
     sprintf(hname, "delta_t_pip_%d", jj);
     sprintf(htitle, "#Deltat #pi^{+} %d", jj);
-    delta_t_hist[1][jj] = std::make_shared<TH1D>(hname, htitle, BINS, Dt_min, Dt_max);
+    delta_t_hist[1][jj] = new TH1D(hname, htitle, BINS, Dt_min, Dt_max);
 
     sprintf(hname, "delta_t_electron_%d", jj);
     sprintf(htitle, "#Deltat electron %d", jj);
-    delta_t_hist[2][jj] = std::make_shared<TH1D>(hname, htitle, BINS, Dt_min, Dt_max);
+    delta_t_hist[2][jj] = new TH1D(hname, htitle, BINS, Dt_min, Dt_max);
   }
 
   for (int jj = 0; jj < NUM_SECTORS; jj++) {
     for (int jjj = 0; jjj < SC_PADDLE_NUM; jjj++) {
       sprintf(hname, "delta_t_p_sec%d_pad%d", jj + 1, jjj + 1);
       sprintf(htitle, "#Deltat P Sector %d Paddle %d", jj + 1, jjj + 1);
-      delta_t_sec_pad_hist[0][jj][jjj] =
-          std::make_shared<TH2D>(hname, htitle, BINS / 2, p_min, p_max, BINS / 2, Dt_min, Dt_max);
+      delta_t_sec_pad_hist[0][jj][jjj] = new TH2D(hname, htitle, BINS / 2, p_min, p_max, BINS / 2, Dt_min, Dt_max);
 
       sprintf(hname, "delta_t_pip_sec%d_pad%d", jj + 1, jjj + 1);
       sprintf(htitle, "#Deltat #pi^{+} Sector %d Paddle %d", jj + 1, jjj + 1);
-      delta_t_sec_pad_hist[1][jj][jjj] =
-          std::make_shared<TH2D>(hname, htitle, BINS / 2, p_min, p_max, BINS / 2, Dt_min, Dt_max);
+      delta_t_sec_pad_hist[1][jj][jjj] = new TH2D(hname, htitle, BINS / 2, p_min, p_max, BINS / 2, Dt_min, Dt_max);
 
       sprintf(hname, "delta_t_electron_sec%d_pad%d", jj + 1, jjj + 1);
       sprintf(htitle, "#Deltat electron Sector %d Paddle %d", jj + 1, jjj + 1);
-      delta_t_sec_pad_hist[2][jj][jjj] =
-          std::make_shared<TH2D>(hname, htitle, BINS / 2, p_min, p_max, BINS / 2, Dt_min, Dt_max);
+      delta_t_sec_pad_hist[2][jj][jjj] = new TH2D(hname, htitle, BINS / 2, p_min, p_max, BINS / 2, Dt_min, Dt_max);
     }
   }
 }
@@ -1054,21 +1039,21 @@ void Histogram::makeHists_CC() {
   for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
     sprintf(hname, "Theta_CC_sec%d", sec_i + 1);
     sprintf(htitle, "Theta CC sector %d", sec_i + 1);
-    Theta_CC_Sec[sec_i] = std::make_shared<TH2D>(hname, htitle, 20, 0.0, 20.0, 60, 0.0, 60.0);
+    Theta_CC_Sec[sec_i] = new TH2D(hname, htitle, 20, 0.0, 20.0, 60, 0.0, 60.0);
     sprintf(hname, "Theta_CC_sec_cut%d", sec_i + 1);
     sprintf(htitle, "Theta CC sector cut %d", sec_i + 1);
-    Theta_CC_Sec_cut[sec_i] = std::make_shared<TH2D>(hname, htitle, 20, 0.0, 20.0, 60, 0.0, 60.0);
+    Theta_CC_Sec_cut[sec_i] = new TH2D(hname, htitle, 20, 0.0, 20.0, 60, 0.0, 60.0);
     for (int pmt_i = 0; pmt_i < PMT; pmt_i++) {
       if (pmt_i == 0) L_R_C = "both";
       if (pmt_i == 1) L_R_C = "right";
       if (pmt_i == 2) L_R_C = "left";
       sprintf(hname, "CC_sec%d_%s", sec_i + 1, L_R_C.c_str());
       sprintf(htitle, "CC sector %d %s", sec_i + 1, L_R_C.c_str());
-      cc_hist_allSeg[sec_i][pmt_i] = std::make_shared<TH1D>(hname, htitle, bins_CC, CC_min, CC_max);
+      cc_hist_allSeg[sec_i][pmt_i] = new TH1D(hname, htitle, bins_CC, CC_min, CC_max);
       for (int seg_i = 0; seg_i < segment; seg_i++) {
         sprintf(hname, "CC_sec%d_seg%d_%s", sec_i + 1, seg_i + 1, L_R_C.c_str());
         sprintf(htitle, "CC sector %d segment %d %s", sec_i + 1, seg_i + 1, L_R_C.c_str());
-        cc_hist[sec_i][seg_i][pmt_i] = std::make_shared<TH1D>(hname, htitle, bins_CC, CC_min, CC_max);
+        cc_hist[sec_i][seg_i][pmt_i] = new TH1D(hname, htitle, bins_CC, CC_min, CC_max);
       }
     }
   }
@@ -1233,13 +1218,13 @@ void Histogram::makeHists_fid() {
     sprintf(hname, "electron_fid_sec%d", sec_i + 1);
     sprintf(htitle, "electron_fid_sec%d", sec_i + 1);
     electron_fid_sec_hist[sec_i] =
-        std::make_shared<TH2D>(hname, htitle, BINS, min_phi[sec_i], max_phi[sec_i], BINS, theta_min, theta_max);
+        new TH2D(hname, htitle, BINS, min_phi[sec_i], max_phi[sec_i], BINS, theta_min, theta_max);
 
     for (int t = 0; t < 3; t++) {
       sprintf(hname, "hadron_fid_sec%d_%d", sec_i + 1, t);
       sprintf(htitle, "hadron_fid_sec%d_%d", sec_i + 1, t);
       hadron_fid_sec_hist[t][sec_i] =
-          std::make_shared<TH2D>(hname, htitle, BINS, min_phi[sec_i], max_phi[sec_i], BINS, theta_min, theta_max);
+          new TH2D(hname, htitle, BINS, min_phi[sec_i], max_phi[sec_i], BINS, theta_min, theta_max);
     }
   }
 }
@@ -1308,7 +1293,7 @@ void Histogram::Fid_Write() {
       electron_fid_can[sec_i] = new TCanvas(hname, htitle, 1280, 720);
       for (int slice = start_slice; slice < FID_SLICES; slice++) {
         sprintf(hname, "electron_fid_sec_%d_%d", sec_i + 1, slice + 1);
-        electron_fid_sec_slice[sec_i][slice] = (TH1D_ptr)electron_fid_sec_hist[sec_i]->ProjectionY(
+        electron_fid_sec_slice[sec_i][slice] = (TH1D *)electron_fid_sec_hist[sec_i]->ProjectionY(
             hname, slice_width * slice, slice_width * slice + (slice_width - 1));
         electron_fid_sec_slice[sec_i][slice]->Rebin(4);
         SliceFit[sec_i][slice] = std::make_unique<Fits>();
@@ -1366,11 +1351,11 @@ void Histogram::makeHists_EC() {
   for (int n = 0; n < NUM_POINTS; n++) {
     sprintf(hname, "ec_%d", n);
     sprintf(htitle, "Sampling Fraction %d", n);
-    EC_hist[n] = std::make_shared<TH1D>(hname, htitle, BINS, EC_min, EC_max);
+    EC_hist[n] = new TH1D(hname, htitle, BINS, EC_min, EC_max);
 
     sprintf(hname, "ec_cut_%d", n);
     sprintf(htitle, "Sampling Fraction cut %d", n);
-    EC_hist_cut[n] = std::make_shared<TH1D>(hname, htitle, BINS, EC_min, EC_max);
+    EC_hist_cut[n] = new TH1D(hname, htitle, BINS, EC_min, EC_max);
   }
 }
 

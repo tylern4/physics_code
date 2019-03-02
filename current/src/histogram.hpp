@@ -87,11 +87,11 @@ class Histogram {
   TH2D_ptr WvsQ2_hist = std::make_shared<TH2D>("WvsQ2_hist", "W vs Q^{2}", BINS, w_min, w_max, BINS, q2_min, q2_max);
   TH1D_ptr W_hist = std::make_shared<TH1D>("W", "W", BINS, w_min, w_max);
 
-  std::vector<TH2D_ptr> WvsQ2_sec;
-  std::vector<TH1D_ptr> W_sec;
+  TH2D* WvsQ2_sec[NUM_SECTORS];
+  TH1D* W_sec[NUM_SECTORS];
 
-  std::vector<TH2D_ptr> WvsQ2_channel_sec;
-  std::vector<TH1D_ptr> W_channel_sec;
+  TH2D* WvsQ2_channel_sec[NUM_SECTORS];
+  TH1D* W_channel_sec[NUM_SECTORS];
 
   TH1D_ptr Q2_hist = std::make_shared<TH1D>("Q2", "Q^{2}", BINS, q2_min, q2_max);
   TH1D_ptr E_prime_hist = std::make_shared<TH1D>("E_prime", "Scattered Electron Energy", BINS, 0.0, 5.0);
@@ -132,10 +132,10 @@ class Histogram {
   TH2D_ptr WvsQ2_binned = std::make_shared<TH2D>("WvsQ2_hist_binned", "W vs Q^{2} binned", W_BINS, w_binned_min,
                                                  w_binned_max, Q2_BINS, q2_binned_min, q2_binned_max);
 
-  std::vector<TH1D_ptr> W_binned;
-  std::vector<TH1D_ptr> Q2_binned;
-  std::vector<TH1D_ptr> Missing_Mass_WBinned;
-  std::vector<TH1D_ptr> Missing_Mass_WBinned_square;
+  TH1D* W_binned[NUM_SECTORS];
+  TH1D* Q2_binned[NUM_SECTORS];
+  TH1D* Missing_Mass_WBinned[NUM_SECTORS];
+  TH1D* Missing_Mass_WBinned_square[NUM_SECTORS];
 
   Fits* Fit_Missing_Mass_WBinned[W_BINS];
 
@@ -177,10 +177,10 @@ class Histogram {
   // jj -> Fit point
   float Dt_min = -10;
   float Dt_max = 10;
-  TH1D_ptr delta_t_hist[3][NUM_POINTS];
+  TH1D* delta_t_hist[3][NUM_POINTS];
   float bin_width = (p_max - p_min) / NUM_POINTS;
 
-  TH2D_ptr delta_t_sec_pad_hist[3][NUM_SECTORS][SC_PADDLE_NUM];
+  TH2D* delta_t_sec_pad_hist[3][NUM_SECTORS][SC_PADDLE_NUM];
   TH2D_ptr delta_t_mass_P = std::make_shared<TH2D>("delta_t_mass_P", "#Deltat assuming mass of proton", BINS, p_min,
                                                    p_max, BINS, Dt_min, Dt_max);
   TH2D_ptr delta_t_mass_P_PID =
@@ -219,8 +219,8 @@ class Histogram {
   static const int segment = 18;
   static const int PMT = 3;
 
-  TH1D_ptr cc_hist[NUM_SECTORS][segment][PMT];
-  TH1D_ptr cc_hist_allSeg[NUM_SECTORS][PMT];
+  TH1D* cc_hist[NUM_SECTORS][segment][PMT];
+  TH1D* cc_hist_allSeg[NUM_SECTORS][PMT];
   /*
   static const int ndims_cc_sparse = 4;
   int bins_cc_sparse[ndims_cc_sparse] = {NUM_SECTORS, segment, PMT, bins_CC};
@@ -231,8 +231,8 @@ class Histogram {
   */
 
   TH2D_ptr Theta_CC = std::make_shared<TH2D>("Theta_CC", "Theta_CC", 20, 0.0, 20.0, 60, 0.0, 60.0);
-  TH2D_ptr Theta_CC_Sec[NUM_SECTORS];
-  TH2D_ptr Theta_CC_Sec_cut[NUM_SECTORS];
+  TH2D* Theta_CC_Sec[NUM_SECTORS];
+  TH2D* Theta_CC_Sec_cut[NUM_SECTORS];
   // cc hist
 
   // fiducial
@@ -242,14 +242,14 @@ class Histogram {
   float phi_max = 360 / 2.0;
 
   static const int start_slice = 0;
-  TH2D_ptr electron_fid_sec_hist[NUM_SECTORS];
-  TH1D_ptr electron_fid_sec_slice[NUM_SECTORS][FID_SLICES];
+  TH2D* electron_fid_sec_hist[NUM_SECTORS];
+  TH1D* electron_fid_sec_slice[NUM_SECTORS][FID_SLICES];
   TH2D_ptr electron_fid_hist =
       std::make_shared<TH2D>("electron_fid", "electron_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
 
-  TH2D_ptr hadron_fid_sec_hist[3][NUM_SECTORS];
-  TH1D_ptr hadron_fid_sec_slice[NUM_SECTORS][FID_SLICES];
-  TH2D_ptr hadron_fid_hist[3];
+  TH2D* hadron_fid_sec_hist[3][NUM_SECTORS];
+  TH1D* hadron_fid_sec_slice[NUM_SECTORS][FID_SLICES];
+  TH2D* hadron_fid_hist[3];
   // fiducial
 
   // EC hists
@@ -259,8 +259,8 @@ class Histogram {
       std::make_shared<TH2D>("EC_sampling_fraction", "EC_sampling_fraction", BINS, p_min, p_max, BINS, EC_min, EC_max);
   TH2D_ptr EC_sampling_fraction_cut = std::make_shared<TH2D>("EC_sampling_fraction_cut", "EC_sampling_fraction_cut",
                                                              BINS, p_min, p_max, BINS, EC_min, EC_max);
-  TH1D_ptr EC_hist[NUM_POINTS];
-  TH1D_ptr EC_hist_cut[NUM_POINTS];
+  TH1D* EC_hist[NUM_POINTS];
+  TH1D* EC_hist_cut[NUM_POINTS];
   TH2D_ptr Theta_vs_mom = std::make_shared<TH2D>("Theta_vs_mom", "Theta_vs_mom", BINS, p_min, p_max, BINS, 0, 100);
   TH2D_ptr ECin_ECout = std::make_shared<TH2D>("ECin_ECout", "ECin_ECout", BINS, 0.0, 0.5, BINS, 0.0, 0.5);
   // EC hists

@@ -3,7 +3,6 @@
 /*	University Of South Carolina*/
 /************************************************************************/
 
-// Only My Includes. All others in main.h
 #include <memory>
 #include "TStopwatch.h"
 #include "branches.hpp"
@@ -35,9 +34,9 @@ int main(int argc, char **argv) {
     outfilename = argv[2];
   }
 
-  auto dh = std::make_shared<DataHandeler>();
+  auto dh = std::make_unique<DataHandeler>();
   auto hist = std::make_shared<Histogram>();
-  auto Watch = std::make_shared<TStopwatch>();
+  auto Watch = new TStopwatch();
   Watch->Start();
   size_t events = 0;
   if (files.size() > 1) {
@@ -46,20 +45,13 @@ int main(int argc, char **argv) {
       events += dh->Run(files.at(i), hist);
     }
     Watch->Stop();
-    cout << BOLDGREEN << "\n\n" << events / Watch->RealTime() << "Hz" << DEF << endl;
     hist->Write(outfilename, true);
     cout << RED << Watch->RealTime() << "sec" << DEF << endl;
     cout << BOLDYELLOW << "\n\n" << events / Watch->RealTime() << "Hz" << DEF << endl;
-
-    return 0;
-  }
-  /*
-  else {
+  } else {
     dh->Run(files.at(0), hist);
     hist->Write(outfilename, true);
-    return 0;
   }
-  */
 
-  return 1;
+  return 0;
 }
