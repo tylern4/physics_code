@@ -8,20 +8,24 @@
 DataHandeler::DataHandeler() {}
 DataHandeler::~DataHandeler() {}
 
-void DataHandeler::Run(std::vector<std::string> fin, Histogram *hists) {
-  for (auto f : fin) Run(f, hists);
+int DataHandeler::Run(std::vector<std::string> fin, std::shared_ptr<Histogram> hists) {
+  size_t total = 0;
+  for (auto f : fin) total += Run(f, hists);
+  return total;
 }
 
-void DataHandeler::Run(std::string fin, Histogram *hists) {
+int DataHandeler::Run(std::string fin, std::shared_ptr<Histogram> hists) {
+  size_t total = 0;
   TChain *chain = new TChain("h10");
   chain->Add(fin.c_str());
-  Branches *data = new Branches(chain);
+  auto data = std::make_shared<Branches>(chain);
   int num_of_events = (int)chain->GetEntries();
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
     auto check = std::make_unique<Cuts>(data);
     if (!check->isElecctron()) continue;
+    total++;
     if (data->ec_ei(0) < 0.01 || data->ec_eo(0) < 0.01) continue;
 
     hists->EC_inout(data->ec_ei(0), data->ec_eo(0));
@@ -134,6 +138,7 @@ void DataHandeler::Run(std::string fin, Histogram *hists) {
     }
   }
   chain->Reset();  // delete Tree object
+  return total;
 }
 
 void DataHandeler::loadbar(long x, long n) {

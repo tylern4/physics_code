@@ -1,5 +1,6 @@
 #!/usr/bin/expect -f
 spawn -noecho root -l
+send "gStyle->SetPalette(kViridis);\r"
 send "gStyle->SetOptStat(1111);\r"
 send "gStyle->SetOptFit(1111);\r"
 send "gStyle->SetNumberContours(999);\r"

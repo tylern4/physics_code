@@ -27,7 +27,7 @@ void Skim::Basic() {
 
   int num_of_events = (int)chain->GetEntries();
   TTree *skim = chain->CloneTree(0);
-  Branches *data = new Branches(chain);
+  auto data = std::make_shared<Branches>(chain);
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
@@ -48,7 +48,7 @@ void Skim::Strict() {
 
   num_of_events = (int)chain->GetEntries();
   auto skim = chain->CloneTree(0);
-  auto data = new Branches(chain);
+  auto data = std::make_shared<Branches>(chain);
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
@@ -77,7 +77,7 @@ void Skim::Final() {
 
   int num_of_events = (int)chain->GetEntries();
   TTree *skim = chain->CloneTree(0);
-  Branches *data = new Branches(chain);
+  auto data = std::make_shared<Branches>(chain);
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);

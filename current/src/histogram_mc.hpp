@@ -99,7 +99,7 @@ class mcHistogram {
   void Fill_Missing_Mass(double mm, double mm2);
   void Write_Missing_Mass();
 
-  void Fill_P(Branches *d);
+  void Fill_P(std::shared_ptr<Branches> d);
   void Write_DeltaP();
 };
 

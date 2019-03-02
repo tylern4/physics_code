@@ -39,7 +39,7 @@ double Delta_T::Get_dt_Pi() { return dt_Pi; }
 double Delta_T::Get_dt_K() { return dt_K; }
 double Delta_T::Get_vertex() { return vertex; }
 
-void Delta_T::delta_t_hists(Histogram *hists, Branches *data) {
+void Delta_T::delta_t_hists(std::shared_ptr<Histogram> hists, std::shared_ptr<Branches> data) {
   auto dt_cut = std::make_unique<Cuts>(data);
   double sct, scr, mom;
   int ID, charge, sc_paddle, sc_sector;
@@ -84,7 +84,7 @@ double Delta_T::delta_t(double mass, double momentum, double sc_t, double sc_r) 
   return this->vertex - vertex_time(sc_t, sc_r, cut_beta);
 }
 
-double *Delta_T::delta_t_array(double *dt_array, double mass, Branches *data) {
+double *Delta_T::delta_t_array(double *dt_array, double mass, std::shared_ptr<Branches> data) {
   double sct, scr, mom;
 
   for (int event_number = 0; event_number < data->gpart(); event_number++) {
@@ -97,7 +97,7 @@ double *Delta_T::delta_t_array(double *dt_array, double mass, Branches *data) {
   return dt_array;
 }
 
-std::vector<double> Delta_T::delta_t_array(double mass, Branches *data) {
+std::vector<double> Delta_T::delta_t_array(double mass, std::shared_ptr<Branches> data) {
   std::vector<double> dt_array(data->gpart());
   double sct, scr, mom;
 
@@ -111,21 +111,7 @@ std::vector<double> Delta_T::delta_t_array(double mass, Branches *data) {
   return dt_array;
 }
 
-std::vector<double> Delta_T::delta_t_array(double mass, std::unique_ptr<Branches> data) {
-  std::vector<double> dt_array(data->gpart());
-  double sct, scr, mom;
-
-  for (int event_number = 0; event_number < data->gpart(); event_number++) {
-    sct = data->sc_t(event_number);
-    scr = data->sc_r(event_number);
-    mom = data->p(event_number);
-
-    dt_array[event_number] = delta_t(mass, mom, sct, scr);
-  }
-  return dt_array;
-}
-
-void Delta_T::_delta_t_array(double mass, Branches *data, std::vector<double> *dt_array) {
+void Delta_T::_delta_t_array(double mass, std::shared_ptr<Branches> data, std::vector<double> *dt_array) {
   dt_array->reserve(data->gpart());
   double sct, scr, mom;
   for (int event_number = 0; event_number < data->gpart(); event_number++) {

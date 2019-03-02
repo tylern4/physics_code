@@ -16,11 +16,6 @@
 using namespace std;
 
 int main(int argc, char **argv) {
-  gROOT->SetBatch(true);
-  TStopwatch *Watch = new TStopwatch;
-  Watch->Start();
-  gStyle->SetOptFit(1111);
-
   std::vector<std::string> files;
   if (argc >= 2) {
     files = glob(argv[1]);
@@ -40,17 +35,22 @@ int main(int argc, char **argv) {
     outfilename = argv[2];
   }
 
-  DataHandeler *dh = new DataHandeler();
-  Histogram *hist = new Histogram();
-
+  auto dh = std::make_unique<DataHandeler>();
+  auto hist = std::make_shared<Histogram>();
+  auto Watch = std::make_unique<TStopwatch>();
+  Watch->Start();
+  size_t events = 0;
   if (files.size() > 1) {
     for (int i = 0; i < files.size(); i++) {
       loadbar(i, files.size() - 1);
-      dh->Run(files.at(i), hist);
+      events += dh->Run(files.at(i), hist);
     }
-    hist->Write(outfilename);
     Watch->Stop();
+    cout << BOLDGREEN << "\n\n" << events / Watch->RealTime() << "Hz" << DEF << endl;
+    hist->Write(outfilename);
     cout << RED << Watch->RealTime() << "sec" << DEF << endl;
+    cout << BOLDYELLOW << "\n\n" << events / Watch->RealTime() << "Hz" << DEF << endl;
+
   } else {
     dh->Run(files.at(0), hist);
     hist->Write(outfilename, true);

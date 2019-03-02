@@ -33,8 +33,8 @@ class DataHandeler {
  public:
   DataHandeler();
   ~DataHandeler();
-  void Run(std::string fin, Histogram *hists);
-  void Run(std::vector<std::string> fin, Histogram *hists);
+  int Run(std::string fin, std::shared_ptr<Histogram> hists);
+  int Run(std::vector<std::string> fin, std::shared_ptr<Histogram> hists);
   void loadbar(long x, long n);
 };
 

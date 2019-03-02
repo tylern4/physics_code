@@ -25,9 +25,9 @@ void mcHandeler::Run(std::vector<std::string> fin, mcHistogram *hists) {
 }
 
 void mcHandeler::Run(std::string fin, mcHistogram *hists) {
-  auto *chain = new TChain("h10");
+  auto chain = new TChain("h10");
   chain->Add(fin.c_str());
-  auto *data = new Branches(chain, true);
+  auto data = std::make_shared<Branches>(chain, true);
   int num_of_events = (int)chain->GetEntries();
 
   int current_event = 0;

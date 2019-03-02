@@ -82,7 +82,7 @@ void mcHistogram::Fill_WQ2_MC(double W, double Q2) {
   }
 }
 
-void mcHistogram::Fill_P(Branches *d) {
+void mcHistogram::Fill_P(std::shared_ptr<Branches> d) {
   double P = 0;
   for (int part_num = 0; part_num < d->gpart(); part_num++) {
     double px = d->p(part_num) * d->cx(part_num);

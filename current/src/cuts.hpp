@@ -14,7 +14,7 @@
 class Cuts {
  private:
   bool electron_cut = false;
-  Branches* _data;
+  std::shared_ptr<Branches> _data;
 
   int num_phe = 0;
   int gpart = 0;
@@ -39,7 +39,7 @@ class Cuts {
   bool samp_frac_cut = false;
 
  public:
-  Cuts(Branches* data);
+  Cuts(std::shared_ptr<Branches> data);
   ~Cuts();
   void Set_elec_fid();
 

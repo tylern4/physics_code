@@ -6,7 +6,7 @@
 #include <iostream>
 #include "cuts.hpp"
 
-Cuts::Cuts(Branches* data) { _data = data; }
+Cuts::Cuts(std::shared_ptr<Branches> data) { _data = data; }
 Cuts::~Cuts() {}
 
 void Cuts::Set_elec_fid() {

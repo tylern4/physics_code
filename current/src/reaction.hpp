@@ -29,10 +29,9 @@ class Reaction {
   std::unique_ptr<TLorentzVector> _prot;
   std::unique_ptr<TLorentzVector> _pip;
   std::unique_ptr<TLorentzVector> _pim;
-  // std::vector<std::unique_ptr<TLorentzVector>> *_other;
   std::unique_ptr<TLorentzVector> _neutron;
 
-  Branches *_data;
+  std::shared_ptr<Branches> _data;
 
   bool _hasE = false;
   bool _hasP = false;
@@ -59,7 +58,7 @@ class Reaction {
   double _phi_star = NAN;
 
  public:
-  Reaction(Branches *data);
+  Reaction(std::shared_ptr<Branches> data);
   ~Reaction();
 
   void SetProton(int i);

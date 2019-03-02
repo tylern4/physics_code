@@ -29,7 +29,7 @@ void Yeilds::Run(std::vector<std::string> fin) {
 int Yeilds::Run(std::string root_file) {
   TChain *chain = new TChain("h10");
   chain->Add(root_file.c_str());
-  Branches *data = new Branches(chain);
+  auto data = std::make_shared<Branches>(chain);
   int num_of_events = (int)chain->GetEntries();
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {

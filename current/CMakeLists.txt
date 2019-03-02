@@ -33,19 +33,21 @@ target_link_libraries(e1d_skim physics ${ROOT_LIBRARIES})
 install(TARGETS e1d_skim
   RUNTIME DESTINATION bin)
 
-
-find_package(PythonInterp)
-find_package(PythonLibs)
-find_package(PythonExtensions)
 find_package(Cython)
-
 IF(Cython_FOUND)
+  find_package(PythonInterp REQUIRED)
+  find_package(PythonLibs REQUIRED)
+  find_package(PythonExtensions REQUIRED)
+  find_package(NumPy REQUIRED)
   if(${PYTHON_VERSION_MAJOR} STREQUAL "2")
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
   else()
     set(CMAKE_CXX_STANDARD 17)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
   endif()
+  
+  include_directories(${PYTHON_INCLUDE_DIRS} ${NumPy_INCLUDE_DIR})
+
   set(EXTRA_FLAGS "-pthread -m64 -Wno-deprecated-register -D__ROOFIT_NOBANNER")
   set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${EXTRA_FLAGS}" )
   include_directories(${PYTHON_INCLUDE_DIRS} ${PYTHON_NUMPY_INCLUDE_DIR} ${NumPy_INCLUDE_DIR})

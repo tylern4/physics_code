@@ -36,10 +36,9 @@ class Delta_T {
   double Get_vertex();
 
   double delta_t(double mass, double momentum, double sc_t, double sc_r);
-  void delta_t_hists(Histogram *hists, Branches *data);
-  double *delta_t_array(double *dt_array, double mass, Branches *data);
-  std::vector<double> delta_t_array(double mass, Branches *data);
-  std::vector<double> delta_t_array(double mass, std::unique_ptr<Branches> data);
-  void _delta_t_array(double mass, Branches *data, std::vector<double> *dt_array);
+  void delta_t_hists(std::shared_ptr<Histogram> hists, std::shared_ptr<Branches> data);
+  double *delta_t_array(double *dt_array, double mass, std::shared_ptr<Branches> data);
+  std::vector<double> delta_t_array(double mass, std::shared_ptr<Branches> data);
+  void _delta_t_array(double mass, std::shared_ptr<Branches> data, std::vector<double> *dt_array);
 };
 #endif
