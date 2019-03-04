@@ -11,7 +11,7 @@ Branches::Branches(TChain* tree) {
   init();
 }
 
-Branches::Branches(std::unique_ptr<TChain> tree) {
+Branches::Branches(std::shared_ptr<TChain> tree) {
   myTree = tree.get();
   init();
 }
@@ -19,6 +19,11 @@ Branches::Branches(std::unique_ptr<TChain> tree) {
 Branches::Branches(TChain* tree, bool MC) {
   _MC = MC;
   myTree = tree;
+  init();
+}
+Branches::Branches(std::shared_ptr<TChain> tree, bool MC) {
+  _MC = MC;
+  myTree = tree.get();
   init();
 }
 

@@ -1,6 +1,8 @@
 # distutils: language = c++
 from libcpp.vector cimport vector
 from libcpp.string cimport string
+from libcpp.memory cimport unique_ptr, shared_ptr
+from cython.operator cimport dereference as deref
 from libcpp cimport bool
 from cpython cimport array
 from libc.stdlib cimport free
@@ -10,6 +12,26 @@ import array
 
 cdef dict get_id = {'PROTON': 2212, 'NEUTRON': 2112, 'PIP': 211, 'PIM': -211, 'PI0': 111, 'KP': 321, 'KM': -321, 'PHOTON': 22, 'ELECTRON': 11}
 cdef dict part_mass = {11: 0.000511, 211: 0.13957, -211: 0.13957, 2212: 0.93827, 2112: 0.939565, 321: 0.493667, -321: 0.493667, 22: 0}
+
+class colors:
+  RESET = b"\033[0m"
+  BLACK = b"\033[30m"
+  RED = b"\033[31m"
+  GREEN = b"\033[32m"
+  YELLOW = b"\033[33m"
+  BLUE = b"\033[34m"
+  MAGENTA = b"\033[35m"
+  CYAN = b"\033[36m"
+  WHITE = b"\033[37m"
+  BOLDBLACK = b"\033[1m\033[30m"
+  BOLDRED = b"\033[1m\033[31m"
+  BOLDGREEN = b"\033[1m\033[32m"
+  BOLDYELLOW = b"\033[1m\033[33m"
+  BOLDBLUE = b"\033[1m\033[34m"
+  BOLDMAGENTA = b"\033[1m\033[35m"
+  BOLDCYAN = b"\033[1m\033[36m"
+  BOLDWHITE = b"\033[1m\033[37m"
+
 
 cdef extern from "TChain.h":
   cdef cppclass TChain:
@@ -287,8 +309,8 @@ cdef extern from "branches.cpp":
 
 cdef extern from "branches.hpp":
     cdef cppclass Branches:
-      Branches(TChain*) except +
-      Branches(TChain*, bool) except +
+      Branches(shared_ptr[TChain]) except +
+      Branches(shared_ptr[TChain], bool) except +
       int npart()
       int evstat()
       int intt()
@@ -382,266 +404,264 @@ cdef char* str_to_char(str name):
 
 
 cdef class h10:
-  cdef int entry
-  cdef TChain*c_chain
-  cdef Branches*c_branches
+  cdef:
+    int entry
+    shared_ptr[TChain] c_chain
+    shared_ptr[Branches] c_branches
   def __cinit__(h10 self, str branch_name, str file_name):
     self.entry = 0
-    self.c_chain = new TChain(str_to_char(branch_name))
-    self.c_chain.Add(str_to_char(file_name))
-    self.c_branches = new Branches(self.c_chain)
+    self.c_chain.reset(new TChain(str_to_char(branch_name)))
+    deref(self.c_chain).Add(str_to_char(file_name))
+    self.c_branches.reset(new Branches(self.c_chain))
   def __cinit__(h10 self, str branch_name, str file_name, bool MC):
     self.entry = 0
-    self.c_chain = new TChain(str_to_char(branch_name))
-    self.c_chain.Add(str_to_char(file_name))
-    self.c_branches = new Branches(self.c_chain, MC)
-  def __dealloc__(self):
-    free(self.c_chain)
-    free(self.c_branches)
+    self.c_chain.reset(new TChain(str_to_char(branch_name)))
+    deref(self.c_chain).Add(str_to_char(file_name))
+    self.c_branches.reset(new Branches(self.c_chain, MC))
   def add(self, file_name):
-    self.c_chain.Add(str_to_char(file_name))
+    deref(self.c_chain).Add(str_to_char(file_name))
   @property
   def num_entries(self):
-    return self.c_chain.GetEntries()
+    return deref(self.c_chain).GetEntries()
   def get_entry(self, num):
-    self.c_chain.GetEntry(num)
+    deref(self.c_chain).GetEntry(num)
   def __iter__(self):
       return self
   def next(self):
-    if(self.entry <= self.c_chain.GetEntries()):
-      self.c_chain.GetEntry(self.entry)
+    if(self.entry <= deref(self.c_chain).GetEntries()):
+      deref(self.c_chain).GetEntry(self.entry)
       self.entry += 1
       return self
     else:
       raise StopIteration
   def __next__(self):
-    if(self.entry <= self.c_chain.GetEntries()):
-      self.c_chain.GetEntry(self.entry)
+    if(self.entry <= deref(self.c_chain).GetEntries()):
+      deref(self.c_chain).GetEntry(self.entry)
       self.entry += 1
       return self
     else:
       raise StopIteration
   def __len__(self):
-    return self.c_branches.gpart()
+    return deref(self.c_branches).gpart()
   @property
   def gpart(self):
-    return np.array(self.c_branches.gpart())
+    return np.array(deref(self.c_branches).gpart())
   @property
   def p(self):
-    return np.array(self.c_branches.p())
+    return np.array(deref(self.c_branches).p())
   @property
   def b(self):
-    return np.array(self.c_branches.b())
+    return np.array(deref(self.c_branches).b())
   @property
   def q(self):
-    return np.array(self.c_branches.q())
+    return np.array(deref(self.c_branches).q())
   @property
   def cx(self):
-    return np.array(self.c_branches.cx())
+    return np.array(deref(self.c_branches).cx())
   @property
   def cy(self):
-    return np.array(self.c_branches.cy())
+    return np.array(deref(self.c_branches).cy())
   @property
   def cz(self):
-    return np.array(self.c_branches.cz())
+    return np.array(deref(self.c_branches).cz())
   @property
   def px(self):
-    return np.array(self.c_branches.cx()) * np.array(self.c_branches.p())
+    return np.array(deref(self.c_branches).cx()) * np.array(deref(self.c_branches).p())
   @property
   def py(self):
-    return np.array(self.c_branches.cy()) * np.array(self.c_branches.p())
+    return np.array(deref(self.c_branches).cy()) * np.array(deref(self.c_branches).p())
   @property
   def pz(self):
-    return np.array(self.c_branches.cz()) * np.array(self.c_branches.p())
+    return np.array(deref(self.c_branches).cz()) * np.array(deref(self.c_branches).p())
   @property
   def vx(self):
-    return np.array(self.c_branches.vx())
+    return np.array(deref(self.c_branches).vx())
   @property
   def vy(self):
-    return np.array(self.c_branches.vy())
+    return np.array(deref(self.c_branches).vy())
   @property
   def vz(self):
-    return np.array(self.c_branches.vz())
+    return np.array(deref(self.c_branches).vz())
   @property
   def id(self):
-    return np.array(self.c_branches.id())
+    return np.array(deref(self.c_branches).id())
   @property
   def dc(self):
-    return np.array(self.c_branches.dc())
+    return np.array(deref(self.c_branches).dc())
   @property
   def cc(self):
-    return np.array(self.c_branches.cc())
+    return np.array(deref(self.c_branches).cc())
   @property
   def sc(self):
-    return np.array(self.c_branches.sc())
+    return np.array(deref(self.c_branches).sc())
   @property
   def ec(self):
-    return np.array(self.c_branches.ec())
+    return np.array(deref(self.c_branches).ec())
   @property
   def dc_sect(self):
-    return np.array(self.c_branches.dc_sect())
+    return np.array(deref(self.c_branches).dc_sect())
   @property
   def dc_trk(self):
-    return np.array(self.c_branches.dc_trk())
+    return np.array(deref(self.c_branches).dc_trk())
   @property
   def dc_stat(self):
-    return np.array(self.c_branches.dc_stat())
+    return np.array(deref(self.c_branches).dc_stat())
   @property
   def dc_vx(self):
-    return np.array(self.c_branches.dc_vx())
+    return np.array(deref(self.c_branches).dc_vx())
   @property
   def dc_vy(self):
-    return np.array(self.c_branches.dc_vy())
+    return np.array(deref(self.c_branches).dc_vy())
   @property
   def dc_vz(self):
-    return np.array(self.c_branches.dc_vz())
+    return np.array(deref(self.c_branches).dc_vz())
   @property
   def dc_vr(self):
-    return np.array(self.c_branches.dc_vr())
+    return np.array(deref(self.c_branches).dc_vr())
   @property
   def dc_xsc(self):
-    return np.array(self.c_branches.dc_xsc())
+    return np.array(deref(self.c_branches).dc_xsc())
   @property
   def dc_ysc(self):
-    return np.array(self.c_branches.dc_ysc())
+    return np.array(deref(self.c_branches).dc_ysc())
   @property
   def dc_zsc(self):
-    return np.array(self.c_branches.dc_zsc())
+    return np.array(deref(self.c_branches).dc_zsc())
   @property
   def dc_cxsc(self):
-    return np.array(self.c_branches.dc_cxsc())
+    return np.array(deref(self.c_branches).dc_cxsc())
   @property
   def dc_cysc(self):
-    return np.array(self.c_branches.dc_cysc())
+    return np.array(deref(self.c_branches).dc_cysc())
   @property
   def dc_czsc(self):
-    return np.array(self.c_branches.dc_czsc())
+    return np.array(deref(self.c_branches).dc_czsc())
   @property
   def dc_c2(self):
-    return np.array(self.c_branches.dc_c2())
+    return np.array(deref(self.c_branches).dc_c2())
   @property
   def ec_stat(self):
-    return np.array(self.c_branches.ec_stat())
+    return np.array(deref(self.c_branches).ec_stat())
   @property
   def ec_sect(self):
-    return np.array(self.c_branches.ec_sect())
+    return np.array(deref(self.c_branches).ec_sect())
   @property
   def ec_whol(self):
-    return np.array(self.c_branches.ec_whol())
+    return np.array(deref(self.c_branches).ec_whol())
   @property
   def ec_inst(self):
-    return np.array(self.c_branches.ec_inst())
+    return np.array(deref(self.c_branches).ec_inst())
   @property
   def ec_oust(self):
-    return np.array(self.c_branches.ec_oust())
+    return np.array(deref(self.c_branches).ec_oust())
   @property
   def etot(self):
-    return np.array(self.c_branches.etot())
+    return np.array(deref(self.c_branches).etot())
   @property
   def ec_ei(self):
-    return np.array(self.c_branches.ec_ei())
+    return np.array(deref(self.c_branches).ec_ei())
   @property
   def ec_eo(self):
-    return np.array(self.c_branches.ec_eo())
+    return np.array(deref(self.c_branches).ec_eo())
   @property
   def ec_t(self):
-    return np.array(self.c_branches.ec_t())
+    return np.array(deref(self.c_branches).ec_t())
   @property
   def ec_r(self):
-    return np.array(self.c_branches.ec_r())
+    return np.array(deref(self.c_branches).ec_r())
   @property
   def ech_x(self):
-    return np.array(self.c_branches.ech_x())
+    return np.array(deref(self.c_branches).ech_x())
   @property
   def ech_y(self):
-    return np.array(self.c_branches.ech_y())
+    return np.array(deref(self.c_branches).ech_y())
   @property
   def ech_z(self):
-    return np.array(self.c_branches.ech_z())
+    return np.array(deref(self.c_branches).ech_z())
   @property
   def ec_m2(self):
-    return np.array(self.c_branches.ec_m2())
+    return np.array(deref(self.c_branches).ec_m2())
   @property
   def ec_m3(self):
-    return np.array(self.c_branches.ec_m3())
+    return np.array(deref(self.c_branches).ec_m3())
   @property
   def ec_m4(self):
-    return np.array(self.c_branches.ec_m4())
+    return np.array(deref(self.c_branches).ec_m4())
   @property
   def ec_c2(self):
-    return np.array(self.c_branches.ec_c2())
+    return np.array(deref(self.c_branches).ec_c2())
   @property
   def sc_sect(self):
-    return np.array(self.c_branches.sc_sect())
+    return np.array(deref(self.c_branches).sc_sect())
   @property
   def sc_hit(self):
-    return np.array(self.c_branches.sc_hit())
+    return np.array(deref(self.c_branches).sc_hit())
   @property
   def sc_pd(self):
-    return np.array(self.c_branches.sc_pd())
+    return np.array(deref(self.c_branches).sc_pd())
   @property
   def sc_stat(self):
-    return np.array(self.c_branches.sc_stat())
+    return np.array(deref(self.c_branches).sc_stat())
   @property
   def edep(self):
-    return np.array(self.c_branches.edep())
+    return np.array(deref(self.c_branches).edep())
   @property
   def sc_t(self):
-    return np.array(self.c_branches.sc_t())
+    return np.array(deref(self.c_branches).sc_t())
   @property
   def sc_r(self):
-    return np.array(self.c_branches.sc_r())
+    return np.array(deref(self.c_branches).sc_r())
   @property
   def sc_c2(self):
-    return np.array(self.c_branches.sc_c2())
+    return np.array(deref(self.c_branches).sc_c2())
   @property
   def cc_sect(self):
-    return np.array(self.c_branches.cc_sect())
+    return np.array(deref(self.c_branches).cc_sect())
   @property
   def cc_hit(self):
-    return np.array(self.c_branches.cc_hit())
+    return np.array(deref(self.c_branches).cc_hit())
   @property
   def cc_segm(self):
-    return np.array(self.c_branches.cc_segm())
+    return np.array(deref(self.c_branches).cc_segm())
   @property
   def nphe(self):
-    return np.array(self.c_branches.nphe())
+    return np.array(deref(self.c_branches).nphe())
   @property
   def cc_t(self):
-    return np.array(self.c_branches.cc_t())
+    return np.array(deref(self.c_branches).cc_t())
   @property
   def cc_r(self):
-    return np.array(self.c_branches.cc_r())
+    return np.array(deref(self.c_branches).cc_r())
   @property
   def cc_c2(self):
-    return np.array(self.c_branches.cc_c2())
+    return np.array(deref(self.c_branches).cc_c2())
   @property
   def pidpart(self):
-    return np.array(self.c_branches.pidpart())
+    return np.array(deref(self.c_branches).pidpart())
   @property
   def xpart(self):
-    return np.array(self.c_branches.xpart())
+    return np.array(deref(self.c_branches).xpart())
   @property
   def ypart(self):
-    return np.array(self.c_branches.ypart())
+    return np.array(deref(self.c_branches).ypart())
   @property
   def zpart(self):
-    return np.array(self.c_branches.zpart())
+    return np.array(deref(self.c_branches).zpart())
   @property
   def epart(self):
-    return np.array(self.c_branches.epart())
+    return np.array(deref(self.c_branches).epart())
   @property
   def pxpart(self):
-    return np.array(self.c_branches.pxpart())
+    return np.array(deref(self.c_branches).pxpart())
   @property
   def pypart(self):
-    return np.array(self.c_branches.pypart())
+    return np.array(deref(self.c_branches).pypart())
   @property
   def pzpart(self):
-    return np.array(self.c_branches.pzpart())
+    return np.array(deref(self.c_branches).pzpart())
   @property
   def qpart(self):
-    return np.array(self.c_branches.qpart())
+    return np.array(deref(self.c_branches).qpart())
 
 
 #class Event:

@@ -51,7 +51,6 @@ class Histogram {
   void Write(std::string output_file);
   void Write(std::string output_file, bool multi);
   bool _multi = false;
-  std::mutex _mutex;
 
   TFile* RootOutputFile;
   TCanvas* def;

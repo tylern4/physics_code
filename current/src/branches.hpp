@@ -112,8 +112,9 @@ class Branches {
 
  public:
   Branches(TChain* tree);
-  Branches(std::unique_ptr<TChain> tree);
+  Branches(std::shared_ptr<TChain> tree);
   Branches(TChain* tree, bool MC);
+  Branches(std::shared_ptr<TChain> tree, bool MC);
   Branches(const Branches& b);
   ~Branches(){};
   void init();

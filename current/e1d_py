@@ -9,12 +9,10 @@ from multiprocessing import Pool, cpu_count
 
 from tqdm import tqdm
 
-import handeler as dh
+import h10 as dh
 import skim
 
-bar_format = (
-    dh.colors.BLUE + "{bar}" + dh.colors.GREEN + "{percentage:3.0f}%" + dh.colors.ENDC
-)
+bar_format = b"{bar}" + b"{percentage:3.0f}%"
 
 
 def parallel_skim(files):
@@ -28,13 +26,7 @@ USAGE = """
 """
 
 if len(sys.argv) == 1:
-    print(
-        dh.colors.WARNING
-        + "No inputs given: "
-        + dh.colors.BLUE
-        + USAGE.format(sys.argv[0])
-        + dh.colors.ENDC
-    )
+    print("No inputs given: " + str(USAGE.format(sys.argv[0])))
     sys.exit(2)
 elif len(sys.argv) == 2:
     input_files = sys.argv[1]
@@ -57,9 +49,7 @@ skimmed = pool.map(parallel_skim, (files))
 
 pool.close()
 skim_end = time.time()
-print(
-    dh.colors.FAIL + "Skim Time: {} Sec".format(skim_end - skim_start) + dh.colors.ENDC
-)
+print("Skim Time: {} Sec".format(skim_end - skim_start))
 
 data = dh.handeler()
 for f in tqdm(skimmed, bar_format=bar_format):
@@ -67,5 +57,5 @@ for f in tqdm(skimmed, bar_format=bar_format):
 data.write(output_file)
 
 end = time.time()
-print(dh.colors.FAIL + "Reduce: {} Sec".format(end - skim_end) + dh.colors.ENDC)
-print(dh.colors.FAIL + "Total: {} Sec".format(end - skim_start) + dh.colors.ENDC)
+print("Reduce: {} Sec".format(end - skim_end))
+print("Total: {} Sec".format(end - skim_start))
