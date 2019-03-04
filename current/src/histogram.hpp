@@ -44,20 +44,9 @@ using TH1D_ptr = std::shared_ptr<TH1D>;
 
 class Histogram {
  private:
- public:
-  Histogram();
-  Histogram(std::string output_file);
-  ~Histogram();
-  void Write(std::string output_file);
-  void Write(std::string output_file, bool multi);
   bool _multi = false;
-
   TFile* RootOutputFile;
   TCanvas* def;
-  void makeHists_fid();
-  void makeHists_deltat();
-  void makeHists_CC();
-  void makeHists_WvsQ2();
 
   float p_min = 0.0;
   float p_max = 5.0;
@@ -79,7 +68,6 @@ class Histogram {
   float w_max = 3.25;
   float q2_min = 0;
   float q2_max = 5;
-
   float W_width = (w_binned_max - w_binned_min) / (float)W_BINS;
   float Q2_width = (q2_binned_max - q2_binned_min) / (float)Q2_BINS;
 
@@ -107,9 +95,9 @@ class Histogram {
   TH2D_ptr WvsQ2_NeutronPip =
       std::make_shared<TH2D>("WvsQ2_NeutronPip", "W vs Q^{2} N #pi^{+}", BINS, w_min, w_max, BINS, q2_min, q2_max);
   TH2D_ptr WvsMM_NeutronPip =
-      std::make_shared<TH2D>("WvsMM_NeutronPip", "W vs MM N #pi^{+}", BINS, w_min, w_max, BINS, -q2_min, q2_max);
+      std::make_shared<TH2D>("WvsMM_NeutronPip", "W vs MM N #pi^{+}", BINS, w_min, w_max, BINS, -q2_max, q2_max);
   TH2D_ptr WvsMM2_NeutronPip =
-      std::make_shared<TH2D>("WvsMM2_NeutronPip", "W vs MM^{2} N #pi^{+}", BINS, w_min, w_max, BINS, -q2_min, q2_max);
+      std::make_shared<TH2D>("WvsMM2_NeutronPip", "W vs MM^{2} N #pi^{+}", BINS, w_min, w_max, BINS, -q2_max, q2_max);
   TH1D_ptr W_NeutronPip = std::make_shared<TH1D>("W_NeutronPip", "W N #pi^{+}", BINS, w_min, w_max);
   TH1D_ptr Q2_NeutronPip = std::make_shared<TH1D>("Q2_NeutronPip", "Q^{2} N #pi^{+}", BINS, q2_min, q2_max);
   TH2D_ptr WvsQ2_MM =
@@ -135,18 +123,7 @@ class Histogram {
   TH1D* Q2_binned[NUM_SECTORS];
   TH1D* Missing_Mass_WBinned[NUM_SECTORS];
   TH1D* Missing_Mass_WBinned_square[NUM_SECTORS];
-
   Fits* Fit_Missing_Mass_WBinned[W_BINS];
-
-  /*
-    int bins_pip_N[NDIMS_PIP_N] = {W_BINS, Q2_BINS, NUM_SECTORS, BINS_MM, BINS_MM, THETA_BINS, PHI_BINS};
-    float xmin_pip_N[NDIMS_PIP_N] = {w_binned_min,     q2_binned_min,   0.0, MM_min, MM_min,
-                                     -2 * TMath::Pi(), -2 * TMath::Pi()};
-    float xmax_pip_N[NDIMS_PIP_N] = {w_binned_max, q2_binned_max,   NUM_SECTORS,    MM_max,
-                                     MM_max,       2 * TMath::Pi(), 2 * TMath::Pi()};
-    THnF* pip_N = new THnF("pip_N", "WvsQ2_NPIP", NDIMS_PIP_N, bins_pip_N, xmin_pip_N, xmax_pip_N);
-  */
-
   // W and Q^2
 
   // P and E
@@ -310,6 +287,17 @@ class Histogram {
   TH1D_ptr energy_channel_cuts =
       std::make_shared<TH1D>("Energy_channel_cuts", "Scattered electron energy for N #pi^{+} events", 500, 0.0, 5.0);
 
+ public:
+  Histogram();
+  Histogram(std::string output_file);
+  ~Histogram();
+  void Write(std::string output_file);
+  void Write(std::string output_file, bool multi);
+  void makeHists_fid();
+  void makeHists_deltat();
+  void makeHists_CC();
+  void makeHists_WvsQ2();
+
   // W and Q^2
   void Fill_proton_WQ2(float W, float Q2);
   void Fill_P_PI0(float W, float Q2);
@@ -387,16 +375,13 @@ class Histogram {
   void EC_cut_fill(float etot, float momentum);
   void EC_slice_fit();
   void EC_Write();
-
   void TM_Fill(float momentum, float theta);
 
   // Beam Position
   void Fill_Beam_Position(float vertex_x, float vertex_y, float vertex_z);
   void Beam_Position_Write();
-
   void Fill_Target_Vertex(float vertex_x, float vertex_y, float vertex_z);
   void Target_Vertex_Write();
-
   void Fill_E_Prime(TLorentzVector e_prime);
   void Fill_E_Prime_fid(TLorentzVector e_prime);
   void Fill_E_Prime_channel(TLorentzVector e_prime);
