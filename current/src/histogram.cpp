@@ -274,9 +274,6 @@ void Histogram::Fill_channel_WQ2(float W, float Q2, int sector, TLorentzVector e
   W_channel->Fill(W);
   Q2_channel->Fill(Q2);
 
-  WvsQ2_channel_sec[sector - 1]->Fill(W, Q2);
-  W_channel_sec[sector - 1]->Fill(W);
-
   WvsQ2_binned->Fill(W, Q2);
 
   for (int y = 0; y < Q2_BINS; y++) {
@@ -292,26 +289,27 @@ void Histogram::Fill_channel_WQ2(float W, float Q2, int sector, TLorentzVector e
       continue;
     }
   }
+  if (sector == 0 || sector > NUM_SECTORS) return;
+  WvsQ2_channel_sec[sector - 1]->Fill(W, Q2);
+  W_channel_sec[sector - 1]->Fill(W);
 }
 
 void Histogram::Fill_single_proton_WQ2(float W, float Q2) {
-  
   WvsQ2_single_proton->Fill(W, Q2);
   W_single_proton->Fill(W);
   Q2_single_proton->Fill(Q2);
 }
 
 void Histogram::WvsQ2_Fill(float W, float Q2, int sector) {
-  
   WvsQ2_hist->Fill(W, Q2);
   W_hist->Fill(W);
   Q2_hist->Fill(Q2);
+  if (sector == 0 || sector > NUM_SECTORS) return;
   WvsQ2_sec[sector - 1]->Fill(W, Q2);
   W_sec[sector - 1]->Fill(W);
 }
 
 void Histogram::Fill_pion_WQ2(float W, float Q2) {
-  
   WvsQ2_pion->Fill(W, Q2);
   W_pion->Fill(W);
   Q2_pion->Fill(Q2);
@@ -522,46 +520,24 @@ void Histogram::WvsQ2_binned_Write() {
 // W and Q^2
 
 // P and E
-void Histogram::MomVsBeta_Fill_pos(float P, float Beta) {
-  
-  MomVsBeta_hist_pos->Fill(P, Beta);
-}
+void Histogram::MomVsBeta_Fill_pos(float P, float Beta) { MomVsBeta_hist_pos->Fill(P, Beta); }
 
-void Histogram::MomVsBeta_Fill_neg(float P, float Beta) {
-  
-  MomVsBeta_hist_neg->Fill(P, Beta);
-}
+void Histogram::MomVsBeta_Fill_neg(float P, float Beta) { MomVsBeta_hist_neg->Fill(P, Beta); }
 
-void Histogram::MomVsBeta_Fill_neutral(float P, float Beta) {
-  
-  MomVsBeta_hist_neutral->Fill(P, Beta);
-}
+void Histogram::MomVsBeta_Fill_neutral(float P, float Beta) { MomVsBeta_hist_neutral->Fill(P, Beta); }
 
-void Histogram::Fill_proton_ID_P(float p, float beta) {
-  
-  MomVsBeta_proton_ID->Fill(p, beta);
-}
+void Histogram::Fill_proton_ID_P(float p, float beta) { MomVsBeta_proton_ID->Fill(p, beta); }
 
-void Histogram::Fill_Pi_ID_P(float p, float beta) {
-  
-  MomVsBeta_Pi_ID->Fill(p, beta);
-}
+void Histogram::Fill_Pi_ID_P(float p, float beta) { MomVsBeta_Pi_ID->Fill(p, beta); }
 
-void Histogram::Fill_proton_Pi_ID_P(float p, float beta) {
-  
-  MomVsBeta_proton_Pi_ID->Fill(p, beta);
-}
+void Histogram::Fill_proton_Pi_ID_P(float p, float beta) { MomVsBeta_proton_Pi_ID->Fill(p, beta); }
 
 void Histogram::MomVsBeta_Fill(float P, float Beta) {
-  
   MomVsBeta_hist->Fill(P, Beta);
   Mom->Fill(P);
 }
 
-void Histogram::Photon_flux_Fill(float photon_flux) {
-  
-  photon_flux_hist->Fill(photon_flux);
-}
+void Histogram::Photon_flux_Fill(float photon_flux) { photon_flux_hist->Fill(photon_flux); }
 
 void Histogram::MomVsBeta_Write() {
   MomVsBeta_hist->SetXTitle("Momentum (GeV)");
@@ -605,24 +581,18 @@ void Histogram::MomVsBeta_Write() {
 }
 
 // Missing Mass
-void Histogram::Fill_Missing_Mass(float miss_mass) {
-  
-  Missing_Mass->Fill(miss_mass);
-}
+void Histogram::Fill_Missing_Mass(float miss_mass) { Missing_Mass->Fill(miss_mass); }
 
 void Histogram::Fill_Missing_Mass(float mm, float mm2) {
-  
   Missing_Mass->Fill(mm);
   Missing_Mass_square->Fill(mm2);
 }
 void Histogram::Fill_Missing_Mass_strict(float mm, float mm2) {
-  
   Missing_Mass_strict->Fill(mm);
   Missing_Mass_square_strict->Fill(mm2);
 }
 
 void Histogram::Fill_Missing_Mass_pi0(float mm, float mm2) {
-  
   if (mm != 0) {
     Missing_Mass_pi0->Fill(mm);
     Missing_Mass_square_pi0->Fill(mm2);
@@ -630,13 +600,11 @@ void Histogram::Fill_Missing_Mass_pi0(float mm, float mm2) {
 }
 
 void Histogram::Fill_Missing_Mass_twoPi(float mm, float mm2) {
-  
   Missing_Mass_2pi->Fill(mm);
   Missing_Mass_square_2pi->Fill(mm2);
 }
 
 void Histogram::Fill_W_Missing_Mass(float W, float mm, float mm2) {
-  
   for (int x = 0; x < W_BINS; x++) {
     if (w_binned_min + (W_width * x) <= W && w_binned_min + (W_width * (x + 1)) >= W) {
       Missing_Mass_WBinned[x]->Fill(mm);
@@ -648,10 +616,7 @@ void Histogram::Fill_W_Missing_Mass(float W, float mm, float mm2) {
 
 // void Histogram::Fill_Mass(float mass) { Mass->Fill(mass); }
 
-void Histogram::Fill_Missing_Mass_square(float miss_mass_2) {
-  
-  Missing_Mass_square->Fill(miss_mass_2);
-}
+void Histogram::Fill_Missing_Mass_square(float miss_mass_2) { Missing_Mass_square->Fill(miss_mass_2); }
 
 void Histogram::Write_Missing_Mass() {
   Missing_Mass->SetXTitle("Mass (GeV)");
@@ -726,54 +691,27 @@ void Histogram::makeHists_deltat() {
   }
 }
 
-void Histogram::Fill_deltat_P(float momentum, float delta_t) {
-  
-  delta_t_mass_P->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_P(float momentum, float delta_t) { delta_t_mass_P->Fill(momentum, delta_t); }
 
-void Histogram::Fill_deltat_P_PID(float momentum, float delta_t) {
-  
-  delta_t_mass_P_PID->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_P_PID(float momentum, float delta_t) { delta_t_mass_P_PID->Fill(momentum, delta_t); }
 
-void Histogram::Fill_deltat_PIP(float momentum, float delta_t) {
-  
-  delta_t_mass_PIP->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_PIP(float momentum, float delta_t) { delta_t_mass_PIP->Fill(momentum, delta_t); }
 
-void Histogram::Fill_deltat_PIP_PID(float momentum, float delta_t) {
-  
-  delta_t_mass_PIP_PID->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_PIP_PID(float momentum, float delta_t) { delta_t_mass_PIP_PID->Fill(momentum, delta_t); }
 
-void Histogram::Fill_deltat_PIM(float momentum, float delta_t) {
-  
-  delta_t_mass_PIM->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_PIM(float momentum, float delta_t) { delta_t_mass_PIM->Fill(momentum, delta_t); }
 
-void Histogram::Fill_deltat_PIM_PID(float momentum, float delta_t) {
-  
-  delta_t_mass_PIM_PID->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_PIM_PID(float momentum, float delta_t) { delta_t_mass_PIM_PID->Fill(momentum, delta_t); }
 
-void Histogram::Fill_deltat_electron(float momentum, float delta_t) {
-  
-  delta_t_mass_electron->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_electron(float momentum, float delta_t) { delta_t_mass_electron->Fill(momentum, delta_t); }
 
 void Histogram::Fill_deltat_electron_PID(float momentum, float delta_t) {
   delta_t_mass_electron_PID->Fill(momentum, delta_t);
 }
 
-void Histogram::Fill_deltat_kp(float momentum, float delta_t) {
-  
-  delta_t_mass_kp->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_kp(float momentum, float delta_t) { delta_t_mass_kp->Fill(momentum, delta_t); }
 
-void Histogram::Fill_deltat_kp_PID(float momentum, float delta_t) {
-  
-  delta_t_mass_kp_PID->Fill(momentum, delta_t);
-}
+void Histogram::Fill_deltat_kp_PID(float momentum, float delta_t) { delta_t_mass_kp_PID->Fill(momentum, delta_t); }
 
 void Histogram::delta_t_slice_fit() {
   // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
@@ -924,7 +862,6 @@ void Histogram::delta_t_Write() {
 
 void Histogram::delta_t_Fill(float momentum, int charge, float delta_t_proton, float delta_t_pip,
                              float delta_t_electron) {
-  
   for (int jj = 0; jj < NUM_POINTS; jj++) {
     if (momentum > jj * bin_width && momentum <= (jj + 1) * bin_width) {
       if (charge == 1 && !std::isnan(delta_t_proton) && !std::isnan(delta_t_pip)) {
@@ -1008,7 +945,6 @@ void Histogram::delta_T_canvas() {
 }
 
 void Histogram::CC_fill(int cc_sector, int cc_segment, int cc_pmt, int cc_nphe, float theta_cc) {
-  
   if (cc_pmt == -1) cc_pmt = 2;
   /*
   x_cc_sparse[0] = cc_sector;
@@ -1230,13 +1166,13 @@ void Histogram::makeHists_fid() {
 }
 
 void Histogram::Fill_electron_fid(float theta, float phi, int sector) {
-  
   electron_fid_hist->Fill(phi, theta);
+  if (sector == 0 || sector > NUM_SECTORS) return;
   electron_fid_sec_hist[sector - 1]->Fill(phi, theta);
 }
 
 void Histogram::Fill_hadron_fid(float theta, float phi, int sector, int id) {
-  
+  if (sector == 0 || sector > NUM_SECTORS) return;
   if (id == PROTON) {
     hadron_fid_hist[0]->Fill(phi, theta);
     hadron_fid_sec_hist[0][sector - 1]->Fill(phi, theta);
@@ -1360,7 +1296,6 @@ void Histogram::makeHists_EC() {
 }
 
 void Histogram::EC_fill(float etot, float momentum) {
-  
   float sampling_frac = etot / momentum;
   EC_sampling_fraction->Fill(momentum, sampling_frac);
 
@@ -1371,18 +1306,11 @@ void Histogram::EC_fill(float etot, float momentum) {
   }
 }
 
-void Histogram::EC_inout(float Ein, float Eout) {
-  
-  ECin_ECout->Fill(Ein, Eout);
-}
+void Histogram::EC_inout(float Ein, float Eout) { ECin_ECout->Fill(Ein, Eout); }
 
-void Histogram::TM_Fill(float momentum, float theta) {
-  
-  Theta_vs_mom->Fill(momentum, theta);
-}
+void Histogram::TM_Fill(float momentum, float theta) { Theta_vs_mom->Fill(momentum, theta); }
 
 void Histogram::EC_cut_fill(float etot, float momentum) {
-  
   float sampling_frac = etot / momentum;
   EC_sampling_fraction_cut->Fill(momentum, sampling_frac);
 
@@ -1510,7 +1438,6 @@ void Histogram::EC_Write() {
 }
 
 void Histogram::Fill_Beam_Position(float vertex_x, float vertex_y, float vertex_z) {
-  
   Beam_Position->Fill(vertex_x, vertex_y);
   Beam_Position_X->Fill(vertex_x);
   Beam_Position_Y->Fill(vertex_y);
@@ -1536,7 +1463,6 @@ void Histogram::Beam_Position_Write() {
 }
 
 void Histogram::Fill_Target_Vertex(float vertex_x, float vertex_y, float vertex_z) {
-  
   if (0 == vertex_x) return;
   if (0 == vertex_y && 0 == vertex_z) return;
   target_vertex_X->Fill(vertex_x);
@@ -1574,15 +1500,12 @@ void Histogram::Target_Vertex_Write() {
 }
 
 void Histogram::Fill_E_Prime(TLorentzVector e_prime) {
-  
   if (e_prime.E() > 0.1) energy_no_cuts->Fill(e_prime.E());
 }
 void Histogram::Fill_E_Prime_fid(TLorentzVector e_prime) {
-  
   if (e_prime.E() > 0.1) energy_fid_cuts->Fill(e_prime.E());
 }
 void Histogram::Fill_E_Prime_channel(TLorentzVector e_prime) {
-  
   if (e_prime.E() > 0.1) energy_channel_cuts->Fill(e_prime.E());
 }
 
