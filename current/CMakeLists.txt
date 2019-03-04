@@ -45,10 +45,10 @@ IF(Cython_FOUND)
     set(CMAKE_CXX_STANDARD 17)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
   endif()
-  
+
   include_directories(${PYTHON_INCLUDE_DIRS} ${NumPy_INCLUDE_DIR})
 
-  set(EXTRA_FLAGS "-pthread -m64 -Wno-deprecated-register -D__ROOFIT_NOBANNER")
+  set(EXTRA_FLAGS "-pthread -Wno-deprecated-register -D__ROOFIT_NOBANNER")
   set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${EXTRA_FLAGS}" )
   include_directories(${PYTHON_INCLUDE_DIRS} ${PYTHON_NUMPY_INCLUDE_DIR} ${NumPy_INCLUDE_DIR})
 

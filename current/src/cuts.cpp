@@ -46,6 +46,7 @@ bool Cuts::isElecctron() {
   _elec &= (_data->sc(0) > 0);
   _elec &= (_data->dc(0) > 0);
   //_elec &= (_data->nphe(0) > 30);
+  _elec &= (_data->ec_ei(0) > 0.04);
   _elec &= (_data->dc_stat(0) > 0);
 
   return _elec;

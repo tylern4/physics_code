@@ -24,9 +24,9 @@ int DataHandeler::Run(std::string fin, std::shared_ptr<Histogram> hists) {
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
     auto check = std::make_unique<Cuts>(data);
+    if (data->ec_eo(0) < 0.01) continue;
     if (!check->isElecctron()) continue;
     total++;
-    if (data->ec_ei(0) < 0.01 || data->ec_eo(0) < 0.01) continue;
 
     hists->EC_inout(data->ec_ei(0), data->ec_eo(0));
     hists->EC_fill(data->etot(0), data->p(0));

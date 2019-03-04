@@ -34,7 +34,7 @@ add_library(physics STATIC
   yeilds.cpp
   )
 
-set(EXTRA_FLAGS "-pthread -fPIC -m64 -Wno-return-type -Wno-writable-strings -Wno-dangling-else -Wno-comment -D__ROOFIT_NOBANNER")
+set(EXTRA_FLAGS "-pthread -fPIC -Wno-return-type -Wno-writable-strings -Wno-dangling-else -Wno-comment -D__ROOFIT_NOBANNER")
 target_link_libraries(physics ${ROOT_LIBRARIES})
 
 target_include_directories(physics
