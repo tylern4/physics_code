@@ -4,20 +4,20 @@
 /************************************************************************/
 
 // Only My Includes. All others in main.h
-#include "main.h"
-#include "../src/classes.hpp"
-#include "../src/constants.hpp"
-#include "../src/branches.hpp"
-#include "TStopwatch.h"
 #include "../src/physics.hpp"
 #include "511_lab.hpp"
+#include "TStopwatch.h"
+#include "branches.hpp"
+#include "classes.hpp"
+#include "constants.hpp"
+#include "main.h"
 
 int main(int argc, char **argv) {
   TStopwatch *Watch = new TStopwatch;
   Watch->Start();
 
   if (argc == 2) {
-    char *infilename = argv[1];
+    std::string infilename = argv[1];
     make_electron_csv(infilename);
     make_mm_csv(infilename);
   } else if (argc == 1) {

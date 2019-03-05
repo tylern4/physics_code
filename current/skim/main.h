@@ -6,37 +6,31 @@
 
 #ifndef MAIN_H
 #define MAIN_H
-#include <stdlib.h>
-#include <stdio.h>
+#include <TFile.h>
 #include <TFileCollection.h>
-#include <TFile.h>
-#include "TMath.h"
 #include <TGraph.h>
-#include "THn.h"
-#include "TTree.h"
-#include "TROOT.h"
 #include <TLorentzVector.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <string>
 #include <cstring>
-#include "time.h"
-#include <string>
-#include <cstring>
-#include "TTree.h"
-#include "TROOT.h"
-#include "TH2.h"
-#include <TFile.h>
-#include "TStyle.h"
-#include "TCanvas.h"
 #include <fstream>
-#include "TF1.h"
-#include "TLeaf.h"
-#include "TChain.h"
-#include "TSystem.h"
+#include <string>
 #include <vector>
-#include <fstream>
-#include "../src/color.hpp"
-#include "../src/constants.hpp"
+#include "TCanvas.h"
+#include "TChain.h"
+#include "TF1.h"
+#include "TH2.h"
+#include "THn.h"
+#include "TLeaf.h"
+#include "TMath.h"
+#include "TROOT.h"
+#include "TStyle.h"
+#include "TSystem.h"
+#include "TTree.h"
+#include "color.hpp"
+#include "constants.hpp"
+#include "time.h"
 
 using namespace std;
 

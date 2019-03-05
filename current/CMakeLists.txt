@@ -21,6 +21,12 @@ target_link_libraries(e1d physics ${ROOT_LIBRARIES})
 install(TARGETS e1d
   RUNTIME DESTINATION bin)
 
+# lab_511
+add_executable(lab_511 511-lab/511_lab.cpp)
+target_link_libraries(lab_511 physics ${ROOT_LIBRARIES})
+install(TARGETS lab_511
+  RUNTIME DESTINATION bin)
+
 # e1d_mc
 add_executable(e1d_mc monteCarlo/main_mc.cpp)
 target_link_libraries(e1d_mc physics ${ROOT_LIBRARIES})
