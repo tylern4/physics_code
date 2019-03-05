@@ -10,6 +10,8 @@
 #include "branches.hpp"
 #include "main.h"
 
+double BEAM_ENERGY = 0.0;
+
 void make_electron_csv(std::string fin) {
   if (getenv("BEAM_E") != NULL) {
     BEAM_ENERGY = atof(getenv("BEAM_E"));
