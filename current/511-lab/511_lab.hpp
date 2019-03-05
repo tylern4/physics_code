@@ -11,6 +11,12 @@
 #include "main.h"
 
 void make_electron_csv(std::string fin) {
+  if (getenv("BEAM_E") != NULL) {
+    BEAM_ENERGY = atof(getenv("BEAM_E"));
+    std::cout << RED << "Beam energy set to: " << BEAM_ENERGY << DEF << std::endl;
+  } else {
+    BEAM_ENERGY = E1D_E0;
+  }
   std::string csv_name_output = "511_lab_E_data.csv";
   std::string root_name_output = "511_lab_E_data.root";
   const char *progress = "-\\|/";
@@ -18,6 +24,7 @@ void make_electron_csv(std::string fin) {
   bool electron_cuts;
   double _p, _cx, _cy, _cz;
   TFile *OutputFile = new TFile(root_name_output.c_str(), "RECREATE");
+  OutputFile->SetCompressionSettings(404);
   TChain *chain = new TChain("h10");
   chain->Add(fin.c_str());
   auto data = std::make_shared<Branches>(chain);
@@ -65,7 +72,7 @@ void make_electron_csv(std::string fin) {
     if (n_prot >= 1 && n_other <= 1) {
       // Setup scattered electron 4 vector
       TLorentzVector e_mu_prime;
-      TLorentzVector e_mu(0.0, 0.0, sqrt(Square(E1D_E0) - Square(MASS_E)), E1D_E0);
+      TLorentzVector e_mu(0.0, 0.0, sqrt(Square(BEAM_ENERGY) - Square(MASS_E)), BEAM_ENERGY);
       e_mu_prime.SetXYZM(data->px(0), data->py(0), data->pz(0), MASS_E);
       double W = physics::W_calc(e_mu, e_mu_prime);
       double Q2 = physics::Q2_calc(e_mu, e_mu_prime);
@@ -95,6 +102,12 @@ void make_electron_csv(std::string fin) {
 }
 
 void make_mm_csv(std::string fin) {
+  if (getenv("BEAM_E") != NULL) {
+    BEAM_ENERGY = atof(getenv("BEAM_E"));
+    std::cout << RED << "Beam energy set to: " << BEAM_ENERGY << DEF << std::endl;
+  } else {
+    BEAM_ENERGY = E1D_E0;
+  }
   std::string csv_name_output = "511_lab_E_PIP_data.csv";
   std::string root_name_output = "511_lab_E_PIP_data.root";
   const char *progress = "-\\|/";
@@ -103,6 +116,7 @@ void make_mm_csv(std::string fin) {
   double e_p, e_cx, e_cy, e_cz;
   double pip_p, pip_cx, pip_cy, pip_cz;
   TFile *OutputFile = new TFile(root_name_output.c_str(), "RECREATE");
+  OutputFile->SetCompressionSettings(404);
   TTree *lab = new TTree("lab", "lab");
 
   lab->Branch("e_p", &e_p);
@@ -186,6 +200,12 @@ void make_mm_csv(std::string fin) {
 }
 
 void analyze_wq2(std::string fin, std::string fout) {
+  if (getenv("BEAM_E") != NULL) {
+    BEAM_ENERGY = atof(getenv("BEAM_E"));
+    std::cout << RED << "Beam energy set to: " << BEAM_ENERGY << DEF << std::endl;
+  } else {
+    BEAM_ENERGY = E1D_E0;
+  }
   double _p, _cx, _cy, _cz;
   TH2D *hist = new TH2D("WvsQ2", "WvsQ2", 500, 0, 2, 500, 0, 4);
   TH1D *hist_W = new TH1D("W", "W", 500, 0, 2);
@@ -206,7 +226,7 @@ void analyze_wq2(std::string fin, std::string fout) {
     // Setup scattered electron 4 vector
     TVector3 e_mu_prime_3;
     TLorentzVector e_mu_prime;
-    TLorentzVector e_mu(0.0, 0.0, sqrt(Square(E1D_E0) - Square(MASS_E)), E1D_E0);
+    TLorentzVector e_mu(0.0, 0.0, sqrt(Square(BEAM_ENERGY) - Square(MASS_E)), BEAM_ENERGY);
 
     e_mu_prime_3.SetXYZ(_p * _cx, _p * _cy, _p * _cz);
     e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
@@ -242,9 +262,16 @@ double missing_mass(TLorentzVector gamma_mu, TLorentzVector pip_mu) {
 double Breit(double *x, double *par) { return par[2] * TMath::BreitWigner(x[0], par[0], par[1]); }
 
 void analyze_MM(std::string fin, std::string fout) {
+  if (getenv("BEAM_E") != NULL) {
+    BEAM_ENERGY = atof(getenv("BEAM_E"));
+    std::cout << RED << "Beam energy set to: " << BEAM_ENERGY << DEF << std::endl;
+  } else {
+    BEAM_ENERGY = E1D_E0;
+  }
   double e_p, e_cx, e_cy, e_cz;
   double pip_p, pip_cx, pip_cy, pip_cz;
   TH2D *hist_2 = new TH2D("WvsQ2_mm", "WvsQ2_mm", 500, 0, 3, 500, 0, 4);
+  TH2D *w_vs_mm = new TH2D("w_vs_mm", "w_vs_mm", 500, 0, 4, 500, -2, 2);
   TH1D *MM = new TH1D("mm", "mm", 500, 0, 3);
   TH1D *hist_W_2 = new TH1D("W_mm", "W_mm", 500, 0, 3);
   TH1D *hist_Q2_2 = new TH1D("Q2_mm", "Q2_mm", 500, 0, 4);
@@ -278,7 +305,7 @@ void analyze_MM(std::string fin, std::string fout) {
     TLorentzVector e_mu_prime;
     TVector3 pip_mu_prime_3;
     TLorentzVector pip_mu_prime;
-    TLorentzVector e_mu(0.0, 0.0, sqrt(Square(E1D_E0) - Square(MASS_E)), E1D_E0);
+    TLorentzVector e_mu(0.0, 0.0, sqrt(Square(BEAM_ENERGY) - Square(MASS_E)), BEAM_ENERGY);
 
     e_mu_prime_3.SetXYZ(e_p * e_cx, e_p * e_cy, e_p * e_cz);
     e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
@@ -296,6 +323,8 @@ void analyze_MM(std::string fin, std::string fout) {
     hist_Q2_2->Fill(Q2);
     hist_2->Fill(W, Q2);
 
+    w_vs_mm->Fill(W, mm);
+
     if (mm < 1.1) {
       MM_after->Fill(mm);
       hist_W_2_after->Fill(W);
@@ -310,6 +339,7 @@ void analyze_MM(std::string fin, std::string fout) {
   hist_2->Write();
   hist_W_2->Write();
   hist_Q2_2->Write();
+  w_vs_mm->Write();
   bw->SetParName(0, "Mean");
   bw->SetParName(1, "Width");
   bw->SetParName(2, "Const");
