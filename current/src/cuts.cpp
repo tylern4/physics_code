@@ -38,15 +38,16 @@ void Cuts::Set_elec_fid() {
 
 bool Cuts::isElecctron() {
   bool _elec = true;
+  _elec &= (_data->gpart() > 0);  // Number of good particles is greater than 0
+  if(!_elec) return false;
   _elec &= (_data->q(0) == NEGATIVE);
   _elec &= (_data->ec(0) > 0);    // ``` ``` ``` ec
-  _elec &= (_data->gpart() > 0);  // Number of good particles is greater than 0
   _elec &= (_data->cc(0) > 0);
   _elec &= (_data->stat(0) > 0);  // First Particle hit stat
   _elec &= (_data->sc(0) > 0);
   _elec &= (_data->dc(0) > 0);
   //_elec &= (_data->nphe(0) > 30);
-  _elec &= (_data->ec_ei(0) > 0.04);
+  _elec &= (_data->ec_ei(0) >= 0.01);
   _elec &= (_data->dc_stat(0) > 0);
 
   return _elec;

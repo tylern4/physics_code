@@ -16,8 +16,13 @@ using namespace std;
 
 int main(int argc, char **argv) {
   std::vector<std::string> files;
+
   if (argc >= 2) {
-    files = glob(argv[1]);
+    try {
+      files = glob(argv[1]);
+    } catch (...) {
+      files = glob("/Users/tylern/Data/e1d/new_cook/skim*.root");
+    }
   } else if (argc < 2) {
     std::cerr << RED << "Error: \n";
     std::cerr << BOLDRED << "\tNeed input file and output file\n";

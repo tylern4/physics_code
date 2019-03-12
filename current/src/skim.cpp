@@ -6,33 +6,38 @@
 #include "skim.hpp"
 
 Skim::Skim(std::vector<std::string> input, std::string output) {
-  fin = input;
-  fout = output;
+  fin = std::move(input);
+  fout = std::move(output);
   chain = new TChain("h10");
+
   for (auto f : fin) chain->AddFile(f.c_str());
 
   RootOutputFile = new TFile(fout.c_str(), "RECREATE");
+  RootOutputFile->SetCompressionSettings(404);
   if (getenv("BEAM_E") != NULL) {
-    BEAM_ENERGY = atof(getenv("BEAM_E"));
+    BEAM_ENERGY = strtod(getenv("BEAM_E"),(char **)NULL);
     std::cout << RED << "Beam energy set to: " << BEAM_ENERGY << DEF << std::endl;
   }
-
-  e_mu.SetPxPyPzE(0.0, 0.0, sqrt((BEAM_ENERGY * BEAM_ENERGY) - (MASS_E * MASS_E)), BEAM_ENERGY);
-  MM_neutron = new MissingMass(MASS_P, 0.0);
+  e_mu = std::make_shared<TLorentzVector>();
+  e_mu->SetPxPyPzE(0.0, 0.0, sqrt((BEAM_ENERGY * BEAM_ENERGY) - (MASS_E * MASS_E)), BEAM_ENERGY);
+  MM_neutron = std::make_shared<MissingMass>(MASS_P, 0.0);
 }
 Skim::~Skim() {}
 
-void Skim::Basic() {
+float Skim::Basic() {
   std::cout << BLUE << "Basic Skim " << GREEN << fout << DEF << std::endl;
 
   int num_of_events = (int)chain->GetEntries();
   TTree *skim = chain->CloneTree(0);
   auto data = std::make_shared<Branches>(chain);
-
+  int total = 0;
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
     auto check = std::make_unique<Cuts>(data);
-    if (check->isElecctron() && check->Beam_cut()) skim->Fill();
+    if (check->isElecctron()) {
+      total++;
+      skim->Fill();
+    }
   }
 
   delete chain;
@@ -40,6 +45,8 @@ void Skim::Basic() {
   RootOutputFile->Write();
   RootOutputFile->Close();
   delete RootOutputFile;
+
+  return (total/(float)num_of_events);
 }
 
 void Skim::Strict() {
@@ -52,7 +59,7 @@ void Skim::Strict() {
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
-    if (data->gpart() > 5) continue;
+    if (data->gpart() >= 4) continue;
     auto check = std::make_unique<Cuts>(data);
     auto event = std::make_unique<Reaction>(data);
 

@@ -1,6 +1,7 @@
 *.o
 current/inputFiles
 current/outputFiles
+cmake-build-debug
 *.out
 *.csv
 *.csv.gz

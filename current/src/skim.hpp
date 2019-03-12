@@ -26,21 +26,21 @@ class Skim {
   std::string fout;
   std::vector<std::string> fin;
   TFile *RootOutputFile;
-  TVector3 e_mu_prime_3;
-  TLorentzVector e_mu_prime;
-  TVector3 particle_3;
-  TLorentzVector particle;
-  TLorentzVector e_mu;
-  TVector3 Particle3;
-  TLorentzVector Particle4;
-  MissingMass *MM_neutron;
+  //TVector3 e_mu_prime_3;
+  //TLorentzVector e_mu_prime;
+  //TVector3 particle_3;
+  //TLorentzVector particle;
+  std::shared_ptr<TLorentzVector> e_mu;
+  //TVector3 Particle3;
+  //TLorentzVector Particle4;
+  std::shared_ptr<MissingMass> MM_neutron;
   double BEAM_ENERGY = E1D_E0;
 
  public:
   Skim(std::vector<std::string> input, std::string output);
   ~Skim();
 
-  void Basic();
+  float Basic();
   void Strict();
   void Final();
 

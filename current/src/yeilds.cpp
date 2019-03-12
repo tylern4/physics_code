@@ -11,7 +11,9 @@ Yeilds::~Yeilds() {}
 
 void Yeilds::OpenFile(std::string output_file_name) { csv_output.open(output_file_name); }
 
-void Yeilds::WriteHeader() { csv_output << "W,Q2,MM,MM2,Theta,Phi,sector" << std::endl; }
+void Yeilds::WriteHeader() {
+  csv_output << "W,Q2,MM,MM2,theta_e,theta_star,phi_star,theta_lab,phi_lab,sector" << std::endl;
+}
 
 void Yeilds::Run(std::vector<std::string> fin) {
   std::cout.imbue(std::locale(""));
@@ -50,10 +52,6 @@ int Yeilds::Run(std::string root_file) {
       // photon_flux->GetVirtualPhotonFlux();
 
       for (int part_num = 1; part_num < data->gpart(); part_num++) {
-        theta = physics::theta_calc(data->cz(part_num));
-        phi = physics::phi_calc(data->cx(part_num), data->cy(part_num));
-        sector = data->dc_sect(part_num);
-
         if (data->q(part_num) == POSITIVE) {
           if (check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num)))
             event->SetPip(part_num);
@@ -73,8 +71,8 @@ int Yeilds::Run(std::string root_file) {
 
       if ((event->SinglePip() || event->NeutronPip()))
         csv_output << std::setprecision(15) << event->W() << "," << event->Q2() << "," << event->MM() << ","
-                   << event->MM2() << "," << event->Theta_star() << "," << event->Phi_star() << "," << sector
-                   << std::endl;
+                   << event->MM2() << "," << event->Theta_E() << "," << event->Theta_star() << "," << event->Phi_star()
+                   << "," << theta << "," << phi << "," << sector << std::endl;
     }
   }
   chain->Reset();  // delete Tree object

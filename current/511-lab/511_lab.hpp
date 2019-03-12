@@ -52,13 +52,12 @@ void make_electron_csv(std::string fin) {
 
     electron_cuts = true;
     // electron cuts
-    electron_cuts &= (data->ec(0) > 0);                              // ``` ``` ``` ec
-    electron_cuts &= (data->id(0) == ELECTRON || data->id(0) == 0);  // First particle is electron`
-    electron_cuts &= (data->gpart() > 0);                            // Number of good particles is gt 0
-    electron_cuts &= (data->stat(0) > 0);                            // First Particle hit stat
-    electron_cuts &= (data->q(0) == -1);                             // First particle is negative Q
-    electron_cuts &= (data->sc(0) > 0);                              // First Particle hit sc
-    electron_cuts &= (data->dc(0) > 0);                              // ``` ``` ``` dc
+    electron_cuts &= (data->gpart() > 0);  // Number of good particles is gt 0
+    electron_cuts &= (data->stat(0) > 0);  // First Particle hit stat
+    electron_cuts &= (data->q(0) == -1);   // First particle is negative Q
+    electron_cuts &= (data->sc(0) > 0);    // First Particle hit sc
+    electron_cuts &= (data->dc(0) > 0);    // ``` ``` ``` dc
+    electron_cuts &= (data->ec(0) > 0);    // ``` ``` ``` ec
     electron_cuts &= (data->dc_stat(0) > 0);
 
     if (!electron_cuts) continue;
@@ -71,7 +70,7 @@ void make_electron_csv(std::string fin) {
       else
         n_other++;
 
-    if (n_prot >= 1 && n_other <= 1) {
+    if (n_prot == 1 && n_other == 0) {
       // Setup scattered electron 4 vector
       TLorentzVector e_mu_prime;
       TLorentzVector e_mu(0.0, 0.0, sqrt(Square(BEAM_ENERGY) - Square(MASS_E)), BEAM_ENERGY);
@@ -150,13 +149,12 @@ void make_mm_csv(std::string fin) {
 
     electron_cuts = true;
     // electron cuts
-    electron_cuts &= (data->ec(0) > 0);                              // ``` ``` ``` ec
-    electron_cuts &= (data->id(0) == ELECTRON || data->id(0) == 0);  // First particle is electron`
-    electron_cuts &= (data->gpart() > 0);                            // Number of good particles is gt 0
-    electron_cuts &= (data->stat(0) > 0);                            // First Particle hit stat
-    electron_cuts &= (data->q(0) == -1);                             // First particle is negative Q
-    electron_cuts &= (data->sc(0) > 0);                              // First Particle hit sc
-    electron_cuts &= (data->dc(0) > 0);                              // ``` ``` ``` dc
+    electron_cuts &= (data->gpart() > 0);  // Number of good particles is gt 0
+    electron_cuts &= (data->stat(0) > 0);  // First Particle hit stat
+    electron_cuts &= (data->q(0) == -1);   // First particle is negative Q
+    electron_cuts &= (data->sc(0) > 0);    // First Particle hit sc
+    electron_cuts &= (data->dc(0) > 0);    // ``` ``` ``` dc
+    electron_cuts &= (data->ec(0) > 0);    // ``` ``` ``` ec
     electron_cuts &= (data->dc_stat(0) > 0);
     if (!electron_cuts) continue;
 

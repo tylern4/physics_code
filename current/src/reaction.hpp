@@ -23,13 +23,16 @@ class Reaction {
   std::unique_ptr<TLorentzVector> _beam;
   std::unique_ptr<TLorentzVector> _elec;
   std::unique_ptr<TLorentzVector> _gamma;
-  std::unique_ptr<TLorentzVector> _com;
-  std::unique_ptr<TLorentzVector> _elec_com;
   std::unique_ptr<TLorentzVector> _target;
   std::unique_ptr<TLorentzVector> _prot;
   std::unique_ptr<TLorentzVector> _pip;
   std::unique_ptr<TLorentzVector> _pim;
   std::unique_ptr<TLorentzVector> _neutron;
+  std::unique_ptr<TLorentzVector> _com;
+  std::unique_ptr<TLorentzVector> _elec_boosted;
+  std::unique_ptr<TLorentzVector> _gamma_boosted;
+  std::unique_ptr<TLorentzVector> _beam_boosted;
+  std::unique_ptr<TLorentzVector> _pip_boosted;
 
   std::shared_ptr<Branches> _data;
 
@@ -39,6 +42,8 @@ class Reaction {
   bool _hasPim = false;
   bool _hasOther = false;
   bool _hasNeutron = false;
+
+  bool _boosted = false;
 
   short _numProt = 0;
   short _numPip = 0;
@@ -54,6 +59,7 @@ class Reaction {
   double _W = NAN;
   double _Q2 = NAN;
 
+  double _theta_e = NAN;
   double _theta_star = NAN;
   double _phi_star = NAN;
 
@@ -70,12 +76,23 @@ class Reaction {
   void CalcMissMass();
   double MM();
   double MM2();
+  void boost();
 
   inline double W() { return _W; }
   inline double Q2() { return _Q2; }
 
-  inline double Theta_star() { return _theta_star; }
-  inline double Phi_star() { return _phi_star; }
+  inline double Theta_star() {
+    if (!_boosted) boost();
+    return _theta_star;
+  }
+  inline double Phi_star() {
+    if (!_boosted) boost();
+    return _phi_star;
+  }
+  inline double Theta_E() {
+    if (!_boosted) boost();
+    return _theta_e;
+  }
 
   inline bool TwoPion() {
     return ((_numPip == 1 && _numPim == 1) && (_hasE && !_hasP && _hasPip && _hasPim && !_hasNeutron && !_hasOther));
