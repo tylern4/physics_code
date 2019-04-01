@@ -28,8 +28,8 @@ void MissingMass::Set_PxPyPz(double px, double py, double pz) {
   vec_4_out.SetXYZM(PX, PY, PZ, out_mass);
 }
 
-void MissingMass::Set_4Vec(TLorentzVector event_p) { vec_4_out = event_p; }
-void MissingMass::Add_4Vec(TLorentzVector event_p) { vec_4_out += event_p; }
+void MissingMass::Set_4Vec(const TLorentzVector& event_p) { vec_4_out = event_p; }
+void MissingMass::Add_4Vec(const TLorentzVector& event_p) { vec_4_out += event_p; }
 void MissingMass::Reset() { vec_4_out.SetXYZM(0, 0, 0, 0); }
 
 void MissingMass::Set_P_cos(double p_out, double cx_out, double cy_out, double cz_out) {

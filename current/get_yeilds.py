@@ -1,12 +1,10 @@
 #!/usr/bin/env python
-import numpy as np
 
+import argparse
 import glob
 import sys
 import time
 from multiprocessing import Pool, cpu_count
-from tqdm import tqdm
-import argparse
 
 import yeilds
 
@@ -24,7 +22,7 @@ def main(args):
         files = glob.glob(args.input + "/*.root")
 
     base = files[0][: files[0].rfind("/") + 1]
-    files = [f[f.rfind("/") + 1 :] for f in files]
+    files = [f[f.rfind("/") + 1:] for f in files]
     files = [f[: f.rfind(".A")] for f in files]
     files = [f[: f.rfind("_")] for f in files]
     files = set(files)
@@ -41,7 +39,8 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Python ROOT program")
-    parser.add_argument("input", type=str, help="Input directory for *.root files")
+    parser.add_argument("input", type=str,
+                        help="Input directory for *.root files")
 
     # Print help if there aren't enough arguments
     if len(sys.argv[1:]) == 0:

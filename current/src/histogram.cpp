@@ -18,7 +18,7 @@ Histogram::Histogram() {
 }
 
 Histogram::Histogram(std::string output_file) {
-  RootOutputFile = new TFile(output_file.c_str(), "RECREATE");
+  RootOutputFile = std::make_shared<TFile>(output_file.c_str(), "RECREATE");
   def = new TCanvas("def");
   makeHists_WvsQ2();
   makeHists_deltat();
@@ -31,9 +31,11 @@ Histogram::Histogram(std::string output_file) {
 }
 
 Histogram::~Histogram() {}
-
-void Histogram::Write(std::string output_file) {
-  RootOutputFile = new TFile(output_file.c_str(), "RECREATE");
+void Histogram::Write(const std::string &output_file) {
+  RootOutputFile = std::make_shared<TFile>(output_file.c_str(), "RECREATE");
+  Write();
+}
+void Histogram::Write() {
   std::cout << GREEN << "\nFitting" << DEF << std::endl;
   // Start of cuts
   auto MM_neutron_cut = std::make_unique<Fits>();
@@ -119,8 +121,6 @@ void Histogram::Write(std::string output_file) {
   TDirectory *E_Prime = RootOutputFile->mkdir("E_Prime");
   E_Prime->cd();
   E_Prime_Write();
-  RootOutputFile->Close();
-
   std::cerr << "MM:mean,+3,-3" << std::endl;
   std::cerr << MM_neutron_cut->Get_mean() << ",";
   std::cerr << MM_neutron_cut->Get_mean() + 3 * MM_neutron_cut->Get_sigma() << ",";
@@ -128,9 +128,9 @@ void Histogram::Write(std::string output_file) {
   std::cerr << BOLDBLUE << "Done Writing!!!" << DEF << std::endl;
 }
 
-void Histogram::Write(std::string output_file, bool multi) {
+void Histogram::Write(const std::string &output_file, bool multi) {
   _multi = multi;
-  RootOutputFile = new TFile(output_file.c_str(), "RECREATE");
+  RootOutputFile = std::make_unique<TFile>(output_file.c_str(), "RECREATE");
   RootOutputFile->cd();
 
   TDirectory *EC_folder = RootOutputFile->mkdir("EC_hists");
@@ -434,15 +434,15 @@ void Histogram::WvsQ2_Write() {
 }
 
 void Histogram::WvsQ2_sec_Write() {
-  for (short sec = 0; sec < NUM_SECTORS; sec++) {
-    WvsQ2_channel_sec[sec]->SetXTitle("W (GeV)");
-    WvsQ2_channel_sec[sec]->SetYTitle("Q^{2} (GeV^{2})");
-    WvsQ2_channel_sec[sec]->SetOption("COLZ");
-    WvsQ2_channel_sec[sec]->Write();
+  for (auto &sec : WvsQ2_channel_sec) {
+    sec->SetXTitle("W (GeV)");
+    sec->SetYTitle("Q^{2} (GeV^{2})");
+    sec->SetOption("COLZ");
+    sec->Write();
   }
-  for (short sec = 0; sec < NUM_SECTORS; sec++) {
-    W_channel_sec[sec]->SetXTitle("W (GeV)");
-    W_channel_sec[sec]->Write();
+  for (auto &sec : W_channel_sec) {
+    sec->SetXTitle("W (GeV)");
+    sec->Write();
   }
 
   if (!_multi) {
@@ -467,16 +467,16 @@ void Histogram::WvsQ2_sec_Write() {
     canW_channel->Write();
   }
 
-  for (short sec = 0; sec < NUM_SECTORS; sec++) {
-    WvsQ2_sec[sec]->SetXTitle("W (GeV)");
-    WvsQ2_sec[sec]->SetYTitle("Q^{2} (GeV^{2})");
-    WvsQ2_sec[sec]->SetOption("COLZ");
-    WvsQ2_sec[sec]->Write();
+  for (auto &sec : WvsQ2_sec) {
+    sec->SetXTitle("W (GeV)");
+    sec->SetYTitle("Q^{2} (GeV^{2})");
+    sec->SetOption("COLZ");
+    sec->Write();
   }
 
-  for (short sec = 0; sec < NUM_SECTORS; sec++) {
-    W_sec[sec]->SetXTitle("W (GeV)");
-    W_sec[sec]->Write();
+  for (auto &sec : W_sec) {
+    sec->SetXTitle("W (GeV)");
+    sec->Write();
   }
 
   if (!_multi) {
@@ -508,13 +508,13 @@ void Histogram::WvsQ2_binned_Write() {
   WvsQ2_binned->SetOption("COLZ");
   WvsQ2_binned->Write();
 
-  for (int x = 0; x < Q2_BINS; x++) {
-    W_binned[x]->SetXTitle("W (GeV)");
-    W_binned[x]->Write();
+  for (auto &sec : W_binned) {
+    sec->SetXTitle("W (GeV)");
+    sec->Write();
   }
-  for (int y = 0; y < W_BINS; y++) {
-    Q2_binned[y]->SetXTitle("Q^{2} (GeV^{2})");
-    Q2_binned[y]->Write();
+  for (auto &sec : Q2_binned) {
+    sec->SetXTitle("Q^{2} (GeV^{2})");
+    sec->Write();
   }
 }
 // W and Q^2
@@ -1518,4 +1518,95 @@ void Histogram::E_Prime_Write() {
 
   energy_channel_cuts->SetXTitle("Energy (GeV)");
   energy_channel_cuts->Write();
+}
+
+mcHistogram::~mcHistogram() {}
+
+void mcHistogram::Write() {
+  std::cerr << GREEN << "\nWriting" << DEF << std::endl;
+  Histogram::Write();
+  RootOutputFile->cd();
+  // Start of cuts
+  // Fits *MM_neutron_cut = new Fits();
+  // MM_neutron_cut->Set_min(0.8);
+  // MM_neutron_cut->Set_max(1.2);
+  // MM_neutron_cut->FitBreitWigner(Missing_Mass.get());
+  std::cerr << BOLDBLUE << "WvsQ2()" << DEF << std::endl;
+  // TDirectory *WvsQ2_folder = RootOutputFile->mkdir("W vs Q2 MC");
+  // WvsQ2_folder->cd();
+  WvsQ2_MC_Write();
+
+  TDirectory *delta_mom = RootOutputFile->mkdir("delta_mom");
+  delta_mom->cd();
+  Write_DeltaP();
+  std::cerr << BOLDBLUE << "Done!!!" << DEF << std::endl;
+}
+
+void mcHistogram::makeMCHists() {
+  std::string xyz[4] = {"X", "Y", "Z", "all"};
+  for (int i = 0; i < 4; i++) {
+    sprintf(hname, "dPvsP_%s", xyz[i].c_str());
+    sprintf(htitle, "#DeltaP/P_{rec} vs P_{%s}", xyz[i].c_str());
+    delta_p[i] = std::make_unique<TH1D>(hname, htitle, 500, -0.5, 0.5);
+  }
+
+  for (int y = 0; y < Q2_BINS; y++) {
+    sprintf(hname, "W_MC_%0.3f_%0.3f", q2_binned_min + (Q2_width * y), q2_binned_min + (Q2_width * (y + 1)));
+    sprintf(htitle, "W hist from true MC\nQ^{2} %0.3f %0.3f", q2_binned_min + (Q2_width * y),
+            q2_binned_min + (Q2_width * (y + 1)));
+    W_binned_MC[y] = std::make_unique<TH1D>(hname, htitle, BINS, w_binned_min, w_binned_max);
+  }
+}
+
+void mcHistogram::Fill_WQ2_MC(double W, double Q2) {
+  WvsQ2_MC->Fill(W, Q2);
+  W_MC->Fill(W);
+  WvsQ2_binned_MC->Fill(W, Q2);
+  for (int y = 0; y < Q2_BINS; y++) {
+    if (q2_binned_min + (Q2_width * y) <= Q2 && q2_binned_min + (Q2_width * (y + 1)) >= Q2) {
+      W_binned_MC[y]->Fill(W);
+      continue;
+    }
+  }
+}
+
+void mcHistogram::Fill_P(const std::shared_ptr<Branches> &d) {
+  double P = 0;
+  for (int part_num = 0; part_num < d->gpart(); part_num++) {
+    double px = d->p(part_num) * d->cx(part_num);
+    delta_p[0]->Fill((px - d->pxpart(part_num)) / px);
+    double py = d->p(part_num) * d->cy(part_num);
+    delta_p[1]->Fill((py - d->pypart(part_num)) / py);
+    double pz = d->p(part_num) * d->cz(part_num);
+    delta_p[2]->Fill((pz - d->pzpart(part_num)) / pz);
+    P = TMath::Sqrt(d->pxpart(part_num) * d->pxpart(part_num) + d->pypart(part_num) * d->pypart(part_num) +
+                    d->pzpart(part_num) * d->pzpart(part_num));
+    delta_p[3]->Fill((d->p(part_num) - P) / d->p(part_num));
+  }
+}
+
+void mcHistogram::WvsQ2_MC_Write() {
+  WvsQ2_MC->SetXTitle("W (GeV)");
+  WvsQ2_MC->SetYTitle("Q^{2} (GeV^{2})");
+  WvsQ2_MC->SetOption("COLZ");
+  WvsQ2_MC->Write();
+
+  W_MC->SetXTitle("W (GeV)");
+  W_MC->Write();
+}
+
+void mcHistogram::Write_DeltaP() {
+  TCanvas *dp_canvas = new TCanvas("dp_canvas", "#Delta P", 1280, 720);
+  dp_canvas->Divide(2, 2);
+  for (int i = 0; i < 4; i++) {
+    dp_canvas->cd(i + 1);
+    delta_p[i]->SetXTitle("#Delta P (GeV)");
+    delta_p[i]->Fit("gaus", "QM+", "", -0.1, 0.1);
+    delta_p[i]->Draw("same");
+  }
+  dp_canvas->Write();
+  for (auto &dp : delta_p) {
+    dp->SetXTitle("#Delta P (GeV)");
+    dp->Write();
+  }
 }

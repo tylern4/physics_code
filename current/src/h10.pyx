@@ -3,12 +3,13 @@ from libcpp.vector cimport vector
 from libcpp.string cimport string
 from libcpp.memory cimport unique_ptr, shared_ptr
 from cython.operator cimport dereference as deref
+import cython
 from libcpp cimport bool
 from cpython cimport array
 from libc.stdlib cimport free
 import numpy as np
 cimport numpy as np
-import array
+#import array
 
 cdef dict get_id = {'PROTON': 2212, 'NEUTRON': 2112, 'PIP': 211, 'PIM': -211, 'PI0': 111, 'KP': 321, 'KM': -321, 'PHOTON': 22, 'ELECTRON': 11}
 cdef dict part_mass = {11: 0.000511, 211: 0.13957, -211: 0.13957, 2212: 0.93827, 2112: 0.939565, 321: 0.493667, -321: 0.493667, 22: 0}

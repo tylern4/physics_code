@@ -1,11 +1,11 @@
 /**************************************/
-/*																		*/
+/*                                    */
 /*  Created by Nick Tyler             */
-/*	University Of South Carolina      */
+/*	University Of South Carolina  */
 /**************************************/
 #include "reaction.hpp"
 
-Reaction::Reaction(std::shared_ptr<Branches> data) : _data(data) {
+Reaction::Reaction(std::shared_ptr<Branches> data) : _data(std::move(data)) {
   _beam = std::make_unique<TLorentzVector>();
   if (getenv("BEAM_E") != NULL) _beam_energy = atof(getenv("BEAM_E"));
   _beam->SetPxPyPzE(0.0, 0.0, sqrt(_beam_energy * _beam_energy - MASS_E * MASS_E), _beam_energy);
@@ -24,7 +24,26 @@ Reaction::Reaction(std::shared_ptr<Branches> data) : _data(data) {
   _Q2 = physics::Q2_calc(*_gamma);
 }
 
-Reaction::~Reaction() {}
+Reaction::Reaction(std::shared_ptr<Branches> data, bool MC) : _data(std::move(data)) {
+  _beam = std::make_unique<TLorentzVector>();
+  if (getenv("BEAM_E") != NULL) _beam_energy = atof(getenv("BEAM_E"));
+  _beam->SetPxPyPzE(0.0, 0.0, sqrt(_beam_energy * _beam_energy - MASS_E * MASS_E), _beam_energy);
+  _gamma = std::make_unique<TLorentzVector>();
+  _target = std::make_unique<TLorentzVector>(0.0, 0.0, 0.0, MASS_P);
+  _elec = std::make_unique<TLorentzVector>();
+  _prot = std::make_unique<TLorentzVector>();
+  _pip = std::make_unique<TLorentzVector>();
+  _pim = std::make_unique<TLorentzVector>();
+  _neutron = std::make_unique<TLorentzVector>();
+
+  _hasE = true;
+  _elec->SetXYZM(_data->pxpart(0), _data->pypart(0), _data->pzpart(0), MASS_E);
+  *_gamma += *_beam - *_elec;
+  _W = physics::W_calc(*_gamma);
+  _Q2 = physics::Q2_calc(*_gamma);
+}
+
+Reaction::~Reaction() = default;
 
 void Reaction::SetProton(int i) {
   _numProt++;

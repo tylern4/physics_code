@@ -6,7 +6,7 @@
 // Only My Includes. All others in main.h
 #include <memory>
 #include "TStopwatch.h"
-#include "datahandeler_mc.hpp"
+#include "datahandeler.hpp"
 #include "glob_files.hpp"
 
 using namespace std;
@@ -35,13 +35,17 @@ int main(int argc, char **argv) {
   } else if (argc == 3) {
     outfilename = argv[2];
   }
-
-  mcHandeler *dh = new mcHandeler();
-  mcHistogram *hist = new mcHistogram(outfilename);
-  dh->Run(files, hist);
-  delete hist;
-  Watch->Stop();
-  cout << RED << Watch->RealTime() << "sec" << DEF << endl;
+  auto hist = std::make_shared<mcHistogram>(outfilename);
+  auto dh = std::make_shared<mcHandeler>(files, hist);
+  dh->setLoadBar(true);
+  auto start = std::chrono::high_resolution_clock::now();
+  size_t events = 0;
+  events += dh->Run();
+  hist->Write();
+  std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
+  std::cout << RED << elapsed_full.count() << " sec" << DEF << std::endl;
+  std::cout.imbue(std::locale(""));
+  std::cout << BOLDYELLOW << "\n\n" << events / elapsed_full.count() << " Hz" << DEF << std::endl;
 
   return 0;
 }

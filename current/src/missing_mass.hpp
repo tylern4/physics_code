@@ -29,8 +29,8 @@ class MissingMass {
   void Set_target_PxPyPz(int zero);
   void Set_target_PxPyPz(double t_px, double t_py, double t_pz);
   void Set_target_P_cos(double t_p, double t_cx, double t_cy, double t_cz);
-  void Set_4Vec(TLorentzVector event_p);
-  void Add_4Vec(TLorentzVector event_p);
+  void Set_4Vec(const TLorentzVector& event_p);
+  void Add_4Vec(const TLorentzVector& event_p);
   void Reset();
 
   void missing_mass(TLorentzVector gamma_mu);

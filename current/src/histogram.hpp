@@ -19,6 +19,7 @@
 #include "TH2.h"
 #include "TH3.h"
 #include "THn.h"
+#include "branches.hpp"
 #include "color.hpp"
 #include "fits.hpp"
 #include "missing_mass.hpp"
@@ -43,9 +44,9 @@ using TH2D_ptr = std::shared_ptr<TH2D>;
 using TH1D_ptr = std::shared_ptr<TH1D>;
 
 class Histogram {
- private:
+ protected:
   bool _multi = false;
-  TFile* RootOutputFile;
+  std::shared_ptr<TFile> RootOutputFile;
   TCanvas* def;
 
   float p_min = 0.0;
@@ -119,10 +120,10 @@ class Histogram {
   TH2D_ptr WvsQ2_binned = std::make_shared<TH2D>("WvsQ2_hist_binned", "W vs Q^{2} binned", W_BINS, w_binned_min,
                                                  w_binned_max, Q2_BINS, q2_binned_min, q2_binned_max);
 
-  TH1D* W_binned[NUM_SECTORS];
-  TH1D* Q2_binned[NUM_SECTORS];
-  TH1D* Missing_Mass_WBinned[NUM_SECTORS];
-  TH1D* Missing_Mass_WBinned_square[NUM_SECTORS];
+  TH1D* W_binned[Q2_BINS];
+  TH1D* Q2_binned[W_BINS];
+  TH1D* Missing_Mass_WBinned[W_BINS];
+  TH1D* Missing_Mass_WBinned_square[W_BINS];
   Fits* Fit_Missing_Mass_WBinned[W_BINS];
   // W and Q^2
 
@@ -291,8 +292,9 @@ class Histogram {
   Histogram();
   Histogram(std::string output_file);
   ~Histogram();
-  void Write(std::string output_file);
-  void Write(std::string output_file, bool multi);
+  void Write(const std::string& output_file);
+  void Write();
+  void Write(const std::string& output_file, bool multi);
   void makeHists_fid();
   void makeHists_deltat();
   void makeHists_CC();
@@ -386,6 +388,30 @@ class Histogram {
   void Fill_E_Prime_fid(TLorentzVector e_prime);
   void Fill_E_Prime_channel(TLorentzVector e_prime);
   void E_Prime_Write();
+};
+
+class mcHistogram : public Histogram {
+ private:
+ public:
+  mcHistogram();
+  mcHistogram(std::string output_file) : Histogram(output_file) { makeMCHists(); }
+  ~mcHistogram();
+  TH2D_ptr WvsQ2_MC =
+      std::make_shared<TH2D>("WvsQ2_MC", "W vs Q^{2} #pi^{+} N", BINS, w_min, w_max, BINS, q2_min, q2_max);
+  TH1D_ptr W_MC = std::make_shared<TH1D>("W_MC", "W #pi^{+} N", BINS, w_min, w_max);
+
+  TH2D_ptr WvsQ2_binned_MC = std::make_shared<TH2D>("WvsQ2_hist_binned_MC", "W vs Q^{2} binned", W_BINS, w_binned_min,
+                                                    w_binned_max, Q2_BINS, q2_binned_min, q2_binned_max);
+
+  TH1D_ptr W_binned_MC[Q2_BINS];
+  TH1D_ptr delta_p[4];
+  // W and Q^2
+  void makeMCHists();
+  void Fill_WQ2_MC(double W, double Q2);
+  void Fill_P(const std::shared_ptr<Branches>& d);
+  void Write();
+  void Write_DeltaP();
+  void WvsQ2_MC_Write();
 };
 
 #endif

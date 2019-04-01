@@ -65,6 +65,7 @@ class Reaction {
 
  public:
   Reaction(std::shared_ptr<Branches> data);
+  Reaction(std::shared_ptr<Branches> data, bool MC);
   ~Reaction();
 
   void SetProton(int i);
