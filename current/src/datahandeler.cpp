@@ -38,9 +38,11 @@ int DataHandeler::Run() {
   }
 
   int num_of_events = (int)_chain[0]->GetEntries();
-  for (int current_event = 0; current_event < num_of_events; current_event++) {
-#pragma omp critical nowait
-    if (current_event % 500000 == 0 && _loadbar) DataHandeler::loadbar(current_event + 1, num_of_events);
+  int current_event = 0;
+#pragma omp parallel for private(current_event) reduction(+ : total)
+  for (current_event = 0; current_event < num_of_events; current_event++) {
+    //#pragma omp critical
+    //    if (current_event % 500000 == 0 && _loadbar) DataHandeler::loadbar(current_event + 1, num_of_events);
     total += DataHandeler::Run(current_event, omp_get_thread_num());
   }
 
@@ -48,6 +50,7 @@ int DataHandeler::Run() {
 }
 
 int DataHandeler::Run(int current_event, int thread) {
+#pragma omp critical
   _chain[thread]->GetEntry(current_event);
   auto check = std::make_unique<Cuts>(_data[thread]);
   // if (_data[thread]->ec_eo(0) < 0.01) return 0;
@@ -186,6 +189,7 @@ int mcHandeler::Run() {
   int current_event = 0;
 #pragma omp parallel for private(current_event)
   for (current_event = 0; current_event < num_of_events; current_event++) {
+#pragma omp critical
     if (current_event % 500000 == 0 && _loadbar) DataHandeler::loadbar(current_event + 1, num_of_events);
     total += DataHandeler::Run(current_event, omp_get_thread_num());
     total += mcHandeler::Run(current_event, omp_get_thread_num());
@@ -195,6 +199,7 @@ int mcHandeler::Run() {
 }
 
 int mcHandeler::Run(int current_event, int thread) {
+#pragma omp critical
   _chain[thread]->GetEntry(current_event);
   auto check = std::make_unique<Cuts>(_data[thread]);
   // if (!check->isElecctron()) return 0;

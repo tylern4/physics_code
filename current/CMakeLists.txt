@@ -1,9 +1,28 @@
 cmake_minimum_required(VERSION 3.5)
 project(DataHandeler)
 set(VERSION 1.0.0)
-#set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CXX_FLAGS "-O3 ${ROOT_CXX_FLAGS}")
 set(CMAKE_C_FLAGS "-O3 ${ROOT_CXX_FLAGS}")
+
+set(CMAKE_C_COMPILER "/usr/local/Cellar/llvm/7.0.0/bin/clang")
+set(CMAKE_CXX_COMPILER "/usr/local/Cellar/llvm/7.0.0/bin/clang++")
+set(OPENMP_LIBRARIES "/usr/local/Cellar/libomp/7.0.0/lib")
+set(OPENMP_INCLUDES "/usr/local/Cellar/libomp/7.0.0/include")
+# Find OpenMP
+if(APPLE)
+  set(OpenMP_CXX "${CMAKE_CXX_COMPILER}")
+  set(OpenMP_CXX_FLAGS "-fopenmp=libomp -Wno-unused-command-line-argument")
+  set(OpenMP_CXX_LIB_NAMES "/usr/local/Cellar/libomp/7.0.0/lib/libomp.a" "/usr/local/Cellar/libomp/7.0.0/lib/libgomp.a" "/usr/local/Cellar/libomp/7.0.0/lib/libiomp5.a")
+  set(OpenMP_libomp_LIBRARY ${OpenMP_CXX_LIB_NAMES})
+  set(OpenMP_libgomp_LIBRARY ${OpenMP_CXX_LIB_NAMES})
+  set(OpenMP_libiomp5_LIBRARY ${OpenMP_CXX_LIB_NAMES})
+endif()
+
+link_directories("${OPENMP_LIBRARIES}")
+include_directories("${OPENMP_INCLUDES}")
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 find_package(ROOT REQUIRED COMPONENTS RIO Net RooFit) #RooFit RooFitCore RooStats RootAuth

@@ -1,19 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
 
-# For CMake < 3.9, we need to make the target ourselves
-if(NOT TARGET OpenMP::OpenMP_CXX)
-    find_package(Threads REQUIRED)
-    add_library(OpenMP::OpenMP_CXX IMPORTED INTERFACE)
-    set_property(TARGET OpenMP::OpenMP_CXX
-                 PROPERTY INTERFACE_COMPILE_OPTIONS ${OpenMP_CXX_FLAGS})
-    # Only works if the same flag is passed to the linker; use CMake 3.9+ otherwise (Intel, AppleClang)
-    set_property(TARGET OpenMP::OpenMP_CXX
-                 PROPERTY INTERFACE_LINK_LIBRARIES ${OpenMP_CXX_FLAGS} Threads::Threads)
-
-endif()
-
-
-
 find_package(PythonInterp)
 find_package(PythonLibs)
 find_package(PythonExtensions)
@@ -47,7 +33,7 @@ add_library(physics STATIC
   )
 
 set(EXTRA_FLAGS "-pthread -fPIC -Wno-return-type -Wno-writable-strings -Wno-dangling-else -Wno-comment -D__ROOFIT_NOBANNER")
-target_link_libraries(physics PUBLIC OpenMP::OpenMP_CXX ${ROOT_LIBRARIES})
+target_link_libraries(physics PUBLIC ${OpenMP_CXX_LIB_NAMES} ${ROOT_LIBRARIES})
 
 target_include_directories(physics
   PRIVATE include

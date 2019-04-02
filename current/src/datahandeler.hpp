@@ -24,21 +24,15 @@
 #include "physics.hpp"
 #include "reaction.hpp"
 
-#if defined(ENABLE_OPENMP)
 #include <omp.h>
-#else
-typedef int omp_int_t;
-inline omp_int_t omp_get_thread_num() { return 0; }
-inline omp_int_t omp_get_max_threads() { return 1; }
-#endif
 
 class DataHandeler {
  protected:
   bool _loadbar = false;
-  TChain* _chain[4];
+  TChain* _chain[8];
   std::vector<std::string> _input_files;
   std::shared_ptr<Histogram> _hists;
-  std::shared_ptr<Branches> _data[4];
+  std::shared_ptr<Branches> _data[8];
   bool CUTS = true;
 
  public:
@@ -46,7 +40,7 @@ class DataHandeler {
   DataHandeler(const std::vector<std::string>& fin, const std::shared_ptr<Histogram>& hists);
   ~DataHandeler();
   void setLoadBar(bool load);
-  // int Run(const std::vector<std::string>& fin, const std::shared_ptr<Histogram>& hists);
+
   int Run();
   int Run(int current_event, int thread);
   void loadbar(long x, long n);
