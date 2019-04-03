@@ -46,8 +46,8 @@ void Histogram::Write() {
   MissingMassSquare_cut->Set_min(0.7);
   MissingMassSquare_cut->FitBreitWigner(Missing_Mass_square.get());
   MissingMassSquare_cut->Get_sigma();
-
   RootOutputFile->cd();
+
   std::cerr << BOLDBLUE << "EC_Write()" << DEF << std::endl;
   TDirectory *EC_folder = RootOutputFile->mkdir("EC_hists");
   EC_folder->cd();
@@ -121,6 +121,7 @@ void Histogram::Write() {
   TDirectory *E_Prime = RootOutputFile->mkdir("E_Prime");
   E_Prime->cd();
   E_Prime_Write();
+
   std::cerr << "MM:mean,+3,-3" << std::endl;
   std::cerr << MM_neutron_cut->Get_mean() << ",";
   std::cerr << MM_neutron_cut->Get_mean() + 3 * MM_neutron_cut->Get_sigma() << ",";

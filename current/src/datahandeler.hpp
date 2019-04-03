@@ -25,14 +25,15 @@
 #include "reaction.hpp"
 
 #include <omp.h>
+#define NUM_THREADS 4
 
 class DataHandeler {
  protected:
   bool _loadbar = false;
-  TChain* _chain[8];
+  TChain* _chain[NUM_THREADS];
   std::vector<std::string> _input_files;
   std::shared_ptr<Histogram> _hists;
-  std::shared_ptr<Branches> _data[8];
+  std::shared_ptr<Branches> _data[NUM_THREADS];
   bool CUTS = true;
 
  public:

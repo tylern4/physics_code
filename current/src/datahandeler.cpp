@@ -28,24 +28,28 @@ void DataHandeler::setLoadBar(bool load) { _loadbar = load; }
 int DataHandeler::Run() {
   if (_hists == nullptr) return 0;
   size_t total = 0;
-  int _ci = 0;
-  for (auto& _c : _chain) {
-    _c = new TChain("h10");
-    for (auto& f : _input_files) {
-      _c->Add(f.c_str());
-    }
-    _data[_ci++] = std::make_shared<Branches>(_c);
-  }
-
-  int num_of_events = (int)_chain[0]->GetEntries();
   int current_event = 0;
-#pragma omp parallel for private(current_event) reduction(+ : total)
-  for (current_event = 0; current_event < num_of_events; current_event++) {
-    //#pragma omp critical
-    //    if (current_event % 500000 == 0 && _loadbar) DataHandeler::loadbar(current_event + 1, num_of_events);
-    total += DataHandeler::Run(current_event, omp_get_thread_num());
-  }
+  int _ci = 0;
+  int num_of_events = 0;
+#pragma omp parallel private(current_event) num_threads(NUM_THREADS)
+  {
+#pragma omp critical
+    {
+      for (_ci = 0; _ci < NUM_THREADS; _ci++) {
+        _chain[_ci] = new TChain("h10");
+        for (auto& f : _input_files) {
+          _chain[_ci]->Add(f.c_str());
+        }
+        _data[_ci] = std::make_shared<Branches>(_chain[_ci]);
+      }
 
+      num_of_events = (int)_chain[omp_get_thread_num()]->GetEntries();
+    }
+#pragma omp for reduction(+ : total)
+    for (current_event = 0; current_event < num_of_events; current_event++) {
+      total += DataHandeler::Run(current_event, omp_get_thread_num());
+    }
+  }
   return total;
 }
 
