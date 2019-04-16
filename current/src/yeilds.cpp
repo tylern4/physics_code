@@ -15,24 +15,23 @@ void Yeilds::WriteHeader() {
   csv_output << "W,Q2,MM,MM2,theta_e,theta_star,phi_star,theta_lab,phi_lab,sector" << std::endl;
 }
 
-void Yeilds::Run(std::vector<std::string> fin) {
+int Yeilds::Run(std::vector<std::string> fin) {
   std::cout.imbue(std::locale(""));
-  int total_num = 0;
-  auto start_full = std::chrono::high_resolution_clock::now();
-  for (auto f : fin) {
-    total_num += Run(f);
-    if (getenv("YEILDPROG") != NULL) {
-      std::chrono::duration<double> elapsed = (std::chrono::high_resolution_clock::now() - start_full);
-      std::cout << BOLDGREEN << "\tEvents/Sec: " << total_num / elapsed.count() << " Hz\r\r" << RESET << std::flush;
-    }
+  int total = 0;
+  int f = 0;
+  for (f = 0; f < fin.size(); f++) {
+    total += Run(fin.at(f));
   }
+  return total;
 }
 
 int Yeilds::Run(std::string root_file) {
-  TChain *chain = new TChain("h10");
+  auto chain = std::make_unique<TChain>("h10");
+  int num_of_events = 0;
   chain->Add(root_file.c_str());
-  auto data = std::make_shared<Branches>(chain);
-  int num_of_events = (int)chain->GetEntries();
+  num_of_events = (int)chain->GetEntries();
+  auto data = std::make_shared<Branches>(chain.get());
+  int total = 0;
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
@@ -40,6 +39,7 @@ int Yeilds::Run(std::string root_file) {
     auto event = std::make_unique<Reaction>(data);
 
     if (check->isElecctron()) {
+      total++;
       auto dt = std::make_unique<Delta_T>(data->sc_t(0), data->sc_r(0));
       std::vector<double> dt_proton = dt->delta_t_array(MASS_P, data);
       std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, data);
@@ -77,5 +77,5 @@ int Yeilds::Run(std::string root_file) {
   }
   chain->Reset();  // delete Tree object
 
-  return num_of_events;
+  return total;
 }

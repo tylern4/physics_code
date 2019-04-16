@@ -45,7 +45,7 @@ using TH1D_ptr = std::shared_ptr<TH1D>;
 
 class Histogram {
  protected:
-  bool _multi = false;
+  bool _multi = true;
   std::shared_ptr<TFile> RootOutputFile;
   TCanvas* def;
 

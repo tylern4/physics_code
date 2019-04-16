@@ -49,7 +49,8 @@ int main(int argc, char **argv) {
   std::cout << RED << elapsed_full.count() << " sec" << DEF << std::endl;
   std::cout.imbue(std::locale(""));
   std::cout << BOLDYELLOW << "\n\n" << events / elapsed_full.count() << " Hz" << DEF << std::endl;
-  hist->Write(outfilename);
-
+  hist->Write(outfilename, true);
+  std::cout << RED << elapsed_full.count() << " sec" << DEF << std::endl;
+  std::cout << BOLDYELLOW << "\n\n" << events / elapsed_full.count() << " Hz" << DEF << std::endl;
   return 0;
 }

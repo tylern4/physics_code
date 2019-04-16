@@ -50,6 +50,8 @@ int DataHandeler::Run() {
       total += DataHandeler::Run(current_event, omp_get_thread_num());
     }
   }
+
+  for (auto& _c : _chain) _c->Reset();
   return total;
 }
 
@@ -193,12 +195,11 @@ int mcHandeler::Run() {
   int current_event = 0;
 #pragma omp parallel for private(current_event)
   for (current_event = 0; current_event < num_of_events; current_event++) {
-#pragma omp critical
-    if (current_event % 500000 == 0 && _loadbar) DataHandeler::loadbar(current_event + 1, num_of_events);
     total += DataHandeler::Run(current_event, omp_get_thread_num());
     total += mcHandeler::Run(current_event, omp_get_thread_num());
   }
-  //_chain->Reset();
+  for (auto& _c : _chain) _c->Reset();
+
   return total;
 }
 

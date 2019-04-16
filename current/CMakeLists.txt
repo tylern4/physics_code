@@ -8,8 +8,8 @@ set(CMAKE_C_FLAGS "-O3 ${ROOT_CXX_FLAGS}")
 
 # Find OpenMP
 if(APPLE)
-  set(CMAKE_C_COMPILER "/usr/local/Cellar/llvm/7.0.0/bin/clang")
-  set(CMAKE_CXX_COMPILER "/usr/local/Cellar/llvm/7.0.0/bin/clang++")
+  set(CMAKE_C_COMPILER "/usr/local/Cellar/llvm/8.0.0/bin/clang")
+  set(CMAKE_CXX_COMPILER "/usr/local/Cellar/llvm/8.0.0/bin/clang++")
   set(OPENMP_LIBRARIES "/usr/local/Cellar/libomp/7.0.0/lib")
   set(OPENMP_INCLUDES "/usr/local/Cellar/libomp/7.0.0/include")
   set(OpenMP_CXX "${CMAKE_CXX_COMPILER}")
@@ -63,6 +63,12 @@ install(TARGETS e1d_mc
 add_executable(e1d_skim skim/main_skim.cpp)
 target_link_libraries(e1d_skim physics ${ROOT_LIBRARIES})
 install(TARGETS e1d_skim
+  RUNTIME DESTINATION bin)
+
+#csv_maker
+add_executable(e1d_yeilds csv_maker/csv_maker.cpp)
+target_link_libraries(e1d_yeilds physics ${ROOT_LIBRARIES})
+install(TARGETS e1d_yeilds
   RUNTIME DESTINATION bin)
 
 find_package(Cython)

@@ -24,6 +24,8 @@
 #include "physics.hpp"
 #include "reaction.hpp"
 
+#define NUM_THREADS 4
+
 class Yeilds {
  private:
   int PID;
@@ -38,7 +40,7 @@ class Yeilds {
   void OpenFile(std::string output_file_name);
   void WriteHeader();
   int Run(std::string fin);
-  void Run(std::vector<std::string> fin);
+  int Run(std::vector<std::string> fin);
 };
 
 #endif
