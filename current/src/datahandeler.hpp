@@ -24,16 +24,13 @@
 #include "physics.hpp"
 #include "reaction.hpp"
 
-#include <omp.h>
-#define NUM_THREADS 4
-
 class DataHandeler {
  protected:
   bool _loadbar = false;
-  TChain* _chain[NUM_THREADS];
+  TChain* _chain;
   std::vector<std::string> _input_files;
   std::shared_ptr<Histogram> _hists;
-  std::shared_ptr<Branches> _data[NUM_THREADS];
+  std::shared_ptr<Branches> _data;
   bool CUTS = true;
 
  public:
@@ -43,7 +40,7 @@ class DataHandeler {
   void setLoadBar(bool load);
 
   int Run();
-  int Run(int current_event, int thread);
+  int Run(int current_event);
   void loadbar(long x, long n);
 };
 
@@ -55,7 +52,7 @@ class mcHandeler : public DataHandeler {
   mcHandeler() : DataHandeler() {}
   mcHandeler(const std::vector<std::string>& fin, const std::shared_ptr<mcHistogram>& hists);
   int Run();
-  int Run(int current_event, int thread);
+  int Run(int current_event);
 };
 
 #endif

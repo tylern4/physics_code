@@ -31,46 +31,33 @@ int DataHandeler::Run() {
   int current_event = 0;
   int _ci = 0;
   int num_of_events = 0;
-#pragma omp parallel private(current_event) num_threads(NUM_THREADS)
-  {
-#pragma omp critical
-    {
-      for (_ci = 0; _ci < NUM_THREADS; _ci++) {
-        _chain[_ci] = new TChain("h10");
-        for (auto& f : _input_files) {
-          _chain[_ci]->Add(f.c_str());
-        }
-        _data[_ci] = std::make_shared<Branches>(_chain[_ci]);
-      }
 
-      num_of_events = (int)_chain[omp_get_thread_num()]->GetEntries();
-    }
-#pragma omp for reduction(+ : total)
-    for (current_event = 0; current_event < num_of_events; current_event++) {
-      total += DataHandeler::Run(current_event, omp_get_thread_num());
-    }
+  _chain = new TChain("h10");
+  for (auto& f : _input_files) _chain->Add(f.c_str());
+  _data = std::make_shared<Branches>(_chain);
+  num_of_events = (int)_chain->GetEntries();
+  for (current_event = 0; current_event < num_of_events; current_event++) {
+    total += DataHandeler::Run(current_event);
   }
 
-  for (auto& _c : _chain) _c->Reset();
   return total;
 }
 
-int DataHandeler::Run(int current_event, int thread) {
+int DataHandeler::Run(int current_event) {
 #pragma omp critical
-  _chain[thread]->GetEntry(current_event);
-  auto check = std::make_unique<Cuts>(_data[thread]);
-  // if (_data[thread]->ec_eo(0) < 0.01) return 0;
+  _chain->GetEntry(current_event);
+  auto check = std::make_unique<Cuts>(_data);
+  // if (_data->ec_eo(0) < 0.01) return 0;
   if (!check->isElecctron()) return 0;
 
-  _hists->EC_inout(_data[thread]->ec_ei(0), _data[thread]->ec_eo(0));
-  _hists->EC_fill(_data[thread]->etot(0), _data[thread]->p(0));
-  _hists->TM_Fill(_data[thread]->p(0), physics::theta_calc(_data[thread]->cz(0)));
-  double theta_cc =
-      TMath::ACos(TMath::Abs(_data[thread]->p(0) * _data[thread]->cz(0)) / TMath::Abs(_data[thread]->p(0))) / D2R;
-  _hists->CC_fill(_data[thread]->cc_sect(0), (_data[thread]->cc_segm(0) % 1000) / 10,
-                  _data[thread]->cc_segm(0) / 1000 - 1, _data[thread]->nphe(0), theta_cc);
+  _hists->EC_inout(_data->ec_ei(0), _data->ec_eo(0));
+  _hists->EC_fill(_data->etot(0), _data->p(0));
+  _hists->TM_Fill(_data->p(0), physics::theta_calc(_data->cz(0)));
+  double theta_cc = TMath::ACos(TMath::Abs(_data->p(0) * _data->cz(0)) / TMath::Abs(_data->p(0))) / D2R;
+  _hists->CC_fill(_data->cc_sect(0), (_data->cc_segm(0) % 1000) / 10, _data->cc_segm(0) / 1000 - 1, _data->nphe(0),
+                  theta_cc);
 
-  auto event = std::make_unique<Reaction>(_data[thread]);
+  auto event = std::make_unique<Reaction>(_data);
 
   _hists->Fill_E_Prime_fid(event->e_mu_prime());
   _hists->Fill_E_Prime(event->e_mu_prime());
@@ -83,63 +70,63 @@ int DataHandeler::Run(int current_event, int thread) {
 
   // if (CUTS) {
   if (check->isElecctron()) {
-    _hists->Fill_Beam_Position(_data[thread]->dc_vx(0), _data[thread]->dc_vy(0), _data[thread]->dc_vz(0));
+    _hists->Fill_Beam_Position(_data->dc_vx(0), _data->dc_vy(0), _data->dc_vz(0));
 
-    auto dt = std::make_unique<Delta_T>(_data[thread]->sc_t(0), _data[thread]->sc_r(0));
+    auto dt = std::make_unique<Delta_T>(_data->sc_t(0), _data->sc_r(0));
 
-    dt->delta_t_hists(_hists, _data[thread]);
-    std::vector<double> dt_proton = dt->delta_t_array(MASS_P, _data[thread]);
-    std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, _data[thread]);
+    dt->delta_t_hists(_hists, _data);
+    std::vector<double> dt_proton = dt->delta_t_array(MASS_P, _data);
+    std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, _data);
 
-    float theta = physics::theta_calc(_data[thread]->cz(0));
-    float phi = physics::phi_calc(_data[thread]->cx(0), _data[thread]->cy(0));
-    int sector = _data[thread]->dc_sect(0);
+    float theta = physics::theta_calc(_data->cz(0));
+    float phi = physics::phi_calc(_data->cx(0), _data->cy(0));
+    int sector = _data->dc_sect(0);
     _hists->Fill_electron_fid(theta, phi, sector);
 
     // auto photon_flux = std::make_unique<PhotonFlux>(event->e_mu(), event->e_mu_prime());
     //_hists->Photon_flux_Fill(photon_flux->GetVirtualPhotonFlux());
 
-    _hists->WvsQ2_Fill(event->W(), event->Q2(), _data[thread]->ec_sect(0));
+    _hists->WvsQ2_Fill(event->W(), event->Q2(), _data->ec_sect(0));
 
-    for (int part_num = 1; part_num < _data[thread]->gpart(); part_num++) {
-      theta = physics::theta_calc(_data[thread]->cz(part_num));
-      phi = physics::phi_calc(_data[thread]->cx(part_num), _data[thread]->cy(part_num));
-      sector = _data[thread]->dc_sect(part_num);
+    for (int part_num = 1; part_num < _data->gpart(); part_num++) {
+      theta = physics::theta_calc(_data->cz(part_num));
+      phi = physics::phi_calc(_data->cx(part_num), _data->cy(part_num));
+      sector = _data->dc_sect(part_num);
 
-      _hists->delta_t_sec_pad(_data[thread]->p(part_num), _data[thread]->q(part_num), dt->Get_dt_P(), dt->Get_dt_Pi(),
-                              dt->Get_dt_E(), _data[thread]->sc_sect(part_num), _data[thread]->sc_pd(part_num));
+      _hists->delta_t_sec_pad(_data->p(part_num), _data->q(part_num), dt->Get_dt_P(), dt->Get_dt_Pi(), dt->Get_dt_E(),
+                              _data->sc_sect(part_num), _data->sc_pd(part_num));
 
-      _hists->Fill_Target_Vertex(_data[thread]->vx(part_num), _data[thread]->vy(part_num), _data[thread]->vz(part_num));
-      _hists->MomVsBeta_Fill(_data[thread]->p(part_num), _data[thread]->b(part_num));
+      _hists->Fill_Target_Vertex(_data->vx(part_num), _data->vy(part_num), _data->vz(part_num));
+      _hists->MomVsBeta_Fill(_data->p(part_num), _data->b(part_num));
 
-      if (_data[thread]->q(part_num) == POSITIVE) {
-        _hists->MomVsBeta_Fill_pos(_data[thread]->p(part_num), _data[thread]->b(part_num));
-        if (check->dt_Pip_cut(dt_pi.at(part_num), _data[thread]->p(part_num)) &&
-            check->dt_P_cut(dt_proton.at(part_num), _data[thread]->p(part_num)))
-          _hists->Fill_proton_Pi_ID_P(_data[thread]->p(part_num), _data[thread]->b(part_num));
+      if (_data->q(part_num) == POSITIVE) {
+        _hists->MomVsBeta_Fill_pos(_data->p(part_num), _data->b(part_num));
+        if (check->dt_Pip_cut(dt_pi.at(part_num), _data->p(part_num)) &&
+            check->dt_P_cut(dt_proton.at(part_num), _data->p(part_num)))
+          _hists->Fill_proton_Pi_ID_P(_data->p(part_num), _data->b(part_num));
 
-        if (check->dt_Pip_cut(dt_pi.at(part_num), _data[thread]->p(part_num))) {
+        if (check->dt_Pip_cut(dt_pi.at(part_num), _data->p(part_num))) {
           event->SetPip(part_num);
           _hists->Fill_hadron_fid(theta, phi, sector, PIP);
           _hists->Fill_pion_WQ2(event->W(), event->Q2());
-          _hists->Fill_Pi_ID_P(_data[thread]->p(part_num), _data[thread]->b(part_num));
-        } else if (check->dt_P_cut(dt_proton.at(part_num), _data[thread]->p(part_num))) {
+          _hists->Fill_Pi_ID_P(_data->p(part_num), _data->b(part_num));
+        } else if (check->dt_P_cut(dt_proton.at(part_num), _data->p(part_num))) {
           event->SetProton(part_num);
           _hists->Fill_hadron_fid(theta, phi, sector, PROTON);
           _hists->Fill_proton_WQ2(event->W(), event->Q2());
-          _hists->Fill_proton_ID_P(_data[thread]->p(part_num), _data[thread]->b(part_num));
+          _hists->Fill_proton_ID_P(_data->p(part_num), _data->b(part_num));
         } else
           event->SetOther(part_num);
 
-      } else if (_data[thread]->q(part_num) == NEGATIVE) {
-        _hists->MomVsBeta_Fill_neg(_data[thread]->p(part_num), _data[thread]->b(part_num));
-        if (check->dt_Pip_cut(dt_pi.at(part_num), _data[thread]->p(part_num))) {
+      } else if (_data->q(part_num) == NEGATIVE) {
+        _hists->MomVsBeta_Fill_neg(_data->p(part_num), _data->b(part_num));
+        if (check->dt_Pip_cut(dt_pi.at(part_num), _data->p(part_num))) {
           _hists->Fill_hadron_fid(theta, phi, sector, PIM);
           event->SetPim(part_num);
         } else
           event->SetOther(part_num);
-      } else if (_data[thread]->q(part_num) == 0) {
-        _hists->MomVsBeta_Fill_neutral(_data[thread]->p(part_num), _data[thread]->b(part_num));
+      } else if (_data->q(part_num) == 0) {
+        _hists->MomVsBeta_Fill_neutral(_data->p(part_num), _data->b(part_num));
         event->SetOther(part_num);
       }
     }
@@ -156,10 +143,10 @@ int DataHandeler::Run(int current_event, int thread) {
     mm_cut &= (event->MM() > 0.923374);
     if (mm_cut) _hists->Fill_MM_WQ2(event->W(), event->Q2());
     if ((event->SinglePip() || event->NeutronPip()) && mm_cut) {
-      _hists->Fill_channel_WQ2(event->W(), event->Q2(), _data[thread]->ec_sect(0), event->e_mu_prime(), event->MM(),
+      _hists->Fill_channel_WQ2(event->W(), event->Q2(), _data->ec_sect(0), event->e_mu_prime(), event->MM(),
                                event->MM2());
       _hists->Fill_Missing_Mass_strict(event->MM(), event->MM2());
-      _hists->EC_cut_fill(_data[thread]->etot(0), _data[thread]->p(0));
+      _hists->EC_cut_fill(_data->etot(0), _data->p(0));
       _hists->Fill_E_Prime_channel(event->e_mu_prime());
     }
     if ((event->SinglePip() || event->NeutronPip()))
@@ -183,38 +170,31 @@ mcHandeler::mcHandeler(const std::vector<std::string>& fin, const std::shared_pt
 int mcHandeler::Run() {
   size_t total = 0;
   int _ci = 0;
-  for (auto& _c : _chain) {
-    _c = new TChain("h10");
-    for (auto& f : _input_files) {
-      _c->Add(f.c_str());
-    }
-    _data[_ci++] = std::make_shared<Branches>(_c, true);
-  }
 
-  int num_of_events = (int)_chain[0]->GetEntries();
+  _chain = new TChain("h10");
+  for (auto& f : _input_files) _chain->Add(f.c_str());
+  _data = std::make_shared<Branches>(_chain, true);
+  int num_of_events = (int)_chain->GetEntries();
   int current_event = 0;
-#pragma omp parallel for private(current_event)
+
   for (current_event = 0; current_event < num_of_events; current_event++) {
-    total += DataHandeler::Run(current_event, omp_get_thread_num());
-    total += mcHandeler::Run(current_event, omp_get_thread_num());
+    total += DataHandeler::Run(current_event);
+    total += mcHandeler::Run(current_event);
   }
-  for (auto& _c : _chain) _c->Reset();
 
   return total;
 }
 
-int mcHandeler::Run(int current_event, int thread) {
-#pragma omp critical
-  _chain[thread]->GetEntry(current_event);
-  auto check = std::make_unique<Cuts>(_data[thread]);
-  // if (!check->isElecctron()) return 0;
+int mcHandeler::Run(int current_event) {
+  _chain->GetEntry(current_event);
+  auto check = std::make_unique<Cuts>(_data);
 
-  auto mc_event = std::make_unique<Reaction>(_data[thread], true);
-  _mc_hists->Fill_P(_data[thread]);
+  auto mc_event = std::make_unique<Reaction>(_data, true);
+  _mc_hists->Fill_P(_data);
   _mc_hists->Fill_WQ2_MC(mc_event->W(), mc_event->Q2());
 
-  for (int part_num = 1; part_num < _data[thread]->gpart(); part_num++) {
-    if (_data[thread]->pidpart(part_num) == PIP) mc_event->SetPip(part_num);
+  for (int part_num = 1; part_num < _data->gpart(); part_num++) {
+    if (_data->pidpart(part_num) == PIP) mc_event->SetPip(part_num);
   }
   if (mc_event->SinglePip()) _mc_hists->Fill_Missing_Mass(mc_event->MM(), mc_event->MM2());
 
