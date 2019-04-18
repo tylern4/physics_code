@@ -46,11 +46,9 @@ int main(int argc, char **argv) {
   size_t events = 0;
   events += dh->Run();
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
-  std::cout << RED << elapsed_full.count() << " sec" << DEF << std::endl;
   std::cout.imbue(std::locale(""));
-  std::cout << BOLDYELLOW << "\n\n" << events / elapsed_full.count() << " Hz" << DEF << std::endl;
   hist->Write(outfilename, true);
   std::cout << RED << elapsed_full.count() << " sec" << DEF << std::endl;
-  std::cout << BOLDYELLOW << "\n\n" << events / elapsed_full.count() << " Hz" << DEF << std::endl;
+  std::cout << BOLDYELLOW << events / elapsed_full.count() << " Hz" << DEF << std::endl;
   return 0;
 }

@@ -36,15 +36,16 @@ int DataHandeler::Run() {
   for (auto& f : _input_files) _chain->Add(f.c_str());
   _data = std::make_shared<Branches>(_chain);
   num_of_events = (int)_chain->GetEntries();
+
   for (current_event = 0; current_event < num_of_events; current_event++) {
+    //if (current_event % 100000 == 0) DataHandeler::loadbar(current_event, num_of_events);
     total += DataHandeler::Run(current_event);
   }
-
+  _chain->Reset();
   return total;
 }
 
 int DataHandeler::Run(int current_event) {
-#pragma omp critical
   _chain->GetEntry(current_event);
   auto check = std::make_unique<Cuts>(_data);
   // if (_data->ec_eo(0) < 0.01) return 0;
@@ -178,10 +179,11 @@ int mcHandeler::Run() {
   int current_event = 0;
 
   for (current_event = 0; current_event < num_of_events; current_event++) {
+    if (current_event % 1000 == 0) DataHandeler::loadbar(current_event, num_of_events);
     total += DataHandeler::Run(current_event);
     total += mcHandeler::Run(current_event);
   }
-
+  _chain->Reset();
   return total;
 }
 

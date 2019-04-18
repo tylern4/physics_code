@@ -35,7 +35,7 @@
 #define BINS 500
 #define BINS_MM 300
 
-#define FID_SLICES 10
+#define FID_SLICES 50
 
 #define N_SIGMA 3
 #define NUM_POINTS 20
@@ -54,10 +54,10 @@ class Histogram {
   char hname[50];
   char htitle[500];
 
-  float w_binned_min = 1.0;
-  float w_binned_max = 3.0;
+  float w_binned_min = 1.3;
+  float w_binned_max = 1.8;
   float q2_binned_min = 1.0;
-  float q2_binned_max = 3.0;
+  float q2_binned_max = 4.5;
 
   // Missing Mass
   float MM_min = 0.0;

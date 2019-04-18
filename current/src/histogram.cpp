@@ -116,7 +116,7 @@ void Histogram::Write() {
   std::cerr << BOLDBLUE << "fid_canvas()" << DEF << std::endl;
   TDirectory *Fid_canvas = RootOutputFile->mkdir("Fid_canvas");
   Fid_canvas->cd();
-  fid_canvas();
+  // fid_canvas();
   std::cerr << BOLDBLUE << "E_Prime_Write()" << DEF << std::endl;
   TDirectory *E_Prime = RootOutputFile->mkdir("E_Prime");
   E_Prime->cd();
