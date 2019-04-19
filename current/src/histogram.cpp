@@ -1297,8 +1297,11 @@ void Histogram::makeHists_EC() {
 }
 
 void Histogram::EC_fill(float etot, float momentum) {
+  EC_etot_vs_P->Fill(momentum, etot);
   float sampling_frac = etot / momentum;
   EC_sampling_fraction->Fill(momentum, sampling_frac);
+
+  EC_tot_energy->Fill(etot);
 
   for (int n = 0; n < NUM_POINTS; n++) {
     if (momentum > n * bin_width && momentum <= (n + 1) * bin_width) {
@@ -1307,7 +1310,9 @@ void Histogram::EC_fill(float etot, float momentum) {
   }
 }
 
-void Histogram::EC_inout(float Ein, float Eout) { ECin_ECout->Fill(Ein, Eout); }
+void Histogram::EC_inout(float Ein, float Eout) {
+  if (Eout > 0) ECin_ECout->Fill(Ein, Eout);
+}
 
 void Histogram::TM_Fill(float momentum, float theta) { Theta_vs_mom->Fill(momentum, theta); }
 
@@ -1416,6 +1421,13 @@ void Histogram::EC_slices_Write() {
 }
 
 void Histogram::EC_Write() {
+  EC_tot_energy->SetXTitle("Energy (GeV)");
+  EC_tot_energy->Write();
+
+  EC_etot_vs_P->SetYTitle("Energy (GeV)");
+  EC_etot_vs_P->SetXTitle("Momentum (GeV)");
+  EC_etot_vs_P->Write();
+
   EC_sampling_fraction->SetXTitle("Momentum (GeV)");
   EC_sampling_fraction->SetYTitle("Sampling Fraction");
   EC_sampling_fraction->SetOption("COLZ");

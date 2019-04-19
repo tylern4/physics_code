@@ -240,6 +240,9 @@ class Histogram {
   TH1D* EC_hist_cut[NUM_POINTS];
   TH2D_ptr Theta_vs_mom = std::make_shared<TH2D>("Theta_vs_mom", "Theta_vs_mom", BINS, p_min, p_max, BINS, 0, 100);
   TH2D_ptr ECin_ECout = std::make_shared<TH2D>("ECin_ECout", "ECin_ECout", BINS, 0.0, 0.5, BINS, 0.0, 0.5);
+
+  TH1D_ptr EC_tot_energy = std::make_shared<TH1D>("EC_tot_energy", "EC_tot_energy", BINS, 0, 1.5);
+  TH2D_ptr EC_etot_vs_P = std::make_shared<TH2D>("EC_etot_vs_P", "EC_etot_vs_P", BINS, 0, 5.0, BINS, 0, 1.5);
   // EC hists
 
   // Beam Position
