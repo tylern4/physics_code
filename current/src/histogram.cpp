@@ -1409,6 +1409,7 @@ void Histogram::EC_slices_Write() {
   float fit_ec_min = 0.2;
   float fit_ec_max = 0.4;
   for (int n = 0; n < NUM_POINTS; n++) {
+    if (EC_hist[n]->GetEntries() < 1000) continue;
     EC_fit[n] = std::make_unique<Fits>();
     EC_fit[n]->Set_min(fit_ec_min);
     EC_fit[n]->Set_max(fit_ec_max);
