@@ -20,6 +20,12 @@ cdef class py_skim:
   def __cinit__(self, list_files, output):
     self.f = list_files
     self.output = output
+  def __cinit__(self, file):
+    self.f = [file]
+    self.output = file[:-5]+b'_skim.root'
+    self.basic()
+  def __reduce__(self):
+    return (self.output.decode("utf-8"))
   def basic(self):
     self.c_skim = new Skim(self.f, self.output)
     self.c_skim.Basic()
