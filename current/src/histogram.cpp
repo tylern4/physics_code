@@ -39,7 +39,7 @@ void Histogram::Write() {
   std::cout << GREEN << "\nFitting" << DEF << std::endl;
   // Start of cuts
   auto MM_neutron_cut = std::make_unique<Fits>();
-  MM_neutron_cut->FitMissMass(Missing_Mass.get());
+  // MM_neutron_cut->FitMissMass(Missing_Mass.get());
 
   auto MissingMassSquare_cut = std::make_unique<Fits>();
   MissingMassSquare_cut->Set_max(1.1);
