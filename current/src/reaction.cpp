@@ -105,11 +105,13 @@ void Reaction::CalcMissMass() {
 }
 
 double Reaction::MM() {
-  if (std::isnan(_MM)) CalcMissMass();
+  //if (std::isnan(_MM)) 
+  CalcMissMass();
   return _MM;
 }
 double Reaction::MM2() {
-  if (std::isnan(_MM2)) CalcMissMass();
+  //if (std::isnan(_MM2))
+  CalcMissMass();
   return _MM2;
 }
 /*

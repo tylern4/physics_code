@@ -53,15 +53,15 @@ class Reaction {
   short _numNeutral = 0;
   short _numOther = 0;
 
-  double _MM = NAN;
-  double _MM2 = NAN;
+  float _MM = NAN;
+  float _MM2 = NAN;
 
-  double _W = NAN;
-  double _Q2 = NAN;
+  float _W = NAN;
+  float _Q2 = NAN;
 
-  double _theta_e = NAN;
-  double _theta_star = NAN;
-  double _phi_star = NAN;
+  float _theta_e = NAN;
+  float _theta_star = NAN;
+  float _phi_star = NAN;
 
  public:
   Reaction(std::shared_ptr<Branches> data);
