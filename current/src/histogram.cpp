@@ -116,7 +116,7 @@ void Histogram::Write() {
   std::cerr << BOLDBLUE << "fid_canvas()" << DEF << std::endl;
   TDirectory *Fid_canvas = RootOutputFile->mkdir("Fid_canvas");
   Fid_canvas->cd();
-  // fid_canvas();
+  fid_canvas();
   std::cerr << BOLDBLUE << "E_Prime_Write()" << DEF << std::endl;
   TDirectory *E_Prime = RootOutputFile->mkdir("E_Prime");
   E_Prime->cd();
@@ -1269,7 +1269,7 @@ void Histogram::Fid_Write() {
 
 void Histogram::fid_canvas() {
   TCanvas *can[NUM_SECTORS];
-  char can_name[50];
+  char can_name[500];
 
   for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
     sprintf(can_name, "Electron Fid Sector %d Slices", sec_i + 1);
