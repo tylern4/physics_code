@@ -721,7 +721,7 @@ void Histogram::delta_t_slice_fit() {
   // TF1 *peak = new TF1("peak", func::peak, -1, 1, 3);
   peak->SetParNames("constant", "mean", "#sigma");
   // Bin 50 = 0.5GeV, Bin 300 = 3 GeV
-  delta_t_mass_P->FitSlicesY(peak, 50, 300, 10, "QRG5");
+  delta_t_mass_P->FitSlicesY(peak, 0, 300, 10, "QRG5");
   TH1D *delta_t_mass_P_const = (TH1D *)gDirectory->Get("delta_t_mass_P_0");
   TH1D *delta_t_mass_P_mean = (TH1D *)gDirectory->Get("delta_t_mass_P_1");
   TH1D *delta_t_mass_P_sigma = (TH1D *)gDirectory->Get("delta_t_mass_P_2");
@@ -755,10 +755,10 @@ void Histogram::delta_t_slice_fit() {
   TF1 *Proton_Neg_fit = new TF1("Proton_Neg_fit", func::dt_fit, 0.1, 3.0, 2);
   P->Fit(Proton_Pos_fit, "QRG5", "", 0.2, 2);
   M->Fit(Proton_Neg_fit, "QRG5", "", 0.2, 2);
-  // P->Write();
-  // M->Write();
-  // Proton_Pos_fit->Write();
-  // Proton_Neg_fit->Write();
+  P->Write();
+  M->Write();
+  Proton_Pos_fit->Write();
+  Proton_Neg_fit->Write();
 
   TCanvas *dt_proton_canvas = new TCanvas("dt_proton_canvas", "#dt Proton", 1280, 720);
   dt_proton_canvas->cd();
@@ -769,7 +769,7 @@ void Histogram::delta_t_slice_fit() {
   M->Draw("*same");
   dt_proton_canvas->Write();
 
-  delta_t_mass_PIP->FitSlicesY(peak, 50, 300, 10, "QRG5");
+  delta_t_mass_PIP->FitSlicesY(peak, 0, 300, 10, "QRG5");
   TH1D *delta_t_mass_PIP_const = (TH1D *)gDirectory->Get("delta_t_mass_PIP_0");
   TH1D *delta_t_mass_PIP_mean = (TH1D *)gDirectory->Get("delta_t_mass_PIP_1");
   TH1D *delta_t_mass_PIP_sigma = (TH1D *)gDirectory->Get("delta_t_mass_PIP_2");
@@ -799,10 +799,10 @@ void Histogram::delta_t_slice_fit() {
   TF1 *Pip_Neg_fit = new TF1("Pip_Neg_fit", func::dt_fit, 0.1, 3.0, 2);
   P_pip->Fit(Pip_Pos_fit, "QRG5", "", 0.1, 1.75);
   M_pip->Fit(Pip_Neg_fit, "QRG5", "", 0.1, 1.75);
-  // P_pip->Write();
-  // M_pip->Write();
-  // Pip_Pos_fit->Write();
-  // Pip_Neg_fit->Write();
+  P_pip->Write();
+  M_pip->Write();
+  Pip_Pos_fit->Write();
+  Pip_Neg_fit->Write();
 
   TCanvas *dt_Pip_canvas = new TCanvas("dt_Pip_canvas", "#dt #pi^{+}", 1280, 720);
   dt_Pip_canvas->cd();
@@ -1230,7 +1230,7 @@ void Histogram::Fid_Write() {
       electron_fid_can[sec_i] = new TCanvas(hname, htitle, 1280, 720);
       for (int slice = start_slice; slice < FID_SLICES; slice++) {
         sprintf(hname, "electron_fid_sec_%d_%d", sec_i + 1, slice + 1);
-        electron_fid_sec_slice[sec_i][slice] = (TH1D *)electron_fid_sec_hist[sec_i]->ProjectionY(
+        electron_fid_sec_slice[sec_i][slice] = (TH1D *)electron_fid_sec_hist[sec_i]->ProjectionX(
             hname, slice_width * slice, slice_width * slice + (slice_width - 1));
         electron_fid_sec_slice[sec_i][slice]->Rebin(4);
         SliceFit[sec_i][slice] = std::make_unique<Fits>();
@@ -1256,7 +1256,7 @@ void Histogram::Fid_Write() {
       FidGraph[sec_i]->Set_min(min_phi[sec_i]);
       FidGraph[sec_i]->Set_max(max_phi[sec_i]);
       // FidGraph[sec_i]->FitFiducial(fid[sec_i], sec_i);
-      // FidGraph[sec_i]->FitPoly_fid(fid[sec_i]);
+      FidGraph[sec_i]->FitPoly_fid(fid[sec_i]);
 
       electron_fid_can[sec_i]->cd();
 
