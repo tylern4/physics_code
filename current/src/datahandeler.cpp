@@ -38,7 +38,7 @@ int DataHandeler::Run() {
   num_of_events = (int)_chain->GetEntries();
 
   for (current_event = 0; current_event < num_of_events; current_event++) {
-    //if (current_event % 100000 == 0) DataHandeler::loadbar(current_event, num_of_events);
+    if (current_event % 10000 == 0) DataHandeler::loadbar(current_event, num_of_events);
     total += DataHandeler::Run(current_event);
   }
   _chain->Reset();
