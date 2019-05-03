@@ -64,13 +64,12 @@ int DataHandeler::Run(int current_event) {
   _hists->Fill_E_Prime(event->e_mu_prime());
 
   if (getenv("CUTS") != nullptr && atoi(getenv("CUTS")) == true) {
-    CUTS = (check->isElecctron() && check->Fid_cut() && check->Beam_cut());
+    CUTS = check->isStrictElecctron();
   } else {
     CUTS = check->isElecctron();
   }
 
-  // if (CUTS) {
-  if (check->isElecctron()) {
+  if (CUTS) {
     _hists->Fill_Beam_Position(_data->dc_vx(0), _data->dc_vy(0), _data->dc_vz(0));
 
     auto dt = std::make_unique<Delta_T>(_data->sc_t(0), _data->sc_r(0));

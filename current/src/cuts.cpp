@@ -51,8 +51,7 @@ bool Cuts::isElecctron() {
   // _elec &= (_data->ec_ei(0) >= 0.01);
   _elec &= (_data->dc_stat(0) > 0);
 
-  _elec &= Fid_cut();
-
+  electron_cut = _elec;
   return _elec;
 }
 
@@ -82,6 +81,7 @@ bool Cuts::isStrictElecctron() {
   _elec &= Fid_cut();
   _elec &= (_data->p(0) > MIN_P_CUT);
   _elec &= sf_cut(_data->etot(0) / _data->p(0), _data->p(0));
+  _elec &= Beam_cut();
 
   electron_cut = _elec;
   return _elec;
