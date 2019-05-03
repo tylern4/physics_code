@@ -12,26 +12,26 @@ Cuts::~Cuts() {}
 void Cuts::Set_elec_fid() {
   _theta = physics::theta_calc(_data->cz(0));
   _phi = physics::phi_calc(_data->cx(0), _data->cy(0));
-  _sec = physics::get_sector(_phi) + 1;
+  _sec = _data->dc_sect(0);
 
   switch (_sec) {
     case 1:
-      _phi_cent = _phi - 30;
-      break;
-    case 2:
       _phi_cent = _phi - 90;
       break;
+    case 2:
+      _phi_cent = _phi - 30;
+      break;
     case 3:
-      _phi_cent = _phi - 150;
+      _phi_cent = _phi + 30;
       break;
     case 4:
-      _phi_cent = _phi + 150;
-      break;
-    case 5:
       _phi_cent = _phi + 90;
       break;
+    case 5:
+      _phi_cent = _phi + 150;
+      break;
     case 6:
-      _phi_cent = _phi + 30;
+      _phi_cent = _phi - 150;
       break;
   }
 }
@@ -50,6 +50,8 @@ bool Cuts::isElecctron() {
   // _elec &= (_data->nphe(0) > 30);
   // _elec &= (_data->ec_ei(0) >= 0.01);
   _elec &= (_data->dc_stat(0) > 0);
+
+  _elec &= Fid_cut();
 
   return _elec;
 }
@@ -124,7 +126,8 @@ double Cuts::dt_Pip_top_fit(double P) {
 bool Cuts::dt_Pip_cut(double dt, double P) { return (dt > dt_Pip_bot_fit(P)) && (dt < dt_Pip_top_fit(P)); }
 
 bool Cuts::elec_fid_cut() {
-  double c[3] = {0.0548311203, 0.0327878012, 17.0683287374};
+  // double c[3] = {0.0548311203, 0.0327878012, 17.0683287374};
+  double c[3] = {0.04, 0.03, 15};
   double y = c[0] * _phi_cent * _phi_cent + c[1] * _phi_cent + c[2];
 
   return _theta >= y;
