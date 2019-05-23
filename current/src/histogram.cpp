@@ -582,11 +582,15 @@ void Histogram::MomVsBeta_Write() {
 }
 
 // Missing Mass
-void Histogram::Fill_Missing_Mass(float miss_mass) { Missing_Mass->Fill(miss_mass); }
+void Histogram::Fill_Missing_Mass(float miss_mass) {
+  Missing_Mass->Fill(miss_mass);
+  Missing_Mass_small->Fill(miss_mass);
+}
 
 void Histogram::Fill_Missing_Mass(float mm, float mm2) {
   Missing_Mass->Fill(mm);
   Missing_Mass_square->Fill(mm2);
+  Missing_Mass_small->Fill(mm);
 }
 void Histogram::Fill_Missing_Mass_strict(float mm, float mm2) {
   Missing_Mass_strict->Fill(mm);
@@ -622,6 +626,9 @@ void Histogram::Fill_Missing_Mass_square(float miss_mass_2) { Missing_Mass_squar
 void Histogram::Write_Missing_Mass() {
   Missing_Mass->SetXTitle("Mass (GeV)");
   Missing_Mass->Write();
+
+  Missing_Mass_small->SetXTitle("Mass (GeV)");
+  Missing_Mass_small->Write();
 
   Missing_Mass_square->SetXTitle("Mass^{2} (GeV^{2})");
   Missing_Mass_square->Write();

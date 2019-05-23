@@ -271,6 +271,7 @@ class Histogram {
       std::make_shared<TH2D>("Target_vertex_zx", "Target_vertex_zx", BINS, -6.0, 6.0, BINS, -6.0, 6.0);
 
   TH1D_ptr Missing_Mass = std::make_shared<TH1D>("Missing_Mass", "Missing Mass", BINS_MM, MM_min, MM_max);
+  TH1D_ptr Missing_Mass_small = std::make_shared<TH1D>("Missing_Mass_small", "e(p,#pi^{+} X)e'", BINS_MM, 0.8, 1.6);
   TH1D_ptr Missing_Mass_square =
       std::make_shared<TH1D>("Missing_Mass_square", "Missing Mass square", BINS_MM, MM_min, MM_max* MM_max);
 
