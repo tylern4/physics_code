@@ -29,6 +29,8 @@ int main(int argc, char **argv) {
 
   for (int i = 0; i < infilename.size(); i++) {
     events += dh->RunNtuple(infilename.at(i));
+    std::chrono::duration<double> elapsed_temp = (std::chrono::high_resolution_clock::now() - start);
+    std::cout << BOLDYELLOW << "\t" << events / elapsed_temp.count() << " Hz \r\r" << DEF << std::flush;
   }
 
   delete dh;
