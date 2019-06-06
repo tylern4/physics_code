@@ -14,6 +14,8 @@
 #include <thread>
 #include <vector>
 #include "TChain.h"
+#include "TFile.h"
+#include "TNtuple.h"
 #include "color.hpp"
 #include "constants.hpp"
 #include "cuts.hpp"
@@ -29,6 +31,8 @@
 class Yeilds {
  private:
   int PID;
+  TNtuple* ntuple = nullptr;
+  TFile* Rootout = nullptr;
   std::ofstream csv_output;
   std::vector<std::string> input_files;
   bool CUTS = true;
@@ -36,10 +40,12 @@ class Yeilds {
  public:
   Yeilds();
   Yeilds(std::string output_file_name);
+  Yeilds(std::string output_file_name, bool isRoot);
   ~Yeilds();
   void OpenFile(std::string output_file_name);
   void WriteHeader();
   int Run(std::string fin);
+  int RunNtuple(std::string fin);
   int Run(std::vector<std::string> fin);
 };
 

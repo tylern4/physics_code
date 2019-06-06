@@ -6,7 +6,7 @@ set(CMAKE_CXX_FLAGS "-Ofast ${ROOT_CXX_FLAGS}")
 set(CMAKE_C_FLAGS "-Ofast ${ROOT_CXX_FLAGS}")
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
-find_package(ROOT REQUIRED COMPONENTS RIO Net RooFit) #RooFit RooFitCore RooStats RootAuth
+find_package(ROOT REQUIRED COMPONENTS RIO Net) #RooFit RooFitCore RooStats RootAuth
 include(${ROOT_USE_FILE})
 
 set(CMAKE_MODULE_PATH
@@ -45,6 +45,12 @@ install(TARGETS e1d_skim
 add_executable(e1d_yeilds csv_maker/csv_maker.cpp)
 target_link_libraries(e1d_yeilds physics ${ROOT_LIBRARIES})
 install(TARGETS e1d_yeilds
+  RUNTIME DESTINATION bin)
+
+#ntuple_maker
+add_executable(e1d_ntuple ntuple_maker/ntuple_maker.cpp)
+target_link_libraries(e1d_ntuple physics ${ROOT_LIBRARIES})
+install(TARGETS e1d_ntuple
   RUNTIME DESTINATION bin)
 
 find_package(Cython)

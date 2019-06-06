@@ -5,19 +5,20 @@
 /**************************************/
 #include "physics.hpp"
 
-TLorentzVector physics::fourVec(double px, double py, double pz, double mass) {
-  TLorentzVector Particle4(0.0, 0.0, 0.0, 0.0);
-  Particle4.SetXYZM(px, py, pz, mass);
+TLorentzVector *physics::fourVec(double px, double py, double pz, double mass) {
+  TLorentzVector *Particle4 = new TLorentzVector(0.0, 0.0, 0.0, 0.0);
+  // Particle4.SetXYZM(px, py, pz, mass);
+  Particle4->SetXYZM(px, py, pz, mass);
   return Particle4;
 }
-TLorentzVector physics::fourVec(double px, double py, double pz, int pid) {
+TLorentzVector *physics::fourVec(double px, double py, double pz, int pid) {
   return physics::fourVec(px, py, pz, physics::Get_Mass(pid));
 }
-TLorentzVector physics::fourVec(double p, double cx, double cy, double cz, double mass) {
+TLorentzVector *physics::fourVec(double p, double cx, double cy, double cz, double mass) {
   return physics::fourVec(p * cx, p * cy, p * cz, mass);
 }
 
-TLorentzVector physics::fourVec(double p, double cx, double cy, double cz, int pid) {
+TLorentzVector *physics::fourVec(double p, double cx, double cy, double cz, int pid) {
   return physics::fourVec(p * cx, p * cy, p * cz, pid);
 }
 

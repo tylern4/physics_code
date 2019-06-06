@@ -8,8 +8,6 @@ import time
 from multiprocessing import Pool, cpu_count
 
 from tqdm import tqdm
-
-import h10 as dh
 import skim
 
 bar_format = b"{bar}" + b"{percentage:3.0f}%"
@@ -17,7 +15,7 @@ bar_format = b"{bar}" + b"{percentage:3.0f}%"
 
 def parallel_skim(files):
     skimmed = files[:-5] + "_skim.root".encode("utf-8")
-    skim.py_skim([files], skimmed).final()
+    skim.py_skim(files).basic()
     return skimmed
 
 
@@ -41,20 +39,13 @@ if sys.version_info[0] == 3:
     files = [f.encode("utf-8") for f in files]
     output_file = str.encode(output_file)
 
-skim_start = time.time()
-
 num_cores = cpu_count()
-pool = Pool(processes=num_cores)
-skimmed = pool.map(parallel_skim, (files))
-
-pool.close()
+skim_start = time.time()
+with Pool(processes=num_cores) as pool:
+    skimmed = pool.map(parallel_skim, (files))
 skim_end = time.time()
 print("Skim Time: {} Sec".format(skim_end - skim_start))
 
-data = dh.handeler()
-for f in tqdm(skimmed, bar_format=bar_format):
-    data.run(f)
-data.write(output_file)
 
 end = time.time()
 print("Reduce: {} Sec".format(end - skim_end))
