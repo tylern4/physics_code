@@ -46,8 +46,8 @@ void make_electron_csv(std::string fin) {
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
-    if (current_event % 10000 == 0)
-      cout << "\t[ " << progress[((current_event / 10000) % 4)] << " ]\t\t"
+    if (current_event % 1000000 == 0)
+      cout << "\t[ " << progress[((current_event / 1000000) % 4)] << " ]\t\t"
            << 100 * ((float)current_event / (float)num_of_events) << "\r\r" << flush;
 
     electron_cuts = true;

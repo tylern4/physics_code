@@ -28,6 +28,10 @@ int main(int argc, char **argv) {
 
   for (int i = 0; i < infilename.size(); i++) {
     events += dh->Run(infilename.at(i));
+
+    std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
+    std::cout << RED << elapsed_full.count();
+    std::cout << BOLDYELLOW << "\t\t" << events / elapsed_full.count() << " Hz\r\r" << DEF << std::flush;
   }
 
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
