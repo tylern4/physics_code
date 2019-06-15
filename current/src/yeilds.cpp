@@ -9,7 +9,7 @@ Yeilds::Yeilds() {}
 Yeilds::Yeilds(std::string output_file_name) { csv_output.open(output_file_name); }
 Yeilds::Yeilds(std::string output_file_name, bool isRoot = true) {
   Rootout = new TFile(output_file_name.c_str(), "RECREATE");
-  ntuple = new TNtuple("ntuple", "", "W:Q2:MM:MM2:theta_e:theta_star:phi_star:theta_lab:phi_lab:sector");
+  ntuple = new TNtuple("ntuple", "", "type:W:Q2:MM:MM2:theta_e:theta_star:phi_star:theta_lab:phi_lab:sector");
 }
 Yeilds::~Yeilds() {
   if (ntuple) ntuple->Write();
@@ -86,7 +86,7 @@ int Yeilds::Run(std::string root_file) {
   return total;
 }
 
-int Yeilds::RunNtuple(std::string root_file) {
+int Yeilds::RunNtuple(std::string root_file, bool python) {
   auto chain = std::make_unique<TChain>("h10");
   int num_of_events = 0;
   chain->Add(root_file.c_str());
@@ -132,10 +132,10 @@ int Yeilds::RunNtuple(std::string root_file) {
 
       if (event->W() < 0) continue;
       if (event->Q2() > 6) continue;
-      if (event->MM() < 0) continue;
-      if ((event->SinglePip() || event->NeutronPip()))
-        ntuple->Fill(event->W(), event->Q2(), event->MM(), event->MM2(), event->Theta_E(), event->Theta_star(),
-                     event->Phi_star(), theta, phi, sector);
+      if (event->SinglePip() || event->NeutronPip() || event->ProtonPim() || event->SingleP() || event->TwoPion()) {
+        ntuple->Fill(event->Type(), event->W(), event->Q2(), event->MM(), event->MM2(), event->Theta_E(),
+                     event->Theta_star(), event->Phi_star(), theta, phi, sector);
+      }
     }
   }
   chain->Reset();  // delete Tree object

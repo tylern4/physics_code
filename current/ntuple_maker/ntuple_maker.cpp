@@ -23,14 +23,14 @@ int main(int argc, char **argv) {
 
   auto start = std::chrono::high_resolution_clock::now();
   std::cout.imbue(std::locale(""));
-  int events = 0;
+  size_t events = 0;
   int j = 0;
   Yeilds *dh = new Yeilds(outfilename, true);
 
-  for (int i = 0; i < infilename.size(); i++) {
-    events += dh->RunNtuple(infilename.at(i));
+  for (auto &in : infilename) {
+    events += dh->RunNtuple(in);
     std::chrono::duration<double> elapsed_temp = (std::chrono::high_resolution_clock::now() - start);
-    std::cout << BOLDYELLOW << "\t" << events / elapsed_temp.count() << " Hz \r\r" << DEF << std::flush;
+    std::cout << BOLDYELLOW << "\t" << events / elapsed_temp.count() << " Hz\r\r" << DEF << std::flush;
   }
 
   delete dh;

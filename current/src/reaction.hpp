@@ -33,6 +33,7 @@ class Reaction {
   std::unique_ptr<TLorentzVector> _gamma_boosted;
   std::unique_ptr<TLorentzVector> _beam_boosted;
   std::unique_ptr<TLorentzVector> _pip_boosted;
+  std::unique_ptr<TLorentzVector> _p_boosted;
 
   std::shared_ptr<Branches> _data;
 
@@ -63,6 +64,8 @@ class Reaction {
   float _theta_star = NAN;
   float _phi_star = NAN;
 
+  std::string _type = "NAN";
+
  public:
   Reaction(std::shared_ptr<Branches> data);
   Reaction(std::shared_ptr<Branches> data, bool MC);
@@ -78,6 +81,7 @@ class Reaction {
   double MM();
   double MM2();
   void boost();
+  int Type();
 
   inline double W() { return _W; }
   inline double Q2() { return _Q2; }

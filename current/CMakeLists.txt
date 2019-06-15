@@ -77,16 +77,21 @@ IF(Cython_FOUND)
   add_library(skim MODULE ${_skim})
   python_extension_module(skim)
   target_link_libraries(skim physics ${PYTHON_LIBRARIES} ${ROOT_LIBRARIES})
-  install(TARGETS skim
-          LIBRARY DESTINATION lib)
+  install(TARGETS skim LIBRARY DESTINATION lib)
 
   # Python h10
   add_cython_target(h10 src/h10.pyx CXX PY3 OUTPUT_VAR _h10)
   add_library(h10 MODULE ${_h10})
   python_extension_module(h10)
   target_link_libraries(h10 physics ${PYTHON_LIBRARIES} ${ROOT_LIBRARIES})
-  install(TARGETS h10
-          LIBRARY DESTINATION lib)
+  install(TARGETS h10 LIBRARY DESTINATION lib)
+
+  # Python h10
+  add_cython_target(physics_vectors src/physics_vectors.pyx CXX PY3 OUTPUT_VAR _physics_vectors)
+  add_library(physics_vectors MODULE ${_physics_vectors})
+  python_extension_module(physics_vectors)
+  target_link_libraries(physics_vectors physics ${PYTHON_LIBRARIES} ${ROOT_LIBRARIES})
+  install(TARGETS physics_vectors LIBRARY DESTINATION lib)
 
   # Python h10
   add_cython_target(yeilds src/yeilds.pyx CXX PY3 OUTPUT_VAR _yeilds)

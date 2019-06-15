@@ -45,7 +45,7 @@ class Yeilds {
   void OpenFile(std::string output_file_name);
   void WriteHeader();
   int Run(std::string fin);
-  int RunNtuple(std::string fin);
+  int RunNtuple(std::string fin, bool python = false);
   int Run(std::vector<std::string> fin);
 };
 
