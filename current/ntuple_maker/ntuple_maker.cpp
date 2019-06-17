@@ -5,6 +5,7 @@
 
 // Only My Includes. All others in main.h
 #include <algorithm>
+#include <future>
 #include <iostream>
 #include <thread>
 #include <vector>
@@ -19,7 +20,8 @@ size_t run_file(std::vector<std::string> in, std::string out_path, int thread_id
   auto chain = std::make_unique<TChain>("h10");
   for (auto& f : in) chain->Add(f.c_str());
   auto dh = std::make_unique<Yeilds>(outf.c_str(), true);
-  return dh->RunNtuple(std::move(chain));
+  size_t tot = dh->RunNtuple(std::move(chain));
+  return tot;
 }
 
 void call_from_thread(std::string in) { std::cout << in << std::endl; }
@@ -40,12 +42,12 @@ int main(int argc, char** argv) {
   size_t events = 0;
   int j = 0;
 
-  std::thread t[NUM_THREADS];
+  std::future<size_t> t[NUM_THREADS];
   for (size_t i = 0; i < NUM_THREADS; i++) {
-    t[i] = std::thread(run_file, infilenames.at(i), outfilename, i);
+    t[i] = std::async(run_file, infilenames.at(i), outfilename, i);
   }
   for (size_t i = 0; i < NUM_THREADS; i++) {
-    t[i].join();
+    events += t[i].get();
   }
 
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
