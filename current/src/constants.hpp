@@ -8,6 +8,10 @@
 #define CONSTANTS_H_GUARD
 #include "TMath.h"
 
+#ifndef NUM_THREADS
+#define NUM_THREADS 4
+#endif
+
 static const int MAX_PARTS = 100;
 static const int N_SIGMA = 3;
 static const double PI = TMath::Pi();

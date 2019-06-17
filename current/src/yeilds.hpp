@@ -26,8 +26,6 @@
 #include "physics.hpp"
 #include "reaction.hpp"
 
-#define NUM_THREADS 16
-
 class Yeilds {
  private:
   int PID;

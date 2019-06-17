@@ -5,6 +5,24 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CXX_FLAGS "-Ofast ${ROOT_CXX_FLAGS}")
 set(CMAKE_C_FLAGS "-Ofast ${ROOT_CXX_FLAGS}")
 
+
+if(NOT N_CORES EQUAL 0)
+  set(CTEST_BUILD_FLAGS -j${N})
+  set(ctest_test_args ${ctest_test_args} PARALLEL_LEVEL ${N})
+endif()
+
+if(NUM_THREADS)
+    message(STATUS "Manually setting NUM_THREADS=${NUM_THREADS}")
+    set(EXTRA_FLAGS "-DNUM_THREADS=${NUM_THREADS}")
+else()
+  include(ProcessorCount)
+  ProcessorCount(NUM_THREADS)
+  if(NUM_THREADS)
+    message(STATUS "From computer NUM_THREADS=${NUM_THREADS}")
+    set(EXTRA_FLAGS "-DNUM_THREADS=${NUM_THREADS}")
+  endif()
+endif()
+
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 find_package(ROOT REQUIRED COMPONENTS RIO Net) #RooFit RooFitCore RooStats RootAuth
 include(${ROOT_USE_FILE})
@@ -68,7 +86,7 @@ IF(Cython_FOUND)
 
   include_directories(${PYTHON_INCLUDE_DIRS} ${NumPy_INCLUDE_DIR})
 
-  set(EXTRA_FLAGS "-pthread -Wno-deprecated-register -D__ROOFIT_NOBANNER")
+  set(EXTRA_FLAGS "${EXTRA_FLAGS} -pthread -Wno-deprecated-register -D__ROOFIT_NOBANNER")
   set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${EXTRA_FLAGS}" )
   include_directories(${PYTHON_INCLUDE_DIRS} ${PYTHON_NUMPY_INCLUDE_DIR} ${NumPy_INCLUDE_DIR})
 
