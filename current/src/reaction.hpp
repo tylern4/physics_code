@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <iostream>
 #include <map>
+#include "TLorentzRotation.h"
 #include "TLorentzVector.h"
 #include "branches.hpp"
 #include "constants.hpp"

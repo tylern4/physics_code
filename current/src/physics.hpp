@@ -32,5 +32,8 @@ TLorentzVector *fourVec(double px, double py, double pz, double mass);
 TLorentzVector *fourVec(double p, double cx, double cy, double cz, double mass);
 TLorentzVector *fourVec(double px, double py, double pz, int pid);
 TLorentzVector *fourVec(double p, double cx, double cy, double cz, int pid);
+float invTan(float y, float x);
+float phi_boosted(std::unique_ptr<TLorentzVector> &vec);
+
 }  // namespace physics
 #endif

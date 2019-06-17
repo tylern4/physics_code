@@ -131,6 +131,7 @@ int Reaction::Type() {
   return -1;
 }
 
+/*
 void Reaction::boost() {
   // Angles gotten from picture in KPark thesis page 11
   // May be wrong still, need to check
@@ -143,25 +144,73 @@ void Reaction::boost() {
   _pip_boosted = std::make_unique<TLorentzVector>(*_pip);
   _p_boosted = std::make_unique<TLorentzVector>(*_prot);
 
-  TVector3 beta_com = _com->BoostVector();
+  TVector3 beta_com = -1 * _com->BoostVector();
 
-  _elec_boosted->Boost(-beta_com);
-  _gamma_boosted->Boost(-beta_com);
-  _beam_boosted->Boost(-beta_com);
-  _pip_boosted->Boost(-beta_com);
-  _p_boosted->Boost(-beta_com);
+  _elec_boosted->Boost(beta_com);
+  _gamma_boosted->Boost(beta_com);
+  _beam_boosted->Boost(beta_com);
+  _pip_boosted->Boost(beta_com);
+  _p_boosted->Boost(beta_com);
 
-  auto n_hat = std::make_unique<TVector3>(_elec_boosted->Vect().Cross(_beam_boosted->Vect()));
+  auto n_hat = std::make_unique<TVector3>(_elec_boosted->Vect().Cross(_beam_boosted->Vect()).Unit());
   if ((this->SinglePip() || this->NeutronPip())) {
-    auto m_hat = std::make_unique<TVector3>(_pip_boosted->Vect().Cross(_gamma_boosted->Vect()));
+    auto m_hat = std::make_unique<TVector3>(_pip_boosted->Vect().Cross(_gamma_boosted->Vect()).Unit());
     _theta_e = _elec_boosted->Theta();
     _theta_star = _pip_boosted->Angle(_gamma_boosted->Vect());
     _phi_star = n_hat->Angle(*m_hat);
   } else if (this->SingleP()) {
-    auto m_hat = std::make_unique<TVector3>(_p_boosted->Vect().Cross(_gamma_boosted->Vect()));
+    auto m_hat = std::make_unique<TVector3>(_p_boosted->Vect().Cross(_gamma_boosted->Vect()).Unit());
     _theta_e = _elec_boosted->Theta();
     _theta_star = _p_boosted->Angle(_gamma_boosted->Vect());
     _phi_star = n_hat->Angle(*m_hat);
+  } else {
+    _theta_e = _elec_boosted->Theta();
+    _theta_star = NAN;
+    _phi_star = NAN;
+  }
+}
+*/
+
+void Reaction::boost() {
+  // Angles gotten from picture in KPark thesis page 11
+  // May be wrong still, need to check
+  _boosted = true;
+
+  _com = std::make_unique<TLorentzVector>(*_target);
+  *_com += (*_beam - *_elec);
+  _elec_boosted = std::make_unique<TLorentzVector>(*_elec);
+  _gamma_boosted = std::make_unique<TLorentzVector>(*_gamma);
+  _beam_boosted = std::make_unique<TLorentzVector>(*_beam);
+  _pip_boosted = std::make_unique<TLorentzVector>(*_pip);
+  _p_boosted = std::make_unique<TLorentzVector>(*_prot);
+
+  //! Varsets
+  //! Calculate rotation: taken from Evan's phys-ana-omega on 08-05-13
+  // Copied and modified from Arjun's code
+  TVector3 uz = _gamma->Vect().Unit();
+  TVector3 ux = (_beam->Vect().Cross(_elec->Vect())).Unit();
+  ux.Rotate(-PI / 2, uz);
+  TRotation r3;  // = new TRotation();
+  r3.SetZAxis(uz, ux).Invert();
+  //! _w and _q are in z-direction
+  TVector3 boost(-1 * _com->BoostVector());
+  TLorentzRotation r4(r3);  //*_boost);
+  r4 *= boost;              //*_3rot;
+
+  _gamma_boosted->Transform(r4);
+  _elec_boosted->Transform(r4);
+  _beam_boosted->Transform(r4);
+  _pip_boosted->Transform(r4);
+  _p_boosted->Transform(r4);
+
+  if ((this->SinglePip() || this->NeutronPip())) {
+    _theta_e = _elec_boosted->Theta() / D2R;
+    _theta_star = _pip_boosted->Theta() / D2R;
+    _phi_star = physics::phi_boosted(_pip_boosted) / D2R;
+  } else if (this->SingleP()) {
+    _theta_e = _elec_boosted->Theta() / D2R;
+    _theta_star = _p_boosted->Theta() / D2R;
+    _phi_star = physics::phi_boosted(_p_boosted) / D2R;
   } else {
     _theta_e = _elec_boosted->Theta();
     _theta_star = NAN;

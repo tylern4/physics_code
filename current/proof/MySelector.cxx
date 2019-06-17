@@ -23,9 +23,9 @@
 // root> T->Process("MySelector.C+")
 //
 
+#include "MySelector.hh"
 #include <TH2.h>
 #include <TStyle.h>
-#include "MySelector.hh"
 void MySelector::Begin(TTree* /*tree*/) {
   // The Begin() function is called at the start of the query.
   // When running with PROOF Begin() is only called on the client.
@@ -66,7 +66,7 @@ Bool_t MySelector::Process(Long64_t entry) {
   // When processing keyed objects with PROOF, the object is already loaded
   // and is available via the fObject pointer.
   //
-  // This function should contain the \"body\" of the analysis. It can contain
+  // This function should contain the "body" of the analysis. It can contain
   // simple or elaborate selection criteria, run algorithms on the data
   // of the event and typically fill histograms.
   //

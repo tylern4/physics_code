@@ -26,7 +26,7 @@
 #include "physics.hpp"
 #include "reaction.hpp"
 
-#define NUM_THREADS 4
+#define NUM_THREADS 16
 
 class Yeilds {
  private:
@@ -45,7 +45,7 @@ class Yeilds {
   void OpenFile(std::string output_file_name);
   void WriteHeader();
   int Run(std::string fin);
-  int RunNtuple(std::string fin, bool python = false);
+  int RunNtuple(std::unique_ptr<TChain> chain);
   int Run(std::vector<std::string> fin);
 };
 

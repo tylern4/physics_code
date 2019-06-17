@@ -12,7 +12,7 @@ cdef extern from "yeilds.hpp":
       void WriteHeader()
       void Run(vector[string])
       void OpenFile(string)
-      int RunNtuple(string, bool)
+      #int RunNtuple(string, bool)
 
 cdef class yeild:
   cdef Yeilds*c_yeilds
@@ -27,6 +27,6 @@ cdef class yeild:
     self.c_yeilds.WriteHeader()
   def run(self):
     self.c_yeilds.Run(self._files)
-  def ntuple(self):
-    for f in self._files:
-      self.c_yeilds.RunNtuple(f, False)
+  #def ntuple(self):
+  #  for f in self._files:
+  #    self.c_yeilds.RunNtuple(f)

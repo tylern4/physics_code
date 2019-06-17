@@ -86,10 +86,10 @@ int Yeilds::Run(std::string root_file) {
   return total;
 }
 
-int Yeilds::RunNtuple(std::string root_file, bool python) {
-  auto chain = std::make_unique<TChain>("h10");
+int Yeilds::RunNtuple(std::unique_ptr<TChain> chain) {
+  // auto chain = std::make_unique<TChain>("h10");
   int num_of_events = 0;
-  chain->Add(root_file.c_str());
+  // chain->Add(root_file.c_str());
   num_of_events = (int)chain->GetEntries();
   auto data = std::make_shared<Branches>(chain.get());
   int total = 0;

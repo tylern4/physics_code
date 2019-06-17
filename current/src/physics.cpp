@@ -63,6 +63,24 @@ double physics::theta_calc(double cosz) { return acos(cosz) / D2R; }
 
 double physics::phi_calc(double cosx, double cosy) { return atan2(cosx, cosy) / D2R; }
 
+float physics::invTan(float y, float x) {
+  if (x > 0 && y > 0)
+    return atan(y / x);  // 1st Quad.
+  else if (x < 0 && y > 0)
+    return atan(y / x) + PI;  // 2nd Quad
+  else if (x < 0 && y < 0)
+    return atan(y / x) + PI;  // 3rd Quad
+  else if (x > 0 && y < 0)
+    return atan(y / x) + 2 * PI;  // 4th Quad
+  else if (x == 0 && y > 0)
+    return PI / 2;
+  else if (x == 0 && y < 0)
+    return 3 * PI / 2;
+  return NAN;
+}
+
+float physics::phi_boosted(std::unique_ptr<TLorentzVector> &vec) { return invTan(vec->Py(), vec->Px()); }
+
 double physics::center_phi_calc(double cosx, double cosy) {
   double phi0 = (atan2(cosx, cosy) / D2R);
   phi0 += 30;
