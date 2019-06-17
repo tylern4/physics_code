@@ -24,8 +24,6 @@ size_t run_file(std::vector<std::string> in, std::string out_path, int thread_id
   return tot;
 }
 
-void call_from_thread(std::string in) { std::cout << in << std::endl; }
-
 int main(int argc, char** argv) {
   ROOT::EnableThreadSafety();
   std::vector<std::vector<std::string>> infilenames(NUM_THREADS);
@@ -40,7 +38,6 @@ int main(int argc, char** argv) {
   auto start = std::chrono::high_resolution_clock::now();
   std::cout.imbue(std::locale(""));
   size_t events = 0;
-  int j = 0;
 
   std::future<size_t> t[NUM_THREADS];
   for (size_t i = 0; i < NUM_THREADS; i++) {
