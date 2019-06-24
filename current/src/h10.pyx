@@ -9,7 +9,6 @@ from cpython cimport array
 from libc.stdlib cimport free
 import numpy as np
 cimport numpy as np
-#import array
 
 class colors:
   RESET = b"\033[0m"
@@ -397,5 +396,3 @@ cdef class h10:
   def qpart(self):
     return np.array(deref(self.c_branches).qpart())
 
-
-#class Event:

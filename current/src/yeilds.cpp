@@ -87,14 +87,12 @@ int Yeilds::Run(std::string root_file) {
 }
 
 int Yeilds::RunNtuple(std::unique_ptr<TChain> chain) {
-  // auto chain = std::make_unique<TChain>("h10");
-  int num_of_events = 0;
-  // chain->Add(root_file.c_str());
-  num_of_events = (int)chain->GetEntries();
-  auto data = std::make_shared<Branches>(chain.get());
-  int total = 0;
 
-  for (int current_event = 0; current_event < num_of_events; current_event++) {
+  size_t num_of_events = (size_t)chain->GetEntries();
+  auto data = std::make_shared<Branches>(chain.get());
+  size_t total = 0;
+
+  for (size_t current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
     auto check = std::make_unique<Cuts>(data);
     auto event = std::make_unique<Reaction>(data);
@@ -108,9 +106,6 @@ int Yeilds::RunNtuple(std::unique_ptr<TChain> chain) {
       float theta = physics::theta_calc(data->cz(0));
       float phi = physics::phi_calc(data->cx(0), data->cy(0));
       int sector = data->dc_sect(0);
-
-      // auto photon_flux = std::make_unique<PhotonFlux>(event->e_mu(), event->e_mu_prime());
-      // photon_flux->GetVirtualPhotonFlux();
 
       for (int part_num = 1; part_num < data->gpart(); part_num++) {
         if (data->q(part_num) == POSITIVE) {

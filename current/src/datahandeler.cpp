@@ -38,7 +38,7 @@ int DataHandeler::Run() {
   num_of_events = (int)_chain->GetEntries();
 
   for (current_event = 0; current_event < num_of_events; current_event++) {
-    if (current_event % 10000 == 0) DataHandeler::loadbar(current_event, num_of_events);
+    if (_loadbar && current_event % 10000 == 0) DataHandeler::loadbar(current_event, num_of_events);
     total += DataHandeler::Run(current_event);
   }
   _chain->Reset();
@@ -48,7 +48,6 @@ int DataHandeler::Run() {
 int DataHandeler::Run(int current_event) {
   _chain->GetEntry(current_event);
   auto check = std::make_unique<Cuts>(_data);
-  // if (_data->ec_eo(0) < 0.01) return 0;
   if (!check->isElecctron()) return 0;
 
   _hists->EC_inout(_data->ec_ei(0), _data->ec_eo(0));
