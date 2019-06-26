@@ -19,14 +19,14 @@
 size_t run_file(std::vector<std::string> in, std::shared_ptr<Histogram> hists, int thread_id) {
   auto dh = std::make_unique<DataHandeler>(in, hists);
   dh->setLoadBar(false);
-  if(thread_id == 0) dh->setLoadBar(true);
+  if (thread_id == 0) dh->setLoadBar(true);
   size_t tot = 0;
   tot += dh->Run();
   return tot;
 }
 
 int main(int argc, char **argv) {
-  ROOT::EnableThreadSafety(); 
+  ROOT::EnableThreadSafety();
   std::vector<std::vector<std::string>> infilenames(NUM_THREADS);
   std::string outfilename;
   if (argc >= 2) {
@@ -50,10 +50,10 @@ int main(int argc, char **argv) {
   for (size_t i = 0; i < NUM_THREADS; i++) {
     events += t[i].get();
   }
-  
+
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
   std::cout.imbue(std::locale(""));
-  hist->Write(outfilename, false);
+  hist->Write(outfilename);
   std::cout << RED << elapsed_full.count() << " sec" << DEF << std::endl;
   std::cout << BOLDYELLOW << events / elapsed_full.count() << " Hz" << DEF << std::endl;
   return 0;

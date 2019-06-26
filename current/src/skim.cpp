@@ -5,23 +5,24 @@
 /**************************************/
 #include "skim.hpp"
 
-Skim::Skim(std::vector<std::string> input, std::string output) {
+Skim::Skim(const std::vector<std::string> &input, const std::string &output) {
   fin = std::move(input);
   fout = std::move(output);
-  chain = new TChain("h10");
+  chain = std::make_shared<TChain>("h10");
 
   for (auto f : fin) chain->AddFile(f.c_str());
 
-  RootOutputFile = new TFile(fout.c_str(), "RECREATE");
+  RootOutputFile = std::make_shared<TFile>(fout.c_str(), "RECREATE");
   RootOutputFile->SetCompressionSettings(404);
   if (getenv("BEAM_E") != NULL) {
-    BEAM_ENERGY = strtod(getenv("BEAM_E"),(char **)NULL);
+    BEAM_ENERGY = strtod(getenv("BEAM_E"), (char **)NULL);
     std::cout << RED << "Beam energy set to: " << BEAM_ENERGY << DEF << std::endl;
   }
   e_mu = std::make_shared<TLorentzVector>();
   e_mu->SetPxPyPzE(0.0, 0.0, sqrt((BEAM_ENERGY * BEAM_ENERGY) - (MASS_E * MASS_E)), BEAM_ENERGY);
   MM_neutron = std::make_shared<MissingMass>(MASS_P, 0.0);
 }
+
 Skim::~Skim() {}
 
 float Skim::Basic() {
@@ -40,13 +41,11 @@ float Skim::Basic() {
     }
   }
 
-  delete chain;
   RootOutputFile->cd();
   RootOutputFile->Write();
   RootOutputFile->Close();
-  delete RootOutputFile;
 
-  return (total/(float)num_of_events);
+  return (total / (float)num_of_events);
 }
 
 void Skim::Strict() {
@@ -72,11 +71,10 @@ void Skim::Strict() {
     if (cuts) skim->Fill();  // Fill the banks after the skim
   }
   chain->Reset();  // delete Tree object
-  delete chain;
+
   RootOutputFile->cd();
   RootOutputFile->Write();
   RootOutputFile->Close();
-  delete RootOutputFile;
 }
 
 void Skim::Final() {
@@ -118,11 +116,9 @@ void Skim::Final() {
     if ((event->SinglePip() || event->NeutronPip()) && mm_cut) skim->Fill();
   }
 
-  delete chain;
   RootOutputFile->cd();
   RootOutputFile->Write();
   RootOutputFile->Close();
-  delete RootOutputFile;
 }
 
 double Skim::sf_top_fit(double P) {

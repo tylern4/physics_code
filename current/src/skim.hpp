@@ -22,22 +22,16 @@
 
 class Skim {
  private:
-  TChain *chain;
+  std::shared_ptr<TChain> chain;
   std::string fout;
   std::vector<std::string> fin;
-  TFile *RootOutputFile;
-  //TVector3 e_mu_prime_3;
-  //TLorentzVector e_mu_prime;
-  //TVector3 particle_3;
-  //TLorentzVector particle;
+  std::shared_ptr<TFile> RootOutputFile;
   std::shared_ptr<TLorentzVector> e_mu;
-  //TVector3 Particle3;
-  //TLorentzVector Particle4;
   std::shared_ptr<MissingMass> MM_neutron;
   double BEAM_ENERGY = E1D_E0;
 
  public:
-  Skim(std::vector<std::string> input, std::string output);
+  Skim(const std::vector<std::string> &input, const std::string &output);
   ~Skim();
 
   float Basic();

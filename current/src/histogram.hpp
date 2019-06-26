@@ -45,7 +45,6 @@ using TH1D_ptr = std::shared_ptr<TH1D>;
 
 class Histogram {
  protected:
-  bool _multi = true;
   std::shared_ptr<TFile> RootOutputFile;
   TCanvas* def;
 
@@ -294,11 +293,10 @@ class Histogram {
 
  public:
   Histogram();
-  Histogram(std::string output_file);
+  Histogram(const std::string& output_file);
   ~Histogram();
   void Write(const std::string& output_file);
   void Write();
-  void Write(const std::string& output_file, bool multi);
   void makeHists_fid();
   void makeHists_deltat();
   void makeHists_CC();
@@ -398,7 +396,7 @@ class mcHistogram : public Histogram {
  private:
  public:
   mcHistogram();
-  mcHistogram(std::string output_file) : Histogram(output_file) { makeMCHists(); }
+  mcHistogram(const std::string& output_file) : Histogram(output_file) { makeMCHists(); }
   ~mcHistogram();
   TH2D_ptr WvsQ2_MC =
       std::make_shared<TH2D>("WvsQ2_MC", "W vs Q^{2} #pi^{+} N", BINS, w_min, w_max, BINS, q2_min, q2_max);

@@ -17,7 +17,7 @@ Histogram::Histogram() {
   hadron_fid_hist[2] = new TH2D("pip_fid", "pip_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
 }
 
-Histogram::Histogram(std::string output_file) {
+Histogram::Histogram(const std::string &output_file) {
   RootOutputFile = std::make_shared<TFile>(output_file.c_str(), "RECREATE");
   def = new TCanvas("def");
   makeHists_WvsQ2();
@@ -127,62 +127,6 @@ void Histogram::Write() {
   std::cerr << MM_neutron_cut->Get_mean() + 3 * MM_neutron_cut->Get_sigma() << ",";
   std::cerr << MM_neutron_cut->Get_mean() - 3 * MM_neutron_cut->Get_sigma() << std::endl;
   std::cerr << BOLDBLUE << "Done Writing!!!" << DEF << std::endl;
-}
-
-void Histogram::Write(const std::string &output_file, bool multi) {
-  _multi = multi;
-  RootOutputFile = std::make_unique<TFile>(output_file.c_str(), "RECREATE");
-  RootOutputFile->cd();
-
-  TDirectory *EC_folder = RootOutputFile->mkdir("EC_hists");
-  EC_folder->cd();
-  EC_Write();
-
-  TDirectory *Beam_Folder = RootOutputFile->mkdir("Beam Position");
-  Beam_Folder->cd();
-  Beam_Position_Write();
-  Target_Vertex_Write();
-
-  TDirectory *WvsQ2_folder = RootOutputFile->mkdir("W vs Q2");
-  WvsQ2_folder->cd();
-  WvsQ2_Write();
-
-  TDirectory *WvsQ2_sec_folder = RootOutputFile->mkdir("W_vs_Q2_sec");
-  WvsQ2_sec_folder->cd();
-  WvsQ2_sec_Write();
-  TDirectory *W_Q2_binned = RootOutputFile->mkdir("W_Q2_binned");
-  W_Q2_binned->cd();
-  WvsQ2_binned_Write();
-
-  TDirectory *MomVsBeta_folder = RootOutputFile->mkdir("Momentum vs beta");
-  MomVsBeta_folder->cd();
-  MomVsBeta_Write();
-
-  TDirectory *MissMass = RootOutputFile->mkdir("Missing_Mass");
-  MissMass->cd();
-  Write_Missing_Mass();
-
-  TDirectory *DeltaT = RootOutputFile->mkdir("Delta_T");
-  DeltaT->cd();
-  delta_t_Write();
-
-  TDirectory *DeltaT_slices = RootOutputFile->mkdir("Delta_T_slices");
-  DeltaT_slices->cd();
-  delta_t_slices_Write();
-
-  TDirectory *DeltaT_sec_pad = RootOutputFile->mkdir("Delta_T_sec_pad");
-  DeltaT_sec_pad->cd();
-  delta_t_sec_pad_Write();
-
-  TDirectory *Theta_CC_hists = RootOutputFile->mkdir("Theta_CC_hists");
-  Theta_CC_hists->cd();
-  Theta_CC_Write();
-
-  TDirectory *Fid_cuts = RootOutputFile->mkdir("Fid_cuts");
-  Fid_cuts->cd();
-  Fid_Write();
-
-  RootOutputFile->Close();
 }
 
 // W and Q^2
@@ -446,27 +390,25 @@ void Histogram::WvsQ2_sec_Write() {
     sec->Write();
   }
 
-  if (!_multi) {
-    auto canWQ2_channel = std::make_unique<TCanvas>("w_q2_sec_channel_can", "W vs Q2 N #pi^{+} Sec", 1600, 900);
-    canWQ2_channel->Divide(2, 3);
-    for (short sec = 0; sec < NUM_SECTORS; sec++) {
-      canWQ2_channel->cd(sec + 1);
-      WvsQ2_channel_sec[sec]->SetXTitle("W (GeV)");
-      WvsQ2_channel_sec[sec]->SetYTitle("Q^{2} (GeV^{2})");
-      WvsQ2_channel_sec[sec]->SetOption("COLZ");
-      WvsQ2_channel_sec[sec]->Draw();
-    }
-    canWQ2_channel->Write();
-
-    auto canW_channel = std::make_unique<TCanvas>("w_channel_sec_can", "W Sec", 1600, 900);
-    canW_channel->Divide(2, 3);
-    for (short sec = 0; sec < NUM_SECTORS; sec++) {
-      canW_channel->cd(sec + 1);
-      W_channel_sec[sec]->SetXTitle("W (GeV)");
-      W_channel_sec[sec]->Draw();
-    }
-    canW_channel->Write();
+  auto canWQ2_channel = std::make_unique<TCanvas>("w_q2_sec_channel_can", "W vs Q2 N #pi^{+} Sec", 1600, 900);
+  canWQ2_channel->Divide(2, 3);
+  for (short sec = 0; sec < NUM_SECTORS; sec++) {
+    canWQ2_channel->cd(sec + 1);
+    WvsQ2_channel_sec[sec]->SetXTitle("W (GeV)");
+    WvsQ2_channel_sec[sec]->SetYTitle("Q^{2} (GeV^{2})");
+    WvsQ2_channel_sec[sec]->SetOption("COLZ");
+    WvsQ2_channel_sec[sec]->Draw();
   }
+  canWQ2_channel->Write();
+
+  auto canW_channel = std::make_unique<TCanvas>("w_channel_sec_can", "W Sec", 1600, 900);
+  canW_channel->Divide(2, 3);
+  for (short sec = 0; sec < NUM_SECTORS; sec++) {
+    canW_channel->cd(sec + 1);
+    W_channel_sec[sec]->SetXTitle("W (GeV)");
+    W_channel_sec[sec]->Draw();
+  }
+  canW_channel->Write();
 
   for (auto &sec : WvsQ2_sec) {
     sec->SetXTitle("W (GeV)");
@@ -480,27 +422,25 @@ void Histogram::WvsQ2_sec_Write() {
     sec->Write();
   }
 
-  if (!_multi) {
-    auto canWQ2 = std::make_unique<TCanvas>("w_q2_sec_can", "W vs Q2 Sec", 1600, 900);
-    canWQ2->Divide(2, 3);
-    for (short sec = 0; sec < NUM_SECTORS; sec++) {
-      canWQ2->cd(sec + 1);
-      WvsQ2_sec[sec]->SetXTitle("W (GeV)");
-      WvsQ2_sec[sec]->SetYTitle("Q^{2} (GeV^{2})");
-      WvsQ2_sec[sec]->SetOption("COLZ");
-      WvsQ2_sec[sec]->Draw();
-    }
-    canWQ2->Write();
-
-    auto canW = std::make_unique<TCanvas>("w_sec_can", "W Sec", 1600, 900);
-    canW->Divide(2, 3);
-    for (short sec = 0; sec < NUM_SECTORS; sec++) {
-      canW->cd(sec + 1);
-      W_sec[sec]->SetXTitle("W (GeV)");
-      W_sec[sec]->Draw();
-    }
-    canW->Write();
+  auto canWQ2 = std::make_unique<TCanvas>("w_q2_sec_can", "W vs Q2 Sec", 1600, 900);
+  canWQ2->Divide(2, 3);
+  for (short sec = 0; sec < NUM_SECTORS; sec++) {
+    canWQ2->cd(sec + 1);
+    WvsQ2_sec[sec]->SetXTitle("W (GeV)");
+    WvsQ2_sec[sec]->SetYTitle("Q^{2} (GeV^{2})");
+    WvsQ2_sec[sec]->SetOption("COLZ");
+    WvsQ2_sec[sec]->Draw();
   }
+  canWQ2->Write();
+
+  auto canW = std::make_unique<TCanvas>("w_sec_can", "W Sec", 1600, 900);
+  canW->Divide(2, 3);
+  for (short sec = 0; sec < NUM_SECTORS; sec++) {
+    canW->cd(sec + 1);
+    W_sec[sec]->SetXTitle("W (GeV)");
+    W_sec[sec]->Draw();
+  }
+  canW->Write();
 }
 
 void Histogram::WvsQ2_binned_Write() {
@@ -652,10 +592,9 @@ void Histogram::Write_Missing_Mass() {
   TDirectory *mm_binned = RootOutputFile->mkdir("MM_binned");
   mm_binned->cd();
   for (int y = 0; y < W_BINS; y++) {
-    if (!_multi) {
-      Fit_Missing_Mass_WBinned[y] = new Fits();
-      Fit_Missing_Mass_WBinned[y]->FitMissMass(Missing_Mass_WBinned[y]);
-    }
+    Fit_Missing_Mass_WBinned[y] = new Fits();
+    Fit_Missing_Mass_WBinned[y]->FitMissMass(Missing_Mass_WBinned[y]);
+
     Missing_Mass_WBinned[y]->SetXTitle("Mass (GeV)");
     Missing_Mass_WBinned[y]->Write();
   }
@@ -853,7 +792,7 @@ void Histogram::delta_t_Write() {
   delta_t_mass_kp_PID->SetYTitle("#Deltat");
   delta_t_mass_kp_PID->SetOption("COLZ");
 
-  if (!_multi) delta_t_slice_fit();
+  delta_t_slice_fit();
 
   delta_t_mass_P->Write();
   delta_t_mass_P_PID->Write();
@@ -887,12 +826,10 @@ void Histogram::delta_t_slices_Write() {
   float fit_dt_max = 1.0;
   for (int j = 0; j < 3; j++) {
     for (int jj = 0; jj < NUM_POINTS; jj++) {
-      if (j != 2 && !_multi) {
-        delta_t_cut[j][jj] = std::make_unique<Fits>();
-        delta_t_cut[j][jj]->Set_min(fit_dt_min);
-        delta_t_cut[j][jj]->Set_max(fit_dt_max);
-        delta_t_cut[j][jj]->FitGaus(delta_t_hist[j][jj]);
-      }
+      delta_t_cut[j][jj] = std::make_unique<Fits>();
+      delta_t_cut[j][jj]->Set_min(fit_dt_min);
+      delta_t_cut[j][jj]->Set_max(fit_dt_max);
+      delta_t_cut[j][jj]->FitGaus(delta_t_hist[j][jj]);
 
       delta_t_hist[j][jj]->SetYTitle("#Deltat");
       delta_t_hist[j][jj]->Write();
@@ -1008,21 +945,20 @@ void Histogram::Theta_CC_Write() {
   Theta_CC->SetYTitle("#theta_CC");
   Theta_CC->SetOption("COLZ");
   Theta_CC->Write();
-  if (!_multi) {
-    for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
-      Theta_CC_Sec[sec_i]->SetXTitle("CC segment");
-      Theta_CC_Sec[sec_i]->SetYTitle("#theta_CC");
-      Theta_CC_Sec[sec_i]->SetOption("COLZ");
-      Theta_CC_Sec[sec_i]->Write();
 
-      Theta_CC_Sec_cut[sec_i]->SetXTitle("CC segment");
-      Theta_CC_Sec_cut[sec_i]->SetYTitle("#theta_CC");
-      Theta_CC_Sec_cut[sec_i]->SetOption("COLZ");
-      Theta_CC_Sec_cut[sec_i]->Write();
-    }
+  for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
+    Theta_CC_Sec[sec_i]->SetXTitle("CC segment");
+    Theta_CC_Sec[sec_i]->SetYTitle("#theta_CC");
+    Theta_CC_Sec[sec_i]->SetOption("COLZ");
+    Theta_CC_Sec[sec_i]->Write();
 
-    theta_cc_slice_fit();
+    Theta_CC_Sec_cut[sec_i]->SetXTitle("CC segment");
+    Theta_CC_Sec_cut[sec_i]->SetYTitle("#theta_CC");
+    Theta_CC_Sec_cut[sec_i]->SetOption("COLZ");
+    Theta_CC_Sec_cut[sec_i]->Write();
   }
+
+  theta_cc_slice_fit();
 }
 
 void Histogram::CC_Write() {
@@ -1219,58 +1155,56 @@ void Histogram::Fid_Write() {
     }
   }
 
-  if (!_multi) {
-    float slice_width = ((float)100 / (float)FID_SLICES);
-    float y_width = (60.0 / (float)100);
-    std::unique_ptr<Fits> SliceFit[NUM_SECTORS][FID_SLICES];
-    TGraph *fid[NUM_SECTORS];
-    std::unique_ptr<Fits> FidGraph[NUM_SECTORS];
+  float slice_width = ((float)100 / (float)FID_SLICES);
+  float y_width = (60.0 / (float)100);
+  std::unique_ptr<Fits> SliceFit[NUM_SECTORS][FID_SLICES];
+  TGraph *fid[NUM_SECTORS];
+  std::unique_ptr<Fits> FidGraph[NUM_SECTORS];
 
-    TCanvas *electron_fid_can[NUM_SECTORS];
-    float x[FID_SLICES * 2];
-    float y[FID_SLICES * 2];
+  TCanvas *electron_fid_can[NUM_SECTORS];
+  float x[FID_SLICES * 2];
+  float y[FID_SLICES * 2];
 
-    // std::cout << "sec,y,x" << '\n';
-    for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
-      sprintf(hname, "electron_fid_sector_%d", sec_i + 1);
-      sprintf(htitle, "electron_fid_sector_%d", sec_i + 1);
-      electron_fid_can[sec_i] = new TCanvas(hname, htitle, 1280, 720);
-      for (int slice = start_slice; slice < FID_SLICES; slice++) {
-        sprintf(hname, "electron_fid_sec_%d_%d", sec_i + 1, slice + 1);
-        electron_fid_sec_slice[sec_i][slice] = (TH1D *)electron_fid_sec_hist[sec_i]->ProjectionX(
-            hname, slice_width * slice, slice_width * slice + (slice_width - 1));
-        electron_fid_sec_slice[sec_i][slice]->Rebin(4);
-        SliceFit[sec_i][slice] = std::make_unique<Fits>();
-        SliceFit[sec_i][slice]->Set_min(min_phi[sec_i]);
-        SliceFit[sec_i][slice]->Set_max(max_phi[sec_i]);
-        SliceFit[sec_i][slice]->FitGenNormal(electron_fid_sec_slice[sec_i][slice]);
+  // std::cout << "sec,y,x" << '\n';
+  for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
+    sprintf(hname, "electron_fid_sector_%d", sec_i + 1);
+    sprintf(htitle, "electron_fid_sector_%d", sec_i + 1);
+    electron_fid_can[sec_i] = new TCanvas(hname, htitle, 1280, 720);
+    for (int slice = start_slice; slice < FID_SLICES; slice++) {
+      sprintf(hname, "electron_fid_sec_%d_%d", sec_i + 1, slice + 1);
+      electron_fid_sec_slice[sec_i][slice] = (TH1D *)electron_fid_sec_hist[sec_i]->ProjectionX(
+          hname, slice_width * slice, slice_width * slice + (slice_width - 1));
+      electron_fid_sec_slice[sec_i][slice]->Rebin(4);
+      SliceFit[sec_i][slice] = std::make_unique<Fits>();
+      SliceFit[sec_i][slice]->Set_min(min_phi[sec_i]);
+      SliceFit[sec_i][slice]->Set_max(max_phi[sec_i]);
+      SliceFit[sec_i][slice]->FitGenNormal(electron_fid_sec_slice[sec_i][slice]);
 
-        if (SliceFit[sec_i][slice]->Get_left_edge() == SliceFit[sec_i][slice]->Get_left_edge() &&
-            SliceFit[sec_i][slice]->Get_right_edge() == SliceFit[sec_i][slice]->Get_right_edge()) {
-          x[slice + FID_SLICES] = y_width * slice_width * slice;
-          y[slice + FID_SLICES] = SliceFit[sec_i][slice]->Get_left_edge();
-          x[slice] = y_width * slice_width * slice;
-          y[slice] = SliceFit[sec_i][slice]->Get_right_edge();
+      if (SliceFit[sec_i][slice]->Get_left_edge() == SliceFit[sec_i][slice]->Get_left_edge() &&
+          SliceFit[sec_i][slice]->Get_right_edge() == SliceFit[sec_i][slice]->Get_right_edge()) {
+        x[slice + FID_SLICES] = y_width * slice_width * slice;
+        y[slice + FID_SLICES] = SliceFit[sec_i][slice]->Get_left_edge();
+        x[slice] = y_width * slice_width * slice;
+        y[slice] = SliceFit[sec_i][slice]->Get_right_edge();
 
-          // std::cout << sec_i + 1 << "," << y[slice] << "," << x[slice + FID_SLICES] << '\n';
-          // std::cout << sec_i + 1 << "," << y[slice] << "," << x[slice] << '\n';
-        }
+        // std::cout << sec_i + 1 << "," << y[slice] << "," << x[slice + FID_SLICES] << '\n';
+        // std::cout << sec_i + 1 << "," << y[slice] << "," << x[slice] << '\n';
       }
-
-      fid[sec_i] = new TGraph(FID_SLICES * 2, x, y);
-      FidGraph[sec_i] = std::make_unique<Fits>();
-
-      FidGraph[sec_i]->Set_min(min_phi[sec_i]);
-      FidGraph[sec_i]->Set_max(max_phi[sec_i]);
-      // FidGraph[sec_i]->FitFiducial(fid[sec_i], sec_i);
-      FidGraph[sec_i]->FitPoly_fid(fid[sec_i]);
-
-      electron_fid_can[sec_i]->cd();
-
-      electron_fid_sec_hist[sec_i]->Draw();
-      fid[sec_i]->Draw("*same");
-      electron_fid_can[sec_i]->Write();
     }
+
+    fid[sec_i] = new TGraph(FID_SLICES * 2, x, y);
+    FidGraph[sec_i] = std::make_unique<Fits>();
+
+    FidGraph[sec_i]->Set_min(min_phi[sec_i]);
+    FidGraph[sec_i]->Set_max(max_phi[sec_i]);
+    FidGraph[sec_i]->FitFiducial(fid[sec_i], sec_i);
+    FidGraph[sec_i]->FitPoly_fid(fid[sec_i]);
+
+    electron_fid_can[sec_i]->cd();
+
+    electron_fid_sec_hist[sec_i]->Draw();
+    fid[sec_i]->Draw("*same");
+    electron_fid_can[sec_i]->Write();
   }
 }
 
@@ -1445,7 +1379,7 @@ void Histogram::EC_Write() {
   EC_sampling_fraction_cut->SetYTitle("Sampling Fraction");
   EC_sampling_fraction_cut->SetOption("COLZ");
   EC_sampling_fraction_cut->Write();
-  if (!_multi) EC_slice_fit();
+  EC_slice_fit();
 
   Theta_vs_mom->SetXTitle("Momentum (GeV)");
   Theta_vs_mom->SetYTitle("Theta #theta");

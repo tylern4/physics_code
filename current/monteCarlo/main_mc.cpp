@@ -1,51 +1,59 @@
-/**************************************/
-/*  Created by Nick Tyler             */
-/*	University Of South Carolina      */
-/**************************************/
+/************************************************************************/
+/*  Created by Nick Tyler*/
+/*	University Of South Carolina*/
+/************************************************************************/
 
-// Only My Includes. All others in main.h
-#include <memory>
+#include <algorithm>
+#include <future>
+#include <iostream>
+#include <thread>
+#include <vector>
 #include "TStopwatch.h"
+#include "branches.hpp"
+#include "constants.hpp"
 #include "datahandeler.hpp"
 #include "glob_files.hpp"
+#include "physics.hpp"
 
-using namespace std;
+size_t run_file(std::vector<std::string> in, std::shared_ptr<mcHistogram> hists, int thread_id) {
+  auto dh = std::make_unique<mcHandeler>(in, hists);
+  dh->setLoadBar(false);
+  if (thread_id == 0) dh->setLoadBar(true);
+  size_t tot = 0;
+  tot += dh->Run();
+  return tot;
+}
 
 int main(int argc, char **argv) {
-  gROOT->SetBatch(true);
-  TStopwatch *Watch = new TStopwatch;
-  Watch->Start();
-  gStyle->SetOptFit(1111);
-
-  std::vector<std::string> files;
+  ROOT::EnableThreadSafety();
+  std::vector<std::vector<std::string>> infilenames(NUM_THREADS);
+  std::string outfilename;
   if (argc >= 2) {
-    files = glob(argv[1]);
-  } else if (argc < 2) {
-    std::cerr << RED << "Error: \n";
-    std::cerr << BOLDRED << "\tNeed input file and output file\n";
-    std::cerr << RESET << "Usage:\n\t";
-    std::cerr << BOLDWHITE << argv[0] << " infile.root outfile.root\n\n";
-    std::cerr << RESET << std::endl;
+    outfilename = argv[1];
+    for (int i = 2; i < argc; i++) infilenames[i % NUM_THREADS].push_back(argv[i]);
+  } else {
     return 1;
   }
 
-  std::string outfilename;
-  if (argc == 2) {
-    outfilename = "out.root";
-  } else if (argc == 3) {
-    outfilename = argv[2];
-  }
-  auto hist = std::make_shared<mcHistogram>(outfilename);
-  auto dh = std::make_shared<mcHandeler>(files, hist);
-  dh->setLoadBar(true);
   auto start = std::chrono::high_resolution_clock::now();
-  size_t events = 0;
-  events += dh->Run();
-  hist->Write();
-  std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
-  std::cout << RED << elapsed_full.count() << " sec" << DEF << std::endl;
-  std::cout.imbue(std::locale(""));
-  std::cout << BOLDYELLOW << "\n\n" << events / elapsed_full.count() << " Hz" << DEF << std::endl;
 
+  auto hist = std::make_shared<mcHistogram>(outfilename);
+  std::cout.imbue(std::locale(""));
+  size_t events = 0;
+
+  std::future<size_t> t[NUM_THREADS];
+
+  for (size_t i = 0; i < NUM_THREADS; i++) {
+    t[i] = std::async(run_file, infilenames.at(i), hist, i);
+  }
+  for (size_t i = 0; i < NUM_THREADS; i++) {
+    events += t[i].get();
+  }
+
+  std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
+  std::cout.imbue(std::locale(""));
+  hist->Write();
+  std::cout << RED << elapsed_full.count() << " sec" << DEF << std::endl;
+  std::cout << BOLDYELLOW << events / elapsed_full.count() << " Hz" << DEF << std::endl;
   return 0;
 }

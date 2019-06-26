@@ -177,7 +177,7 @@ int mcHandeler::Run() {
   int current_event = 0;
 
   for (current_event = 0; current_event < num_of_events; current_event++) {
-    if (current_event % 1000 == 0) DataHandeler::loadbar(current_event, num_of_events);
+    if (_loadbar && current_event % 10000 == 0) DataHandeler::loadbar(current_event, num_of_events);
     total += DataHandeler::Run(current_event);
     total += mcHandeler::Run(current_event);
   }

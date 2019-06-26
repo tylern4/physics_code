@@ -6,53 +6,58 @@
 /**************************************/
 
 // Only My Includes. All others in main.h
+#include <future>
+#include <thread>
 #include "TStopwatch.h"
 #include "clipp.h"
 #include "glob_files.hpp"
 #include "physics.hpp"
 #include "skim.hpp"
 
-using namespace std;
+float run_file(const std::vector<std::string>& in, std::string outfile, int thread_id) {
+  if (in.size() < 1) return 0.0;
+  float tot = 0;
+  outfile = outfile.substr(0, outfile.find(".root"));
+  outfile += "_" + std::to_string(thread_id) + ".root";
+  auto s = std::make_unique<Skim>(in, outfile);
+  tot = s->Basic();
+  return tot;
+}
 
-int main(int argc, char **argv) {
-  bool _mc = false;
-  bool _basic = false;
-  bool _strict = false;
-  bool _final = false;
-  bool print_help = false;
-  std::vector<std::string> infile;
-  std::string outfile = "skim.root";
-  auto cli =
-      (clipp::option("-h", "--help").set(print_help) % "print help", clipp::option("-mc", "--MC").set(_mc) % "mc Skim",
-       clipp::option("-b", "--basic").set(_basic) % "basic skim",
-       clipp::option("-s", "--strict").set(_strict) % "strict skim",
-       clipp::option("-f", "--final").set(_final) % "final skim",
-       clipp::value("skim.root", outfile), clipp::values("inputFile.root", infile));
+int main(int argc, char** argv) {
+  short n_threads = 16;
+  if (argc > 2) {
+    n_threads = atoi(argv[1]);
+  } else {
+    std::cerr << argv[0] << " n_threads outfile.root infiles*.root";
+    return 1;
+  }
+  std::vector<std::vector<std::string>> infilenames(n_threads);
+  std::string outfilename;
 
-  clipp::parse(argc, argv, cli);
-  if (print_help) {
-    std::cout << clipp::make_man_page(cli, argv[0]);
-    exit(-1);
+  if (argc >= 3) {
+    outfilename = argv[2];
+    for (int i = 3; i < argc; i++) infilenames[i % n_threads].push_back(argv[i]);
+  } else {
+    return 1;
   }
 
+  ROOT::EnableThreadSafety();
   auto start = std::chrono::high_resolution_clock::now();
-  auto s = std::make_unique<Skim>(infile, outfile);
+  // auto s = std::make_unique<Skim>(infile, outfile);
   float per = 0;
-  if (_basic)
-    per = s->Basic();
-  else if (_strict)
-    s->Strict();
-  else if (_final)
-    s->Final();
-  else
-    per = s->Basic();
-
+  std::future<float> threads[n_threads];
+  for (size_t i = 0; i < n_threads; i++) {
+    threads[i] = std::async(run_file, infilenames.at(i), outfilename, i);
+  }
+  for (size_t i = 0; i < n_threads; i++) {
+    per += threads[i].get();
+  }
 
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
   std::cout.imbue(std::locale(""));
   std::cout << RED << elapsed_full.count() << " sec\t";
-  std::cout << BOLDYELLOW << "(" << per*100 << ") % converted" << DEF << std::endl;
-
+  std::cout << BOLDYELLOW << "(" << (per / n_threads) * 100 << ") % converted" << DEF << std::endl;
 
   return 0;
 }
