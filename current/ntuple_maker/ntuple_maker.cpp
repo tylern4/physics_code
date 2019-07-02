@@ -19,7 +19,7 @@ size_t run_file(std::vector<std::string> in, std::string out_path, int thread_id
   std::string outf = out_path + "/ntuple_" + std::to_string(thread_id) + ".root";
   auto chain = std::make_unique<TChain>("h10");
   for (auto& f : in) chain->Add(f.c_str());
-  auto dh = std::make_unique<Yeilds>(outf.c_str(), true);
+  auto dh = std::make_unique<Yeilds>(outf.c_str(), false);
   size_t tot = dh->RunNtuple(std::move(chain));
   return tot;
 }
