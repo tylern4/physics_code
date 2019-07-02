@@ -1170,11 +1170,14 @@ void Histogram::Fid_Write() {
     sprintf(hname, "electron_fid_sector_%d", sec_i + 1);
     sprintf(htitle, "electron_fid_sector_%d", sec_i + 1);
     electron_fid_can[sec_i] = new TCanvas(hname, htitle, 1280, 720);
+
     for (int slice = start_slice; slice < FID_SLICES; slice++) {
+      // std::cout << "Fid Write " << sec_i << "\t" << slice << std::endl;
       sprintf(hname, "electron_fid_sec_%d_%d", sec_i + 1, slice + 1);
       electron_fid_sec_slice[sec_i][slice] = (TH1D *)electron_fid_sec_hist[sec_i]->ProjectionX(
           hname, slice_width * slice, slice_width * slice + (slice_width - 1));
       electron_fid_sec_slice[sec_i][slice]->Rebin(4);
+      /*
       SliceFit[sec_i][slice] = std::make_unique<Fits>();
       SliceFit[sec_i][slice]->Set_min(min_phi[sec_i]);
       SliceFit[sec_i][slice]->Set_max(max_phi[sec_i]);
@@ -1190,6 +1193,7 @@ void Histogram::Fid_Write() {
         // std::cout << sec_i + 1 << "," << y[slice] << "," << x[slice + FID_SLICES] << '\n';
         // std::cout << sec_i + 1 << "," << y[slice] << "," << x[slice] << '\n';
       }
+      */
     }
 
     fid[sec_i] = new TGraph(FID_SLICES * 2, x, y);

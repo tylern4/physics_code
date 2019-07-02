@@ -29,8 +29,8 @@
 class Yeilds {
  private:
   int PID;
-  TNtuple* ntuple = nullptr;
-  TFile* Rootout = nullptr;
+  std::shared_ptr<TNtuple> ntuple = nullptr;
+  std::shared_ptr<TFile> Rootout = nullptr;
   std::ofstream csv_output;
   std::vector<std::string> input_files;
   bool CUTS = true;

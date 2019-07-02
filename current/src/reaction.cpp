@@ -131,46 +131,6 @@ int Reaction::Type() {
   return -1;
 }
 
-/*
-void Reaction::boost() {
-  // Angles gotten from picture in KPark thesis page 11
-  // May be wrong still, need to check
-  _boosted = true;
-  _com = std::make_unique<TLorentzVector>(*_target);
-  *_com += (*_beam - *_elec);
-  _elec_boosted = std::make_unique<TLorentzVector>(*_elec);
-  _gamma_boosted = std::make_unique<TLorentzVector>(*_gamma);
-  _beam_boosted = std::make_unique<TLorentzVector>(*_beam);
-  _pip_boosted = std::make_unique<TLorentzVector>(*_pip);
-  _p_boosted = std::make_unique<TLorentzVector>(*_prot);
-
-  TVector3 beta_com = -1 * _com->BoostVector();
-
-  _elec_boosted->Boost(beta_com);
-  _gamma_boosted->Boost(beta_com);
-  _beam_boosted->Boost(beta_com);
-  _pip_boosted->Boost(beta_com);
-  _p_boosted->Boost(beta_com);
-
-  auto n_hat = std::make_unique<TVector3>(_elec_boosted->Vect().Cross(_beam_boosted->Vect()).Unit());
-  if ((this->SinglePip() || this->NeutronPip())) {
-    auto m_hat = std::make_unique<TVector3>(_pip_boosted->Vect().Cross(_gamma_boosted->Vect()).Unit());
-    _theta_e = _elec_boosted->Theta();
-    _theta_star = _pip_boosted->Angle(_gamma_boosted->Vect());
-    _phi_star = n_hat->Angle(*m_hat);
-  } else if (this->SingleP()) {
-    auto m_hat = std::make_unique<TVector3>(_p_boosted->Vect().Cross(_gamma_boosted->Vect()).Unit());
-    _theta_e = _elec_boosted->Theta();
-    _theta_star = _p_boosted->Angle(_gamma_boosted->Vect());
-    _phi_star = n_hat->Angle(*m_hat);
-  } else {
-    _theta_e = _elec_boosted->Theta();
-    _theta_star = NAN;
-    _phi_star = NAN;
-  }
-}
-*/
-
 void Reaction::boost() {
   // Angles gotten from picture in KPark thesis page 11
   // May be wrong still, need to check

@@ -8,8 +8,9 @@
 Yeilds::Yeilds() {}
 Yeilds::Yeilds(std::string output_file_name) { csv_output.open(output_file_name); }
 Yeilds::Yeilds(std::string output_file_name, bool isRoot = true) {
-  Rootout = new TFile(output_file_name.c_str(), "RECREATE");
-  ntuple = new TNtuple("ntuple", "", "type:W:Q2:MM:MM2:theta_e:theta_star:phi_star:theta_lab:phi_lab:sector");
+  Rootout = std::make_shared<TFile>(output_file_name.c_str(), "RECREATE");
+  ntuple =
+      std::make_shared<TNtuple>("ntuple", "", "type:W:Q2:MM:MM2:theta_e:theta_star:phi_star:theta_lab:phi_lab:sector");
 }
 Yeilds::~Yeilds() {
   if (ntuple) ntuple->Write();
@@ -87,7 +88,6 @@ int Yeilds::Run(std::string root_file) {
 }
 
 int Yeilds::RunNtuple(std::unique_ptr<TChain> chain) {
-
   size_t num_of_events = (size_t)chain->GetEntries();
   auto data = std::make_shared<Branches>(chain.get());
   size_t total = 0;

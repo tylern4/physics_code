@@ -119,6 +119,7 @@ class Reaction {
 
   inline TLorentzVector e_mu() { return *_beam; }
   inline TLorentzVector e_mu_prime() { return *_elec; }
+  inline TLorentzVector p_prime() { return *_prot; }
   inline TLorentzVector gamma() { return *_gamma; }
 };
 
