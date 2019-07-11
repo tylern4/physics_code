@@ -140,8 +140,8 @@ int DataHandeler::Run(int current_event) {
 
     // mm_cut &= (event->MM() < 0.987669);
     // mm_cut &= (event->MM() > 0.923374);
-    mm_cut &= (event->MM() > 0.8);
-    mm_cut &= (event->MM() > 1.1);
+    mm_cut &= (event->MM() >= 0.8);
+    mm_cut &= (event->MM() <= 1.1);
     if (mm_cut) _hists->Fill_MM_WQ2(event->W(), event->Q2());
     if ((event->SinglePip() || event->NeutronPip()) && mm_cut) {
       _hists->Fill_channel_WQ2(event->W(), event->Q2(), _data->ec_sect(0), event->e_mu_prime(), event->MM(),
