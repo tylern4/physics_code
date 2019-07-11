@@ -39,7 +39,7 @@ void Histogram::Write() {
   std::cout << GREEN << "\nFitting" << DEF << std::endl;
   // Start of cuts
   auto MM_neutron_cut = std::make_unique<Fits>();
-  // MM_neutron_cut->FitMissMass(Missing_Mass.get());
+  MM_neutron_cut->FitMissMass(Missing_Mass.get());
 
   auto MissingMassSquare_cut = std::make_unique<Fits>();
   MissingMassSquare_cut->Set_max(1.1);
@@ -142,13 +142,12 @@ void Histogram::makeHists_WvsQ2() {
   }
 
   for (short sec = 0; sec < NUM_SECTORS; sec++) {
-    sprintf(hname, "W_vs_Q2_channel_sec_%d", sec + 1);
-    sprintf(htitle, "W vs Q^{2} N #pi^{+} Sector: %d", sec + 1);
-    WvsQ2_channel_sec[sec] = new TH2D(hname, htitle, BINS, w_min, w_max, BINS, q2_min, q2_max);
+    WvsQ2_channel_sec[sec] =
+        new TH2D(Form("W_vs_Q2_channel_sec_%d", sec + 1), Form("W vs Q^{2} N #pi^{+} Sector: %d", sec + 1), BINS, w_min,
+                 w_max, BINS / 2, q2_min, q2_max);
 
-    sprintf(hname, "W_channel_sec_%d", sec + 1);
-    sprintf(htitle, "W N #pi^{+} Sector: %d", sec + 1);
-    W_channel_sec[sec] = new TH1D(hname, htitle, BINS, w_min, w_max);
+    W_channel_sec[sec] =
+        new TH1D(Form("W_channel_sec_%d", sec + 1), Form("W N #pi^{+} Sector: %d", sec + 1), BINS / 2, w_min, w_max);
   }
 
   for (short y = 0; y < Q2_BINS; y++) {
@@ -965,24 +964,25 @@ void Histogram::CC_Write() {
   // cc_sparse->Write();
   std::unique_ptr<Fits> cc_fits[NUM_SECTORS][segment][PMT];
   for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
-    for (int pmt_i = 0; pmt_i < PMT; pmt_i++) {
+    for (int pmt_i = 1; pmt_i < PMT; pmt_i++) {
       cc_hist_allSeg[sec_i][pmt_i]->SetYTitle("number photoelectrons");
       cc_hist_allSeg[sec_i][pmt_i]->Write();
       for (int seg_i = 0; seg_i < segment; seg_i++) {
         cc_fits[sec_i][seg_i][pmt_i] = std::make_unique<Fits>();
-        /*
-        cc_fits[sec_i][seg_i][pmt_i]->FitLandauGaus(cc_hist[sec_i][seg_i][pmt_i]);
 
         cc_fits[sec_i][seg_i][pmt_i]->Set_lineColor(9);
         cc_fits[sec_i][seg_i][pmt_i]->Set_min(0.0);
         cc_fits[sec_i][seg_i][pmt_i]->Set_max(30.0);
         cc_fits[sec_i][seg_i][pmt_i]->FitLandau(cc_hist[sec_i][seg_i][pmt_i]);
-        */
+
         cc_fits[sec_i][seg_i][pmt_i]->Set_lineColor(8);
-        // cc_fits[sec_i][seg_i][pmt_i]->Set_min(30.0);
+        cc_fits[sec_i][seg_i][pmt_i]->Set_min(30.0);
         cc_fits[sec_i][seg_i][pmt_i]->Set_min(0.0);
         cc_fits[sec_i][seg_i][pmt_i]->Set_max(250.0);
         cc_fits[sec_i][seg_i][pmt_i]->FitGaus(cc_hist[sec_i][seg_i][pmt_i]);
+
+        cc_fits[sec_i][seg_i][pmt_i]->Set_lineColor(10);
+        cc_fits[sec_i][seg_i][pmt_i]->FitLandauGaus(cc_hist[sec_i][seg_i][pmt_i]);
 
         cc_hist[sec_i][seg_i][pmt_i]->SetYTitle("number photoelectrons");
         cc_hist[sec_i][seg_i][pmt_i]->Write();
@@ -1197,12 +1197,12 @@ void Histogram::Fid_Write() {
     }
 
     fid[sec_i] = new TGraph(FID_SLICES * 2, x, y);
-    FidGraph[sec_i] = std::make_unique<Fits>();
+    // FidGraph[sec_i] = std::make_unique<Fits>();
 
-    FidGraph[sec_i]->Set_min(min_phi[sec_i]);
-    FidGraph[sec_i]->Set_max(max_phi[sec_i]);
-    FidGraph[sec_i]->FitFiducial(fid[sec_i], sec_i);
-    FidGraph[sec_i]->FitPoly_fid(fid[sec_i]);
+    // FidGraph[sec_i]->Set_min(min_phi[sec_i]);
+    // FidGraph[sec_i]->Set_max(max_phi[sec_i]);
+    // FidGraph[sec_i]->FitFiducial(fid[sec_i], sec_i);
+    // FidGraph[sec_i]->FitPoly_fid(fid[sec_i]);
 
     electron_fid_can[sec_i]->cd();
 
@@ -1217,8 +1217,8 @@ void Histogram::fid_canvas() {
   char can_name[500];
 
   for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
-    sprintf(can_name, "Electron Fid Sector %d Slices", sec_i + 1);
-    can[sec_i] = new TCanvas(can_name, can_name, 1600, 900);
+    can[sec_i] = new TCanvas(Form("Electron Fid Sector %d Slices", sec_i + 1),
+                             Form("Electron Fid Sector %d Slices", sec_i + 1), 1600, 900);
     can[sec_i]->Divide(10, (FID_SLICES - 10) / 10);
     int x = 1;
     for (int slice = start_slice; slice < FID_SLICES; slice++) {
@@ -1231,13 +1231,8 @@ void Histogram::fid_canvas() {
 
 void Histogram::makeHists_EC() {
   for (int n = 0; n < NUM_POINTS; n++) {
-    sprintf(hname, "ec_%d", n);
-    sprintf(htitle, "Sampling Fraction %d", n);
-    EC_hist[n] = new TH1D(hname, htitle, BINS, EC_min, EC_max);
-
-    sprintf(hname, "ec_cut_%d", n);
-    sprintf(htitle, "Sampling Fraction cut %d", n);
-    EC_hist_cut[n] = new TH1D(hname, htitle, BINS, EC_min, EC_max);
+    EC_hist[n] = new TH1D(Form("ec_%d", n), Form("Sampling Fraction %d", n), BINS, EC_min, EC_max);
+    EC_hist_cut[n] = new TH1D(Form("ec_cut_%d", n), Form("Sampling Fraction cut %d", n), BINS, EC_min, EC_max);
   }
 }
 
@@ -1256,7 +1251,7 @@ void Histogram::EC_fill(float etot, float momentum) {
 }
 
 void Histogram::EC_inout(float Ein, float Eout) {
-  if (Eout > 0) ECin_ECout->Fill(Ein, Eout);
+  if (Eout > 0 && Ein > 0) ECin_ECout->Fill(Ein, Eout);
 }
 
 void Histogram::TM_Fill(float momentum, float theta) { Theta_vs_mom->Fill(momentum, theta); }
@@ -1307,12 +1302,10 @@ void Histogram::EC_slice_fit() {
   TF1 *EC_P_fit = new TF1("EC_P_fit", func::ec_fit_func, 0.25, 4.0, 3);
   TF1 *EC_M_fit = new TF1("EC_M_fit", func::ec_fit_func, 0.25, 4.0, 3);
 
-  /*
-    EC_P_fit->SetParameters(0.3296, 0.002571, 4.8e-7);
-    EC_M_fit->SetParameters(0.1715, 0.02044, -1.581e-5);
-    EC_P_fit->SetParLimits(2, 1.0e-7, 5.0e-7);
-    EC_M_fit->SetParLimits(2, -2.0e-5, -1.0e-5);
-  */
+  EC_P_fit->SetParameters(0.3296, 0.002571, 4.8e-7);
+  EC_M_fit->SetParameters(0.1715, 0.02044, -1.581e-5);
+  EC_P_fit->SetParLimits(2, 1.0e-7, 5.0e-7);
+  EC_M_fit->SetParLimits(2, -2.0e-5, -1.0e-5);
 
   EC_P->Fit(EC_P_fit, "QMRG+", "", 0.75, 3.75);
   EC_M->Fit(EC_M_fit, "QMRG+", "", 0.75, 3.75);
@@ -1486,13 +1479,13 @@ void mcHistogram::Write() {
   Histogram::Write();
   RootOutputFile->cd();
   // Start of cuts
-  // Fits *MM_neutron_cut = new Fits();
-  // MM_neutron_cut->Set_min(0.8);
-  // MM_neutron_cut->Set_max(1.2);
-  // MM_neutron_cut->FitBreitWigner(Missing_Mass.get());
+  Fits *MM_neutron_cut = new Fits();
+  MM_neutron_cut->Set_min(0.8);
+  MM_neutron_cut->Set_max(1.2);
+  MM_neutron_cut->FitBreitWigner(Missing_Mass.get());
   std::cerr << BOLDBLUE << "WvsQ2()" << DEF << std::endl;
-  // TDirectory *WvsQ2_folder = RootOutputFile->mkdir("W vs Q2 MC");
-  // WvsQ2_folder->cd();
+  TDirectory *WvsQ2_folder = RootOutputFile->mkdir("W vs Q2 MC");
+  WvsQ2_folder->cd();
   WvsQ2_MC_Write();
 
   TDirectory *delta_mom = RootOutputFile->mkdir("delta_mom");
@@ -1504,16 +1497,16 @@ void mcHistogram::Write() {
 void mcHistogram::makeMCHists() {
   std::string xyz[4] = {"X", "Y", "Z", "all"};
   for (int i = 0; i < 4; i++) {
-    sprintf(hname, "dPvsP_%s", xyz[i].c_str());
-    sprintf(htitle, "#DeltaP/P_{rec} vs P_{%s}", xyz[i].c_str());
-    delta_p[i] = std::make_unique<TH1D>(hname, htitle, 500, -0.5, 0.5);
+    delta_p[i] = std::make_unique<TH1D>(Form("dPvsP_%s", xyz[i].c_str()),
+                                        Form("#DeltaP/P_{rec} vs P_{%s}", xyz[i].c_str()), 500, -0.5, 0.5);
   }
 
   for (int y = 0; y < Q2_BINS; y++) {
-    sprintf(hname, "W_MC_%0.3f_%0.3f", q2_binned_min + (Q2_width * y), q2_binned_min + (Q2_width * (y + 1)));
-    sprintf(htitle, "W hist from true MC\nQ^{2} %0.3f %0.3f", q2_binned_min + (Q2_width * y),
-            q2_binned_min + (Q2_width * (y + 1)));
-    W_binned_MC[y] = std::make_unique<TH1D>(hname, htitle, BINS, w_binned_min, w_binned_max);
+    W_binned_MC[y] = std::make_unique<TH1D>(
+        Form("W_MC_%0.3f_%0.3f", q2_binned_min + (Q2_width * y), q2_binned_min + (Q2_width * (y + 1))),
+        Form("W hist from true MC\nQ^{2} %0.3f %0.3f", q2_binned_min + (Q2_width * y),
+             q2_binned_min + (Q2_width * (y + 1))),
+        BINS, w_binned_min, w_binned_max);
   }
 }
 

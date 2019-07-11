@@ -188,7 +188,7 @@ class Histogram {
   // Delta T
 
   // cc hist
-  int bins_CC = 50;
+  int bins_CC = 100;
   float CC_min = 0;
   float CC_max = 250;
   std::string L_R_C;

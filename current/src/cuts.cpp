@@ -3,8 +3,9 @@
 /*  Created by Nick Tyler             */
 /*	University Of South Carolina      */
 /**************************************/
-#include <iostream>
 #include "cuts.hpp"
+#include <iostream>
+//#include "fid_cuts.hpp"
 
 Cuts::Cuts(std::shared_ptr<Branches> data) : _data(data) {}
 Cuts::~Cuts() {}
@@ -47,9 +48,13 @@ bool Cuts::isElecctron() {
   _elec &= (_data->stat(0) > 0);  // First Particle stat
   _elec &= (_data->sc(0) > 0);
   _elec &= (_data->dc(0) > 0);
-  // _elec &= (_data->nphe(0) > 30);
-  // _elec &= (_data->ec_ei(0) >= 0.01);
   _elec &= (_data->dc_stat(0) > 0);
+
+  ///////
+  // _elec &= Fid_cut();
+  // _elec &= (_data->cc_segm(0) / 1000 - 1 != 0);
+  // _elec &= (_data->ec_ei(0) >= 0.05);
+  _elec &= (_data->nphe(0) > 15);
 
   electron_cut = _elec;
   return _elec;

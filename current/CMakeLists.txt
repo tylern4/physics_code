@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(DataHandeler)
+project(DataHandeler C CXX Fortran)
 set(VERSION 1.0.0)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CXX_FLAGS "-Ofast ${ROOT_CXX_FLAGS}")
