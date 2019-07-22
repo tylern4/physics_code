@@ -80,6 +80,7 @@ int DataHandeler::Run(int current_event) {
     float theta = physics::theta_calc(_data->cz(0));
     float phi = physics::phi_calc(_data->cx(0), _data->cy(0));
     int sector = _data->dc_sect(0);
+
     _hists->Fill_electron_fid(theta, phi, sector);
 
     // auto photon_flux = std::make_unique<PhotonFlux>(event->e_mu(), event->e_mu_prime());
@@ -136,14 +137,9 @@ int DataHandeler::Run(int current_event) {
       _hists->Fill_Missing_Mass(event->MM(), event->MM2());
       _hists->Fill_W_Missing_Mass(event->W(), event->MM(), event->MM2());
     }
-    bool mm_cut = true;
 
-    // mm_cut &= (event->MM() < 0.987669);
-    // mm_cut &= (event->MM() > 0.923374);
-    mm_cut &= (event->MM() >= 0.8);
-    mm_cut &= (event->MM() <= 1.1);
-    if (mm_cut) _hists->Fill_MM_WQ2(event->W(), event->Q2());
-    if ((event->SinglePip() || event->NeutronPip()) && mm_cut) {
+    if (event->MM_cut()) _hists->Fill_MM_WQ2(event->W(), event->Q2());
+    if (event->channel()) {
       _hists->Fill_channel_WQ2(event->W(), event->Q2(), _data->ec_sect(0), event->e_mu_prime(), event->MM(),
                                event->MM2());
       _hists->Fill_Missing_Mass_strict(event->MM(), event->MM2());

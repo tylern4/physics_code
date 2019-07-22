@@ -8,7 +8,6 @@
 
 #include <iomanip>
 #include <iostream>
-#include <map>
 #include "TLorentzRotation.h"
 #include "TLorentzVector.h"
 #include "branches.hpp"
@@ -17,9 +16,6 @@
 
 class Reaction {
  private:
-  std::map<int, double> _mass_map = {{PROTON, MASS_P}, {-PROTON, MASS_P},  {NEUTRON, MASS_N},  {PIP, MASS_PIP},
-                                     {PIM, MASS_PIM},  {PI0, MASS_PI0},    {KP, MASS_KP},      {KM, MASS_KM},
-                                     {PHOTON, MASS_G}, {ELECTRON, MASS_E}, {-ELECTRON, MASS_E}};
   double _beam_energy = E1D_E0;
   std::unique_ptr<TLorentzVector> _beam;
   std::unique_ptr<TLorentzVector> _elec;
@@ -115,6 +111,17 @@ class Reaction {
   inline bool NeutronPip() {
     return ((_numPip == 1 && _numNeutral == 1) &&
             (_hasE && !_hasP && _hasPip && !_hasPim && _hasNeutron && !_hasOther));
+  }
+
+  inline bool channel() { return (this->SinglePip() || this->NeutronPip()) && this->MM_cut(); }
+
+  inline bool MM_cut() {
+    bool mm_cut = true;
+    // mm_cut &= (this->MM() < 0.987669);
+    // mm_cut &= (this->MM() > 0.923374);
+    mm_cut &= (this->MM() >= 0.8);
+    mm_cut &= (this->MM() <= 1.1);
+    return mm_cut;
   }
 
   inline TLorentzVector e_mu() { return *_beam; }

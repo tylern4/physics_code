@@ -51,9 +51,9 @@ bool Cuts::isElecctron() {
   _elec &= (_data->dc_stat(0) > 0);
 
   ///////
-  // _elec &= Fid_cut();
+  //_elec &= Fid_cut();
   // _elec &= (_data->cc_segm(0) / 1000 - 1 != 0);
-  // _elec &= (_data->ec_ei(0) >= 0.05);
+  _elec &= (_data->ec_ei(0) >= 0.05);
   _elec &= (_data->nphe(0) > 15);
 
   electron_cut = _elec;

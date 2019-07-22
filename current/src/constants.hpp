@@ -6,6 +6,7 @@
 
 #ifndef CONSTANTS_H_GUARD
 #define CONSTANTS_H_GUARD
+#include <unordered_map>
 #include "TMath.h"
 
 #ifndef NUM_THREADS
@@ -64,5 +65,9 @@ static const double MIN_P_CUT = 0.005000;
 
 const double min_phi[6] = {60, 0, -60, -120, -180, 120};
 const double max_phi[6] = {120, 60, 0, -60, -120, 180};
+
+static std::unordered_map<int, double> mass_map = {
+    {PROTON, MASS_P}, {-PROTON, MASS_P}, {NEUTRON, MASS_N}, {PIP, MASS_PIP},    {PIM, MASS_PIM},    {PI0, MASS_PI0},
+    {KP, MASS_KP},    {KM, MASS_KM},     {PHOTON, MASS_G},  {ELECTRON, MASS_E}, {-ELECTRON, MASS_E}};
 
 #endif
