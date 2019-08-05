@@ -4,5 +4,10 @@
         "**/.project": true,
         "**/.settings": true,
         "**/.factorypath": true
+    },
+    "files.associations": {
+        "WvsMM.C": "cpp",
+        "rootlogon.C": "cpp",
+        "run.C": "cpp"
     }
 }

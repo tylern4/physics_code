@@ -35,41 +35,20 @@ set(CMAKE_MODULE_PATH
 include_directories("src")
 add_subdirectory("src")
 
-# e1d
-add_executable(e1d cpp/main_cpp.cpp)
-target_link_libraries(e1d physics ${ROOT_LIBRARIES})
-install(TARGETS e1d
-  RUNTIME DESTINATION bin)
 
-# lab_511
-add_executable(lab_511 511-lab/511_lab.cpp)
-target_link_libraries(lab_511 physics ${ROOT_LIBRARIES})
-install(TARGETS lab_511
-  RUNTIME DESTINATION bin)
-
-# e1d_mc
-add_executable(e1d_mc monteCarlo/main_mc.cpp)
-target_link_libraries(e1d_mc physics ${ROOT_LIBRARIES})
-install(TARGETS e1d_mc
-    RUNTIME DESTINATION bin)
-
-#Skim
-add_executable(e1d_skim skim/main_skim.cpp)
-target_link_libraries(e1d_skim physics ${ROOT_LIBRARIES})
-install(TARGETS e1d_skim
-  RUNTIME DESTINATION bin)
-
-#csv_maker
-add_executable(e1d_yeilds csv_maker/csv_maker.cpp)
-target_link_libraries(e1d_yeilds physics ${ROOT_LIBRARIES})
-install(TARGETS e1d_yeilds
-  RUNTIME DESTINATION bin)
-
-#ntuple_maker
-add_executable(e1d_ntuple ntuple_maker/ntuple_maker.cpp)
-target_link_libraries(e1d_ntuple physics ${ROOT_LIBRARIES})
-install(TARGETS e1d_ntuple
-  RUNTIME DESTINATION bin)
+set(PROGRAMS cpp/e1d.cpp 
+      511-lab/511_lab.cpp 
+      monteCarlo/e1d_mc.cpp 
+      skim/e1d_skim.cpp 
+      csv_maker/csv_maker.cpp 
+      ntuple_maker/ntuple_maker.cpp)
+foreach(prog ${PROGRAMS} )
+    get_filename_component(progname ${prog} NAME)
+    string( REPLACE ".cpp" "" progname ${progname} )
+    add_executable( ${progname} ${prog} )
+    target_link_libraries(${progname} PUBLIC physics ${ROOT_LIBRARIES})
+    install(TARGETS ${progname} EXPORT ${PROJECT_NAME}Targets RUNTIME DESTINATION bin)
+endforeach( prog ${PROGRAMS} )
 
 find_package(Cython)
 IF(Cython_FOUND)
@@ -86,36 +65,29 @@ IF(Cython_FOUND)
 
   include_directories(${PYTHON_INCLUDE_DIRS} ${NumPy_INCLUDE_DIR})
 
-  set(EXTRA_FLAGS "${EXTRA_FLAGS} -pthread -Wno-deprecated-register -D__ROOFIT_NOBANNER")
+  set(EXTRA_FLAGS "${EXTRA_FLAGS} -pthread -Wno-deprecated-register")
   set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${EXTRA_FLAGS}" )
   include_directories(${PYTHON_INCLUDE_DIRS} ${PYTHON_NUMPY_INCLUDE_DIR} ${NumPy_INCLUDE_DIR})
 
-  # Python Skim
-  add_cython_target(skim src/skim.pyx CXX PY3 OUTPUT_VAR _skim)
-  add_library(skim MODULE ${_skim})
-  python_extension_module(skim)
-  target_link_libraries(skim physics ${PYTHON_LIBRARIES} ${ROOT_LIBRARIES})
-  install(TARGETS skim LIBRARY DESTINATION lib)
-
-  # Python h10
-  add_cython_target(h10 src/h10.pyx CXX PY3 OUTPUT_VAR _h10)
-  add_library(h10 MODULE ${_h10})
-  python_extension_module(h10)
-  target_link_libraries(h10 physics ${PYTHON_LIBRARIES} ${ROOT_LIBRARIES})
-  install(TARGETS h10 LIBRARY DESTINATION lib)
-
-  # Python h10
-  add_cython_target(physics_vectors src/physics_vectors.pyx CXX PY3 OUTPUT_VAR _physics_vectors)
-  add_library(physics_vectors MODULE ${_physics_vectors})
-  python_extension_module(physics_vectors)
-  target_link_libraries(physics_vectors physics ${PYTHON_LIBRARIES} ${ROOT_LIBRARIES})
-  install(TARGETS physics_vectors LIBRARY DESTINATION lib)
-
-  # Python h10
-  add_cython_target(yeilds src/yeilds.pyx CXX PY3 OUTPUT_VAR _yeilds)
-  add_library(yeilds MODULE ${_yeilds})
-  python_extension_module(yeilds)
-  target_link_libraries(yeilds physics ${PYTHON_LIBRARIES} ${ROOT_LIBRARIES})
-  install(TARGETS yeilds LIBRARY DESTINATION lib)
+  file(GLOB CYTHON_TARGETS src/*.pyx )
+  foreach(pyx ${CYTHON_TARGETS} )
+    get_filename_component(pyxname ${pyx} NAME)
+    string( REPLACE ".pyx" "" pyxname ${pyxname} )
+      add_cython_target(${pyxname} ${pyx} CXX PY3 OUTPUT_VAR _pyxname)
+      add_library(${pyxname} MODULE ${_pyxname})
+      python_extension_module(${pyxname})
+      target_link_libraries(${pyxname} physics ${PYTHON_LIBRARIES} ${ROOT_LIBRARIES})
+      install(TARGETS ${pyxname} LIBRARY DESTINATION lib)
+  endforeach( pyx ${CYTHON_TARGETS} )
   SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 ENDIF()
+
+
+file(GLOB EXAMPLES scripts/*.cxx )
+foreach(exe ${EXAMPLES} )
+    get_filename_component(exename ${exe} NAME)
+    string( REPLACE ".cxx" "" exename ${exename} )
+    add_executable( ${exename} ${exe} )
+    target_link_libraries(${exename} PUBLIC ${ROOT_LIBRARIES})
+    install(TARGETS ${exename} EXPORT ${PROJECT_NAME}Targets RUNTIME DESTINATION bin)
+endforeach( exe ${EXAMPLES} )

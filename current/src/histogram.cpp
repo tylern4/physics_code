@@ -162,12 +162,12 @@ void Histogram::makeHists_WvsQ2() {
 
     sprintf(hname, "MM_W_%0.3f_%0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
     sprintf(htitle, "Missing Mass\nW %0.3f %0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
-    Missing_Mass_WBinned[x] = new TH1D(hname, htitle, BINS, MM_min, MM_max);
+    Missing_Mass_WBinned[x] = new TH1D(hname, htitle, BINS, 0.8, 1.5);
 
     sprintf(hname, "MM2_W_%0.3f_%0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
     sprintf(htitle, "Missing Mass^{2}\nW %0.3f %0.3f", w_binned_min + (W_width * x),
             w_binned_min + (W_width * (x + 1)));
-    Missing_Mass_WBinned_square[x] = new TH1D(hname, htitle, BINS, MM_min * MM_min, MM_max * MM_max);
+    Missing_Mass_WBinned_square[x] = new TH1D(hname, htitle, BINS, 0.8 * 0.8, 1.5 * 1.5);
   }
 }
 

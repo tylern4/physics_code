@@ -6,10 +6,11 @@
     "configurations": [
         {
             "name": "debug e1d",
-            "type": "cppdbg",
-            "request": "launch",
             "program": "${workspaceFolder}/build/e1d",
-            "args": ["~/Data/e1d/h10_r2300*", "v2_all.root"],
+            "args": [
+                "v2_all.root",
+                "~/Data/e1d/h10_r2300*",
+            ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build",
             "environment": [],
