@@ -7,11 +7,14 @@
 #ifndef CONSTANTS_H_GUARD
 #define CONSTANTS_H_GUARD
 #include <unordered_map>
+#include "Math/Vector4D.h"
 #include "TMath.h"
 
 #ifndef NUM_THREADS
 #define NUM_THREADS 4
 #endif
+
+typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzM4D<double> > LorentzVector;
 
 static const int MAX_PARTS = 100;
 static const int N_SIGMA = 3;

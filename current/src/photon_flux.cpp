@@ -17,7 +17,7 @@ PhotonFlux::PhotonFlux(double W, double Q2) {
   _flux = photon_flux();
 }
 
-PhotonFlux::PhotonFlux(TLorentzVector e_mu, TLorentzVector e_mu_prime) {
+PhotonFlux::PhotonFlux(LorentzVector e_mu, LorentzVector e_mu_prime) {
   _W = physics::W_calc(e_mu, e_mu_prime);
   _Q2 = physics::Q2_calc(e_mu, e_mu_prime);
   _beam_momentum = e_mu.P();

@@ -21,6 +21,7 @@
 #include "THn.h"
 #include "branches.hpp"
 #include "color.hpp"
+#include "constants.hpp"
 #include "fits.hpp"
 #include "missing_mass.hpp"
 
@@ -307,7 +308,7 @@ class Histogram {
   void Fill_P_PI0(float W, float Q2);
   void Fill_NeutronPip_WQ2(float W, float Q2, float MM, float MM2);
   void Fill_MM_WQ2(float W, float Q2);
-  void Fill_channel_WQ2(float W, float Q2, int sector, TLorentzVector e_prime, float mm, float mm2);
+  void Fill_channel_WQ2(float W, float Q2, int sector, LorentzVector e_prime, float mm, float mm2);
   void Fill_single_proton_WQ2(float W, float Q2);
   void WvsQ2_Fill(float W, float Q2, int sector);
   void Fill_pion_WQ2(float W, float Q2);
@@ -386,9 +387,9 @@ class Histogram {
   void Beam_Position_Write();
   void Fill_Target_Vertex(float vertex_x, float vertex_y, float vertex_z);
   void Target_Vertex_Write();
-  void Fill_E_Prime(TLorentzVector e_prime);
-  void Fill_E_Prime_fid(TLorentzVector e_prime);
-  void Fill_E_Prime_channel(TLorentzVector e_prime);
+  void Fill_E_Prime(LorentzVector e_prime);
+  void Fill_E_Prime_fid(LorentzVector e_prime);
+  void Fill_E_Prime_channel(LorentzVector e_prime);
   void E_Prime_Write();
 };
 

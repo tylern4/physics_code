@@ -5,45 +5,42 @@
 /**************************************/
 #include "physics.hpp"
 
-TLorentzVector *physics::fourVec(double px, double py, double pz, double mass) {
-  TLorentzVector *Particle4 = new TLorentzVector(0.0, 0.0, 0.0, 0.0);
-  // Particle4.SetXYZM(px, py, pz, mass);
-  Particle4->SetXYZM(px, py, pz, mass);
+LorentzVector *physics::fourVec(double px, double py, double pz, double mass) {
+  LorentzVector *Particle4 = new LorentzVector(px, py, pz, mass);
   return Particle4;
 }
-TLorentzVector *physics::fourVec(double px, double py, double pz, int pid) {
+LorentzVector *physics::fourVec(double px, double py, double pz, int pid) {
   return physics::fourVec(px, py, pz, physics::Get_Mass(pid));
 }
-TLorentzVector *physics::fourVec(double p, double cx, double cy, double cz, double mass) {
+LorentzVector *physics::fourVec(double p, double cx, double cy, double cz, double mass) {
   return physics::fourVec(p * cx, p * cy, p * cz, mass);
 }
 
-TLorentzVector *physics::fourVec(double p, double cx, double cy, double cz, int pid) {
+LorentzVector *physics::fourVec(double p, double cx, double cy, double cz, int pid) {
   return physics::fourVec(p * cx, p * cy, p * cz, pid);
 }
 
 // Calcuating Q^2
 //	Gotten from t channel
 // -q^mu^2 = -(e^mu - e^mu')^2 = Q^2
-double physics::Q2_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime) {
-  TLorentzVector q_mu = (e_mu - e_mu_prime);
-  return -q_mu.Mag2();
+double physics::Q2_calc(LorentzVector e_mu, LorentzVector e_mu_prime) {
+  LorentzVector q_mu = (e_mu - e_mu_prime);
+  return -q_mu.mag2();
 }
 //	Calcualting W
 //	Gotten from s channel [(gamma + P)^2 == s == w^2]
 //	Sqrt√[M_p^2 - Q^2 + 2 M_p gamma]
-double physics::W_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime) {
-  TLorentzVector q_mu = (e_mu - e_mu_prime);
-  TVector3 p_mu_3(0, 0, 0);
-  TLorentzVector p_mu;
-  p_mu.SetVectM(p_mu_3, MASS_P);
-  return (p_mu + q_mu).Mag();
+double physics::W_calc(LorentzVector e_mu, LorentzVector e_mu_prime) {
+  LorentzVector q_mu = (e_mu - e_mu_prime);
+  LorentzVector p_mu(0, 0, 0, MASS_P);
+  return (p_mu + q_mu).mag();
 }
 
-double physics::Q2_calc(TLorentzVector gamma_mu) { return -gamma_mu.Mag2(); }
-double physics::W_calc(TLorentzVector gamma_mu) {
-  TLorentzVector p_mu(0.0, 0.0, 0.0, MASS_P);
-  return (p_mu + gamma_mu).Mag();
+double physics::Q2_calc(const LorentzVector &gamma_mu) { return -gamma_mu.mag2(); }
+
+double physics::W_calc(const LorentzVector &gamma_mu) {
+  LorentzVector p_mu(0.0, 0.0, 0.0, MASS_P);
+  return (p_mu + gamma_mu).mag();
 }
 
 double physics::xb_calc(double Q2, double E_prime) {
@@ -52,10 +49,10 @@ double physics::xb_calc(double Q2, double E_prime) {
   return xb;
 }
 // overload with 4 vectors
-double physics::xb_calc(TLorentzVector e_mu, TLorentzVector e_mu_prime) {
+double physics::xb_calc(LorentzVector e_mu, LorentzVector e_mu_prime) {
   double Q2 = Q2_calc(e_mu, e_mu_prime);
-  TLorentzVector q = e_mu - e_mu_prime;
-  TLorentzVector target(0, 0, 0, MASS_P);
+  LorentzVector q = e_mu - e_mu_prime;
+  LorentzVector target(0, 0, 0, MASS_P);
   return (Q2 / (2 * (q.Dot(target))));
 }
 
@@ -79,7 +76,7 @@ float physics::invTan(float y, float x) {
   return NAN;
 }
 
-float physics::phi_boosted(std::unique_ptr<TLorentzVector> &vec) { return invTan(vec->Py(), vec->Px()); }
+float physics::phi_boosted(std::unique_ptr<LorentzVector> &vec) { return invTan(vec->Py(), vec->Px()); }
 
 double physics::center_phi_calc(double cosx, double cosy) {
   double phi0 = (atan2(cosx, cosy) / D2R);

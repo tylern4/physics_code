@@ -8,7 +8,6 @@
 #include <TFile.h>
 #include <TFileCollection.h>
 #include <TGraph.h>
-#include <TLorentzVector.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

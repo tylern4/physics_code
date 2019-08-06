@@ -6,9 +6,9 @@
 #ifndef CSV_MAKER_H_GUARD
 #define CSV_MAKER_H_GUARD
 #include "TFile.h"
-#include "TLorentzVector.h"
 #include "branches.hpp"
 #include "main.h"
+#include "physics.hpp"
 
 double BEAM_ENERGY = 0.0;
 
@@ -72,9 +72,8 @@ void make_electron_csv(std::string fin) {
 
     if (n_prot == 1 && n_other == 0) {
       // Setup scattered electron 4 vector
-      TLorentzVector e_mu_prime;
-      TLorentzVector e_mu(0.0, 0.0, sqrt(Square(BEAM_ENERGY) - Square(MASS_E)), BEAM_ENERGY);
-      e_mu_prime.SetXYZM(data->px(0), data->py(0), data->pz(0), MASS_E);
+      LorentzVector e_mu_prime(data->px(0), data->py(0), data->pz(0), MASS_E);
+      LorentzVector e_mu(0.0, 0.0, sqrt(Square(BEAM_ENERGY) - Square(MASS_E)), BEAM_ENERGY);
       double W = physics::W_calc(e_mu, e_mu_prime);
       double Q2 = physics::Q2_calc(e_mu, e_mu_prime);
 
@@ -224,12 +223,8 @@ void analyze_wq2(std::string fin, std::string fout) {
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     lab.GetEntry(current_event);
     // Setup scattered electron 4 vector
-    TVector3 e_mu_prime_3;
-    TLorentzVector e_mu_prime;
-    TLorentzVector e_mu(0.0, 0.0, sqrt(Square(BEAM_ENERGY) - Square(MASS_E)), BEAM_ENERGY);
-
-    e_mu_prime_3.SetXYZ(_p * _cx, _p * _cy, _p * _cz);
-    e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
+    LorentzVector e_mu_prime(_p * _cx, _p * _cy, _p * _cz, MASS_E);
+    LorentzVector e_mu(0.0, 0.0, sqrt(Square(BEAM_ENERGY) - Square(MASS_E)), BEAM_ENERGY);
 
     double W = physics::W_calc(e_mu, e_mu_prime);
     double Q2 = physics::Q2_calc(e_mu, e_mu_prime);
@@ -247,16 +242,11 @@ void analyze_wq2(std::string fin, std::string fout) {
   OutputFile->Close();
 }
 
-double missing_mass(TLorentzVector gamma_mu, TLorentzVector pip_mu) {
-  TVector3 target_3;
-  TLorentzVector target;
-  // Set target vector
-  target_3.SetXYZ(0.0, 0.0, 0.0);
-  target.SetVectM(target_3, MASS_P);
-  TLorentzVector reaction;
+double missing_mass(LorentzVector gamma_mu, LorentzVector pip_mu) {
+  LorentzVector target(0.0, 0.0, 0.0, MASS_P);
+  LorentzVector reaction;
   reaction = (gamma_mu + target - pip_mu);
-
-  return reaction.M();
+  return reaction.mag();
 }
 
 double Breit(double *x, double *par) { return par[2] * TMath::BreitWigner(x[0], par[0], par[1]); }
@@ -301,19 +291,13 @@ void analyze_MM(std::string fin, std::string fout) {
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     lab.GetEntry(current_event);
     // Setup scattered electron 4 vector
-    TVector3 e_mu_prime_3;
-    TLorentzVector e_mu_prime;
-    TVector3 pip_mu_prime_3;
-    TLorentzVector pip_mu_prime;
-    TLorentzVector e_mu(0.0, 0.0, sqrt(Square(BEAM_ENERGY) - Square(MASS_E)), BEAM_ENERGY);
 
-    e_mu_prime_3.SetXYZ(e_p * e_cx, e_p * e_cy, e_p * e_cz);
-    e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
+    LorentzVector e_mu_prime(e_p * e_cx, e_p * e_cy, e_p * e_cz, MASS_E);
 
-    pip_mu_prime_3.SetXYZ(pip_p * pip_cx, pip_p * pip_cy, pip_p * pip_cz);
-    pip_mu_prime.SetVectM(pip_mu_prime_3, MASS_PIP);
+    LorentzVector pip_mu_prime(pip_p * pip_cx, pip_p * pip_cy, pip_p * pip_cz, MASS_PIP);
+    LorentzVector e_mu(0.0, 0.0, sqrt(Square(BEAM_ENERGY) - Square(MASS_E)), BEAM_ENERGY);
 
-    TLorentzVector gamma_mu;
+    LorentzVector gamma_mu;
     gamma_mu = e_mu - e_mu_prime;
     double mm = missing_mass(gamma_mu, pip_mu_prime);
     MM->Fill(mm);

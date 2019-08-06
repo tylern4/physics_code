@@ -196,7 +196,7 @@ void Histogram::Fill_MM_WQ2(float W, float Q2) {
   Q2_MM->Fill(Q2);
 }
 
-void Histogram::Fill_channel_WQ2(float W, float Q2, int sector, TLorentzVector e_prime, float mm, float mm2) {
+void Histogram::Fill_channel_WQ2(float W, float Q2, int sector, LorentzVector e_prime, float mm, float mm2) {
   /*
   float x_pip_N[NDIMS_PIP_N];
   x_pip_N[0] = W;
@@ -1451,13 +1451,13 @@ void Histogram::Target_Vertex_Write() {
   target_vertex_zx->Write();
 }
 
-void Histogram::Fill_E_Prime(TLorentzVector e_prime) {
+void Histogram::Fill_E_Prime(LorentzVector e_prime) {
   if (e_prime.E() > 0.1) energy_no_cuts->Fill(e_prime.E());
 }
-void Histogram::Fill_E_Prime_fid(TLorentzVector e_prime) {
+void Histogram::Fill_E_Prime_fid(LorentzVector e_prime) {
   if (e_prime.E() > 0.1) energy_fid_cuts->Fill(e_prime.E());
 }
-void Histogram::Fill_E_Prime_channel(TLorentzVector e_prime) {
+void Histogram::Fill_E_Prime_channel(LorentzVector e_prime) {
   if (e_prime.E() > 0.1) energy_channel_cuts->Fill(e_prime.E());
 }
 

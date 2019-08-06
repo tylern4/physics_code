@@ -7,7 +7,6 @@
 #ifndef PF_H
 #define PF_H
 #include <iostream>
-#include "TLorentzVector.h"
 #include "color.hpp"
 #include "constants.hpp"
 #include "physics.hpp"
@@ -33,7 +32,7 @@ class PhotonFlux {
  public:
   PhotonFlux();
   PhotonFlux(double W, double Q2);
-  PhotonFlux(TLorentzVector e_mu, TLorentzVector e_mu_prime);
+  PhotonFlux(LorentzVector e_mu, LorentzVector e_mu_prime);
   ~PhotonFlux();
 
   double GetVirtualPhotonFlux();

@@ -6,39 +6,23 @@
 #include "reaction.hpp"
 
 Reaction::Reaction(std::shared_ptr<Branches> data) : _data(std::move(data)) {
-  _beam = std::make_unique<TLorentzVector>();
   if (getenv("BEAM_E") != NULL) _beam_energy = atof(getenv("BEAM_E"));
-  _beam->SetPxPyPzE(0.0, 0.0, sqrt(_beam_energy * _beam_energy - MASS_E * MASS_E), _beam_energy);
-  _gamma = std::make_unique<TLorentzVector>();
-  _target = std::make_unique<TLorentzVector>(0.0, 0.0, 0.0, MASS_P);
-  _elec = std::make_unique<TLorentzVector>();
-  _prot = std::make_unique<TLorentzVector>();
-  _pip = std::make_unique<TLorentzVector>();
-  _pim = std::make_unique<TLorentzVector>();
-  _neutron = std::make_unique<TLorentzVector>();
-
+  _beam = std::make_unique<LorentzVector>(0.0, 0.0, _beam_energy, MASS_E);
+  _elec = std::make_unique<LorentzVector>(_data->px(0), _data->py(0), _data->pz(0), MASS_E);
   _hasE = true;
-  _elec->SetXYZM(_data->px(0), _data->py(0), _data->pz(0), MASS_E);
-  *_gamma += *_beam - *_elec;
+  _gamma = std::make_unique<LorentzVector>(0, 0, 0, 0);
+  *_gamma = *_beam - *_elec;
   _W = physics::W_calc(*_gamma);
   _Q2 = physics::Q2_calc(*_gamma);
 }
 
 Reaction::Reaction(std::shared_ptr<Branches> data, bool MC) : _data(std::move(data)) {
-  _beam = std::make_unique<TLorentzVector>();
   if (getenv("BEAM_E") != NULL) _beam_energy = atof(getenv("BEAM_E"));
-  _beam->SetPxPyPzE(0.0, 0.0, sqrt(_beam_energy * _beam_energy - MASS_E * MASS_E), _beam_energy);
-  _gamma = std::make_unique<TLorentzVector>();
-  _target = std::make_unique<TLorentzVector>(0.0, 0.0, 0.0, MASS_P);
-  _elec = std::make_unique<TLorentzVector>();
-  _prot = std::make_unique<TLorentzVector>();
-  _pip = std::make_unique<TLorentzVector>();
-  _pim = std::make_unique<TLorentzVector>();
-  _neutron = std::make_unique<TLorentzVector>();
-
+  _beam = std::make_unique<LorentzVector>(0.0, 0.0, _beam_energy, MASS_E);
+  _gamma = std::make_unique<LorentzVector>();
+  _elec = std::make_unique<LorentzVector>(_data->pxpart(0), _data->pypart(0), _data->pzpart(0), MASS_E);
   _hasE = true;
-  _elec->SetXYZM(_data->pxpart(0), _data->pypart(0), _data->pzpart(0), MASS_E);
-  *_gamma += *_beam - *_elec;
+  _gamma = std::make_unique<LorentzVector>(*_beam - *_elec);
   _W = physics::W_calc(*_gamma);
   _Q2 = physics::Q2_calc(*_gamma);
 }
@@ -49,25 +33,25 @@ void Reaction::SetProton(int i) {
   _numProt++;
   _numPos++;
   _hasP = true;
-  _prot->SetXYZM(_data->px(i), _data->py(i), _data->pz(i), MASS_P);
+  _prot = std::make_unique<LorentzVector>(_data->px(i), _data->py(i), _data->pz(i), MASS_P);
 }
 void Reaction::SetPip(int i) {
   _numPip++;
   _numPos++;
   _hasPip = true;
-  _pip->SetXYZM(_data->px(i), _data->py(i), _data->pz(i), MASS_PIP);
+  _pip = std::make_unique<LorentzVector>(_data->px(i), _data->py(i), _data->pz(i), MASS_PIP);
 }
 void Reaction::SetPim(int i) {
   _numPim++;
   _numNeg++;
   _hasPim = true;
-  _pim->SetXYZM(_data->px(i), _data->py(i), _data->pz(i), MASS_PIM);
+  _pim = std::make_unique<LorentzVector>(_data->px(i), _data->py(i), _data->pz(i), MASS_PIM);
 }
 
 void Reaction::SetNeutron(int i) {
   _numNeutral++;
   _hasNeutron = true;
-  _neutron->SetXYZM(_data->px(i), _data->py(i), _data->pz(i), MASS_N);
+  _neutron = std::make_unique<LorentzVector>(_data->px(i), _data->py(i), _data->pz(i), MASS_N);
 }
 
 void Reaction::SetOther(int i) {
@@ -80,27 +64,26 @@ void Reaction::SetOther(int i) {
 }
 
 void Reaction::CalcMissMass() {
-  auto mm = std::make_unique<TLorentzVector>();
+  auto mm = std::make_unique<LorentzVector>();
   *mm += (*_beam - *_elec + *_target);
   if (SinglePip() || NeutronPip()) {
     *mm -= *_pip;
     _MM = mm->M();
     _MM2 = mm->M2();
   } else if (TwoPion()) {
-    *mm -= *_prot;
     *mm -= *_pip;
     *mm -= *_pim;
-    _MM = mm->M();
-    _MM2 = mm->M2();
+    _MM = mm->mag();
+    _MM2 = mm->mag2();
   } else if (ProtonPim()) {
     *mm -= *_prot;
     *mm -= *_pim;
-    _MM = mm->M();
-    _MM2 = mm->M2();
+    _MM = mm->mag();
+    _MM2 = mm->mag2();
   } else if (SingleP()) {
     *mm -= *_prot;
-    _MM = mm->M();
-    _MM2 = mm->M2();
+    _MM = mm->mag();
+    _MM2 = mm->mag2();
   }
 }
 
@@ -135,14 +118,14 @@ void Reaction::boost() {
   // Angles gotten from picture in KPark thesis page 11
   // May be wrong still, need to check
   _boosted = true;
-
-  _com = std::make_unique<TLorentzVector>(*_target);
+  /*
+  _com = std::make_unique<LorentzVector>(*_target);
   *_com += (*_beam - *_elec);
-  _elec_boosted = std::make_unique<TLorentzVector>(*_elec);
-  _gamma_boosted = std::make_unique<TLorentzVector>(*_gamma);
-  _beam_boosted = std::make_unique<TLorentzVector>(*_beam);
-  _pip_boosted = std::make_unique<TLorentzVector>(*_pip);
-  _p_boosted = std::make_unique<TLorentzVector>(*_prot);
+  _elec_boosted = std::make_unique<LorentzVector>(*_elec);
+  _gamma_boosted = std::make_unique<LorentzVector>(*_gamma);
+  _beam_boosted = std::make_unique<LorentzVector>(*_beam);
+  _pip_boosted = std::make_unique<LorentzVector>(*_pip);
+  _p_boosted = std::make_unique<LorentzVector>(*_prot);
 
   //! Varsets
   //! Calculate rotation: taken from Evan's phys-ana-omega on 08-05-13
@@ -176,4 +159,6 @@ void Reaction::boost() {
     _theta_star = NAN;
     _phi_star = NAN;
   }
+
+  */
 }

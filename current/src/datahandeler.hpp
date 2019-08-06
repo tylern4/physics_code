@@ -6,7 +6,6 @@
 #ifndef DATAHANDELER_H_GUARD
 #define DATAHANDELER_H_GUARD
 #include <TFile.h>
-#include <TLorentzVector.h>
 #include <cstring>
 #include <fstream>
 #include <future>

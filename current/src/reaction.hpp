@@ -8,8 +8,6 @@
 
 #include <iomanip>
 #include <iostream>
-#include "TLorentzRotation.h"
-#include "TLorentzVector.h"
 #include "branches.hpp"
 #include "constants.hpp"
 #include "physics.hpp"
@@ -17,20 +15,20 @@
 class Reaction {
  private:
   double _beam_energy = E1D_E0;
-  std::unique_ptr<TLorentzVector> _beam;
-  std::unique_ptr<TLorentzVector> _elec;
-  std::unique_ptr<TLorentzVector> _gamma;
-  std::unique_ptr<TLorentzVector> _target;
-  std::unique_ptr<TLorentzVector> _prot;
-  std::unique_ptr<TLorentzVector> _pip;
-  std::unique_ptr<TLorentzVector> _pim;
-  std::unique_ptr<TLorentzVector> _neutron;
-  std::unique_ptr<TLorentzVector> _com;
-  std::unique_ptr<TLorentzVector> _elec_boosted;
-  std::unique_ptr<TLorentzVector> _gamma_boosted;
-  std::unique_ptr<TLorentzVector> _beam_boosted;
-  std::unique_ptr<TLorentzVector> _pip_boosted;
-  std::unique_ptr<TLorentzVector> _p_boosted;
+  std::unique_ptr<LorentzVector> _beam;
+  std::unique_ptr<LorentzVector> _elec;
+  std::unique_ptr<LorentzVector> _gamma;
+  std::unique_ptr<LorentzVector> _target = std::make_unique<LorentzVector>(0.0, 0.0, 0.0, MASS_P);
+  std::unique_ptr<LorentzVector> _prot;
+  std::unique_ptr<LorentzVector> _pip;
+  std::unique_ptr<LorentzVector> _pim;
+  std::unique_ptr<LorentzVector> _neutron;
+  std::unique_ptr<LorentzVector> _com;
+  std::unique_ptr<LorentzVector> _elec_boosted;
+  std::unique_ptr<LorentzVector> _gamma_boosted;
+  std::unique_ptr<LorentzVector> _beam_boosted;
+  std::unique_ptr<LorentzVector> _pip_boosted;
+  std::unique_ptr<LorentzVector> _p_boosted;
 
   std::shared_ptr<Branches> _data;
 
@@ -124,10 +122,10 @@ class Reaction {
     return mm_cut;
   }
 
-  inline TLorentzVector e_mu() { return *_beam; }
-  inline TLorentzVector e_mu_prime() { return *_elec; }
-  inline TLorentzVector p_prime() { return *_prot; }
-  inline TLorentzVector gamma() { return *_gamma; }
+  inline LorentzVector e_mu() { return *_beam; }
+  inline LorentzVector e_mu_prime() { return *_elec; }
+  inline LorentzVector p_prime() { return *_prot; }
+  inline LorentzVector gamma() { return *_gamma; }
 };
 
 #endif
