@@ -4,6 +4,9 @@
 /*	University Of South Carolina  */
 /**************************************/
 #include "reaction.hpp"
+#include "TLorentzRotation.h"
+#include "TLorentzVector.h"
+#include "TVector3.h"
 
 Reaction::Reaction(std::shared_ptr<Branches> data) : _data(std::move(data)) {
   if (getenv("BEAM_E") != NULL) _beam_energy = atof(getenv("BEAM_E"));
@@ -118,47 +121,47 @@ void Reaction::boost() {
   // Angles gotten from picture in KPark thesis page 11
   // May be wrong still, need to check
   _boosted = true;
-  /*
-  _com = std::make_unique<LorentzVector>(*_target);
-  *_com += (*_beam - *_elec);
-  _elec_boosted = std::make_unique<LorentzVector>(*_elec);
-  _gamma_boosted = std::make_unique<LorentzVector>(*_gamma);
-  _beam_boosted = std::make_unique<LorentzVector>(*_beam);
-  _pip_boosted = std::make_unique<LorentzVector>(*_pip);
-  _p_boosted = std::make_unique<LorentzVector>(*_prot);
+  auto _com_ = *_target + (*_beam - *_elec);
+  auto com = std::make_unique<TLorentzVector>(_com_.X(), _com_.Y(), _com_.Z(), _com_.E());
+  auto elec_boosted = std::make_unique<TLorentzVector>(_elec->X(), _elec->Y(), _elec->Z(), _elec->E());
+  auto gamma_boosted = std::make_unique<TLorentzVector>(_gamma->X(), _gamma->Y(), _gamma->Z(), _gamma->E());
+  auto beam_boosted = std::make_unique<TLorentzVector>(_beam->X(), _beam->Y(), _beam->Z(), _beam->E());
+  auto pip_boosted = std::make_unique<TLorentzVector>(_pip->X(), _pip->Y(), _pip->Z(), _pip->E());
+  auto p_boosted = std::make_unique<TLorentzVector>(_prot->X(), _prot->Y(), _prot->Z(), _prot->E());
 
   //! Varsets
   //! Calculate rotation: taken from Evan's phys-ana-omega on 08-05-13
   // Copied and modified from Arjun's code
-  TVector3 uz = _gamma->Vect().Unit();
-  TVector3 ux = (_beam->Vect().Cross(_elec->Vect())).Unit();
+  TVector3 uz = gamma_boosted->Vect().Unit();
+  TVector3 ux = (beam_boosted->Vect().Cross(elec_boosted->Vect())).Unit();
   ux.Rotate(-PI / 2, uz);
   TRotation r3;  // = new TRotation();
   r3.SetZAxis(uz, ux).Invert();
   //! _w and _q are in z-direction
-  TVector3 boost(-1 * _com->BoostVector());
+  TVector3 boost(-1 * com->BoostVector());
   TLorentzRotation r4(r3);  //*_boost);
   r4 *= boost;              //*_3rot;
 
-  _gamma_boosted->Transform(r4);
-  _elec_boosted->Transform(r4);
-  _beam_boosted->Transform(r4);
-  _pip_boosted->Transform(r4);
-  _p_boosted->Transform(r4);
+  gamma_boosted->Transform(r4);
+  elec_boosted->Transform(r4);
+  beam_boosted->Transform(r4);
+  pip_boosted->Transform(r4);
+  p_boosted->Transform(r4);
 
   if ((this->SinglePip() || this->NeutronPip())) {
-    _theta_e = _elec_boosted->Theta() / D2R;
-    _theta_star = _pip_boosted->Theta() / D2R;
-    _phi_star = physics::phi_boosted(_pip_boosted) / D2R;
+    _theta_e = elec_boosted->Theta() / D2R;
+    _theta_star = pip_boosted->Theta() / D2R;
+    auto _temp =
+        std::make_unique<LorentzVector>(pip_boosted->X(), pip_boosted->Y(), pip_boosted->Z(), pip_boosted->M());
+    _phi_star = physics::phi_boosted(_temp) / D2R;
   } else if (this->SingleP()) {
-    _theta_e = _elec_boosted->Theta() / D2R;
-    _theta_star = _p_boosted->Theta() / D2R;
-    _phi_star = physics::phi_boosted(_p_boosted) / D2R;
+    _theta_e = elec_boosted->Theta() / D2R;
+    _theta_star = p_boosted->Theta() / D2R;
+    auto _temp = std::make_unique<LorentzVector>(p_boosted->X(), p_boosted->Y(), p_boosted->Z(), p_boosted->M());
+    _phi_star = physics::phi_boosted(_temp) / D2R;
   } else {
-    _theta_e = _elec_boosted->Theta();
+    _theta_e = elec_boosted->Theta();
     _theta_star = NAN;
     _phi_star = NAN;
   }
-
-  */
 }

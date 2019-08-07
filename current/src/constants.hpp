@@ -7,6 +7,8 @@
 #ifndef CONSTANTS_H_GUARD
 #define CONSTANTS_H_GUARD
 #include <unordered_map>
+#include "Math/Rotation3D.h"
+#include "Math/Vector3D.h"
 #include "Math/Vector4D.h"
 #include "TMath.h"
 
@@ -15,6 +17,8 @@
 #endif
 
 typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzM4D<double> > LorentzVector;
+typedef ROOT::Math::Rotation3D LorentzRotation;
+typedef ROOT::Math::XYZVectorD Vector3;
 
 static const int MAX_PARTS = 100;
 static const int N_SIGMA = 3;

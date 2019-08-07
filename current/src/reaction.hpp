@@ -23,12 +23,6 @@ class Reaction {
   std::unique_ptr<LorentzVector> _pip;
   std::unique_ptr<LorentzVector> _pim;
   std::unique_ptr<LorentzVector> _neutron;
-  std::unique_ptr<LorentzVector> _com;
-  std::unique_ptr<LorentzVector> _elec_boosted;
-  std::unique_ptr<LorentzVector> _gamma_boosted;
-  std::unique_ptr<LorentzVector> _beam_boosted;
-  std::unique_ptr<LorentzVector> _pip_boosted;
-  std::unique_ptr<LorentzVector> _p_boosted;
 
   std::shared_ptr<Branches> _data;
 
