@@ -5,82 +5,67 @@
 
 #ifndef GOLDEN_RUN_H
 #define GOLDEN_RUN_H
+#include "branches.hpp"
 #include "main.h"
 
 // Finds the files with golden runs
-
-void golden_run(char *fin, char *fout) {
-  ifstream input(fin);
+#define COUNTER 10000
+void golden_run(std::vector<std::string> fins, std::string fout) {
+  // ROOT::EnableImplicitMT(4);
   ofstream golden_run(fout);
   golden_run << "run_num,file_num,num_of_events,total_q" << endl;
-  string file_num, run_num, line;
-  int n_evnt, num_of_events = 0;
+  std::string file_num, run_num, line;
+  int n_evnt = 0;
   double total_q = 0.0, curr_q = 0.0, prev_q = 0.0, delta_q = 0.0;
   bool electron_cuts;
-  TVector3 e_mu_prime_3, pi_3vec;
-  TLorentzVector e_mu_prime, pi_4vec;
-  TLorentzVector e_mu(0.0, 0.0, sqrt(Square(E1D_E0) - Square(MASS_E)), E1D_E0);
-  TLorentzVector ZERO(0.0, 0.0, 0.0, 0.0);
+  LorentzVector e_mu(0.0, 0.0, E1D_E0, MASS_E);
+  LorentzVector ZERO(0.0, 0.0, 0.0, 0.0);
   int line_num = 0;
   const char *progress = "-\\|/";
 
-  while (input.is_open() && input.good()) {
-    getline(input, line);
-    if (!line.empty()) {
-      run_num = line.substr(line.find("/h10") + 6, 5);
-      // cout << run_num << endl;
-      file_num = line.substr(line.find("/h10") + 12, 2);
-      // cout << file_num << endl;
-      TChain chain("h10");
-      chain.AddFile(line.c_str());
-      getBranches(&chain);
-      n_evnt = (int)chain.GetEntries();
-      num_of_events = 0;
-      total_q = 0.0;
+  for (auto &fin : fins) {
+    line_num++;
+    run_num = fin.substr(fin.find("/h10") + 6, 5);
+    file_num = fin.substr(fin.find("/h10") + 12, 2);
+    auto chain = std::make_shared<TChain>("h10");
+    chain->Add(fin.c_str());
+    auto data = std::make_shared<Branches>(chain);
 
-      for (int current_event = 0; current_event < n_evnt; current_event++) {
-        cout << BLUE << "\t[ " << progress[(current_event / 100) % 4] << " ]\r" << DEF << flush;
-        chain.GetEntry(current_event);
-        // reset electron cut bool
-        electron_cuts = true;
-        // electron cuts
-        electron_cuts &= (ec[0] > 0);                                  // ``` ``` ``` ec
-        electron_cuts &= ((int)id[0] == ELECTRON || (int)id[0] == 0);  // First particle is electron
-        electron_cuts &= ((int)gpart > 0);                             // Number of good particles is greater than 0
-        electron_cuts &= ((int)stat[0] > 0);                           // First Particle hit stat
-        electron_cuts &= ((int)q[0] == -1);                            // First particle is negative Q
-        electron_cuts &= ((int)sc[0] > 0);                             // First Particle hit sc
-        electron_cuts &= ((int)dc[0] > 0);                             // ``` ``` ``` dc
-        electron_cuts &= ((int)dc_stat[dc[0] - 1] > 0);
-        electron_cuts &= ((int)cc[0] > 0);
+    size_t num_of_events = chain->GetEntries();
+    total_q = 0.0;
 
-        if (electron_cuts) {
-          e_mu_prime_3.SetXYZ(p[0] * cx[0], p[0] * cy[0], p[0] * cz[0]);
-          e_mu_prime.SetVectM(e_mu_prime_3, MASS_E);
-          curr_q = q_l;
-          if (curr_q > 0.0) {
-            if (curr_q > prev_q) {
-              delta_q = curr_q - prev_q;
-              total_q += delta_q;
-            }
-            prev_q = curr_q;
+    for (int current_event = 0; current_event < num_of_events; current_event++) {
+      chain->GetEntry(current_event);
+      if (current_event % COUNTER == 0)
+        std::cout << BLUE << "\t[ " << progress[(current_event / COUNTER) % 4] << " ] "
+                  << 100.0 * line_num / fins.size() << "\r" << DEF << std::flush;
+      electron_cuts = true;
+      // electron cuts
+      electron_cuts &= (data->ec(0) > 0);                              // ``` ``` ``` ec
+      electron_cuts &= (data->id(0) == ELECTRON || data->id(0) == 0);  // First particle is electron
+      electron_cuts &= (data->gpart() > 0);                            // Number of good particles is greater than 0
+      electron_cuts &= (data->stat(0) > 0);                            // First Particle hit stat
+      electron_cuts &= (data->q(0) == -1);                             // First particle is negative Q
+      electron_cuts &= (data->sc(0) > 0);                              // First Particle hit sc
+      electron_cuts &= (data->dc(0) > 0);                              // ``` ``` ``` dc
+      electron_cuts &= (data->dc_stat(0) > 0);
+      electron_cuts &= (data->cc(0) > 0);
+
+      if (electron_cuts) {
+        n_evnt++;
+        curr_q = data->q_l();
+        if (curr_q > 0.0) {
+          if (curr_q > prev_q) {
+            delta_q = curr_q - prev_q;
+            total_q += delta_q;
           }
-          for (int part_num = 1; part_num < gpart; part_num++) {
-            if (id[part_num] == PIP) {
-              pi_3vec.SetXYZ(p[part_num] * cx[part_num], p[part_num] * cy[part_num], p[part_num] * cz[part_num]);
-              pi_4vec.SetVectM(pi_3vec, MASS_PIP);
-            }
-            if (e_mu_prime != ZERO && pi_4vec != ZERO) num_of_events++;
-          }
+          prev_q = curr_q;
         }
       }
-
-      if (num_of_events != 0 && total_q != 0)
-        golden_run << run_num << "," << file_num << "," << num_of_events << "," << total_q << endl;
-      chain.Clear();
     }
+    if (n_evnt != 0 && total_q != 0)
+      golden_run << run_num << "," << file_num << "," << num_of_events << "," << total_q << endl;
   }
-  input.close();
   golden_run.close();
 }
 #endif

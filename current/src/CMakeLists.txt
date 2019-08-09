@@ -27,6 +27,7 @@ add_library(physics STATIC
   delta_t.cpp
   reaction.cpp
   yeilds.cpp
+  makeHeader.cpp
   # fid_cuts.f
   )
 

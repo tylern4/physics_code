@@ -23,6 +23,7 @@
 #include "color.hpp"
 #include "constants.hpp"
 #include "fits.hpp"
+#include "makeHeader.hpp"
 #include "missing_mass.hpp"
 
 #define W_BINS 20
@@ -387,9 +388,9 @@ class Histogram {
   void Beam_Position_Write();
   void Fill_Target_Vertex(float vertex_x, float vertex_y, float vertex_z);
   void Target_Vertex_Write();
-  void Fill_E_Prime(LorentzVector e_prime);
-  void Fill_E_Prime_fid(LorentzVector e_prime);
-  void Fill_E_Prime_channel(LorentzVector e_prime);
+  void Fill_E_Prime(const LorentzVector& e_prime);
+  void Fill_E_Prime_fid(const LorentzVector& e_prime);
+  void Fill_E_Prime_channel(const LorentzVector& e_prime);
   void E_Prime_Write();
 };
 

@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
   std::string outfilename;
   if (argc >= 2) {
     outfilename = argv[1];
-    for (int i = 2; i < argc; i++) infilenames[i % NUM_THREADS].push_back(argv[i]);
+    for (size_t i = 2; i < argc; i++) infilenames[i % NUM_THREADS].push_back(argv[i]);
   } else {
     return 1;
   }
@@ -42,17 +42,19 @@ int main(int argc, char **argv) {
   std::cout.imbue(std::locale(""));
   size_t events = 0;
 
-  std::future<size_t> t[NUM_THREADS];
+  std::future<size_t> threads[NUM_THREADS];
 
   for (size_t i = 0; i < NUM_THREADS; i++) {
-    t[i] = std::async(run_file, infilenames.at(i), hist, i);
+    threads[i] = std::async(run_file, infilenames.at(i), hist, i);
   }
+
   for (size_t i = 0; i < NUM_THREADS; i++) {
-    events += t[i].get();
+    events += threads[i].get();
   }
 
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
   std::cout.imbue(std::locale(""));
+  ROOT::EnableImplicitMT(NUM_THREADS);
   hist->Write(outfilename);
   std::cout << RED << elapsed_full.count() << " sec" << DEF << std::endl;
   std::cout << BOLDYELLOW << events / elapsed_full.count() << " Hz" << DEF << std::endl;

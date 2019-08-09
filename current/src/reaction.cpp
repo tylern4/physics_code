@@ -120,14 +120,21 @@ int Reaction::Type() {
 void Reaction::boost() {
   // Angles gotten from picture in KPark thesis page 11
   // May be wrong still, need to check
+  if (_boosted) return;
   _boosted = true;
+  if (!(this->SinglePip() || this->NeutronPip())) {
+    _theta_e = NAN;
+    _theta_star = NAN;
+    _phi_star = NAN;
+    return;
+  }
+
   auto _com_ = *_target + (*_beam - *_elec);
   auto com = std::make_unique<TLorentzVector>(_com_.X(), _com_.Y(), _com_.Z(), _com_.E());
   auto elec_boosted = std::make_unique<TLorentzVector>(_elec->X(), _elec->Y(), _elec->Z(), _elec->E());
   auto gamma_boosted = std::make_unique<TLorentzVector>(_gamma->X(), _gamma->Y(), _gamma->Z(), _gamma->E());
   auto beam_boosted = std::make_unique<TLorentzVector>(_beam->X(), _beam->Y(), _beam->Z(), _beam->E());
   auto pip_boosted = std::make_unique<TLorentzVector>(_pip->X(), _pip->Y(), _pip->Z(), _pip->E());
-  auto p_boosted = std::make_unique<TLorentzVector>(_prot->X(), _prot->Y(), _prot->Z(), _prot->E());
 
   //! Varsets
   //! Calculate rotation: taken from Evan's phys-ana-omega on 08-05-13
@@ -146,22 +153,13 @@ void Reaction::boost() {
   elec_boosted->Transform(r4);
   beam_boosted->Transform(r4);
   pip_boosted->Transform(r4);
-  p_boosted->Transform(r4);
 
-  if ((this->SinglePip() || this->NeutronPip())) {
-    _theta_e = elec_boosted->Theta() / D2R;
-    _theta_star = pip_boosted->Theta() / D2R;
-    auto _temp =
-        std::make_unique<LorentzVector>(pip_boosted->X(), pip_boosted->Y(), pip_boosted->Z(), pip_boosted->M());
-    _phi_star = physics::phi_boosted(_temp) / D2R;
-  } else if (this->SingleP()) {
+  /*
+  else if (this->SingleP()) {
     _theta_e = elec_boosted->Theta() / D2R;
     _theta_star = p_boosted->Theta() / D2R;
     auto _temp = std::make_unique<LorentzVector>(p_boosted->X(), p_boosted->Y(), p_boosted->Z(), p_boosted->M());
     _phi_star = physics::phi_boosted(_temp) / D2R;
-  } else {
-    _theta_e = elec_boosted->Theta();
-    _theta_star = NAN;
-    _phi_star = NAN;
   }
+  */
 }

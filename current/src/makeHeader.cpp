@@ -71,13 +71,11 @@ void Header::WriteFunction() {
     header_file << ";\n}\n\n";
     Header::NewFunction();
   } else {
-#ifdef __DEBUG__
     std::cerr << "Cannot Write to header:" << std::endl
               << "r_type = " << !r_type.empty() << std::endl
               << "f_name = " << !f_name.empty() << std::endl
               << "f_input = " << !f_input.empty() << std::endl
               << "func = " << !func.empty() << std::endl;
-#endif
   }
 }
 

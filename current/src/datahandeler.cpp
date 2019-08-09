@@ -48,7 +48,7 @@ int DataHandeler::Run() {
 int DataHandeler::Run(int current_event) {
   _chain->GetEntry(current_event);
   auto check = std::make_unique<Cuts>(_data);
-  if (!check->isElecctron()) return 0;
+  if (!check->isElecctron()) return 1;
 
   _hists->EC_inout(_data->ec_ei(0), _data->ec_eo(0));
   _hists->EC_fill(_data->etot(0), _data->p(0));
@@ -83,8 +83,8 @@ int DataHandeler::Run(int current_event) {
 
     _hists->Fill_electron_fid(theta, phi, sector);
 
-    // auto photon_flux = std::make_unique<PhotonFlux>(event->e_mu(), event->e_mu_prime());
-    //_hists->Photon_flux_Fill(photon_flux->GetVirtualPhotonFlux());
+    auto photon_flux = std::make_unique<PhotonFlux>(event->e_mu(), event->e_mu_prime());
+    _hists->Photon_flux_Fill(photon_flux->GetVirtualPhotonFlux());
 
     _hists->WvsQ2_Fill(event->W(), event->Q2(), _data->ec_sect(0));
 

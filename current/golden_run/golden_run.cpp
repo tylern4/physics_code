@@ -4,27 +4,26 @@
 /************************************************************************/
 
 // Only My Includes. All others in main.h
-#include "main.h"
-#include "../src/constants.hpp"
-#include "../src/branches.hpp"
-#include "TStopwatch.h"
 #include "golden_run.hpp"
-
-using namespace std;
+#include "TStopwatch.h"
+#include "branches.hpp"
+#include "constants.hpp"
+#include "main.h"
 
 int main(int argc, char **argv) {
   TStopwatch *Watch = new TStopwatch;
   Watch->Start();
   gStyle->SetOptFit(1111);
 
-  if (argc == 3) {
-    char *infilename = argv[1];
-    char *outfilename = argv[2];
-    golden_run(infilename, outfilename);
+  if (argc >= 3) {
+    std::string outfilename = argv[1];
+    std::vector<std::string> infilenames;
+    for (int i = 2; i < argc; i++) infilenames.push_back(argv[i]);
+    golden_run(infilenames, outfilename);
   }
 
   Watch->Stop();
-  cout << RED << Watch->RealTime() << "sec" << DEF << endl;
+  std::cout << RED << Watch->RealTime() << "sec" << DEF << std::endl;
 
   return 0;
 }

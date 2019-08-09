@@ -41,7 +41,9 @@ set(PROGRAMS cpp/e1d.cpp
       monteCarlo/e1d_mc.cpp 
       skim/e1d_skim.cpp 
       csv_maker/csv_maker.cpp 
-      ntuple_maker/ntuple_maker.cpp)
+      ntuple_maker/ntuple_maker.cpp
+      golden_run/golden_run.cpp
+      )
 foreach(prog ${PROGRAMS} )
     get_filename_component(progname ${prog} NAME)
     string( REPLACE ".cpp" "" progname ${progname} )

@@ -129,30 +129,19 @@ cdef extern from "branches.hpp":
       vector[float] pzpart()
       vector[float] qpart()
 
-cdef char* str_to_char(str name):
-  """Convert python string to char*"""
-  cdef bytes name_bytes = name.encode()
-  cdef char* c_name = name_bytes
-  return c_name
 
-
-cdef class h10:
+cdef class data:
   cdef:
     int entry
     shared_ptr[TChain] c_chain
     shared_ptr[Branches] c_branches
-  def __cinit__(h10 self, str branch_name, str file_name):
+  def __cinit__(data self, str file_name):
     self.entry = 0
-    self.c_chain.reset(new TChain(str_to_char(branch_name)))
-    deref(self.c_chain).Add(str_to_char(file_name))
+    self.c_chain.reset(new TChain("h10"))
+    deref(self.c_chain).Add(file_name.encode())
     self.c_branches.reset(new Branches(self.c_chain))
-  def __cinit__(h10 self, str branch_name, str file_name, bool MC):
-    self.entry = 0
-    self.c_chain.reset(new TChain(str_to_char(branch_name)))
-    deref(self.c_chain).Add(str_to_char(file_name))
-    self.c_branches.reset(new Branches(self.c_chain, MC))
   def add(self, file_name):
-    deref(self.c_chain).Add(str_to_char(file_name))
+    deref(self.c_chain).Add(file_name.encode())
   @property
   def num_entries(self):
     return deref(self.c_chain).GetEntries()
@@ -178,7 +167,7 @@ cdef class h10:
     return deref(self.c_branches).gpart()
   @property
   def gpart(self):
-    return np.array(deref(self.c_branches).gpart())
+    return deref(self.c_branches).gpart()
   @property
   def p(self):
     return np.array(deref(self.c_branches).p())
