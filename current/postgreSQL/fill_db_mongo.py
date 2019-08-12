@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 from __future__ import print_function, unicode_literals, absolute_import
 # Loads ROOT for opening files
+from pymongo import MongoClient
+import sys
+import time
+import h10
 import ROOT
 from ROOT import gROOT, gBenchmark
 
 from halo import Halo
-spinner = Halo({'text': 'Startup', 'spinner': 'dots'})
-spinner.start()
+#{'text': 'Startup', 'spinner': 'dots'}
 
-import sys
-import cppyy
-cppyy.load_reflection_info("H10.so")
 
-from pymongo import MongoClient
-client = MongoClient('mongodb://172.21.139.37:27017')
+client = MongoClient('mongodb://172.21.139.204:27017')
+print(client.list_database_names())
 db = client['e1d']
 events = db['events']
 
@@ -24,38 +24,44 @@ if len(sys.argv) < 2:
 filename = sys.argv[1]
 evnt_id_base = filename.replace("/", ".").split(".")[-2]
 
-gROOT.SetBatch(True)
-chain = ROOT.TChain('h10')
-h10 = cppyy.gbl.H10()
 
+spinner = Halo()
 spinner.succeed('Starting DataHandeler')
 spinner.start('Starting DataHandeler')
 
-num_files = chain.Add(filename)
-h10_data = h10.dataHandeler(chain)
-
-num = len(h10_data.W_vec)
-
 spinner.start('Filling mongodb')
-for e in xrange(0, num):
-    id_list = []
-    for ids in h10_data.particle_list[e]:
-        id_list.append(ids)
 
-    eid = evnt_id_base + "_" + str(e)
-    pl = ' '.join(map(str, id_list))
-    pls = ' '.join(map(str, sorted(id_list)))
-    n = len(id_list)
+data = h10.data(filename)
+data.num_entries
+start = time.time()
+e = 0
+for d in data:
+    if d.gpart == 0:
+        continue
+    e += 1
+    d.p[0]
 
-    event = {"evnt_id": eid,
-             "particle_list": pl,
-             "particle_list_sorted": pls,
-             "num_particles": n,
-             "w": h10_data.W_vec[e],
-             "q2": h10_data.Q2_vec[e],
-             "mm": 0}
-    events.insert_one(event)
+    #id_list = []
+    # for ids in h10.particle_list[e]:
+    #    id_list.append(ids)
 
+    eid = evnt_id_base + str(e)
+    #pl = ' '.join(map(str, id_list))
+    #pls = ' '.join(map(str, sorted(id_list)))
+    #n = len(id_list)
 
-print(evnt_id_base)
+    event = {"evnt_id": eid}
+    #         "particle_list": pl,
+    #         "particle_list_sorted": pls,
+    #         "num_particles": n,
+    #         "w": 0,  # h10.W_vec[e],
+    #         "q2": 0,  # h10.Q2_vec[e],
+    #         "mm": 0}
+    db.events.insert_one(event)
+
+end = time.time()
+
+print(f'Time {end - start}s => {data.num_entries/(end-start)} Hz')
+print(data.num_entries)
+
 spinner.stop()
