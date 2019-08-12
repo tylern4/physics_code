@@ -6,7 +6,11 @@
 
 DataHandeler::DataHandeler() = default;
 DataHandeler::DataHandeler(const std::vector<std::string>& fin, const std::shared_ptr<Histogram>& hists)
-    : _input_files(fin), _hists(hists) {}
+    : _input_files(fin), _hists(hists) {
+  _chain = new TChain("h10");
+  for (auto& f : _input_files) _chain->Add(f.c_str());
+  _data = std::make_shared<Branches>(_chain);
+}
 DataHandeler::~DataHandeler() = default;
 
 void DataHandeler::loadbar(long x, long n) {
@@ -16,39 +20,30 @@ void DataHandeler::loadbar(long x, long n) {
   double ratio = x / (double)n;
   int c = ratio * w;
 
-  std::cout << BLUE << " [";
-  for (int x = 0; x < c; x++) std::cout << GREEN << "=" << DEF;
-  std::cout << GREEN << ">" << DEF;
-  for (int x = c; x < w; x++) std::cout << " ";
-  std::cout << BLUE << (int)(ratio * 100) << "%]\r" << DEF << std::flush;
+  std::cerr << BLUE << " [";
+  for (int x = 0; x < c; x++) std::cerr << GREEN << "=" << DEF;
+  std::cerr << GREEN << ">" << DEF;
+  for (int x = c; x < w; x++) std::cerr << " ";
+  std::cerr << BLUE << (int)(ratio * 100) << "%]\r" << DEF << std::flush;
 }
 
 void DataHandeler::setLoadBar(bool load) { _loadbar = load; }
 
 int DataHandeler::Run() {
   if (_hists == nullptr) return 0;
-  size_t total = 0;
-  int current_event = 0;
-  int _ci = 0;
-  int num_of_events = 0;
-
-  _chain = new TChain("h10");
-  for (auto& f : _input_files) _chain->Add(f.c_str());
-  _data = std::make_shared<Branches>(_chain);
-  num_of_events = (int)_chain->GetEntries();
-
-  for (current_event = 0; current_event < num_of_events; current_event++) {
+  size_t num_of_events = (size_t)_chain->GetEntries();
+  for (size_t current_event = 0; current_event < num_of_events; current_event++) {
     if (_loadbar && current_event % 10000 == 0) DataHandeler::loadbar(current_event, num_of_events);
-    total += DataHandeler::Run(current_event);
+    DataHandeler::RunEvent(current_event);
   }
   _chain->Reset();
-  return total;
+  return num_of_events;
 }
 
-int DataHandeler::Run(int current_event) {
+const void DataHandeler::RunEvent(size_t current_event) {
   _chain->GetEntry(current_event);
   auto check = std::make_unique<Cuts>(_data);
-  if (!check->isElecctron()) return 0;
+  if (!check->isElecctron()) return;
 
   _hists->EC_inout(_data->ec_ei(0), _data->ec_eo(0));
   _hists->EC_fill(_data->etot(0), _data->p(0));
@@ -68,7 +63,7 @@ int DataHandeler::Run(int current_event) {
     CUTS = check->isElecctron();
   }
 
-  if (!CUTS) return 0;
+  if (!CUTS) return;
   _hists->Fill_Beam_Position(_data->dc_vx(0), _data->dc_vy(0), _data->dc_vz(0));
 
   auto photon_flux = std::make_unique<PhotonFlux>(event->e_mu(), event->e_mu_prime());
@@ -86,6 +81,7 @@ int DataHandeler::Run(int current_event) {
 
   _hists->Fill_electron_fid(theta, phi, sector);
 
+#pragma omp parallel for private(part_num)
   for (int part_num = 1; part_num < _data->gpart(); part_num++) {
     theta = physics::theta_calc(_data->cz(part_num));
     phi = physics::phi_calc(_data->cx(part_num), _data->cy(part_num));
@@ -152,35 +148,30 @@ int DataHandeler::Run(int current_event) {
   }
   if (event->TwoPion()) _hists->Fill_Missing_Mass_twoPi(event->MM(), event->MM2());
 
-  return 1;
+  return;
 }
 
 mcHandeler::mcHandeler(const std::vector<std::string>& fin, const std::shared_ptr<mcHistogram>& hists) {
   _input_files = fin;
   _hists = hists;
   _mc_hists = hists;
-}
-
-int mcHandeler::Run() {
-  size_t total = 0;
-  int _ci = 0;
-
   _chain = new TChain("h10");
   for (auto& f : _input_files) _chain->Add(f.c_str());
   _data = std::make_shared<Branches>(_chain, true);
-  int num_of_events = (int)_chain->GetEntries();
-  int current_event = 0;
-
-  for (current_event = 0; current_event < num_of_events; current_event++) {
-    if (_loadbar && current_event % 10000 == 0) DataHandeler::loadbar(current_event, num_of_events);
-    total += DataHandeler::Run(current_event);
-    total += mcHandeler::Run(current_event);
-  }
-  _chain->Reset();
-  return total;
 }
 
-int mcHandeler::Run(int current_event) {
+int mcHandeler::Run() {
+  size_t num_of_events = (size_t)_chain->GetEntries();
+  for (size_t current_event = 0; current_event < num_of_events; current_event++) {
+    if (_loadbar && current_event % 10000 == 0) DataHandeler::loadbar(current_event, num_of_events);
+    DataHandeler::RunEvent(current_event);
+    mcHandeler::RunEvent(current_event);
+  }
+  _chain->Reset();
+  return num_of_events;
+}
+
+const void mcHandeler::RunEvent(int current_event) {
   _chain->GetEntry(current_event);
   auto check = std::make_unique<Cuts>(_data);
 
@@ -193,5 +184,5 @@ int mcHandeler::Run(int current_event) {
   }
   if (mc_event->SinglePip()) _mc_hists->Fill_Missing_Mass(mc_event->MM(), mc_event->MM2());
 
-  return 1;
+  return;
 }

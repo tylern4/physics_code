@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
   }
 
   for (size_t i = 0; i < NUM_THREADS; i++) {
-    events = threads[i].get();
+    events += threads[i].get();
   }
 
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);

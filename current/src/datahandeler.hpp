@@ -9,6 +9,7 @@
 #include <cstring>
 #include <fstream>
 #include <future>
+#include <iostream>
 #include <string>
 #include <thread>
 #include <vector>
@@ -30,7 +31,7 @@ class DataHandeler {
   std::vector<std::string> _input_files;
   std::shared_ptr<Histogram> _hists;
   std::shared_ptr<Branches> _data;
-  bool CUTS = true;
+  bool CUTS;
 
  public:
   DataHandeler();
@@ -39,7 +40,8 @@ class DataHandeler {
   void setLoadBar(bool load);
 
   int Run();
-  int Run(int current_event);
+  const void RunEvent(size_t current_event);
+
   void loadbar(long x, long n);
 };
 
@@ -51,7 +53,7 @@ class mcHandeler : public DataHandeler {
   mcHandeler() : DataHandeler() {}
   mcHandeler(const std::vector<std::string>& fin, const std::shared_ptr<mcHistogram>& hists);
   int Run();
-  int Run(int current_event);
+  const void RunEvent(int current_event);
 };
 
 #endif
