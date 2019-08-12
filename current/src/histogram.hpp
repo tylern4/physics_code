@@ -48,7 +48,7 @@ using TH1D_ptr = std::shared_ptr<TH1D>;
 class Histogram {
  protected:
   std::shared_ptr<TFile> RootOutputFile;
-  TCanvas* def;
+  std::shared_ptr<TCanvas> def;
 
   float p_min = 0.0;
   float p_max = 5.0;
@@ -84,7 +84,7 @@ class Histogram {
 
   TH1D_ptr Q2_hist = std::make_shared<TH1D>("Q2", "Q^{2}", BINS, q2_min, q2_max);
   TH1D_ptr E_prime_hist = std::make_shared<TH1D>("E_prime", "Scattered Electron Energy", BINS, 0.0, 5.0);
-  TH1D_ptr photon_flux_hist = std::make_shared<TH1D>("photon_flux", "Photon Flux", BINS, -0.1, 0.1);
+  TH1D_ptr photon_flux_hist = std::make_shared<TH1D>("photon_flux", "Photon Flux", 100, -0.0001, 0.001);
   TH2D_ptr Q2_vs_xb = std::make_shared<TH2D>("Q2_vs_xb", "Q^{2} vs x_{b}", BINS, 0.1, 0.6, BINS, 1.0, 3.5);
   TH2D_ptr WvsQ2_proton =
       std::make_shared<TH2D>("WvsQ2_proton", "W vs Q^{2} P", BINS, w_min, w_max, BINS, q2_min, q2_max);

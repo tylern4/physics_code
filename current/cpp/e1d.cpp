@@ -49,14 +49,14 @@ int main(int argc, char **argv) {
   }
 
   for (size_t i = 0; i < NUM_THREADS; i++) {
-    events += threads[i].get();
+    events = threads[i].get();
   }
 
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
   std::cout.imbue(std::locale(""));
   ROOT::EnableImplicitMT(NUM_THREADS);
   hist->Write(outfilename);
-  std::cout << RED << elapsed_full.count() << " sec" << DEF << std::endl;
+  std::cout << RED << events << " events\t" << elapsed_full.count() << " sec" << DEF << std::endl;
   std::cout << BOLDYELLOW << events / elapsed_full.count() << " Hz" << DEF << std::endl;
   return 0;
 }

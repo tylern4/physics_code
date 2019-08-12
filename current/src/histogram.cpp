@@ -6,7 +6,7 @@
 #include "histogram.hpp"
 
 Histogram::Histogram() {
-  def = new TCanvas("def");
+  def = std::make_shared<TCanvas>();
   makeHists_WvsQ2();
   makeHists_deltat();
   makeHists_EC();
@@ -19,7 +19,7 @@ Histogram::Histogram() {
 
 Histogram::Histogram(const std::string &output_file) {
   RootOutputFile = std::make_shared<TFile>(output_file.c_str(), "RECREATE");
-  def = new TCanvas("def");
+  def = std::make_shared<TCanvas>();
   makeHists_WvsQ2();
   makeHists_deltat();
   makeHists_EC();
