@@ -36,7 +36,8 @@ include_directories("src")
 add_subdirectory("src")
 
 
-set(PROGRAMS cpp/e1d.cpp 
+set(PROGRAMS 
+      cpp/e1d.cpp 
       511-lab/511_lab.cpp 
       monteCarlo/e1d_mc.cpp 
       skim/e1d_skim.cpp 

@@ -16,7 +16,7 @@
 #define NUM_THREADS 4
 #endif
 
-typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzM4D<double> > LorentzVector;
+typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzM4D<double>> LorentzVector;
 typedef ROOT::Math::Rotation3D LorentzRotation;
 typedef ROOT::Math::XYZVectorD Vector3;
 
@@ -70,11 +70,19 @@ static const double MIN_P_CUT = 0.005000;
 // const double min_phi[6] = {0, 60, 120, -180, -120, -60};
 // const double max_phi[6] = {60, 120, 180, -120, -60, 0};
 
+static std::unordered_map<int, std::pair<float, float>> phi_map = {
+    {1, std::make_pair(60, 120)},   {2, std::make_pair(0, 60)},      {3, std::make_pair(-60, 0)},
+    {4, std::make_pair(-120, -60)}, {5, std::make_pair(-180, -120)}, {6, std::make_pair(120, 180)}};
+
 const double min_phi[6] = {60, 0, -60, -120, -180, 120};
 const double max_phi[6] = {120, 60, 0, -60, -120, 180};
 
 static std::unordered_map<int, double> mass_map = {
     {PROTON, MASS_P}, {-PROTON, MASS_P}, {NEUTRON, MASS_N}, {PIP, MASS_PIP},    {PIM, MASS_PIM},    {PI0, MASS_PI0},
     {KP, MASS_KP},    {KM, MASS_KM},     {PHOTON, MASS_G},  {ELECTRON, MASS_E}, {-ELECTRON, MASS_E}};
+
+static std::unordered_map<int, std::string> particle_name = {
+    {PROTON, "P"}, {-PROTON, "-P"}, {NEUTRON, "N"}, {PIP, "PIP"},    {PIM, "PIM"},    {PI0, "PI0"},
+    {KP, "KP"},    {KM, "KM"},      {PHOTON, "G"},  {ELECTRON, "E"}, {-ELECTRON, "E"}};
 
 #endif

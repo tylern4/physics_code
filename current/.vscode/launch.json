@@ -5,16 +5,28 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "debug e1d",
+            "name": "(lldb) Launch",
+            "type": "cppdbg",
+            "request": "launch",
             "program": "${workspaceFolder}/build/e1d",
             "args": [
                 "v2_all.root",
-                "~/Data/e1d/h10_r2300*",
+                "/Users/tylern/Data/e1d/data/h10_r23000_00.root",
+                "/Users/tylern/Data/e1d/data/h10_r23000_01.root",
+                "/Users/tylern/Data/e1d/data/h10_r23000_02.root",
+                "/Users/tylern/Data/e1d/data/h10_r23000_03.root",
+                "/Users/tylern/Data/e1d/data/h10_r23000_04.root",
+                "/Users/tylern/Data/e1d/data/h10_r23000_05.root",
+                "/Users/tylern/Data/e1d/data/h10_r23000_06.root",
+                "/Users/tylern/Data/e1d/data/h10_r23000_07.root",
+                "/Users/tylern/Data/e1d/data/h10_r23000_08.root",
+                "/Users/tylern/Data/e1d/data/h10_r23000_09.root",
+                "/Users/tylern/Data/e1d/data/h10_r23000_10.root"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/build",
+            "cwd": "${workspaceFolder}",
             "environment": [],
-            "externalConsole": true,
+            "externalConsole": false,
             "MIMode": "lldb"
         }
     ]

@@ -7,7 +7,7 @@
 DataHandeler::DataHandeler() = default;
 DataHandeler::DataHandeler(const std::vector<std::string>& fin, const std::shared_ptr<Histogram>& hists)
     : _input_files(fin), _hists(hists) {
-  _chain = new TChain("h10");
+  _chain = std::make_shared<TChain>("h10");
   for (auto& f : _input_files) _chain->Add(f.c_str());
   _data = std::make_shared<Branches>(_chain);
 }
@@ -81,7 +81,6 @@ const void DataHandeler::RunEvent(size_t current_event) {
 
   _hists->Fill_electron_fid(theta, phi, sector);
 
-#pragma omp parallel for private(part_num)
   for (int part_num = 1; part_num < _data->gpart(); part_num++) {
     theta = physics::theta_calc(_data->cz(part_num));
     phi = physics::phi_calc(_data->cx(part_num), _data->cy(part_num));
@@ -120,18 +119,20 @@ const void DataHandeler::RunEvent(size_t current_event) {
       } else
         event->SetOther(part_num);
     } else if (_data->q(part_num) == 0) {
-      _hists->MomVsBeta_Fill_neutral(_data->p(part_num), _data->b(part_num));
-      event->SetOther(part_num);
+      if (_data->id(part_num) == NEUTRON && !std::isnan(_data->cc_c2(part_num))) {
+        event->SetNeutron(part_num);
+        _hists->MomVsBeta_Fill_neutral(_data->p(part_num), _data->b(part_num));
+        _hists->Fill_neutron_fid(_data->cc_c2(part_num), _data->cc_r(part_num), _data->cc_sect(part_num));
+      } else
+        event->SetOther(part_num);
     }
   }
 
   if (event->SingleP() && event->MM() >= 0.1 && event->MM() <= 0.2) _hists->Fill_P_PI0(event->W(), event->Q2());
-
   if (event->SinglePip()) {
     _hists->Fill_Missing_Mass(event->MM(), event->MM2());
     _hists->Fill_W_Missing_Mass(event->W(), event->MM(), event->MM2());
   }
-
   if (event->MM_cut()) _hists->Fill_MM_WQ2(event->W(), event->Q2());
   if (event->channel()) {
     _hists->Fill_channel_WQ2(event->W(), event->Q2(), _data->ec_sect(0), event->e_mu_prime(), event->MM(),
@@ -155,7 +156,7 @@ mcHandeler::mcHandeler(const std::vector<std::string>& fin, const std::shared_pt
   _input_files = fin;
   _hists = hists;
   _mc_hists = hists;
-  _chain = new TChain("h10");
+  _chain = std::make_shared<TChain>("h10");
   for (auto& f : _input_files) _chain->Add(f.c_str());
   _data = std::make_shared<Branches>(_chain, true);
 }

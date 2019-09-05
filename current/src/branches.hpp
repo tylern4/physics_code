@@ -13,7 +13,7 @@
 
 class Branches {
  private:
-  TChain* myTree;
+  std::shared_ptr<TTree> _tree;
   bool _MC = false;
   int _npart;
   int _evstat;
@@ -111,9 +111,7 @@ class Branches {
   int _flagspart[MAX_PARTS];  //[nprt]
 
  public:
-  Branches(TChain* tree);
   Branches(std::shared_ptr<TChain> tree);
-  Branches(TChain* tree, bool MC);
   Branches(std::shared_ptr<TChain> tree, bool MC);
   Branches(const Branches& b);
   ~Branches(){};

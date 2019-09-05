@@ -1111,8 +1111,20 @@ void Histogram::makeHists_fid() {
 
 void Histogram::Fill_electron_fid(float theta, float phi, int sector) {
   electron_fid_hist->Fill(phi, theta);
-  if (sector == 0 || sector > NUM_SECTORS) return;
+  if (sector == 0 || sector > NUM_SECTORS) {
+    std::cerr << "Error filling electron fid = " << sector << std::endl;
+    return;
+  }
   electron_fid_sec_hist[sector - 1]->Fill(phi, theta);
+}
+
+void Histogram::Fill_neutron_fid(float theta, float phi, int sector) {
+  neutron_fid_hist->Fill(phi, theta);
+  // if (sector == 0 || sector > NUM_SECTORS) {
+  //  std::cerr << "Error filling electron fid = " << sector << std::endl;
+  //  return;
+  //}
+  // electron_fid_sec_hist[sector - 1]->Fill(phi, theta);
 }
 
 void Histogram::Fill_hadron_fid(float theta, float phi, int sector, int id) {
@@ -1135,6 +1147,11 @@ void Histogram::Fid_Write() {
   electron_fid_hist->SetXTitle("#phi");
   electron_fid_hist->SetOption("COLZ");
   electron_fid_hist->Write();
+
+  neutron_fid_hist->SetYTitle("#theta");
+  neutron_fid_hist->SetXTitle("#phi");
+  neutron_fid_hist->SetOption("COLZ");
+  neutron_fid_hist->Write();
 
   for (int t = 0; t < 3; t++) {
     hadron_fid_hist[t]->SetYTitle("#theta");
@@ -1370,6 +1387,7 @@ void Histogram::EC_Write() {
 
   EC_etot_vs_P->SetYTitle("Energy (GeV)");
   EC_etot_vs_P->SetXTitle("Momentum (GeV)");
+  EC_etot_vs_P->SetOption("COLZ");
   EC_etot_vs_P->Write();
 
   EC_sampling_fraction->SetXTitle("Momentum (GeV)");
@@ -1504,6 +1522,9 @@ void mcHistogram::makeMCHists() {
   for (int i = 0; i < 4; i++) {
     delta_p[i] = std::make_unique<TH1D>(Form("dPvsP_%s", xyz[i].c_str()),
                                         Form("#DeltaP/P_{rec} vs P_{%s}", xyz[i].c_str()), 500, -0.5, 0.5);
+    delta_p_electron[i] =
+        std::make_unique<TH1D>(Form("dPvsP_electron_%s", xyz[i].c_str()),
+                               Form("Electron #DeltaP/P_{rec} vs P_{%s}", xyz[i].c_str()), 500, -0.5, 0.5);
   }
 
   for (int y = 0; y < Q2_BINS; y++) {
@@ -1528,17 +1549,24 @@ void mcHistogram::Fill_WQ2_MC(double W, double Q2) {
 }
 
 void mcHistogram::Fill_P(const std::shared_ptr<Branches> &d) {
-  double P = 0;
-  for (int part_num = 0; part_num < d->gpart(); part_num++) {
-    double px = d->p(part_num) * d->cx(part_num);
-    delta_p[0]->Fill((px - d->pxpart(part_num)) / px);
-    double py = d->p(part_num) * d->cy(part_num);
-    delta_p[1]->Fill((py - d->pypart(part_num)) / py);
-    double pz = d->p(part_num) * d->cz(part_num);
-    delta_p[2]->Fill((pz - d->pzpart(part_num)) / pz);
-    P = TMath::Sqrt(d->pxpart(part_num) * d->pxpart(part_num) + d->pypart(part_num) * d->pypart(part_num) +
-                    d->pzpart(part_num) * d->pzpart(part_num));
-    delta_p[3]->Fill((d->p(part_num) - P) / d->p(part_num));
+  if (d->gpart() > 0) {
+    delta_p_electron[0]->Fill((d->px(0) - d->pxpart(0)) / d->px(0));
+    delta_p_electron[1]->Fill((d->py(0) - d->pypart(0)) / d->py(0));
+    delta_p_electron[2]->Fill((d->pz(0) - d->pzpart(0)) / d->pz(0));
+    delta_p_electron[3]->Fill((d->p(0) - TMath::Sqrt(d->pxpart(0) * d->pxpart(0) + d->pypart(0) * d->pypart(0) +
+                                                     d->pzpart(0) * d->pzpart(0))) /
+                              d->p(0));
+    delta_px_py_electron->Fill(d->px(0) - d->pxpart(0), d->py(0) - d->pypart(0));
+  }
+
+  for (int part_num = 1; part_num < d->gpart(); part_num++) {
+    delta_p[0]->Fill((d->px(part_num) - d->pxpart(part_num)) / d->px(part_num));
+    delta_p[1]->Fill((d->py(part_num) - d->pypart(part_num)) / d->py(part_num));
+    delta_p[2]->Fill((d->pz(part_num) - d->pzpart(part_num)) / d->pz(part_num));
+    delta_p[3]->Fill((d->p(part_num) - TMath::Sqrt(d->pxpart(part_num) * d->pxpart(part_num) +
+                                                   d->pypart(part_num) * d->pypart(part_num) +
+                                                   d->pzpart(part_num) * d->pzpart(part_num))) /
+                     d->p(part_num));
   }
 }
 
@@ -1553,7 +1581,21 @@ void mcHistogram::WvsQ2_MC_Write() {
 }
 
 void mcHistogram::Write_DeltaP() {
-  TCanvas *dp_canvas = new TCanvas("dp_canvas", "#Delta P", 1280, 720);
+  ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  for (auto &dp : delta_p_electron) {
+    dp->Fit("gaus", "QM+", "", -0.1, 0.1);
+    dp->SetXTitle("#Delta P (GeV)");
+    dp->Write();
+  }
+  auto f2 = std::make_unique<TF2>("f2", "[0]*TMath::Gaus(x,[1],[2])*TMath::Gaus(y,[3],[4])", -0.1, 0.1, -0.1, 0.1);
+  f2->SetParameters(10, 0.0, 0.1, 0.0, 0.1);
+  delta_px_py_electron->Fit(f2.get(), "MR+", "");
+  delta_px_py_electron->SetOption("SURF3");
+  delta_px_py_electron->SetXTitle("Px");
+  delta_px_py_electron->SetYTitle("Py");
+  delta_px_py_electron->Write();
+
+  auto dp_canvas = std::make_unique<TCanvas>("dp_canvas", "#Delta P", 1280, 720);
   dp_canvas->Divide(2, 2);
   for (int i = 0; i < 4; i++) {
     dp_canvas->cd(i + 1);

@@ -27,7 +27,7 @@ void make_electron_csv(std::string fin) {
   double _p, _cx, _cy, _cz;
   TFile *OutputFile = new TFile(root_name_output.c_str(), "RECREATE");
   OutputFile->SetCompressionSettings(404);
-  TChain *chain = new TChain("h10");
+  auto chain = std::make_shared<TChain>("h10");
   chain->Add(fin.c_str());
   auto data = std::make_shared<Branches>(chain);
 
@@ -134,7 +134,7 @@ void make_mm_csv(std::string fin) {
   csv_output << "e_p,e_cx,e_cy,e_cz,pip_p,pip_cx,pip_cy,pip_cz" << endl;
 
   // Load chain from branch h10
-  TChain *chain = new TChain("h10");
+  auto chain = std::make_shared<TChain>("h10");
   chain->Add(fin.c_str());
   auto data = std::make_shared<Branches>(chain);
 

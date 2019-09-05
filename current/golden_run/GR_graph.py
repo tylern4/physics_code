@@ -84,20 +84,21 @@ def main():
     plt.axhline(y=popt[1]+SIGMA*popt[2])
     plt.axhline(y=popt[1]-SIGMA*popt[2])
     plt.xlabel('Run Number')
+    plt.title('Golden Run List')
     plt.ylabel('Ratio (events/total Q)')
     plt.ylim([40000, 80000])
-    plt.savefig('golden_run.pdf')
+    plt.savefig('golden_run.png')
 
     keep = golden_df[(golden_df['ratio'] > popt[1] - SIGMA *
                       popt[2]) & (golden_df['ratio'] < popt[1]+SIGMA*popt[2])]
     keep = keep[['run_num', 'file_num']]
 
-    # print(len(keep))
-    # for index, row in keep.iterrows():
-    #    print(
-    #        "rsync -rav --partial --progress ../h10_r" + str(row[0]) + "_" +
-    #       str(row[1]).zfill(2) + ".root",
-    #        end=" .; \n")
+    print(len(keep))
+    for index, row in keep.iterrows():
+        print(
+            "rsync -rav --partial --progress /mnt/Hyperion_work/clas6/e1d/data/v2/h10_r" + str(row[0]) + "_" +
+           str(row[1]).zfill(2) + ".root",
+            end=" .; \n")
 
 
 if __name__ == "__main__":

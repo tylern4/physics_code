@@ -14,17 +14,16 @@
 #include "physics.hpp"
 #include "yeilds.hpp"
 
-using namespace std;
 size_t run_file(std::vector<std::string> in, std::string out_path, int thread_id) {
   std::string outf = out_path + "/ntuple_" + std::to_string(thread_id) + ".root";
-  auto chain = std::make_unique<TChain>("h10");
+  auto chain = std::make_shared<TChain>("h10");
   for (auto& f : in) chain->Add(f.c_str());
   auto dh = std::make_unique<Yeilds>(outf.c_str(), false);
-  size_t tot = dh->RunNtuple(std::move(chain));
+  size_t tot = dh->RunNtuple(chain);
   return tot;
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char* argv[]) {
   ROOT::EnableThreadSafety();
   std::vector<std::vector<std::string>> infilenames(NUM_THREADS);
   std::string outfilename;

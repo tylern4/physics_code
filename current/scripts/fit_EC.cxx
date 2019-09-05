@@ -31,7 +31,6 @@ double genNormal(double *x, double *par) {
   double expo = TMath::Power(TMath::Abs(x[0] - par[2]) / par[0], par[1]);
 
   double func = par[3] * frac * TMath::Exp(-expo);
-
   return func;
 }
 
@@ -45,7 +44,13 @@ double gaus(double *x, double *par) {
 }
 
 FitsData FitGenNormal(TH1D *hist, int slice, int sec_i) {
-  std::cout << slice << "\t" << sec_i << std::endl;
+  if (hist->GetEntries() < 100) {
+    FitsData output;
+    output.left_edge = NAN;
+    output.right_edge = NAN;
+    output.fit = nullptr;
+    return output;
+  }
   double min_value = hist->GetXaxis()->GetXmin();
   double max_value = hist->GetXaxis()->GetXmax();
 
@@ -53,8 +58,7 @@ FitsData FitGenNormal(TH1D *hist, int slice, int sec_i) {
       new TCanvas(Form("can_sec%d_slice%d", sec_i, slice), Form("can_sec%d_slice%d", sec_i, slice), 800, 600);
   out->cd();
   can->cd();
-
-  hist->Rebin(2);
+  hist->Rebin(4);
   TF1 *fitFunc = new TF1("genNormal", genNormal, min_value, max_value, 4);
   double min, max, val, min_m, max_m, min_fwhm, max_fwhm;
 
@@ -66,17 +70,17 @@ FitsData FitGenNormal(TH1D *hist, int slice, int sec_i) {
   fitFunc->SetParNames("alpha", "beta", "mu", "weight");
 
   for (int i = 0; i < 10; i++) hist->Fit("genNormal", "QMR0+", "", min_value, max_value);
-
   hist->Fit("genNormal", "QMR+", "", min_value, max_value);
-  double fwhm_max = fitFunc->GetMaximum() / 2;
 
-  min_fwhm = fitFunc->GetX(fitFunc->GetMaximum() / 2.0, min_value, max_value / 2.0, 1.E-10, 100000, false);
-  max_fwhm = fitFunc->GetX(fitFunc->GetMaximum() / 2.0, max_value / 2.0, max_value, 1.E-10, 100000, false);
+  double fwhm_max = fitFunc->GetMaximum() / 2.0;
+  min_fwhm = fitFunc->GetX(fwhm_max, min_value, max_value / 2.0, 1.E-10, 100000, false);
+  max_fwhm = fitFunc->GetX(fwhm_max, max_value / 2.0, max_value, 1.E-10, 100000, false);
 
+  /*
   size_t num_its = 0;
-  std::cout << min_value << "\t" << max_value << std::endl;
+
   double m = min_value;
-  while (m < max_value || num_its < 1000) {
+  while (m < max_value || num_its < 10000) {
     num_its++;
     val = fitFunc->Derivative(m);
     if (max < val) {
@@ -87,23 +91,23 @@ FitsData FitGenNormal(TH1D *hist, int slice, int sec_i) {
       min = val;
       min_m = m;
     }
-    if (num_its == 10000000) {
-      // std::cerr << "Too Many iterations" << std::endl;
+    if (num_its == 10000) {
+      std::cerr << "Too Many iterations" << std::endl;
       break;
     }
     m = m + 0.01;
   }
-
+  */
   float ymax = hist->GetMaximum();
+  /*
+    TLine *lineR = new TLine(max_m, 0, max_m, ymax);
+    lineR->SetLineColor(kBlue);
+    lineR->SetLineWidth(3);
 
-  TLine *lineR = new TLine(max_m, 0, max_m, ymax);
-  lineR->SetLineColor(kBlue);
-  lineR->SetLineWidth(3);
-
-  TLine *lineL = new TLine(min_m, 0, min_m, ymax);
-  lineL->SetLineColor(kBlue);
-  lineL->SetLineWidth(3);
-
+    TLine *lineL = new TLine(min_m, 0, min_m, ymax);
+    lineL->SetLineColor(kBlue);
+    lineL->SetLineWidth(3);
+  */
   TLine *lineR_fwhm = new TLine(max_fwhm, 0, max_fwhm, ymax);
   lineR_fwhm->SetLineColor(kGreen);
   lineR_fwhm->SetLineWidth(3);
@@ -114,15 +118,17 @@ FitsData FitGenNormal(TH1D *hist, int slice, int sec_i) {
 
   hist->Draw();
   fitFunc->Draw("same");
-  lineL->Draw("same");
-  lineR->Draw("same");
+  // lineL->Draw("same");
+  // lineR->Draw("same");
   lineL_fwhm->Draw("same");
   lineR_fwhm->Draw("same");
   can->Write();
 
   FitsData output;
-  output.left_edge = min_m;
-  output.right_edge = max_m;
+  // output.left_edge = min_m;
+  // output.right_edge = max_m;
+  output.left_edge = min_fwhm;
+  output.right_edge = max_fwhm;
   output.fit = fitFunc;
   return output;
 }
@@ -179,8 +185,8 @@ FitsData FitTheFit(TGraph *hist, int sec, bool lr) {
 }
 
 TCanvas *fit_EC(std::string file = "e1d_all.root") {
-  ROOT::EnableThreadSafety();
-  ROOT::EnableImplicitMT(4);
+  // ROOT::EnableThreadSafety();
+  // ROOT::EnableImplicitMT(4);
   TFile *f = new TFile(file.c_str());
   gStyle->SetOptStat(1111);
   gStyle->SetOptFit(1111);
@@ -193,6 +199,7 @@ TCanvas *fit_EC(std::string file = "e1d_all.root") {
   for (int i = 0; i < NUM_SECTORS; i++) {
     elec_fid[i] = (TH2D *)f->Get(Form("Fid_cuts/electron_fid_sec%d", i + 1));
   }
+
   int bin_nums = 500;
   double slice_width = ((double)bin_nums / (double)FID_SLICES);
   double y_width = (60.0 / (double)bin_nums);
@@ -205,10 +212,15 @@ TCanvas *fit_EC(std::string file = "e1d_all.root") {
     std::vector<double> y;
 
     for (int slice = 14; slice < FID_SLICES; slice++) {
+      std::cout << sec_i << std::endl;
+      std::cout << slice << std::endl;
+      // if ((sec_i == 4 && slice == 32) || (sec_i == 3 && slice == 14) || (sec_i == 4 && slice == 37) ||
+      //    (sec_i == 5 && slice == 28))
+      //  continue;
       electron_fid_sec_slice[sec_i][slice] =
           (TH1D *)elec_fid[sec_i]->ProjectionX(Form("electron_fid_sec_%d_%d", sec_i + 1, slice + 1),
                                                slice_width * slice, slice_width * slice + (slice_width - 1));
-      if (electron_fid_sec_slice[sec_i][slice]->GetEntries() > 100) {
+      if (electron_fid_sec_slice[sec_i][slice]->GetEntries() > 1000) {
         FitsData genNormal_fit = FitGenNormal(electron_fid_sec_slice[sec_i][slice], slice, sec_i);
 
         x.push_back(y_width * slice_width * slice);
@@ -226,10 +238,11 @@ TCanvas *fit_EC(std::string file = "e1d_all.root") {
   for (int i = 0; i < NUM_SECTORS; i++) {
     fid_can->cd(i + 1);
     elec_fid[i]->Draw("colz");
-    fid_graph[i]->Draw("same*");
-    FitTheFit(fid_graph[i], i, true).fit->Draw("same");
-    FitTheFit(fid_graph[i], i, false).fit->Draw("same");
+    // fid_graph[i]->Draw("same*");
+    // FitTheFit(fid_graph[i], i, true).fit->Draw("same");
+    // FitTheFit(fid_graph[i], i, false).fit->Draw("same");
   }
+
   fid_can->Write();
   out->Write();
   return fid_can;

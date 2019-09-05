@@ -19,8 +19,7 @@ int main() {
   int q2_size = 7;
   int c_size = 10;
   int p_size = 10;
-
-  std::cout << "W,Q2,cos_theta,phi,dsigma\n";
+  std::cout << "type,W,Q2,MM,MM2,theta_e,theta_star,phi_star,theta,phi,sector\n";
 
   for (int w = 0; w < w_size; w++) {
     for (int q = 0; q < q2_size; q++) {

@@ -41,6 +41,7 @@ class Reaction {
   short _numPos = 0;
   short _numNeg = 0;
   short _numNeutral = 0;
+  short _numPhotons = 0;
   short _numOther = 0;
 
   float _MM = NAN;
@@ -71,6 +72,10 @@ class Reaction {
   double MM2();
   void boost();
   int Type();
+
+  friend std::ostream& operator<<(std::ostream& os, Reaction& e) {
+    return os << '{' << "W:" << e._W << " Q2:" << e._Q2 << " type:" << e.Type() << '}';
+  }
 
   inline double W() { return _W; }
   inline double Q2() { return _Q2; }

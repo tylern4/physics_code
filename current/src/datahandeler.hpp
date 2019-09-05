@@ -27,7 +27,7 @@
 class DataHandeler {
  protected:
   bool _loadbar = false;
-  TChain* _chain;
+  std::shared_ptr<TChain> _chain;
   std::vector<std::string> _input_files;
   std::shared_ptr<Histogram> _hists;
   std::shared_ptr<Branches> _data;

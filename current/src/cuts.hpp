@@ -13,13 +13,11 @@
 
 class Cuts {
  private:
-  bool electron_cut = false;
   std::shared_ptr<Branches> _data;
 
   int num_phe = 0;
   int gpart = 0;
   int charge = 0;
-  int electron_id = 0;
   double electron_p = 0;
   double samp_frac = 0;
   double _vx = 0;
@@ -42,10 +40,8 @@ class Cuts {
   Cuts(std::shared_ptr<Branches> data);
   ~Cuts();
   void Set_elec_fid();
-
   bool isElecctron();
   bool isStrictElecctron();
-  bool CheckElectron();
   bool Fid_cut();
   bool Beam_cut();
 

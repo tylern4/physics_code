@@ -43,7 +43,7 @@ class Yeilds {
   void OpenFile(std::string output_file_name);
   void WriteHeader();
   int Run(std::string fin);
-  int RunNtuple(std::unique_ptr<TChain> chain);
+  int RunNtuple(const std::shared_ptr<TChain> &chain);
   int Run(std::vector<std::string> fin);
 };
 

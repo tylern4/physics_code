@@ -224,6 +224,7 @@ class Histogram {
   TH1D* electron_fid_sec_slice[NUM_SECTORS][FID_SLICES];
   TH2D_ptr electron_fid_hist =
       std::make_shared<TH2D>("electron_fid", "electron_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
+  TH2D_ptr neutron_fid_hist = std::make_shared<TH2D>("neutron_fid", "neutron_fid", BINS, -360, 360, BINS, -360, 360);
 
   TH2D* hadron_fid_sec_hist[3][NUM_SECTORS];
   TH1D* hadron_fid_sec_slice[NUM_SECTORS][FID_SLICES];
@@ -369,6 +370,7 @@ class Histogram {
 
   // fiducial hist
   void Fill_electron_fid(float theta, float phi, int sector);
+  void Fill_neutron_fid(float theta, float phi, int sector);
   void Fill_hadron_fid(float theta, float phi, int sector, int id);
   void Fid_Write();
   void fid_canvas();
@@ -409,6 +411,10 @@ class mcHistogram : public Histogram {
 
   TH1D_ptr W_binned_MC[Q2_BINS];
   TH1D_ptr delta_p[4];
+  TH1D_ptr delta_p_electron[4];
+  TH2D_ptr delta_px_py_electron =
+      std::make_shared<TH2D>("delta_px_py_electron", "#DeltaP_x vs #DeltaP_y", 500, -0.1, 0.1, 500, -0.1, 0.1);
+
   // W and Q^2
   void makeMCHists();
   void Fill_WQ2_MC(double W, double Q2);

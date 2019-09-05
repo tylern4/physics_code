@@ -4,6 +4,7 @@
 /*	University Of South Carolina  */
 /**************************************/
 #include "reaction.hpp"
+#include <mutex>
 #include "TLorentzRotation.h"
 #include "TLorentzVector.h"
 #include "TVector3.h"
@@ -23,7 +24,11 @@ Reaction::Reaction(std::shared_ptr<Branches> data, bool MC) : _data(std::move(da
   if (getenv("BEAM_E") != NULL) _beam_energy = atof(getenv("BEAM_E"));
   _beam = std::make_unique<LorentzVector>(0.0, 0.0, _beam_energy, MASS_E);
   _gamma = std::make_unique<LorentzVector>();
-  _elec = std::make_unique<LorentzVector>(_data->pxpart(0), _data->pypart(0), _data->pzpart(0), MASS_E);
+  if (MC)
+    _elec = std::make_unique<LorentzVector>(_data->pxpart(0), _data->pypart(0), _data->pzpart(0), MASS_E);
+  else
+    _elec = std::make_unique<LorentzVector>(_data->px(0), _data->py(0), _data->pz(0), MASS_E);
+
   _hasE = true;
   _gamma = std::make_unique<LorentzVector>(*_beam - *_elec);
   _W = physics::W_calc(*_gamma);
@@ -59,7 +64,9 @@ void Reaction::SetNeutron(int i) {
 
 void Reaction::SetOther(int i) {
   if (_data->id(i) == NEUTRON)
-    SetNeutron(i);
+    Reaction::SetNeutron(i);
+  else if (_data->id(i) == PHOTON)
+    _numPhotons++;
   else {
     _numOther++;
     _hasOther = true;
@@ -154,12 +161,8 @@ void Reaction::boost() {
   beam_boosted->Transform(r4);
   pip_boosted->Transform(r4);
 
-  /*
-  else if (this->SingleP()) {
-    _theta_e = elec_boosted->Theta() / D2R;
-    _theta_star = p_boosted->Theta() / D2R;
-    auto _temp = std::make_unique<LorentzVector>(p_boosted->X(), p_boosted->Y(), p_boosted->Z(), p_boosted->M());
-    _phi_star = physics::phi_boosted(_temp) / D2R;
-  }
-  */
+  auto _temp = std::make_unique<LorentzVector>(pip_boosted->X(), pip_boosted->Y(), pip_boosted->Z(), pip_boosted->M());
+  _theta_e = elec_boosted->Theta();
+  _theta_star = _temp->Theta();
+  _phi_star = physics::phi_boosted(_temp);
 }
