@@ -23,6 +23,7 @@ class Reaction {
   std::unique_ptr<LorentzVector> _pip;
   std::unique_ptr<LorentzVector> _pim;
   std::unique_ptr<LorentzVector> _neutron;
+  std::vector<std::unique_ptr<LorentzVector>> _photons;
 
   std::shared_ptr<Branches> _data;
 
@@ -47,6 +48,9 @@ class Reaction {
   float _MM = NAN;
   float _MM2 = NAN;
 
+  float _pi0_mass = NAN;
+  float _pi0_mass2 = NAN;
+
   float _W = NAN;
   float _Q2 = NAN;
 
@@ -70,6 +74,8 @@ class Reaction {
   void CalcMissMass();
   double MM();
   double MM2();
+  float pi0_mass();
+  float pi0_mass2();
   void boost();
   int Type();
 
@@ -105,6 +111,8 @@ class Reaction {
   inline bool SingleP() {
     return ((_numProt == 1) && (_hasE && _hasP && !_hasPip && !_hasPim && !_hasNeutron && !_hasOther));
   }
+
+  inline bool PPi0() { return (SingleP() && _pi0_mass > 0.1 && _pi0_mass < 0.15); }
   inline bool NeutronPip() {
     return ((_numPip == 1 && _numNeutral == 1) &&
             (_hasE && !_hasP && _hasPip && !_hasPim && _hasNeutron && !_hasOther));

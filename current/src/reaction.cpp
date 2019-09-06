@@ -65,9 +65,10 @@ void Reaction::SetNeutron(int i) {
 void Reaction::SetOther(int i) {
   if (_data->id(i) == NEUTRON)
     Reaction::SetNeutron(i);
-  else if (_data->id(i) == PHOTON)
+  else if (_data->id(i) == PHOTON) {
+    _photons.push_back(std::make_unique<LorentzVector>(_data->px(i), _data->py(i), _data->pz(i), 0));
     _numPhotons++;
-  else {
+  } else {
     _numOther++;
     _hasOther = true;
   }
@@ -95,6 +96,14 @@ void Reaction::CalcMissMass() {
     _MM = mm->mag();
     _MM2 = mm->mag2();
   }
+  auto pi0 = std::make_unique<LorentzVector>();
+  if (_numPhotons >= 2) {
+    for (auto& p : _photons) {
+      *pi0 += *p;
+    }
+    _pi0_mass = pi0->mag();
+    _pi0_mass2 = pi0->mag2();
+  }
 }
 
 double Reaction::MM() {
@@ -106,6 +115,16 @@ double Reaction::MM2() {
   // if (std::isnan(_MM2))
   CalcMissMass();
   return _MM2;
+}
+
+float Reaction::pi0_mass() {
+  CalcMissMass();
+  return _pi0_mass;
+}
+
+float Reaction::pi0_mass2() {
+  CalcMissMass();
+  return _pi0_mass2;
 }
 
 int Reaction::Type() {

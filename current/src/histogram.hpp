@@ -25,6 +25,7 @@
 #include "fits.hpp"
 #include "makeHeader.hpp"
 #include "missing_mass.hpp"
+#include "reaction.hpp"
 
 #define W_BINS 20
 #define Q2_BINS 10
@@ -284,6 +285,9 @@ class Histogram {
   TH1D_ptr Missing_Mass_pi0 = std::make_shared<TH1D>("Missing_Mass_pi0", "Missing Mass #pi^{0}", BINS_MM, -3, 3);
   TH1D_ptr Missing_Mass_square_pi0 = std::make_shared<TH1D>("Missing_Mass_pi0_2", "MM^{2} #pi^{0}", BINS_MM, -3, 3);
 
+  TH1D_ptr Mass_pi0 = std::make_shared<TH1D>("Mass_pi0", "Mass #pi^{0}", BINS_MM, 0, 0.5);
+  TH1D_ptr Mass_square_pi0 = std::make_shared<TH1D>("Mass_pi0_2", "#pi^{0} mass^{2}", BINS_MM, 0, 0.05);
+
   TH1D_ptr Missing_Mass_2pi = std::make_shared<TH1D>("Missing_Mass_2pi", "Missing Mass 2 #pi", BINS_MM, MM_min, MM_max);
   TH1D_ptr Missing_Mass_square_2pi =
       std::make_shared<TH1D>("Missing_Mass_square_2pi", "Missing Mass 2 #pi", BINS_MM, MM_min, MM_max* MM_max);
@@ -335,6 +339,8 @@ class Histogram {
   void Fill_Missing_Mass_strict(float mm, float mm2);
   // void Fill_Mass(float mass);
   void Fill_Missing_Mass_square(float miss_mass_2);
+
+  void Fill_Mass_pi0(float mass, float mass2);
   void Write_Missing_Mass();
 
   void Fill_Missing_Mass_pi0(float mm, float mm2);

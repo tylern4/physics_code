@@ -128,7 +128,6 @@ const void DataHandeler::RunEvent(size_t current_event) {
     }
   }
 
-  if (event->SingleP() && event->MM() >= 0.1 && event->MM() <= 0.2) _hists->Fill_P_PI0(event->W(), event->Q2());
   if (event->SinglePip()) {
     _hists->Fill_Missing_Mass(event->MM(), event->MM2());
     _hists->Fill_W_Missing_Mass(event->W(), event->MM(), event->MM2());
@@ -144,8 +143,12 @@ const void DataHandeler::RunEvent(size_t current_event) {
   if ((event->SinglePip() || event->NeutronPip()))
     _hists->Fill_NeutronPip_WQ2(event->W(), event->Q2(), event->MM(), event->MM2());
   if (event->SingleP()) {
-    _hists->Fill_single_proton_WQ2(event->W(), event->Q2());
-    _hists->Fill_Missing_Mass_pi0(event->MM(), event->MM2());
+    _hists->Fill_Mass_pi0(event->pi0_mass(), event->pi0_mass2());
+    if (event->PPi0()) {
+      if (event->SingleP() && event->MM() >= 0.1 && event->MM() <= 0.2) _hists->Fill_P_PI0(event->W(), event->Q2());
+      _hists->Fill_single_proton_WQ2(event->W(), event->Q2());
+      _hists->Fill_Missing_Mass_pi0(event->MM(), event->MM2());
+    }
   }
   if (event->TwoPion()) _hists->Fill_Missing_Mass_twoPi(event->MM(), event->MM2());
 
