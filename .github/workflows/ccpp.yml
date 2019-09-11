@@ -12,5 +12,5 @@ jobs:
     - name: docker build
       run: |
         docker run \
-        -v ${{ github.workspace }}:/tmp \
-        uofscphysics/root /bin/bash -c "cd /tmp && ls -l"
+        -v ${{ github.workspace }}:/tmp --entrypoint "bash" \
+        uofscphysics/root "cd /tmp && ls -l"
