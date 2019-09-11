@@ -9,9 +9,8 @@ jobs:
     
     steps:
     - uses: actions/checkout@v1
-    - name: mkbuild
-      run: cd current && mkdir build && cd build
-    - name: cmake
-      run: cd current/build && cmake --version && cmake ..
-    - name: make
-      run: cd current/build && make
+    - name: docker build
+      run: |
+        docker run \
+        -v ${{ github.workspace }}:/tmp \
+        uofscphysics/root /bin/bash -c "cd /tmp && ls -l"
