@@ -12,6 +12,6 @@ jobs:
     - name: mkbuild
       run: mkdir build && cd build
     - name: cmake
-      run: cmake ..
+      run: cmake ../current
     - name: make
       run: make
