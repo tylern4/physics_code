@@ -13,6 +13,8 @@ jobs:
       run : docker --version
     - name: docker build
       run: |
+        cp .github/workflows/build.sh . && \
+        chmod +x build.sh && \
         docker run \
-        -v ${{ github.workspace }}:/tmp --entrypoint "bash" \
-        uofscphysics/root build.sh
+        -v ${{ github.workspace }}:/build -v $PWD:/tmp --entrypoint "bash" \
+        uofscphysics/root /tmp/build.sh
