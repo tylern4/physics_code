@@ -1,0 +1,17 @@
+name: C/C++ CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: docker://uofscphysics/root
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: mkbuild
+      run: mkdir build && cd build
+    - name: cmake
+      run: cmake ..
+    - name: make
+      run: make
