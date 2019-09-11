@@ -14,4 +14,4 @@ jobs:
     - name: cmake
       run: cd current/build && cmake --version && cmake ..
     - name: make
-      run: make
+      run: cd current/build && make
