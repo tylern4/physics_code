@@ -15,4 +15,4 @@ jobs:
       run: |
         docker run \
         -v ${{ github.workspace }}:/tmp --entrypoint "bash" \
-        uofscphysics/root cd /tmp && ls -l 
+        uofscphysics/root pwd && ls -l 
