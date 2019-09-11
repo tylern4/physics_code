@@ -107,23 +107,33 @@ void Reaction::CalcMissMass() {
 }
 
 double Reaction::MM() {
-  // if (std::isnan(_MM))
-  CalcMissMass();
+  if (!_MM_calc) {
+    CalcMissMass();
+    _MM_calc = true;
+  }
   return _MM;
 }
 double Reaction::MM2() {
-  // if (std::isnan(_MM2))
-  CalcMissMass();
+  if (!_MM_calc) {
+    CalcMissMass();
+    _MM_calc = true;
+  }
   return _MM2;
 }
 
 float Reaction::pi0_mass() {
-  CalcMissMass();
+  if (!_MM_calc) {
+    CalcMissMass();
+    _MM_calc = true;
+  }
   return _pi0_mass;
 }
 
 float Reaction::pi0_mass2() {
-  CalcMissMass();
+  if (!_MM_calc) {
+    CalcMissMass();
+    _MM_calc = true;
+  }
   return _pi0_mass2;
 }
 

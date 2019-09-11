@@ -6,7 +6,6 @@
 
 #include "delta_t.hpp"
 
-Delta_T::Delta_T() {}
 Delta_T::Delta_T(double sc_time, double sc_pathlength) { this->vertex = vertex_time(sc_time, sc_pathlength, 1.0); }
 Delta_T::~Delta_T() {}
 
@@ -73,9 +72,9 @@ void Delta_T::delta_t_hists(std::shared_ptr<Histogram> hists, std::shared_ptr<Br
     }
 
     hists->delta_t_Fill(mom, charge, dt_P, dt_Pi, dt_E);
-    // if (sc_sector <= 6 && sc_sector != 0 && sc_paddle <= 48 && sc_paddle != 0) {
-    //  hists->delta_t_sec_pad(mom, charge, dt_P, dt_Pi, dt_E, sc_sector, sc_paddle);
-    //}
+    if (sc_sector <= 6 && sc_sector != 0 && sc_paddle <= 48 && sc_paddle != 0) {
+      hists->delta_t_sec_pad(mom, charge, dt_P, dt_Pi, dt_E, sc_sector, sc_paddle);
+    }
   }
 }
 

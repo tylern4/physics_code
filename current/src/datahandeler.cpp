@@ -119,7 +119,7 @@ const void DataHandeler::RunEvent(size_t current_event) {
       } else
         event->SetOther(part_num);
     } else if (_data->q(part_num) == 0) {
-      if (_data->id(part_num) == NEUTRON && !std::isnan(_data->cc_c2(part_num))) {
+      if (_data->id(part_num) == NEUTRON) {
         event->SetNeutron(part_num);
         _hists->MomVsBeta_Fill_neutral(_data->p(part_num), _data->b(part_num));
         _hists->Fill_neutron_fid(_data->cc_c2(part_num), _data->cc_r(part_num), _data->cc_sect(part_num));
@@ -143,11 +143,13 @@ const void DataHandeler::RunEvent(size_t current_event) {
   if ((event->SinglePip() || event->NeutronPip()))
     _hists->Fill_NeutronPip_WQ2(event->W(), event->Q2(), event->MM(), event->MM2());
   if (event->SingleP()) {
+    // if (event->MM() >= -0.25 && event->MM() <= 0.25)
     _hists->Fill_Mass_pi0(event->pi0_mass(), event->pi0_mass2());
+    // if (event->pi0_mass() > 0.08 && event->pi0_mass() < 0.2)
+    _hists->Fill_Missing_Mass_pi0(event->MM(), event->MM2());
     if (event->PPi0()) {
-      if (event->SingleP() && event->MM() >= 0.1 && event->MM() <= 0.2) _hists->Fill_P_PI0(event->W(), event->Q2());
+      _hists->Fill_P_PI0(event->W(), event->Q2());
       _hists->Fill_single_proton_WQ2(event->W(), event->Q2());
-      _hists->Fill_Missing_Mass_pi0(event->MM(), event->MM2());
     }
   }
   if (event->TwoPion()) _hists->Fill_Missing_Mass_twoPi(event->MM(), event->MM2());

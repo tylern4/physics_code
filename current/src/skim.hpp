@@ -26,9 +26,6 @@ class Skim {
   std::string fout;
   std::vector<std::string> fin;
   std::shared_ptr<TFile> RootOutputFile;
-  std::shared_ptr<TLorentzVector> e_mu;
-  std::shared_ptr<MissingMass> MM_neutron;
-  double BEAM_ENERGY = E1D_E0;
 
  public:
   Skim(const std::vector<std::string> &input, const std::string &output);
@@ -37,17 +34,5 @@ class Skim {
   float Basic();
   void Strict();
   void Final();
-
-  double sf_top_fit(double P);
-  double sf_bot_fit(double P);
-  bool sf_cut(double sf, double P);
-
-  double dt_P_bot_fit(double P);
-  double dt_P_top_fit(double P);
-  bool dt_P_cut(double dt, double P);
-
-  double dt_Pip_bot_fit(double P);
-  double dt_Pip_top_fit(double P);
-  bool dt_Pip_cut(double dt, double P);
 };
 #endif

@@ -24,7 +24,6 @@ class Delta_T {
   double vertex_time(double sc_time, double sc_pathlength, double relatavistic_beta);
 
  public:
-  Delta_T();
   Delta_T(double sc_time, double sc_pathlength);
   ~Delta_T();
 

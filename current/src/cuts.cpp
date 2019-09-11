@@ -72,14 +72,14 @@ bool Cuts::Fid_cut() {
 bool Cuts::Beam_cut() {
   bool _beam = true;
 
-  _beam &= (_data->dc_vx(0) > 0.2 && _data->dc_vx(0) < 0.4);
-  _beam &= (_data->dc_vy(0) > -0.1 && _data->dc_vy(0) < 0.16);
-  _beam &= (_data->dc_vz(0) > -2.0 && _data->dc_vz(0) < 2.0);
+  _beam &= (_data->dc_vx(0) > 0.2f && _data->dc_vx(0) < 0.4f);
+  _beam &= (_data->dc_vy(0) > -0.1f && _data->dc_vy(0) < 0.16f);
+  _beam &= (_data->dc_vz(0) > -2.0f && _data->dc_vz(0) < 2.0f);
 
   for (short i = 0; i < _data->gpart(); i++) {
-    _beam &= (_data->vx(i) > -1.0 && _data->vx(i) < 1.0);
-    _beam &= (_data->vy(i) > -1.5 && _data->vy(i) < 1.5);
-    _beam &= (_data->vz(i) > -2.0 && _data->vz(i) < 2.0);
+    _beam &= (_data->vx(i) > -1.0f && _data->vx(i) < 1.0f);
+    _beam &= (_data->vy(i) > -1.5f && _data->vy(i) < 1.5f);
+    _beam &= (_data->vz(i) > -2.0f && _data->vz(i) < 2.0f);
   }
 
   return _beam;
@@ -91,7 +91,7 @@ bool Cuts::isStrictElecctron() {
   // remove CC hit to both
   ////_elec &= (_data->cc_segm(0) / 1000 - 1 != 0);
   // Cut low number of photo electrons in cc
-  ////_elec &= (_data->nphe(0) > 15);
+  _elec &= (_data->nphe(0) > 15);
 
   return _elec;
 }

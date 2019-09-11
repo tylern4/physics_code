@@ -45,6 +45,7 @@ class Reaction {
   short _numPhotons = 0;
   short _numOther = 0;
 
+  bool _MM_calc = false;
   float _MM = NAN;
   float _MM2 = NAN;
 
@@ -112,7 +113,10 @@ class Reaction {
     return ((_numProt == 1) && (_hasE && _hasP && !_hasPip && !_hasPim && !_hasNeutron && !_hasOther));
   }
 
-  inline bool PPi0() { return (SingleP() && _pi0_mass > 0.1 && _pi0_mass < 0.15); }
+  inline bool PPi0() {
+    return (SingleP() && this->MM() >= -0.25 && this->MM() <= 0.25 && this->pi0_mass() > 0.08 &&
+            this->pi0_mass() < 0.2);
+  }
   inline bool NeutronPip() {
     return ((_numPip == 1 && _numNeutral == 1) &&
             (_hasE && !_hasP && _hasPip && !_hasPim && _hasNeutron && !_hasOther));

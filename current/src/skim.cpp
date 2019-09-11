@@ -14,13 +14,6 @@ Skim::Skim(const std::vector<std::string> &input, const std::string &output) {
 
   RootOutputFile = std::make_shared<TFile>(fout.c_str(), "RECREATE");
   RootOutputFile->SetCompressionSettings(404);
-  if (getenv("BEAM_E") != NULL) {
-    BEAM_ENERGY = strtod(getenv("BEAM_E"), (char **)NULL);
-    std::cout << RED << "Beam energy set to: " << BEAM_ENERGY << DEF << std::endl;
-  }
-  e_mu = std::make_shared<TLorentzVector>();
-  e_mu->SetPxPyPzE(0.0, 0.0, sqrt((BEAM_ENERGY * BEAM_ENERGY) - (MASS_E * MASS_E)), BEAM_ENERGY);
-  MM_neutron = std::make_shared<MissingMass>(MASS_P, 0.0);
 }
 
 Skim::~Skim() {}
@@ -120,38 +113,3 @@ void Skim::Final() {
   RootOutputFile->Write();
   RootOutputFile->Close();
 }
-
-double Skim::sf_top_fit(double P) {
-  double par[3] = {0.363901, -0.00992778, 5.84749e-06};
-  double x[1] = {P};
-  return func::ec_fit_func(x, par);
-}
-double Skim::sf_bot_fit(double P) {
-  double par[3] = {0.103964, 0.0524214, -3.64355e-05};
-  double x[1] = {P};
-  return func::ec_fit_func(x, par);
-}
-bool Skim::sf_cut(double sf, double P) { return ((sf > sf_bot_fit(P)) && (sf < sf_top_fit(P))); }
-
-double Skim::dt_P_bot_fit(double P) {
-  double par[2] = {-1.509, 0.4172};
-  double x[1] = {P};
-  return func::dt_fit(x, par);
-}
-double Skim::dt_P_top_fit(double P) {
-  double par[2] = {1.307, -0.3473};
-  double x[1] = {P};
-  return func::dt_fit(x, par);
-}
-bool Skim::dt_P_cut(double dt, double P) { return ((dt > dt_P_bot_fit(P)) && (dt < dt_P_top_fit(P))); }
-double Skim::dt_Pip_bot_fit(double P) {
-  double par[2] = {-0.9285, -0.04094};
-  double x[1] = {P};
-  return func::dt_fit(x, par);
-}
-double Skim::dt_Pip_top_fit(double P) {
-  double par[2] = {0.9845, -0.05473};
-  double x[1] = {P};
-  return func::dt_fit(x, par);
-}
-bool Skim::dt_Pip_cut(double dt, double P) { return ((dt > dt_Pip_bot_fit(P)) && (dt < dt_Pip_top_fit(P))); }
