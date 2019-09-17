@@ -1,8 +1,8 @@
 5                       ! Physics model (1=AO, 4=MAID98, 5=MAID2000)
 1                       ! 1 for polarized electron, 0 for unpolarized
 .20 .12 .20 .20         ! the sizes of the integration regions
-2                       ! npart
-3	                      ! 1: pi0 , 3:pi+
+4                       ! npart
+1	                      ! 1: pi0 , 3:pi+
 .2                      ! a limit on the error in (mm)**2
 5.0                     ! target cell length (cm)
 0.486                   ! radius of target cyclinder
