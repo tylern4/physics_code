@@ -9,17 +9,14 @@
 #include <iostream>
 #include <thread>
 #include <vector>
-#include "branches.hpp"
-#include "constants.hpp"
-#include "physics.hpp"
-#include "yeilds.hpp"
+#include "ntuple.hpp"
 
 size_t run_file(std::vector<std::string> in, std::string out_path, int thread_id) {
   std::string outf = out_path + "/ntuple_" + std::to_string(thread_id) + ".root";
   auto chain = std::make_shared<TChain>("h10");
   for (auto& f : in) chain->Add(f.c_str());
-  auto dh = std::make_unique<Yeilds>(outf.c_str(), false);
-  size_t tot = dh->RunNtuple(chain);
+  auto dh = std::make_unique<Ntuple>(outf);
+  size_t tot = dh->Run(chain);
   return tot;
 }
 

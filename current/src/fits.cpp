@@ -362,7 +362,7 @@ TF1 *Fits::FitGenNormal(TH1D *hist) {
 }
 
 TF1 *Fits::FitBreitWigner(TH1D *hist) {
-  if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  if (hist->GetEntries() > 1000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
 
   TF1 *fitbw = new TF1("bw", func::breit_wigner, min_value, max_value, 3);
   par_max = std::isnan(hist->GetMaximum()) ? 0 : hist->GetMaximum();
@@ -382,7 +382,7 @@ TF1 *Fits::FitBreitWigner(TH1D *hist) {
 
 TF1 *Fits::FitMissMass(TH1D *hist) {
   if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
-  if (hist->GetEntries() < 1000) return NULL;
+  if (hist->GetEntries() < 1000) return nullptr;
 
   float fit_min = 0.5;
   float fit_max = 1.8;
@@ -399,7 +399,6 @@ TF1 *Fits::FitMissMass(TH1D *hist) {
   peak_fit->SetParameters(1.0, 1.0, 1.0);
 
   Double_t par[max_par];
-
   for (size_t i = 0; i < 10; i++) hist->Fit(peak_fit, "RNQM+", "", 0.9, 1.0);  // Peak of N at 0.939
   for (size_t i = 0; i < 50; i++) hist->Fit(back_fit, "RNQM+", "", 0.5, fit_max);
   for (size_t i = 0; i < 10; i++) hist->Fit(back_peak_fit, "RNQM+", "", 1.1, 1.3);

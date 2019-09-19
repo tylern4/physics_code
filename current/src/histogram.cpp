@@ -595,12 +595,14 @@ void Histogram::Write_Missing_Mass() {
   Missing_Mass_2pi->Write();
   Missing_Mass_square_2pi->SetXTitle("Mass^{2} (GeV^{2})");
   Missing_Mass_square_2pi->Write();
-
+  Fit_Missing_Mass_WBinned.reserve(W_BINS);
   TDirectory *mm_binned = RootOutputFile->mkdir("MM_binned");
   mm_binned->cd();
   for (int y = 0; y < W_BINS; y++) {
+    std::cout << Missing_Mass_WBinned[y]->GetEntries() << std::endl;
     Fit_Missing_Mass_WBinned[y] = new Fits();
-    Fit_Missing_Mass_WBinned[y]->FitMissMass(Missing_Mass_WBinned[y]);
+    Fit_Missing_Mass_WBinned[y]->FitBreitWigner(Missing_Mass_WBinned[y]);
+    // Fit_Missing_Mass_WBinned[y]->FitMissMass(Missing_Mass_WBinned[y]);
 
     Missing_Mass_WBinned[y]->SetXTitle("Mass (GeV)");
     Missing_Mass_WBinned[y]->Write();

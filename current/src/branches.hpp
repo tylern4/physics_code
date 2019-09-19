@@ -124,6 +124,7 @@ class Branches {
   int evntclas();
   int evthel();
   int evntclas2();
+  int helicity();
   float q_l();
   float t_l();
   float tr_time();

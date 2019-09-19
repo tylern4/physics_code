@@ -142,12 +142,12 @@ int Reaction::Type() {
     return 0;
   } else if (this->NeutronPip()) {
     return 10;
-  } else if (this->TwoPion()) {
-    return 22;
   } else if (this->SingleP()) {
-    return 33;
+    return 22;
+  } else if (this->PPi0()) {
+    return 222;
   } else if (this->ProtonPim()) {
-    return 44;
+    return 3333;
   }
 
   return -1;

@@ -131,6 +131,16 @@ int Branches::evtype() { return _evtype; }
 int Branches::evntclas() { return _evntclas; }
 int Branches::evthel() { return _evthel; }
 int Branches::evntclas2() { return _evntclas2; }
+int Branches::helicity() {
+  if (_evntclas2 > 5000)
+    return 1;
+  else if (_evntclas2 < -5000)
+    return -1;
+  else
+    return 0;
+  return 0;
+}
+
 float Branches::q_l() { return _q_l; }
 float Branches::t_l() { return _t_l; }
 float Branches::tr_time() { return _tr_time; }

@@ -126,7 +126,7 @@ class Histogram {
   TH1D* Q2_binned[W_BINS];
   TH1D* Missing_Mass_WBinned[W_BINS];
   TH1D* Missing_Mass_WBinned_square[W_BINS];
-  Fits* Fit_Missing_Mass_WBinned[W_BINS];
+  std::vector<Fits*> Fit_Missing_Mass_WBinned;
   // W and Q^2
 
   // P and E
