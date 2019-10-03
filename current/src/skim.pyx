@@ -5,7 +5,7 @@ import multiprocessing
 from timeit import default_timer as timer
 import glob
 
-
+"""
 cdef extern from "skim.hpp":
     cdef cppclass Skim:
       Skim(vector[string], string) except +
@@ -46,3 +46,4 @@ class skim_files:
     pool.map(py_skim, (self.files))
     end = timer()
     print("Time: "+ str(end - start))
+"""

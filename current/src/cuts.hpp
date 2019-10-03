@@ -6,14 +6,18 @@
 
 #ifndef CUTS_H_GUARD
 #define CUTS_H_GUARD
+#include <iostream>
 #include "branches.hpp"
 #include "constants.hpp"
+#include "delta_t.hpp"
 #include "func.hpp"
 #include "physics.hpp"
+#include "reaction.hpp"
 
 class Cuts {
  private:
-  std::shared_ptr<Branches> _data;
+  std::shared_ptr<Branches> _data = nullptr;
+  std::shared_ptr<Delta_T> _dt = nullptr;
 
   int num_phe = 0;
   int gpart = 0;
@@ -37,7 +41,8 @@ class Cuts {
   bool samp_frac_cut = false;
 
  public:
-  Cuts(std::shared_ptr<Branches> data);
+  Cuts(const std::shared_ptr<Branches>& data);
+  Cuts(const std::shared_ptr<Branches>& data, const std::shared_ptr<Delta_T>& dt);
   ~Cuts();
   void Set_elec_fid();
   bool isElecctron();

@@ -13,7 +13,7 @@
 #include "physics.hpp"
 
 class Reaction {
- private:
+ protected:
   double _beam_energy = E1D_E0;
   std::unique_ptr<LorentzVector> _beam;
   std::unique_ptr<LorentzVector> _elec;
@@ -62,8 +62,9 @@ class Reaction {
   std::string _type = "NAN";
 
  public:
+  Reaction() : _data(nullptr){};
   Reaction(std::shared_ptr<Branches> data);
-  Reaction(std::shared_ptr<Branches> data, bool MC);
+
   ~Reaction();
 
   void SetProton(int i);
@@ -78,6 +79,7 @@ class Reaction {
   float pi0_mass();
   float pi0_mass2();
   void boost();
+  void _boost();
   int Type();
 
   friend std::ostream& operator<<(std::ostream& os, Reaction& e) {
@@ -139,4 +141,21 @@ class Reaction {
   inline LorentzVector gamma() { return *_gamma; }
 };
 
+class MCReaction : public Reaction {
+  float _W_thrown = NAN;
+  float _Q2_thrown = NAN;
+  std::unique_ptr<LorentzVector> _elec_thrown;
+  std::unique_ptr<LorentzVector> _gamma_thrown;
+  std::unique_ptr<LorentzVector> _pip_thrown;
+  std::unique_ptr<LorentzVector> _neutron_thrown;
+
+ public:
+  MCReaction(std::shared_ptr<Branches> data);
+  inline double W_thrown() { return _W_thrown; }
+  inline double Q2_thrown() { return _Q2_thrown; }
+
+  double Theta_star();
+  double Phi_star();
+  double Theta_E();
+};
 #endif

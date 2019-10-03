@@ -4,10 +4,11 @@
 /*	University Of South Carolina      */
 /**************************************/
 #include "cuts.hpp"
-#include <iostream>
-//#include "fid_cuts.hpp"
 
-Cuts::Cuts(std::shared_ptr<Branches> data) : _data(data) {}
+Cuts::Cuts(const std::shared_ptr<Branches>& data) : _data(data) {
+  if (_data->gpart() > 0) _dt = std::make_shared<Delta_T>(_data->sc_t(0), _data->sc_r(0));
+}
+Cuts::Cuts(const std::shared_ptr<Branches>& data, const std::shared_ptr<Delta_T>& dt) : _data(data), _dt(dt) {}
 Cuts::~Cuts() {}
 
 void Cuts::Set_elec_fid() {

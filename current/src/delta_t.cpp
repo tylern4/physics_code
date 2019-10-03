@@ -5,6 +5,7 @@
 /**************************************/
 
 #include "delta_t.hpp"
+#include "cuts.hpp"
 
 Delta_T::Delta_T(double sc_time, double sc_pathlength) { this->vertex = vertex_time(sc_time, sc_pathlength, 1.0); }
 Delta_T::~Delta_T() {}

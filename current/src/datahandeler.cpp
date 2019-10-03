@@ -52,7 +52,7 @@ const void DataHandeler::RunEvent(size_t current_event) {
   _hists->CC_fill(_data->cc_sect(0), (_data->cc_segm(0) % 1000) / 10, _data->cc_segm(0) / 1000 - 1, _data->nphe(0),
                   theta_cc);
 
-  auto event = std::make_unique<Reaction>(_data);
+  auto event = std::make_shared<Reaction>(_data);
 
   _hists->Fill_E_Prime_fid(event->e_mu_prime());
   _hists->Fill_E_Prime(event->e_mu_prime());
@@ -134,6 +134,7 @@ const void DataHandeler::RunEvent(size_t current_event) {
   }
   if (event->MM_cut()) _hists->Fill_MM_WQ2(event->W(), event->Q2());
   if (event->channel()) {
+    _hists->Fill_ND(event);
     _hists->Fill_channel_WQ2(event->W(), event->Q2(), _data->ec_sect(0), event->e_mu_prime(), event->MM(),
                              event->MM2());
     _hists->Fill_Missing_Mass_strict(event->MM(), event->MM2());
@@ -179,9 +180,11 @@ const void mcHandeler::RunEvent(int current_event) {
   _chain->GetEntry(current_event);
   auto check = std::make_unique<Cuts>(_data);
 
-  auto mc_event = std::make_unique<Reaction>(_data, true);
+  auto mc_event = std::make_shared<MCReaction>(_data);
   _mc_hists->Fill_P(_data);
-  _mc_hists->Fill_WQ2_MC(mc_event->W(), mc_event->Q2());
+  _mc_hists->Fill_WQ2_MC(mc_event);
+  _hists->Fill_ND(mc_event);
+  _mc_hists->Fill(mc_event);
 
   for (int part_num = 1; part_num < _data->gpart(); part_num++) {
     if (_data->pidpart(part_num) == PIP) mc_event->SetPip(part_num);

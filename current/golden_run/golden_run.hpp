@@ -10,10 +10,8 @@
 
 // Finds the files with golden runs
 #define COUNTER 10000
-void golden_run(std::vector<std::string> fins, std::string fout) {
-  // ROOT::EnableImplicitMT(4);
-  ofstream golden_run(fout);
-  golden_run << "run_num,file_num,num_of_events,total_q" << endl;
+std::string golden_run(const std::vector<std::string>& fins) {
+  std::string golden_run;
   std::string file_num, run_num, line;
   int n_evnt = 0;
   double total_q = 0.0, curr_q = 0.0, prev_q = 0.0, delta_q = 0.0;
@@ -21,9 +19,9 @@ void golden_run(std::vector<std::string> fins, std::string fout) {
   LorentzVector e_mu(0.0, 0.0, E1D_E0, MASS_E);
   LorentzVector ZERO(0.0, 0.0, 0.0, 0.0);
   int line_num = 0;
-  const char *progress = "-\\|/";
+  // const char* progress = "-\\|/";
 
-  for (auto &fin : fins) {
+  for (auto& fin : fins) {
     line_num++;
     run_num = fin.substr(fin.find("/h10") + 6, 5);
     file_num = fin.substr(fin.find("/h10") + 12, 2);
@@ -36,9 +34,6 @@ void golden_run(std::vector<std::string> fins, std::string fout) {
 
     for (int current_event = 0; current_event < num_of_events; current_event++) {
       chain->GetEntry(current_event);
-      if (current_event % COUNTER == 0)
-        std::cout << BLUE << "\t[ " << progress[(current_event / COUNTER) % 4] << " ] "
-                  << 100.0 * line_num / fins.size() << "\r" << DEF << std::flush;
       electron_cuts = true;
       // electron cuts
       electron_cuts &= (data->ec(0) > 0);                              // ``` ``` ``` ec
@@ -64,8 +59,8 @@ void golden_run(std::vector<std::string> fins, std::string fout) {
       }
     }
     if (n_evnt != 0 && total_q != 0)
-      golden_run << run_num << "," << file_num << "," << num_of_events << "," << total_q << endl;
+      golden_run += run_num + "," + file_num + "," + num_of_events + "," + total_q + "\n";
   }
-  golden_run.close();
+  return golden_run;
 }
 #endif

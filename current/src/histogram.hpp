@@ -19,6 +19,7 @@
 #include "TH2.h"
 #include "TH3.h"
 #include "THn.h"
+#include "THnSparse.h"
 #include "branches.hpp"
 #include "color.hpp"
 #include "constants.hpp"
@@ -50,6 +51,7 @@ class Histogram {
  protected:
   std::shared_ptr<TFile> RootOutputFile;
   std::shared_ptr<TCanvas> def;
+  std::unique_ptr<THnD> ndhist;
 
   float p_min = 0.0;
   float p_max = 5.0;
@@ -400,14 +402,13 @@ class Histogram {
   void Fill_E_Prime_fid(const LorentzVector& e_prime);
   void Fill_E_Prime_channel(const LorentzVector& e_prime);
   void E_Prime_Write();
+
+  void Fill_ND(const std::shared_ptr<Reaction>& event);
 };
 
 class mcHistogram : public Histogram {
  private:
- public:
-  mcHistogram();
-  mcHistogram(const std::string& output_file) : Histogram(output_file) { makeMCHists(); }
-  ~mcHistogram();
+  std::unique_ptr<THnD> ndhist_mc;
   TH2D_ptr WvsQ2_MC =
       std::make_shared<TH2D>("WvsQ2_MC", "W vs Q^{2} #pi^{+} N", BINS, w_min, w_max, BINS, q2_min, q2_max);
   TH1D_ptr W_MC = std::make_shared<TH1D>("W_MC", "W #pi^{+} N", BINS, w_min, w_max);
@@ -421,9 +422,15 @@ class mcHistogram : public Histogram {
   TH2D_ptr delta_px_py_electron =
       std::make_shared<TH2D>("delta_px_py_electron", "#DeltaP_x vs #DeltaP_y", 500, -0.1, 0.1, 500, -0.1, 0.1);
 
+ public:
+  mcHistogram() : Histogram() {}
+  mcHistogram(const std::string& output_file) : Histogram(output_file) { makeMCHists(); }
+  ~mcHistogram();
+
   // W and Q^2
   void makeMCHists();
-  void Fill_WQ2_MC(double W, double Q2);
+  void Fill_WQ2_MC(const std::shared_ptr<MCReaction>& _e);
+  void Fill(const std::shared_ptr<MCReaction>& _e);
   void Fill_P(const std::shared_ptr<Branches>& d);
   void Write();
   void Write_DeltaP();

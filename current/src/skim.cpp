@@ -5,42 +5,27 @@
 /**************************************/
 #include "skim.hpp"
 
-Skim::Skim(const std::vector<std::string> &input, const std::string &output) {
-  fin = std::move(input);
-  fout = std::move(output);
-  chain = std::make_shared<TChain>("h10");
-
-  for (auto f : fin) chain->AddFile(f.c_str());
-
-  RootOutputFile = std::make_shared<TFile>(fout.c_str(), "RECREATE");
-  RootOutputFile->SetCompressionSettings(404);
-}
+Skim::Skim(const std::shared_ptr<TChain> &chain) : _chain(chain) {}
 
 Skim::~Skim() {}
 
-float Skim::Basic() {
-  std::cout << BLUE << "Basic Skim " << GREEN << fout << DEF << std::endl;
-
-  int num_of_events = (int)chain->GetEntries();
-  TTree *skim = chain->CloneTree(0);
-  auto data = std::make_shared<Branches>(chain);
+std::shared_ptr<TTree> Skim::Basic() {
+  int num_of_events = (int)_chain->GetEntries();
+  std::shared_ptr<TTree> skim(_chain->CloneTree(0));
+  auto data = std::make_shared<Branches>(_chain);
   int total = 0;
   for (int current_event = 0; current_event < num_of_events; current_event++) {
-    chain->GetEntry(current_event);
+    _chain->GetEntry(current_event);
     auto check = std::make_unique<Cuts>(data);
     if (check->isElecctron()) {
       total++;
       skim->Fill();
     }
   }
-
-  RootOutputFile->cd();
-  RootOutputFile->Write();
-  RootOutputFile->Close();
-
-  return (total / (float)num_of_events);
+  return skim;
 }
 
+/*
 void Skim::Strict() {
   int num_of_events;
   std::cout << BLUE << "Strict Skim file " << GREEN << fout << DEF << std::endl;
@@ -69,16 +54,15 @@ void Skim::Strict() {
   RootOutputFile->Write();
   RootOutputFile->Close();
 }
+*/
 
-void Skim::Final() {
-  std::cout << BLUE << "Event selection of file " << GREEN << fout << DEF << std::endl;
-
-  int num_of_events = (int)chain->GetEntries();
-  TTree *skim = chain->CloneTree(0);
-  auto data = std::make_shared<Branches>(chain);
+std::shared_ptr<TTree> Skim::Final() {
+  int num_of_events = (int)_chain->GetEntries();
+  std::shared_ptr<TTree> skim(_chain->CloneTree(0));
+  auto data = std::make_shared<Branches>(_chain);
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
-    chain->GetEntry(current_event);
+    _chain->GetEntry(current_event);
     if (data->ec_ei(0) < 0.01 || data->ec_eo(0) < 0.01) continue;
     auto check = std::make_unique<Cuts>(data);
     if (!check->isElecctron()) continue;
@@ -103,13 +87,8 @@ void Skim::Final() {
       }
     }
 
-    bool mm_cut = true;
-    mm_cut &= (event->MM() < 1.5);
-    mm_cut &= (event->MM() > 0.7);
-    if ((event->SinglePip() || event->NeutronPip()) && mm_cut) skim->Fill();
+    if (event->SinglePip() || event->NeutronPip() || event->PPi0()) skim->Fill();
   }
 
-  RootOutputFile->cd();
-  RootOutputFile->Write();
-  RootOutputFile->Close();
+  return skim;
 }

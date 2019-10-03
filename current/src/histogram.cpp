@@ -15,27 +15,36 @@ Histogram::Histogram() {
   hadron_fid_hist[0] = new TH2D("hadron_fid", "hadron_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
   hadron_fid_hist[1] = new TH2D("proton_fid", "proton_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
   hadron_fid_hist[2] = new TH2D("pip_fid", "pip_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
+
+  int dimentions = 4;
+  //////////////// W , Q2, Theta_star_pip, Phi_star_pip
+  int nbins[4] = {W_BINS, Q2_BINS, 20, 20};
+  double xmin[4] = {1.0, 0.8, 0, 0};
+  double xmax[4] = {2.0, 2.0, PI, 2 * PI};
+  ndhist = std::make_unique<THnD>("ndhist", "ndhist", dimentions, nbins, xmin, xmax);
+  ndhist->GetAxis(0)->SetName("W");
+  ndhist->GetAxis(1)->SetName("Q2");
+  ndhist->GetAxis(2)->SetName("Theta_star");
+  ndhist->GetAxis(3)->SetName("Phi_star");
 }
 
-Histogram::Histogram(const std::string &output_file) {
+Histogram::Histogram(const std::string &output_file) : Histogram() {
   RootOutputFile = std::make_shared<TFile>(output_file.c_str(), "RECREATE");
-  def = std::make_shared<TCanvas>();
-  makeHists_WvsQ2();
-  makeHists_deltat();
-  makeHists_EC();
-  makeHists_CC();
-  makeHists_fid();
-  hadron_fid_hist[0] = new TH2D("hadron_fid", "hadron_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
-  hadron_fid_hist[1] = new TH2D("proton_fid", "proton_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
-  hadron_fid_hist[2] = new TH2D("pip_fid", "pip_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
 }
 
 Histogram::~Histogram() {}
+
+void Histogram::Fill_ND(const std::shared_ptr<Reaction> &event) {
+  double to_fill[5] = {event->W(), event->Q2(), event->Theta_star(), event->Phi_star()};
+  ndhist->Fill(to_fill);
+}
+
 void Histogram::Write(const std::string &output_file) {
   RootOutputFile = std::make_shared<TFile>(output_file.c_str(), "RECREATE");
   Write();
 }
 void Histogram::Write() {
+  ndhist->Write();
   std::cout << GREEN << "\nFitting" << DEF << std::endl;
   // Start of cuts
   auto MM_neutron_cut = std::make_unique<Fits>();
@@ -599,7 +608,7 @@ void Histogram::Write_Missing_Mass() {
   TDirectory *mm_binned = RootOutputFile->mkdir("MM_binned");
   mm_binned->cd();
   for (int y = 0; y < W_BINS; y++) {
-    std::cout << Missing_Mass_WBinned[y]->GetEntries() << std::endl;
+    // std::cout << Missing_Mass_WBinned[y]->GetEntries() << std::endl;
     Fit_Missing_Mass_WBinned[y] = new Fits();
     Fit_Missing_Mass_WBinned[y]->FitBreitWigner(Missing_Mass_WBinned[y]);
     // Fit_Missing_Mass_WBinned[y]->FitMissMass(Missing_Mass_WBinned[y]);
@@ -1509,14 +1518,22 @@ mcHistogram::~mcHistogram() {}
 
 void mcHistogram::Write() {
   std::cerr << GREEN << "\nWriting" << DEF << std::endl;
-  Histogram::Write();
   RootOutputFile->cd();
+  ndhist_mc->Write();
+  // THn *acceptance = (THn *)ndhist_mc->Clone("Acceptance");
+  // acceptance->Scale(1 / ndhist_mc->GetEntries());
+  // ndhist->Scale(1 / ndhist->GetEntries());
+  // acceptance->Divide(ndhist.get());
+  // acceptance->Write();
+
+  Histogram::Write();
   // Start of cuts
   Fits *MM_neutron_cut = new Fits();
   MM_neutron_cut->Set_min(0.8);
   MM_neutron_cut->Set_max(1.2);
   MM_neutron_cut->FitBreitWigner(Missing_Mass.get());
   std::cerr << BOLDBLUE << "WvsQ2()" << DEF << std::endl;
+
   TDirectory *WvsQ2_folder = RootOutputFile->mkdir("W vs Q2 MC");
   WvsQ2_folder->cd();
   WvsQ2_MC_Write();
@@ -1528,6 +1545,17 @@ void mcHistogram::Write() {
 }
 
 void mcHistogram::makeMCHists() {
+  int dimentions = 4;
+  //////////////// W , Q2, Theta_star_pip, Phi_star_pip
+  int nbins[4] = {W_BINS, Q2_BINS, 20, 20};
+  double xmin[4] = {1.0, 0.8, 0, 0};
+  double xmax[4] = {2.0, 2.0, PI, 2 * PI};
+  ndhist_mc = std::make_unique<THnD>("ndhist_mc", "ndhist_mc", dimentions, nbins, xmin, xmax);
+  ndhist_mc->GetAxis(0)->SetName("W");
+  ndhist_mc->GetAxis(1)->SetName("Q2");
+  ndhist_mc->GetAxis(2)->SetName("Theta_star");
+  ndhist_mc->GetAxis(3)->SetName("Phi_star");
+
   std::string xyz[4] = {"X", "Y", "Z", "all"};
   for (int i = 0; i < 4; i++) {
     delta_p[i] = std::make_unique<TH1D>(Form("dPvsP_%s", xyz[i].c_str()),
@@ -1546,16 +1574,21 @@ void mcHistogram::makeMCHists() {
   }
 }
 
-void mcHistogram::Fill_WQ2_MC(double W, double Q2) {
-  WvsQ2_MC->Fill(W, Q2);
-  W_MC->Fill(W);
-  WvsQ2_binned_MC->Fill(W, Q2);
+void mcHistogram::Fill_WQ2_MC(const std::shared_ptr<MCReaction> &_e) {
+  WvsQ2_MC->Fill(_e->W_thrown(), _e->Q2_thrown());
+  W_MC->Fill(_e->W_thrown());
+  WvsQ2_binned_MC->Fill(_e->W_thrown(), _e->Q2_thrown());
   for (int y = 0; y < Q2_BINS; y++) {
-    if (q2_binned_min + (Q2_width * y) <= Q2 && q2_binned_min + (Q2_width * (y + 1)) >= Q2) {
-      W_binned_MC[y]->Fill(W);
+    if (q2_binned_min + (Q2_width * y) <= _e->Q2_thrown() && q2_binned_min + (Q2_width * (y + 1)) >= _e->Q2_thrown()) {
+      W_binned_MC[y]->Fill(_e->W_thrown());
       continue;
     }
   }
+}
+
+void mcHistogram::Fill(const std::shared_ptr<MCReaction> &event) {
+  double to_fill[4] = {event->W_thrown(), event->Q2_thrown(), event->Theta_star(), event->Phi_star()};
+  ndhist_mc->Fill(to_fill);
 }
 
 void mcHistogram::Fill_P(const std::shared_ptr<Branches> &d) {

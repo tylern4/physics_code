@@ -6,8 +6,11 @@
         "**/.factorypath": true
     },
     "files.associations": {
+        "*.inc": "fortran_fixed-form",
         "WvsMM.C": "cpp",
         "rootlogon.C": "cpp",
-        "run.C": "cpp"
-    }
+        "run.C": "cpp",
+        "parallelcoordtrans.C": "cpp"
+    },
+    "C_Cpp.dimInactiveRegions": false
 }

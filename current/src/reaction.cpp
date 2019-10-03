@@ -9,6 +9,8 @@
 #include "TLorentzVector.h"
 #include "TVector3.h"
 
+#include "TRandom.h"
+
 Reaction::Reaction(std::shared_ptr<Branches> data) : _data(std::move(data)) {
   if (getenv("BEAM_E") != NULL) _beam_energy = atof(getenv("BEAM_E"));
   _beam = std::make_unique<LorentzVector>(0.0, 0.0, _beam_energy, MASS_E);
@@ -16,21 +18,6 @@ Reaction::Reaction(std::shared_ptr<Branches> data) : _data(std::move(data)) {
   _hasE = true;
   _gamma = std::make_unique<LorentzVector>(0, 0, 0, 0);
   *_gamma = *_beam - *_elec;
-  _W = physics::W_calc(*_gamma);
-  _Q2 = physics::Q2_calc(*_gamma);
-}
-
-Reaction::Reaction(std::shared_ptr<Branches> data, bool MC) : _data(std::move(data)) {
-  if (getenv("BEAM_E") != NULL) _beam_energy = atof(getenv("BEAM_E"));
-  _beam = std::make_unique<LorentzVector>(0.0, 0.0, _beam_energy, MASS_E);
-  _gamma = std::make_unique<LorentzVector>();
-  if (MC)
-    _elec = std::make_unique<LorentzVector>(_data->pxpart(0), _data->pypart(0), _data->pzpart(0), MASS_E);
-  else
-    _elec = std::make_unique<LorentzVector>(_data->px(0), _data->py(0), _data->pz(0), MASS_E);
-
-  _hasE = true;
-  _gamma = std::make_unique<LorentzVector>(*_beam - *_elec);
   _W = physics::W_calc(*_gamma);
   _Q2 = physics::Q2_calc(*_gamma);
 }
@@ -158,7 +145,8 @@ void Reaction::boost() {
   // May be wrong still, need to check
   if (_boosted) return;
   _boosted = true;
-  if (!(this->SinglePip() || this->NeutronPip())) {
+
+  if (!(this->SinglePip() || this->NeutronPip() || this->SingleP() || this->PPi0())) {
     _theta_e = NAN;
     _theta_star = NAN;
     _phi_star = NAN;
@@ -195,3 +183,40 @@ void Reaction::boost() {
   _theta_star = _temp->Theta();
   _phi_star = physics::phi_boosted(_temp);
 }
+
+void Reaction::_boost() {
+  // Angles gotten from picture in KPark thesis page 11
+  // May be wrong still, need to check
+  if (_boosted) return;
+  _boosted = true;
+
+  if (!(this->SinglePip() || this->NeutronPip() || this->SingleP() || this->PPi0())) {
+    _theta_e = NAN;
+    _theta_star = NAN;
+    _phi_star = NAN;
+    return;
+  }
+
+  auto com = *_target + (*_beam - *_elec);
+  auto uz = _gamma->BoostToCM();
+  auto ux = (_beam->Vect().Cross(_elec->Vect())).Unit();
+  auto boost = (-1 * com.BoostToCM());
+
+  //_elec
+
+  _theta_e = _elec->Theta();
+  _theta_star = _pip->Theta();
+  _phi_star = physics::phi_boosted(_pip);
+}
+
+MCReaction::MCReaction(std::shared_ptr<Branches> data) : Reaction(data) {
+  _elec_thrown = std::make_unique<LorentzVector>(_data->pxpart(0), _data->pypart(0), _data->pzpart(0), MASS_E);
+  _pip_thrown = std::make_unique<LorentzVector>(_data->pxpart(1), _data->pypart(1), _data->pzpart(1), MASS_E);
+  _gamma_thrown = std::make_unique<LorentzVector>(*_beam - *_elec_thrown);
+  _W_thrown = physics::W_calc(*_gamma_thrown);
+  _Q2_thrown = physics::Q2_calc(*_gamma_thrown);
+}
+
+double MCReaction::Theta_E() { return _elec_thrown->Theta(); }
+double MCReaction::Theta_star() { return _pip_thrown->Theta(); }
+double MCReaction::Phi_star() { return physics::phi_boosted(_pip_thrown); }
