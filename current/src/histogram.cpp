@@ -35,8 +35,15 @@ Histogram::Histogram(const std::string &output_file) : Histogram() {
 Histogram::~Histogram() {}
 
 void Histogram::Fill_ND(const std::shared_ptr<Reaction> &event) {
-  double to_fill[5] = {event->W(), event->Q2(), event->Theta_star(), event->Phi_star()};
-  ndhist->Fill(to_fill);
+  bool _good = true;
+  _good &= !std::isnan(event->W());
+  _good &= !std::isnan(event->Q2());
+  _good &= !std::isnan(event->Theta_star());
+  _good &= !std::isnan(event->Phi_star());
+  if (_good) {
+    double to_fill[5] = {event->W(), event->Q2(), event->Theta_star(), event->Phi_star()};
+    ndhist->Fill(to_fill);
+  }
 }
 
 void Histogram::Write(const std::string &output_file) {
