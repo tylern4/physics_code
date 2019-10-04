@@ -211,7 +211,7 @@ void Reaction::_boost() {
 
 MCReaction::MCReaction(std::shared_ptr<Branches> data) : Reaction(data) {
   _elec_thrown = std::make_unique<LorentzVector>(_data->pxpart(0), _data->pypart(0), _data->pzpart(0), MASS_E);
-  _pip_thrown = std::make_unique<LorentzVector>(_data->pxpart(1), _data->pypart(1), _data->pzpart(1), MASS_E);
+  _pip_thrown = std::make_unique<LorentzVector>(_data->pxpart(1), _data->pypart(1), _data->pzpart(1), MASS_PIP);
   _gamma_thrown = std::make_unique<LorentzVector>(*_beam - *_elec_thrown);
   _W_thrown = physics::W_calc(*_gamma_thrown);
   _Q2_thrown = physics::Q2_calc(*_gamma_thrown);
