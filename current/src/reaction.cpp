@@ -214,8 +214,10 @@ MCReaction::MCReaction(std::shared_ptr<Branches> data) : Reaction(data) {
   _gamma_thrown = std::make_unique<LorentzVector>(*_beam - *_elec_thrown);
   _W_thrown = physics::W_calc(*_gamma_thrown);
   _Q2_thrown = physics::Q2_calc(*_gamma_thrown);
-  if (_data->npart() < 2) return;
-  _pip_thrown = std::make_unique<LorentzVector>(_data->pxpart(1), _data->pypart(1), _data->pzpart(1), MASS_PIP);
+  if (_data->npart() >= 2)
+    _pip_thrown = std::make_unique<LorentzVector>(_data->pxpart(1), _data->pypart(1), _data->pzpart(1), MASS_PIP);
+  else
+    _pip_thrown = std::make_unique<LorentzVector>(0, 0, 0, MASS_PIP);
 }
 
 double MCReaction::Theta_E() { return _elec_thrown->Theta(); }
