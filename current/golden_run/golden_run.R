@@ -15,7 +15,7 @@ print(plot)
 
 
 hist <- ggplot(data = df) +
-  #geom_density(aes(x = ratio, color = ratio), kernel = "gaussian", adjust = 0.5) +
+  geom_density(aes(x = ratio, color = ratio), kernel = "gaussian", adjust = 0.5) +
   geom_histogram(aes(x = ratio, fill=file_num),bins = 200) +
   scale_fill_gradient(low = "#003b6f", high = "#b20000") +
   theme(axis.text.x = element_text(angle = 90, vjust = -0.1)) +
