@@ -156,7 +156,7 @@
   },
   {
     "directory": "/Users/tylern/physics_code/current/build/src",
-    "command": "/usr/bin/clang++   -I/usr/local/root/include -I/Users/tylern/physics_code/current/src -I/Users/tylern/physics_code/current/src/include  -Ofast   -std=c++17 -m64 -pipe -fsigned-char -fno-common -Qunused-arguments -pthread -stdlib=libc++  -std=c++17 -m64 -pipe -fsigned-char -fno-common -Qunused-arguments -pthread -stdlib=libc++ -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk -fPIC   -std=gnu++1z -o CMakeFiles/physics.dir/NDhist.cpp.o -c /Users/tylern/physics_code/current/src/NDhist.cpp",
-    "file": "/Users/tylern/physics_code/current/src/NDhist.cpp"
+    "command": "/usr/bin/clang++   -I/usr/local/root/include -I/Users/tylern/physics_code/current/golden_run -I/Users/tylern/physics_code/current/src -I/Users/tylern/physics_code/current/src/include  -Ofast   -std=c++17 -m64 -pipe -fsigned-char -fno-common -Qunused-arguments -pthread -stdlib=libc++  -std=c++17 -m64 -pipe -fsigned-char -fno-common -Qunused-arguments -pthread -stdlib=libc++ -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk -fPIC   -std=gnu++1z -o CMakeFiles/physics.dir/golden_run.cpp.o -c /Users/tylern/physics_code/current/golden_run/golden_run.cpp",
+    "file": "/Users/tylern/physics_code/current/golden_run/golden_run.cpp"
   }
 ]

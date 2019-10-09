@@ -36,15 +36,17 @@ std::string golden_run(const std::vector<std::string>& fins) {
       chain->GetEntry(current_event);
       electron_cuts = true;
       // electron cuts
-      electron_cuts &= (data->ec(0) > 0);                              // ``` ``` ``` ec
-      electron_cuts &= (data->id(0) == ELECTRON || data->id(0) == 0);  // First particle is electron
-      electron_cuts &= (data->gpart() > 0);                            // Number of good particles is greater than 0
-      electron_cuts &= (data->stat(0) > 0);                            // First Particle hit stat
-      electron_cuts &= (data->q(0) == -1);                             // First particle is negative Q
-      electron_cuts &= (data->sc(0) > 0);                              // First Particle hit sc
-      electron_cuts &= (data->dc(0) > 0);                              // ``` ``` ``` dc
-      electron_cuts &= (data->dc_stat(0) > 0);
-      electron_cuts &= (data->cc(0) > 0);
+
+      electron_cuts &= (data->gpart() > 0);  // Number of good particles is greater than 0
+      // electron_cuts &= (data->id(0) == ELECTRON || data->id(0) == 0);  // First particle is electron
+
+      // electron_cuts &= (data->stat(0) > 0);                            // First Particle hit stat
+      electron_cuts &= (data->q(0) == -1);  // First particle is negative Q
+      // electron_cuts &= (data->sc(0) > 0);   // First Particle hit sc
+      // electron_cuts &= (data->dc(0) > 0);   // ``` ``` ``` dc
+      // electron_cuts &= (data->ec(0) > 0);   // ``` ``` ``` ec
+      // electron_cuts &= (data->dc_stat(0) > 0);
+      // electron_cuts &= (data->cc(0) > 0);
 
       if (electron_cuts) {
         n_evnt++;

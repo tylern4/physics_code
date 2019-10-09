@@ -12,16 +12,14 @@
 #include "Math/Vector4D.h"
 #include "TMath.h"
 
-#ifndef NUM_THREADS
-#define NUM_THREADS 4
-#endif
-
 typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzM4D<double>> LorentzVector;
 typedef ROOT::Math::Rotation3D LorentzRotation;
 typedef ROOT::Math::XYZVectorD Vector3;
 
-static const int MAX_PARTS = 100;
-static const int N_SIGMA = 3;
+static const short NUM_THREADS = (getenv("NUM_THREADS") != NULL) ? atoi(getenv("NUM_THREADS")) : 8;
+
+static const short MAX_PARTS = 100;
+static const short N_SIGMA = 3;
 static const double PI = TMath::Pi();
 static const double INV_SQRT_2PI = TMath::Sqrt(2 * TMath::Pi());
 static const double D2R = PI / 180.0;

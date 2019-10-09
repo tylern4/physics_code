@@ -8,7 +8,8 @@
                 "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include",
                 "/usr/local/root/include/**",
                 "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1",
-                "/usr/local/clhep/include/**"
+                "/usr/local/clhep/include/**",
+                "${workspaceFolder}/golden_run/**"
             ],
             "defines": [],
             "macFrameworkPath": [
