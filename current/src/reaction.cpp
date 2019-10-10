@@ -11,7 +11,7 @@
 
 #include "TRandom.h"
 
-Reaction::Reaction(std::shared_ptr<Branches> data) : _data(std::move(data)) {
+Reaction::Reaction(const std::shared_ptr<Branches>& data) : _data(data) {
   if (getenv("BEAM_E") != NULL) _beam_energy = atof(getenv("BEAM_E"));
   _beam = std::make_unique<LorentzVector>(0.0, 0.0, _beam_energy, MASS_E);
   _elec = std::make_unique<LorentzVector>(_data->px(0), _data->py(0), _data->pz(0), MASS_E);
@@ -228,6 +228,6 @@ MCReaction::MCReaction(std::shared_ptr<Branches> data) : Reaction(data) {
     _pip_thrown = std::make_unique<LorentzVector>(0, 0, 0, MASS_PIP);
 }
 
-double MCReaction::Theta_E() { return _elec_thrown->Theta(); }
-double MCReaction::Theta_star() { return _pip_thrown->Theta(); }
-double MCReaction::Phi_star() { return physics::phi_boosted(_pip_thrown); }
+float MCReaction::Theta_E() { return _elec_thrown->Theta(); }
+float MCReaction::Theta_star() { return _pip_thrown->Theta(); }
+float MCReaction::Phi_star() { return physics::phi_boosted(_pip_thrown); }

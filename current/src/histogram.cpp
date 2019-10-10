@@ -16,12 +16,7 @@ Histogram::Histogram() {
   hadron_fid_hist[1] = new TH2D("proton_fid", "proton_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
   hadron_fid_hist[2] = new TH2D("pip_fid", "pip_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
 
-  int dimentions = 4;
-  //////////////// W , Q2, Theta_star_pip, Phi_star_pip
-  int nbins[4] = {W_BINS, Q2_BINS, 20, 20};
-  double xmin[4] = {1.0, 0.8, 0, 0};
-  double xmax[4] = {2.0, 2.0, PI, 2 * PI};
-  ndhist = std::make_unique<THnD>("ndhist", "ndhist", dimentions, nbins, xmin, xmax);
+  ndhist = std::make_unique<THnSparseD>("ndhist", "ndhist", DIMENSIONS, nbins, xmin, xmax);
   ndhist->GetAxis(0)->SetName("W");
   ndhist->GetAxis(1)->SetName("Q2");
   ndhist->GetAxis(2)->SetName("Theta_star");
@@ -42,7 +37,9 @@ void Histogram::Fill_ND(const std::shared_ptr<Reaction> &event) {
   _good &= !std::isnan(event->Phi_star());
   if (_good) {
     double to_fill[5] = {event->W(), event->Q2(), event->Theta_star(), event->Phi_star()};
+    TThread::Lock();
     ndhist->Fill(to_fill);
+    TThread::UnLock();
   }
 }
 
@@ -1552,12 +1549,7 @@ void mcHistogram::Write() {
 }
 
 void mcHistogram::makeMCHists() {
-  int dimentions = 4;
-  //////////////// W , Q2, Theta_star_pip, Phi_star_pip
-  int nbins[4] = {W_BINS, Q2_BINS, 20, 20};
-  double xmin[4] = {1.0, 0.8, 0, 0};
-  double xmax[4] = {2.0, 2.0, PI, 2 * PI};
-  ndhist_mc = std::make_unique<THnD>("ndhist_mc", "ndhist_mc", dimentions, nbins, xmin, xmax);
+  ndhist_mc = std::make_unique<THnSparseD>("ndhist_mc", "ndhist_mc", DIMENSIONS, nbins, xmin, xmax);
   ndhist_mc->GetAxis(0)->SetName("W");
   ndhist_mc->GetAxis(1)->SetName("Q2");
   ndhist_mc->GetAxis(2)->SetName("Theta_star");
@@ -1595,7 +1587,9 @@ void mcHistogram::Fill_WQ2_MC(const std::shared_ptr<MCReaction> &_e) {
 
 void mcHistogram::Fill(const std::shared_ptr<MCReaction> &event) {
   double to_fill[4] = {event->W_thrown(), event->Q2_thrown(), event->Theta_star(), event->Phi_star()};
+  TThread::Lock();
   ndhist_mc->Fill(to_fill);
+  TThread::UnLock();
 }
 
 void mcHistogram::Fill_P(const std::shared_ptr<Branches> &d) {

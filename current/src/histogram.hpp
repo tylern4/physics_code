@@ -20,6 +20,7 @@
 #include "TH3.h"
 #include "THn.h"
 #include "THnSparse.h"
+#include "TThread.h"
 #include "branches.hpp"
 #include "color.hpp"
 #include "constants.hpp"
@@ -28,6 +29,7 @@
 #include "missing_mass.hpp"
 #include "reaction.hpp"
 
+#define DIMENSIONS 4
 #define W_BINS 20
 #define Q2_BINS 10
 #define THETA_BINS 100
@@ -51,7 +53,12 @@ class Histogram {
  protected:
   std::shared_ptr<TFile> RootOutputFile;
   std::shared_ptr<TCanvas> def;
-  std::unique_ptr<THnD> ndhist;
+
+  //////////////// W , Q2, Theta_star_pip, Phi_star_pip
+  int nbins[DIMENSIONS] = {W_BINS, Q2_BINS, 20, 20};
+  double xmin[DIMENSIONS] = {1.0, 0.8, 0, 0};
+  double xmax[DIMENSIONS] = {2.0, 2.0, PI, 2.0 * PI};
+  std::unique_ptr<THnSparse> ndhist;
 
   float p_min = 0.0;
   float p_max = 5.0;
@@ -208,7 +215,8 @@ class Histogram {
   float xmin_cc_sparse[ndims_cc_sparse] = {0.0, 0.0, -2.0, CC_min};
   float xmax_cc_sparse[ndims_cc_sparse] = {NUM_SECTORS + 1.0, segment + 1.0, 1.0, CC_max};
   float x_cc_sparse[ndims_cc_sparse];
-  THnF* cc_sparse = new THnF("cc_sparse", "Histogram", ndims_cc_sparse, bins_cc_sparse, xmin_cc_sparse, xmax_cc_sparse);
+  THnF* cc_sparse = new THnF("cc_sparse", "Histogram", ndims_cc_sparse, bins_cc_sparse, xmin_cc_sparse,
+  xmax_cc_sparse);
   */
 
   TH2D_ptr Theta_CC = std::make_shared<TH2D>("Theta_CC", "Theta_CC", 20, 0.0, 20.0, 60, 0.0, 60.0);
@@ -408,7 +416,7 @@ class Histogram {
 
 class mcHistogram : public Histogram {
  private:
-  std::unique_ptr<THnD> ndhist_mc;
+  std::unique_ptr<THnSparse> ndhist_mc;
   TH2D_ptr WvsQ2_MC =
       std::make_shared<TH2D>("WvsQ2_MC", "W vs Q^{2} #pi^{+} N", BINS, w_min, w_max, BINS, q2_min, q2_max);
   TH1D_ptr W_MC = std::make_shared<TH1D>("W_MC", "W #pi^{+} N", BINS, w_min, w_max);

@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
 
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
   std::cout.imbue(std::locale(""));
-  ROOT::EnableImplicitMT(NUM_THREADS);
+  ROOT::EnableImplicitMT(2);
   hist->Write(outfilename);
   std::cout << RED << events << " events\t" << elapsed_full.count() << " sec" << DEF << std::endl;
   std::cout << BOLDYELLOW << events / elapsed_full.count() << " Hz" << DEF << std::endl;

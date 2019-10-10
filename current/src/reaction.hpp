@@ -63,7 +63,7 @@ class Reaction {
 
  public:
   Reaction() : _data(nullptr){};
-  Reaction(std::shared_ptr<Branches> data);
+  Reaction(const std::shared_ptr<Branches>& data);
 
   ~Reaction();
 
@@ -86,18 +86,18 @@ class Reaction {
     return os << '{' << "W:" << e._W << " Q2:" << e._Q2 << " type:" << e.Type() << '}';
   }
 
-  inline double W() { return _W; }
-  inline double Q2() { return _Q2; }
+  inline float W() { return _W; }
+  inline float Q2() { return _Q2; }
 
-  inline double Theta_star() {
+  inline float Theta_star() {
     if (!_boosted) boost();
     return _theta_star;
   }
-  inline double Phi_star() {
+  inline float Phi_star() {
     if (!_boosted) boost();
     return _phi_star;
   }
-  inline double Theta_E() {
+  inline float Theta_E() {
     if (!_boosted) boost();
     return _theta_e;
   }
@@ -151,11 +151,11 @@ class MCReaction : public Reaction {
 
  public:
   MCReaction(std::shared_ptr<Branches> data);
-  inline double W_thrown() { return _W_thrown; }
-  inline double Q2_thrown() { return _Q2_thrown; }
+  inline float W_thrown() { return _W_thrown; }
+  inline float Q2_thrown() { return _Q2_thrown; }
 
-  double Theta_star();
-  double Phi_star();
-  double Theta_E();
+  float Theta_star();
+  float Phi_star();
+  float Theta_E();
 };
 #endif
