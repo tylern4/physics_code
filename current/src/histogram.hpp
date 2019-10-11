@@ -55,7 +55,7 @@ class Histogram {
   std::shared_ptr<TCanvas> def;
 
   //////////////// W , Q2, Theta_star_pip, Phi_star_pip
-  int nbins[DIMENSIONS] = {W_BINS, Q2_BINS, 20, 20};
+  int nbins[DIMENSIONS] = {250, 250, 250, 250};
   double xmin[DIMENSIONS] = {1.0, 0.8, 0, 0};
   double xmax[DIMENSIONS] = {2.0, 2.0, PI, 2.0 * PI};
   std::unique_ptr<THnSparse> ndhist;
