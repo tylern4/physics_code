@@ -47,6 +47,7 @@ void Histogram::Write(const std::string &output_file) {
   RootOutputFile = std::make_shared<TFile>(output_file.c_str(), "RECREATE");
   Write();
 }
+
 void Histogram::Write() {
   ndhist->Write();
   std::cout << GREEN << "\nFitting" << DEF << std::endl;
