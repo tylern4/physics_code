@@ -6,7 +6,7 @@
 #include "cuts.hpp"
 
 Cuts::Cuts(const std::shared_ptr<Branches>& data) : _data(data) {
-  if (_data->gpart() > 0) _dt = std::make_shared<Delta_T>(_data->sc_t(0), _data->sc_r(0));
+  if (_data->gpart() > 0) _dt = std::make_shared<Delta_T>(_data);
 }
 Cuts::Cuts(const std::shared_ptr<Branches>& data, const std::shared_ptr<Delta_T>& dt) : _data(data), _dt(dt) {}
 Cuts::~Cuts() {}
@@ -63,6 +63,25 @@ bool Cuts::isElecctron() {
   ////_elec &= Fid_cut();
 
   return _elec;
+}
+
+bool Cuts::Pip(int part) {
+  bool _pip = true;
+  _pip = (_data->q(part) == POSITIVE);
+  _pip &= dt_Pip_cut(_dt->Get_dt_Pi(part), _data->p(part));
+  return _pip;
+}
+bool Cuts::Pim(int part) {
+  bool _pim = true;
+  _pim = (_data->q(part) == NEGATIVE);
+  _pim &= dt_Pip_cut(_dt->Get_dt_Pi(part), _data->p(part));
+  return _pim;
+}
+bool Cuts::Prot(int part) {
+  bool _prot = true;
+  _prot = (_data->q(part) == POSITIVE);
+  _prot &= dt_P_cut(_dt->Get_dt_P(part), _data->p(part));
+  return _prot;
 }
 
 bool Cuts::Fid_cut() {

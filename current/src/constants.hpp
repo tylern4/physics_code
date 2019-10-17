@@ -13,16 +13,20 @@
 #include "TMath.h"
 
 typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzM4D<double>> LorentzVector;
+typedef std::shared_ptr<ROOT::Math::LorentzVector<ROOT::Math::PxPyPzM4D<double>>> Lorentz_ptr;
 typedef ROOT::Math::Rotation3D LorentzRotation;
 typedef ROOT::Math::XYZVectorD Vector3;
 
 static const short NUM_THREADS = (getenv("NUM_THREADS") != NULL) ? atoi(getenv("NUM_THREADS")) : 8;
+static const float BEAM_E = (getenv("BEAM_E") != NULL) ? atof(getenv("BEAM_E")) : 4.81726;
 
 static const short MAX_PARTS = 100;
 static const short N_SIGMA = 3;
 static const double PI = TMath::Pi();
 static const double INV_SQRT_2PI = TMath::Sqrt(2 * TMath::Pi());
 static const double D2R = PI / 180.0;
+static const double DEG2RAD = PI / 180.0;
+static const double RAD2DEG = 180.0 / PI;
 static const int POSITIVE = 1;
 static const int NEGATIVE = -1;
 // static const double E1D_E0 = 4.802;   // GeV

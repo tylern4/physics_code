@@ -70,10 +70,8 @@ const void DataHandeler::RunEvent(size_t current_event) {
   _hists->Photon_flux_Fill(photon_flux->GetVirtualPhotonFlux());
   _hists->WvsQ2_Fill(event->W(), event->Q2(), _data->ec_sect(0));
 
-  auto dt = std::make_unique<Delta_T>(_data->sc_t(0), _data->sc_r(0));
-  dt->delta_t_hists(_hists, _data);
-  std::vector<double> dt_proton = dt->delta_t_array(MASS_P, _data);
-  std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, _data);
+  auto dt = std::make_unique<Delta_T>(_data);
+  dt->delta_t_hists(_hists);
 
   float theta = physics::theta_calc(_data->cz(0));
   float phi = physics::phi_calc(_data->cx(0), _data->cy(0));
@@ -86,38 +84,16 @@ const void DataHandeler::RunEvent(size_t current_event) {
     phi = physics::phi_calc(_data->cx(part_num), _data->cy(part_num));
     sector = _data->dc_sect(part_num);
 
-    _hists->delta_t_sec_pad(_data->p(part_num), _data->q(part_num), dt->Get_dt_P(), dt->Get_dt_Pi(), dt->Get_dt_E(),
-                            _data->sc_sect(part_num), _data->sc_pd(part_num));
+    _hists->delta_t_sec_pad(_data->p(part_num), _data->q(part_num), dt->Get_dt_P(part_num), dt->Get_dt_Pi(part_num),
+                            dt->Get_dt_E(part_num), _data->sc_sect(part_num), _data->sc_pd(part_num));
 
     _hists->Fill_Target_Vertex(_data->vx(part_num), _data->vy(part_num), _data->vz(part_num));
     _hists->MomVsBeta_Fill(_data->p(part_num), _data->b(part_num));
 
     if (_data->q(part_num) == POSITIVE) {
       _hists->MomVsBeta_Fill_pos(_data->p(part_num), _data->b(part_num));
-      if (check->dt_Pip_cut(dt_pi.at(part_num), _data->p(part_num)) &&
-          check->dt_P_cut(dt_proton.at(part_num), _data->p(part_num)))
-        _hists->Fill_proton_Pi_ID_P(_data->p(part_num), _data->b(part_num));
-
-      if (check->dt_Pip_cut(dt_pi.at(part_num), _data->p(part_num))) {
-        event->SetPip(part_num);
-        _hists->Fill_hadron_fid(theta, phi, sector, PIP);
-        _hists->Fill_pion_WQ2(event->W(), event->Q2());
-        _hists->Fill_Pi_ID_P(_data->p(part_num), _data->b(part_num));
-      } else if (check->dt_P_cut(dt_proton.at(part_num), _data->p(part_num))) {
-        event->SetProton(part_num);
-        _hists->Fill_hadron_fid(theta, phi, sector, PROTON);
-        _hists->Fill_proton_WQ2(event->W(), event->Q2());
-        _hists->Fill_proton_ID_P(_data->p(part_num), _data->b(part_num));
-      } else
-        event->SetOther(part_num);
-
     } else if (_data->q(part_num) == NEGATIVE) {
       _hists->MomVsBeta_Fill_neg(_data->p(part_num), _data->b(part_num));
-      if (check->dt_Pip_cut(dt_pi.at(part_num), _data->p(part_num))) {
-        _hists->Fill_hadron_fid(theta, phi, sector, PIM);
-        event->SetPim(part_num);
-      } else
-        event->SetOther(part_num);
     } else if (_data->q(part_num) == 0) {
       if (_data->id(part_num) == NEUTRON) {
         event->SetNeutron(part_num);
@@ -125,7 +101,27 @@ const void DataHandeler::RunEvent(size_t current_event) {
         _hists->Fill_neutron_fid(_data->cc_c2(part_num), _data->cc_r(part_num), _data->cc_sect(part_num));
       } else
         event->SetOther(part_num);
+      continue;
     }
+
+    if (check->Pip(part_num) && check->Prot(part_num))
+      _hists->Fill_proton_Pi_ID_P(_data->p(part_num), _data->b(part_num));
+
+    if (check->Pip(part_num)) {
+      event->SetPip(part_num);
+      _hists->Fill_hadron_fid(theta, phi, sector, PIP);
+      _hists->Fill_pion_WQ2(event->W(), event->Q2());
+      _hists->Fill_Pi_ID_P(_data->p(part_num), _data->b(part_num));
+    } else if (check->Prot(part_num)) {
+      event->SetProton(part_num);
+      _hists->Fill_hadron_fid(theta, phi, sector, PROTON);
+      _hists->Fill_proton_WQ2(event->W(), event->Q2());
+      _hists->Fill_proton_ID_P(_data->p(part_num), _data->b(part_num));
+    } else if (check->Pim(part_num)) {
+      _hists->Fill_hadron_fid(theta, phi, sector, PIM);
+      event->SetPim(part_num);
+    } else
+      event->SetOther(part_num);
   }
 
   if (event->SinglePip()) {

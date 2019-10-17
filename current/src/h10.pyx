@@ -130,15 +130,14 @@ cdef extern from "branches.hpp":
       vector[float] qpart()
 
 
-cdef class data:
+cdef class h10_data:
   cdef:
     int entry
     shared_ptr[TChain] c_chain
     shared_ptr[Branches] c_branches
-  def __cinit__(data self, str file_name):
+  def __cinit__(h10_data self):
     self.entry = 0
     self.c_chain.reset(new TChain("h10"))
-    deref(self.c_chain).Add(file_name.encode())
     self.c_branches.reset(new Branches(self.c_chain))
   def add(self, file_name):
     deref(self.c_chain).Add(file_name.encode())

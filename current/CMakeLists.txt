@@ -47,6 +47,7 @@ set(PROGRAMS
       csv_maker/csv_maker.cpp 
       ntuple_maker/ntuple_maker.cpp
       golden_run/golden_run.cpp
+      momentumCorrections/momemtumCorrections.cpp
       )
 foreach(prog ${PROGRAMS} )
     get_filename_component(progname ${prog} NAME)

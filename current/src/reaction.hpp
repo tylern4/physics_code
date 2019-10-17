@@ -15,17 +15,20 @@
 class Reaction {
  protected:
   double _beam_energy = E1D_E0;
-  std::unique_ptr<LorentzVector> _beam;
-  std::unique_ptr<LorentzVector> _elec;
-  std::unique_ptr<LorentzVector> _gamma;
-  std::unique_ptr<LorentzVector> _target = std::make_unique<LorentzVector>(0.0, 0.0, 0.0, MASS_P);
-  std::unique_ptr<LorentzVector> _prot;
-  std::unique_ptr<LorentzVector> _pip;
-  std::unique_ptr<LorentzVector> _pim;
-  std::unique_ptr<LorentzVector> _neutron;
-  std::vector<std::unique_ptr<LorentzVector>> _photons;
+  Lorentz_ptr _beam = std::make_shared<LorentzVector>(0.0, 0.0, BEAM_E, MASS_E);
+  Lorentz_ptr _target = std::make_shared<LorentzVector>(0.0, 0.0, 0.0, MASS_P);
+  Lorentz_ptr _gamma = std::make_shared<LorentzVector>(0, 0, 0, 0);
+
+  Lorentz_ptr _elec;
+  Lorentz_ptr _prot;
+  Lorentz_ptr _pip;
+  Lorentz_ptr _pim;
+  Lorentz_ptr _neutron;
+  std::vector<Lorentz_ptr> _photons;
 
   std::shared_ptr<Branches> _data;
+
+  double par[6][16];
 
   bool _hasE = false;
   bool _hasP = false;
@@ -45,6 +48,8 @@ class Reaction {
   short _numPhotons = 0;
   short _numOther = 0;
 
+  short _sector = -1;
+
   bool _MM_calc = false;
   float _MM = NAN;
   float _MM2 = NAN;
@@ -54,6 +59,7 @@ class Reaction {
 
   float _W = NAN;
   float _Q2 = NAN;
+  float _xb = NAN;
 
   float _theta_e = NAN;
   float _theta_star = NAN;
@@ -66,7 +72,7 @@ class Reaction {
   Reaction(const std::shared_ptr<Branches>& data);
 
   ~Reaction();
-
+  void correct_mom();
   void SetProton(int i);
   void SetPip(int i);
   void SetPim(int i);
@@ -81,6 +87,8 @@ class Reaction {
   void boost();
   void _boost();
   int Type();
+
+  inline short sector() { return _sector; }
 
   friend std::ostream& operator<<(std::ostream& os, Reaction& e) {
     return os << '{' << "W:" << e._W << " Q2:" << e._Q2 << " type:" << e.Type() << '}';
@@ -144,10 +152,10 @@ class Reaction {
 class MCReaction : public Reaction {
   float _W_thrown = NAN;
   float _Q2_thrown = NAN;
-  std::unique_ptr<LorentzVector> _elec_thrown;
-  std::unique_ptr<LorentzVector> _gamma_thrown;
-  std::unique_ptr<LorentzVector> _pip_thrown;
-  std::unique_ptr<LorentzVector> _neutron_thrown;
+  Lorentz_ptr _elec_thrown;
+  Lorentz_ptr _gamma_thrown;
+  Lorentz_ptr _pip_thrown;
+  Lorentz_ptr _neutron_thrown;
 
  public:
   MCReaction(std::shared_ptr<Branches> data);

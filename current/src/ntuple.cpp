@@ -78,9 +78,7 @@ size_t Ntuple::Run(const std::shared_ptr<TChain> &chain) {
 
     if (!check->isElecctron()) continue;
 
-    auto dt = std::make_unique<Delta_T>(data->sc_t(0), data->sc_r(0));
-    std::vector<double> dt_proton = dt->delta_t_array(MASS_P, data);
-    std::vector<double> dt_pi = dt->delta_t_array(MASS_PIP, data);
+    auto dt = std::make_unique<Delta_T>(data);
 
     float theta = physics::theta_calc(data->cz(0));
     float phi = physics::phi_calc(data->cx(0), data->cy(0));
@@ -88,14 +86,14 @@ size_t Ntuple::Run(const std::shared_ptr<TChain> &chain) {
 
     for (int part_num = 1; part_num < data->gpart(); part_num++) {
       if (data->q(part_num) == POSITIVE) {
-        if (check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num)))
+        if (check->dt_Pip_cut(dt->Get_dt_Pi(part_num), data->p(part_num)))
           event->SetPip(part_num);
-        else if (check->dt_P_cut(dt_proton.at(part_num), data->p(part_num)))
+        else if (check->dt_P_cut(dt->Get_dt_P(part_num), data->p(part_num)))
           event->SetProton(part_num);
         else
           event->SetOther(part_num);
       } else if (data->q(part_num) == NEGATIVE) {
-        if (check->dt_Pip_cut(dt_pi.at(part_num), data->p(part_num)))
+        if (check->dt_Pip_cut(dt->Get_dt_Pi(part_num), data->p(part_num)))
           event->SetPim(part_num);
         else
           event->SetOther(part_num);

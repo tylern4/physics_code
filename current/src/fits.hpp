@@ -50,6 +50,7 @@ class Fits {
   TF1 *FitFiducial(TH2D *hist2d);
   TF1 *FitGenNormal(TH1D *hist);
   TF1 *FitBreitWigner(TH1D *hist);
+  TF1 *FitBreitWigner(const std::shared_ptr<TH1D> &hist);
   TF1 *FitMissMass(TH1D *hist);
   void Set_min(double val);
   void Set_max(double val);

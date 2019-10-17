@@ -50,18 +50,19 @@ class Cuts {
   bool Fid_cut();
   bool Beam_cut();
 
+  bool Pip(int part);
+  bool Pim(int part);
+  bool Prot(int part);
+
   double sf_top_fit(double P);
   double sf_bot_fit(double P);
   bool sf_cut(double sf, double P);
-
   double dt_P_bot_fit(double P);
   double dt_P_top_fit(double P);
   bool dt_P_cut(double dt, double P);
-
   double dt_Pip_bot_fit(double P);
   double dt_Pip_top_fit(double P);
   bool dt_Pip_cut(double dt, double P);
-
   bool elec_fid_cut();
 };
 

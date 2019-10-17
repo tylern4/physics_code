@@ -5,18 +5,17 @@
 /**************************************/
 #include "physics.hpp"
 
-LorentzVector *physics::fourVec(double px, double py, double pz, double mass) {
-  LorentzVector *Particle4 = new LorentzVector(px, py, pz, mass);
-  return Particle4;
+Lorentz_ptr physics::fourVec(double px, double py, double pz, double mass) {
+  return std::make_shared<LorentzVector>(px, py, pz, mass);
 }
-LorentzVector *physics::fourVec(double px, double py, double pz, int pid) {
+Lorentz_ptr physics::fourVec(double px, double py, double pz, int pid) {
   return physics::fourVec(px, py, pz, physics::Get_Mass(pid));
 }
-LorentzVector *physics::fourVec(double p, double cx, double cy, double cz, double mass) {
+Lorentz_ptr physics::fourVec(double p, double cx, double cy, double cz, double mass) {
   return physics::fourVec(p * cx, p * cy, p * cz, mass);
 }
 
-LorentzVector *physics::fourVec(double p, double cx, double cy, double cz, int pid) {
+Lorentz_ptr physics::fourVec(double p, double cx, double cy, double cz, int pid) {
   return physics::fourVec(p * cx, p * cy, p * cz, pid);
 }
 
@@ -48,12 +47,11 @@ double physics::xb_calc(double Q2, double E_prime) {
   double xb = (Q2 / (2 * MASS_P * gamma));
   return xb;
 }
-// overload with 4 vectors
-double physics::xb_calc(LorentzVector e_mu, LorentzVector e_mu_prime) {
-  double Q2 = Q2_calc(e_mu, e_mu_prime);
-  LorentzVector q = e_mu - e_mu_prime;
+
+double physics::xb_calc(const LorentzVector &gamma_mu) {
+  double Q2 = Q2_calc(gamma_mu);
   LorentzVector target(0, 0, 0, MASS_P);
-  return (Q2 / (2 * (q.Dot(target))));
+  return (Q2 / (2 * (gamma_mu.Dot(target))));
 }
 
 double physics::theta_calc(double cosz) { return acos(cosz) / D2R; }
@@ -76,7 +74,7 @@ float physics::invTan(float y, float x) {
   return NAN;
 }
 
-float physics::phi_boosted(std::unique_ptr<LorentzVector> &vec) { return invTan(vec->Py(), vec->Px()); }
+float physics::phi_boosted(const Lorentz_ptr &vec) { return invTan(vec->Py(), vec->Px()); }
 
 double physics::center_phi_calc(double cosx, double cosy) {
   double phi0 = (atan2(cosx, cosy) / D2R);

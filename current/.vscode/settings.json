@@ -10,7 +10,9 @@
         "WvsMM.C": "cpp",
         "rootlogon.C": "cpp",
         "run.C": "cpp",
-        "parallelcoordtrans.C": "cpp"
+        "parallelcoordtrans.C": "cpp",
+        "memory": "cpp"
     },
-    "C_Cpp.dimInactiveRegions": false
+    "C_Cpp.dimInactiveRegions": false,
+    "python.pythonPath": "/usr/local/bin/python"
 }

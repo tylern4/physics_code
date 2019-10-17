@@ -12,48 +12,89 @@
 #include "TRandom.h"
 
 Reaction::Reaction(const std::shared_ptr<Branches>& data) : _data(data) {
-  if (getenv("BEAM_E") != NULL) _beam_energy = atof(getenv("BEAM_E"));
-  _beam = std::make_unique<LorentzVector>(0.0, 0.0, _beam_energy, MASS_E);
-  _elec = std::make_unique<LorentzVector>(_data->px(0), _data->py(0), _data->pz(0), MASS_E);
   _hasE = true;
-  _gamma = std::make_unique<LorentzVector>(0, 0, 0, 0);
+  _sector = data->dc_sect(0);
+  _elec = std::make_shared<LorentzVector>(_data->px(0), _data->py(0), _data->pz(0), MASS_E);
+
+  // this->correct_mom();
   *_gamma = *_beam - *_elec;
   _W = physics::W_calc(*_gamma);
   _Q2 = physics::Q2_calc(*_gamma);
+  _xb = physics::xb_calc(*_gamma);
 }
 
 Reaction::~Reaction() = default;
+
+void Reaction::correct_mom() {
+  for (int i = 0; i < 6; i++)
+    for (int ii = 0; ii < 16; ii++) par[i][ii] = 0.0;
+  float torus = 1.0;
+  float phi = _elec->Phi() * RAD2DEG;
+  // transforming phi: [-30,270] -> [-30,30]
+  if (phi < -30.) phi = phi + 360.;
+  phi = ((phi + 30.) / 60. - (int(phi + 30.)) / 60) * 60. - 30.;
+  phi = phi * DEG2RAD;
+
+  float factor = _elec->Theta() / (sin(4. * _elec->Theta()) * sin(4. * _elec->Theta()));
+  if (_elec->Theta() * RAD2DEG >= 22.5) factor = _elec->Theta();
+
+  float theta = _elec->Theta();
+
+  float dtheta = (par[_sector - 1][0] + par[_sector - 1][1] * phi) * cos(theta) / cos(phi) +
+                 (par[_sector - 1][2] + par[_sector - 1][3] * phi) * sin(theta) +
+                 par[_sector - 1][14] * cos(theta) * cos(theta) / cos(phi);
+
+  // new corrected theta
+  theta += dtheta;
+
+  float term = (par[_sector - 1][4] + par[_sector - 1][5] * phi) * cos(theta) / cos(phi) +
+               (par[_sector - 1][6] + par[_sector - 1][7] * phi) * sin(theta) +
+               par[_sector - 1][15] * cos(theta) * cos(theta) / cos(phi);
+
+  term *= _elec->P() * 3375. / (_data->q(0) * torus * 2250.) * factor;
+  float dmom =
+      term + par[_sector - 1][8] * cos(theta) + par[_sector - 1][9] * sin(theta) +
+      par[_sector - 1][10] * sin(2. * theta) +
+      (par[_sector - 1][11] * cos(theta) + par[_sector - 1][12] * sin(theta) + par[_sector - 1][13] * sin(2. * theta)) *
+          phi;
+  // new corrected momentum
+  float p_cor = _elec->P() * (1. + dmom);
+  phi = _elec->Phi();
+
+  //_elec->SetPxPyPzE(p_cor * cos(phi) * sin(theta), p_cor * sin(phi) * sin(theta), p_cor * cos(theta), sqrt(p_cor *
+  // p_cor + MASS_E * MASS_E));
+}
 
 void Reaction::SetProton(int i) {
   _numProt++;
   _numPos++;
   _hasP = true;
-  _prot = std::make_unique<LorentzVector>(_data->px(i), _data->py(i), _data->pz(i), MASS_P);
+  _prot = std::make_shared<LorentzVector>(_data->px(i), _data->py(i), _data->pz(i), MASS_P);
 }
 void Reaction::SetPip(int i) {
   _numPip++;
   _numPos++;
   _hasPip = true;
-  _pip = std::make_unique<LorentzVector>(_data->px(i), _data->py(i), _data->pz(i), MASS_PIP);
+  _pip = std::make_shared<LorentzVector>(_data->px(i), _data->py(i), _data->pz(i), MASS_PIP);
 }
 void Reaction::SetPim(int i) {
   _numPim++;
   _numNeg++;
   _hasPim = true;
-  _pim = std::make_unique<LorentzVector>(_data->px(i), _data->py(i), _data->pz(i), MASS_PIM);
+  _pim = std::make_shared<LorentzVector>(_data->px(i), _data->py(i), _data->pz(i), MASS_PIM);
 }
 
 void Reaction::SetNeutron(int i) {
   _numNeutral++;
   _hasNeutron = true;
-  _neutron = std::make_unique<LorentzVector>(_data->px(i), _data->py(i), _data->pz(i), MASS_N);
+  _neutron = std::make_shared<LorentzVector>(_data->px(i), _data->py(i), _data->pz(i), MASS_N);
 }
 
 void Reaction::SetOther(int i) {
   if (_data->id(i) == NEUTRON)
     Reaction::SetNeutron(i);
   else if (_data->id(i) == PHOTON) {
-    _photons.push_back(std::make_unique<LorentzVector>(_data->px(i), _data->py(i), _data->pz(i), 0));
+    _photons.push_back(std::make_shared<LorentzVector>(_data->px(i), _data->py(i), _data->pz(i), 0));
     _numPhotons++;
   } else {
     _numOther++;
@@ -62,7 +103,7 @@ void Reaction::SetOther(int i) {
 }
 
 void Reaction::CalcMissMass() {
-  auto mm = std::make_unique<LorentzVector>();
+  auto mm = std::make_shared<LorentzVector>();
   *mm += (*_beam - *_elec + *_target);
   if (SinglePip() || NeutronPip()) {
     *mm -= *_pip;
@@ -83,7 +124,7 @@ void Reaction::CalcMissMass() {
     _MM = mm->mag();
     _MM2 = mm->mag2();
   }
-  auto pi0 = std::make_unique<LorentzVector>();
+  auto pi0 = std::make_shared<LorentzVector>();
   if (_numPhotons >= 2) {
     for (auto& p : _photons) {
       *pi0 += *p;
@@ -154,11 +195,11 @@ void Reaction::boost() {
   }
 
   auto _com_ = *_target + (*_beam - *_elec);
-  auto com = std::make_unique<TLorentzVector>(_com_.X(), _com_.Y(), _com_.Z(), _com_.E());
-  auto elec_boosted = std::make_unique<TLorentzVector>(_elec->X(), _elec->Y(), _elec->Z(), _elec->E());
-  auto gamma_boosted = std::make_unique<TLorentzVector>(_gamma->X(), _gamma->Y(), _gamma->Z(), _gamma->E());
-  auto beam_boosted = std::make_unique<TLorentzVector>(_beam->X(), _beam->Y(), _beam->Z(), _beam->E());
-  auto pip_boosted = std::make_unique<TLorentzVector>(_pip->X(), _pip->Y(), _pip->Z(), _pip->E());
+  auto com = std::make_shared<TLorentzVector>(_com_.X(), _com_.Y(), _com_.Z(), _com_.E());
+  auto elec_boosted = std::make_shared<TLorentzVector>(_elec->X(), _elec->Y(), _elec->Z(), _elec->E());
+  auto gamma_boosted = std::make_shared<TLorentzVector>(_gamma->X(), _gamma->Y(), _gamma->Z(), _gamma->E());
+  auto beam_boosted = std::make_shared<TLorentzVector>(_beam->X(), _beam->Y(), _beam->Z(), _beam->E());
+  auto pip_boosted = std::make_shared<TLorentzVector>(_pip->X(), _pip->Y(), _pip->Z(), _pip->E());
 
   //! Varsets
   //! Calculate rotation: taken from Evan's phys-ana-omega on 08-05-13
@@ -178,7 +219,7 @@ void Reaction::boost() {
   beam_boosted->Transform(r4);
   pip_boosted->Transform(r4);
 
-  auto _temp = std::make_unique<LorentzVector>(pip_boosted->X(), pip_boosted->Y(), pip_boosted->Z(), pip_boosted->M());
+  auto _temp = std::make_shared<LorentzVector>(pip_boosted->X(), pip_boosted->Y(), pip_boosted->Z(), pip_boosted->M());
   _theta_e = elec_boosted->Theta();
   _theta_star = _temp->Theta();
   _phi_star = physics::phi_boosted(_temp);
@@ -210,22 +251,11 @@ void Reaction::_boost() {
 }
 
 MCReaction::MCReaction(std::shared_ptr<Branches> data) : Reaction(data) {
-  if (_data->nprt() >= 1) {
-    _elec_thrown = std::make_unique<LorentzVector>(_data->pxpart(0), _data->pypart(0), _data->pzpart(0), MASS_E);
-    _gamma_thrown = std::make_unique<LorentzVector>(*_beam - *_elec_thrown);
-    _W_thrown = physics::W_calc(*_gamma_thrown);
-    _Q2_thrown = physics::Q2_calc(*_gamma_thrown);
-  } else {
-    _elec_thrown = std::make_unique<LorentzVector>(0, 0, 0, MASS_E);
-    _gamma_thrown = std::make_unique<LorentzVector>(*_beam - *_elec_thrown);
-    _W_thrown = NAN;
-    _Q2_thrown = NAN;
-  }
-
-  if (_data->nprt() >= 2)
-    _pip_thrown = std::make_unique<LorentzVector>(_data->pxpart(1), _data->pypart(1), _data->pzpart(1), MASS_PIP);
-  else
-    _pip_thrown = std::make_unique<LorentzVector>(0, 0, 0, MASS_PIP);
+  _elec_thrown = std::make_shared<LorentzVector>(_data->pxpart(0), _data->pypart(0), _data->pzpart(0), MASS_E);
+  _gamma_thrown = std::make_shared<LorentzVector>(*_beam - *_elec_thrown);
+  _W_thrown = physics::W_calc(*_gamma_thrown);
+  _Q2_thrown = physics::Q2_calc(*_gamma_thrown);
+  _pip_thrown = std::make_shared<LorentzVector>(_data->pxpart(1), _data->pypart(1), _data->pzpart(1), MASS_PIP);
 }
 
 float MCReaction::Theta_E() { return _elec_thrown->Theta(); }

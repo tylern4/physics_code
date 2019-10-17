@@ -145,43 +145,50 @@ void Histogram::Write() {
 
 // W and Q^2
 void Histogram::makeHists_WvsQ2() {
-  for (short sec = 0; sec < NUM_SECTORS; sec++) {
-    sprintf(hname, "W_vs_Q2_sec_%d", sec + 1);
-    sprintf(htitle, "W vs Q^{2} Sector: %d", sec + 1);
-    WvsQ2_sec[sec] = new TH2D(hname, htitle, BINS, w_min, w_max, BINS, q2_min, q2_max);
-
-    sprintf(hname, "W_sec_%d", sec + 1);
-    sprintf(htitle, "W Sector: %d", sec + 1);
-    W_sec[sec] = new TH1D(hname, htitle, BINS, w_min, w_max);
-  }
+  WvsQ2_sec.reserve(NUM_SECTORS);
+  W_sec.reserve(NUM_SECTORS);
+  WvsQ2_channel_sec.reserve(NUM_SECTORS);
+  W_channel_sec.reserve(NUM_SECTORS);
 
   for (short sec = 0; sec < NUM_SECTORS; sec++) {
-    WvsQ2_channel_sec[sec] =
-        new TH2D(Form("W_vs_Q2_channel_sec_%d", sec + 1), Form("W vs Q^{2} N #pi^{+} Sector: %d", sec + 1), BINS, w_min,
-                 w_max, BINS / 2, q2_min, q2_max);
+    WvsQ2_sec[sec] = std::make_shared<TH2D>(Form("W_vs_Q2_sec_%d", sec + 1), Form("W vs Q^{2} Sector: %d", sec + 1),
+                                            BINS, w_min, w_max, BINS, q2_min, q2_max);
 
-    W_channel_sec[sec] =
-        new TH1D(Form("W_channel_sec_%d", sec + 1), Form("W N #pi^{+} Sector: %d", sec + 1), BINS / 2, w_min, w_max);
+    W_sec[sec] = std::make_shared<TH1D>(Form("W_sec_%d", sec + 1), Form("W Sector: %d", sec + 1), BINS, w_min, w_max);
+
+    WvsQ2_channel_sec[sec] = std::make_shared<TH2D>(Form("W_vs_Q2_channel_sec_%d", sec + 1),
+                                                    Form("W vs Q^{2} N #pi^{+} Sector: %d", sec + 1), BINS, w_min,
+                                                    w_max, BINS / 2, q2_min, q2_max);
+
+    W_channel_sec[sec] = std::make_shared<TH1D>(Form("W_channel_sec_%d", sec + 1),
+                                                Form("W N #pi^{+} Sector: %d", sec + 1), BINS / 2, w_min, w_max);
   }
-
+  W_binned.reserve(Q2_BINS);
   for (short y = 0; y < Q2_BINS; y++) {
-    sprintf(hname, "W_%0.3f_%0.3f", q2_binned_min + (Q2_width * y), q2_binned_min + (Q2_width * (y + 1)));
-    sprintf(htitle, "W hist\nQ^{2} %0.3f %0.3f", q2_binned_min + (Q2_width * y), q2_binned_min + (Q2_width * (y + 1)));
-    W_binned[y] = new TH1D(hname, htitle, BINS, w_binned_min, w_binned_max);
+    float _min = q2_binned_min + (Q2_width * y);
+    float _max = q2_binned_min + (Q2_width * (y + 1));
+    W_binned[y] =
+        std::make_shared<TH1D>(Form("W_%0.3f_%0.3f", _min, _max), Form("W hist\nQ^{2} %0.3f %0.3f", _min, _max), BINS,
+                               w_binned_min, w_binned_max);
   }
+
+  Q2_binned.reserve(W_BINS);
+  Missing_Mass_WBinned.reserve(W_BINS);
+  Missing_Mass_WBinned_square.reserve(W_BINS);
   for (short x = 0; x < W_BINS; x++) {
-    sprintf(hname, "Q2_%0.3f_%0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
-    sprintf(htitle, "Q^{2} hist\nW %0.3f %0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
-    Q2_binned[x] = new TH1D(hname, htitle, BINS, q2_binned_min, q2_binned_max);
+    float _min = w_binned_min + (W_width * x);
+    float _max = w_binned_min + (W_width * (x + 1));
 
-    sprintf(hname, "MM_W_%0.3f_%0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
-    sprintf(htitle, "Missing Mass\nW %0.3f %0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
-    Missing_Mass_WBinned[x] = new TH1D(hname, htitle, BINS, 0.8, 1.5);
+    Q2_binned[x] =
+        std::make_shared<TH1D>(Form("Q2_%0.3f_%0.3f", _min, _max), Form("Q^{2} hist\nW %0.3f %0.3f", _min, _max), BINS,
+                               q2_binned_min, q2_binned_max);
 
-    sprintf(hname, "MM2_W_%0.3f_%0.3f", w_binned_min + (W_width * x), w_binned_min + (W_width * (x + 1)));
-    sprintf(htitle, "Missing Mass^{2}\nW %0.3f %0.3f", w_binned_min + (W_width * x),
-            w_binned_min + (W_width * (x + 1)));
-    Missing_Mass_WBinned_square[x] = new TH1D(hname, htitle, BINS, 0.8 * 0.8, 1.5 * 1.5);
+    Missing_Mass_WBinned[x] = std::make_shared<TH1D>(Form("MM_W_%0.3f_%0.3f", _min, _max),
+                                                     Form("Missing Mass\nW %0.3f %0.3f", _min, _max), BINS, 0.8, 1.5);
+
+    Missing_Mass_WBinned_square[x] =
+        std::make_shared<TH1D>(Form("MM2_W_%0.3f_%0.3f", _min, _max),
+                               Form("Missing Mass^{2}\nW %0.3f %0.3f", _min, _max), BINS, 0.8 * 0.8, 1.5 * 1.5);
   }
 }
 
@@ -211,20 +218,6 @@ void Histogram::Fill_MM_WQ2(float W, float Q2) {
 }
 
 void Histogram::Fill_channel_WQ2(float W, float Q2, int sector, LorentzVector e_prime, float mm, float mm2) {
-  /*
-  float x_pip_N[NDIMS_PIP_N];
-  x_pip_N[0] = W;
-  x_pip_N[1] = Q2;
-  x_pip_N[2] = (float)sec;
-  x_pip_N[3] = mm;
-  x_pip_N[4] = mm2;
-  x_pip_N[5] = e_prime.Theta();
-  x_pip_N[6] = e_prime.Phi();
-
-
-  // pip_N->Fill(x_pip_N);
-  // std::cout << "Nope" << '\n';
-  */
   E_prime_hist->Fill(e_prime.E());
   Q2_vs_xb->Fill(physics::xb_calc(Q2, e_prime.E()), Q2);
 
