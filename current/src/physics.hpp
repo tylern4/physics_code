@@ -27,12 +27,12 @@ double center_phi_calc(double cosx, double cosy);
 int get_sector(double phi);
 double Get_Mass(int ID);
 double fiducial_phi(double theta_e, double e_p);
-Lorentz_ptr fourVec(double px, double py, double pz, double mass);
-Lorentz_ptr fourVec(double p, double cx, double cy, double cz, double mass);
-Lorentz_ptr fourVec(double px, double py, double pz, int pid);
-Lorentz_ptr fourVec(double p, double cx, double cy, double cz, int pid);
+std::shared_ptr<LorentzVector> fourVec(double px, double py, double pz, double mass);
+std::shared_ptr<LorentzVector> fourVec(double p, double cx, double cy, double cz, double mass);
+std::shared_ptr<LorentzVector> fourVec(double px, double py, double pz, int pid);
+std::shared_ptr<LorentzVector> fourVec(double p, double cx, double cy, double cz, int pid);
 float invTan(float y, float x);
-float phi_boosted(const Lorentz_ptr &vec);
+float phi_boosted(const std::shared_ptr<LorentzVector> &vec);
 
 }  // namespace physics
 #endif

@@ -15,16 +15,16 @@
 class Reaction {
  protected:
   double _beam_energy = E1D_E0;
-  Lorentz_ptr _beam = std::make_shared<LorentzVector>(0.0, 0.0, BEAM_E, MASS_E);
-  Lorentz_ptr _target = std::make_shared<LorentzVector>(0.0, 0.0, 0.0, MASS_P);
-  Lorentz_ptr _gamma = std::make_shared<LorentzVector>(0, 0, 0, 0);
+  std::shared_ptr<LorentzVector> _beam = std::make_shared<LorentzVector>(0.0, 0.0, BEAM_E, MASS_E);
+  std::shared_ptr<LorentzVector> _target = std::make_shared<LorentzVector>(0.0, 0.0, 0.0, MASS_P);
+  std::shared_ptr<LorentzVector> _gamma = std::make_shared<LorentzVector>(0, 0, 0, 0);
 
-  Lorentz_ptr _elec;
-  Lorentz_ptr _prot;
-  Lorentz_ptr _pip;
-  Lorentz_ptr _pim;
-  Lorentz_ptr _neutron;
-  std::vector<Lorentz_ptr> _photons;
+  std::shared_ptr<LorentzVector> _elec;
+  std::shared_ptr<LorentzVector> _prot;
+  std::shared_ptr<LorentzVector> _pip;
+  std::shared_ptr<LorentzVector> _pim;
+  std::shared_ptr<LorentzVector> _neutron;
+  std::vector<std::shared_ptr<LorentzVector>> _photons;
 
   std::shared_ptr<Branches> _data;
 
@@ -152,10 +152,10 @@ class Reaction {
 class MCReaction : public Reaction {
   float _W_thrown = NAN;
   float _Q2_thrown = NAN;
-  Lorentz_ptr _elec_thrown;
-  Lorentz_ptr _gamma_thrown;
-  Lorentz_ptr _pip_thrown;
-  Lorentz_ptr _neutron_thrown;
+  std::shared_ptr<LorentzVector> _elec_thrown;
+  std::shared_ptr<LorentzVector> _gamma_thrown;
+  std::shared_ptr<LorentzVector> _pip_thrown;
+  std::shared_ptr<LorentzVector> _neutron_thrown;
 
  public:
   MCReaction(std::shared_ptr<Branches> data);

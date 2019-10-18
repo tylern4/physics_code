@@ -13,7 +13,6 @@
 #include "TMath.h"
 
 typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzM4D<double>> LorentzVector;
-typedef std::shared_ptr<ROOT::Math::LorentzVector<ROOT::Math::PxPyPzM4D<double>>> Lorentz_ptr;
 typedef ROOT::Math::Rotation3D LorentzRotation;
 typedef ROOT::Math::XYZVectorD Vector3;
 

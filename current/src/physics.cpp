@@ -5,17 +5,17 @@
 /**************************************/
 #include "physics.hpp"
 
-Lorentz_ptr physics::fourVec(double px, double py, double pz, double mass) {
+std::shared_ptr<LorentzVector> physics::fourVec(double px, double py, double pz, double mass) {
   return std::make_shared<LorentzVector>(px, py, pz, mass);
 }
-Lorentz_ptr physics::fourVec(double px, double py, double pz, int pid) {
+std::shared_ptr<LorentzVector> physics::fourVec(double px, double py, double pz, int pid) {
   return physics::fourVec(px, py, pz, physics::Get_Mass(pid));
 }
-Lorentz_ptr physics::fourVec(double p, double cx, double cy, double cz, double mass) {
+std::shared_ptr<LorentzVector> physics::fourVec(double p, double cx, double cy, double cz, double mass) {
   return physics::fourVec(p * cx, p * cy, p * cz, mass);
 }
 
-Lorentz_ptr physics::fourVec(double p, double cx, double cy, double cz, int pid) {
+std::shared_ptr<LorentzVector> physics::fourVec(double p, double cx, double cy, double cz, int pid) {
   return physics::fourVec(p * cx, p * cy, p * cz, pid);
 }
 
@@ -74,7 +74,7 @@ float physics::invTan(float y, float x) {
   return NAN;
 }
 
-float physics::phi_boosted(const Lorentz_ptr &vec) { return invTan(vec->Py(), vec->Px()); }
+float physics::phi_boosted(const std::shared_ptr<LorentzVector> &vec) { return invTan(vec->Py(), vec->Px()); }
 
 double physics::center_phi_calc(double cosx, double cosy) {
   double phi0 = (atan2(cosx, cosy) / D2R);
