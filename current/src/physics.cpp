@@ -22,14 +22,14 @@ std::shared_ptr<LorentzVector> physics::fourVec(double p, double cx, double cy, 
 // Calcuating Q^2
 //	Gotten from t channel
 // -q^mu^2 = -(e^mu - e^mu')^2 = Q^2
-double physics::Q2_calc(LorentzVector e_mu, LorentzVector e_mu_prime) {
+double physics::Q2_calc(const LorentzVector &e_mu, const LorentzVector &e_mu_prime) {
   LorentzVector q_mu = (e_mu - e_mu_prime);
   return -q_mu.mag2();
 }
 //	Calcualting W
 //	Gotten from s channel [(gamma + P)^2 == s == w^2]
 //	Sqrt√[M_p^2 - Q^2 + 2 M_p gamma]
-double physics::W_calc(LorentzVector e_mu, LorentzVector e_mu_prime) {
+double physics::W_calc(const LorentzVector &e_mu, const LorentzVector &e_mu_prime) {
   LorentzVector q_mu = (e_mu - e_mu_prime);
   LorentzVector p_mu(0, 0, 0, MASS_P);
   return (p_mu + q_mu).mag();

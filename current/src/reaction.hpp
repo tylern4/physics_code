@@ -15,9 +15,9 @@
 class Reaction {
  protected:
   double _beam_energy = E1D_E0;
-  std::shared_ptr<LorentzVector> _beam = std::make_shared<LorentzVector>(0.0, 0.0, BEAM_E, MASS_E);
-  std::shared_ptr<LorentzVector> _target = std::make_shared<LorentzVector>(0.0, 0.0, 0.0, MASS_P);
-  std::shared_ptr<LorentzVector> _gamma = std::make_shared<LorentzVector>(0, 0, 0, 0);
+  std::shared_ptr<LorentzVector> _beam = physics::fourVec(0.0, 0.0, BEAM_E, MASS_E);
+  std::shared_ptr<LorentzVector> _target = physics::fourVec(0.0, 0.0, 0.0, MASS_P);
+  std::shared_ptr<LorentzVector> _gamma = physics::fourVec(0, 0, 0, 0);
 
   std::shared_ptr<LorentzVector> _elec;
   std::shared_ptr<LorentzVector> _prot;

@@ -145,10 +145,10 @@ void Histogram::Write() {
 
 // W and Q^2
 void Histogram::makeHists_WvsQ2() {
-  WvsQ2_sec.reserve(NUM_SECTORS);
-  W_sec.reserve(NUM_SECTORS);
-  WvsQ2_channel_sec.reserve(NUM_SECTORS);
-  W_channel_sec.reserve(NUM_SECTORS);
+  WvsQ2_sec.resize(NUM_SECTORS);
+  W_sec.resize(NUM_SECTORS);
+  WvsQ2_channel_sec.resize(NUM_SECTORS);
+  W_channel_sec.resize(NUM_SECTORS);
 
   for (short sec = 0; sec < NUM_SECTORS; sec++) {
     WvsQ2_sec[sec] = std::make_shared<TH2D>(Form("W_vs_Q2_sec_%d", sec + 1), Form("W vs Q^{2} Sector: %d", sec + 1),
@@ -163,7 +163,7 @@ void Histogram::makeHists_WvsQ2() {
     W_channel_sec[sec] = std::make_shared<TH1D>(Form("W_channel_sec_%d", sec + 1),
                                                 Form("W N #pi^{+} Sector: %d", sec + 1), BINS / 2, w_min, w_max);
   }
-  W_binned.reserve(Q2_BINS);
+  W_binned.resize(Q2_BINS);
   for (short y = 0; y < Q2_BINS; y++) {
     float _min = q2_binned_min + (Q2_width * y);
     float _max = q2_binned_min + (Q2_width * (y + 1));
@@ -172,9 +172,9 @@ void Histogram::makeHists_WvsQ2() {
                                w_binned_min, w_binned_max);
   }
 
-  Q2_binned.reserve(W_BINS);
-  Missing_Mass_WBinned.reserve(W_BINS);
-  Missing_Mass_WBinned_square.reserve(W_BINS);
+  Q2_binned.resize(W_BINS);
+  Missing_Mass_WBinned.resize(W_BINS);
+  Missing_Mass_WBinned_square.resize(W_BINS);
   for (short x = 0; x < W_BINS; x++) {
     float _min = w_binned_min + (W_width * x);
     float _max = w_binned_min + (W_width * (x + 1));

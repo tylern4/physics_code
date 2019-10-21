@@ -14,7 +14,7 @@
 Reaction::Reaction(const std::shared_ptr<Branches>& data) : _data(data) {
   _hasE = true;
   _sector = data->dc_sect(0);
-  _elec = std::make_shared<LorentzVector>(_data->px(0), _data->py(0), _data->pz(0), MASS_E);
+  _elec = physics::fourVec(_data->px(0), _data->py(0), _data->pz(0), MASS_E);
 
   // this->correct_mom();
   *_gamma = *_beam - *_elec;
@@ -69,32 +69,32 @@ void Reaction::SetProton(int i) {
   _numProt++;
   _numPos++;
   _hasP = true;
-  _prot = std::make_shared<LorentzVector>(_data->px(i), _data->py(i), _data->pz(i), MASS_P);
+  _prot = physics::fourVec(_data->px(i), _data->py(i), _data->pz(i), MASS_P);
 }
 void Reaction::SetPip(int i) {
   _numPip++;
   _numPos++;
   _hasPip = true;
-  _pip = std::make_shared<LorentzVector>(_data->px(i), _data->py(i), _data->pz(i), MASS_PIP);
+  _pip = physics::fourVec(_data->px(i), _data->py(i), _data->pz(i), MASS_PIP);
 }
 void Reaction::SetPim(int i) {
   _numPim++;
   _numNeg++;
   _hasPim = true;
-  _pim = std::make_shared<LorentzVector>(_data->px(i), _data->py(i), _data->pz(i), MASS_PIM);
+  _pim = physics::fourVec(_data->px(i), _data->py(i), _data->pz(i), MASS_PIM);
 }
 
 void Reaction::SetNeutron(int i) {
   _numNeutral++;
   _hasNeutron = true;
-  _neutron = std::make_shared<LorentzVector>(_data->px(i), _data->py(i), _data->pz(i), MASS_N);
+  _neutron = physics::fourVec(_data->px(i), _data->py(i), _data->pz(i), MASS_N);
 }
 
 void Reaction::SetOther(int i) {
   if (_data->id(i) == NEUTRON)
     Reaction::SetNeutron(i);
   else if (_data->id(i) == PHOTON) {
-    _photons.push_back(std::make_shared<LorentzVector>(_data->px(i), _data->py(i), _data->pz(i), 0));
+    _photons.push_back(physics::fourVec(_data->px(i), _data->py(i), _data->pz(i), 0));
     _numPhotons++;
   } else {
     _numOther++;
@@ -219,7 +219,7 @@ void Reaction::boost() {
   beam_boosted->Transform(r4);
   pip_boosted->Transform(r4);
 
-  auto _temp = std::make_shared<LorentzVector>(pip_boosted->X(), pip_boosted->Y(), pip_boosted->Z(), pip_boosted->M());
+  auto _temp = physics::fourVec(pip_boosted->X(), pip_boosted->Y(), pip_boosted->Z(), pip_boosted->M());
   _theta_e = elec_boosted->Theta();
   _theta_star = _temp->Theta();
   _phi_star = physics::phi_boosted(_temp);
@@ -251,11 +251,11 @@ void Reaction::_boost() {
 }
 
 MCReaction::MCReaction(std::shared_ptr<Branches> data) : Reaction(data) {
-  _elec_thrown = std::make_shared<LorentzVector>(_data->pxpart(0), _data->pypart(0), _data->pzpart(0), MASS_E);
+  _elec_thrown = physics::fourVec(_data->pxpart(0), _data->pypart(0), _data->pzpart(0), MASS_E);
   _gamma_thrown = std::make_shared<LorentzVector>(*_beam - *_elec_thrown);
   _W_thrown = physics::W_calc(*_gamma_thrown);
   _Q2_thrown = physics::Q2_calc(*_gamma_thrown);
-  _pip_thrown = std::make_shared<LorentzVector>(_data->pxpart(1), _data->pypart(1), _data->pzpart(1), MASS_PIP);
+  _pip_thrown = physics::fourVec(_data->pxpart(1), _data->pypart(1), _data->pzpart(1), MASS_PIP);
 }
 
 float MCReaction::Theta_E() { return _elec_thrown->Theta(); }
