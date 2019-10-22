@@ -149,6 +149,7 @@ void Histogram::makeHists_WvsQ2() {
   W_sec.resize(NUM_SECTORS);
   WvsQ2_channel_sec.resize(NUM_SECTORS);
   W_channel_sec.resize(NUM_SECTORS);
+  Missing_Mass_small_sec.resize(NUM_SECTORS);
 
   for (short sec = 0; sec < NUM_SECTORS; sec++) {
     WvsQ2_sec[sec] = std::make_shared<TH2D>(Form("W_vs_Q2_sec_%d", sec + 1), Form("W vs Q^{2} Sector: %d", sec + 1),
@@ -162,6 +163,8 @@ void Histogram::makeHists_WvsQ2() {
 
     W_channel_sec[sec] = std::make_shared<TH1D>(Form("W_channel_sec_%d", sec + 1),
                                                 Form("W N #pi^{+} Sector: %d", sec + 1), BINS / 2, w_min, w_max);
+    Missing_Mass_small_sec[sec] = std::make_shared<TH1D>(Form("Missing_Mass_small_%d", sec),
+                                                         Form("e(p,#pi^{+} X)e' Sector %d", sec), BINS_MM, 0.8, 1.3);
   }
   W_binned.resize(Q2_BINS);
   for (short y = 0; y < Q2_BINS; y++) {
@@ -217,9 +220,12 @@ void Histogram::Fill_MM_WQ2(float W, float Q2) {
   Q2_MM->Fill(Q2);
 }
 
-void Histogram::Fill_channel_WQ2(float W, float Q2, int sector, LorentzVector e_prime, float mm, float mm2) {
-  E_prime_hist->Fill(e_prime.E());
-  Q2_vs_xb->Fill(physics::xb_calc(Q2, e_prime.E()), Q2);
+void Histogram::Fill_channel_WQ2(const std::shared_ptr<Reaction> &event) {
+  float W = event->W();
+  float Q2 = event->Q2();
+  short sector = event->sector();
+  E_prime_hist->Fill(event->E_prime());
+  Q2_vs_xb->Fill(event->xb(), Q2);
 
   WvsQ2_channel->Fill(W, Q2);
   W_channel->Fill(W);
@@ -528,15 +534,15 @@ void Histogram::MomVsBeta_Write() {
 }
 
 // Missing Mass
-void Histogram::Fill_Missing_Mass(float miss_mass) {
-  Missing_Mass->Fill(miss_mass);
-  Missing_Mass_small->Fill(miss_mass);
-}
-
-void Histogram::Fill_Missing_Mass(float mm, float mm2) {
-  Missing_Mass->Fill(mm);
-  Missing_Mass_square->Fill(mm2);
-  Missing_Mass_small->Fill(mm);
+void Histogram::Fill_Missing_Mass(const std::shared_ptr<Reaction> &event) {
+  Missing_Mass->Fill(event->MM());
+  Missing_Mass_square->Fill(event->MM2());
+  Missing_Mass_small->Fill(event->MM());
+  if (event->sector() == 0 || event->sector() > NUM_SECTORS) {
+    std::cerr << "Error filling electron fid = " << event->sector() << std::endl;
+    return;
+  }
+  Missing_Mass_small_sec[event->sector() - 1]->Fill(event->MM());
 }
 void Histogram::Fill_Missing_Mass_strict(float mm, float mm2) {
   Missing_Mass_strict->Fill(mm);
@@ -579,6 +585,11 @@ void Histogram::Write_Missing_Mass() {
   Missing_Mass_small->SetXTitle("Mass (GeV)");
   Missing_Mass_small->Write();
 
+  for (auto &&sec : Missing_Mass_small_sec) {
+    sec->SetXTitle("Mass (GeV)");
+    sec->Write();
+  }
+
   Missing_Mass_square->SetXTitle("Mass^{2} (GeV^{2})");
   Missing_Mass_square->Write();
 
@@ -602,7 +613,7 @@ void Histogram::Write_Missing_Mass() {
   Missing_Mass_2pi->Write();
   Missing_Mass_square_2pi->SetXTitle("Mass^{2} (GeV^{2})");
   Missing_Mass_square_2pi->Write();
-  Fit_Missing_Mass_WBinned.reserve(W_BINS);
+  Fit_Missing_Mass_WBinned.resize(W_BINS);
   TDirectory *mm_binned = RootOutputFile->mkdir("MM_binned");
   mm_binned->cd();
   for (int y = 0; y < W_BINS; y++) {

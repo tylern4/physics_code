@@ -88,14 +88,15 @@ class Reaction {
   void _boost();
   int Type();
 
-  inline short sector() { return _sector; }
-
   friend std::ostream& operator<<(std::ostream& os, Reaction& e) {
     return os << '{' << "W:" << e._W << " Q2:" << e._Q2 << " type:" << e.Type() << '}';
   }
 
+  inline float E_prime() { return _elec->E(); }
+  inline short sector() { return _sector; }
   inline float W() { return _W; }
   inline float Q2() { return _Q2; }
+  inline float xb() { return _xb; }
 
   inline float Theta_star() {
     if (!_boosted) boost();
@@ -143,10 +144,10 @@ class Reaction {
     return mm_cut;
   }
 
-  inline LorentzVector e_mu() { return *_beam; }
-  inline LorentzVector e_mu_prime() { return *_elec; }
-  inline LorentzVector p_prime() { return *_prot; }
-  inline LorentzVector gamma() { return *_gamma; }
+  inline LorentzVector& e_mu() { return *_beam; }
+  inline LorentzVector& e_mu_prime() { return *_elec; }
+  inline LorentzVector& p_prime() { return *_prot; }
+  inline LorentzVector& gamma() { return *_gamma; }
 };
 
 class MCReaction : public Reaction {

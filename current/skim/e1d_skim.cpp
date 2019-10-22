@@ -48,24 +48,12 @@ int main(int argc, char** argv) {
 
   int i = 0;
   for (auto& f : skimmed_trees) {
-    auto outFile = std::make_unique<TFile>(Form("%s_%d.root", "outfile", ++i), "RECREATE");
+    auto outFile = std::make_unique<TFile>(Form("%s_%d.root", "h10_skim", ++i), "RECREATE");
     outFile->cd();
     f->Write();
     outFile->Write();
     outFile->Close();
   }
-
-  /* Saves verything to one file.
-    TFile* outFile = new TFile("output.root", "RECREATE");
-    outFile->cd();
-    std::cout << "Merging " << std::endl;
-    auto treeList = std::make_shared<TList>();
-    for (auto& f : skimmed_trees) treeList->Add(f.get());
-    TTree* outTree = TTree::MergeTrees(treeList.get());
-    outTree->Write();
-    outFile->Write();
-    outFile->Close();
-  */
 
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
   std::cout.imbue(std::locale(""));

@@ -285,6 +285,7 @@ class Histogram {
 
   TH1D_ptr Missing_Mass = std::make_shared<TH1D>("Missing_Mass", "Missing Mass", BINS_MM, MM_min, MM_max);
   TH1D_ptr Missing_Mass_small = std::make_shared<TH1D>("Missing_Mass_small", "e(p,#pi^{+} X)e'", BINS_MM, 0.8, 1.3);
+  std::vector<TH1D_ptr> Missing_Mass_small_sec;
   TH1D_ptr Missing_Mass_square =
       std::make_shared<TH1D>("Missing_Mass_square", "Missing Mass square", BINS_MM, MM_min, MM_max* MM_max);
 
@@ -324,7 +325,7 @@ class Histogram {
   void Fill_P_PI0(float W, float Q2);
   void Fill_NeutronPip_WQ2(float W, float Q2, float MM, float MM2);
   void Fill_MM_WQ2(float W, float Q2);
-  void Fill_channel_WQ2(float W, float Q2, int sector, LorentzVector e_prime, float mm, float mm2);
+  void Fill_channel_WQ2(const std::shared_ptr<Reaction>& event);
   void Fill_single_proton_WQ2(float W, float Q2);
   void WvsQ2_Fill(float W, float Q2, int sector);
   void Fill_pion_WQ2(float W, float Q2);
@@ -344,8 +345,7 @@ class Histogram {
   void MomVsBeta_Write();
 
   // Missing Mass
-  void Fill_Missing_Mass(float miss_mass);
-  void Fill_Missing_Mass(float mm, float mm2);
+  void Fill_Missing_Mass(const std::shared_ptr<Reaction>& event);
   void Fill_Missing_Mass_strict(float mm, float mm2);
   // void Fill_Mass(float mass);
   void Fill_Missing_Mass_square(float miss_mass_2);

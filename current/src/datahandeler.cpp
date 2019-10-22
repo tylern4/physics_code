@@ -125,14 +125,13 @@ const void DataHandeler::RunEvent(size_t current_event) {
   }
 
   if (event->SinglePip()) {
-    _hists->Fill_Missing_Mass(event->MM(), event->MM2());
+    _hists->Fill_Missing_Mass(event);
     _hists->Fill_W_Missing_Mass(event->W(), event->MM(), event->MM2());
   }
   if (event->MM_cut()) _hists->Fill_MM_WQ2(event->W(), event->Q2());
   if (event->channel()) {
     _hists->Fill_ND(event);
-    _hists->Fill_channel_WQ2(event->W(), event->Q2(), _data->ec_sect(0), event->e_mu_prime(), event->MM(),
-                             event->MM2());
+    _hists->Fill_channel_WQ2(event);
     _hists->Fill_Missing_Mass_strict(event->MM(), event->MM2());
     _hists->EC_cut_fill(_data->etot(0), _data->p(0));
     _hists->Fill_E_Prime_channel(event->e_mu_prime());
@@ -185,7 +184,7 @@ const void mcHandeler::RunEvent(int current_event) {
   for (int part_num = 1; part_num < _data->gpart(); part_num++) {
     if (_data->pidpart(part_num) == PIP) mc_event->SetPip(part_num);
   }
-  if (mc_event->SinglePip()) _mc_hists->Fill_Missing_Mass(mc_event->MM(), mc_event->MM2());
+  if (mc_event->SinglePip()) _mc_hists->Fill_Missing_Mass(mc_event);
 
   return;
 }
