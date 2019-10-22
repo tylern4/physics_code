@@ -23,16 +23,15 @@ std::shared_ptr<TTree> run_file(const std::vector<std::string>& in) {
 }
 
 int main(int argc, char** argv) {
-  short n_threads = 8;
   if (argc < 2) {
     std::cerr << argv[0] << " infiles*.root";
     return 1;
   }
 
-  std::vector<std::vector<std::string>> infilenames(n_threads);
+  std::vector<std::vector<std::string>> infilenames(NUM_THREADS);
 
   if (argc > 2) {
-    for (int i = 2; i < argc; i++) infilenames[i % n_threads].push_back(argv[i]);
+    for (int i = 2; i < argc; i++) infilenames[i % NUM_THREADS].push_back(argv[i]);
   } else {
     return 1;
   }
@@ -40,14 +39,14 @@ int main(int argc, char** argv) {
   ROOT::EnableThreadSafety();
   auto start = std::chrono::high_resolution_clock::now();
 
-  std::future<std::shared_ptr<TTree>> threads[n_threads];
+  std::future<std::shared_ptr<TTree>> threads[NUM_THREADS];
   std::vector<std::shared_ptr<TTree>> skimmed_trees;
 
-  for (size_t i = 0; i < n_threads; i++) threads[i] = std::async(run_file, infilenames.at(i));
-  for (size_t i = 0; i < n_threads; i++) skimmed_trees.push_back(threads[i].get());
+  for (size_t i = 0; i < NUM_THREADS; i++) threads[i] = std::async(run_file, infilenames.at(i));
+  for (size_t i = 0; i < NUM_THREADS; i++) skimmed_trees.push_back(threads[i].get());
 
   int i = 0;
-  for (auto& f : skimmed_trees) {
+  for (auto&& f : skimmed_trees) {
     auto outFile = std::make_unique<TFile>(Form("%s_%d.root", "h10_skim", ++i), "RECREATE");
     outFile->cd();
     f->Write();

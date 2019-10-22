@@ -380,7 +380,7 @@ TF1 *Fits::FitBreitWigner(TH1D *hist) {
   return fitbw;
 }
 
-TF1 *Fits::FitBreitWigner(const std::shared_ptr<TH1D> &hists) { return Fits::FitBreitWigner(hists.get()); }
+TF1 *Fits::FitBreitWigner(std::shared_ptr<TH1D> &hists) { return Fits::FitBreitWigner(hists.get()); }
 
 TF1 *Fits::FitMissMass(TH1D *hist) {
   if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
