@@ -86,4 +86,13 @@ static std::unordered_map<int, std::string> particle_name = {
     {PROTON, "P"}, {-PROTON, "-P"}, {NEUTRON, "N"}, {PIP, "PIP"},    {PIM, "PIM"},    {PI0, "PI0"},
     {KP, "KP"},    {KM, "KM"},      {PHOTON, "G"},  {ELECTRON, "E"}, {-ELECTRON, "E"}};
 
+static const float a0xh[6] = {24.0, 24.0, 23.0, 23.5, 24.5, 24.5};
+static const float a0mh[6] = {25.0, 26.0, 26.0, 25.5, 27.0, 26.0};
+static const float a1xh[6] = {0.22, 0.23, 0.20, 0.20, 0.22, 0.22};
+static const float a1mh[6] = {0.22, 0.22, 0.22, 0.22, 0.16, 0.16};
+static const float a2xh[6] = {8.0, 8.0, 8.0, 8.0, 8.0, 8.0};
+static const float a2mh[6] = {8.0, 8.0, 8.0, 8.0, 8.0, 8.0};
+static const float a3xh[6] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+static const float a3mh[6] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+
 #endif

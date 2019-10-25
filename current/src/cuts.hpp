@@ -50,6 +50,13 @@ class Cuts {
   bool Fid_cut();
   bool Beam_cut();
 
+  bool Electron_fid_arjun();
+  bool Hardon_fid_arjun(int part);
+
+  float hardon_fid_phi(int part);
+  float hadron_fid_phi_min(float theta, int sec);
+  float hadron_fid_phi_max(float theta, int sec);
+
   bool Pip(int part);
   bool Pim(int part);
   bool Prot(int part);

@@ -38,6 +38,27 @@ void Cuts::Set_elec_fid() {
   }
 }
 
+float Cuts::hardon_fid_phi(int part) {
+  float phi = physics::phi_calc(_data->cx(part), _data->cy(part));
+  short sec = _data->dc_sect(part);
+
+  switch (sec) {
+    case 1:
+      return phi - 90;
+    case 2:
+      return phi - 30;
+    case 3:
+      return phi + 30;
+    case 4:
+      return phi + 90;
+    case 5:
+      return phi + 150;
+    case 6:
+      return phi - 150;
+  }
+  return NAN;
+}
+
 bool Cuts::isElecctron() {
   bool _elec = true;
   _elec &= (_data->gpart() > 0);  // Number of good particles is greater than 0
@@ -56,30 +77,53 @@ bool Cuts::isElecctron() {
   // Cut out low ec inner
   _elec &= (_data->ec_ei(0) >= 0.05);
   // Minimum momentum cut
-  _elec &= (_data->p(0) > MIN_P_CUT);
+  //_elec &= (_data->p(0) > MIN_P_CUT);
   // Beam Position cut
   _elec &= Beam_cut();
   // Fid Cuts
-  _elec &= Fid_cut();
+  //_elec &= Fid_cut();
 
   return _elec;
 }
 
+float Cuts::hadron_fid_phi_min(float theta, int idx) {
+  return -(a0mh[idx] * (1.0 - expf(-a1mh[idx] * (theta - a2mh[idx]))) - a3mh[idx]);
+}
+
+float Cuts::hadron_fid_phi_max(float theta, int idx) {
+  return (a0xh[idx] * (1.0 - expf(-a1xh[idx] * (theta - a2xh[idx]))) + a3xh[idx]);
+}
+
+bool Cuts::Hardon_fid_arjun(int part) {
+  float theta = physics::theta_calc(_data->cz(part));
+  float phi_c = hardon_fid_phi(part);
+  int sector = _data->dc_sect(part);
+
+  if (sector == 0) return false;
+
+  if (phi_c >= hadron_fid_phi_min(theta, sector - 1) && phi_c <= hadron_fid_phi_max(theta, sector - 1)) return true;
+
+  return false;
+}
+
 bool Cuts::Pip(int part) {
   bool _pip = true;
-  _pip = (_data->q(part) == POSITIVE);
+  _pip &= (_data->q(part) == POSITIVE);
+  _pip &= Hardon_fid_arjun(part);
   _pip &= dt_Pip_cut(_dt->Get_dt_Pi(part), _data->p(part));
   return _pip;
 }
 bool Cuts::Pim(int part) {
   bool _pim = true;
-  _pim = (_data->q(part) == NEGATIVE);
+  _pim &= (_data->q(part) == NEGATIVE);
+  _pim &= Hardon_fid_arjun(part);
   _pim &= dt_Pip_cut(_dt->Get_dt_Pi(part), _data->p(part));
   return _pim;
 }
 bool Cuts::Prot(int part) {
   bool _prot = true;
-  _prot = (_data->q(part) == POSITIVE);
+  _prot &= (_data->q(part) == POSITIVE);
+  _prot &= Hardon_fid_arjun(part);
   _prot &= dt_P_cut(_dt->Get_dt_P(part), _data->p(part));
   return _prot;
 }
@@ -162,4 +206,25 @@ bool Cuts::elec_fid_cut() {
   double y = c[0] * _phi_cent * _phi_cent + c[1] * _phi_cent + c[2];
 
   return _theta >= y;
+}
+
+bool Cuts::Electron_fid_arjun() {
+  float c1e = 12.0;
+  float c2e = 18.5;
+  float c3e = 0.25;
+  float c4e = 15.0;
+  float factor_e = 0.416667;
+  float p_shift_e = 0.14;
+
+  // Calculates the center phi
+  Set_elec_fid();
+
+  // Creating the cut function
+  float theta_cut = c1e + c2e / (_data->p(0) + p_shift_e);
+  float expon = c3e * pow(_data->p(0), factor_e);
+  float del_phi = c4e * pow(sinf((_theta - theta_cut) * DEG2RAD), expon);
+
+  if (abs(_phi_cent) <= del_phi && _theta >= theta_cut) return true;
+
+  return false;
 }

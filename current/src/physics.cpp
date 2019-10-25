@@ -54,9 +54,9 @@ double physics::xb_calc(const LorentzVector &gamma_mu) {
   return (Q2 / (2 * (gamma_mu.Dot(target))));
 }
 
-double physics::theta_calc(double cosz) { return acos(cosz) / D2R; }
+double physics::theta_calc(double cosz) { return acos(cosz) * RAD2DEG; }
 
-double physics::phi_calc(double cosx, double cosy) { return atan2(cosx, cosy) / D2R; }
+double physics::phi_calc(double cosx, double cosy) { return atan2(cosx, cosy) * RAD2DEG; }
 
 float physics::invTan(float y, float x) {
   if (x > 0 && y > 0)
@@ -77,7 +77,7 @@ float physics::invTan(float y, float x) {
 float physics::phi_boosted(const std::shared_ptr<LorentzVector> &vec) { return invTan(vec->Py(), vec->Px()); }
 
 double physics::center_phi_calc(double cosx, double cosy) {
-  double phi0 = (atan2(cosx, cosy) / D2R);
+  double phi0 = (atan2(cosx, cosy) * RAD2DEG);
   phi0 += 30;
   if (phi0 < 0.0) phi0 += 360.0;
   if (phi0 > 360.0) phi0 -= 360.0;
