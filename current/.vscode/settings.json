@@ -11,7 +11,8 @@
         "rootlogon.C": "cpp",
         "run.C": "cpp",
         "parallelcoordtrans.C": "cpp",
-        "memory": "cpp"
+        "memory": "cpp",
+        "W_Q2.C": "cpp"
     },
     "C_Cpp.dimInactiveRegions": false,
     "python.pythonPath": "/usr/local/bin/python"

@@ -19,11 +19,11 @@ class Reaction {
   std::shared_ptr<LorentzVector> _target = physics::fourVec(0.0, 0.0, 0.0, MASS_P);
   std::shared_ptr<LorentzVector> _gamma = physics::fourVec(0, 0, 0, 0);
 
-  std::shared_ptr<LorentzVector> _elec;
-  std::shared_ptr<LorentzVector> _prot;
-  std::shared_ptr<LorentzVector> _pip;
-  std::shared_ptr<LorentzVector> _pim;
-  std::shared_ptr<LorentzVector> _neutron;
+  std::shared_ptr<LorentzVector> _elec = nullptr;
+  std::shared_ptr<LorentzVector> _prot = nullptr;
+  std::shared_ptr<LorentzVector> _pip = nullptr;
+  std::shared_ptr<LorentzVector> _pim = nullptr;
+  std::shared_ptr<LorentzVector> _neutron = nullptr;
   std::vector<std::shared_ptr<LorentzVector>> _photons;
 
   std::shared_ptr<Branches> _data;
@@ -85,7 +85,8 @@ class Reaction {
   float pi0_mass();
   float pi0_mass2();
   void boost();
-  void _boost();
+  void _boost_pip();
+  void _boost_p();
   int Type();
 
   friend std::ostream& operator<<(std::ostream& os, Reaction& e) {

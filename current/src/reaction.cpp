@@ -187,12 +187,20 @@ void Reaction::boost() {
   if (_boosted) return;
   _boosted = true;
 
-  if (!(this->SinglePip() || this->NeutronPip() || this->SingleP() || this->PPi0())) {
+  if ((this->SinglePip() || this->NeutronPip()) && _pip != nullptr) {
+    _boost_pip();
+  } else if ((this->SingleP() || this->PPi0()) && _prot != nullptr) {
+    _boost_p();
+  } else {
     _theta_e = NAN;
     _theta_star = NAN;
     _phi_star = NAN;
-    return;
   }
+}
+
+void Reaction::_boost_pip() {
+  // Angles gotten from picture in KPark thesis page 11
+  // May be wrong still, need to check
 
   auto _com_ = *_target + (*_beam - *_elec);
   auto com = std::make_shared<TLorentzVector>(_com_.X(), _com_.Y(), _com_.Z(), _com_.E());
@@ -225,29 +233,39 @@ void Reaction::boost() {
   _phi_star = physics::phi_boosted(_temp);
 }
 
-void Reaction::_boost() {
+void Reaction::_boost_p() {
   // Angles gotten from picture in KPark thesis page 11
   // May be wrong still, need to check
-  if (_boosted) return;
-  _boosted = true;
 
-  if (!(this->SinglePip() || this->NeutronPip() || this->SingleP() || this->PPi0())) {
-    _theta_e = NAN;
-    _theta_star = NAN;
-    _phi_star = NAN;
-    return;
-  }
+  auto _com_ = *_target + (*_beam - *_elec);
+  auto com = std::make_shared<TLorentzVector>(_com_.X(), _com_.Y(), _com_.Z(), _com_.E());
+  auto elec_boosted = std::make_shared<TLorentzVector>(_elec->X(), _elec->Y(), _elec->Z(), _elec->E());
+  auto gamma_boosted = std::make_shared<TLorentzVector>(_gamma->X(), _gamma->Y(), _gamma->Z(), _gamma->E());
+  auto beam_boosted = std::make_shared<TLorentzVector>(_beam->X(), _beam->Y(), _beam->Z(), _beam->E());
+  auto prot_boosted = std::make_shared<TLorentzVector>(_prot->X(), _prot->Y(), _prot->Z(), _prot->E());
 
-  auto com = *_target + (*_beam - *_elec);
-  auto uz = _gamma->BoostToCM();
-  auto ux = (_beam->Vect().Cross(_elec->Vect())).Unit();
-  auto boost = (-1 * com.BoostToCM());
+  //! Varsets
+  //! Calculate rotation: taken from Evan's phys-ana-omega on 08-05-13
+  // Copied and modified from Arjun's code
+  TVector3 uz = gamma_boosted->Vect().Unit();
+  TVector3 ux = (beam_boosted->Vect().Cross(elec_boosted->Vect())).Unit();
+  ux.Rotate(-PI / 2, uz);
+  TRotation r3;  // = new TRotation();
+  r3.SetZAxis(uz, ux).Invert();
+  //! _w and _q are in z-direction
+  TVector3 boost(-1 * com->BoostVector());
+  TLorentzRotation r4(r3);  //*_boost);
+  r4 *= boost;              //*_3rot;
 
-  //_elec
+  gamma_boosted->Transform(r4);
+  elec_boosted->Transform(r4);
+  beam_boosted->Transform(r4);
+  prot_boosted->Transform(r4);
 
-  _theta_e = _elec->Theta();
-  _theta_star = _pip->Theta();
-  _phi_star = physics::phi_boosted(_pip);
+  auto _temp = physics::fourVec(prot_boosted->X(), prot_boosted->Y(), prot_boosted->Z(), prot_boosted->M());
+  _theta_e = elec_boosted->Theta();
+  _theta_star = _temp->Theta();
+  _phi_star = physics::phi_boosted(_temp);
 }
 
 MCReaction::MCReaction(std::shared_ptr<Branches> data) : Reaction(data) {

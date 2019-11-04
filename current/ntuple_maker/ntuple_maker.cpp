@@ -11,7 +11,7 @@
 #include <vector>
 #include "ntuple.hpp"
 
-size_t run_file(std::vector<std::string> in, std::string out_path, int thread_id) {
+size_t run_file(const std::vector<std::string>& in, const std::string& out_path, int thread_id) {
   std::string outf = out_path + "/ntuple_" + std::to_string(thread_id) + ".root";
   auto chain = std::make_shared<TChain>("h10");
   for (auto& f : in) chain->Add(f.c_str());

@@ -21,6 +21,12 @@ Histogram::Histogram() {
   ndhist->GetAxis(1)->SetName("Q2");
   ndhist->GetAxis(2)->SetName("Theta_star");
   ndhist->GetAxis(3)->SetName("Phi_star");
+
+  ndhist_protPi0 = std::make_unique<THnSparseD>("ndhist_protPi0", "ndhist_protPi0", DIMENSIONS, nbins, xmin, xmax);
+  ndhist_protPi0->GetAxis(0)->SetName("W");
+  ndhist_protPi0->GetAxis(1)->SetName("Q2");
+  ndhist_protPi0->GetAxis(2)->SetName("Theta_star");
+  ndhist_protPi0->GetAxis(3)->SetName("Phi_star");
 }
 
 Histogram::Histogram(const std::string &output_file) : Histogram() {
@@ -29,16 +35,58 @@ Histogram::Histogram(const std::string &output_file) : Histogram() {
 
 Histogram::~Histogram() {}
 
+void Histogram::FillEvent(const std::shared_ptr<Reaction> &event) {
+  this->Fill_ND(event);
+  if (event->SinglePip()) {
+    this->Fill_Missing_Mass(event);
+    this->Fill_W_Missing_Mass(event->W(), event->MM(), event->MM2());
+  }
+
+  if (event->MM_cut()) this->Fill_MM_WQ2(event->W(), event->Q2());
+
+  if (event->channel()) {
+    this->Fill_channel_WQ2(event);
+    this->Fill_Missing_Mass_strict(event->MM(), event->MM2());
+    this->Fill_E_Prime_channel(event->e_mu_prime());
+  }
+
+  if ((event->SinglePip() || event->NeutronPip()))
+    this->Fill_NeutronPip_WQ2(event->W(), event->Q2(), event->MM(), event->MM2());
+
+  if (event->SingleP()) {
+    this->Fill_single_proton_WQ2(event->W(), event->Q2());
+    this->Fill_Mass_pi0(event->pi0_mass(), event->pi0_mass2());
+    this->Fill_Missing_Mass_pi0(event->MM(), event->MM2());
+
+    if (event->MM() >= 0.05 && event->MM() <= 0.3) {
+      Mass_pi0_otherCut->Fill(event->pi0_mass());
+      Mass_square_pi0_otherCut->Fill(event->pi0_mass2());
+    }
+    if (event->pi0_mass() >= 0.05 && event->pi0_mass() <= 0.2) {
+      Missing_Mass_pi0_otherCut->Fill(event->MM());
+      Missing_Mass_square_pi0_otherCut->Fill(event->MM2());
+    }
+  }
+
+  if (event->PPi0()) this->Fill_P_PI0(event->W(), event->Q2());
+  if (event->TwoPion()) this->Fill_Missing_Mass_twoPi(event->MM(), event->MM2());
+}
+
 void Histogram::Fill_ND(const std::shared_ptr<Reaction> &event) {
   bool _good = true;
   _good &= !std::isnan(event->W());
   _good &= !std::isnan(event->Q2());
   _good &= !std::isnan(event->Theta_star());
   _good &= !std::isnan(event->Phi_star());
-  if (_good) {
+  if (_good && event->channel()) {
     double to_fill[5] = {event->W(), event->Q2(), event->Theta_star(), event->Phi_star()};
     TThread::Lock();
     ndhist->Fill(to_fill);
+    TThread::UnLock();
+  } else if (_good && event->PPi0()) {
+    double to_fill[5] = {event->W(), event->Q2(), event->Theta_star(), event->Phi_star()};
+    TThread::Lock();
+    ndhist_protPi0->Fill(to_fill);
     TThread::UnLock();
   }
 }
@@ -50,6 +98,7 @@ void Histogram::Write(const std::string &output_file) {
 
 void Histogram::Write() {
   ndhist->Write();
+  ndhist_protPi0->Write();
   std::cout << GREEN << "\nFitting" << DEF << std::endl;
   // Start of cuts
   auto MM_neutron_cut = std::make_unique<Fits>();
@@ -550,10 +599,8 @@ void Histogram::Fill_Missing_Mass_strict(float mm, float mm2) {
 }
 
 void Histogram::Fill_Missing_Mass_pi0(float mm, float mm2) {
-  if (mm != 0) {
-    Missing_Mass_pi0->Fill(mm);
-    Missing_Mass_square_pi0->Fill(mm2);
-  }
+  Missing_Mass_pi0->Fill(mm);
+  Missing_Mass_square_pi0->Fill(mm2);
 }
 
 void Histogram::Fill_Missing_Mass_twoPi(float mm, float mm2) {
@@ -612,6 +659,11 @@ void Histogram::Write_Missing_Mass() {
   Mass_square_pi0->SetXTitle("Mass (GeV)");
   Mass_pi0->Write();
   Mass_square_pi0->Write();
+
+  Missing_Mass_pi0_otherCut->Write();
+  Missing_Mass_square_pi0_otherCut->Write();
+  Mass_pi0_otherCut->Write();
+  Mass_square_pi0_otherCut->Write();
 
   Missing_Mass_2pi->SetXTitle("Mass (GeV)");
   Missing_Mass_2pi->Write();

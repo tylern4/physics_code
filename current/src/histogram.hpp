@@ -55,10 +55,11 @@ class Histogram {
   std::shared_ptr<TCanvas> def;
 
   //////////////// W , Q2, Theta_star_pip, Phi_star_pip
-  int nbins[DIMENSIONS] = {25, 25, 25, 25};
+  int nbins[DIMENSIONS] = {5, 5, 5, 25};
   double xmin[DIMENSIONS] = {1.0, 0.8, 0, 0};
   double xmax[DIMENSIONS] = {2.0, 2.0, PI, 2.0 * PI};
   std::unique_ptr<THnSparse> ndhist;
+  std::unique_ptr<THnSparse> ndhist_protPi0;
 
   float p_min = 0.0;
   float p_max = 5.0;
@@ -293,11 +294,20 @@ class Histogram {
   TH1D_ptr Missing_Mass_square_strict =
       std::make_shared<TH1D>("Missing_Mass_square_strict", "Missing Mass square", BINS_MM, MM_min, MM_max* MM_max);
 
-  TH1D_ptr Missing_Mass_pi0 = std::make_shared<TH1D>("Missing_Mass_pi0", "Missing Mass #pi^{0}", BINS_MM, -3, 3);
-  TH1D_ptr Missing_Mass_square_pi0 = std::make_shared<TH1D>("Missing_Mass_pi0_2", "MM^{2} #pi^{0}", BINS_MM, -3, 3);
+  TH1D_ptr Missing_Mass_pi0 = std::make_shared<TH1D>("Missing_Mass_pi0", "Missing Mass #pi^{0}", BINS_MM, -1, 1);
+  TH1D_ptr Missing_Mass_square_pi0 = std::make_shared<TH1D>("Missing_Mass_pi0_2", "MM^{2} #pi^{0}", BINS_MM, -1, 1);
 
   TH1D_ptr Mass_pi0 = std::make_shared<TH1D>("Mass_pi0", "Mass #pi^{0}", BINS_MM, 0, 0.5);
   TH1D_ptr Mass_square_pi0 = std::make_shared<TH1D>("Mass_pi0_2", "#pi^{0} mass^{2}", BINS_MM, 0, 0.05);
+
+  TH1D_ptr Missing_Mass_pi0_otherCut =
+      std::make_shared<TH1D>("Missing_Mass_pi0_otherCut", "Missing Mass #pi^{0}", BINS_MM, -1, 1);
+  TH1D_ptr Missing_Mass_square_pi0_otherCut =
+      std::make_shared<TH1D>("Missing_Mass_pi0_2_otherCut", "MM^{2} #pi^{0}", BINS_MM, -1, 1);
+
+  TH1D_ptr Mass_pi0_otherCut = std::make_shared<TH1D>("Mass_pi0_otherCut", "Mass #pi^{0}", BINS_MM, 0, 0.5);
+  TH1D_ptr Mass_square_pi0_otherCut =
+      std::make_shared<TH1D>("Mass_pi0_2_otherCut", "#pi^{0} mass^{2}", BINS_MM, 0, 0.05);
 
   TH1D_ptr Missing_Mass_2pi = std::make_shared<TH1D>("Missing_Mass_2pi", "Missing Mass 2 #pi", BINS_MM, MM_min, MM_max);
   TH1D_ptr Missing_Mass_square_2pi =
@@ -309,16 +319,20 @@ class Histogram {
   TH1D_ptr energy_channel_cuts =
       std::make_shared<TH1D>("Energy_channel_cuts", "Scattered electron energy for N #pi^{+} events", 500, 0.0, 5.0);
 
- public:
-  Histogram();
-  Histogram(const std::string& output_file);
-  ~Histogram();
-  void Write(const std::string& output_file);
-  void Write();
   void makeHists_fid();
   void makeHists_deltat();
   void makeHists_CC();
   void makeHists_WvsQ2();
+
+ public:
+  Histogram();
+  Histogram(const std::string& output_file);
+  ~Histogram();
+
+  void FillEvent(const std::shared_ptr<Reaction>& event);
+
+  void Write(const std::string& output_file);
+  void Write();
 
   // W and Q^2
   void Fill_proton_WQ2(float W, float Q2);

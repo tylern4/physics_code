@@ -124,29 +124,8 @@ const void DataHandeler::RunEvent(size_t current_event) {
       event->SetOther(part_num);
   }
 
-  if (event->SinglePip()) {
-    _hists->Fill_Missing_Mass(event);
-    _hists->Fill_W_Missing_Mass(event->W(), event->MM(), event->MM2());
-  }
-  if (event->MM_cut()) _hists->Fill_MM_WQ2(event->W(), event->Q2());
-  if (event->channel()) {
-    _hists->Fill_ND(event);
-    _hists->Fill_channel_WQ2(event);
-    _hists->Fill_Missing_Mass_strict(event->MM(), event->MM2());
-    _hists->EC_cut_fill(_data->etot(0), _data->p(0));
-    _hists->Fill_E_Prime_channel(event->e_mu_prime());
-  }
-  if ((event->SinglePip() || event->NeutronPip()))
-    _hists->Fill_NeutronPip_WQ2(event->W(), event->Q2(), event->MM(), event->MM2());
-  if (event->SingleP()) {
-    if (event->MM() >= 0.05 && event->MM() <= 0.3) _hists->Fill_Mass_pi0(event->pi0_mass(), event->pi0_mass2());
-    if (event->pi0_mass() >= 0.05 && event->pi0_mass() <= 0.2) _hists->Fill_Missing_Mass_pi0(event->MM(), event->MM2());
-    if (event->PPi0()) {
-      _hists->Fill_P_PI0(event->W(), event->Q2());
-      _hists->Fill_single_proton_WQ2(event->W(), event->Q2());
-    }
-  }
-  if (event->TwoPion()) _hists->Fill_Missing_Mass_twoPi(event->MM(), event->MM2());
+  if (event->channel()) _hists->EC_cut_fill(_data->etot(0), _data->p(0));
+  _hists->FillEvent(event);
 
   return;
 }

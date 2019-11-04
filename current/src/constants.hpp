@@ -12,7 +12,7 @@
 #include "Math/Vector4D.h"
 #include "TMath.h"
 
-typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzM4D<double>> LorentzVector;
+typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzM4D<float>> LorentzVector;
 typedef ROOT::Math::Rotation3D LorentzRotation;
 typedef ROOT::Math::XYZVectorD Vector3;
 

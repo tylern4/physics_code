@@ -46,25 +46,6 @@ Ntuple::~Ntuple() {
   if (ntuple) ntuple->Write();
 }
 
-/*
-size_t Ntuple::run_file(std::vector<std::string> in, int thread_id) {
-  auto chain = std::make_shared<TChain>("h10");
-  for (auto &f : in) chain->Add(f.c_str());
-  size_t tot = this->Run(chain);
-  return tot;
-}
-
-size_t Ntuple::Run() {
-  std::future<size_t> t[NUM_THREADS];
-  for (size_t i = 0; i < NUM_THREADS; i++) {
-    t[i] = std::async(Ntuple::run_file, infilenames.at(i), i);
-  }
-  for (size_t i = 0; i < NUM_THREADS; i++) {
-    events += t[i].get();
-  }
-}
-*/
-
 size_t Ntuple::Run(const std::shared_ptr<TChain> &chain) {
   size_t num_of_events = (size_t)chain->GetEntries();
   auto data = std::make_shared<Branches>(chain);
@@ -79,27 +60,19 @@ size_t Ntuple::Run(const std::shared_ptr<TChain> &chain) {
     if (!check->isElecctron()) continue;
 
     auto dt = std::make_unique<Delta_T>(data);
-
     float theta = physics::theta_calc(data->cz(0));
     float phi = physics::phi_calc(data->cx(0), data->cy(0));
     int sector = data->dc_sect(0);
 
     for (int part_num = 1; part_num < data->gpart(); part_num++) {
-      if (data->q(part_num) == POSITIVE) {
-        if (check->dt_Pip_cut(dt->Get_dt_Pi(part_num), data->p(part_num)))
-          event->SetPip(part_num);
-        else if (check->dt_P_cut(dt->Get_dt_P(part_num), data->p(part_num)))
-          event->SetProton(part_num);
-        else
-          event->SetOther(part_num);
-      } else if (data->q(part_num) == NEGATIVE) {
-        if (check->dt_Pip_cut(dt->Get_dt_Pi(part_num), data->p(part_num)))
-          event->SetPim(part_num);
-        else
-          event->SetOther(part_num);
-      } else if (data->q(part_num) == 0) {
+      if (check->Pip(part_num))
+        event->SetPip(part_num);
+      else if (check->Prot(part_num))
+        event->SetProton(part_num);
+      else if (check->Prot(part_num))
+        event->SetPim(part_num);
+      else
         event->SetOther(part_num);
-      }
     }
 
     if (event->W() < 0) continue;
@@ -109,6 +82,7 @@ size_t Ntuple::Run(const std::shared_ptr<TChain> &chain) {
     if (event->SinglePip() && event->MM() <= 0) continue;
 
     event->boost();
+
     _type = event->Type();
     _helicity = data->helicity();
     _W = event->W();
@@ -123,6 +97,7 @@ size_t Ntuple::Run(const std::shared_ptr<TChain> &chain) {
     _sector = sector;
 
     ntuple->Fill();
+
     total++;
   }
   chain->Reset();  // delete Tree object

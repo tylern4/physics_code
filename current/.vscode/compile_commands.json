@@ -6,6 +6,11 @@
   },
   {
     "directory": "/Users/tylern/physics_code/current/build",
+    "command": "/usr/bin/clang++   -I/usr/local/root/include -I/Users/tylern/physics_code/current/src -I/usr/local/Frameworks/Python.framework/Versions/3.7/include/python3.7m -I/usr/local/lib/python3.7/site-packages/numpy/core/include  -Ofast   -std=c++17 -m64 -pipe -fsigned-char -fno-common -Qunused-arguments -pthread -stdlib=libc++ -DNUM_THREADS=16 -pthread -Wno-deprecated-register -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk -fPIE   -std=gnu++1z -o CMakeFiles/mc_vs_data_plots.dir/scripts/kinematics.cxx.o -c /Users/tylern/physics_code/current/scripts/kinematics.cxx",
+    "file": "/Users/tylern/physics_code/current/scripts/kinematics.cxx"
+  },
+  {
+    "directory": "/Users/tylern/physics_code/current/build",
     "command": "/usr/bin/clang++   -I/usr/local/root/include -I/Users/tylern/physics_code/current/src -I/usr/local/Frameworks/Python.framework/Versions/3.7/include/python3.7m -I/usr/local/lib/python3.7/site-packages/numpy/core/include  -Ofast   -std=c++17 -m64 -pipe -fsigned-char -fno-common -Qunused-arguments -pthread -stdlib=libc++ -DNUM_THREADS=16 -pthread -Wno-deprecated-register -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk -fPIE   -std=gnu++1z -o CMakeFiles/EC_show.dir/scripts/EC_show.cxx.o -c /Users/tylern/physics_code/current/scripts/EC_show.cxx",
     "file": "/Users/tylern/physics_code/current/scripts/EC_show.cxx"
   },
