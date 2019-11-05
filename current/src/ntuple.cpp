@@ -60,9 +60,6 @@ size_t Ntuple::Run(const std::shared_ptr<TChain> &chain) {
     if (!check->isElecctron()) continue;
 
     auto dt = std::make_unique<Delta_T>(data);
-    float theta = physics::theta_calc(data->cz(0));
-    float phi = physics::phi_calc(data->cx(0), data->cy(0));
-    int sector = data->dc_sect(0);
 
     for (int part_num = 1; part_num < data->gpart(); part_num++) {
       if (check->Pip(part_num))
@@ -92,9 +89,9 @@ size_t Ntuple::Run(const std::shared_ptr<TChain> &chain) {
     _Theta_E = event->Theta_E();
     _Theta_star = event->Theta_star();
     _Phi_star = event->Phi_star();
-    _theta = theta;
-    _phi = phi;
-    _sector = sector;
+    _theta = physics::theta_calc(data->cz(0));
+    _phi = physics::phi_calc(data->cx(0), data->cy(0));
+    _sector = event->sector();
 
     ntuple->Fill();
 

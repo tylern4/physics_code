@@ -10,9 +10,9 @@
 
 #define DIMENSIONS 4
 //////////////// W , Q2, Theta_star_pip, Phi_star_pip
-int nbins[DIMENSIONS] = {5, 5, 5, 25};
+int nbins[DIMENSIONS] = {100, 100, 100, 100};
 double xmin[DIMENSIONS] = {1.0, 0.8, 0, 0};
-double xmax[DIMENSIONS] = {2.0, 2.0, TMath::Pi(), 2.0 * TMath::Pi()};
+double xmax[DIMENSIONS] = {2.5, 2.5, TMath::Pi(), 2.0 * TMath::Pi()};
 
 TCanvas *kinematics(std::string data_root) {
   TFile *root_data = new TFile(data_root.c_str());
@@ -20,6 +20,7 @@ TCanvas *kinematics(std::string data_root) {
   can->cd();
 
   THnSparse *ndHist = (THnSparse *)root_data->Get("ndhist");
+  ndHist->Rebin(2);
   // ndHist->Projection(2)->Draw();
 
   std::cout << "w,q2,theta,phi,y,yerr" << std::endl;
@@ -28,9 +29,9 @@ TCanvas *kinematics(std::string data_root) {
       for (int theta = 0; theta < nbins[2]; theta++) {
         for (int phi = 0; phi < nbins[3]; phi++) {
           int bin[DIMENSIONS] = {w, q2, theta, phi};
-          if (ndHist->GetBinContent(bin) == 0) continue;
-          std::cout << w * (1.0f / nbins[0] * 1.0) + 1.0 << ",";
-          std::cout << q2 * ((2.0f - 0.8f) / nbins[1]) + 0.8 << ",";
+          if (ndHist->GetBinContent(bin) == 0 || ndHist->GetBinContent(bin) == 1) continue;
+          std::cout << w * ((xmax[0] - xmin[0]) / nbins[0] * 1.0) + xmin[0] << ",";
+          std::cout << q2 * ((xmax[1] - xmin[1]) / nbins[1]) + xmin[1] << ",";
           std::cout << theta * (TMath::Pi() / nbins[2]) << ",";
           std::cout << phi * (TMath::TwoPi() / nbins[3]) << ",";
           std::cout << ndHist->GetBinContent(bin) << ",";

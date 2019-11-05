@@ -78,15 +78,14 @@ void Histogram::Fill_ND(const std::shared_ptr<Reaction> &event) {
   _good &= !std::isnan(event->Q2());
   _good &= !std::isnan(event->Theta_star());
   _good &= !std::isnan(event->Phi_star());
+  std::array<double, DIMENSIONS> to_fill = {event->W(), event->Q2(), event->Theta_star(), event->Phi_star()};
   if (_good && event->channel()) {
-    double to_fill[5] = {event->W(), event->Q2(), event->Theta_star(), event->Phi_star()};
     TThread::Lock();
-    ndhist->Fill(to_fill);
+    ndhist->Fill(to_fill.data());
     TThread::UnLock();
   } else if (_good && event->PPi0()) {
-    double to_fill[5] = {event->W(), event->Q2(), event->Theta_star(), event->Phi_star()};
     TThread::Lock();
-    ndhist_protPi0->Fill(to_fill);
+    ndhist_protPi0->Fill(to_fill.data());
     TThread::UnLock();
   }
 }
