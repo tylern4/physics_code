@@ -12,14 +12,14 @@ h1d = Hist1D(500, 0.5, 2)
 
 
 data = h10_data()
-data.add("~/Data/e1d/data/h10_r230*.root")
+data.add("~/Data/e1d/data/h10_r23501*.root")
 
-for e in tqdm(range(data.num_entries)):
+for e in tqdm(range(0, data.num_entries)):
     data.get_entry(e)
     event = reaction(data)
+    event.run()
+    if event.PROT_EVENT:
+        h1d.fill(event.W)
 
-    # h1d.fill(event.W)
-
-
-# plt.step(*h1d.data)
-# plt.show()
+plt.step(*h1d.data)
+plt.show()

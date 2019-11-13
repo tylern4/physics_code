@@ -4,6 +4,7 @@
 /*	University Of South Carolina      */
 /**************************************/
 #include "cuts.hpp"
+#include "fid_cuts.hpp"
 
 Cuts::Cuts(const std::shared_ptr<Branches>& data) : _data(data) {
   if (_data->gpart() > 0) _dt = std::make_shared<Delta_T>(_data);
@@ -71,7 +72,7 @@ bool Cuts::isElecctron() {
   _elec &= (_data->sc(0) > 0);
   _elec &= (_data->dc(0) > 0);
   _elec &= (_data->dc_stat(0) > 0);
-
+  fid_e(_data->p(0), _data->cz(0), _data->cx(0), _data->cy(0));
   // Sampling fraction cut
   _elec &= sf_cut(_data->etot(0) / _data->p(0), _data->p(0));
   // Cut out low ec inner

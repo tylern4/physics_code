@@ -10,12 +10,18 @@
 
 //////////////// W , Q2, Theta_star_pip, Phi_star_pip
 
-TCanvas *kinematics(std::string data_root) {
+TCanvas *acc_corr(const std::string &data_root, const std::string &mc_root) {
   TFile *root_data = new TFile(data_root.c_str());
+  TFile *root_mc = new TFile(mc_root.c_str());
   TCanvas *can = new TCanvas();
   can->cd();
 
   THnSparse *ndHist = (THnSparse *)root_data->Get("ndhist");
+  THnSparse *ndHist_rec = (THnSparse *)root_mc->Get("ndhist");
+  THnSparse *ndHist_thrown = (THnSparse *)root_mc->Get("ndhist_mc");
+  ndHist_rec->Divide(ndHist_thrown);
+  ndHist->Multiply(ndHist_rec);
+
   const int DIMENSIONS = ndHist->GetNdimensions();
   int nbins[DIMENSIONS];
   double xmin[DIMENSIONS];
@@ -41,8 +47,8 @@ TCanvas *kinematics(std::string data_root) {
           std::cout << w * ((xmax[0] - xmin[0]) / nbins[0] * 1.0) + xmin[0] << ",";
           std::cout << theta * ((xmax[2] - xmin[2]) / nbins[2] * 1.0) + xmin[2] << ",";
           std::cout << phi * ((xmax[3] - xmin[3]) / nbins[3] * 1.0) + xmin[3] << ",";
-          std::cout << ndHist->GetBinContent(bin) << ",";
-          std::cout << ndHist->GetBinError(ndHist->GetBin(bin)) << std::endl;
+          std::cout << static_cast<double>(ndHist->GetBinContent(bin)) << ",";
+          std::cout << static_cast<double>(ndHist->GetBinError(ndHist->GetBin(bin))) << std::endl;
         }
       }
     }
@@ -57,12 +63,12 @@ TCanvas *kinematics(std::string data_root) {
 int main(int argc, char const *argv[]) {
   if (argc < 2) {
     std::cerr << "Not enough arguments" << std::endl;
-    std::cerr << "To Use:\t" << argv[0] << " data.root" << std::endl;
+    std::cerr << "To Use:\t" << argv[0] << " data.root mc.root" << std::endl;
     exit(1);
   }
 
-  auto can = kinematics(argv[1]);
-  can->SaveAs("kinematics.pdf");
+  auto can = acc_corr(argv[1], argv[2]);
+  can->SaveAs("acc_corr.pdf");
 
   return 0;
 }

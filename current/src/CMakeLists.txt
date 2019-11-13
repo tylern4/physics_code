@@ -29,6 +29,7 @@ add_library(physics STATIC
   yeilds.cpp
   makeHeader.cpp
   ntuple.cpp
+  fid_cuts.f
   )
 
 set(EXTRA_FLAGS "-pthread -fPIC -Wno-return-type -Wno-writable-strings -Wno-dangling-else -Wno-comment -D__ROOFIT_NOBANNER")

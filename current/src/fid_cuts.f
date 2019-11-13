@@ -23,12 +23,12 @@
 
       del_phie = c4*sin((thetael-thetacut)*pi/180.)**expon 
       if (abs(phiel_s).le.del_phie.and.thetael.ge.thetacut) then
-      in_fid_reg=.TRUE.
+            in_fid_reg=.TRUE.
       else
-      in_fid_reg=.FALSE.
+            in_fid_reg=.FALSE.
       endif
 
-      write(*,*) 'pshift=',pshift
+      !write(*,*) 'pshift=',pshift
       fidu_e_sub=in_fid_reg
       END
 
@@ -55,9 +55,9 @@
        phi_max= a0p(s)*(1-exp(-a1p(s)*(theta-a2p(s))))+a3p(s)
 
        if (phic.ge.phi_min.and.phic.le.phi_max) then
-       result=.TRUE.
+            result=.TRUE.
        else 
-       result=.FALSE.
+            result=.FALSE.
        endif
 
        !write(*,*) 'result=',result

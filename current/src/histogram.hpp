@@ -56,8 +56,8 @@ class Histogram {
 
   //////////////// W , Q2, Theta_star_pip, Phi_star_pip
   // int nbins[DIMENSIONS] = {6, 7, 25, 25};
-  int nbins[DIMENSIONS] = {100, 100, 100, 100};
-  double xmin[DIMENSIONS] = {1.0, 0.8, 0, 0};
+  int nbins[DIMENSIONS] = {6, 6, 20, 20};
+  double xmin[DIMENSIONS] = {1.0, 1.0, 0, 0};
   double xmax[DIMENSIONS] = {2.5, 2.5, PI, 2.0 * PI};
   std::unique_ptr<THnSparse> ndhist;
   std::unique_ptr<THnSparse> ndhist_protPi0;
