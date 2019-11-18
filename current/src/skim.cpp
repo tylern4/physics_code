@@ -25,37 +25,6 @@ std::shared_ptr<TTree> Skim::Basic() {
   return skim;
 }
 
-/*
-void Skim::Strict() {
-  int num_of_events;
-  std::cout << BLUE << "Strict Skim file " << GREEN << fout << DEF << std::endl;
-
-  num_of_events = (int)chain->GetEntries();
-  auto skim = chain->CloneTree(0);
-  auto data = std::make_shared<Branches>(chain);
-
-  for (int current_event = 0; current_event < num_of_events; current_event++) {
-    chain->GetEntry(current_event);
-    if (data->gpart() >= 4) continue;
-    auto check = std::make_unique<Cuts>(data);
-    auto event = std::make_unique<Reaction>(data);
-
-    bool cuts = true;
-    cuts &= check->isElecctron();
-    cuts &= check->Beam_cut();
-    cuts &= (event->Q2() >= 1.0);
-    cuts &= (event->W() >= 0.8);
-    cuts &= (event->W() <= 2.0);
-    if (cuts) skim->Fill();  // Fill the banks after the skim
-  }
-  chain->Reset();  // delete Tree object
-
-  RootOutputFile->cd();
-  RootOutputFile->Write();
-  RootOutputFile->Close();
-}
-*/
-
 std::shared_ptr<TTree> Skim::Final() {
   int num_of_events = (int)_chain->GetEntries();
   std::shared_ptr<TTree> skim(_chain->CloneTree(0));

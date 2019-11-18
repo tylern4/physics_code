@@ -76,7 +76,6 @@ std::vector<float> Delta_T::_delta_t_vec(float mass) {
   std::vector<float> dt_array(_data->gpart());
   float sct, scr, mom;
 
-#pragma omp parallel for private(event_number)
   for (int event_number = 0; event_number < _data->gpart(); event_number++) {
     sct = _data->sc_t(event_number);
     scr = _data->sc_r(event_number);

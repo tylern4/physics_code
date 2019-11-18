@@ -15,41 +15,94 @@
 #include "physics.hpp"
 #include "skim.hpp"
 
-std::shared_ptr<TTree> run_file(const std::vector<std::string>& in) {
+struct fileNames {
+  std::string folder;
+  int run_num;
+  std::vector<std::string> file_num;
+};
+
+std::vector<fileNames> getFileNames(const std::vector<std::string>& inputNames) {
+  std::vector<int> run_nums;
+  int _temp_run = 0;
+
+  for (auto&& in : inputNames) {
+    int folder_end = in.find_last_of("/") + 1;
+    int run_num = stol(in.substr(folder_end + 5, 5));
+    run_nums.push_back(run_num);
+  }
+
+  auto ip = std::unique(run_nums.begin(), run_nums.end());
+  run_nums.resize(std::distance(run_nums.begin(), ip));
+  std::sort(run_nums.begin(), run_nums.end());
+
+  std::vector<fileNames> x;
+  for (auto&& r : run_nums) {
+    fileNames z;
+    for (auto&& in : inputNames) {
+      int folder_end = in.find_last_of("/") + 1;
+      int run_end = in.find_last_of("_") + 1;
+      int run_num = stoi(in.substr(folder_end + 5, 5));
+      if (r != run_num) continue;
+      z.run_num = stol(in.substr(folder_end + 5, 5));
+      z.folder = in.substr(0, folder_end);
+      z.file_num.push_back(in.substr(run_end, 2));
+    }
+    x.push_back(z);
+  }
+  return x;
+}
+
+struct tree_run {
+  std::shared_ptr<TTree> tree;
+  int run_num;
+};
+
+tree_run run_file(const fileNames& in) {
   std::shared_ptr<TChain> h10 = std::make_shared<TChain>("h10");
-  for (auto& f : in) h10->Add(f.c_str());
+  for (auto& f : in.file_num) h10->Add(Form("%s/h10_r%d_%s.root", in.folder.c_str(), in.run_num, f.c_str()));
   auto s = std::make_unique<Skim>(h10);
-  return s->Final();
+  tree_run out;
+  out.tree = s->Basic();
+  out.run_num = in.run_num;
+  return out;
 }
 
 int main(int argc, char** argv) {
   if (argc < 2) {
     std::cerr << argv[0] << " infiles*.root";
-    return 1;
+    exit(1);
   }
 
-  std::vector<std::vector<std::string>> infilenames(NUM_THREADS);
-
+  std::vector<std::string> inputs;
   if (argc > 2) {
-    for (int i = 2; i < argc; i++) infilenames[i % NUM_THREADS].push_back(argv[i]);
-  } else {
-    return 1;
+    for (int i = 2; i < argc; i++) inputs.push_back(argv[i]);
   }
+  auto file_names = getFileNames(inputs);
 
   ROOT::EnableThreadSafety();
   auto start = std::chrono::high_resolution_clock::now();
 
-  std::future<std::shared_ptr<TTree>> threads[NUM_THREADS];
-  std::vector<std::shared_ptr<TTree>> skimmed_trees;
+  std::future<tree_run> threads[NUM_THREADS];
+  std::vector<tree_run> skimmed_trees;
 
-  for (size_t i = 0; i < NUM_THREADS; i++) threads[i] = std::async(run_file, infilenames.at(i));
-  for (size_t i = 0; i < NUM_THREADS; i++) skimmed_trees.push_back(threads[i].get());
+  int total_num = 0;
+  for (auto&& fn : file_names) {
+    std::cout << "Start: " << fn.run_num << "\tThread: " << (total_num % NUM_THREADS) << std::endl;
+    threads[total_num % NUM_THREADS] = std::async(run_file, fn);
+    total_num++;
+  }
+
+  for (size_t i = 0; i < total_num; i++) {
+    skimmed_trees.push_back(threads[i].get());
+    std::cout << skimmed_trees.back().run_num << std::endl;
+  }
 
   int i = 0;
   for (auto&& f : skimmed_trees) {
-    auto outFile = std::make_unique<TFile>(Form("%s_%d.root", "h10_skim", ++i), "RECREATE");
+    std::cout << Form("%s_%d.root", "h10_skim", f.run_num) << std::endl;
+    auto outFile = std::make_unique<TFile>(Form("%s_%d.root", "h10_skim", f.run_num), "RECREATE");
     outFile->cd();
-    f->Write();
+    f.tree->Write();
     outFile->Write();
     outFile->Close();
   }
