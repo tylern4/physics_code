@@ -55,6 +55,7 @@ std::vector<fileNames> getFileNames(const std::vector<std::string>& inputNames) 
 struct tree_run {
   std::shared_ptr<TTree> tree;
   int run_num;
+  std::string folder;
 };
 
 tree_run run_file(const fileNames& in) {
@@ -64,6 +65,7 @@ tree_run run_file(const fileNames& in) {
   tree_run out;
   out.tree = s->Basic();
   out.run_num = in.run_num;
+  out.folder = in.folder;
   return out;
 }
 
@@ -94,17 +96,19 @@ int main(int argc, char** argv) {
 
   for (size_t i = 0; i < total_num; i++) {
     skimmed_trees.push_back(threads[i].get());
-    std::cout << skimmed_trees.back().run_num << std::endl;
   }
 
   int i = 0;
   for (auto&& f : skimmed_trees) {
-    std::cout << Form("%s_%d.root", "h10_skim", f.run_num) << std::endl;
-    auto outFile = std::make_unique<TFile>(Form("%s_%d.root", "h10_skim", f.run_num), "RECREATE");
+    TThread::Lock();
+    std::cout << Form("%sskim/%s_%d.root", f.folder.c_str(), "h10_skim", f.run_num) << std::endl;
+    auto outFile =
+        std::make_unique<TFile>(Form("%sskim/%s_%d.root", f.folder.c_str(), "h10_skim", f.run_num), "RECREATE");
     outFile->cd();
     f.tree->Write();
     outFile->Write();
     outFile->Close();
+    TThread::UnLock();
   }
 
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
