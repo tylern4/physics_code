@@ -92,23 +92,18 @@ int main(int argc, char** argv) {
     std::cout << "Start: " << fn.run_num << "\tThread: " << (total_num % NUM_THREADS) << std::endl;
     threads[total_num % NUM_THREADS] = std::async(run_file, fn);
     total_num++;
-  }
-
-  for (size_t i = 0; i < total_num; i++) {
-    skimmed_trees.push_back(threads[i].get());
-  }
-
-  int i = 0;
-  for (auto&& f : skimmed_trees) {
-    TThread::Lock();
-    std::cout << Form("%sskim/%s_%d.root", f.folder.c_str(), "h10_skim", f.run_num) << std::endl;
-    auto outFile =
-        std::make_unique<TFile>(Form("%sskim/%s_%d.root", f.folder.c_str(), "h10_skim", f.run_num), "RECREATE");
-    outFile->cd();
-    f.tree->Write();
-    outFile->Write();
-    outFile->Close();
-    TThread::UnLock();
+    if (total_num % NUM_THREADS == 0) {
+      for (size_t i = 0; i < NUM_THREADS; i++) {
+        auto f = threads[i].get();
+        std::cout << Form("%sskim/%s_%d.root", f.folder.c_str(), "h10_skim", f.run_num) << std::endl;
+        auto outFile =
+            std::make_unique<TFile>(Form("%sskim/%s_%d.root", f.folder.c_str(), "h10_skim", f.run_num), "RECREATE");
+        outFile->cd();
+        f.tree->Write();
+        outFile->Write();
+        outFile->Close();
+      }
+    }
   }
 
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
