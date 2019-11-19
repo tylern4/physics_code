@@ -6,6 +6,7 @@
 
 #ifndef CONSTANTS_H_GUARD
 #define CONSTANTS_H_GUARD
+#include <iostream>
 #include <unordered_map>
 #include "Math/Rotation3D.h"
 #include "Math/Vector3D.h"
@@ -19,6 +20,7 @@ typedef ROOT::Math::XYZVectorD Vector3;
 static const short NUM_THREADS = (getenv("NUM_THREADS") != NULL) ? atoi(getenv("NUM_THREADS")) : 8;
 static const float BEAM_E = (getenv("BEAM_E") != NULL) ? atof(getenv("BEAM_E")) : 4.81726;
 
+static const short NUM_SECTORS = 6;
 static const short MAX_PARTS = 100;
 static const short N_SIGMA = 3;
 static const double PI = TMath::Pi();

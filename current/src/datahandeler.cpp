@@ -5,12 +5,22 @@
 #include "datahandeler.hpp"
 
 DataHandeler::DataHandeler() = default;
+
 DataHandeler::DataHandeler(const std::vector<std::string>& fin, const std::shared_ptr<Histogram>& hists)
     : _input_files(fin), _hists(hists) {
   _chain = std::make_shared<TChain>("h10");
   for (auto& f : _input_files) _chain->Add(f.c_str());
   _data = std::make_shared<Branches>(_chain);
 }
+
+DataHandeler::DataHandeler(const std::vector<std::string>& fin, const std::shared_ptr<Histogram>& hists,
+                           const std::shared_ptr<MomCorr>& mom_corr)
+    : _input_files(fin), _hists(hists), _mom_corr(mom_corr) {
+  _chain = std::make_shared<TChain>("h10");
+  for (auto& f : _input_files) _chain->Add(f.c_str());
+  _data = std::make_shared<Branches>(_chain);
+}
+
 DataHandeler::~DataHandeler() = default;
 
 void DataHandeler::loadbar(long x, long n) {
@@ -52,7 +62,7 @@ const void DataHandeler::RunEvent(size_t current_event) {
   _hists->CC_fill(_data->cc_sect(0), (_data->cc_segm(0) % 1000) / 10, _data->cc_segm(0) / 1000 - 1, _data->nphe(0),
                   theta_cc);
 
-  auto event = std::make_shared<Reaction>(_data);
+  auto event = std::make_shared<Reaction>(_data, _mom_corr);
 
   _hists->Fill_E_Prime_fid(event->e_mu_prime());
   _hists->Fill_E_Prime(event->e_mu_prime());

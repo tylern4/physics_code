@@ -20,6 +20,7 @@
 #include "delta_t.hpp"
 #include "histogram.hpp"
 #include "missing_mass.hpp"
+#include "mom_corr.hpp"
 #include "photon_flux.hpp"
 #include "physics.hpp"
 #include "reaction.hpp"
@@ -31,10 +32,14 @@ class DataHandeler {
   std::vector<std::string> _input_files;
   std::shared_ptr<Histogram> _hists;
   std::shared_ptr<Branches> _data;
+  std::shared_ptr<MomCorr> _mom_corr = nullptr;
   bool CUTS;
 
  public:
   DataHandeler();
+  DataHandeler(const std::vector<std::string>& fin, const std::shared_ptr<Histogram>& hists,
+               const std::shared_ptr<MomCorr>& mom_corr);
+               
   DataHandeler(const std::vector<std::string>& fin, const std::shared_ptr<Histogram>& hists);
   ~DataHandeler();
   void setLoadBar(bool load);

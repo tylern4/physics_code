@@ -7,9 +7,8 @@
 #include <mutex>
 #include "TLorentzRotation.h"
 #include "TLorentzVector.h"
-#include "TVector3.h"
-
 #include "TRandom.h"
+#include "TVector3.h"
 
 Reaction::Reaction(const std::shared_ptr<Branches>& data) : _data(data) {
   _hasE = true;
@@ -17,6 +16,21 @@ Reaction::Reaction(const std::shared_ptr<Branches>& data) : _data(data) {
   _elec = physics::fourVec(_data->px(0), _data->py(0), _data->pz(0), MASS_E);
 
   // this->correct_mom();
+  *_gamma = *_beam - *_elec;
+  _W = physics::W_calc(*_gamma);
+  _Q2 = physics::Q2_calc(*_gamma);
+  _xb = physics::xb_calc(*_gamma);
+}
+
+Reaction::Reaction(const std::shared_ptr<Branches>& data, const std::shared_ptr<MomCorr>& mom_corr)
+    : _data(data), _mom_corr(mom_corr) {
+  _hasE = true;
+  _sector = data->dc_sect(0);
+  if (mom_corr != nullptr)
+    _elec = _mom_corr->CorrectedVector(_data->px(0), _data->py(0), _data->pz(0), ELECTRON);
+  else
+    _elec = physics::fourVec(_data->px(0), _data->py(0), _data->pz(0), MASS_E);
+
   *_gamma = *_beam - *_elec;
   _W = physics::W_calc(*_gamma);
   _Q2 = physics::Q2_calc(*_gamma);
@@ -69,19 +83,30 @@ void Reaction::SetProton(int i) {
   _numProt++;
   _numPos++;
   _hasP = true;
-  _prot = physics::fourVec(_data->px(i), _data->py(i), _data->pz(i), MASS_P);
+  if (_mom_corr != nullptr)
+    _prot = _mom_corr->CorrectedVector(_data->px(i), _data->py(i), _data->pz(i), PROTON);
+  else
+    _prot = physics::fourVec(_data->px(i), _data->py(i), _data->pz(i), MASS_P);
 }
+
 void Reaction::SetPip(int i) {
   _numPip++;
   _numPos++;
   _hasPip = true;
-  _pip = physics::fourVec(_data->px(i), _data->py(i), _data->pz(i), MASS_PIP);
+  if (_mom_corr != nullptr)
+    _pip = _mom_corr->CorrectedVector(_data->px(i), _data->py(i), _data->pz(i), PIP);
+  else
+    _pip = physics::fourVec(_data->px(i), _data->py(i), _data->pz(i), MASS_PIP);
 }
+
 void Reaction::SetPim(int i) {
   _numPim++;
   _numNeg++;
   _hasPim = true;
-  _pim = physics::fourVec(_data->px(i), _data->py(i), _data->pz(i), MASS_PIM);
+  if (_mom_corr != nullptr)
+    _pim = _mom_corr->CorrectedVector(_data->px(i), _data->py(i), _data->pz(i), PIM);
+  else
+    _pim = physics::fourVec(_data->px(i), _data->py(i), _data->pz(i), MASS_PIM);
 }
 
 void Reaction::SetNeutron(int i) {

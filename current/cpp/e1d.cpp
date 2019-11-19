@@ -15,8 +15,9 @@
 #include "main.h"
 #include "physics.hpp"
 
-size_t run_file(std::vector<std::string> in, std::shared_ptr<Histogram> hists, int thread_id) {
-  auto dh = std::make_unique<DataHandeler>(in, hists);
+size_t run_file(std::vector<std::string> in, std::shared_ptr<Histogram> hists, std::shared_ptr<MomCorr> mom_corr,
+                int thread_id) {
+  auto dh = std::make_unique<DataHandeler>(in, hists, mom_corr);
   dh->setLoadBar(false);
   if (thread_id == 0) dh->setLoadBar(true);
   size_t tot = 0;
@@ -38,13 +39,14 @@ int main(int argc, char **argv) {
   auto start = std::chrono::high_resolution_clock::now();
 
   auto hist = std::make_shared<Histogram>();
+  auto mom_corr = std::make_shared<MomCorr>();
   std::cout.imbue(std::locale(""));
   size_t events = 0;
 
   std::future<size_t> threads[NUM_THREADS];
 
   for (size_t i = 0; i < NUM_THREADS; i++) {
-    threads[i] = std::async(run_file, infilenames.at(i), hist, i);
+    threads[i] = std::async(run_file, infilenames.at(i), hist, mom_corr, i);
   }
 
   for (size_t i = 0; i < NUM_THREADS; i++) {

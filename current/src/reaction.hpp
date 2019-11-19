@@ -10,6 +10,7 @@
 #include <iostream>
 #include "branches.hpp"
 #include "constants.hpp"
+#include "mom_corr.hpp"
 #include "physics.hpp"
 
 class Reaction {
@@ -26,7 +27,8 @@ class Reaction {
   std::shared_ptr<LorentzVector> _neutron = nullptr;
   std::vector<std::shared_ptr<LorentzVector>> _photons;
 
-  std::shared_ptr<Branches> _data;
+  std::shared_ptr<Branches> _data = nullptr;
+  std::shared_ptr<MomCorr> _mom_corr = nullptr;
 
   double par[6][16];
 
@@ -68,8 +70,9 @@ class Reaction {
   std::string _type = "NAN";
 
  public:
-  Reaction() : _data(nullptr){};
+  Reaction() : _data(nullptr), _mom_corr(nullptr){};
   Reaction(const std::shared_ptr<Branches>& data);
+  Reaction(const std::shared_ptr<Branches>& data, const std::shared_ptr<MomCorr>& mom_corr);
 
   ~Reaction();
   void correct_mom();
