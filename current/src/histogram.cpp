@@ -632,10 +632,10 @@ void Histogram::Write_Missing_Mass() {
   Missing_Mass_small->Write();
 
   for (auto &&sec : Missing_Mass_small_sec) {
-    auto fit = std::make_shared<Fits>();
-    fit->Set_min(0.8);
-    fit->Set_max(1.0);
-    fit->FitBreitWigner(sec);
+    // auto fit = std::make_shared<Fits>();
+    // fit->Set_min(0.8);
+    // fit->Set_max(1.0);
+    // fit->FitBreitWigner(sec);
     sec->SetXTitle("Mass (GeV)");
     sec->Write();
   }
