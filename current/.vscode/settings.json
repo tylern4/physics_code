@@ -12,7 +12,8 @@
         "run.C": "cpp",
         "parallelcoordtrans.C": "cpp",
         "memory": "cpp",
-        "W_Q2.C": "cpp"
+        "W_Q2.C": "cpp",
+        "mm_canvas.C": "cpp"
     },
     "C_Cpp.dimInactiveRegions": false,
     "python.pythonPath": "/usr/local/bin/python"

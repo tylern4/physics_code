@@ -13,7 +13,6 @@
       DATA PI/3.141592/
       data factor/0.416667/
 
-
       phiel_s = phiel+180.
       mod6=(phiel_s+30.)/60
       phiel_s = phiel_s - mod6*60.

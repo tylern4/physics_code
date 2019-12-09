@@ -19,13 +19,13 @@ Histogram::Histogram() {
   ndhist = std::make_unique<THnSparseD>("ndhist", "ndhist", DIMENSIONS, nbins, xmin, xmax);
   ndhist->GetAxis(0)->SetName("W");
   ndhist->GetAxis(1)->SetName("Q2");
-  ndhist->GetAxis(2)->SetName("Theta_star");
+  ndhist->GetAxis(2)->SetName("cos_Theta_star");
   ndhist->GetAxis(3)->SetName("Phi_star");
 
   ndhist_protPi0 = std::make_unique<THnSparseD>("ndhist_protPi0", "ndhist_protPi0", DIMENSIONS, nbins, xmin, xmax);
   ndhist_protPi0->GetAxis(0)->SetName("W");
   ndhist_protPi0->GetAxis(1)->SetName("Q2");
-  ndhist_protPi0->GetAxis(2)->SetName("Theta_star");
+  ndhist_protPi0->GetAxis(2)->SetName("cos_Theta_star");
   ndhist_protPi0->GetAxis(3)->SetName("Phi_star");
 }
 
@@ -54,10 +54,9 @@ void Histogram::FillEvent(const std::shared_ptr<Reaction> &event) {
     this->Fill_NeutronPip_WQ2(event->W(), event->Q2(), event->MM(), event->MM2());
 
   if (event->SingleP()) {
-    this->Fill_single_proton_WQ2(event->W(), event->Q2());
     this->Fill_Mass_pi0(event->pi0_mass(), event->pi0_mass2());
     this->Fill_Missing_Mass_pi0(event->MM(), event->MM2());
-
+    this->Fill_elastic(event);
     if (event->MM() >= 0.05 && event->MM() <= 0.3) {
       Mass_pi0_otherCut->Fill(event->pi0_mass());
       Mass_square_pi0_otherCut->Fill(event->pi0_mass2());
@@ -73,20 +72,19 @@ void Histogram::FillEvent(const std::shared_ptr<Reaction> &event) {
 }
 
 void Histogram::Fill_ND(const std::shared_ptr<Reaction> &event) {
+  std::lock_guard<std::mutex> lk(mutex);
   bool _good = true;
   _good &= !std::isnan(event->W());
   _good &= !std::isnan(event->Q2());
   _good &= !std::isnan(event->Theta_star());
   _good &= !std::isnan(event->Phi_star());
-  std::array<double, DIMENSIONS> to_fill = {event->W(), event->Q2(), event->Theta_star(), event->Phi_star()};
+
+  std::array<double, DIMENSIONS> to_fill = {event->W(), event->Q2(), cos(event->Theta_star()),
+                                            event->Phi_star() * RAD2DEG};
   if (_good && event->channel()) {
-    TThread::Lock();
     ndhist->Fill(to_fill.data());
-    TThread::UnLock();
   } else if (_good && event->PPi0()) {
-    TThread::Lock();
     ndhist_protPi0->Fill(to_fill.data());
-    TThread::UnLock();
   }
 }
 
@@ -299,10 +297,19 @@ void Histogram::Fill_channel_WQ2(const std::shared_ptr<Reaction> &event) {
   W_channel_sec[sector - 1]->Fill(W);
 }
 
-void Histogram::Fill_single_proton_WQ2(float W, float Q2) {
-  WvsQ2_single_proton->Fill(W, Q2);
-  W_single_proton->Fill(W);
-  Q2_single_proton->Fill(Q2);
+void Histogram::Fill_elastic(const std::shared_ptr<Reaction> &event) {
+  if (event->W() > 2.0) return;
+  elastic_phi->Fill(event->phi_diff());
+  if (event->phi_diff() > (3.125) && event->phi_diff() < (3.165)) {
+    elastic_MM->Fill(event->MM2());
+    if (abs(event->MM2()) < 0.005) elastic_thetaVsP->Fill(event->P_Mom(), event->P_Theta());
+  }
+
+  if (event->elastic()) {
+    WvsQ2_elastic->Fill(event->W(), event->Q2());
+    W_elastic->Fill(event->W());
+    Q2_elastic->Fill(event->Q2());
+  }
 }
 
 void Histogram::WvsQ2_Fill(float W, float Q2, int sector) {
@@ -404,16 +411,20 @@ void Histogram::WvsQ2_Write() {
   Q2_NeutronPip->SetXTitle("Q^{2} (GeV^{2})");
   Q2_NeutronPip->Write();
 
-  WvsQ2_single_proton->SetXTitle("W (GeV)");
-  WvsQ2_single_proton->SetYTitle("Q^{2} (GeV^{2})");
-  WvsQ2_single_proton->SetOption("COLZ");
-  WvsQ2_single_proton->Write();
+  WvsQ2_elastic->SetXTitle("W (GeV)");
+  WvsQ2_elastic->SetYTitle("Q^{2} (GeV^{2})");
+  WvsQ2_elastic->SetOption("COLZ");
+  WvsQ2_elastic->Write();
 
-  W_single_proton->SetXTitle("W (GeV)");
-  W_single_proton->Write();
+  W_elastic->SetXTitle("W (GeV)");
+  W_elastic->Write();
 
-  Q2_single_proton->SetXTitle("Q^{2} (GeV^{2})");
-  Q2_single_proton->Write();
+  Q2_elastic->SetXTitle("Q^{2} (GeV^{2})");
+  Q2_elastic->Write();
+
+  elastic_MM->Write();
+  elastic_phi->Write();
+  elastic_thetaVsP->Write();
 
   WvsQ2_Ppi0->SetXTitle("W (GeV)");
   WvsQ2_Ppi0->SetYTitle("Q^{2} (GeV^{2})");
@@ -1612,7 +1623,7 @@ void mcHistogram::makeMCHists() {
   ndhist_mc = std::make_unique<THnSparseD>("ndhist_mc", "ndhist_mc", DIMENSIONS, nbins, xmin, xmax);
   ndhist_mc->GetAxis(0)->SetName("W");
   ndhist_mc->GetAxis(1)->SetName("Q2");
-  ndhist_mc->GetAxis(2)->SetName("Theta_star");
+  ndhist_mc->GetAxis(2)->SetName("cos_Theta_star");
   ndhist_mc->GetAxis(3)->SetName("Phi_star");
 
   std::string xyz[4] = {"X", "Y", "Z", "all"};
@@ -1646,10 +1657,10 @@ void mcHistogram::Fill_WQ2_MC(const std::shared_ptr<MCReaction> &_e) {
 }
 
 void mcHistogram::Fill(const std::shared_ptr<MCReaction> &event) {
-  double to_fill[4] = {event->W_thrown(), event->Q2_thrown(), event->Theta_star(), event->Phi_star()};
-  TThread::Lock();
-  ndhist_mc->Fill(to_fill);
-  TThread::UnLock();
+  std::lock_guard<std::mutex> lk(mutex);
+  std::array<double, DIMENSIONS> to_fill = {event->W_thrown(), event->Q2_thrown(), cos(event->Theta_star()),
+                                            event->Phi_star() * RAD2DEG};
+  ndhist_mc->Fill(to_fill.data());
 }
 
 void mcHistogram::Fill_P(const std::shared_ptr<Branches> &d) {

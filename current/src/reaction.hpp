@@ -139,6 +139,39 @@ class Reaction {
 
   inline bool channel() { return (this->SinglePip() || this->NeutronPip()) && this->MM_cut(); }
 
+  inline float phi_diff() {
+    if (_prot != nullptr)
+      return abs(_elec->Phi() - _prot->Phi());
+    else
+      return NAN;
+  }
+
+  inline float P_Theta() {
+    if (_prot != nullptr)
+      return _prot->Theta() * RAD2DEG;
+    else
+      return NAN;
+  }
+
+  inline float P_Mom() {
+    if (_prot != nullptr)
+      return _prot->P();
+    else
+      return NAN;
+  }
+
+  inline bool elastic() {
+    bool elastic = SingleP();
+    elastic &= (abs(MM2()) < 0.005);
+    if (elastic && _prot != nullptr) {
+      elastic &= (phi_diff() > (3.125) && phi_diff() < (3.165));
+    } else {
+      elastic = false;
+    }
+
+    return elastic;
+  }
+
   inline bool MM_cut() {
     bool mm_cut = true;
     // mm_cut &= (this->MM() < 0.987669);

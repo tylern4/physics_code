@@ -51,14 +51,22 @@ using TH1D_ptr = std::shared_ptr<TH1D>;
 
 class Histogram {
  protected:
+  std::mutex mutex;
   std::shared_ptr<TFile> RootOutputFile;
   std::shared_ptr<TCanvas> def;
 
-  //////////////// W , Q2, Theta_star_pip, Phi_star_pip
+  /*
+Garys binning
+  W: 1.1 to 1.9 GeV in 32 bins
+  Q^2: 0.4 to 1.0 GeV in 3 bins
+  cos(theta) range: -1 to 1 in 10 bins
+  phi range: 0 to 360 (degrees) in 6, 8, or 9 bins
+*/
   // int nbins[DIMENSIONS] = {6, 7, 25, 25};
-  int nbins[DIMENSIONS] = {6, 6, 20, 20};
-  double xmin[DIMENSIONS] = {1.0, 1.0, 0, 0};
-  double xmax[DIMENSIONS] = {2.5, 2.5, PI, 2.0 * PI};
+  //////////////// W , Q2, Theta_star_pip, Phi_star_pip
+  int nbins[DIMENSIONS] = {32, 8, 10, 10};
+  double xmin[DIMENSIONS] = {1.1, 1.0, -1.0, 0};
+  double xmax[DIMENSIONS] = {1.9, 2.6, 1.0, 360};
   std::unique_ptr<THnSparse> ndhist;
   std::unique_ptr<THnSparse> ndhist_protPi0;
 
@@ -126,10 +134,15 @@ class Histogram {
       std::make_shared<TH2D>("WvsQ2_Ppi0", "W vs Q^{2} P #pi^{0}", BINS, w_min, w_max, BINS, q2_min, q2_max);
   TH1D_ptr W_Ppi0 = std::make_shared<TH1D>("W_Ppi0", "W P #pi^{0}", BINS, w_min, w_max);
   TH1D_ptr Q2_Ppi0 = std::make_shared<TH1D>("Q2_Ppi0", "Q^{2} P #pi^{0}", BINS, q2_min, q2_max);
-  TH2D_ptr WvsQ2_single_proton =
-      std::make_shared<TH2D>("WvsQ2_single_proton", "W vs Q^{2} P", BINS, w_min, w_max, BINS, q2_min, q2_max);
-  TH1D_ptr W_single_proton = std::make_shared<TH1D>("W_single_proton", "W P", BINS, w_min, w_max);
-  TH1D_ptr Q2_single_proton = std::make_shared<TH1D>("Q2_single_proton", "Q^{2} P", BINS, q2_min, q2_max);
+  TH2D_ptr WvsQ2_elastic =
+      std::make_shared<TH2D>("WvsQ2_elastic", "W vs Q^{2} P", BINS, w_min, 2.0, BINS, q2_min, q2_max);
+  TH1D_ptr W_elastic = std::make_shared<TH1D>("W_elastic", "W P", BINS, w_min, 2.0);
+  TH1D_ptr Q2_elastic = std::make_shared<TH1D>("Q2_elastic", "Q^{2} P", BINS, q2_min, q2_max);
+
+  TH1D_ptr elastic_MM = std::make_shared<TH1D>("Elastic_MM", "Elastic_MM", BINS, -0.2, 0.2);
+  TH1D_ptr elastic_phi = std::make_shared<TH1D>("Elastic_phi", "Elastic_phi", BINS, 2, 4);
+  TH2D_ptr elastic_thetaVsP = std::make_shared<TH2D>("elastic_thetaVsP", "elastic_thetaVsP", 500, 0.0, 3.5, 500, 0, 90);
+
   TH2D_ptr WvsQ2_binned = std::make_shared<TH2D>("WvsQ2_hist_binned", "W vs Q^{2} binned", W_BINS, w_binned_min,
                                                  w_binned_max, Q2_BINS, q2_binned_min, q2_binned_max);
 
@@ -341,7 +354,7 @@ class Histogram {
   void Fill_NeutronPip_WQ2(float W, float Q2, float MM, float MM2);
   void Fill_MM_WQ2(float W, float Q2);
   void Fill_channel_WQ2(const std::shared_ptr<Reaction>& event);
-  void Fill_single_proton_WQ2(float W, float Q2);
+  void Fill_elastic(const std::shared_ptr<Reaction>& event);
   void WvsQ2_Fill(float W, float Q2, int sector);
   void Fill_pion_WQ2(float W, float Q2);
   void WvsQ2_Write();
