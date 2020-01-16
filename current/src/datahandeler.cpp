@@ -67,11 +67,11 @@ const void DataHandeler::RunEvent(size_t current_event) {
   _hists->Fill_E_Prime_fid(event->e_mu_prime());
   _hists->Fill_E_Prime(event->e_mu_prime());
 
-  if (getenv("CUTS") != nullptr && atoi(getenv("CUTS")) == true) {
-    CUTS = check->isStrictElecctron();
-  } else {
-    CUTS = check->isElecctron();
-  }
+  // if (getenv("CUTS") != nullptr && atoi(getenv("CUTS")) == true) {
+  //  CUTS = check->isStrictElecctron();
+  //} else {
+  CUTS = check->isElecctron();
+  //}
 
   if (!CUTS) return;
   _hists->Fill_Beam_Position(_data->dc_vx(0), _data->dc_vy(0), _data->dc_vz(0));
@@ -87,7 +87,7 @@ const void DataHandeler::RunEvent(size_t current_event) {
   float phi = physics::phi_calc(_data->cx(0), _data->cy(0));
   int sector = _data->dc_sect(0);
 
-  _hists->Fill_electron_fid(theta, phi, sector);
+  _hists->Fill_electron_fid(theta, phi, _data->dc_xsc(0), _data->dc_ysc(0), sector);
 
   for (int part_num = 1; part_num < _data->gpart(); part_num++) {
     theta = physics::theta_calc(_data->cz(part_num));

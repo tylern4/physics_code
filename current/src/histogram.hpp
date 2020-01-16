@@ -11,6 +11,7 @@
 #include <iostream>
 #include <mutex>
 #include <thread>
+#include <unordered_map>
 #include "TDirectory.h"
 #include "TF1.h"
 #include "TFile.h"
@@ -218,25 +219,19 @@ Garys binning
   int bins_CC = 100;
   float CC_min = 0;
   float CC_max = 250;
-  std::string L_R_C;
+  std::unordered_map<int, std::string> L_R_C = {{0, "both"}, {1, "right"}, {2, "left"}};
   static const int segment = 18;
   static const int PMT = 3;
 
-  TH1D* cc_hist[NUM_SECTORS][segment][PMT];
-  TH1D* cc_hist_allSeg[NUM_SECTORS][PMT];
-  /*
-  static const int ndims_cc_sparse = 4;
-  int bins_cc_sparse[ndims_cc_sparse] = {NUM_SECTORS, segment, PMT, bins_CC};
-  float xmin_cc_sparse[ndims_cc_sparse] = {0.0, 0.0, -2.0, CC_min};
-  float xmax_cc_sparse[ndims_cc_sparse] = {NUM_SECTORS + 1.0, segment + 1.0, 1.0, CC_max};
-  float x_cc_sparse[ndims_cc_sparse];
-  THnF* cc_sparse = new THnF("cc_sparse", "Histogram", ndims_cc_sparse, bins_cc_sparse, xmin_cc_sparse,
-  xmax_cc_sparse);
-  */
+  TH1D_ptr cc_hist[NUM_SECTORS][segment][PMT];
+  TH1D_ptr cc_hist_allSeg[NUM_SECTORS][PMT];
+
+  TH2D_ptr fid_xy_hist;
+  TH2D_ptr fid_xy[NUM_SECTORS];
 
   TH2D_ptr Theta_CC = std::make_shared<TH2D>("Theta_CC", "Theta_CC", 20, 0.0, 20.0, 60, 0.0, 60.0);
-  TH2D* Theta_CC_Sec[NUM_SECTORS];
-  TH2D* Theta_CC_Sec_cut[NUM_SECTORS];
+  TH2D_ptr Theta_CC_Sec[NUM_SECTORS];
+  TH2D_ptr Theta_CC_Sec_cut[NUM_SECTORS];
   // cc hist
 
   // fiducial
@@ -413,7 +408,7 @@ Garys binning
   void CC_canvas();
 
   // fiducial hist
-  void Fill_electron_fid(float theta, float phi, int sector);
+  void Fill_electron_fid(float theta, float phi, float x, float y, int sector);
   void Fill_neutron_fid(float theta, float phi, int sector);
   void Fill_hadron_fid(float theta, float phi, int sector, int id);
   void Fid_Write();

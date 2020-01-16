@@ -19,8 +19,7 @@ Yeilds::~Yeilds() {
 void Yeilds::OpenFile(std::string output_file_name) { csv_output.open(output_file_name); }
 
 void Yeilds::WriteHeader() {
-  // csv_output << "W,Q2,MM,MM2,theta_e,theta_star,phi_star,theta_lab,phi_lab,sector" << std::endl;
-  csv_output << "p,cx,cy,cz,theta,phi,sector" << std::endl;
+  csv_output << "electron_sector,e_p,e_cx,e_cy,e_cz,pip_p,pip_cx,pip_cy,pip_cz" << std::endl;
 }
 
 int Yeilds::Run(std::vector<std::string> fin) {
@@ -44,17 +43,29 @@ int Yeilds::Run(std::string root_file) {
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
     auto check = std::make_unique<Cuts>(data);
+    auto event = std::make_unique<Reaction>(data);
+    int pip_num = 0;
+    for (int part_num = 1; part_num < data->gpart(); part_num++) {
+      if (check->Pip(part_num)) {
+        pip_num = part_num;
+        event->SetPip(part_num);
+      } else if (check->Prot(part_num)) {
+        event->SetProton(part_num);
+      } else if (check->Pim(part_num)) {
+        event->SetPim(part_num);
+      } else
+        event->SetOther(part_num);
+    }
 
-    float theta = physics::theta_calc(data->cz(0));
-    float phi = physics::phi_calc(data->cx(0), data->cy(0));
-    if (check->isElecctron()) {
+    if ((event->SinglePip() || event->NeutronPip()) && pip_num != 0) {
       total++;
-      csv_output << std::setprecision(15) << data->p(0) << "," << data->cx(0) << "," << data->cy(0) << ","
-                 << data->cz(0) << "," << theta << "," << phi << "," << data->dc_sect(0) << std::endl;
+      csv_output << std::setprecision(15) << data->dc_sect(0) << "," << data->p(0) << "," << data->cx(0) << ","
+                 << data->cy(0) << "," << data->cz(0) << "," << data->p(pip_num) << "," << data->cx(pip_num) << ","
+                 << data->cy(pip_num) << "," << data->cz(pip_num) << "," << std::endl;
     }
   }
 
-  chain->Reset();  // delete Tree object
+  chain->Reset();
 
   return total;
 }
