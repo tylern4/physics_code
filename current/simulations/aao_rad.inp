@@ -11,8 +11,8 @@
 0.                      ! z-coord of beam positio
 4.81726                 ! beam energy
 0.8 2.5                  ! Q2_min, Q2_max
-1.0 4.5                ! scattered electron momentum min and max
-.05                    ! minimum photon energy for integration
-500000	                ! number of events
-0.01	                ! a multiplication factor for sigr_max
+1.0 4.9                ! scattered electron momentum min and max
+.005                    ! minimum photon energy for integration
+50000	                ! number of events
+0.0	                ! a multiplication factor for sigr_max
 .005                    ! sigr_max
