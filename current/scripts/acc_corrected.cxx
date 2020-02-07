@@ -82,6 +82,10 @@ TCanvas *twoD_acc_corrected(std::string data_root, std::string sim_root, std::pa
   THnD *ndHist_thrown = (THnD *)root_sim->Get("ndhist_mc");
   ndHist_thrown->Scale(1 / ndHist_thrown->GetEntries());
 
+  ndHist->Sumw2();
+  ndHist_rec->Sumw2();
+  ndHist_thrown->Sumw2();
+
   return DrawProjection_2D(ndHist, ndHist_rec, ndHist_thrown, projection);
 }
 
