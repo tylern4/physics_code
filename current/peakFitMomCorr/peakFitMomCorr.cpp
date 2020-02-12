@@ -3,8 +3,7 @@
 /*	University Of South Carolina*/
 /************************************************************************/
 
-// Only My Includes. All others in main.h
-#include "momemtumCorrections.hpp"
+#include "peakFitMomCorr.hpp"
 #include <future>
 #include <thread>
 
@@ -22,12 +21,11 @@ int main(int argc, char **argv) {
 
   std::future<std::string> mom_corrections[NUM_THREADS];
   int i = 0;
-  for (auto &fils : infilenames) mom_corrections[i++] = std::async(mom_correction_csv, fils);
+  for (auto &fils : infilenames) mom_corrections[i++] = std::async(mom_correction_csv, fils, i);
 
-  myfile << "e_px,e_py,e_pz,p_px,p_py,p_pz,W_uncorr,Q2_uncorr,sector" << std::endl;
+  myfile << "e_p,e_theta,e_phi,sector,type" << std::endl;
   int num = 0;
   for (auto &o : mom_corrections) {
-    std::cerr << "Done: " << num++ << std::endl;
     myfile << o.get();
   }
 

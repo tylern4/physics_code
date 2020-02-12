@@ -6,29 +6,10 @@ set(CMAKE_CXX_FLAGS "-Ofast ${ROOT_CXX_FLAGS}")
 set(CMAKE_C_FLAGS "-Ofast ${ROOT_CXX_FLAGS}")
 
 
-#if(NOT N_CORES EQUAL 0)
-#  set(CTEST_BUILD_FLAGS -j${N})
-#  set(ctest_test_args ${ctest_test_args} PARALLEL_LEVEL ${N})
-#endif()
-
-#if(NUM_THREADS)
-#    message(STATUS "Manually setting NUM_THREADS=${NUM_THREADS}")
-#    set(EXTRA_FLAGS "-DNUM_THREADS=${NUM_THREADS}")
-#else()
-#  include(ProcessorCount)
-#  ProcessorCount(NUM_THREADS)
-#  if(NUM_THREADS)
-#    message(STATUS "From computer NUM_THREADS=${NUM_THREADS}")
-#    set(EXTRA_FLAGS "-DNUM_THREADS=${NUM_THREADS}")
-#  endif()
-#endif()
-
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 find_package(ROOT REQUIRED COMPONENTS RIO Net) #RooFit RooFitCore RooStats RootAuth
 include(${ROOT_USE_FILE})
 
-#find_package(CLHEP REQUIRED)
-#include_directories(${CLHEP_INCLUDE_DIR})
 
 set(CMAKE_MODULE_PATH
    ${CMAKE_MODULE_PATH}
@@ -48,6 +29,7 @@ set(PROGRAMS
       ntuple_maker/ntuple_maker.cpp
       golden_run/golden_run.cpp
       momentumCorrections/momemtumCorrections.cpp
+      peakFitMomCorr/peakFitMomCorr.cpp
       )
 foreach(prog ${PROGRAMS} )
     get_filename_component(progname ${prog} NAME)

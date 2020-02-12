@@ -104,14 +104,9 @@ const void DataHandeler::RunEvent(size_t current_event) {
       _hists->MomVsBeta_Fill_pos(_data->p(part_num), _data->b(part_num));
     } else if (_data->q(part_num) == NEGATIVE) {
       _hists->MomVsBeta_Fill_neg(_data->p(part_num), _data->b(part_num));
-    } else if (_data->q(part_num) == 0) {
-      if (_data->id(part_num) == NEUTRON) {
-        event->SetNeutron(part_num);
-        _hists->MomVsBeta_Fill_neutral(_data->p(part_num), _data->b(part_num));
-        _hists->Fill_neutron_fid(_data->cc_c2(part_num), _data->cc_r(part_num), _data->cc_sect(part_num));
-      } else
-        event->SetOther(part_num);
-      continue;
+    } else if (_data->q(part_num) == 0 && _data->id(part_num) == NEUTRON) {
+      _hists->MomVsBeta_Fill_neutral(_data->p(part_num), _data->b(part_num));
+      _hists->Fill_neutron_fid(_data->cc_c2(part_num), _data->cc_r(part_num), _data->cc_sect(part_num));
     }
 
     if (check->Pip(part_num) && check->Prot(part_num))
