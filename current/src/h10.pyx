@@ -355,32 +355,32 @@ cdef class h10_data:
     return np.array(deref(self.c_branches).cc_r())
   @property
   def cc_c2(self):
-    return np.array(deref(self.c_branches).cc_c2())
-  @property
-  def pidpart(self):
-    return np.array(deref(self.c_branches).pidpart())
-  @property
-  def xpart(self):
-    return np.array(deref(self.c_branches).xpart())
-  @property
-  def ypart(self):
-    return np.array(deref(self.c_branches).ypart())
-  @property
-  def zpart(self):
-    return np.array(deref(self.c_branches).zpart())
-  @property
-  def epart(self):
-    return np.array(deref(self.c_branches).epart())
-  @property
-  def pxpart(self):
-    return np.array(deref(self.c_branches).pxpart())
-  @property
-  def pypart(self):
-    return np.array(deref(self.c_branches).pypart())
-  @property
-  def pzpart(self):
-    return np.array(deref(self.c_branches).pzpart())
-  @property
-  def qpart(self):
-    return np.array(deref(self.c_branches).qpart())
+    return np.array(deref(self.c_branches).cc_c2())  
+  #@property
+  #def pidpart(self):
+  #  return np.array(deref(self.c_branches).pidpart())
+  #@property
+  #def xpart(self):
+  #  return np.array(deref(self.c_branches).xpart())
+  #@property
+  #def ypart(self):
+  #  return np.array(deref(self.c_branches).ypart())
+  #@property
+  #def zpart(self):
+  #  return np.array(deref(self.c_branches).zpart())
+  #@property
+  #def epart(self):
+  #  return np.array(deref(self.c_branches).epart())
+  #@property
+  #def pxpart(self):
+  #  return np.array(deref(self.c_branches).pxpart())
+  #@property
+  #def pypart(self):
+  #  return np.array(deref(self.c_branches).pypart())
+  #@property
+  #def pzpart(self):
+  #  return np.array(deref(self.c_branches).pzpart())
+  #@property
+  #def qpart(self):
+  #  return np.array(deref(self.c_branches).qpart())
 

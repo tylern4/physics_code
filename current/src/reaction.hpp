@@ -168,7 +168,6 @@ class Reaction {
     } else {
       elastic = false;
     }
-
     return elastic;
   }
 

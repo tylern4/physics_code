@@ -35,12 +35,14 @@ std::string mom_correction_csv(const std::vector<std::string>& fins) {
       } else
         event->SetOther(part_num);
     }
-    if (event->SingleP() && physics::theta_calc(data->pz(prot_num)) > 30 && event->W() > 0.5 && event->W() < 1.1)
-      mom_correction += std::to_string(data->px(0)) + "," + std::to_string(data->py(0)) + "," +
-                        std::to_string(data->pz(0)) + "," + std::to_string(data->px(prot_num)) + "," +
-                        std::to_string(data->py(prot_num)) + "," + std::to_string(data->pz(prot_num)) + "," +
-                        std::to_string(event->W()) + "," + std::to_string(event->Q2()) + "," +
-                        std::to_string(event->sector()) + "\n";
+    // if (event->SingleP() && physics::theta_calc(data->pz(prot_num)) > 30 && event->W() > 0.7 && event->W() < 1.05)
+    if (event->elastic())
+      mom_correction +=
+          std::to_string(data->p(0)) + "," + std::to_string(physics::theta_calc(data->cz(0))) + "," +
+          std::to_string(physics::phi_calc(data->cx(0), data->cy(0))) + "," + std::to_string(data->p(prot_num)) + "," +
+          std::to_string(physics::theta_calc(data->cz(prot_num))) + "," +
+          std::to_string(physics::phi_calc(data->cx(prot_num), data->cy(prot_num))) + "," + std::to_string(event->W()) +
+          "," + std::to_string(event->Q2()) + "," + std::to_string(event->sector()) + "\n";
   }
 
   return mom_correction;

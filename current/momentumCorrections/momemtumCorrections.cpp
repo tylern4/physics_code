@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
   int i = 0;
   for (auto &fils : infilenames) mom_corrections[i++] = std::async(mom_correction_csv, fils);
 
-  myfile << "e_px,e_py,e_pz,p_px,p_py,p_pz,W_uncorr,Q2_uncorr,sector" << std::endl;
+  myfile << "e_p,e_theta,e_phi,p_p,p_theta,p_phi,W_uncorr,Q2_uncorr,sector" << std::endl;
   int num = 0;
   for (auto &o : mom_corrections) {
     std::cerr << "Done: " << num++ << std::endl;

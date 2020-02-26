@@ -27,9 +27,10 @@ double TwoPhi(Double_t *x, Double_t *par) {
 }
 
 void LotsOfHists(const std::string &data_root, const std::string &mc_root) {
+  std::cout << "q2,w,theta,phi,y,yerr" << std::endl;
   TFile *root_data = new TFile(data_root.c_str());
   TFile *root_mc = new TFile(mc_root.c_str());
-  TFile *out = new TFile("output.root", "RECREATE");
+  TFile *out = new TFile("LotsOfHists.root", "RECREATE");
   out->cd();
 
   THnSparse *ndHist = (THnSparse *)root_data->Get("ndhist");
@@ -67,16 +68,20 @@ void LotsOfHists(const std::string &data_root, const std::string &mc_root) {
                      Form("w%0.2f_qSq%0.2f_theta%0.2f", W_val, Q2_val, Theta_val), nbins[3], -360, 360);
         for (int phi = 0; phi < nbins[3]; phi++) {
           bin[3] = phi;
+          float Phi_val = phi * ((xmax[3] - xmin[3]) / nbins[3] * 1.0) + xmin[3];
           if (ndHist->GetBinContent(bin) == 0) continue;
+          std::cout << W_val << "," << Q2_val << "," << Theta_val << "," << Phi_val << ","
+                    << static_cast<double>(ndHist->GetBinContent(bin)) << ","
+                    << static_cast<double>(ndHist->GetBinError(ndHist->GetBin(bin))) << std::endl;
           All_hists[w][q2][theta]->SetBinContent(phi, static_cast<double>(ndHist->GetBinContent(bin)));
           All_hists[w][q2][theta]->SetBinError(phi, static_cast<double>(ndHist->GetBinError(ndHist->GetBin(bin))));
         }
         if (All_hists[w][q2][theta]->GetEntries() > 4) {
-          std::cout << w << "\t" << q2 << "\t" << theta << std::endl;
-          double par[5] = {1.0, 1.0, 1.0, 1.0, 1.0};
-          func->SetParameters(par);
-          for (int i = 0; i < 10; i++) All_hists[w][q2][theta]->Fit("func", "QMN");
-          All_hists[w][q2][theta]->Fit("func", "QM+");
+          // std::cout << w << "\t" << q2 << "\t" << theta << std::endl;
+          // double par[5] = {1.0, 1.0, 1.0, 1.0, 1.0};
+          // func->SetParameters(par);
+          // for (int i = 0; i < 10; i++) All_hists[w][q2][theta]->Fit("func", "QMN");
+          // All_hists[w][q2][theta]->Fit("func", "QM+");
           All_hists[w][q2][theta]->Write();
         }
       }

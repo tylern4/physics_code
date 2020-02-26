@@ -21,9 +21,9 @@ int main(int argc, char **argv) {
 
   std::future<std::string> mom_corrections[NUM_THREADS];
   int i = 0;
-  for (auto &fils : infilenames) mom_corrections[i++] = std::async(mom_correction_csv, fils, i);
+  for (auto &fils : infilenames) mom_corrections[i++] = std::async(mom_correction_csv, fils, true, i);
 
-  myfile << "e_p,e_theta,e_phi,sector,type" << std::endl;
+  myfile << "e_p_thrown,e_theta_thrown,e_phi_thrown,e_p_recon,e_theta_recon,e_phi_recon,sector,type" << std::endl;
   int num = 0;
   for (auto &o : mom_corrections) {
     myfile << o.get();

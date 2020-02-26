@@ -16,11 +16,11 @@ Histogram::Histogram() {
   hadron_fid_hist[1] = new TH2D("proton_fid", "proton_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
   hadron_fid_hist[2] = new TH2D("pip_fid", "pip_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
 
-  ndhist = std::make_unique<THnSparseD>("ndhist", "ndhist", DIMENSIONS, nbins, xmin, xmax);
-  ndhist->GetAxis(0)->SetName("W");
-  ndhist->GetAxis(1)->SetName("Q2");
-  ndhist->GetAxis(2)->SetName("cos_Theta_star");
-  ndhist->GetAxis(3)->SetName("Phi_star");
+  ndhist_nPip = std::make_unique<THnSparseD>("ndhist", "ndhist", DIMENSIONS, nbins, xmin, xmax);
+  ndhist_nPip->GetAxis(0)->SetName("W");
+  ndhist_nPip->GetAxis(1)->SetName("Q2");
+  ndhist_nPip->GetAxis(2)->SetName("cos_Theta_star");
+  ndhist_nPip->GetAxis(3)->SetName("Phi_star");
 
   ndhist_protPi0 = std::make_unique<THnSparseD>("ndhist_protPi0", "ndhist_protPi0", DIMENSIONS, nbins, xmin, xmax);
   ndhist_protPi0->GetAxis(0)->SetName("W");
@@ -82,7 +82,7 @@ void Histogram::Fill_ND(const std::shared_ptr<Reaction> &event) {
   std::array<double, DIMENSIONS> to_fill = {event->W(), event->Q2(), cos(event->Theta_star()),
                                             event->Phi_star() * RAD2DEG};
   if (_good && event->channel()) {
-    ndhist->Fill(to_fill.data());
+    ndhist_nPip->Fill(to_fill.data());
   } else if (_good && event->PPi0()) {
     ndhist_protPi0->Fill(to_fill.data());
   }
@@ -94,7 +94,7 @@ void Histogram::Write(const std::string &output_file) {
 }
 
 void Histogram::Write() {
-  ndhist->Write();
+  ndhist_nPip->Write();
   ndhist_protPi0->Write();
   std::cout << GREEN << "\nFitting" << DEF << std::endl;
   // Start of cuts

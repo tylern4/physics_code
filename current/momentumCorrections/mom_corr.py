@@ -8,7 +8,7 @@ import glob
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-get_ipython().run_line_magic('matplotlib', 'inline')
+#get_ipython().run_line_magic('matplotlib', 'inline')
 
 MASS_P = 0.93827203
 MASS_E = 0.000511

@@ -10,12 +10,11 @@
 #include "constants.hpp"
 #include "cuts.hpp"
 
-std::string mom_correction_csv(const std::vector<std::string>& fins, size_t thread) {
+std::string mom_correction_csv(const std::vector<std::string>& fins, bool MC, size_t thread) {
   std::string mom_correction;
   auto chain = std::make_shared<TChain>("h10");
   for (auto& fin : fins) chain->Add(fin.c_str());
-  auto data = std::make_shared<Branches>(chain);
-  auto mom_corr = std::make_shared<MomCorr>();
+  auto data = std::make_shared<Branches>(chain, MC);
 
   size_t num_of_events = chain->GetEntries();
 
@@ -28,7 +27,7 @@ std::string mom_correction_csv(const std::vector<std::string>& fins, size_t thre
     if (!cuts->isElecctron()) continue;
     if (!cuts->Beam_cut()) continue;
 
-    auto event = std::make_shared<Reaction>(data, mom_corr);
+    auto event = std::make_shared<Reaction>(data, nullptr);
     float theta = physics::theta_calc(data->cz(0));
     float phi = physics::phi_calc(data->cx(0), data->cy(0));
     short sector = data->dc_sect(0);
@@ -44,7 +43,6 @@ std::string mom_correction_csv(const std::vector<std::string>& fins, size_t thre
         event->SetOther(part_num);
     }
 
-    // "e_p,e_theta,e_phi,sector,type"
     std::string type = "unknown";
     if (event->channel())
       type = "Npip";
@@ -53,9 +51,12 @@ std::string mom_correction_csv(const std::vector<std::string>& fins, size_t thre
     else
       type = "";
 
-    if (type != "")
-      mom_correction += std::to_string(data->p(0)) + "," + std::to_string(theta) + "," + std::to_string(phi) + "," +
-                        std::to_string(event->sector()) + "," + type + "\n";
+    if (type != "") {
+      auto e_mc = LorentzVector(data->pxpart(0), data->pypart(0), data->pzpart(0), mass_map[ELECTRON]);
+      mom_correction += std::to_string(e_mc.P()) + "," + std::to_string(e_mc.Theta() * DEG2RAD) + "," +
+                        std::to_string(e_mc.Phi()) + "," + std::to_string(data->p(0)) + "," + std::to_string(theta) +
+                        "," + std::to_string(phi) + "," + std::to_string(event->sector()) + "," + type + "\n";
+    }
   }
 
   return mom_correction;

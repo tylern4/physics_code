@@ -68,7 +68,7 @@ Garys binning
   int nbins[DIMENSIONS] = {32, 8, 10, 10};
   double xmin[DIMENSIONS] = {1.1, 1.0, -1.0, 0};
   double xmax[DIMENSIONS] = {1.9, 2.6, 1.0, 360};
-  std::unique_ptr<THnSparse> ndhist;
+  std::unique_ptr<THnSparse> ndhist_nPip;
   std::unique_ptr<THnSparse> ndhist_protPi0;
 
   float p_min = 0.0;
