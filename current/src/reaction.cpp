@@ -44,6 +44,7 @@ void Reaction::correct_mom() {
     for (int ii = 0; ii < 16; ii++) par[i][ii] = 0.0;
   float torus = 1.0;
   float phi = _elec->Phi() * RAD2DEG;
+
   // transforming phi: [-30,270] -> [-30,30]
   if (phi < -30.) phi = phi + 360.;
   phi = ((phi + 30.) / 60. - (int(phi + 30.)) / 60) * 60. - 30.;
@@ -150,12 +151,40 @@ void Reaction::CalcMissMass() {
     _MM2 = mm->mag2();
   }
   auto pi0 = std::make_shared<LorentzVector>();
-  if (_numPhotons >= 2) {
+  if (_numPhotons == 2) {
+    auto phi = ROOT::Math::VectorUtil::Angle(*_photons[0], *_photons[1]);
+    if (phi < 0.1) return;
     for (auto& p : _photons) {
       *pi0 += *p;
     }
     _pi0_mass = pi0->mag();
     _pi0_mass2 = pi0->mag2();
+  }
+}
+
+void Reaction::CalcMassPairs() {
+  float _min_photon_E = 1.3;
+  if (_photons.size() >= 2) {
+    // Reverse photon vector
+    std::vector<std::shared_ptr<LorentzVector>> r_photons(_photons.rbegin(), _photons.rend());
+    // For each photon
+    for (auto&& _p : _photons) {
+      // Remove last photon in reversed vector aka first photon now _p
+      r_photons.pop_back();
+      // For each photn in revered list
+      for (auto& _rp : r_photons) {
+        // Cut on minimum photon energy
+        if (_p->E() < _min_photon_E || _rp->E() < _min_photon_E) continue;
+
+        auto phi = ROOT::Math::VectorUtil::Angle(*_p, *_rp);
+
+        // if (phi < 0.1) continue;
+        // if (phi * RAD2DEG > 30) continue;
+        //_pair_mass.push_back(sqrt(4 * _p->Energy() * _rp->Energy() * sin(phi_2) * sin(phi_2)));
+        // Add together pair and get mass
+        _pair_mass.push_back((*_p + *_rp).M());
+      }
+    }
   }
 }
 
@@ -228,15 +257,21 @@ void Reaction::_boost_pip() {
   // May be wrong still, need to check
 
   auto _com_ = *_target + (*_beam - *_elec);
+
   auto com = std::make_shared<TLorentzVector>(_com_.X(), _com_.Y(), _com_.Z(), _com_.E());
   auto elec_boosted = std::make_shared<TLorentzVector>(_elec->X(), _elec->Y(), _elec->Z(), _elec->E());
   auto gamma_boosted = std::make_shared<TLorentzVector>(_gamma->X(), _gamma->Y(), _gamma->Z(), _gamma->E());
+
   auto beam_boosted = std::make_shared<TLorentzVector>(_beam->X(), _beam->Y(), _beam->Z(), _beam->E());
   auto pip_boosted = std::make_shared<TLorentzVector>(_pip->X(), _pip->Y(), _pip->Z(), _pip->E());
 
-  //! Varsets
   //! Calculate rotation: taken from Evan's phys-ana-omega on 08-05-13
   // Copied and modified from Arjun's code
+
+  //  auto uz = _gamma->Vect().Unit();
+  // auto ux = _beam->Vect().Cross(_elec->Vect()).Unit();
+  // ROOT::Math::VectorUtil::Rotate(ux, uz);
+
   TVector3 uz = gamma_boosted->Vect().Unit();
   TVector3 ux = (beam_boosted->Vect().Cross(elec_boosted->Vect())).Unit();
   ux.Rotate(-PI / 2, uz);

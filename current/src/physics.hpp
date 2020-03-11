@@ -8,6 +8,7 @@
 #define PHYSICS_H_GUARD
 #include <memory>
 #include "constants.hpp"
+#include "Math/VectorUtil.h"
 
 namespace physics {
 // Calcuating Q^2

@@ -36,8 +36,10 @@ void LotsOfHists(const std::string &data_root, const std::string &mc_root) {
   THnSparse *ndHist = (THnSparse *)root_data->Get("ndhist");
   THnSparse *ndHist_rec = (THnSparse *)root_mc->Get("ndhist");
   THnSparse *ndHist_thrown = (THnSparse *)root_mc->Get("ndhist_mc");
-  ndHist_rec->Divide(ndHist_thrown);
-  ndHist->Multiply(ndHist_rec);
+  ndHist_thrown->Divide(ndHist_rec);
+  ndHist->Multiply(ndHist_thrown);
+
+  ndHist->Sumw2();
 
   const int DIMENSIONS = ndHist->GetNdimensions();
   int nbins[DIMENSIONS];
@@ -78,10 +80,10 @@ void LotsOfHists(const std::string &data_root, const std::string &mc_root) {
         }
         if (All_hists[w][q2][theta]->GetEntries() > 4) {
           // std::cout << w << "\t" << q2 << "\t" << theta << std::endl;
-          // double par[5] = {1.0, 1.0, 1.0, 1.0, 1.0};
-          // func->SetParameters(par);
-          // for (int i = 0; i < 10; i++) All_hists[w][q2][theta]->Fit("func", "QMN");
-          // All_hists[w][q2][theta]->Fit("func", "QM+");
+          double par[5] = {1.0, 1.0, 1.0, 1.0, 1.0};
+          func->SetParameters(par);
+          for (int i = 0; i < 10; i++) All_hists[w][q2][theta]->Fit("func", "QMN");
+          All_hists[w][q2][theta]->Fit("func", "QM+");
           All_hists[w][q2][theta]->Write();
         }
       }

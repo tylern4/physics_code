@@ -27,6 +27,8 @@ class Reaction {
   std::shared_ptr<LorentzVector> _neutron = nullptr;
   std::vector<std::shared_ptr<LorentzVector>> _photons;
 
+  std::vector<double> _pair_mass;
+
   std::shared_ptr<Branches> _data = nullptr;
   std::shared_ptr<MomCorr> _mom_corr = nullptr;
 
@@ -83,6 +85,7 @@ class Reaction {
   void SetNeutron(int i);
 
   void CalcMissMass();
+  void CalcMassPairs();
   double MM();
   double MM2();
   float pi0_mass();
@@ -137,7 +140,7 @@ class Reaction {
             (_hasE && !_hasP && _hasPip && !_hasPim && _hasNeutron && !_hasOther));
   }
 
-  inline bool channel() { return (this->SinglePip() || this->NeutronPip()) && this->MM_cut(); }
+  inline bool channel() { return ((this->SinglePip() || this->NeutronPip()) && this->MM_cut()); }
 
   inline float phi_diff() {
     if (_prot != nullptr)
@@ -178,6 +181,11 @@ class Reaction {
     mm_cut &= (this->MM() >= 0.8);
     mm_cut &= (this->MM() <= 1.1);
     return mm_cut;
+  }
+
+  inline std::vector<double> pair_mass() {
+    if (_pair_mass.size() == 0) CalcMassPairs();
+    return _pair_mass;
   }
 
   inline LorentzVector& e_mu() { return *_beam; }

@@ -12,7 +12,7 @@
 #include "constants.hpp"
 
 class Branches {
- private:
+ protected:
   std::shared_ptr<TTree> _tree;
   bool _MC = false;
   int _npart;
@@ -294,6 +294,11 @@ class Branches {
   float pypart(int i);
   float pzpart(int i);
   float qpart(int i);
+};
+
+class BranchesMC : Branches {
+ public:
+  BranchesMC(std::shared_ptr<TChain> tree);
 };
 
 #endif

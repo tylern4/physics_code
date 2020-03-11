@@ -1,6 +1,7 @@
 #include "mom_corr.hpp"
 
 MomCorr::MomCorr() {
+  std::cout << "Using Momentum Corrections" << std::endl;
   if (getenv("MOM_CORR") != NULL) {
     _datadir = getenv("MOM_CORR");
     read_theta_par();

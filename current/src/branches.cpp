@@ -22,6 +22,7 @@ Branches::Branches(const Branches& b) {
   _MC = b._MC;
   init();
 }
+BranchesMC::BranchesMC(std::shared_ptr<TChain> tree) : Branches(tree, true) {}
 
 void Branches::init() {
   _tree->SetBranchAddress("npart", &_npart);

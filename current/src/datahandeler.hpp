@@ -32,6 +32,7 @@ class DataHandeler {
   std::vector<std::string> _input_files;
   std::shared_ptr<Histogram> _hists;
   std::shared_ptr<Branches> _data;
+  std::shared_ptr<BranchesMC> _data_mc;
   std::shared_ptr<MomCorr> _mom_corr = nullptr;
   bool CUTS;
 
@@ -39,7 +40,7 @@ class DataHandeler {
   DataHandeler();
   DataHandeler(const std::vector<std::string>& fin, const std::shared_ptr<Histogram>& hists,
                const std::shared_ptr<MomCorr>& mom_corr);
-               
+
   DataHandeler(const std::vector<std::string>& fin, const std::shared_ptr<Histogram>& hists);
   ~DataHandeler();
   void setLoadBar(bool load);

@@ -65,9 +65,9 @@ Garys binning
 */
   // int nbins[DIMENSIONS] = {6, 7, 25, 25};
   //////////////// W , Q2, Theta_star_pip, Phi_star_pip
-  int nbins[DIMENSIONS] = {32, 8, 10, 10};
+  int nbins[DIMENSIONS] = {28, 5, 10, 5};
   double xmin[DIMENSIONS] = {1.1, 1.0, -1.0, 0};
-  double xmax[DIMENSIONS] = {1.9, 2.6, 1.0, 360};
+  double xmax[DIMENSIONS] = {1.8, 2.0, 1.0, 360};
   std::unique_ptr<THnSparse> ndhist_nPip;
   std::unique_ptr<THnSparse> ndhist_protPi0;
 
@@ -309,6 +309,9 @@ Garys binning
   TH1D_ptr Mass_pi0 = std::make_shared<TH1D>("Mass_pi0", "Mass #pi^{0}", BINS_MM, 0, 0.5);
   TH1D_ptr Mass_square_pi0 = std::make_shared<TH1D>("Mass_pi0_2", "#pi^{0} mass^{2}", BINS_MM, 0, 0.05);
 
+  TH1D_ptr Mass_eta = std::make_shared<TH1D>("Mass_eta", "Mass #eta", BINS_MM, 0.2, 1.0);
+  TH1D_ptr Mass_square_eta = std::make_shared<TH1D>("Mass_eta_2", "#eta mass^{2}", BINS_MM, 0.2, 1.0);
+
   TH1D_ptr Missing_Mass_pi0_otherCut =
       std::make_shared<TH1D>("Missing_Mass_pi0_otherCut", "Missing Mass #pi^{0}", BINS_MM, -1, 1);
   TH1D_ptr Missing_Mass_square_pi0_otherCut =
@@ -373,7 +376,7 @@ Garys binning
   // void Fill_Mass(float mass);
   void Fill_Missing_Mass_square(float miss_mass_2);
 
-  void Fill_Mass_pi0(float mass, float mass2);
+  void Fill_Mass_photons(std::shared_ptr<Reaction> _e);
   void Write_Missing_Mass();
 
   void Fill_Missing_Mass_pi0(float mm, float mm2);

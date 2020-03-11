@@ -37,6 +37,7 @@ Histogram::~Histogram() {}
 
 void Histogram::FillEvent(const std::shared_ptr<Reaction> &event) {
   this->Fill_ND(event);
+  this->Fill_Mass_photons(event);
   if (event->SinglePip()) {
     this->Fill_Missing_Mass(event);
     this->Fill_W_Missing_Mass(event->W(), event->MM(), event->MM2());
@@ -54,7 +55,6 @@ void Histogram::FillEvent(const std::shared_ptr<Reaction> &event) {
     this->Fill_NeutronPip_WQ2(event->W(), event->Q2(), event->MM(), event->MM2());
 
   if (event->SingleP()) {
-    this->Fill_Mass_pi0(event->pi0_mass(), event->pi0_mass2());
     this->Fill_Missing_Mass_pi0(event->MM(), event->MM2());
     this->Fill_elastic(event);
     if (event->MM() >= 0.05 && event->MM() <= 0.3) {
@@ -628,9 +628,14 @@ void Histogram::Fill_W_Missing_Mass(float W, float mm, float mm2) {
   }
 }
 
-void Histogram::Fill_Mass_pi0(float mass, float mass2) {
-  Mass_pi0->Fill(mass);
-  Mass_square_pi0->Fill(mass2);
+void Histogram::Fill_Mass_photons(std::shared_ptr<Reaction> _e) {
+  Mass_pi0->Fill(_e->pi0_mass());
+  Mass_square_pi0->Fill(_e->pi0_mass2());
+
+  for (auto &&_m : _e->pair_mass()) {
+    Mass_eta->Fill(_m);
+    Mass_square_eta->Fill(_m * _m);
+  }
 }
 
 void Histogram::Fill_Missing_Mass_square(float miss_mass_2) { Missing_Mass_square->Fill(miss_mass_2); }
@@ -669,6 +674,11 @@ void Histogram::Write_Missing_Mass() {
   Mass_square_pi0->SetXTitle("Mass (GeV)");
   Mass_pi0->Write();
   Mass_square_pi0->Write();
+
+  Mass_eta->SetXTitle("Mass (GeV)");
+  Mass_square_eta->SetXTitle("Mass (GeV)");
+  Mass_eta->Write();
+  Mass_square_eta->Write();
 
   Missing_Mass_pi0_otherCut->Write();
   Missing_Mass_square_pi0_otherCut->Write();
