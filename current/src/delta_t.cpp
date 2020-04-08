@@ -17,6 +17,19 @@ Delta_T::Delta_T(const std::shared_ptr<Branches> &data) : _data(data) {
 }
 Delta_T::~Delta_T() {}
 
+std::ostream &operator<<(std::ostream &os, Delta_T const &dt) {
+  for (int event_number = 1; event_number < dt._data->gpart(); event_number++) {
+    if (!std::isnan(dt._vertex))
+      os << dt._data->dc_sect(event_number) << "," << dt._data->q(event_number) << "," << dt._vertex << ","
+         << dt._data->p(event_number) << "," << dt._data->sc_t(event_number) << "," << dt._data->sc_r(event_number)
+         << "\n";
+    else {
+      os << "";
+    }
+  }
+  return os;
+}
+
 float Delta_T::vertex_time(float sc_time, float sc_pathlength, float relatavistic_beta) {
   return sc_time - sc_pathlength / (relatavistic_beta * c_special_units);
 }

@@ -135,3 +135,31 @@ double func::missMassbackground(double *x, double *par) {
 double func::missMassfitFunction(double *x, double *par) {
   return missMasspeak(x, par) + missMasspeak(x, &par[3]) + missMasspeak(x, &par[6]) + missMassbackground(x, &par[9]);
 }
+
+double func::degauss(double *x, double *par) {
+  // The two functions that were convoluted together are:
+  //
+  // 1. Gaussian with A, mu, and sigma for parameters.
+  // Asymmetrical double-exponential function that looks like
+  //* exp(lambda1*x) for x<0
+  //* exp(-lambda2*x) for x>=0.
+
+  // input
+  double xx = x[0];
+  // Gaussian smearing parameters
+  double A = par[0];
+  double mu = par[1];
+  double sigma = par[2];
+  // Asymmetrical double-exponential parameters
+  double lambda1 = par[3];
+  double lambda2 = par[4];
+  // Useful quantities
+  double mu1 = sigma * sigma * lambda1 + xx - mu;
+  double mu2 = -sigma * sigma * lambda2 + xx - mu;
+  double ret =
+      A * 0.5 / (1.0 / lambda1 + 1.0 / lambda2) *
+      (exp(0.5 * TMath::Power(sigma * lambda1, 2) + lambda1 * (xx - mu)) * TMath::Erfc(mu1 / (sigma * sqrt(2.0))) +
+       exp(0.5 * TMath::Power(sigma * lambda2, 2) - lambda2 * (xx - mu)) * TMath::Erfc(-mu2 / (sigma * sqrt(2.0))));
+
+  return ret;
+}

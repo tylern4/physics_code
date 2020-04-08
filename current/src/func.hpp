@@ -41,6 +41,7 @@ double theta_cc_fit(double *x, double *par);
 double missMasspeak(double *x, double *par);
 double missMassbackground(double *x, double *par);
 double missMassfitFunction(double *x, double *par);
+double degauss(double *x, double *par);
 }  // namespace func
 
 #endif

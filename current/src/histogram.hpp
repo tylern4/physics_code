@@ -40,7 +40,7 @@
 #define SC_PADDLE_NUM 48
 
 #define BINS 500
-#define BINS_MM 300
+#define BINS_MM 250
 
 #define FID_SLICES 50
 
@@ -65,9 +65,9 @@ Garys binning
 */
   // int nbins[DIMENSIONS] = {6, 7, 25, 25};
   //////////////// W , Q2, Theta_star_pip, Phi_star_pip
-  int nbins[DIMENSIONS] = {28, 5, 10, 5};
-  double xmin[DIMENSIONS] = {1.1, 1.0, -1.0, 0};
-  double xmax[DIMENSIONS] = {1.8, 2.0, 1.0, 360};
+  int nbins[DIMENSIONS] = {28, 5, 10, 12};
+  double xmin[DIMENSIONS] = {1.1, 1.0, -1.0, 0.0};
+  double xmax[DIMENSIONS] = {1.8, 2.0, 1.0, (M_PI * 2.0)};
   std::unique_ptr<THnSparse> ndhist_nPip;
   std::unique_ptr<THnSparse> ndhist_protPi0;
 
@@ -296,6 +296,7 @@ Garys binning
   TH1D_ptr Missing_Mass = std::make_shared<TH1D>("Missing_Mass", "Missing Mass", BINS_MM, MM_min, MM_max);
   TH1D_ptr Missing_Mass_small = std::make_shared<TH1D>("Missing_Mass_small", "e(p,#pi^{+} X)e'", BINS_MM, 0.8, 1.3);
   std::vector<TH1D_ptr> Missing_Mass_small_sec;
+  std::vector<TH1D_ptr> Missing_Mass_Sq_small_sec;
   TH1D_ptr Missing_Mass_square =
       std::make_shared<TH1D>("Missing_Mass_square", "Missing Mass square", BINS_MM, MM_min, MM_max* MM_max);
 

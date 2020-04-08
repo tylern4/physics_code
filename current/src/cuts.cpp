@@ -78,11 +78,11 @@ bool Cuts::isElecctron() {
   // Cut out low ec inner
   _elec &= (_data->ec_ei(0) >= 0.05);
   // Minimum momentum cut
-  //_elec &= (_data->p(0) > MIN_P_CUT);
+  _elec &= (_data->p(0) > MIN_P_CUT);
   // Beam Position cut
   _elec &= Beam_cut();
   // Fid Cuts
-  //_elec &= Fid_cut();
+  _elec &= Fid_cut();
 
   return _elec;
 }

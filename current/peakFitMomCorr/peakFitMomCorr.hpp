@@ -24,8 +24,16 @@ std::string mom_correction_csv(const std::vector<std::string>& fins, bool MC, si
     chain->GetEntry(current_event);
     auto cuts = std::make_unique<Cuts>(data);
 
-    if (!cuts->isElecctron()) continue;
-    if (!cuts->Beam_cut()) continue;
+    auto e_mc = LorentzVector(data->pxpart(0), data->pypart(0), data->pzpart(0), mass_map[ELECTRON]);
+    mom_correction += std::to_string(e_mc.P()) + "," + std::to_string(e_mc.Theta()) + "," + std::to_string(e_mc.Phi());
+    if (!cuts->isElecctron()) {
+      mom_correction += ",,,,,None\n";
+      continue;
+    }
+    if (!cuts->Beam_cut()) {
+      mom_correction += ",,,,,None\n";
+      continue;
+    }
 
     auto event = std::make_shared<Reaction>(data, nullptr);
     float theta = physics::theta_calc(data->cz(0));
@@ -51,11 +59,11 @@ std::string mom_correction_csv(const std::vector<std::string>& fins, bool MC, si
     else
       type = "";
 
-    if (type != "") {
-      auto e_mc = LorentzVector(data->pxpart(0), data->pypart(0), data->pzpart(0), mass_map[ELECTRON]);
-      mom_correction += std::to_string(e_mc.P()) + "," + std::to_string(e_mc.Theta() * DEG2RAD) + "," +
-                        std::to_string(e_mc.Phi()) + "," + std::to_string(data->p(0)) + "," + std::to_string(theta) +
-                        "," + std::to_string(phi) + "," + std::to_string(event->sector()) + "," + type + "\n";
+    if (type != "")
+      mom_correction += "," + std::to_string(data->p(0)) + "," + std::to_string(theta * DEG2RAD) + "," +
+                        std::to_string(phi * DEG2RAD) + "," + std::to_string(event->sector()) + "," + type + "\n";
+    else {
+      mom_correction += ",,,,,None\n";
     }
   }
 

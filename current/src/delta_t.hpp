@@ -20,6 +20,7 @@ class Delta_T {
   std::vector<float> _pion_array;
   std::vector<float> _kaon_array;
 
+  friend std::ostream &operator<<(std::ostream &os, Delta_T const &m);
   float vertex_time(float sc_time, float sc_pathlength, float relatavistic_beta);
   std::vector<float> _delta_t_vec(float mass);
   float _delta_t(float mass, float momentum, float sc_t, float sc_r);

@@ -30,6 +30,7 @@ set(PROGRAMS
       golden_run/golden_run.cpp
       momentumCorrections/momemtumCorrections.cpp
       peakFitMomCorr/peakFitMomCorr.cpp
+      deltaTFitter/deltaTFitter.cpp
       )
 foreach(prog ${PROGRAMS} )
     get_filename_component(progname ${prog} NAME)

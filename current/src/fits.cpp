@@ -440,3 +440,32 @@ TF1 *Fits::FitMissMass(TH1D *hist) {
 
   return total;
 }
+
+TF1 *Fits::FitDeGauss(TH1D *hist) {
+  if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  if (hist->GetEntries() < 1000) return nullptr;
+
+  static const int max_par = 5;
+  TF1 *total = new TF1("total", func::degauss, min_value, max_value, max_par);
+
+  total->SetParName(0, "A");
+  total->SetParName(1, "#mu");
+  total->SetParName(2, "#sigma");
+
+  total->SetParName(3, "#lambda_{1}");
+  total->SetParName(4, "#lambda_{2}");
+
+  total->SetParameters(40, 0.89, 0.01, 50, 20);
+
+  Double_t par[max_par];
+  for (size_t i = 0; i < 50; i++) hist->Fit(total, "RNQM+", "", min_value, max_value);  // Peak of N at 0.939
+
+  hist->Fit(total, "RQM+");
+
+  // sigma = total->GetParameter("#Gamma_{N}") / (2 * sqrt(2 * log(2)));
+  // mean = total->GetParameter("#mu_{N}");
+
+  return total;
+}
+
+TF1 *Fits::FitDeGauss(std::shared_ptr<TH1D> &hists) { return Fits::FitDeGauss(hists.get()); }

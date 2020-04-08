@@ -10,9 +10,6 @@
 #include "TMath.h"
 #include "TStyle.h"
 
-#define THETA_BINS 100
-#define PHI_BINS 100
-
 #define NUM_SECTORS 6
 #define FID_SLICES 40
 
@@ -77,26 +74,26 @@ FitsData FitGenNormal(TH1D *hist, int slice, int sec_i) {
   max_fwhm = fitFunc->GetX(fwhm_max, max_value / 2.0, max_value, 1.E-10, 100000, false);
 
   /*
-  size_t num_its = 0;
+    size_t num_its = 0;
 
-  double m = min_value;
-  while (m < max_value || num_its < 10000) {
-    num_its++;
-    val = fitFunc->Derivative(m);
-    if (max < val) {
-      max = val;
-      max_m = m;
+    double m = min_value;
+    while (m < max_value || num_its < 10000) {
+      num_its++;
+      val = fitFunc->Derivative(m);
+      if (max < val) {
+        max = val;
+        max_m = m;
+      }
+      if (val < min) {
+        min = val;
+        min_m = m;
+      }
+      if (num_its == 10000) {
+        std::cerr << "Too Many iterations" << std::endl;
+        break;
+      }
+      m = m + 0.01;
     }
-    if (val < min) {
-      min = val;
-      min_m = m;
-    }
-    if (num_its == 10000) {
-      std::cerr << "Too Many iterations" << std::endl;
-      break;
-    }
-    m = m + 0.01;
-  }
   */
   float ymax = hist->GetMaximum();
   /*
@@ -185,8 +182,8 @@ FitsData FitTheFit(TGraph *hist, int sec, bool lr) {
 }
 
 TCanvas *fit_EC(std::string file = "e1d_all.root") {
-  // ROOT::EnableThreadSafety();
-  // ROOT::EnableImplicitMT(4);
+  ROOT::EnableThreadSafety();
+  ROOT::EnableImplicitMT(4);
   TFile *f = new TFile(file.c_str());
   gStyle->SetOptStat(1111);
   gStyle->SetOptFit(1111);
@@ -214,9 +211,7 @@ TCanvas *fit_EC(std::string file = "e1d_all.root") {
     for (int slice = 14; slice < FID_SLICES; slice++) {
       std::cout << sec_i << std::endl;
       std::cout << slice << std::endl;
-      // if ((sec_i == 4 && slice == 32) || (sec_i == 3 && slice == 14) || (sec_i == 4 && slice == 37) ||
-      //    (sec_i == 5 && slice == 28))
-      //  continue;
+      if ((sec_i == 0 && slice == 37) || (sec_i == 4 && slice == 16)) continue;
       electron_fid_sec_slice[sec_i][slice] =
           (TH1D *)elec_fid[sec_i]->ProjectionX(Form("electron_fid_sec_%d_%d", sec_i + 1, slice + 1),
                                                slice_width * slice, slice_width * slice + (slice_width - 1));

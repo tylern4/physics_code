@@ -48,3 +48,4 @@ current/cython/h10.cpp
 .idea
 current/cmake-build-debug
 *.png
+current/crossSection/experimental_data

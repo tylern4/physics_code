@@ -10,24 +10,22 @@
 #include "THnSparse.h"
 #include "TStyle.h"
 
+// a + b cos(phi) + c cos(2phi)
 double TwoPhi(Double_t *x, Double_t *par) {
-  float _phi = x[0] * M_PI / 180.0;
-  float _epsilon = par[0];
-  float _sigma_t = par[1];
-  float _sigma_l = par[2];
-  float _sigma_tt = par[3];
-  float _sigma_lt = par[4];
+  float _phi = x[0];  // * M_PI / 180.0;
+  float _a = par[0];
+  float _b = par[1];
+  float _c = par[2];
+
   float ret = 0;
 
-  ret = _sigma_t + _epsilon * _sigma_l;
-  ret += _epsilon * _sigma_tt * cosf(2 * _phi);
-  ret += sqrtf(2 * _epsilon * (1 + _epsilon)) * _sigma_lt * cosf(_phi);
+  ret = _a + _b * cos(_phi) + _c * cos(2.0 * _phi);
 
   return static_cast<double>(ret);
 }
 
 void LotsOfHists(const std::string &data_root, const std::string &mc_root) {
-  std::cout << "q2,w,theta,phi,y,yerr" << std::endl;
+  std::cout << "q2,w,cos_theta,phi,y,yerr" << std::endl;
   TFile *root_data = new TFile(data_root.c_str());
   TFile *root_mc = new TFile(mc_root.c_str());
   TFile *out = new TFile("LotsOfHists.root", "RECREATE");
@@ -37,6 +35,9 @@ void LotsOfHists(const std::string &data_root, const std::string &mc_root) {
   THnSparse *ndHist_rec = (THnSparse *)root_mc->Get("ndhist");
   THnSparse *ndHist_thrown = (THnSparse *)root_mc->Get("ndhist_mc");
   ndHist_thrown->Divide(ndHist_rec);
+  // ndHist_rec->Divide(ndHist_thrown);
+  ndHist_thrown->Write("Acceptance");
+  // plot acceptane histograms as well
   ndHist->Multiply(ndHist_thrown);
 
   ndHist->Sumw2();
@@ -50,10 +51,11 @@ void LotsOfHists(const std::string &data_root, const std::string &mc_root) {
   for (int i = 0; i < DIMENSIONS; i++) xmin[i] = ndHist->GetAxis(i)->GetBinLowEdge(1);
   for (int i = 0; i < DIMENSIONS; i++) xmax[i] = ndHist->GetAxis(i)->GetBinUpEdge(ndHist->GetAxis(i)->GetNbins());
 
-  // ndHist->Sumw2();
-  TH1D *All_hists[nbins[0]][nbins[1]][nbins[0]];
-  TF1 *func = new TF1("func", TwoPhi, -360, 360, 5);
-  func->SetParNames("#epsilon", "#sigma_{l}", "#sigma_{t}", "#sigma_{lt}", "#sigma_{tt}");
+  ndHist->Sumw2();
+  TH1D *All_hists[nbins[0]][nbins[1]][nbins[2]];
+  TF1 *func = new TF1("func", TwoPhi, -360, 360, 3);
+  // func->SetParNames("#epsilon", "#sigma_{l}", "#sigma_{t}", "#sigma_{lt}", "#sigma_{tt}");
+  func->SetParNames("#alpha", "#beta", "#gamma");
   ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   for (int w = 0; w < nbins[0]; w++) {
     for (int q2 = 0; q2 < nbins[1]; q2++) {
@@ -67,7 +69,7 @@ void LotsOfHists(const std::string &data_root, const std::string &mc_root) {
 
         All_hists[w][q2][theta] =
             new TH1D(Form("w%0.2f_qSq%0.2f_theta%0.2f", W_val, Q2_val, Theta_val),
-                     Form("w%0.2f_qSq%0.2f_theta%0.2f", W_val, Q2_val, Theta_val), nbins[3], -360, 360);
+                     Form("w%0.2f_qSq%0.2f_theta%0.2f", W_val, Q2_val, Theta_val), nbins[3], xmin[3], xmax[3]);
         for (int phi = 0; phi < nbins[3]; phi++) {
           bin[3] = phi;
           float Phi_val = phi * ((xmax[3] - xmin[3]) / nbins[3] * 1.0) + xmin[3];
@@ -78,13 +80,14 @@ void LotsOfHists(const std::string &data_root, const std::string &mc_root) {
           All_hists[w][q2][theta]->SetBinContent(phi, static_cast<double>(ndHist->GetBinContent(bin)));
           All_hists[w][q2][theta]->SetBinError(phi, static_cast<double>(ndHist->GetBinError(ndHist->GetBin(bin))));
         }
-        if (All_hists[w][q2][theta]->GetEntries() > 4) {
+
+        if (All_hists[w][q2][theta]->GetEntries() > 3) {
           // std::cout << w << "\t" << q2 << "\t" << theta << std::endl;
-          double par[5] = {1.0, 1.0, 1.0, 1.0, 1.0};
+          double par[3] = {1.0, 1.0, 1.0};
           func->SetParameters(par);
           for (int i = 0; i < 10; i++) All_hists[w][q2][theta]->Fit("func", "QMN");
           All_hists[w][q2][theta]->Fit("func", "QM+");
-          All_hists[w][q2][theta]->Write();
+          // All_hists[w][q2][theta]->Write();
         }
       }
     }

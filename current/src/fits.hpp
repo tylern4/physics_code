@@ -52,6 +52,10 @@ class Fits {
   TF1 *FitBreitWigner(TH1D *hist);
   TF1 *FitBreitWigner(std::shared_ptr<TH1D> &hist);
   TF1 *FitMissMass(TH1D *hist);
+
+  TF1 *FitDeGauss(std::shared_ptr<TH1D> &hist);
+  TF1 *FitDeGauss(TH1D *hist);
+
   void Set_min(double val);
   void Set_max(double val);
   void Set_lineColor(int val);

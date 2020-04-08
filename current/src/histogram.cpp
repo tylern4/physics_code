@@ -75,12 +75,15 @@ void Histogram::Fill_ND(const std::shared_ptr<Reaction> &event) {
   std::lock_guard<std::mutex> lk(mutex);
   bool _good = true;
   _good &= !std::isnan(event->W());
+  if (!_good) return;
   _good &= !std::isnan(event->Q2());
+  if (!_good) return;
   _good &= !std::isnan(event->Theta_star());
+  if (!_good) return;
   _good &= !std::isnan(event->Phi_star());
+  if (!_good) return;
 
-  std::array<double, DIMENSIONS> to_fill = {event->W(), event->Q2(), cos(event->Theta_star()),
-                                            event->Phi_star() * RAD2DEG};
+  std::array<double, DIMENSIONS> to_fill = {event->W(), event->Q2(), cos(event->Theta_star()), event->Phi_star()};
   if (_good && event->channel()) {
     ndhist_nPip->Fill(to_fill.data());
   } else if (_good && event->PPi0()) {
@@ -196,6 +199,7 @@ void Histogram::makeHists_WvsQ2() {
   WvsQ2_channel_sec.resize(NUM_SECTORS);
   W_channel_sec.resize(NUM_SECTORS);
   Missing_Mass_small_sec.resize(NUM_SECTORS);
+  Missing_Mass_Sq_small_sec.resize(NUM_SECTORS);
 
   for (short sec = 0; sec < NUM_SECTORS; sec++) {
     WvsQ2_sec[sec] = std::make_shared<TH2D>(Form("W_vs_Q2_sec_%d", sec + 1), Form("W vs Q^{2} Sector: %d", sec + 1),
@@ -211,6 +215,8 @@ void Histogram::makeHists_WvsQ2() {
                                                 Form("W N #pi^{+} Sector: %d", sec + 1), BINS / 2, w_min, w_max);
     Missing_Mass_small_sec[sec] = std::make_shared<TH1D>(Form("Missing_Mass_small_%d", sec),
                                                          Form("e(p,#pi^{+} X)e' Sector %d", sec), BINS_MM, 0.8, 1.3);
+    Missing_Mass_Sq_small_sec[sec] = std::make_shared<TH1D>(Form("Missing_Mass_Sq_small_%d", sec),
+                                                            Form("e(p,#pi^{+} X)e' Sector %d", sec), BINS_MM, 0.8, 1.3);
   }
   W_binned.resize(Q2_BINS);
   for (short y = 0; y < Q2_BINS; y++) {
@@ -602,6 +608,7 @@ void Histogram::Fill_Missing_Mass(const std::shared_ptr<Reaction> &event) {
     return;
   }
   Missing_Mass_small_sec[event->sector() - 1]->Fill(event->MM());
+  Missing_Mass_Sq_small_sec[event->sector() - 1]->Fill(event->MM2());
 }
 void Histogram::Fill_Missing_Mass_strict(float mm, float mm2) {
   Missing_Mass_strict->Fill(mm);
@@ -650,9 +657,18 @@ void Histogram::Write_Missing_Mass() {
   for (auto &&sec : Missing_Mass_small_sec) {
     // auto fit = std::make_shared<Fits>();
     // fit->Set_min(0.8);
-    // fit->Set_max(1.0);
-    // fit->FitBreitWigner(sec);
+    // fit->Set_max(1.3);
+    // fit->FitDeGauss(sec);
     sec->SetXTitle("Mass (GeV)");
+    sec->Write();
+  }
+
+  for (auto &&sec : Missing_Mass_Sq_small_sec) {
+    auto fit = std::make_shared<Fits>();
+    fit->Set_min(0.8);
+    fit->Set_max(1.0);
+    fit->FitDeGauss(sec);
+    sec->SetXTitle("Mass^2 (GeV)");
     sec->Write();
   }
 
@@ -672,6 +688,10 @@ void Histogram::Write_Missing_Mass() {
 
   Mass_pi0->SetXTitle("Mass (GeV)");
   Mass_square_pi0->SetXTitle("Mass (GeV)");
+  auto fit = std::make_shared<Fits>();
+  fit->Set_min(0.05);
+  fit->Set_max(0.2);
+  fit->FitDeGauss(Mass_pi0);
   Mass_pi0->Write();
   Mass_square_pi0->Write();
 
