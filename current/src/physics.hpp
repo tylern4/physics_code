@@ -7,8 +7,8 @@
 #ifndef PHYSICS_H_GUARD
 #define PHYSICS_H_GUARD
 #include <memory>
-#include "constants.hpp"
 #include "Math/VectorUtil.h"
+#include "constants.hpp"
 
 namespace physics {
 // Calcuating Q^2
@@ -23,6 +23,8 @@ double Q2_calc(const LorentzVector& gamma_mu);
 double W_calc(const LorentzVector& gamma_mu);
 // overload with 4 vectors instaed of other calculations
 double xb_calc(const LorentzVector& gamma_mu);
+double theta_rad(double cosz);
+double phi_rad(double cosx, double cosy);
 double theta_calc(double cosz);
 double phi_calc(double cosx, double cosy);
 double center_phi_calc(double cosx, double cosy);

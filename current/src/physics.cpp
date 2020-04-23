@@ -54,6 +54,10 @@ double physics::xb_calc(const LorentzVector &gamma_mu) {
   return (Q2 / (2 * (gamma_mu.Dot(target))));
 }
 
+double physics::theta_rad(double cosz) { return acos(cosz); }
+
+double physics::phi_rad(double cosx, double cosy) { return atan2(cosx, cosy); }
+
 double physics::theta_calc(double cosz) { return acos(cosz) * RAD2DEG; }
 
 double physics::phi_calc(double cosx, double cosy) { return atan2(cosx, cosy) * RAD2DEG; }

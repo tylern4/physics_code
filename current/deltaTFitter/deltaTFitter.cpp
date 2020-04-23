@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
 
   std::ofstream csv_output;
   csv_output.open(outfilename);
-  csv_output << "sec,charge,vertex,p,sc_t,sc_r\n";
+  csv_output << "sec,theta,phi,charge,vertex,p,sc_t,sc_r\n";
 
   auto chain = std::make_shared<TChain>("h10");
   for (auto& f : infilenames) chain->Add(f.c_str());
@@ -41,6 +41,9 @@ int main(int argc, char** argv) {
   for (int current_event = 0; current_event < events; current_event++) {
     if (current_event % progress == 0) std::cout << "%" << std::flush;
     chain->GetEntry(current_event);
+    auto check = std::make_unique<Cuts>(data);
+    if (!check->isStrictElecctron()) continue;
+
     auto dt = std::make_shared<Delta_T>(data);
     csv_output << *dt;
   }

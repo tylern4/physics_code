@@ -1195,8 +1195,11 @@ void Histogram::CC_canvas() {
 }
 
 void Histogram::makeHists_fid() {
+  cerenkov_fid.reserve(6);
   fid_xy_hist = std::make_shared<TH2D>(Form("fid_xy"), Form("fid_xy"), BINS, -200, 200, BINS, 0, 400);
   for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
+    cerenkov_fid[sec_i] = std::make_shared<TH2D>(Form("fid_cher_xy_%d", sec_i + 1), Form("fid_cher_xy_%d", sec_i + 1),
+                                                 BINS, -500, 500, BINS, -500, 500);
     fid_xy[sec_i] = std::make_shared<TH2D>(Form("fid_xy_%d", sec_i + 1), Form("fid_xy_%d", sec_i + 1), BINS, -200, 200,
                                            BINS, 0, 400);
 
@@ -1220,6 +1223,25 @@ void Histogram::Fill_electron_fid(float theta, float phi, float x, float y, int 
     return;
   }
   fid_xy[sector - 1]->Fill(y, x);
+  electron_fid_sec_hist[sector - 1]->Fill(phi, theta);
+}
+
+void Histogram::Fill_electron_fid(const std::shared_ptr<Branches> &_data) {
+  float theta = physics::theta_calc(_data->cz(0));
+  float phi = physics::phi_calc(_data->cx(0), _data->cy(0));
+  int sector = _data->dc_sect(0);
+  electron_fid_hist->Fill(phi, theta);
+  fid_xy_hist->Fill(_data->dc_ysc(0), _data->dc_xsc(0));
+  if (sector == 0 || sector > NUM_SECTORS) {
+    std::cerr << "Error filling electron fid = " << sector << std::endl;
+    return;
+  }
+
+  float cher_x = _data->cc_r(0) * _data->cc_c2(0);
+  float cher_y = _data->cc_r(0) * sinf(acosf(_data->cc_c2(0)) / 2);
+  cerenkov_fid[sector - 1]->Fill(cher_y, cher_x);
+  // std::cout << cher_y << " " << cher_x << std::endl;
+  fid_xy[sector - 1]->Fill(_data->dc_ysc(0), _data->dc_xsc(0));
   electron_fid_sec_hist[sector - 1]->Fill(phi, theta);
 }
 
@@ -1264,11 +1286,17 @@ void Histogram::Fid_Write() {
     hadron_fid_hist[t]->SetOption("COLZ");
     hadron_fid_hist[t]->Write();
   }
+
   fid_xy_hist->SetXTitle("X");
   fid_xy_hist->SetYTitle("Y");
   fid_xy_hist->SetOption("COLZ");
   fid_xy_hist->Write();
   for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
+    cerenkov_fid[sec_i]->SetXTitle("X");
+    cerenkov_fid[sec_i]->SetYTitle("Y");
+    cerenkov_fid[sec_i]->SetOption("COLZ");
+    cerenkov_fid[sec_i]->Write();
+
     fid_xy[sec_i]->SetXTitle("X");
     fid_xy[sec_i]->SetYTitle("Y");
     fid_xy[sec_i]->SetOption("COLZ");

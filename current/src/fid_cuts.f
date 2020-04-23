@@ -32,7 +32,7 @@
       END
 
 
-       logical function hadronfid(result,theta,phi,s)
+      logical function hadronfid(theta,phi,s)
        implicit none
        real theta,phi,phic
        real a0p(6),a0m(6),a1p(6),a1m(6),a2p(6),a2m(6),a3p(6),a3m(6)
@@ -60,5 +60,5 @@
        endif
 
        !write(*,*) 'result=',result
-       hadronfid=result 
+       hadronfid=result
        end

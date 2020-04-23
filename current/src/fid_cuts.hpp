@@ -36,6 +36,10 @@ bool fid_e(float p, float cosz, float cosx, float cosy) {
   return fidu_e_sub_(&p, &thetael, &phiel_s, &in_fid_reg);
 }
 
-bool hadronfid(bool result, float theta, float phi, int s) { return hadronfid_(&result, &theta, &phi, &s); }
+bool hadronfid(float theta, float phi, int s) {
+  bool result = true;
+  hadronfid_(&result, &theta, &phi, &s);
+  return result;
+}
 
 #endif

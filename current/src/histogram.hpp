@@ -250,6 +250,9 @@ Garys binning
   TH2D* hadron_fid_sec_hist[3][NUM_SECTORS];
   TH1D* hadron_fid_sec_slice[NUM_SECTORS][FID_SLICES];
   TH2D* hadron_fid_hist[3];
+
+  std::vector<TH2D_ptr> cerenkov_fid;
+
   // fiducial
 
   // EC hists
@@ -413,6 +416,7 @@ Garys binning
 
   // fiducial hist
   void Fill_electron_fid(float theta, float phi, float x, float y, int sector);
+  void Fill_electron_fid(const std::shared_ptr<Branches>& _data);
   void Fill_neutron_fid(float theta, float phi, int sector);
   void Fill_hadron_fid(float theta, float phi, int sector, int id);
   void Fid_Write();
