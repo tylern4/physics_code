@@ -39,6 +39,45 @@ Reaction::Reaction(const std::shared_ptr<Branches>& data, const std::shared_ptr<
 
 Reaction::~Reaction() = default;
 
+float Reaction::cc_theta() {
+  if (std::isnan(_cc_theta)) Reaction::calc_cc_angles();
+  return _cc_theta;
+}
+float Reaction::cc_phi() {
+  if (std::isnan(_cc_phi)) Reaction::calc_cc_angles();
+  return _cc_phi;
+}
+
+float Reaction::cc_x() {
+  if (std::isnan(_cc_theta) || std::isnan(_cc_phi)) Reaction::calc_cc_angles();
+  return _data->cc_r(0) * sinf(_cc_theta) * cosf(_cc_phi);
+}
+float Reaction::cc_y() {
+  if (std::isnan(_cc_theta) || std::isnan(_cc_phi)) Reaction::calc_cc_angles();
+  return _data->cc_r(0) * sinf(_cc_theta) * sinf(_cc_phi);
+}
+
+void Reaction::calc_cc_angles() {
+  float A = -0.000785;
+  float B = 0;
+  float C = -0.00168;
+  float D = 1;
+
+  auto p0_vec = TVector3(_data->dc_xsc(0), _data->dc_ysc(0), _data->dc_zsc(0));
+  auto n_vec = TVector3(_data->dc_cxsc(0), _data->dc_cysc(0), _data->dc_czsc(0));
+  auto S_vec = TVector3(A, B, C);
+
+  auto numer = A * _data->dc_xsc(0) + B * _data->dc_ysc(0) + C * _data->dc_zsc(0) + D;
+  auto denom = S_vec.Dot(n_vec);
+
+  auto t_vec = n_vec * abs(numer / denom);
+
+  p0_vec += t_vec;
+  _cc_theta = acosf(p0_vec.Z() / p0_vec.Mag());
+  _cc_phi = atanf(p0_vec.Y() / p0_vec.X());
+}
+
+/*
 void Reaction::correct_mom() {
   for (int i = 0; i < 6; i++)
     for (int ii = 0; ii < 16; ii++) par[i][ii] = 0.0;
@@ -79,6 +118,7 @@ void Reaction::correct_mom() {
   //_elec->SetPxPyPzE(p_cor * cos(phi) * sin(theta), p_cor * sin(phi) * sin(theta), p_cor * cos(theta), sqrt(p_cor *
   // p_cor + MASS_E * MASS_E));
 }
+*/
 
 void Reaction::SetProton(int i) {
   _numProt++;

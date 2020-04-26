@@ -87,7 +87,7 @@ const void DataHandeler::RunEvent(size_t current_event) {
   float phi = physics::phi_calc(_data->cx(0), _data->cy(0));
   int sector = _data->dc_sect(0);
 
-  _hists->Fill_electron_fid(_data);
+  _hists->Fill_electron_fid(_data, event);
 
   for (int part_num = 1; part_num < _data->gpart(); part_num++) {
     theta = physics::theta_calc(_data->cz(part_num));

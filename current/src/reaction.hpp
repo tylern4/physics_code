@@ -68,6 +68,8 @@ class Reaction {
   float _theta_e = NAN;
   float _theta_star = NAN;
   float _phi_star = NAN;
+  float _cc_theta = NAN;
+  float _cc_phi = NAN;
 
   std::string _type = "NAN";
 
@@ -77,7 +79,12 @@ class Reaction {
   Reaction(const std::shared_ptr<Branches>& data, const std::shared_ptr<MomCorr>& mom_corr);
 
   ~Reaction();
-  void correct_mom();
+  // void correct_mom();
+  void calc_cc_angles();
+  float cc_theta();
+  float cc_phi();
+  float cc_x();
+  float cc_y();
   void SetProton(int i);
   void SetPip(int i);
   void SetPim(int i);
@@ -100,6 +107,7 @@ class Reaction {
   }
 
   inline float E_prime() { return _elec->E(); }
+
   inline short sector() { return _sector; }
   inline float W() { return _W; }
   inline float Q2() { return _Q2; }

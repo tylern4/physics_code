@@ -415,8 +415,7 @@ Garys binning
   void CC_canvas();
 
   // fiducial hist
-  void Fill_electron_fid(float theta, float phi, float x, float y, int sector);
-  void Fill_electron_fid(const std::shared_ptr<Branches>& _data);
+  void Fill_electron_fid(const std::shared_ptr<Branches>& _data, const std::shared_ptr<Reaction>& _r);
   void Fill_neutron_fid(float theta, float phi, int sector);
   void Fill_hadron_fid(float theta, float phi, int sector, int id);
   void Fid_Write();

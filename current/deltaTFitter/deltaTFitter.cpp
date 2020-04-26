@@ -43,6 +43,7 @@ int main(int argc, char** argv) {
     chain->GetEntry(current_event);
     auto check = std::make_unique<Cuts>(data);
     if (!check->isStrictElecctron()) continue;
+    if (!check->Fid_cut()) continue;
 
     auto dt = std::make_shared<Delta_T>(data);
     csv_output << *dt;
