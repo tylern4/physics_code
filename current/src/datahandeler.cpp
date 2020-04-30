@@ -46,6 +46,7 @@ int DataHandeler::Run() {
     if (_loadbar && current_event % 10000 == 0) DataHandeler::loadbar(current_event, num_of_events);
     DataHandeler::RunEvent(current_event);
   }
+
   _chain->Reset();
   return num_of_events;
 }
@@ -78,9 +79,9 @@ const void DataHandeler::RunEvent(size_t current_event) {
 
   auto photon_flux = std::make_unique<PhotonFlux>(event->e_mu(), event->e_mu_prime());
   _hists->Photon_flux_Fill(photon_flux->GetVirtualPhotonFlux());
-  _hists->WvsQ2_Fill(event->W(), event->Q2(), _data->ec_sect(0));
+  _hists->WvsQ2_Fill(event->W(), event->Q2(), _data->dc_sect(0));
 
-  auto dt = std::make_unique<Delta_T>(_data);
+  auto dt = check->share_dt();  // std::make_unique<Delta_T>(_data);
   dt->delta_t_hists(_hists);
 
   float theta = physics::theta_calc(_data->cz(0));

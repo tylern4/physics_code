@@ -111,21 +111,40 @@ bool Cuts::Pip(int part) {
   bool _pip = true;
   _pip &= (_data->q(part) == POSITIVE);
   _pip &= Hardon_fid_arjun(part);
-  _pip &= dt_Pip_cut(_dt->Get_dt_Pi(part), _data->p(part));
+  _pip &= dt_Pip_cut(part);
   return _pip;
 }
 bool Cuts::Pim(int part) {
   bool _pim = true;
   _pim &= (_data->q(part) == NEGATIVE);
   _pim &= Hardon_fid_arjun(part);
-  _pim &= dt_Pip_cut(_dt->Get_dt_Pi(part), _data->p(part));
+  _pim &= dt_Pip_cut(part);
   return _pim;
 }
 bool Cuts::Prot(int part) {
   bool _prot = true;
   _prot &= (_data->q(part) == POSITIVE);
   _prot &= Hardon_fid_arjun(part);
-  _prot &= dt_P_cut(_dt->Get_dt_P(part), _data->p(part));
+  _prot &= dt_P_cut(part);
+  return _prot;
+}
+
+bool Cuts::Pipish(int part) {
+  bool _pip = true;
+  _pip &= (_data->q(part) == POSITIVE);
+  _pip &= Hardon_fid_arjun(part);
+  return _pip;
+}
+bool Cuts::Pimish(int part) {
+  bool _pim = true;
+  _pim &= (_data->q(part) == NEGATIVE);
+  _pim &= Hardon_fid_arjun(part);
+  return _pim;
+}
+bool Cuts::Protish(int part) {
+  bool _prot = true;
+  _prot &= (_data->q(part) == POSITIVE);
+  _prot &= Hardon_fid_arjun(part);
   return _prot;
 }
 
@@ -154,7 +173,7 @@ bool Cuts::isStrictElecctron() {
   bool _elec = true;
   _elec &= isElecctron();
   // remove CC hit to both
-  ////_elec &= (_data->cc_segm(0) / 1000 - 1 != 0);
+  //_elec &= (_data->cc_segm(0) / 1000 - 1 != 0);
   // Cut low number of photo electrons in cc
   _elec &= (_data->nphe(0) > 15);
 
@@ -175,31 +194,30 @@ double Cuts::sf_bot_fit(double P) {
 }
 bool Cuts::sf_cut(double sf, double P) { return ((sf > sf_bot_fit(P)) && (sf < sf_top_fit(P))); }
 
-double Cuts::dt_P_bot_fit(double P) {
-  double par[2] = {-1.509, 0.4172};
-  double x[1] = {P};
-  return func::dt_fit(x, par);
-}
-double Cuts::dt_P_top_fit(double P) {
-  double par[2] = {1.307, -0.3473};
-  double x[1] = {P};
-  return func::dt_fit(x, par);
-}
-bool Cuts::dt_P_cut(double dt, double P) { return ((dt > dt_P_bot_fit(P)) && (dt < dt_P_top_fit(P))); }
+bool Cuts::dt_P_cut(int i) {
+  float dt = _dt->Get_dt_P(i);
+  int sec = _data->dc_sect(i) - 1;
+  if (sec == -1) return false;
+  float p = _data->p(i);
+  bool _cut = true;
+  _cut &= (dt <= func::dt_poly4(dt_P_const_top, p));
+  _cut &= (dt >= func::dt_poly4(dt_P_const_bottom, p));
 
-double Cuts::dt_Pip_bot_fit(double P) {
-  // double par[2] = {-0.9285, -0.04094};
-  double par[2] = {-1.3, 0.2616};
-  double x[1] = {P};
-  return func::dt_fit(x, par);
+  return _cut;
 }
-double Cuts::dt_Pip_top_fit(double P) {
-  // double par[2] = {0.9845, -0.05473};
-  double par[2] = {1.461, -0.4109};
-  double x[1] = {P};
-  return func::dt_fit(x, par);
+
+bool Cuts::dt_Pip_cut(int i) {
+  float dt = _dt->Get_dt_Pi(i);
+  short sec = _data->dc_sect(i) - 1;
+  if (sec == -1) return false;
+  float p = _data->p(i);
+  bool _cut = true;
+
+  _cut &= (dt <= func::dt_poly4(dt_pip_const_top, p));
+  _cut &= (dt >= func::dt_poly4(dt_pip_const_bottom, p));
+
+  return _cut;
 }
-bool Cuts::dt_Pip_cut(double dt, double P) { return (dt > dt_Pip_bot_fit(P)) && (dt < dt_Pip_top_fit(P)); }
 
 bool Cuts::elec_fid_cut() {
   // double c[3] = {0.0548311203, 0.0327878012, 17.0683287374};

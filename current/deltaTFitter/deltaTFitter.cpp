@@ -24,7 +24,9 @@ int main(int argc, char** argv) {
   } else {
     return 1;
   }
-
+  auto output_root = std::make_shared<TFile>("mm_for_dt.root", "RECREATE");
+  auto mm_hist = std::make_shared<TH1D>("mm_for_dt", "mm_for_dt", 500, 0, 3);
+  output_root->cd();
   std::cout.imbue(std::locale(""));
 
   std::ofstream csv_output;
@@ -45,10 +47,22 @@ int main(int argc, char** argv) {
     if (!check->isStrictElecctron()) continue;
     if (!check->Fid_cut()) continue;
 
-    auto dt = std::make_shared<Delta_T>(data);
-    csv_output << *dt;
+    auto event = std::make_shared<Reaction>(data);
+
+    for (int part_num = 1; part_num < data->gpart(); part_num++) {
+      if (check->Protish(part_num)) {
+        event->SetProton(part_num);
+      }
+    }
+    if (event->elastic()) {
+      mm_hist->Fill(event->MM2());
+      auto dt = std::make_shared<Delta_T>(data);
+      csv_output << *dt;
+    }
   }
   std::cout << "]\n";
+
+  output_root->Write();
 
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
   std::cout.imbue(std::locale(""));

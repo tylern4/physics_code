@@ -2,8 +2,8 @@
 /*  Created by Nick Tyler             */
 /*	University Of South Carolina      */
 /**************************************/
-#include <iostream>
 #include "func.hpp"
+#include <iostream>
 
 double func::genNormal(double *x, double *par) {
   double frac = (par[1] / (2 * par[0] * TMath::Gamma(1 / par[1])));
@@ -162,4 +162,15 @@ double func::degauss(double *x, double *par) {
        exp(0.5 * TMath::Power(sigma * lambda2, 2) - lambda2 * (xx - mu)) * TMath::Erfc(-mu2 / (sigma * sqrt(2.0))));
 
   return ret;
+}
+
+float func::dt_poly4(std::vector<double> params, float p) {
+  float y = 0;
+  y += params[0] * p * p * p * p;
+  y += params[1] * p * p * p;
+  y += params[2] * p * p;
+  y += params[3] * p;
+  y += params[4];
+
+  return y;
 }

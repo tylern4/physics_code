@@ -132,9 +132,7 @@ class Reaction {
   inline bool ProtonPim() {
     return ((_numProt == 1 && _numPim == 1) && (_hasE && _hasP && !_hasPip && _hasPim && !_hasNeutron && !_hasOther));
   }
-  inline bool SinglePip() {
-    return ((_numPip == 1) && (_hasE && !_hasP && _hasPip && !_hasPim && !_hasNeutron && !_hasOther));
-  }
+  inline bool SinglePip() { return ((_numPip == 1) && (_hasE && !_hasP && _hasPip && !_hasPim)); }
   inline bool SingleP() {
     return ((_numProt == 1) && (_hasE && _hasP && !_hasPip && !_hasPim && !_hasNeutron && !_hasOther));
   }
@@ -144,8 +142,7 @@ class Reaction {
             ((this->MM() >= 0.05 && this->MM() <= 0.3) || (this->pi0_mass() >= 0.05 && this->pi0_mass() <= 0.2)));
   }
   inline bool NeutronPip() {
-    return ((_numPip == 1 && _numNeutral == 1) &&
-            (_hasE && !_hasP && _hasPip && !_hasPim && _hasNeutron && !_hasOther));
+    return ((_numPip == 1 && _numNeutral == 1) && (_hasE && !_hasP && _hasPip && !_hasPim && _hasNeutron));
   }
 
   inline bool channel() { return ((this->SinglePip() || this->NeutronPip()) && this->MM_cut()); }
@@ -186,8 +183,8 @@ class Reaction {
     bool mm_cut = true;
     // mm_cut &= (this->MM() < 0.987669);
     // mm_cut &= (this->MM() > 0.923374);
-    mm_cut &= (this->MM() >= 0.8);
-    mm_cut &= (this->MM() <= 1.1);
+    mm_cut &= (this->MM2() >= 0.8);
+    mm_cut &= (this->MM2() <= 1.1);
     return mm_cut;
   }
 

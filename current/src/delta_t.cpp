@@ -61,17 +61,13 @@ void Delta_T::delta_t_hists(const std::shared_ptr<Histogram> &hists) {
       hists->Fill_deltat_P(mom, _proton_array.at(event_number));
       hists->Fill_deltat_PIP(mom, _pion_array.at(event_number));
       hists->Fill_deltat_kp(mom, _kaon_array.at(event_number));
-      if (dt_cut->dt_P_cut(_proton_array.at(event_number), mom))
-        hists->Fill_deltat_P_PID(mom, _proton_array.at(event_number));
-      if (dt_cut->dt_Pip_cut(_pion_array.at(event_number), mom))
-        hists->Fill_deltat_PIP_PID(mom, _pion_array.at(event_number));
-      if (dt_cut->dt_P_cut(_kaon_array.at(event_number), mom))
-        hists->Fill_deltat_kp_PID(mom, _kaon_array.at(event_number));
+      if (dt_cut->dt_P_cut(event_number)) hists->Fill_deltat_P_PID(mom, _proton_array.at(event_number));
+      if (dt_cut->dt_Pip_cut(event_number)) hists->Fill_deltat_PIP_PID(mom, _pion_array.at(event_number));
+      if (dt_cut->dt_P_cut(event_number)) hists->Fill_deltat_kp_PID(mom, _kaon_array.at(event_number));
     } else {
       hists->Fill_deltat_electron(mom, _elec_array.at(event_number));
       hists->Fill_deltat_PIM(mom, _pion_array.at(event_number));
-      if (dt_cut->dt_Pip_cut(_pion_array.at(event_number), mom))
-        hists->Fill_deltat_PIM_PID(mom, _pion_array.at(event_number));
+      if (dt_cut->dt_Pip_cut(event_number)) hists->Fill_deltat_PIM_PID(mom, _pion_array.at(event_number));
     }
 
     hists->delta_t_Fill(mom, charge, _proton_array.at(event_number), _pion_array.at(event_number),

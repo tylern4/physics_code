@@ -52,6 +52,7 @@ float Reaction::cc_x() {
   if (std::isnan(_cc_theta) || std::isnan(_cc_phi)) Reaction::calc_cc_angles();
   return _data->cc_r(0) * sinf(_cc_theta) * cosf(_cc_phi);
 }
+
 float Reaction::cc_y() {
   if (std::isnan(_cc_theta) || std::isnan(_cc_phi)) Reaction::calc_cc_angles();
   return _data->cc_r(0) * sinf(_cc_theta) * sinf(_cc_phi);

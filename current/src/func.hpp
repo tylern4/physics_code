@@ -42,6 +42,8 @@ double missMasspeak(double *x, double *par);
 double missMassbackground(double *x, double *par);
 double missMassfitFunction(double *x, double *par);
 double degauss(double *x, double *par);
+
+float dt_poly4(std::vector<double> params, float p);
 }  // namespace func
 
 #endif

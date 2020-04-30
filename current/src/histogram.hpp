@@ -63,7 +63,6 @@ Garys binning
   cos(theta) range: -1 to 1 in 10 bins
   phi range: 0 to 360 (degrees) in 6, 8, or 9 bins
 */
-  // int nbins[DIMENSIONS] = {6, 7, 25, 25};
   //////////////// W , Q2, Theta_star_pip, Phi_star_pip
   int nbins[DIMENSIONS] = {28, 5, 10, 12};
   double xmin[DIMENSIONS] = {1.1, 1.0, -1.0, 0.0};
@@ -94,7 +93,7 @@ Garys binning
   float W_width = (w_binned_max - w_binned_min) / (float)W_BINS;
   float Q2_width = (q2_binned_max - q2_binned_min) / (float)Q2_BINS;
 
-  TH2D_ptr WvsQ2_hist = std::make_shared<TH2D>("WvsQ2_hist", "W vs Q^{2}", BINS, w_min, w_max, BINS, q2_min, q2_max);
+  TH2D_ptr WvsQ2_hist = std::make_shared<TH2D>("WvsQ2_hist", "W vs Q^{2}", BINS, 0, 4.5, BINS, 0, 11);
   TH1D_ptr W_hist = std::make_shared<TH1D>("W", "W", BINS, w_min, w_max);
 
   std::vector<TH2D_ptr> WvsQ2_sec;

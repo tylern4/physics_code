@@ -1,0 +1,12 @@
+
+data = loadAllData("file_names.root")
+class reaction {}
+
+
+foreach (event in data) {
+    if (event.hasGoodElectron) {
+        foreach (particle in event) {
+
+        }
+    }
+}

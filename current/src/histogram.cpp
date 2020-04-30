@@ -344,12 +344,12 @@ void Histogram::WvsQ2_Write() {
     pip_N->GetAxis(6)->SetTitle("#phi");
     pip_N->Write();
   */
-  WvsQ2_channel->SetXTitle("W (GeV)");
+  WvsQ2_channel->SetXTitle("W (GeV/c^{2})");
   WvsQ2_channel->SetYTitle("Q^{2} (GeV^{2})");
   WvsQ2_channel->SetOption("COLZ");
   WvsQ2_channel->Write();
 
-  W_channel->SetXTitle("W (GeV)");
+  W_channel->SetXTitle("W (GeV/c^{2})");
   W_channel->Write();
 
   Q2_channel->SetXTitle("Q^{2} (GeV^{2})");
@@ -363,66 +363,66 @@ void Histogram::WvsQ2_Write() {
   Q2_vs_xb->SetOption("COLZ");
   Q2_vs_xb->Write();
 
-  WvsQ2_hist->SetXTitle("W (GeV)");
-  WvsQ2_hist->SetYTitle("Q^{2} (GeV^{2})");
+  WvsQ2_hist->SetXTitle("W [Invariant Mass] (GeV/c^{2})");
+  WvsQ2_hist->SetYTitle("Q^{2} [Momentum Transfer] (GeV^{2})");
   WvsQ2_hist->SetOption("COLZ");
   WvsQ2_hist->Write();
 
-  W_hist->SetXTitle("W (GeV)");
+  W_hist->SetXTitle("W [Invariant Mass] (GeV/c^{2})");
   W_hist->Write();
 
   Q2_hist->SetXTitle("Q^{2} (GeV^{2})");
   Q2_hist->Write();
 
-  WvsQ2_proton->SetXTitle("W (GeV)");
+  WvsQ2_proton->SetXTitle("W (GeV/c^{2})");
   WvsQ2_proton->SetYTitle("Q^{2} (GeV^{2})");
   WvsQ2_proton->SetOption("COLZ");
   WvsQ2_proton->Write();
 
-  W_proton->SetXTitle("W (GeV)");
+  W_proton->SetXTitle("W (GeV/c^{2})");
   W_proton->Write();
 
   Q2_proton->SetXTitle("Q^{2} (GeV^{2})");
   Q2_proton->Write();
 
-  WvsQ2_pion->SetXTitle("W (GeV)");
+  WvsQ2_pion->SetXTitle("W (GeV/c^{2})");
   WvsQ2_pion->SetYTitle("Q^{2} (GeV^{2})");
   WvsQ2_pion->SetOption("COLZ");
   WvsQ2_pion->Write();
 
-  W_pion->SetXTitle("W (GeV)");
+  W_pion->SetXTitle("W (GeV/c^{2})");
   W_pion->Write();
 
   Q2_pion->SetXTitle("Q^{2} (GeV^{2})");
   Q2_pion->Write();
 
-  WvsQ2_NeutronPip->SetXTitle("W (GeV)");
+  WvsQ2_NeutronPip->SetXTitle("W (GeV/c^{2})");
   WvsQ2_NeutronPip->SetYTitle("Q^{2} (GeV^{2})");
   WvsQ2_NeutronPip->SetOption("COLZ");
   WvsQ2_NeutronPip->Write();
 
-  WvsMM_NeutronPip->SetXTitle("W (GeV)");
+  WvsMM_NeutronPip->SetXTitle("W (GeV/c^{2})");
   WvsMM_NeutronPip->SetYTitle("MM (GeV)");
   WvsMM_NeutronPip->SetOption("COLZ");
   WvsMM_NeutronPip->Write();
 
-  WvsMM2_NeutronPip->SetXTitle("W (GeV)");
+  WvsMM2_NeutronPip->SetXTitle("W (GeV/c^{2})");
   WvsMM2_NeutronPip->SetYTitle("MM^{2} (GeV^{2})");
   WvsMM2_NeutronPip->SetOption("COLZ");
   WvsMM2_NeutronPip->Write();
 
-  W_NeutronPip->SetXTitle("W (GeV)");
+  W_NeutronPip->SetXTitle("W (GeV/c^{2})");
   W_NeutronPip->Write();
 
   Q2_NeutronPip->SetXTitle("Q^{2} (GeV^{2})");
   Q2_NeutronPip->Write();
 
-  WvsQ2_elastic->SetXTitle("W (GeV)");
+  WvsQ2_elastic->SetXTitle("W (GeV/c^{2})");
   WvsQ2_elastic->SetYTitle("Q^{2} (GeV^{2})");
   WvsQ2_elastic->SetOption("COLZ");
   WvsQ2_elastic->Write();
 
-  W_elastic->SetXTitle("W (GeV)");
+  W_elastic->SetXTitle("W (GeV/c^{2})");
   W_elastic->Write();
 
   Q2_elastic->SetXTitle("Q^{2} (GeV^{2})");
@@ -432,23 +432,23 @@ void Histogram::WvsQ2_Write() {
   elastic_phi->Write();
   elastic_thetaVsP->Write();
 
-  WvsQ2_Ppi0->SetXTitle("W (GeV)");
+  WvsQ2_Ppi0->SetXTitle("W (GeV/c^{2})");
   WvsQ2_Ppi0->SetYTitle("Q^{2} (GeV^{2})");
   WvsQ2_Ppi0->SetOption("COLZ");
   WvsQ2_Ppi0->Write();
 
-  W_Ppi0->SetXTitle("W (GeV)");
+  W_Ppi0->SetXTitle("W (GeV/c^{2})");
   W_Ppi0->Write();
 
   Q2_Ppi0->SetXTitle("Q^{2} (GeV^{2})");
   Q2_Ppi0->Write();
 
-  WvsQ2_MM->SetXTitle("W (GeV)");
+  WvsQ2_MM->SetXTitle("W (GeV/c^{2})");
   WvsQ2_MM->SetYTitle("Q^{2} (GeV^{2})");
   WvsQ2_MM->SetOption("COLZ");
   WvsQ2_MM->Write();
 
-  W_MM->SetXTitle("W (GeV)");
+  W_MM->SetXTitle("W (GeV/c^{2})");
   W_MM->Write();
 
   Q2_MM->SetXTitle("Q^{2} (GeV^{2})");
@@ -457,13 +457,13 @@ void Histogram::WvsQ2_Write() {
 
 void Histogram::WvsQ2_sec_Write() {
   for (auto &sec : WvsQ2_channel_sec) {
-    sec->SetXTitle("W (GeV)");
+    sec->SetXTitle("W (GeV/c^{2})");
     sec->SetYTitle("Q^{2} (GeV^{2})");
     sec->SetOption("COLZ");
     sec->Write();
   }
   for (auto &sec : W_channel_sec) {
-    sec->SetXTitle("W (GeV)");
+    sec->SetXTitle("W (GeV/c^{2})");
     sec->Write();
   }
 
@@ -471,7 +471,7 @@ void Histogram::WvsQ2_sec_Write() {
   canWQ2_channel->Divide(2, 3);
   for (short sec = 0; sec < NUM_SECTORS; sec++) {
     canWQ2_channel->cd(sec + 1);
-    WvsQ2_channel_sec[sec]->SetXTitle("W (GeV)");
+    WvsQ2_channel_sec[sec]->SetXTitle("W (GeV/c^{2})");
     WvsQ2_channel_sec[sec]->SetYTitle("Q^{2} (GeV^{2})");
     WvsQ2_channel_sec[sec]->SetOption("COLZ");
     WvsQ2_channel_sec[sec]->Draw();
@@ -482,20 +482,20 @@ void Histogram::WvsQ2_sec_Write() {
   canW_channel->Divide(2, 3);
   for (short sec = 0; sec < NUM_SECTORS; sec++) {
     canW_channel->cd(sec + 1);
-    W_channel_sec[sec]->SetXTitle("W (GeV)");
+    W_channel_sec[sec]->SetXTitle("W (GeV/c^{2})");
     W_channel_sec[sec]->Draw();
   }
   canW_channel->Write();
 
   for (auto &sec : WvsQ2_sec) {
-    sec->SetXTitle("W (GeV)");
+    sec->SetXTitle("W (GeV/c^{2})");
     sec->SetYTitle("Q^{2} (GeV^{2})");
     sec->SetOption("COLZ");
     sec->Write();
   }
 
   for (auto &sec : W_sec) {
-    sec->SetXTitle("W (GeV)");
+    sec->SetXTitle("W (GeV/c^{2})");
     sec->Write();
   }
 
@@ -503,7 +503,7 @@ void Histogram::WvsQ2_sec_Write() {
   canWQ2->Divide(2, 3);
   for (short sec = 0; sec < NUM_SECTORS; sec++) {
     canWQ2->cd(sec + 1);
-    WvsQ2_sec[sec]->SetXTitle("W (GeV)");
+    WvsQ2_sec[sec]->SetXTitle("W (GeV/c^{2})");
     WvsQ2_sec[sec]->SetYTitle("Q^{2} (GeV^{2})");
     WvsQ2_sec[sec]->SetOption("COLZ");
     WvsQ2_sec[sec]->Draw();
@@ -514,20 +514,20 @@ void Histogram::WvsQ2_sec_Write() {
   canW->Divide(2, 3);
   for (short sec = 0; sec < NUM_SECTORS; sec++) {
     canW->cd(sec + 1);
-    W_sec[sec]->SetXTitle("W (GeV)");
+    W_sec[sec]->SetXTitle("W (GeV/c^{2})");
     W_sec[sec]->Draw();
   }
   canW->Write();
 }
 
 void Histogram::WvsQ2_binned_Write() {
-  WvsQ2_binned->SetXTitle("W (GeV)");
+  WvsQ2_binned->SetXTitle("W (GeV/c^{2})");
   WvsQ2_binned->SetYTitle("Q^{2} (GeV^{2})");
   WvsQ2_binned->SetOption("COLZ");
   WvsQ2_binned->Write();
 
   for (auto &sec : W_binned) {
-    sec->SetXTitle("W (GeV)");
+    sec->SetXTitle("W (GeV/c^{2})");
     sec->Write();
   }
   for (auto &sec : Q2_binned) {
@@ -1724,12 +1724,12 @@ void mcHistogram::Fill_P(const std::shared_ptr<Branches> &d) {
 }
 
 void mcHistogram::WvsQ2_MC_Write() {
-  WvsQ2_MC->SetXTitle("W (GeV)");
+  WvsQ2_MC->SetXTitle("W (GeV/c^{2})");
   WvsQ2_MC->SetYTitle("Q^{2} (GeV^{2})");
   WvsQ2_MC->SetOption("COLZ");
   WvsQ2_MC->Write();
 
-  W_MC->SetXTitle("W (GeV)");
+  W_MC->SetXTitle("W (GeV/c^{2})");
   W_MC->Write();
 }
 

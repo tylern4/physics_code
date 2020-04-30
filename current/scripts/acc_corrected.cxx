@@ -24,6 +24,7 @@ TCanvas *DrawProjection(THnD *ndHist, THnD *ndHist_rec, THnD *ndHist_thrown, int
   hist_real->Draw("X0 E1");
   canvas->cd(4);
   auto hist_scale = (TH1D *)ndHist->Projection(projection);
+
   hist_scale->Scale(1 / hist_scale->GetMaximum());
   hist_real->Scale(1 / hist_real->GetMaximum());
   hist_scale->Draw("PLC PMC PFC E1");

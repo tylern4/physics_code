@@ -9,6 +9,9 @@
 #include <iostream>
 #include <vector>
 #include "TChain.h"
+#include "TTree.h"
+#include "TTreeCache.h"
+#include "TTreePerfStats.h"
 #include "constants.hpp"
 
 class Branches {

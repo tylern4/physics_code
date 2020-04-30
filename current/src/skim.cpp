@@ -42,13 +42,13 @@ std::shared_ptr<TTree> Skim::Final() {
 
     for (int part_num = 1; part_num < data->gpart(); part_num++) {
       if (data->q(part_num) == POSITIVE) {
-        if (check->dt_Pip_cut(dt->Get_dt_Pi(part_num), data->p(part_num))) {
+        if (check->dt_Pip_cut(part_num)) {
           event->SetPip(part_num);
-        } else if (check->dt_P_cut(dt->Get_dt_P(part_num), data->p(part_num))) {
+        } else if (check->dt_P_cut(part_num)) {
           event->SetProton(part_num);
         }
       } else if (data->q(part_num) == NEGATIVE) {
-        if (check->dt_Pip_cut(dt->Get_dt_Pi(part_num), data->p(part_num))) {
+        if (check->dt_Pip_cut(part_num)) {
           event->SetPim(part_num);
         }
       }

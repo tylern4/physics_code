@@ -49,6 +49,7 @@ class Cuts {
   bool isStrictElecctron();
   bool Fid_cut();
   bool Beam_cut();
+  const std::shared_ptr<Delta_T>& share_dt() { return _dt; }
 
   bool Electron_fid_arjun();
   bool Hardon_fid_arjun(int part);
@@ -61,15 +62,15 @@ class Cuts {
   bool Pim(int part);
   bool Prot(int part);
 
+  bool Pipish(int part);
+  bool Pimish(int part);
+  bool Protish(int part);
+
   double sf_top_fit(double P);
   double sf_bot_fit(double P);
   bool sf_cut(double sf, double P);
-  double dt_P_bot_fit(double P);
-  double dt_P_top_fit(double P);
-  bool dt_P_cut(double dt, double P);
-  double dt_Pip_bot_fit(double P);
-  double dt_Pip_top_fit(double P);
-  bool dt_Pip_cut(double dt, double P);
+  bool dt_P_cut(int i);
+  bool dt_Pip_cut(int i);
   bool elec_fid_cut();
 };
 
