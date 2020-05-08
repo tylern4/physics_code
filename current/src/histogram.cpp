@@ -84,6 +84,7 @@ void Histogram::Fill_ND(const std::shared_ptr<Reaction> &event) {
   if (!_good) return;
 
   std::array<double, DIMENSIONS> to_fill = {event->W(), event->Q2(), cos(event->Theta_star()), event->Phi_star()};
+
   if (_good && event->channel()) {
     ndhist_nPip->Fill(to_fill.data());
   } else if (_good && event->PPi0()) {
@@ -731,32 +732,24 @@ void Histogram::Write_Missing_Mass() {
 
 void Histogram::makeHists_deltat() {
   for (int jj = 0; jj < NUM_POINTS; jj++) {
-    sprintf(hname, "delta_t_p_%d", jj);
-    sprintf(htitle, "#Deltat P %d", jj);
-    delta_t_hist[0][jj] = new TH1D(hname, htitle, BINS, Dt_min, Dt_max);
-
-    sprintf(hname, "delta_t_pip_%d", jj);
-    sprintf(htitle, "#Deltat #pi^{+} %d", jj);
-    delta_t_hist[1][jj] = new TH1D(hname, htitle, BINS, Dt_min, Dt_max);
-
-    sprintf(hname, "delta_t_electron_%d", jj);
-    sprintf(htitle, "#Deltat electron %d", jj);
-    delta_t_hist[2][jj] = new TH1D(hname, htitle, BINS, Dt_min, Dt_max);
+    delta_t_hist[0][jj] = new TH1D(Form("delta_t_p_%d", jj), Form("#Deltat P %d", jj), BINS, Dt_min, Dt_max);
+    delta_t_hist[1][jj] = new TH1D(Form("delta_t_pip_%d", jj), Form("#Deltat #pi^{+} %d", jj), BINS, Dt_min, Dt_max);
+    delta_t_hist[2][jj] =
+        new TH1D(Form("delta_t_electron_%d", jj), Form("#Deltat electron %d", jj), BINS, Dt_min, Dt_max);
   }
 
   for (int jj = 0; jj < NUM_SECTORS; jj++) {
     for (int jjj = 0; jjj < SC_PADDLE_NUM; jjj++) {
-      sprintf(hname, "delta_t_p_sec%d_pad%d", jj + 1, jjj + 1);
-      sprintf(htitle, "#Deltat P Sector %d Paddle %d", jj + 1, jjj + 1);
-      delta_t_sec_pad_hist[0][jj][jjj] = new TH2D(hname, htitle, BINS / 2, p_min, p_max, BINS / 2, Dt_min, Dt_max);
+      delta_t_sec_pad_hist[0][jj][jjj] = new TH2D(Form("delta_t_p_sec%d_pad%d", jj + 1, jjj + 1),
+                                                  Form("#Deltat P Sector %d Paddle %d", jj + 1, jjj + 1), BINS / 2,
+                                                  p_min, p_max, BINS / 2, Dt_min, Dt_max);
+      delta_t_sec_pad_hist[1][jj][jjj] = new TH2D(Form("delta_t_pip_sec%d_pad%d", jj + 1, jjj + 1),
+                                                  Form("#Deltat #pi^{+} Sector %d Paddle %d", jj + 1, jjj + 1),
+                                                  BINS / 2, p_min, p_max, BINS / 2, Dt_min, Dt_max);
 
-      sprintf(hname, "delta_t_pip_sec%d_pad%d", jj + 1, jjj + 1);
-      sprintf(htitle, "#Deltat #pi^{+} Sector %d Paddle %d", jj + 1, jjj + 1);
-      delta_t_sec_pad_hist[1][jj][jjj] = new TH2D(hname, htitle, BINS / 2, p_min, p_max, BINS / 2, Dt_min, Dt_max);
-
-      sprintf(hname, "delta_t_electron_sec%d_pad%d", jj + 1, jjj + 1);
-      sprintf(htitle, "#Deltat electron Sector %d Paddle %d", jj + 1, jjj + 1);
-      delta_t_sec_pad_hist[2][jj][jjj] = new TH2D(hname, htitle, BINS / 2, p_min, p_max, BINS / 2, Dt_min, Dt_max);
+      delta_t_sec_pad_hist[2][jj][jjj] = new TH2D(Form("delta_t_electron_sec%d_pad%d", jj + 1, jjj + 1),
+                                                  Form("#Deltat electron Sector %d Paddle %d", jj + 1, jjj + 1),
+                                                  BINS / 2, p_min, p_max, BINS / 2, Dt_min, Dt_max);
     }
   }
 }
@@ -1026,12 +1019,13 @@ void Histogram::CC_fill(int cc_sector, int cc_segment, int cc_pmt, int cc_nphe, 
 }
 
 void Histogram::makeHists_CC() {
+  Theta_CC_Sec.reserve(6);
+  Theta_CC_Sec_cut.reserve(6);
   for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
     Theta_CC_Sec[sec_i] = std::make_shared<TH2D>(Form("Theta_CC_sec%d", sec_i + 1),
                                                  Form("Theta CC sector %d", sec_i + 1), 20, 0.0, 20.0, 60, 0.0, 60.0);
-    Theta_CC_Sec_cut[sec_i] =
-        std::make_shared<TH2D>(Form("Theta_CC_sec_cut%d", sec_i + 1), Form(htitle, "Theta CC sector cut %d", sec_i + 1),
-                               20, 0.0, 20.0, 60, 0.0, 60.0);
+    Theta_CC_Sec_cut[sec_i] = std::make_shared<TH2D>(
+        Form("Theta_CC_sec_cut%d", sec_i + 1), Form("Theta CC sector cut %d", sec_i + 1), 20, 0.0, 20.0, 60, 0.0, 60.0);
     for (int pmt_i = 0; pmt_i < PMT; pmt_i++) {
       cc_hist_allSeg[sec_i][pmt_i] =
           std::make_shared<TH1D>(Form("CC_sec%d_%s", sec_i + 1, L_R_C[pmt_i].c_str()),
@@ -1196,6 +1190,8 @@ void Histogram::CC_canvas() {
 
 void Histogram::makeHists_fid() {
   cerenkov_fid.reserve(6);
+  fid_xy.reserve(6);
+  electron_fid_sec_hist.reserve(6);
   fid_xy_hist = std::make_shared<TH2D>(Form("fid_xy"), Form("fid_xy"), BINS, -200, 200, BINS, 0, 400);
   for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
     cerenkov_fid[sec_i] = std::make_shared<TH2D>(Form("fid_cher_xy_%d", sec_i + 1), Form("fid_cher_xy_%d", sec_i + 1),
@@ -1204,8 +1200,8 @@ void Histogram::makeHists_fid() {
                                            BINS, 0, 400);
 
     electron_fid_sec_hist[sec_i] =
-        new TH2D(Form("electron_fid_sec%d", sec_i + 1), Form(htitle, "electron_fid_sec%d", sec_i + 1), BINS,
-                 min_phi[sec_i], max_phi[sec_i], BINS, theta_min, theta_max);
+        std::make_shared<TH2D>(Form("electron_fid_sec%d", sec_i + 1), Form("electron_fid_sec%d", sec_i + 1), BINS,
+                               min_phi[sec_i], max_phi[sec_i], BINS, theta_min, theta_max);
 
     for (int t = 0; t < 3; t++) {
       hadron_fid_sec_hist[t][sec_i] =
@@ -1225,10 +1221,8 @@ void Histogram::Fill_electron_fid(const std::shared_ptr<Branches> &_data, const 
     std::cerr << "Error filling electron fid = " << sector << std::endl;
     return;
   }
-  float A = 1.0;
-  float B = 100.0;
 
-  if (_r->cc_x() < A * _r->cc_y() + B) cerenkov_fid[sector - 1]->Fill(_r->cc_y(), _r->cc_x());
+  cerenkov_fid[sector - 1]->Fill(_r->cc_y(), _r->cc_x());
   fid_xy[sector - 1]->Fill(_data->dc_ysc(0), _data->dc_xsc(0));
   electron_fid_sec_hist[sector - 1]->Fill(phi, theta);
 }
@@ -1316,15 +1310,14 @@ void Histogram::Fid_Write() {
 
   // std::cout << "sec,y,x" << '\n';
   for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
-    sprintf(hname, "electron_fid_sector_%d", sec_i + 1);
-    sprintf(htitle, "electron_fid_sector_%d", sec_i + 1);
-    electron_fid_can[sec_i] = new TCanvas(hname, htitle, 1280, 720);
+    electron_fid_can[sec_i] =
+        new TCanvas(Form("electron_fid_sector_%d", sec_i + 1), Form("electron_fid_sector_%d", sec_i + 1), 1280, 720);
 
     for (int slice = start_slice; slice < FID_SLICES; slice++) {
       // std::cout << "Fid Write " << sec_i << "\t" << slice << std::endl;
-      sprintf(hname, "electron_fid_sec_%d_%d", sec_i + 1, slice + 1);
       electron_fid_sec_slice[sec_i][slice] = (TH1D *)electron_fid_sec_hist[sec_i]->ProjectionX(
-          hname, slice_width * slice, slice_width * slice + (slice_width - 1));
+          Form("electron_fid_sec_%d_%d", sec_i + 1, slice + 1), slice_width * slice,
+          slice_width * slice + (slice_width - 1));
       electron_fid_sec_slice[sec_i][slice]->Rebin(4);
       /*
       SliceFit[sec_i][slice] = std::make_unique<Fits>();
@@ -1569,9 +1562,10 @@ void Histogram::Beam_Position_Write() {
   Beam_Position_Z->Write();
 }
 
-void Histogram::Fill_Target_Vertex(float vertex_x, float vertex_y, float vertex_z) {
+void Histogram::Fill_Target_Vertex(float px, float py, float pz, float vertex_x, float vertex_y, float vertex_z) {
   if (0 == vertex_x) return;
   if (0 == vertex_y && 0 == vertex_z) return;
+
   target_vertex_X->Fill(vertex_x);
   target_vertex_Y->Fill(vertex_y);
   target_vertex_Z->Fill(vertex_z);

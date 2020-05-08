@@ -64,16 +64,19 @@ Garys binning
   phi range: 0 to 360 (degrees) in 6, 8, or 9 bins
 */
   //////////////// W , Q2, Theta_star_pip, Phi_star_pip
-  int nbins[DIMENSIONS] = {28, 5, 10, 12};
-  double xmin[DIMENSIONS] = {1.1, 1.0, -1.0, 0.0};
-  double xmax[DIMENSIONS] = {1.8, 2.0, 1.0, (M_PI * 2.0)};
+  //////////////// int nbins[DIMENSIONS] = {28, 5, 10, 12};
+  //////////////// double xmin[DIMENSIONS] = {1.1, 1.0, -1.0, 0.0};
+  //////////////// double xmax[DIMENSIONS] = {1.8, 2.0, 1.0, (M_PI * 2.0)};
+
+  int nbins[DIMENSIONS] = {28, 5, 15, 15};
+  double xmin[DIMENSIONS] = {1.1, 1.5, -1.0, 0};
+  double xmax[DIMENSIONS] = {1.8, 3.5, 1.0, (M_PI * 2.0)};
+
   std::unique_ptr<THnSparse> ndhist_nPip;
   std::unique_ptr<THnSparse> ndhist_protPi0;
 
   float p_min = 0.0;
   float p_max = 5.0;
-  char hname[50];
-  char htitle[500];
 
   float w_binned_min = 1.3;
   float w_binned_max = 1.8;
@@ -93,7 +96,7 @@ Garys binning
   float W_width = (w_binned_max - w_binned_min) / (float)W_BINS;
   float Q2_width = (q2_binned_max - q2_binned_min) / (float)Q2_BINS;
 
-  TH2D_ptr WvsQ2_hist = std::make_shared<TH2D>("WvsQ2_hist", "W vs Q^{2}", BINS, 0, 4.5, BINS, 0, 11);
+  TH2D_ptr WvsQ2_hist = std::make_shared<TH2D>("WvsQ2_hist", "W vs Q^{2}", BINS, w_min, w_max, BINS, q2_min, q2_max);
   TH1D_ptr W_hist = std::make_shared<TH1D>("W", "W", BINS, w_min, w_max);
 
   std::vector<TH2D_ptr> WvsQ2_sec;
@@ -226,11 +229,11 @@ Garys binning
   TH1D_ptr cc_hist_allSeg[NUM_SECTORS][PMT];
 
   TH2D_ptr fid_xy_hist;
-  TH2D_ptr fid_xy[NUM_SECTORS];
+  std::vector<TH2D_ptr> fid_xy;  //[NUM_SECTORS];
 
   TH2D_ptr Theta_CC = std::make_shared<TH2D>("Theta_CC", "Theta_CC", 20, 0.0, 20.0, 60, 0.0, 60.0);
-  TH2D_ptr Theta_CC_Sec[NUM_SECTORS];
-  TH2D_ptr Theta_CC_Sec_cut[NUM_SECTORS];
+  std::vector<TH2D_ptr> Theta_CC_Sec;      //[NUM_SECTORS];
+  std::vector<TH2D_ptr> Theta_CC_Sec_cut;  //[NUM_SECTORS];
   // cc hist
 
   // fiducial
@@ -240,7 +243,7 @@ Garys binning
   float phi_max = 360 / 2.0;
 
   static const int start_slice = 0;
-  TH2D* electron_fid_sec_hist[NUM_SECTORS];
+  std::vector<TH2D_ptr> electron_fid_sec_hist;  //[NUM_SECTORS];
   TH1D* electron_fid_sec_slice[NUM_SECTORS][FID_SLICES];
   TH2D_ptr electron_fid_hist =
       std::make_shared<TH2D>("electron_fid", "electron_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
@@ -433,7 +436,7 @@ Garys binning
   // Beam Position
   void Fill_Beam_Position(float vertex_x, float vertex_y, float vertex_z);
   void Beam_Position_Write();
-  void Fill_Target_Vertex(float vertex_x, float vertex_y, float vertex_z);
+  void Fill_Target_Vertex(float px, float py, float pz, float vertex_x, float vertex_y, float vertex_z);
   void Target_Vertex_Write();
   void Fill_E_Prime(const LorentzVector& e_prime);
   void Fill_E_Prime_fid(const LorentzVector& e_prime);

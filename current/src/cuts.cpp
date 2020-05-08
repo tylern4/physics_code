@@ -63,7 +63,7 @@ float Cuts::hardon_fid_phi(int part) {
 bool Cuts::isElecctron() {
   bool _elec = true;
   _elec &= (_data->gpart() > 0);  // Number of good particles is greater than 0
-  // _elec &= (_data->gpart() < 5);
+  _elec &= (_data->gpart() < 5);
   if (!_elec) return false;
   _elec &= (_data->q(0) == NEGATIVE);
   _elec &= (_data->ec(0) > 0);
@@ -72,7 +72,8 @@ bool Cuts::isElecctron() {
   _elec &= (_data->sc(0) > 0);
   _elec &= (_data->dc(0) > 0);
   _elec &= (_data->dc_stat(0) > 0);
-  //_elec &= fid_e(_data->p(0), _data->cz(0), _data->cx(0), _data->cy(0));
+  // _elec &= _data->nphe(0) < 20;
+
   // Sampling fraction cut
   _elec &= sf_cut(_data->etot(0) / _data->p(0), _data->p(0));
   // Cut out low ec inner
@@ -81,8 +82,12 @@ bool Cuts::isElecctron() {
   _elec &= (_data->p(0) > MIN_P_CUT);
   // Beam Position cut
   _elec &= Beam_cut();
+
+  if (!_elec) return _elec;
+
   // Fid Cuts
   _elec &= Fid_cut();
+  _elec &= fid_chern_cut();
 
   return _elec;
 }
@@ -206,6 +211,18 @@ bool Cuts::dt_P_cut(int i) {
   return _cut;
 }
 
+bool Cuts::dt_K_cut(int i) {
+  float dt = _dt->Get_dt_K(i);
+  int sec = _data->dc_sect(i) - 1;
+  if (sec == -1) return false;
+  float p = _data->p(i);
+  bool _cut = true;
+  _cut &= (dt <= func::dt_poly4(dt_pip_const_top, p));
+  _cut &= (dt >= func::dt_poly4(dt_pip_const_bottom, p));
+
+  return _cut;
+}
+
 bool Cuts::dt_Pip_cut(int i) {
   float dt = _dt->Get_dt_Pi(i);
   short sec = _data->dc_sect(i) - 1;
@@ -246,4 +263,28 @@ bool Cuts::Electron_fid_arjun() {
   if (abs(_phi_cent) <= del_phi && _theta >= theta_cut) return true;
 
   return false;
+}
+
+bool Cuts::fid_chern_cut() {
+  float A = -0.000785;
+  float B = 0;
+  float C = -0.00168;
+  float D = 1;
+
+  auto p0_vec = TVector3(_data->dc_xsc(0), _data->dc_ysc(0), _data->dc_zsc(0));
+  auto n_vec = TVector3(_data->dc_cxsc(0), _data->dc_cysc(0), _data->dc_czsc(0));
+  auto S_vec = TVector3(A, B, C);
+
+  auto numer = A * _data->dc_xsc(0) + B * _data->dc_ysc(0) + C * _data->dc_zsc(0) + D;
+  auto denom = S_vec.Dot(n_vec);
+
+  auto t_vec = n_vec * abs(numer / denom);
+
+  p0_vec += t_vec;
+  float _cc_theta = acosf(p0_vec.Z() / p0_vec.Mag());
+  float _cc_phi = atanf(p0_vec.Y() / p0_vec.X());
+
+  float _cc_x = _data->cc_r(0) * sinf(_cc_theta) * cosf(_cc_phi);
+  float _cc_y = _data->cc_r(0) * sinf(_cc_theta) * sinf(_cc_phi);
+  return func::fid_chern(_cc_x, _cc_y);
 }

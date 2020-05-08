@@ -98,7 +98,8 @@ const void DataHandeler::RunEvent(size_t current_event) {
     _hists->delta_t_sec_pad(_data->p(part_num), _data->q(part_num), dt->Get_dt_P(part_num), dt->Get_dt_Pi(part_num),
                             dt->Get_dt_E(part_num), _data->sc_sect(part_num), _data->sc_pd(part_num));
 
-    _hists->Fill_Target_Vertex(_data->vx(part_num), _data->vy(part_num), _data->vz(part_num));
+    _hists->Fill_Target_Vertex(_data->px(part_num), _data->py(part_num), _data->pz(part_num), _data->vx(part_num),
+                               _data->vy(part_num), _data->vz(part_num));
     _hists->MomVsBeta_Fill(_data->p(part_num), _data->b(part_num));
 
     if (_data->q(part_num) == POSITIVE) {
@@ -140,6 +141,17 @@ mcHandeler::mcHandeler(const std::vector<std::string>& fin, const std::shared_pt
   _input_files = fin;
   _hists = hists;
   _mc_hists = hists;
+  _chain = std::make_shared<TChain>("h10");
+  for (auto& f : _input_files) _chain->Add(f.c_str());
+  _data = std::make_shared<Branches>(_chain, true);
+}
+
+mcHandeler::mcHandeler(const std::vector<std::string>& fin, const std::shared_ptr<mcHistogram>& hists,
+                       const std::shared_ptr<MomCorr>& mom_corr) {
+  _input_files = fin;
+  _hists = hists;
+  _mc_hists = hists;
+  _mom_corr = mom_corr;
   _chain = std::make_shared<TChain>("h10");
   for (auto& f : _input_files) _chain->Add(f.c_str());
   _data = std::make_shared<Branches>(_chain, true);

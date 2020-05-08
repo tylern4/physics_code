@@ -70,8 +70,10 @@ class Cuts {
   double sf_bot_fit(double P);
   bool sf_cut(double sf, double P);
   bool dt_P_cut(int i);
+  bool dt_K_cut(int i);
   bool dt_Pip_cut(int i);
   bool elec_fid_cut();
+  bool fid_chern_cut();
 };
 
 #endif

@@ -15,8 +15,9 @@
 #include "glob_files.hpp"
 #include "physics.hpp"
 
-size_t run_file(std::vector<std::string> in, std::shared_ptr<mcHistogram> hists, int thread_id) {
-  auto dh = std::make_unique<mcHandeler>(in, hists);
+size_t run_file(std::vector<std::string> in, std::shared_ptr<mcHistogram> hists,
+                const std::shared_ptr<MomCorr>& mom_corr, int thread_id) {
+  auto dh = std::make_unique<mcHandeler>(in, hists, mom_corr);
   dh->setLoadBar(false);
   if (thread_id == 0) dh->setLoadBar(true);
   size_t tot = 0;
@@ -24,7 +25,7 @@ size_t run_file(std::vector<std::string> in, std::shared_ptr<mcHistogram> hists,
   return tot;
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   ROOT::EnableThreadSafety();
   std::vector<std::vector<std::string>> infilenames(NUM_THREADS);
   std::string outfilename;
@@ -38,13 +39,14 @@ int main(int argc, char **argv) {
   auto start = std::chrono::high_resolution_clock::now();
 
   auto hist = std::make_shared<mcHistogram>(outfilename);
+  auto mom_corr = std::make_shared<MomCorr>();
   std::cout.imbue(std::locale(""));
   size_t events = 0;
 
   std::future<size_t> t[NUM_THREADS];
 
   for (size_t i = 0; i < NUM_THREADS; i++) {
-    t[i] = std::async(run_file, infilenames.at(i), hist, i);
+    t[i] = std::async(run_file, infilenames.at(i), hist, mom_corr, i);
   }
   for (size_t i = 0; i < NUM_THREADS; i++) {
     events += t[i].get();

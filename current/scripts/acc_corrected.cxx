@@ -34,7 +34,7 @@ TCanvas *DrawProjection(THnD *ndHist, THnD *ndHist_rec, THnD *ndHist_thrown, int
 }
 
 TCanvas *acc_corrected(std::string data_root, std::string sim_root, int projection = 0) {
-  // gStyle->SetPalette(kDarkRainBow);
+  gStyle->SetPalette(kDarkRainBow);
   TFile *root_data = new TFile(data_root.c_str());
   TFile *root_sim = new TFile(sim_root.c_str());
 
@@ -73,7 +73,7 @@ TCanvas *DrawProjection_2D(THnD *ndHist, THnD *ndHist_rec, THnD *ndHist_thrown, 
 }
 
 TCanvas *twoD_acc_corrected(std::string data_root, std::string sim_root, std::pair<int, int> projection) {
-  // gStyle->SetPalette(kDarkRainBow);
+  gStyle->SetPalette(kDarkRainBow);
   TFile *root_data = new TFile(data_root.c_str());
   TFile *root_sim = new TFile(sim_root.c_str());
 

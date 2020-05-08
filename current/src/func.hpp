@@ -44,6 +44,8 @@ double missMassfitFunction(double *x, double *par);
 double degauss(double *x, double *par);
 
 float dt_poly4(std::vector<double> params, float p);
+
+bool fid_chern(float x, float y);
 }  // namespace func
 
 #endif

@@ -15,7 +15,9 @@
         "W_Q2.C": "cpp",
         "mm_canvas.C": "cpp",
         "filesystem": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "theta_phi.C": "cpp",
+        "show_fid_cuts.C": "cpp"
     },
     "C_Cpp.dimInactiveRegions": false,
     "python.pythonPath": "/usr/local/bin/python"

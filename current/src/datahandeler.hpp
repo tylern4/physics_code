@@ -58,6 +58,9 @@ class mcHandeler : public DataHandeler {
  public:
   mcHandeler() : DataHandeler() {}
   mcHandeler(const std::vector<std::string>& fin, const std::shared_ptr<mcHistogram>& hists);
+  mcHandeler(const std::vector<std::string>& fin, const std::shared_ptr<mcHistogram>& hists,
+             const std::shared_ptr<MomCorr>& mom_corr);
+
   int Run();
   const void RunEvent(int current_event);
 };

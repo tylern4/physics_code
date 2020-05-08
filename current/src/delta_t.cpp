@@ -40,7 +40,7 @@ float Delta_T::vertex_time(float sc_time, float sc_pathlength, float relatavisti
 float Delta_T::Get_dt_E(int part) { return _elec_array.at(part); }
 float Delta_T::Get_dt_P(int part) { return _proton_array.at(part); }
 float Delta_T::Get_dt_Pi(int part) { return _pion_array.at(part); }
-float Delta_T::Get_dt_K(int part) { return _pion_array.at(part); }
+float Delta_T::Get_dt_K(int part) { return _kaon_array.at(part); }
 float Delta_T::Get_vertex(int part) { return _vertex; }
 
 void Delta_T::delta_t_hists(const std::shared_ptr<Histogram> &hists) {
@@ -61,9 +61,12 @@ void Delta_T::delta_t_hists(const std::shared_ptr<Histogram> &hists) {
       hists->Fill_deltat_P(mom, _proton_array.at(event_number));
       hists->Fill_deltat_PIP(mom, _pion_array.at(event_number));
       hists->Fill_deltat_kp(mom, _kaon_array.at(event_number));
-      if (dt_cut->dt_P_cut(event_number)) hists->Fill_deltat_P_PID(mom, _proton_array.at(event_number));
-      if (dt_cut->dt_Pip_cut(event_number)) hists->Fill_deltat_PIP_PID(mom, _pion_array.at(event_number));
-      if (dt_cut->dt_P_cut(event_number)) hists->Fill_deltat_kp_PID(mom, _kaon_array.at(event_number));
+      if (dt_cut->dt_Pip_cut(event_number))
+        hists->Fill_deltat_PIP_PID(mom, _pion_array.at(event_number));
+      else if (dt_cut->dt_P_cut(event_number))
+        hists->Fill_deltat_P_PID(mom, _proton_array.at(event_number));
+      else if (dt_cut->dt_K_cut(event_number))
+        hists->Fill_deltat_kp_PID(mom, _kaon_array.at(event_number));
     } else {
       hists->Fill_deltat_electron(mom, _elec_array.at(event_number));
       hists->Fill_deltat_PIM(mom, _pion_array.at(event_number));

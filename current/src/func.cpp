@@ -174,3 +174,9 @@ float func::dt_poly4(std::vector<double> params, float p) {
 
   return y;
 }
+
+bool func::fid_chern(float x, float y) {
+  float P0 = 55;
+  float P1 = -1.75;
+  return (x > P0 + P1 * y && x > P0 - P1 * y);
+}
