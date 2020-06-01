@@ -19,16 +19,16 @@ int main() {
   int q2_size = 7;
   int c_size = 10;
   int p_size = 10;
-  std::cout << "type,W,Q2,MM,MM2,theta_e,theta_star,phi_star,theta,phi,sector\n";
+  std::cout << "w,q2,cos_theta,phi,y\n";
 
   for (int w = 0; w < w_size; w++) {
     for (int q = 0; q < q2_size; q++) {
       for (int c = 0; c < c_size; c++) {
         for (int p = 0; p < p_size; p++) {
-          std::cout << W_bins[w] << ",";
-          std::cout << Q2_bins[q] << ",";
-          std::cout << cos_bins[c] << ",";
-          std::cout << phi_bins[p] << ",";
+          // std::cout << W_bins[w] << ",";
+          // std::cout << Q2_bins[q] << ",";
+          // std::cout << cos_bins[c] << ",";
+          // std::cout << phi_bins[p] << ",";
           dsigma = maid_dsigma(  // beam_energy
               4.81726,
               // W
@@ -40,14 +40,14 @@ int main() {
               // phi* (degrees)
               phi_bins[p],
               // helicity
-              0,
+              1,
               // model_opt
               5,
               // channel_opt
               3,
               // resonance_opt
               0);
-          std::cout << dsigma << "\n";
+          // std::cout << dsigma << "\n";
         }
       }
     }

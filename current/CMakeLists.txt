@@ -2,8 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 project(DataHandeler C CXX Fortran)
 set(VERSION 1.0.0)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-set(CMAKE_CXX_FLAGS "-Ofast ${ROOT_CXX_FLAGS}")
-set(CMAKE_C_FLAGS "-Ofast ${ROOT_CXX_FLAGS}")
+
 
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
@@ -19,6 +18,8 @@ set(CMAKE_MODULE_PATH
 include_directories("src")
 add_subdirectory("src")
 
+set(CMAKE_CXX_FLAGS "-Ofast ${ROOT_CXX_FLAGS}")
+set(CMAKE_C_FLAGS "-Ofast ${ROOT_CXX_FLAGS}")
 
 set(PROGRAMS 
       cpp/e1d.cpp 

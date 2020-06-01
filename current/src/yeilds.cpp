@@ -19,7 +19,7 @@ Yeilds::~Yeilds() {
 void Yeilds::OpenFile(std::string output_file_name) { csv_output.open(output_file_name); }
 
 void Yeilds::WriteHeader() {
-  csv_output << "electron_sector,e_p,e_cx,e_cy,e_cz,pip_p,pip_cx,pip_cy,pip_cz" << std::endl;
+  csv_output << "electron_sector,w,q2,theta,phi,mm2,e_p,e_cx,e_cy,e_cz,pip_p,pip_cx,pip_cy,pip_cz,helicty" << std::endl;
 }
 
 int Yeilds::Run(std::vector<std::string> fin) {
@@ -57,11 +57,15 @@ int Yeilds::Run(std::string root_file) {
         event->SetOther(part_num);
     }
 
-    if ((event->SinglePip() || event->NeutronPip()) && pip_num != 0) {
+    event->boost();
+
+    if (event->SinglePip() || event->NeutronPip()) {
       total++;
-      csv_output << std::setprecision(15) << data->dc_sect(0) << "," << data->p(0) << "," << data->cx(0) << ","
-                 << data->cy(0) << "," << data->cz(0) << "," << data->p(pip_num) << "," << data->cx(pip_num) << ","
-                 << data->cy(pip_num) << "," << data->cz(pip_num) << "," << std::endl;
+      csv_output << std::setprecision(15) << data->dc_sect(0) << "," << event->W() << "," << event->Q2() << ","
+                 << event->Theta_star() << "," << event->Phi_star() << "," << event->MM2() << "," << data->p(0) << ","
+                 << data->cx(0) << "," << data->cy(0) << "," << data->cz(0) << "," << data->p(pip_num) << ","
+                 << data->cx(pip_num) << "," << data->cy(pip_num) << "," << data->cz(pip_num) << "," << data->helicity()
+                 << std::endl;
     }
   }
 
@@ -110,7 +114,8 @@ int Yeilds::RunNtuple(const std::shared_ptr<TChain> &chain) {
     if (event->W() < 0) continue;
     if (event->Q2() > 6) continue;
     if (event->SinglePip() && event->MM() < 0) continue;
-    if (event->SinglePip() || event->NeutronPip() || event->ProtonPim() || event->SingleP() || event->TwoPion()) {
+
+    if (event->SinglePip() || event->NeutronPip()) {
       event->boost();
       ntuple->Fill(event->Type(), event->W(), event->Q2(), event->MM(), event->MM2(), event->Theta_E(),
                    event->Theta_star(), event->Phi_star(), theta, phi, sector);

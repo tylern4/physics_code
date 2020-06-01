@@ -35,7 +35,7 @@ std::string mom_correction_csv(const std::vector<std::string>& fins) {
       } else
         event->SetOther(part_num);
     }
-    // if (event->SingleP() && physics::theta_calc(data->pz(prot_num)) > 30 && event->W() > 0.7 && event->W() < 1.05)
+
     if (event->elastic())
       mom_correction +=
           std::to_string(data->p(0)) + "," + std::to_string(physics::theta_calc(data->cz(0))) + "," +

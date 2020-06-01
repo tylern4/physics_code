@@ -68,8 +68,8 @@ Garys binning
   //////////////// double xmin[DIMENSIONS] = {1.1, 1.0, -1.0, 0.0};
   //////////////// double xmax[DIMENSIONS] = {1.8, 2.0, 1.0, (M_PI * 2.0)};
 
-  int nbins[DIMENSIONS] = {28, 5, 15, 15};
-  double xmin[DIMENSIONS] = {1.1, 1.5, -1.0, 0};
+  int nbins[DIMENSIONS] = {24, 4, 10, 20};
+  double xmin[DIMENSIONS] = {1.2, 1.5, -1.0, 0};
   double xmax[DIMENSIONS] = {1.8, 3.5, 1.0, (M_PI * 2.0)};
 
   std::unique_ptr<THnSparse> ndhist_nPip;

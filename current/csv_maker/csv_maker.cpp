@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
     events += dh->Run(infilename.at(i));
 
     std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
-    std::cout << RED << "\t" << elapsed_full.count();
+    // std::cout << RED << "\t" << elapsed_full.count();
     std::cout << BOLDYELLOW << "\t\t" << events / elapsed_full.count() << " Hz\r\r" << DEF << std::flush;
   }
 

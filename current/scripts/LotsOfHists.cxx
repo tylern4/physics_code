@@ -25,7 +25,7 @@ double TwoPhi(Double_t *x, Double_t *par) {
 }
 
 void LotsOfHists(const std::string &data_root, const std::string &mc_root) {
-  std::cout << "q2,w,cos_theta,phi,y,yerr" << std::endl;
+  std::cout << "w,q2,cos_theta,phi,y,yerr" << std::endl;
   TFile *root_data = new TFile(data_root.c_str());
   TFile *root_mc = new TFile(mc_root.c_str());
   TFile *out = new TFile("LotsOfHists.root", "RECREATE");
@@ -33,13 +33,14 @@ void LotsOfHists(const std::string &data_root, const std::string &mc_root) {
 
   THnSparse *ndHist = (THnSparse *)root_data->Get("ndhist");
   THnSparse *ndHist_rec = (THnSparse *)root_mc->Get("ndhist");
+  THnSparse *ndHist_acc = (THnSparse *)root_mc->Get("ndhist");
   THnSparse *ndHist_thrown = (THnSparse *)root_mc->Get("ndhist_mc");
-  ndHist_thrown->Divide(ndHist_rec);
-  // ndHist_rec->Divide(ndHist_thrown);
-  ndHist_thrown->Write("Acceptance");
+  // ndHist_thrown->Divide(ndHist_rec);
+  ndHist_acc->Divide(ndHist_thrown);
+  ndHist_acc->Write("Acceptance");
   // plot acceptane histograms as well
   // ndHist->Multiply(ndHist_thrown);
-  ndHist->Divide(ndHist_thrown);
+  ndHist->Divide(ndHist_acc);
 
   ndHist->Sumw2();
 

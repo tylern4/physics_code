@@ -1,13 +1,20 @@
 #include "mom_corr.hpp"
+#include <thread>
 #include "color.hpp"
 
 MomCorr::MomCorr() {
   std::cout << RED << "===== " << BLUE << "Using Momentum Corrections" << RED << " =====" << DEF << std::endl;
   if (getenv("MOM_CORR") != NULL) {
     _datadir = getenv("MOM_CORR");
-    read_theta_par();
-    read_mom_par();
-    read_mom_pip_par();
+    // Make a new thread to load each set of parameters
+    std::thread theta_par(&MomCorr::read_theta_par, this);
+    std::thread mom_par(&MomCorr::read_mom_par, this);
+    std::thread mom_pip_par(&MomCorr::read_mom_pip_par, this);
+
+    theta_par.join();
+    mom_par.join();
+    mom_pip_par.join();
+
   } else {
     std::cerr << "Set env MOM_CORR";
     exit(99);
@@ -160,7 +167,7 @@ double MomCorr::theta_corr(double ThetaM, double PhiM, int Sector) {
       ThetaM - (c0_theta[bin][Sector - 1] + c1_theta[bin][Sector - 1] * phis + c2_theta[bin][Sector - 1] * phis * phis);
   double ThetaC2 = ThetaM - (c0_theta[bin2][Sector - 1] + c1_theta[bin2][Sector - 1] * phis +
                              c2_theta[bin2][Sector - 1] * phis * phis);
-  double fw = TMath::Abs(ThetaM - ThetaBin) / ThetaC_wid;
+  double fw = abs(ThetaM - ThetaBin) / ThetaC_wid;
   double fw2 = 1. - fw;
   double Theta = fw2 * ThetaC + fw * ThetaC2;
 
@@ -262,9 +269,9 @@ std::shared_ptr<LorentzVector> MomCorr::CorrectedVector(float px, float py, floa
   else if (particle_type == KP)
     mom_c = mom_corr_pip(Pin->P(), theta, phi, sect);
 
-  float _px = mom_c * sin(theta_c * DEG2RAD) * cos(Pin->Phi());
-  float _py = mom_c * sin(theta_c * DEG2RAD) * sin(Pin->Phi());
-  float _pz = mom_c * cos(theta_c * DEG2RAD);
+  float _px = mom_c * sinf(theta_c * DEG2RAD) * cosf(Pin->Phi());
+  float _py = mom_c * sinf(theta_c * DEG2RAD) * sinf(Pin->Phi());
+  float _pz = mom_c * cosf(theta_c * DEG2RAD);
 
   return std::make_shared<LorentzVector>(_px, _py, _pz, mass_map[particle_type]);
 }

@@ -23,7 +23,6 @@ current/bin/e1d
 current/bin/Skim
 current/src/fit_functions.hpp
 current/bin/golden_run
-*.ipynb
 *.dblite
 *.so.dSYM
 *_rflx.cpp

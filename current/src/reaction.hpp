@@ -181,10 +181,10 @@ class Reaction {
 
   inline bool MM_cut() {
     bool mm_cut = true;
-    // mm_cut &= (this->MM() < 0.987669);
-    // mm_cut &= (this->MM() > 0.923374);
-    mm_cut &= (this->MM2() >= 0.8);
-    mm_cut &= (this->MM2() <= 1.1);
+    mm_cut &=
+        MM2() <= mm2_fit_values[_sector - 1][mm2_names::mu] + N_SIGMA * mm2_fit_values[_sector - 1][mm2_names::sigma];
+    mm_cut &=
+        MM2() >= mm2_fit_values[_sector - 1][mm2_names::mu] - N_SIGMA * mm2_fit_values[_sector - 1][mm2_names::sigma];
     return mm_cut;
   }
 
