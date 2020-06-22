@@ -5,7 +5,7 @@ from libcpp.vector cimport vector
 import glob
 
 
-cdef extern from "yeilds.hpp":
+cdef extern from "include/yeilds.hpp":
     cdef cppclass Yeilds:
       Yeilds() except +
       Yeilds(string) except +

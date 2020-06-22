@@ -16,13 +16,13 @@ Histogram::Histogram() {
   hadron_fid_hist[1] = new TH2D("proton_fid", "proton_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
   hadron_fid_hist[2] = new TH2D("pip_fid", "pip_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
 
-  ndhist_nPip = std::make_unique<THnSparseD>("ndhist", "ndhist", DIMENSIONS, nbins, xmin, xmax);
+  ndhist_nPip = std::make_unique<THnD>("ndhist", "ndhist", DIMENSIONS, nbins, xmin, xmax);
   ndhist_nPip->GetAxis(0)->SetName("W");
   ndhist_nPip->GetAxis(1)->SetName("Q2");
   ndhist_nPip->GetAxis(2)->SetName("cos_Theta_star");
   ndhist_nPip->GetAxis(3)->SetName("Phi_star");
 
-  ndhist_protPi0 = std::make_unique<THnSparseD>("ndhist_protPi0", "ndhist_protPi0", DIMENSIONS, nbins, xmin, xmax);
+  ndhist_protPi0 = std::make_unique<THnD>("ndhist_protPi0", "ndhist_protPi0", DIMENSIONS, nbins, xmin, xmax);
   ndhist_protPi0->GetAxis(0)->SetName("W");
   ndhist_protPi0->GetAxis(1)->SetName("Q2");
   ndhist_protPi0->GetAxis(2)->SetName("cos_Theta_star");

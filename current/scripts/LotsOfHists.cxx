@@ -12,13 +12,12 @@
 
 // a + b cos(phi) + c cos(2phi)
 double TwoPhi(Double_t *x, Double_t *par) {
-  float _phi = x[0];  // * M_PI / 180.0;
-  float _a = par[0];
-  float _b = par[1];
-  float _c = par[2];
+  double _phi = x[0];  // * M_PI / 180.0;
+  double _a = par[0];
+  double _b = par[1];
+  double _c = par[2];
 
-  float ret = 0;
-
+  double ret = 0;
   ret = _a + _b * cos(_phi) + _c * cos(2.0 * _phi);
 
   return static_cast<double>(ret);
@@ -31,20 +30,32 @@ void LotsOfHists(const std::string &data_root, const std::string &mc_root) {
   TFile *out = new TFile("LotsOfHists.root", "RECREATE");
   out->cd();
 
-  THnSparse *ndHist = (THnSparse *)root_data->Get("ndhist");
-  THnSparse *ndHist_rec = (THnSparse *)root_mc->Get("ndhist");
-  THnSparse *ndHist_acc = (THnSparse *)root_mc->Get("ndhist");
-  THnSparse *ndHist_thrown = (THnSparse *)root_mc->Get("ndhist_mc");
-  // ndHist_thrown->Divide(ndHist_rec);
-  ndHist_acc->Divide(ndHist_thrown);
-  ndHist_acc->Write("Acceptance");
-  // plot acceptane histograms as well
-  // ndHist->Multiply(ndHist_thrown);
-  ndHist->Divide(ndHist_acc);
+  THnD *ndHist = (THnD *)root_data->Get("ndhist");
+  THnD *ndHist_rec = (THnD *)root_mc->Get("ndhist");
+  THnD *ndHist_acc = (THnD *)root_mc->Get("ndhist");
+  THnD *ndHist_thrown = (THnD *)root_mc->Get("ndhist_mc");
 
   ndHist->Sumw2();
+  ndHist_rec->Sumw2();
+  ndHist_thrown->Sumw2();
 
   const int DIMENSIONS = ndHist->GetNdimensions();
+  for (size_t i = 0; i < DIMENSIONS; i++) {
+    auto single_acc = ndHist_rec->Projection(i);
+    single_acc->Divide(ndHist_thrown->Projection(i));
+    single_acc->Multiply(ndHist->Projection(i));
+    single_acc->Write(Form("Acceptance_%zu", i));
+  }
+
+  // ndHist_thrown->Divide(ndHist_rec);
+  ndHist_rec->Divide(ndHist_thrown);
+  ndHist_rec->Write("Acceptance");
+  // ndHist_acc->Divide(ndHist_thrown);
+  // ndHist_acc->Write("Acceptance");
+  // plot acceptane histograms as well
+  ndHist->Multiply(ndHist_rec);
+  // ndHist->Divide(ndHist_rec);
+
   int nbins[DIMENSIONS];
   double xmin[DIMENSIONS];
   double xmax[DIMENSIONS];

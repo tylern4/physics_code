@@ -40,7 +40,7 @@ cdef extern from "TChain.h":
 cdef extern from "branches.cpp":
   pass
 
-cdef extern from "branches.hpp":
+cdef extern from "include/branches.hpp":
     cdef cppclass Branches:
       Branches(shared_ptr[TChain]) except +
       Branches(shared_ptr[TChain], bool) except +

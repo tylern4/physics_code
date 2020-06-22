@@ -118,20 +118,6 @@ void Branches::init() {
     _tree->SetBranchAddress("pzpart", _pzpart);
     _tree->SetBranchAddress("qpart", _qpart);
   }
-
-  // auto cachesize = 128000000U;     // 128 MBytes
-  //_tree->SetCacheSize(cachesize);  //<<<
-  //_tree->AddBranchToCache("*", false);
-  //_tree->AddBranchToCache("p", true);
-  //_tree->AddBranchToCache("q", true);
-  //_tree->AddBranchToCache("b", true);
-  //_tree->AddBranchToCache("cx", true);
-  //_tree->AddBranchToCache("cy", true);
-  //_tree->AddBranchToCache("cz", true);
-  //_tree->AddBranchToCache("vx", true);
-  //_tree->AddBranchToCache("vy", true);
-  //_tree->AddBranchToCache("vz", true);
-  // _tree->AddBranchToCache("*", true);  //<<< add all branches to the cache
 }
 
 int Branches::npart() { return _npart; }
