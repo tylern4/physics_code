@@ -95,17 +95,19 @@ int main(int argc, char** argv) {
   for (auto&& fn : file_names) {
     std::cout << "Start: " << fn.run_num << "\tThread: " << (total_num % number_of_threads) << std::endl;
     threads[total_num++ % number_of_threads] = std::async(run_file, fn);
-  }
 
-  for (size_t i = 0; i < number_of_threads; i++) {
-    auto f = threads[i].get();
-    std::cout << Form("%s/skim/%s_%d.root", f.folder.c_str(), "e1f_skim", f.run_num) << std::endl;
-    auto outFile =
-        std::make_unique<TFile>(Form("%s/skim/%s_%d.root", f.folder.c_str(), "e1f_skim", f.run_num), "RECREATE");
-    outFile->cd();
-    f.tree->Write();
-    outFile->Write();
-    outFile->Close();
+    if (total_num % number_of_threads == 0) {
+      for (size_t i = 0; i < number_of_threads; i++) {
+        auto f = threads[i].get();
+        std::cout << Form("%s/skim/%s_%d.root", f.folder.c_str(), "e1f_skim", f.run_num) << std::endl;
+        auto outFile =
+            std::make_unique<TFile>(Form("%s/skim/%s_%d.root", f.folder.c_str(), "e1f_skim", f.run_num), "RECREATE");
+        outFile->cd();
+        f.tree->Write();
+        outFile->Write();
+        outFile->Close();
+      }
+    }
   }
 
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
