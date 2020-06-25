@@ -4,7 +4,8 @@ from distutils.extension import Extension
 import numpy
 from Cython.Distutils import build_ext
 
-include_dirs = [numpy.get_include(), "/usr/local/root/include", "../src"]
+include_dirs = [numpy.get_include(), "/usr/local/root/include",
+                "../src", "../src/include"]
 library_dirs = ["/usr/local/root/lib"]
 extra_compile_args = [
     "-Wno-deprecated-register",
@@ -20,14 +21,7 @@ extra_link_args = ["-pthread",
                    "-m64"]
 
 ext_modules = [
-    # Extension("h10", ["h10.pyx"],
-    #          language="c++",
-    #          include_dirs=include_dirs,
-    #          library_dirs=library_dirs,
-    #          libraries=["Tree"],
-    #          extra_compile_args=extra_compile_args,
-    #          extra_link_args=extra_link_args),
-    Extension("handeler", ["handeler.pyx"],
+    Extension("h10", ["h10.pyx"],
               language="c++",
               include_dirs=include_dirs,
               library_dirs=library_dirs,
@@ -35,6 +29,6 @@ ext_modules = [
               extra_link_args=extra_link_args)
 
 ]
-setup(name='handeler',
+setup(name='h10',
       cmdclass={'build_ext': build_ext},
       ext_modules=ext_modules)

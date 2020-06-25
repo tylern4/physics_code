@@ -37,6 +37,7 @@ class Fits {
   Fits();
   ~Fits();
   TF1 *FitGaus(TH1D *hist);
+  TF1 *FitGaus(std::shared_ptr<TH1D> &hists);
   TF1 *FitLandauGaus(TH1D *hist);
   TF1 *Fit2Gaus(TH1D *hist);
   TF1 *FitLandau(TH1D *hist);

@@ -26,6 +26,7 @@ set(PROGRAMS
       511-lab/511_lab.cpp 
       monteCarlo/e1d_mc.cpp 
       skim/e1d_skim.cpp 
+      skim/e1f_skim.cpp 
       csv_maker/csv_maker.cpp 
       ntuple_maker/ntuple_maker.cpp
       golden_run/golden_run.cpp

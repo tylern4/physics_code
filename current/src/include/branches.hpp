@@ -14,6 +14,110 @@
 #include "TTreePerfStats.h"
 #include "constants.hpp"
 
+/*
+******************************************************************************
+*Tree    :h10       : h10
+******************************************************************************
+*Br    0 :npart     : npart/I
+*Br    1 :evstat    : evstat/I
+*Br    2 :intt      : intt/I
+*Br    3 :evntid    : evntid/I
+*Br    4 :evtype    : evtype/I
+*Br    5 :evntclas  : evntclas/I
+*Br    6 :evthel    : evthel/I
+*Br    7 :evntclas2 : evntclas2/I
+*Br    8 :q_l       : q_l/F
+*Br    9 :t_l       : t_l/F
+*Br   10 :tr_time   : tr_time/F
+*Br   11 :rf_time1  : rf_time1/F
+*Br   12 :rf_time2  : rf_time2/F
+*Br   13 :gpart     : gpart/I
+*Br   14 :id        : id[gpart]/I
+*Br   15 :stat      : stat[gpart]/I
+*Br   16 :dc        : dc[gpart]/I
+*Br   17 :cc        : cc[gpart]/I
+*Br   18 :sc        : sc[gpart]/I
+*Br   19 :ec        : ec[gpart]/I
+*Br   20 :lec       : lec[gpart]/I
+*Br   21 :ccst      : ccst[gpart]/I
+*Br   22 :p         : p[gpart]/F
+*Br   23 :m         : m[gpart]/F
+*Br   24 :q         : q[gpart]/I
+*Br   25 :b         : b[gpart]/F
+*Br   26 :cx        : cx[gpart]/F
+*Br   27 :cy        : cy[gpart]/F
+*Br   28 :cz        : cz[gpart]/F
+*Br   29 :vx        : vx[gpart]/F
+*Br   30 :vy        : vy[gpart]/F
+*Br   31 :vz        : vz[gpart]/F
+*Br   32 :dc_part   : dc_part/I
+*Br   33 :dc_sect   : dc_sect[dc_part]/I
+*Br   34 :dc_trk    : dc_trk[dc_part]/I
+*Br   35 :dc_stat   : dc_stat[dc_part]/I
+*Br   36 :dc_vx     : dc_vx[dc_part]/F
+*Br   37 :dc_vy     : dc_vy[dc_part]/F
+*Br   38 :dc_vz     : dc_vz[dc_part]/F
+*Br   39 :dc_vr     : dc_vr[dc_part]/F
+*Br   40 :dc_xsc    : dc_xsc[dc_part]/F
+*Br   41 :dc_ysc    : dc_ysc[dc_part]/F
+*Br   42 :dc_zsc    : dc_zsc[dc_part]/F
+*Br   43 :dc_cxsc   : dc_cxsc[dc_part]/F
+*Br   44 :dc_cysc   : dc_cysc[dc_part]/F
+*Br   45 :dc_czsc   : dc_czsc[dc_part]/F
+*Br   46 :dc_c2     : dc_c2[dc_part]/F
+*Br   47 :ec_part   : ec_part/I
+*Br   48 :ec_stat   : ec_stat[ec_part]/I
+*Br   49 :ec_sect   : ec_sect[ec_part]/I
+*Br   50 :ec_whol   : ec_whol[ec_part]/I
+*Br   51 :ec_inst   : ec_inst[ec_part]/I
+*Br   52 :ec_oust   : ec_oust[ec_part]/I
+*Br   53 :etot      : etot[ec_part]/F
+*Br   54 :ec_ei     : ec_ei[ec_part]/F
+*Br   55 :ec_eo     : ec_eo[ec_part]/F
+*Br   56 :ec_t      : ec_t[ec_part]/F
+*Br   57 :ec_r      : ec_r[ec_part]/F
+*Br   58 :ech_x     : ech_x[ec_part]/F
+*Br   59 :ech_y     : ech_y[ec_part]/F
+*Br   60 :ech_z     : ech_z[ec_part]/F
+*Br   61 :ec_m2     : ec_m2[ec_part]/F
+*Br   62 :ec_m3     : ec_m3[ec_part]/F
+*Br   63 :ec_m4     : ec_m4[ec_part]/F
+*Br   64 :ec_c2     : ec_c2[ec_part]/F
+*Br   65 :sc_part   : sc_part/I
+*Br   66 :sc_sect   : sc_sect[sc_part]/I
+*Br   67 :sc_hit    : sc_hit[sc_part]/I
+*Br   68 :sc_pd     : sc_pd[sc_part]/I
+*Br   69 :sc_stat   : sc_stat[sc_part]/I
+*Br   70 :edep      : edep[sc_part]/F
+*Br   71 :sc_t      : sc_t[sc_part]/F
+*Br   72 :sc_r      : sc_r[sc_part]/F
+*Br   73 :sc_c2     : sc_c2[sc_part]/F
+*Br   74 :cc_part   : cc_part/I
+*Br   75 :cc_sect   : cc_sect[cc_part]/I
+*Br   76 :cc_hit    : cc_hit[cc_part]/I
+*Br   77 :cc_segm   : cc_segm[cc_part]/I
+*Br   78 :nphe      : nphe[cc_part]/I
+*Br   79 :cc_t      : cc_t[cc_part]/F
+*Br   80 :cc_r      : cc_r[cc_part]/F
+*Br   81 :cc_c2     : cc_c2[cc_part]/F
+*Br   82 :lac_part  : lac_part/I
+*Br   83 :lec_sect  : lec_sect[lac_part]/I
+*Br   84 :lec_hit   : lec_hit[lac_part]/I
+*Br   85 :lec_stat  : lec_stat[lac_part]/I
+*Br   86 :lec_etot  : lec_etot[lac_part]/F
+*Br   87 :lec_ein   : lec_ein[lac_part]/F
+*Br   88 :lec_t     : lec_t[lac_part]/F
+*Br   89 :lec_r     : lec_r[lac_part]/F
+*Br   90 :lec_x     : lec_x[lac_part]/F
+*Br   91 :lec_y     : lec_y[lac_part]/F
+*Br   92 :lec_z     : lec_z[lac_part]/F
+*Br   93 :lec_c2    : lec_c2[lac_part]/F
+*Br   94 :st_part   : st_part/I
+*Br   95 :st_status : st_status[st_part]/I
+*Br   96 :st_time   : st_time[st_part]/F
+*Br   97 :st_rtrk   : st_rtrk[st_part]/F
+*/
+
 class Branches {
  protected:
   std::shared_ptr<TTree> _tree;

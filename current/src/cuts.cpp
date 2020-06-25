@@ -72,7 +72,7 @@ bool Cuts::isElecctron() {
   _elec &= (_data->sc(0) > 0);
   _elec &= (_data->dc(0) > 0);
   _elec &= (_data->dc_stat(0) > 0);
-  // _elec &= _data->nphe(0) < 20;
+  //_elec &= _data->nphe(0) < 20;
 
   // Sampling fraction cut
   _elec &= sf_cut(_data->etot(0) / _data->p(0), _data->p(0));
@@ -81,12 +81,13 @@ bool Cuts::isElecctron() {
   // Minimum momentum cut
   _elec &= (_data->p(0) > MIN_P_CUT);
   // Beam Position cut
-  _elec &= Beam_cut();
+  if (BEAM_E < 5) _elec &= Beam_cut();
 
   if (!_elec) return _elec;
 
   // Fid Cuts
-  _elec &= Fid_cut();
+  if (BEAM_E < 5) _elec &= Fid_cut();
+
   _elec &= fid_chern_cut();
 
   return _elec;

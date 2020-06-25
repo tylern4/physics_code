@@ -13,9 +13,10 @@ files = ["/Users/tylern/Data/e1d/h10_22904.root",
 
 
 def datahandler(file_name):
-    from physics import h10
-    h10 = h10("h10", file_name)
-    p_vs_b = np.asarray([[np.nan] * h10.num_entries, [np.nan] * h10.num_entries])
+    from h10 import h10_data
+    h10 = h10_data("h10", file_name)
+    p_vs_b = np.asarray([[np.nan] * h10.num_entries,
+                         [np.nan] * h10.num_entries])
     out = []
     for evt in h10:
         px = np.asarray([np.nan] * evt.gpart)
@@ -31,7 +32,10 @@ def datahandler(file_name):
 
 if __name__ == '__main__':
     pool = Pool(processes=4)
-    out = pool.map(datahandler, files)
+    out = []
+    for f in files:
+        datahandler(f)
+    #out = map(datahandler, files)
     pool.close()
     pool.join()
 

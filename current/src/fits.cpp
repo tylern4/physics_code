@@ -469,3 +469,4 @@ TF1 *Fits::FitDeGauss(TH1D *hist) {
 }
 
 TF1 *Fits::FitDeGauss(std::shared_ptr<TH1D> &hists) { return Fits::FitDeGauss(hists.get()); }
+TF1 *Fits::FitGaus(std::shared_ptr<TH1D> &hists) { return Fits::FitGaus(hists.get()); }
