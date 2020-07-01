@@ -21,7 +21,22 @@ class Skim {
   Skim(const std::shared_ptr<TChain>& _chain);
   ~Skim();
 
-  std::shared_ptr<TTree> Basic();
+  template <class CutType>
+  std::shared_ptr<TTree> Basic() {
+    int num_of_events = (int)_chain->GetEntries();
+    std::shared_ptr<TTree> skim(_chain->CloneTree(0));
+    auto data = std::make_shared<Branches>(_chain);
+    int total = 0;
+    for (int current_event = 0; current_event < num_of_events; current_event++) {
+      _chain->GetEntry(current_event);
+      auto check = std::make_unique<CutType>(data);
+      if (check->isElecctron()) {
+        total++;
+        skim->Fill();
+      }
+    }
+    return skim;
+  }
   // void Strict();
   std::shared_ptr<TTree> Final();
 };

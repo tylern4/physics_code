@@ -18,7 +18,7 @@ typedef ROOT::Math::Rotation3D LorentzRotation;
 typedef ROOT::Math::XYZVectorD Vector3;
 
 static const short NUM_THREADS = (getenv("NUM_THREADS") != NULL) ? atoi(getenv("NUM_THREADS")) : 8;
-static const float BEAM_E = (getenv("BEAM_E") != NULL) ? atof(getenv("BEAM_E")) : 4.81726;
+// static const float BEAM_E = (getenv("BEAM_E") != NULL) ? atof(getenv("BEAM_E")) : 4.81726;
 
 static const short NUM_SECTORS = 6;
 static const short MAX_PARTS = 100;
@@ -34,6 +34,7 @@ static const int NEGATIVE = -1;
 // Run Info 22848 - 23500
 // http://clasweb.jlab.org/clasonline/servlet/runinfo?action=detail&run=22880
 static const double E1D_E0 = 4.81726;  // GeV
+static const double E1F_E0 = 5.479;    // GeV
 
 static const double SOL = 29.9792458;
 // misc. constants
@@ -76,6 +77,8 @@ static const double MIN_P_CUT = 0.005000;
 static std::unordered_map<int, std::pair<float, float>> phi_map = {
     {1, std::make_pair(60, 120)},   {2, std::make_pair(0, 60)},      {3, std::make_pair(-60, 0)},
     {4, std::make_pair(-120, -60)}, {5, std::make_pair(-180, -120)}, {6, std::make_pair(120, 180)}};
+
+static std::unordered_map<int, float> phi_center = {{1, 90}, {2, 30}, {3, -30}, {4, -90}, {5, -150}, {6, 150}};
 
 const double min_phi[6] = {60, 0, -60, -120, -180, 120};
 const double max_phi[6] = {120, 60, 0, -60, -120, 180};

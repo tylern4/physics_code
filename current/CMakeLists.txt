@@ -1,14 +1,14 @@
 cmake_minimum_required(VERSION 3.5)
 project(DataHandeler C CXX Fortran)
 set(VERSION 1.0.0)
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-
+if(UNIX AND NOT APPLE)
+    define_property(-DLINUX)
+endif()
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 find_package(ROOT REQUIRED COMPONENTS RIO Net) #RooFit RooFitCore RooStats RootAuth
 include(${ROOT_USE_FILE})
-
 
 set(CMAKE_MODULE_PATH
    ${CMAKE_MODULE_PATH}
@@ -23,8 +23,11 @@ set(CMAKE_C_FLAGS "-Ofast ${ROOT_CXX_FLAGS}")
 
 set(PROGRAMS 
       cpp/e1d.cpp 
+      cpp/e1f.cpp 
+      cpp/analysis.cpp
       511-lab/511_lab.cpp 
       monteCarlo/e1d_mc.cpp 
+      monteCarlo/e1f_mc.cpp 
       skim/e1d_skim.cpp 
       skim/e1f_skim.cpp 
       csv_maker/csv_maker.cpp 

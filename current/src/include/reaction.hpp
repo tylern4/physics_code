@@ -16,7 +16,7 @@
 class Reaction {
  protected:
   double _beam_energy = E1D_E0;
-  std::shared_ptr<LorentzVector> _beam = physics::fourVec(0.0, 0.0, BEAM_E, MASS_E);
+  std::shared_ptr<LorentzVector> _beam;  // = physics::fourVec(0.0, 0.0, _beam_energy, MASS_E);
   std::shared_ptr<LorentzVector> _target = physics::fourVec(0.0, 0.0, 0.0, MASS_P);
   std::shared_ptr<LorentzVector> _gamma = physics::fourVec(0, 0, 0, 0);
 
@@ -77,6 +77,8 @@ class Reaction {
   Reaction() : _data(nullptr), _mom_corr(nullptr){};
   Reaction(const std::shared_ptr<Branches>& data);
   Reaction(const std::shared_ptr<Branches>& data, const std::shared_ptr<MomCorr>& mom_corr);
+  Reaction(const std::shared_ptr<Branches>& data, const double beam_energy);
+  Reaction(const std::shared_ptr<Branches>& data, const double beam_energy, const std::shared_ptr<MomCorr>& mom_corr);
 
   ~Reaction();
   // void correct_mom();
@@ -216,4 +218,7 @@ class MCReaction : public Reaction {
   float Phi_star();
   float Theta_E();
 };
+
+class npip_reaction : Reaction {};
+class ppi0_reaction : Reaction {};
 #endif

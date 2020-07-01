@@ -185,11 +185,12 @@ void Histogram::Write() {
   TDirectory *E_Prime = RootOutputFile->mkdir("E_Prime");
   E_Prime->cd();
   E_Prime_Write();
-
-  std::cerr << "MM:mean,+3,-3" << std::endl;
-  std::cerr << MM_neutron_cut->Get_mean() << ",";
-  std::cerr << MM_neutron_cut->Get_mean() + 3 * MM_neutron_cut->Get_sigma() << ",";
-  std::cerr << MM_neutron_cut->Get_mean() - 3 * MM_neutron_cut->Get_sigma() << std::endl;
+  /*
+    std::cerr << "MM:mean,+3,-3" << std::endl;
+    std::cerr << MM_neutron_cut->Get_mean() << ",";
+    std::cerr << MM_neutron_cut->Get_mean() + 3 * MM_neutron_cut->Get_sigma() << ",";
+    std::cerr << MM_neutron_cut->Get_mean() - 3 * MM_neutron_cut->Get_sigma() << std::endl;
+  */
   std::cerr << BOLDBLUE << "Done Writing!!!" << DEF << std::endl;
 }
 
@@ -215,7 +216,7 @@ void Histogram::makeHists_WvsQ2() {
     W_channel_sec[sec] = std::make_shared<TH1D>(Form("W_channel_sec_%d", sec + 1),
                                                 Form("W N #pi^{+} Sector: %d", sec + 1), BINS / 2, w_min, w_max);
     Missing_Mass_small_sec[sec] = std::make_shared<TH1D>(Form("Missing_Mass_small_%d", sec),
-                                                         Form("e(p,#pi^{+} X)e' Sector %d", sec), BINS_MM, 0.8, 1.3);
+                                                         Form("e(p,#pi^{+} X)e' Sector %d", sec), BINS_MM, 0.3, 1.3);
     Missing_Mass_Sq_small_sec[sec] = std::make_shared<TH1D>(Form("Missing_Mass_Sq_small_%d", sec),
                                                             Form("e(p,#pi^{+} X)e' Sector %d", sec), BINS_MM, 0.4, 1.3);
   }
@@ -690,10 +691,15 @@ void Histogram::Write_Missing_Mass() {
   Mass_pi0->SetXTitle("Mass (GeV)");
   Mass_square_pi0->SetXTitle("Mass (GeV)");
   auto fit = std::make_shared<Fits>();
-  fit->Set_min(0.05);
+  fit->Set_min(0.1);
   fit->Set_max(0.2);
   fit->FitDeGauss(Mass_pi0);
   Mass_pi0->Write();
+
+  auto fit_sq = std::make_shared<Fits>();
+  fit_sq->Set_min(0.01);
+  fit_sq->Set_max(0.03);
+  fit_sq->FitDeGauss(Mass_square_pi0);
   Mass_square_pi0->Write();
 
   Mass_eta->SetXTitle("Mass (GeV)");

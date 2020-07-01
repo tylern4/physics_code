@@ -15,7 +15,7 @@
 #include "reaction.hpp"
 
 class Cuts {
- private:
+ protected:
   std::shared_ptr<Branches> _data = nullptr;
   std::shared_ptr<Delta_T> _dt = nullptr;
 
@@ -74,6 +74,22 @@ class Cuts {
   bool dt_Pip_cut(int i);
   bool elec_fid_cut();
   bool fid_chern_cut();
+};
+
+class e1d_Cuts : public Cuts {
+ public:
+  e1d_Cuts(const std::shared_ptr<Branches>& data) : Cuts(data){};
+  e1d_Cuts(const std::shared_ptr<Branches>& data, const std::shared_ptr<Delta_T>& dt) : Cuts(data, dt){};
+  bool isElecctron();
+  bool Beam_cut();
+};
+
+class e1f_Cuts : public Cuts {
+ public:
+  e1f_Cuts(const std::shared_ptr<Branches>& data) : Cuts(data){};
+  e1f_Cuts(const std::shared_ptr<Branches>& data, const std::shared_ptr<Delta_T>& dt) : Cuts(data, dt){};
+  bool isElecctron();
+  bool Beam_cut();
 };
 
 #endif

@@ -21,7 +21,7 @@ size_t run_file(std::vector<std::string> in, std::shared_ptr<mcHistogram> hists,
   dh->setLoadBar(false);
   if (thread_id == 0) dh->setLoadBar(true);
   size_t tot = 0;
-  tot += dh->Run();
+  tot += dh->Run<e1d_Cuts>();
   return tot;
 }
 

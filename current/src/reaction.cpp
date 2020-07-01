@@ -10,22 +10,30 @@
 #include "TRandom.h"
 #include "TVector3.h"
 
-Reaction::Reaction(const std::shared_ptr<Branches>& data) : _data(data) {
+Reaction::Reaction(const std::shared_ptr<Branches>& data) : Reaction(data, E1D_E0) {}
+Reaction::Reaction(const std::shared_ptr<Branches>& data, const std::shared_ptr<MomCorr>& mom_corr)
+    : Reaction(data, E1D_E0, mom_corr) {}
+
+Reaction::Reaction(const std::shared_ptr<Branches>& data, const double beam_energy)
+    : _beam_energy(beam_energy), _data(data) {
   _hasE = true;
   _sector = data->dc_sect(0);
+  _beam = physics::fourVec(0.0, 0.0, _beam_energy, MASS_E);
   _elec = physics::fourVec(_data->px(0), _data->py(0), _data->pz(0), MASS_E);
 
-  // this->correct_mom();
   *_gamma = *_beam - *_elec;
   _W = physics::W_calc(*_gamma);
   _Q2 = physics::Q2_calc(*_gamma);
   _xb = physics::xb_calc(*_gamma);
-}
+};
 
-Reaction::Reaction(const std::shared_ptr<Branches>& data, const std::shared_ptr<MomCorr>& mom_corr)
-    : _data(data), _mom_corr(mom_corr) {
+Reaction::Reaction(const std::shared_ptr<Branches>& data, const double beam_energy,
+                   const std::shared_ptr<MomCorr>& mom_corr)
+    : _beam_energy(beam_energy), _data(data), _mom_corr(mom_corr) {
   _hasE = true;
   _sector = data->dc_sect(0);
+  _beam = physics::fourVec(0.0, 0.0, _beam_energy, MASS_E);
+
   if (mom_corr != nullptr)
     _elec = _mom_corr->CorrectedVector(_data->px(0), _data->py(0), _data->pz(0), ELECTRON);
   else
@@ -35,7 +43,7 @@ Reaction::Reaction(const std::shared_ptr<Branches>& data, const std::shared_ptr<
   _W = physics::W_calc(*_gamma);
   _Q2 = physics::Q2_calc(*_gamma);
   _xb = physics::xb_calc(*_gamma);
-}
+};
 
 Reaction::~Reaction() = default;
 

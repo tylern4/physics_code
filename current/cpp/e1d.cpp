@@ -15,16 +15,6 @@
 #include "main.h"
 #include "physics.hpp"
 
-size_t run_file(const std::vector<std::string>& in, const std::shared_ptr<Histogram>& hists,
-                const std::shared_ptr<MomCorr>& mom_corr, int thread_id) {
-  auto dh = std::make_unique<DataHandeler>(in, hists, mom_corr);
-  dh->setLoadBar(false);
-  if (thread_id == 0) dh->setLoadBar(true);
-  size_t tot = 0;
-  tot += dh->Run();
-  return tot;
-}
-
 int main(int argc, char** argv) {
   ROOT::EnableThreadSafety();
   std::vector<std::vector<std::string>> infilenames(NUM_THREADS);
@@ -50,7 +40,7 @@ int main(int argc, char** argv) {
   auto start = std::chrono::high_resolution_clock::now();
   // For the number of threads run the list of file
   for (size_t i = 0; i < NUM_THREADS; i++) {
-    threads[i] = std::async(run_file, infilenames.at(i), hist, mom_corr, i);
+    threads[i] = std::async(run_e1d_file, infilenames.at(i), hist, mom_corr, i);
   }
 
   // Let the threads run and get the results when they're done

@@ -16,6 +16,7 @@ void Cuts::Set_elec_fid() {
   _theta = physics::theta_calc(_data->cz(0));
   _phi = physics::phi_calc(_data->cx(0), _data->cy(0));
   _sec = _data->dc_sect(0);
+  //_phi_cent = _phi + phi_center[_sec];
 
   switch (_sec) {
     case 1:
@@ -80,16 +81,30 @@ bool Cuts::isElecctron() {
   _elec &= (_data->ec_ei(0) >= 0.05);
   // Minimum momentum cut
   _elec &= (_data->p(0) > MIN_P_CUT);
-  // Beam Position cut
-  if (BEAM_E < 5) _elec &= Beam_cut();
 
+  return _elec;
+}
+
+bool e1d_Cuts::isElecctron() {
+  bool _elec = true;
+  _elec &= Cuts::isElecctron();
+  _elec &= e1d_Cuts::Beam_cut();
   if (!_elec) return _elec;
-
   // Fid Cuts
-  if (BEAM_E < 5) _elec &= Fid_cut();
-
   _elec &= fid_chern_cut();
+  if (!_elec) return _elec;
+  _elec &= Fid_cut();
 
+  return _elec;
+}
+
+bool e1f_Cuts::isElecctron() {
+  bool _elec = true;
+  _elec &= Cuts::isElecctron();
+  _elec &= e1f_Cuts::Beam_cut();
+  if (!_elec) return _elec;
+  // Fid Cuts
+  _elec &= fid_chern_cut();
   return _elec;
 }
 
@@ -159,7 +174,9 @@ bool Cuts::Fid_cut() {
   return elec_fid_cut();
 }
 
-bool Cuts::Beam_cut() {
+bool Cuts::Beam_cut() { return true; }
+
+bool e1d_Cuts::Beam_cut() {
   bool _beam = true;
 
   _beam &= (_data->dc_vx(0) > 0.2f && _data->dc_vx(0) < 0.4f);
@@ -175,14 +192,26 @@ bool Cuts::Beam_cut() {
   return _beam;
 }
 
+bool e1f_Cuts::Beam_cut() {
+  bool _beam = true;
+
+  _beam &= (abs(_data->dc_vx(0)) < 0.3f);
+  _beam &= (abs(_data->dc_vy(0)) < 0.4f);
+  //_beam &= (_data->dc_vz(0) > -3.0f && _data->dc_vz(0) < 0.0f);
+  /*
+    for (short i = 0; i < _data->gpart(); i++) {
+      _beam &= (abs(_data->vx(i)) < 0.2f);
+      _beam &= (abs(_data->vy(i)) < 0.4f);
+      _beam &= (_data->vz(i) > -3.0f && _data->vz(i) < 0.0f);
+    }
+  */
+  return _beam;
+}
+
 bool Cuts::isStrictElecctron() {
   bool _elec = true;
   _elec &= isElecctron();
-  // remove CC hit to both
-  //_elec &= (_data->cc_segm(0) / 1000 - 1 != 0);
-  // Cut low number of photo electrons in cc
   _elec &= (_data->nphe(0) > 15);
-
   return _elec;
 }
 

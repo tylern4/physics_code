@@ -65,7 +65,7 @@ tree_run run_file(const fileNames& in) {
   h10->Add(Form("%s/run_%d_pass1.a*.root", in.folder.c_str(), in.run_num));
   auto s = std::make_unique<Skim>(h10);
   tree_run out;
-  out.tree = s->Basic();
+  out.tree = s->Basic<e1f_Cuts>();
   out.run_num = in.run_num;
   out.folder = in.folder;
   return out;

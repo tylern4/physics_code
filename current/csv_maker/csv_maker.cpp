@@ -4,36 +4,66 @@
 /************************************************************************/
 
 // Only My Includes. All others in main.h
+#include <algorithm>
 #include "branches.hpp"
+#include "clipp.h"
 #include "constants.hpp"
+#include "glob_files.hpp"
 #include "physics.hpp"
 #include "yeilds.hpp"
 
 using namespace std;
 
 int main(int argc, char **argv) {
-  std::string outfilename = "test.csv";
-  std::vector<std::string> infilename;
-  if (argc >= 2) {
-    for (int i = 1; i < argc; i++) infilename.push_back(argv[i]);
-  } else {
-    return 1;
+  std::string e1d_string = "";
+  std::string e1f_string = "";
+  std::string outputfile = "test.csv";
+  bool print_help = false;
+  std::vector<std::vector<std::string>> infilenames_e1d(NUM_THREADS);
+  std::vector<std::vector<std::string>> infilenames_e1f(NUM_THREADS);
+
+  auto cli = (clipp::option("-h", "--help").set(print_help) % "print help",
+              clipp::option("-e1d") & clipp::value("e1d input file path", e1d_string),
+              clipp::option("-e1f") & clipp::value("e1f input file path", e1f_string),
+              clipp::option("-o") & clipp::value("output filename", outputfile));
+
+  if (!clipp::parse(argc, argv, cli)) {
+    std::cout << clipp::make_man_page(cli, argv[0]);
+    exit(2);
+  } else if (e1d_string == "" || e1f_string == "") {
+    std::cout << clipp::make_man_page(cli, argv[0]);
+    exit(2);
   }
+
+  auto e1d_files = glob(e1d_string);
+  auto e1f_files = glob(e1f_string);
 
   auto start = std::chrono::high_resolution_clock::now();
   std::cout.imbue(std::locale(""));
   int events = 0;
   int j = 0;
-  Yeilds *dh = new Yeilds(outfilename);
+  Yeilds *dh = new Yeilds(outputfile);
   dh->WriteHeader();
 
-  for (int i = 0; i < infilename.size(); i++) {
-    events += dh->Run(infilename.at(i));
-
+#ifdef LINUX
+  std::for_each(std::execution::par, e1d_files.begin(), e1d_files.end(), [start, events, dh](auto &&f) mutable {
+#else
+  std::for_each(e1d_files.begin(), e1d_files.end(), [start, events, dh](auto &&f) mutable {
+#endif
+    events += dh->Run<e1d_Cuts>(f);
     std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
-    // std::cout << RED << "\t" << elapsed_full.count();
-    std::cout << BOLDYELLOW << "\t\t" << events / elapsed_full.count() << " Hz\r\r" << DEF << std::flush;
-  }
+    std::cout << BOLDYELLOW << " " << events / elapsed_full.count() << " Hz\r\r" << DEF << std::flush;
+  });
+
+#ifdef LINUX
+  std::for_each(std::execution::par, e1f_files.begin(), e1f_files.end(), [start, events, dh](auto &&f) mutable {
+#else
+  std::for_each(e1f_files.begin(), e1f_files.end(), [start, events, dh](auto &&f) mutable {
+#endif
+    events += dh->Run<e1f_Cuts>(f);
+    std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
+    std::cout << BOLDYELLOW << " " << events / elapsed_full.count() << " Hz\r\r" << DEF << std::flush;
+  });
 
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
   std::cout << RED << elapsed_full.count() << " sec" << DEF << std::endl;

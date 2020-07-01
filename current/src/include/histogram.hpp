@@ -281,7 +281,7 @@ Garys binning
       std::make_shared<TH1D>("Beam_Position_X", "Beam_Position_X", BINS, -x_y_min_max, x_y_min_max);
   TH1D_ptr Beam_Position_Y =
       std::make_shared<TH1D>("Beam_Position_Y", "Beam_Position_Y", BINS, -x_y_min_max, x_y_min_max);
-  TH1D_ptr Beam_Position_Z = std::make_shared<TH1D>("Beam_Position_Z", "Beam_Position_Z", BINS, -5.0, 5.0);
+  TH1D_ptr Beam_Position_Z = std::make_shared<TH1D>("Beam_Position_Z", "Beam_Position_Z", 10 * BINS, -100.0, 100.0);
 
   TH2D_ptr Beam_Position = std::make_shared<TH2D>("Beam_Position", "Beam_Position", BINS, -x_y_min_max, x_y_min_max,
                                                   BINS, -x_y_min_max, x_y_min_max);
@@ -301,7 +301,7 @@ Garys binning
       std::make_shared<TH2D>("Target_vertex_zx", "Target_vertex_zx", BINS, -6.0, 6.0, BINS, -6.0, 6.0);
 
   TH1D_ptr Missing_Mass = std::make_shared<TH1D>("Missing_Mass", "Missing Mass", BINS_MM, MM_min, MM_max);
-  TH1D_ptr Missing_Mass_small = std::make_shared<TH1D>("Missing_Mass_small", "e(p,#pi^{+} X)e'", BINS_MM, 0.8, 1.3);
+  TH1D_ptr Missing_Mass_small = std::make_shared<TH1D>("Missing_Mass_small", "e(p,#pi^{+} X)e'", BINS_MM, 0.3, 1.3);
   std::vector<TH1D_ptr> Missing_Mass_small_sec;
   std::vector<TH1D_ptr> Missing_Mass_Sq_small_sec;
   TH1D_ptr Missing_Mass_square =

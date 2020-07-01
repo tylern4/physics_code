@@ -63,7 +63,7 @@ tree_run run_file(const fileNames& in) {
   for (auto& f : in.file_num) h10->Add(Form("%s/h10_r%d_%s.root", in.folder.c_str(), in.run_num, f.c_str()));
   auto s = std::make_unique<Skim>(h10);
   tree_run out;
-  out.tree = s->Basic();
+  out.tree = s->Basic<e1d_Cuts>();
   out.run_num = in.run_num;
   out.folder = in.folder;
   return out;

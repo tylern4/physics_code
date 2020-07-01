@@ -9,9 +9,9 @@
 PhotonFlux::PhotonFlux(double W, double Q2) {
   _W = W;
   _Q2 = Q2;
-  _beam_momentum = Momentum(BEAM_E, MASS_E);
+  _beam_momentum = Momentum(_beam_energy, MASS_E);
   _nu = photon_energy();
-  _scattered_energy = (BEAM_E - _nu);
+  _scattered_energy = (_beam_energy - _nu);
   _scattered_momentum = Momentum(_scattered_energy, MASS_E);
 
   _flux = photon_flux();
@@ -22,7 +22,7 @@ PhotonFlux::PhotonFlux(LorentzVector e_mu, LorentzVector e_mu_prime) {
   _Q2 = physics::Q2_calc(e_mu, e_mu_prime);
   _beam_momentum = e_mu.P();
   _nu = photon_energy();
-  _scattered_energy = (BEAM_E - _nu);
+  _scattered_energy = (_beam_energy - _nu);
   _scattered_momentum = e_mu_prime.P();
 
   _flux = photon_flux();
@@ -35,7 +35,7 @@ double PhotonFlux::Momentum(double E, double M) { return TMath::Sqrt(E * E - M *
 double PhotonFlux::photon_energy() { return ((_W * _W + _Q2) / _target_mass - _target_mass) / 2; }
 
 double PhotonFlux::theta_calc() {
-  return TMath::ACos((BEAM_E * _scattered_energy - _Q2 / 2.0 - MASS_E * MASS_E) /
+  return TMath::ACos((_beam_energy * _scattered_energy - _Q2 / 2.0 - MASS_E * MASS_E) /
                      (_beam_momentum * _scattered_momentum));
 }
 
@@ -44,7 +44,7 @@ double PhotonFlux::epsilon_calc() {
 }
 
 double PhotonFlux::photon_flux() {
-  return FS_ALPHA / (4 * PI * _Q2) * _W / (BEAM_E * BEAM_E * _target_mass * _target_mass) *
+  return FS_ALPHA / (4 * PI * _Q2) * _W / (_beam_energy * _beam_energy * _target_mass * _target_mass) *
          (_W * _W - _target_mass * _target_mass) / (1 - epsilon_calc());
 }
 

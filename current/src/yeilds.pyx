@@ -10,7 +10,7 @@ cdef extern from "include/yeilds.hpp":
       Yeilds() except +
       Yeilds(string) except +
       void WriteHeader()
-      void Run(vector[string])
+      void Run[T](vector[string])
       void OpenFile(string)
       #int RunNtuple(string, bool)
 
@@ -25,8 +25,8 @@ cdef class yeild:
     self.c_yeilds.OpenFile(self.output)
   def header(self):
     self.c_yeilds.WriteHeader()
-  def run(self):
-    self.c_yeilds.Run(self._files)
+  #def run(self):
+  #  self.c_yeilds.Run[CutType](self._files)
   #def ntuple(self):
   #  for f in self._files:
   #   self.c_yeilds.RunNtuple(f)
