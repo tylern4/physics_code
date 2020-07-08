@@ -41,8 +41,9 @@ int main(int argc, char** argv) {
   }
 
   auto start = std::chrono::high_resolution_clock::now();
+
   // Create the shared objects for hists and momentum corrections
-  auto hist = std::make_shared<Histogram>();
+  auto hist = std::make_shared<mcHistogram>(output_file);
   auto mom_corr = std::make_shared<MomCorr>();
 
   std::cout.imbue(std::locale(""));
@@ -52,7 +53,7 @@ int main(int argc, char** argv) {
   auto e1d_files = glob(e1d_string);
   if (e1d_files.size() > 0) {
     for (auto&& f : e1d_files) infilenames_e1d[i++ % NUM_THREADS].push_back(f);
-    std::cout << BLUE << "Starting e1d" << DEF << std::endl;
+    std::cout << BLUE << "Starting e1d mc" << DEF << std::endl;
     // Make an array of futures which return an integer
     std::future<size_t> threads_e1d[NUM_THREADS];
 
@@ -70,7 +71,7 @@ int main(int argc, char** argv) {
   auto e1f_files = glob(e1f_string);
   if (e1f_files.size() > 0) {
     for (auto&& f : e1f_files) infilenames_e1f[i++ % NUM_THREADS].push_back(f);
-    std::cout << BLUE << "Starting e1f" << DEF << std::endl;
+    std::cout << BLUE << "Starting e1f mc" << DEF << std::endl;
     // Make an array of futures which return an integer
     std::future<size_t> threads_e1f[NUM_THREADS];
 
@@ -89,7 +90,7 @@ int main(int argc, char** argv) {
   std::cout.imbue(std::locale(""));
   ROOT::EnableImplicitMT(2);
   // Write the histograms to file
-  hist->Write(output_file);
+  hist->Write();
 
   std::cout << RED << events << " events\t" << elapsed_full.count() << " sec" << DEF << std::endl;
   std::cout << BOLDYELLOW << events / elapsed_full.count() << " Hz" << DEF << std::endl;

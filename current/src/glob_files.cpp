@@ -1,6 +1,11 @@
 #include "glob_files.hpp"
 
 std::vector<std::string> glob(const std::string& pattern) {
+  if (pattern == "") {
+    std::vector<std::string> emtpy;
+    return emtpy;
+  }
+
   // glob struct resides on the stack
   glob_t glob_result;
   memset(&glob_result, 0, sizeof(glob_result));

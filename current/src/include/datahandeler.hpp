@@ -153,9 +153,11 @@ class mcHandeler : public DataHandeler {
   mcHandeler(const std::vector<std::string>& fin, const std::shared_ptr<mcHistogram>& hists,
              const std::shared_ptr<MomCorr>& mom_corr);
 
+  template <class CutType>
   void RunEvent(int current_event) {
     _chain->GetEntry(current_event);
-    auto mc_event = std::make_shared<MCReaction>(_data);
+    _beam_energy = std::is_same<CutType, e1f_Cuts>::value ? E1F_E0 : E1D_E0;
+    auto mc_event = std::make_shared<MCReaction>(_data, _beam_energy);
     _mc_hists->Fill_P(_data);
     _mc_hists->Fill_WQ2_MC(mc_event);
     _hists->Fill_ND(mc_event);
@@ -175,7 +177,7 @@ class mcHandeler : public DataHandeler {
     for (size_t current_event = 0; current_event < num_of_events; current_event++) {
       if (_loadbar && current_event % 10000 == 0) DataHandeler::loadbar(current_event, num_of_events);
       DataHandeler::RunEvent<CutType>(current_event);
-      mcHandeler::RunEvent(current_event);
+      mcHandeler::RunEvent<CutType>(current_event);
     }
     _chain->Reset();
     return num_of_events;

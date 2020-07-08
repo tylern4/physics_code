@@ -16,6 +16,7 @@ void Cuts::Set_elec_fid() {
   _theta = physics::theta_calc(_data->cz(0));
   _phi = physics::phi_calc(_data->cx(0), _data->cy(0));
   _sec = _data->dc_sect(0);
+
   //_phi_cent = _phi + phi_center[_sec];
 
   switch (_sec) {
@@ -88,12 +89,12 @@ bool Cuts::isElecctron() {
 bool e1d_Cuts::isElecctron() {
   bool _elec = true;
   _elec &= Cuts::isElecctron();
-  _elec &= e1d_Cuts::Beam_cut();
+  //_elec &= e1d_Cuts::Beam_cut();
   if (!_elec) return _elec;
   // Fid Cuts
   _elec &= fid_chern_cut();
   if (!_elec) return _elec;
-  _elec &= Fid_cut();
+  //_elec &= Fid_cut();
 
   return _elec;
 }
