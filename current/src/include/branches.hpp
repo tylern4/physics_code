@@ -403,7 +403,7 @@ class Branches {
   float qpart(int i);
 };
 
-class BranchesMC : Branches {
+class BranchesMC : public Branches {
  public:
   BranchesMC(std::shared_ptr<TChain> tree);
 };

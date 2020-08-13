@@ -68,6 +68,7 @@ bool Cuts::isElecctron() {
   _elec &= (_data->gpart() < 5);
   if (!_elec) return false;
   _elec &= (_data->q(0) == NEGATIVE);
+
   _elec &= (_data->ec(0) > 0);
   _elec &= (_data->cc(0) > 0);
   _elec &= (_data->stat(0) > 0);  // First Particle stat
