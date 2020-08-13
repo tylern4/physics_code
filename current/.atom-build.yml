@@ -1,2 +1,0 @@
-cmd: cmake .. && make
-cwd: /Users/tylern/physics_code/current/build

@@ -1,3 +1,10 @@
+#include "TCanvas.h"
+#include "TF1.h"
+#include "TFile.h"
+#include "TH1.h"
+#include "TH2.h"
+#include "TLine.h"
+#include "TROOT.h"
 
 // Quadratic background function
 Double_t background(Double_t *x, Double_t *par) {
@@ -20,7 +27,7 @@ void mm_canvas(std::string name = "v2_all.root") {
   TF1 *fitFcn = new TF1("fitFcn", fitFunction, 0.8, 1.2, 6);
 
   fitFcn->SetNpx(200);
-  fitFcn->SetParNames("b1", "b2", "b3", );
+  fitFcn->SetParNames("b1", "b2", "b3");
   fitFcn->SetParameters(1, 1, 1, 6, .03, 1);
   fitFcn->Update();
 
@@ -46,3 +53,17 @@ void mm_canvas(std::string name = "v2_all.root") {
   lower->Draw("same");
   upper->Draw("same");
 }
+
+#if not defined(__CLING__)
+int main(int argc, char const *argv[]) {
+  if (argc < 2) {
+    std::cerr << "Not enough arguments" << std::endl;
+    std::cerr << "To Use:\t" << argv[0] << " v2_all.root" << std::endl;
+    exit(1);
+  }
+
+  mm_canvas(argv[1]);
+
+  return 0;
+}
+#endif

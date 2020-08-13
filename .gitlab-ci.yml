@@ -1,7 +1,7 @@
 image: tylern4/rootv6:ubuntu
 
 before_script:
-  - cd physics_code/current
+  - cd physics_code
 
 build:
   script:
