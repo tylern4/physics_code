@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 project(DataHandeler C CXX Fortran)
 set(VERSION 1.0.0)
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 # if(UNIX AND NOT APPLE)
 #     define_property(-DLINUX)
 # endif()
