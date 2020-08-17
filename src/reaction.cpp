@@ -156,6 +156,7 @@ void Reaction::CalcMissMass() {
     _MM = mm->mag();
     _MM2 = mm->mag2();
   }
+
   auto pi0 = std::make_shared<LorentzVector>();
   if (_numPhotons == 2) {
     auto phi = ROOT::Math::VectorUtil::Angle(*_photons[0], *_photons[1]);
@@ -391,3 +392,22 @@ float MCReaction::Theta_star() {
   return _temp->Theta();
 }
 float MCReaction::Phi_star() { return physics::phi_boosted(_pip_thrown); }
+
+double MCReaction::MM() {
+  if (!_pip_thrown) return NAN;
+  auto mm = std::make_shared<LorentzVector>();
+  *mm += (*_beam - *_elec_thrown + *_target);
+  *mm -= *_pip_thrown;
+  _mm_thrown = mm->M();
+
+  return _mm_thrown;
+}
+double MCReaction::MM2() {
+  if (!_pip_thrown) return NAN;
+  auto mm = std::make_shared<LorentzVector>();
+  *mm += (*_beam - *_elec_thrown + *_target);
+  *mm -= *_pip_thrown;
+  _mm2_thrown = mm->M2();
+
+  return _mm2_thrown;
+}

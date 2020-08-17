@@ -204,6 +204,8 @@ class Reaction {
 class MCReaction : public Reaction {
   float _W_thrown = NAN;
   float _Q2_thrown = NAN;
+  double _mm_thrown = NAN;
+  double _mm2_thrown = NAN;
   std::shared_ptr<LorentzVector> _elec_thrown;
   std::shared_ptr<LorentzVector> _gamma_thrown;
   std::shared_ptr<LorentzVector> _pip_thrown;
@@ -214,6 +216,8 @@ class MCReaction : public Reaction {
   MCReaction(std::shared_ptr<Branches> data, const double beam_energy);
   inline float W_thrown() { return _W_thrown; }
   inline float Q2_thrown() { return _Q2_thrown; }
+  double MM();
+  double MM2();
 
   float Theta_star();
   float Phi_star();

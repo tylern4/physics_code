@@ -3,8 +3,8 @@
 /*	University Of South Carolina*/
 /************************************************************************/
 
-#ifndef DATAHANDELER_H_GUARD
-#define DATAHANDELER_H_GUARD
+#ifndef YEILDS_H_GUARD
+#define YEILDS_H_GUARD
 #include <TFile.h>
 #include <TLorentzVector.h>
 #include <cstring>
@@ -19,6 +19,7 @@
 #include "TNtuple.h"
 #include "color.hpp"
 #include "constants.hpp"
+#include "csv_data.hpp"
 #include "cuts.hpp"
 #include "delta_t.hpp"
 #include "histogram.hpp"
@@ -26,23 +27,25 @@
 #include "photon_flux.hpp"
 #include "physics.hpp"
 #include "reaction.hpp"
+#include "syncfile.hpp"
 
 class Yeilds {
  protected:
   int PID;
   std::shared_ptr<TNtuple> ntuple = nullptr;
   std::shared_ptr<TFile> Rootout = nullptr;
-  std::ofstream csv_output;
+  std::shared_ptr<SyncFile> _multi_threaded_csv;
   std::vector<std::string> input_files;
   double _beam_energy = E1D_E0;
 
  public:
   Yeilds();
-  Yeilds(std::string output_file_name);
+  Yeilds(std::shared_ptr<SyncFile> multi_threaded_csv) : _multi_threaded_csv(multi_threaded_csv) {
+    _multi_threaded_csv->write(Header());
+  };
   Yeilds(std::string output_file_name, bool isRoot);
   ~Yeilds();
-  void OpenFile(std::string output_file_name);
-  void WriteHeader();
+  void WriteData(const csv_data& toWrite);
   std::string Header();
 
   template <class CutType>
@@ -74,14 +77,26 @@ class Yeilds {
       event->boost();
 
       if (event->SinglePip() || event->NeutronPip()) {
-        std::lock_guard<std::mutex> lk(std::mutex);
         total++;
-        csv_output << std::setprecision(15) << data->dc_sect(0) << "," << event->W() << "," << event->Q2() << ","
-                   << event->Theta_star() << "," << event->Phi_star() << "," << event->MM2() << "," << data->p(0) << ","
-                   << data->cx(0) << "," << data->cy(0) << "," << data->cz(0) << "," << data->p(pip_num) << ","
-                   << data->cx(pip_num) << "," << data->cy(pip_num) << "," << data->cz(pip_num) << ","
-                   << data->helicity() << "," << type << ","
-                   << std::hash<std::string>{}(root_file + std::to_string(current_event)) << std::endl;
+        csv_data csv_buffer;
+        csv_buffer.electron_sector = data->dc_sect(0);
+        csv_buffer.w = event->W();
+        csv_buffer.q2 = event->Q2();
+        csv_buffer.theta = event->Theta_star();
+        csv_buffer.phi = event->Phi_star();
+        csv_buffer.mm2 = event->MM2();
+        csv_buffer.e_p = data->p(0);
+        csv_buffer.e_cx = data->cx(0);
+        csv_buffer.e_cy = data->cy(0);
+        csv_buffer.e_cz = data->cz(0);
+        csv_buffer.pip_p = data->p(pip_num);
+        csv_buffer.pip_cx = data->cx(pip_num);
+        csv_buffer.pip_cy = data->cy(pip_num);
+        csv_buffer.pip_cz = data->cz(pip_num);
+        csv_buffer.helicty = data->helicity();
+        csv_buffer.type = type;
+        csv_buffer.hash = std::hash<std::string>{}(root_file + std::to_string(current_event));
+        WriteData(csv_buffer);
       }
     }
 
@@ -91,7 +106,7 @@ class Yeilds {
   }
 
   template <class CutType>
-  int RunNtuple(const std::shared_ptr<TChain> &chain) {
+  int RunNtuple(const std::shared_ptr<TChain>& chain) {
     size_t num_of_events = (size_t)chain->GetEntries();
     auto data = std::make_shared<Branches>(chain);
     size_t total = 0;
@@ -147,7 +162,7 @@ class Yeilds {
 class mcYeilds : public Yeilds {
  public:
   mcYeilds() : Yeilds(){};
-  mcYeilds(std::string output_file_name) : Yeilds(output_file_name){};
+  mcYeilds(std::shared_ptr<SyncFile> multi_threaded_csv) : Yeilds(multi_threaded_csv){};
   mcYeilds(std::string output_file_name, bool isRoot) : Yeilds(output_file_name, isRoot){};
 
   template <class CutType>
@@ -166,16 +181,27 @@ class mcYeilds : public Yeilds {
       int pip_num = 1;
       mc_event->SetPip(pip_num);
 
-      {
-        std::lock_guard<std::mutex> lk(std::mutex);
+      if (!std::isnan(mc_event->W_thrown()) && !std::isnan(mc_event->Q2_thrown())) {
         total++;
-        csv_output << std::setprecision(15) << data->dc_sect(0) << "," << mc_event->W_thrown() << ","
-                   << mc_event->Q2_thrown() << "," << mc_event->Theta_star() << "," << mc_event->Phi_star() << ","
-                   << mc_event->MM2() << "," << data->p(0) << "," << data->cx(0) << "," << data->cy(0) << ","
-                   << data->cz(0) << "," << data->p(pip_num) << "," << data->cx(pip_num) << "," << data->cy(pip_num)
-                   << "," << data->cz(pip_num) << "," << data->helicity() << ","
-                   << "thrown"
-                   << "," << std::hash<std::string>{}(root_file + std::to_string(current_event)) << std::endl;
+        csv_data csv_buffer;
+        csv_buffer.electron_sector = data->dc_sect(0);
+        csv_buffer.w = mc_event->W_thrown();
+        csv_buffer.q2 = mc_event->Q2_thrown();
+        csv_buffer.theta = mc_event->Theta_star();
+        csv_buffer.phi = mc_event->Phi_star();
+        csv_buffer.mm2 = mc_event->MM2();
+        csv_buffer.e_p = data->pxpart(0);
+        csv_buffer.e_cx = data->xpart(0);
+        csv_buffer.e_cy = data->ypart(0);
+        csv_buffer.e_cz = data->zpart(0);
+        csv_buffer.pip_p = data->pxpart(pip_num);
+        csv_buffer.pip_cx = data->xpart(pip_num);
+        csv_buffer.pip_cy = data->ypart(pip_num);
+        csv_buffer.pip_cz = data->zpart(pip_num);
+        csv_buffer.helicty = data->helicity();
+        csv_buffer.type = "thrown";
+        csv_buffer.hash = std::hash<std::string>{}(root_file + std::to_string(current_event));
+        WriteData(csv_buffer);
       }
     }
 

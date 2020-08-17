@@ -39,34 +39,39 @@ int main(int argc, char **argv) {
   std::vector<std::string> e1d_files = glob(e1d_string);
 
   auto e1f_files = glob(e1f_string);
+  std::vector<std::vector<std::string>> infilenames(NUM_THREADS);
+  int i = 0;
+  for (auto &&f : e1d_files) {
+    infilenames[i++ % NUM_THREADS].push_back(f);
+  }
 
   auto start = std::chrono::high_resolution_clock::now();
   std::cout.imbue(std::locale(""));
 
   size_t events = 0;
-  auto dh = std::make_unique<mcYeilds>(outputfile);
-  dh->WriteHeader();
-  std::string data = "";
+  auto csv_file = std::make_shared<SyncFile>(outputfile);
+  auto dh = std::make_unique<mcYeilds>(csv_file);
 
-  auto e1dworker = [&events, &dh](auto &&f) mutable {
-    events += dh->RunMC<e1d_Cuts>(f);
-    events += dh->Run<e1d_Cuts>(f, "mc_rec");
-    std::cout << "  " << events << "\r\r" << std::flush;
+  auto e1dworker = [&dh](auto &&fls) mutable {
+    size_t total = 0;
+    for (auto &&f : fls) {
+      total += dh->RunMC<e1d_Cuts>(f);
+      total += dh->Run<e1d_Cuts>(f, "mc_rec");
+      std::cout << "  " << total << "\r\r" << std::flush;
+    }
+    return total;
   };
 
-  auto e1fworker = [&events, &dh](auto &&f) mutable {
-    events += dh->RunMC<e1f_Cuts>(f);
-    events += dh->Run<e1f_Cuts>(f, "mc_rec");
-    std::cout << "  " << events << "\r\r" << std::flush;
-  };
+  std::future<size_t> threads[NUM_THREADS];
+  for (size_t i = 0; i < NUM_THREADS; i++) {
+    threads[i] = std::async(e1dworker, infilenames.at(i));
+  }
 
-#ifdef DOCKER
-  std::for_each(std::execution::par, e1d_files.begin(), e1d_files.end(), e1dworker);
-  std::for_each(std::execution::par, e1f_files.begin(), e1f_files.end(), e1fworker);
-#else
-  std::for_each(e1d_files.begin(), e1d_files.end(), e1dworker);
-  std::for_each(e1f_files.begin(), e1f_files.end(), e1fworker);
-#endif
+  for (size_t i = 0; i < NUM_THREADS; i++) {
+    events += threads[i].get();
+  }
+
+  // std::for_each(e1d_files.begin(), e1d_files.end(), e1dworker);
 
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
   std::cout << RED << elapsed_full.count() << " sec" << DEF << std::endl;

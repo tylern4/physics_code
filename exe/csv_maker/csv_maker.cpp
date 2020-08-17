@@ -41,8 +41,9 @@ int main(int argc, char **argv) {
 
   auto start = std::chrono::high_resolution_clock::now();
   std::cout.imbue(std::locale(""));
-  auto dh = std::make_unique<mcYeilds>(outputfile);
-  dh->WriteHeader();
+  auto csv_file = std::make_shared<SyncFile>(outputfile);
+  auto dh = std::make_unique<Yeilds>(csv_file);
+
   int events = 0;
   auto e1dworker = [events, &dh](auto &&f) mutable {
     events += dh->Run<e1d_Cuts>(f, "rec");

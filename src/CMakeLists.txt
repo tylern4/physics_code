@@ -31,6 +31,7 @@ add_library(physics STATIC
   fid_cuts.f
   mom_corr.cpp
   vertex_correction.f
+  syncfile.cpp
   )
 
 set(EXTRA_FLAGS "-pthread -fPIC -Wno-return-type -Wno-writable-strings -Wno-dangling-else -Wno-comment -D__ROOFIT_NOBANNER")
