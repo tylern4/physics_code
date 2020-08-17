@@ -9,6 +9,7 @@
 #include "clipp.h"
 #include "constants.hpp"
 #include "glob_files.hpp"
+#include "lz4xx.h"
 #include "physics.hpp"
 #include "yeilds.hpp"
 
@@ -30,7 +31,7 @@ int main(int argc, char **argv) {
   if (!clipp::parse(argc, argv, cli)) {
     std::cout << clipp::make_man_page(cli, argv[0]);
     exit(2);
-  } else if (e1d_string == "" || e1f_string == "") {
+  } else if ((!(e1d_string == "") && !(e1f_string == ""))) {
     std::cout << clipp::make_man_page(cli, argv[0]);
     exit(2);
   }
@@ -40,21 +41,17 @@ int main(int argc, char **argv) {
 
   auto start = std::chrono::high_resolution_clock::now();
   std::cout.imbue(std::locale(""));
-  int events = 0;
-  int j = 0;
-  Yeilds *dh = new Yeilds(outputfile);
+  auto dh = std::make_unique<mcYeilds>(outputfile);
   dh->WriteHeader();
-
-  auto e1dworker = [start, events, dh](auto &&f) mutable {
+  int events = 0;
+  auto e1dworker = [events, &dh](auto &&f) mutable {
     events += dh->Run<e1d_Cuts>(f, "rec");
-    std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
-    std::cout << BOLDYELLOW << " " << events / elapsed_full.count() << " Hz\r\r" << DEF << std::flush;
+    std::cout << "  " << events << "\r\r" << std::flush;
   };
 
-  auto e1fworker = [start, events, dh](auto &&f) mutable {
+  auto e1fworker = [events, &dh](auto &&f) mutable {
     events += dh->Run<e1f_Cuts>(f, "rec");
-    std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
-    std::cout << BOLDYELLOW << " " << events / elapsed_full.count() << " Hz\r\r" << DEF << std::flush;
+    std::cout << "  " << events << "\r\r" << std::flush;
   };
 
 #ifdef DOCKER

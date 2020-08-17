@@ -164,7 +164,7 @@ class mcHandeler : public DataHandeler {
     _mc_hists->Fill(mc_event);
 
     for (int part_num = 1; part_num < _data->gpart(); part_num++) {
-      if (_data->pidpart(part_num) == PIP) mc_event->SetPip(part_num);
+      if (_data->pidpart(part_num) == PIP || _data->pidpart(part_num) == 8) mc_event->SetPip(part_num);
     }
     if (mc_event->SinglePip()) _mc_hists->Fill_Missing_Mass(mc_event);
 

@@ -14,11 +14,13 @@ Yeilds::Yeilds(std::string output_file_name, bool isRoot = true) {
 }
 Yeilds::~Yeilds() {
   if (ntuple) ntuple->Write();
+  if (csv_output.is_open()) csv_output.close();
 }
 
 void Yeilds::OpenFile(std::string output_file_name) { csv_output.open(output_file_name); }
 
-void Yeilds::WriteHeader() {
-  csv_output << "electron_sector,w,q2,theta,phi,mm2,e_p,e_cx,e_cy,e_cz,pip_p,pip_cx,pip_cy,pip_cz,helicty,type"
-             << std::endl;
+std::string Yeilds::Header() {
+  return "electron_sector,w,q2,theta,phi,mm2,e_p,e_cx,e_cy,e_cz,pip_p,pip_cx,pip_cy,pip_cz,helicty,type,hash";
 }
+
+void Yeilds::WriteHeader() { csv_output << Yeilds::Header() << std::endl; }

@@ -15,6 +15,7 @@
 using namespace std;
 
 int main(int argc, char **argv) {
+  ROOT::EnableThreadSafety();
   std::string e1d_string = "";
   std::string e1f_string = "";
   std::string outputfile = "test_mc.csv";
@@ -35,27 +36,30 @@ int main(int argc, char **argv) {
     exit(2);
   }
 
-  auto e1d_files = glob(e1d_string);
+  std::vector<std::string> e1d_files = glob(e1d_string);
+
   auto e1f_files = glob(e1f_string);
 
   auto start = std::chrono::high_resolution_clock::now();
   std::cout.imbue(std::locale(""));
-  int events = 0;
-  int j = 0;
-  Yeilds *dh = new Yeilds(outputfile);
+
+  size_t events = 0;
+  auto dh = std::make_unique<mcYeilds>(outputfile);
   dh->WriteHeader();
+  std::string data = "";
 
-  auto e1dworker = [start, events, dh](auto &&f) mutable {
-    events += dh->Run<e1d_Cuts>(f, "thrown");
-    std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
-    std::cout << BOLDYELLOW << " " << events / elapsed_full.count() << " Hz\r\r" << DEF << std::flush;
+  auto e1dworker = [&events, &dh](auto &&f) mutable {
+    events += dh->RunMC<e1d_Cuts>(f);
+    events += dh->Run<e1d_Cuts>(f, "mc_rec");
+    std::cout << "  " << events << "\r\r" << std::flush;
   };
 
-  auto e1fworker = [start, events, dh](auto &&f) mutable {
-    events += dh->Run<e1f_Cuts>(f, "thrown");
-    std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
-    std::cout << BOLDYELLOW << " " << events / elapsed_full.count() << " Hz\r\r" << DEF << std::flush;
+  auto e1fworker = [&events, &dh](auto &&f) mutable {
+    events += dh->RunMC<e1f_Cuts>(f);
+    events += dh->Run<e1f_Cuts>(f, "mc_rec");
+    std::cout << "  " << events << "\r\r" << std::flush;
   };
+
 #ifdef DOCKER
   std::for_each(std::execution::par, e1d_files.begin(), e1d_files.end(), e1dworker);
   std::for_each(std::execution::par, e1f_files.begin(), e1f_files.end(), e1fworker);

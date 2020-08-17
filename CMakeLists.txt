@@ -8,6 +8,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 #     define_property(-DLINUX)
 # endif()
 
+
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 find_package(ROOT REQUIRED COMPONENTS RIO Net) #RooFit RooFitCore RooStats RootAuth
 include(${ROOT_USE_FILE})
@@ -17,9 +18,13 @@ set(CMAKE_MODULE_PATH
    ${PROJECT_SOURCE_DIR}/cmake
    ${PROJECT_SOURCE_DIR}/cmake/modules)
 
-include_directories("src")
-include_directories("include")
-add_subdirectory("src")
+include_directories(${CMAKE_SOURCE_DIR}/src)
+include_directories(${CMAKE_SOURCE_DIR}/include)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src)
+
+include_directories(${CMAKE_SOURCE_DIR}/external/lz4xx/include)
+add_subdirectory(${CMAKE_SOURCE_DIR}/external/lz4xx)
+set_target_properties(lz4xx PROPERTIES CXX_STANDARD 11)
 
 set(CMAKE_CXX_FLAGS "-Ofast ${ROOT_CXX_FLAGS}")
 set(CMAKE_C_FLAGS "-Ofast ${ROOT_CXX_FLAGS}")
@@ -59,7 +64,7 @@ IF(Cython_FOUND)
   if(${PYTHON_VERSION_MAJOR} STREQUAL "2")
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
   else()
-    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_STANDARD 14)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
   endif()
 

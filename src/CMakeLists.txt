@@ -4,7 +4,6 @@ find_package(PythonInterp)
 find_package(PythonLibs)
 find_package(PythonExtensions)
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 find_package(ROOT REQUIRED COMPONENTS RIO Net)
@@ -35,7 +34,7 @@ add_library(physics STATIC
   )
 
 set(EXTRA_FLAGS "-pthread -fPIC -Wno-return-type -Wno-writable-strings -Wno-dangling-else -Wno-comment -D__ROOFIT_NOBANNER")
-target_link_libraries(physics PUBLIC ${OpenMP_CXX_LIB_NAMES} ${ROOT_LIBRARIES})
+target_link_libraries(physics PUBLIC ${OpenMP_CXX_LIB_NAMES} ${ROOT_LIBRARIES} lz4xx)
 
 target_include_directories(physics
   PRIVATE ${CMAKE_SOURCE_DIR}/include

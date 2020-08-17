@@ -1,0 +1,6 @@
+[submodule "python/analysisNotebooks"]
+	path = python/analysisNotebooks
+	url = https://github.com/tylern4/analysisNotebooks.git
+[submodule "external/lz4xx"]
+	path = external/lz4xx
+	url = https://github.com/thyu/lz4xx.git
