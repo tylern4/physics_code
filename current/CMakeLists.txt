@@ -3,7 +3,7 @@ project(DataHandeler C CXX Fortran)
 set(VERSION 1.0.0)
 
 if(UNIX AND NOT APPLE)
-    define_property(-DLINUX)
+	add_definitions(-DLINUX)
 endif()
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
