@@ -2,6 +2,7 @@
 #define SYNCFILE_H_GUARD
 
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <mutex>
 #include <string>
