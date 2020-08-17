@@ -8,6 +8,7 @@
 #include "TH2D.h"
 #include "TLine.h"
 #include "TMath.h"
+#include "TROOT.h"
 #include "TStyle.h"
 
 #define NUM_SECTORS 6

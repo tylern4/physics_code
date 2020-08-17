@@ -15,7 +15,7 @@
 
 class Reaction {
  protected:
-  double _beam_energy = E1D_E0;
+  double _beam_energy = NAN;
   std::shared_ptr<LorentzVector> _beam;  // = physics::fourVec(0.0, 0.0, _beam_energy, MASS_E);
   std::shared_ptr<LorentzVector> _target = physics::fourVec(0.0, 0.0, 0.0, MASS_P);
   std::shared_ptr<LorentzVector> _gamma = physics::fourVec(0, 0, 0, 0);
@@ -211,6 +211,7 @@ class MCReaction : public Reaction {
 
  public:
   MCReaction(std::shared_ptr<Branches> data);
+  MCReaction(std::shared_ptr<Branches> data, const double beam_energy);
   inline float W_thrown() { return _W_thrown; }
   inline float Q2_thrown() { return _Q2_thrown; }
 

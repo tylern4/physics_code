@@ -25,7 +25,7 @@ Reaction::Reaction(const std::shared_ptr<Branches>& data, const double beam_ener
   _W = physics::W_calc(*_gamma);
   _Q2 = physics::Q2_calc(*_gamma);
   _xb = physics::xb_calc(*_gamma);
-};
+}
 
 Reaction::Reaction(const std::shared_ptr<Branches>& data, const double beam_energy,
                    const std::shared_ptr<MomCorr>& mom_corr)
@@ -43,7 +43,7 @@ Reaction::Reaction(const std::shared_ptr<Branches>& data, const double beam_ener
   _W = physics::W_calc(*_gamma);
   _Q2 = physics::Q2_calc(*_gamma);
   _xb = physics::xb_calc(*_gamma);
-};
+}
 
 Reaction::~Reaction() = default;
 
@@ -85,49 +85,6 @@ void Reaction::calc_cc_angles() {
   _cc_theta = acosf(p0_vec.Z() / p0_vec.Mag());
   _cc_phi = atanf(p0_vec.Y() / p0_vec.X());
 }
-
-/*
-void Reaction::correct_mom() {
-  for (int i = 0; i < 6; i++)
-    for (int ii = 0; ii < 16; ii++) par[i][ii] = 0.0;
-  float torus = 1.0;
-  float phi = _elec->Phi() * RAD2DEG;
-
-  // transforming phi: [-30,270] -> [-30,30]
-  if (phi < -30.) phi = phi + 360.;
-  phi = ((phi + 30.) / 60. - (int(phi + 30.)) / 60) * 60. - 30.;
-  phi = phi * DEG2RAD;
-
-  float factor = _elec->Theta() / (sin(4. * _elec->Theta()) * sin(4. * _elec->Theta()));
-  if (_elec->Theta() * RAD2DEG >= 22.5) factor = _elec->Theta();
-
-  float theta = _elec->Theta();
-
-  float dtheta = (par[_sector - 1][0] + par[_sector - 1][1] * phi) * cos(theta) / cos(phi) +
-                 (par[_sector - 1][2] + par[_sector - 1][3] * phi) * sin(theta) +
-                 par[_sector - 1][14] * cos(theta) * cos(theta) / cos(phi);
-
-  // new corrected theta
-  theta += dtheta;
-
-  float term = (par[_sector - 1][4] + par[_sector - 1][5] * phi) * cos(theta) / cos(phi) +
-               (par[_sector - 1][6] + par[_sector - 1][7] * phi) * sin(theta) +
-               par[_sector - 1][15] * cos(theta) * cos(theta) / cos(phi);
-
-  term *= _elec->P() * 3375. / (_data->q(0) * torus * 2250.) * factor;
-  float dmom =
-      term + par[_sector - 1][8] * cos(theta) + par[_sector - 1][9] * sin(theta) +
-      par[_sector - 1][10] * sin(2. * theta) +
-      (par[_sector - 1][11] * cos(theta) + par[_sector - 1][12] * sin(theta) + par[_sector - 1][13] * sin(2. * theta)) *
-          phi;
-  // new corrected momentum
-  float p_cor = _elec->P() * (1. + dmom);
-  phi = _elec->Phi();
-
-  //_elec->SetPxPyPzE(p_cor * cos(phi) * sin(theta), p_cor * sin(phi) * sin(theta), p_cor * cos(theta), sqrt(p_cor *
-  // p_cor + MASS_E * MASS_E));
-}
-*/
 
 void Reaction::SetProton(int i) {
   _numProt++;
@@ -377,7 +334,9 @@ void Reaction::_boost_p() {
   _phi_star = physics::phi_boosted(_temp);
 }
 
-MCReaction::MCReaction(std::shared_ptr<Branches> data) : Reaction(data) {
+MCReaction::MCReaction(std::shared_ptr<Branches> data) : MCReaction(data, E1D_E0) {}
+
+MCReaction::MCReaction(std::shared_ptr<Branches> data, const double beam_energy) : Reaction(data, beam_energy) {
   _elec_thrown = physics::fourVec(_data->pxpart(0), _data->pypart(0), _data->pzpart(0), MASS_E);
   _gamma_thrown = std::make_shared<LorentzVector>(*_beam - *_elec_thrown);
   _W_thrown = physics::W_calc(*_gamma_thrown);

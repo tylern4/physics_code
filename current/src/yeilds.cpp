@@ -19,15 +19,6 @@ Yeilds::~Yeilds() {
 void Yeilds::OpenFile(std::string output_file_name) { csv_output.open(output_file_name); }
 
 void Yeilds::WriteHeader() {
-  csv_output << "electron_sector,w,q2,theta,phi,mm2,e_p,e_cx,e_cy,e_cz,pip_p,pip_cx,pip_cy,pip_cz,helicty" << std::endl;
+  csv_output << "electron_sector,w,q2,theta,phi,mm2,e_p,e_cx,e_cy,e_cz,pip_p,pip_cx,pip_cy,pip_cz,helicty,type"
+             << std::endl;
 }
-
-// int Yeilds::Run(std::vector<std::string> fin) {
-//   std::cout.imbue(std::locale(""));
-//   int total = 0;
-//   int f = 0;
-//   for (f = 0; f < fin.size(); f++) {
-//     total += Run(fin.at(f));
-//   }
-//   return total;
-// }

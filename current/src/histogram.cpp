@@ -783,7 +783,7 @@ void Histogram::Fill_deltat_kp(float momentum, float delta_t) { delta_t_mass_kp-
 void Histogram::Fill_deltat_kp_PID(float momentum, float delta_t) { delta_t_mass_kp_PID->Fill(momentum, delta_t); }
 
 void Histogram::delta_t_slice_fit() {
-  // ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
 
   TF1 *peak = new TF1("peak", "gaus", -1, 1);
   // TF1 *peak = new TF1("peak", func::peak, -1, 1, 3);

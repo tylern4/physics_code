@@ -66,9 +66,6 @@ class Cuts {
   bool Pimish(int part);
   bool Protish(int part);
 
-  double sf_top_fit(double P);
-  double sf_bot_fit(double P);
-  bool sf_cut(double sf, double P);
   bool dt_P_cut(int i);
   bool dt_K_cut(int i);
   bool dt_Pip_cut(int i);
@@ -82,6 +79,9 @@ class e1d_Cuts : public Cuts {
   e1d_Cuts(const std::shared_ptr<Branches>& data, const std::shared_ptr<Delta_T>& dt) : Cuts(data, dt){};
   bool isElecctron();
   bool Beam_cut();
+  double sf_top_fit(double P);
+  double sf_bot_fit(double P);
+  bool sf_cut(double sf, double P);
 };
 
 class e1f_Cuts : public Cuts {
@@ -90,6 +90,9 @@ class e1f_Cuts : public Cuts {
   e1f_Cuts(const std::shared_ptr<Branches>& data, const std::shared_ptr<Delta_T>& dt) : Cuts(data, dt){};
   bool isElecctron();
   bool Beam_cut();
+  double sf_top_fit(double P);
+  double sf_bot_fit(double P);
+  bool sf_cut(double sf, double P);
 };
 
 #endif

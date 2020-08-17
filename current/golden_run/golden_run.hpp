@@ -23,8 +23,12 @@ std::string golden_run(const std::vector<std::string>& fins) {
 
   for (auto& fin : fins) {
     line_num++;
-    run_num = fin.substr(fin.find("/h10") + 6, 5);
-    file_num = fin.substr(fin.find("/h10") + 12, 2);
+    // run_num = fin.substr(fin.find("/h10") + 6, 5);
+    // file_num = fin.substr(fin.find("/h10") + 12, 2);
+
+    run_num = fin.substr(fin.find("run") + 4, 5);
+    file_num = fin.substr(fin.find("pass1") + 7, 2);
+
     auto chain = std::make_shared<TChain>("h10");
     chain->Add(fin.c_str());
     auto data = std::make_shared<Branches>(chain);

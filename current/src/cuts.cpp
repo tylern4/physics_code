@@ -16,6 +16,7 @@ void Cuts::Set_elec_fid() {
   _theta = physics::theta_calc(_data->cz(0));
   _phi = physics::phi_calc(_data->cx(0), _data->cy(0));
   _sec = _data->dc_sect(0);
+
   //_phi_cent = _phi + phi_center[_sec];
 
   switch (_sec) {
@@ -67,6 +68,7 @@ bool Cuts::isElecctron() {
   _elec &= (_data->gpart() < 5);
   if (!_elec) return false;
   _elec &= (_data->q(0) == NEGATIVE);
+
   _elec &= (_data->ec(0) > 0);
   _elec &= (_data->cc(0) > 0);
   _elec &= (_data->stat(0) > 0);  // First Particle stat
@@ -75,8 +77,6 @@ bool Cuts::isElecctron() {
   _elec &= (_data->dc_stat(0) > 0);
   //_elec &= _data->nphe(0) < 20;
 
-  // Sampling fraction cut
-  _elec &= sf_cut(_data->etot(0) / _data->p(0), _data->p(0));
   // Cut out low ec inner
   _elec &= (_data->ec_ei(0) >= 0.05);
   // Minimum momentum cut
@@ -89,6 +89,8 @@ bool e1d_Cuts::isElecctron() {
   bool _elec = true;
   _elec &= Cuts::isElecctron();
   _elec &= e1d_Cuts::Beam_cut();
+  // Sampling fraction cut
+  _elec &= e1d_Cuts::sf_cut(_data->etot(0) / _data->p(0), _data->p(0));
   if (!_elec) return _elec;
   // Fid Cuts
   _elec &= fid_chern_cut();
@@ -102,6 +104,7 @@ bool e1f_Cuts::isElecctron() {
   bool _elec = true;
   _elec &= Cuts::isElecctron();
   _elec &= e1f_Cuts::Beam_cut();
+  _elec &= e1f_Cuts::sf_cut(_data->etot(0) / _data->p(0), _data->p(0));
   if (!_elec) return _elec;
   // Fid Cuts
   _elec &= fid_chern_cut();
@@ -215,19 +218,44 @@ bool Cuts::isStrictElecctron() {
   return _elec;
 }
 
-double Cuts::sf_top_fit(double P) {
+double e1d_Cuts::sf_top_fit(double P) {
   double par[3] = {0.368209, 0.000961273, 4.8e-07};
   // double par[3] = {0.3269, 0.000336, 7.731e-7};
   double x[1] = {P};
   return func::ec_fit_func(x, par);
 }
-double Cuts::sf_bot_fit(double P) {
+double e1d_Cuts::sf_bot_fit(double P) {
   double par[3] = {0.162189, 0.0134756, -2e-05};
   // double par[3] = {0.1787, 0.02032, -2.726e-6};
   double x[1] = {P};
   return func::ec_fit_func(x, par);
 }
-bool Cuts::sf_cut(double sf, double P) { return ((sf > sf_bot_fit(P)) && (sf < sf_top_fit(P))); }
+bool e1d_Cuts::sf_cut(double sf, double P) {
+  return ((sf > e1d_Cuts::sf_bot_fit(P)) && (sf < e1d_Cuts::sf_top_fit(P)));
+}
+
+double e1f_Cuts::sf_top_fit(double P) {
+  /*
+    double par[3] = {0.368209, 0.000961273, 4.8e-07};
+    // double par[3] = {0.3269, 0.000336, 7.731e-7};
+    double x[1] = {P};
+    return func::ec_fit_func(x, par);
+  */
+  return true;
+}
+double e1f_Cuts::sf_bot_fit(double P) {
+  /*
+    double par[3] = {0.162189, 0.0134756, -2e-05};
+    // double par[3] = {0.1787, 0.02032, -2.726e-6};
+    double x[1] = {P};
+    return func::ec_fit_func(x, par);
+  */
+
+  return true;
+}
+bool e1f_Cuts::sf_cut(double sf, double P) {
+  return ((sf > e1f_Cuts::sf_bot_fit(P)) && (sf < e1f_Cuts::sf_top_fit(P)));
+}
 
 bool Cuts::dt_P_cut(int i) {
   float dt = _dt->Get_dt_P(i);

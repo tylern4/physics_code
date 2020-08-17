@@ -13,17 +13,8 @@
 #include "constants.hpp"
 #include "datahandeler.hpp"
 #include "glob_files.hpp"
+#include "main.h"
 #include "physics.hpp"
-
-size_t run_file(std::vector<std::string> in, std::shared_ptr<mcHistogram> hists,
-                const std::shared_ptr<MomCorr>& mom_corr, int thread_id) {
-  auto dh = std::make_unique<mcHandeler>(in, hists, mom_corr);
-  dh->setLoadBar(false);
-  if (thread_id == 0) dh->setLoadBar(true);
-  size_t tot = 0;
-  tot += dh->Run<e1d_Cuts>();
-  return tot;
-}
 
 int main(int argc, char** argv) {
   ROOT::EnableThreadSafety();
@@ -46,7 +37,7 @@ int main(int argc, char** argv) {
   std::future<size_t> t[NUM_THREADS];
 
   for (size_t i = 0; i < NUM_THREADS; i++) {
-    t[i] = std::async(run_file, infilenames.at(i), hist, mom_corr, i);
+    t[i] = std::async(run_e1d_file, infilenames.at(i), hist, mom_corr, i);
   }
   for (size_t i = 0; i < NUM_THREADS; i++) {
     events += t[i].get();

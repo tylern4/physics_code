@@ -45,25 +45,25 @@ int main(int argc, char **argv) {
   Yeilds *dh = new Yeilds(outputfile);
   dh->WriteHeader();
 
-#ifdef LINUX
-  std::for_each(std::execution::par, e1d_files.begin(), e1d_files.end(), [start, events, dh](auto &&f) mutable {
-#else
-  std::for_each(e1d_files.begin(), e1d_files.end(), [start, events, dh](auto &&f) mutable {
-#endif
-    events += dh->Run<e1d_Cuts>(f);
+  auto e1dworker = [start, events, dh](auto &&f) mutable {
+    events += dh->Run<e1d_Cuts>(f, "rec");
     std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
     std::cout << BOLDYELLOW << " " << events / elapsed_full.count() << " Hz\r\r" << DEF << std::flush;
-  });
+  };
 
-#ifdef LINUX
-  std::for_each(std::execution::par, e1f_files.begin(), e1f_files.end(), [start, events, dh](auto &&f) mutable {
-#else
-  std::for_each(e1f_files.begin(), e1f_files.end(), [start, events, dh](auto &&f) mutable {
-#endif
-    events += dh->Run<e1f_Cuts>(f);
+  auto e1fworker = [start, events, dh](auto &&f) mutable {
+    events += dh->Run<e1f_Cuts>(f, "rec");
     std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
     std::cout << BOLDYELLOW << " " << events / elapsed_full.count() << " Hz\r\r" << DEF << std::flush;
-  });
+  };
+
+#ifdef DOCKER
+  std::for_each(std::execution::par, e1d_files.begin(), e1d_files.end(), e1dworker);
+  std::for_each(std::execution::par, e1f_files.begin(), e1f_files.end(), e1fworker);
+#else
+  std::for_each(e1d_files.begin(), e1d_files.end(), e1dworker);
+  std::for_each(e1f_files.begin(), e1f_files.end(), e1fworker);
+#endif
 
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
   std::cout << RED << elapsed_full.count() << " sec" << DEF << std::endl;
