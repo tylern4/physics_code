@@ -9,13 +9,13 @@
 #include "clipp.h"
 #include "constants.hpp"
 #include "glob_files.hpp"
-#include "lz4xx.h"
 #include "physics.hpp"
 #include "yeilds.hpp"
 
 using namespace std;
 
 int main(int argc, char **argv) {
+  ROOT::EnableThreadSafety();
   std::string e1d_string = "";
   std::string e1f_string = "";
   std::string outputfile = "test.csv";
@@ -36,32 +36,39 @@ int main(int argc, char **argv) {
     exit(2);
   }
 
-  auto e1d_files = glob(e1d_string);
+  std::vector<std::string> e1d_files = glob(e1d_string);
+
   auto e1f_files = glob(e1f_string);
+  std::vector<std::vector<std::string>> infilenames(NUM_THREADS);
+  int i = 0;
+  for (auto &&f : e1d_files) {
+    infilenames[i++ % NUM_THREADS].push_back(f);
+  }
 
   auto start = std::chrono::high_resolution_clock::now();
   std::cout.imbue(std::locale(""));
+
+  size_t events = 0;
   auto csv_file = std::make_shared<SyncFile>(outputfile);
   auto dh = std::make_unique<Yeilds>(csv_file);
 
-  int events = 0;
-  auto e1dworker = [events, &dh](auto &&f) mutable {
-    events += dh->Run<e1d_Cuts>(f, "rec");
-    std::cout << "  " << events << "\r\r" << std::flush;
+  auto e1dworker = [&dh](auto &&fls) mutable {
+    size_t total = 0;
+    for (auto &&f : fls) {
+      total += dh->Run<e1d_Cuts>(f, "rec");
+      std::cout << "  " << total << "\r\r" << std::flush;
+    }
+    return total;
   };
 
-  auto e1fworker = [events, &dh](auto &&f) mutable {
-    events += dh->Run<e1f_Cuts>(f, "rec");
-    std::cout << "  " << events << "\r\r" << std::flush;
-  };
+  std::future<size_t> threads[NUM_THREADS];
+  for (size_t i = 0; i < NUM_THREADS; i++) {
+    threads[i] = std::async(e1dworker, infilenames.at(i));
+  }
 
-#ifdef DOCKER
-  std::for_each(std::execution::par, e1d_files.begin(), e1d_files.end(), e1dworker);
-  std::for_each(std::execution::par, e1f_files.begin(), e1f_files.end(), e1fworker);
-#else
-  std::for_each(e1d_files.begin(), e1d_files.end(), e1dworker);
-  std::for_each(e1f_files.begin(), e1f_files.end(), e1fworker);
-#endif
+  for (size_t i = 0; i < NUM_THREADS; i++) {
+    events += threads[i].get();
+  }
 
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
   std::cout << RED << elapsed_full.count() << " sec" << DEF << std::endl;

@@ -71,8 +71,6 @@ int main(int argc, char **argv) {
     events += threads[i].get();
   }
 
-  // std::for_each(e1d_files.begin(), e1d_files.end(), e1dworker);
-
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
   std::cout << RED << elapsed_full.count() << " sec" << DEF << std::endl;
   std::cout << BOLDYELLOW << "\n\n" << events / elapsed_full.count() << " Hz" << DEF << std::endl;
