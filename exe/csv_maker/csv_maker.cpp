@@ -49,10 +49,11 @@ int main(int argc, char **argv) {
   std::cout.imbue(std::locale(""));
 
   size_t events = 0;
-  auto csv_file = std::make_shared<SyncFile>(outputfile);
-  auto dh = std::make_unique<Yeilds>(csv_file);
 
-  auto e1dworker = [&dh](auto &&fls) mutable {
+  auto e1dworker = [&outputfile](auto &&fls, auto &&num) mutable {
+    std::string name = outputfile + "_" + to_string(num) + ".csv";
+    auto csv_file = std::make_shared<SyncFile>(name);
+    auto dh = std::make_unique<Yeilds>(csv_file);
     size_t total = 0;
     for (auto &&f : fls) {
       total += dh->Run<e1d_Cuts>(f, "rec");
@@ -63,7 +64,7 @@ int main(int argc, char **argv) {
 
   std::future<size_t> threads[NUM_THREADS];
   for (size_t i = 0; i < NUM_THREADS; i++) {
-    threads[i] = std::async(e1dworker, infilenames.at(i));
+    threads[i] = std::async(e1dworker, infilenames.at(i), i);
   }
 
   for (size_t i = 0; i < NUM_THREADS; i++) {

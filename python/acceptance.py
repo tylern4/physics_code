@@ -147,6 +147,10 @@ def draw_xsection(rec, mc_rec, thrown, func):
                         thrown_data.phi, bins=bins, range=(0, 2 * np.pi)
                     )
 
+                    # Change 0's to 1 for division
+                    thrown_y = np.where(thrown_y == 0, 1, thrown_y)
+                    mc_rec_y = np.where(mc_rec_y == 0, 1, mc_rec_y)
+
                     ax[0][0].errorbar(
                         x,
                         thrown_y,
@@ -185,7 +189,7 @@ def draw_xsection(rec, mc_rec, thrown, func):
                         label="acceptance",
                     )
 
-                    y = np.nan_to_num(data_y * (acceptance))
+                    y = data_y * np.nan_to_num(acceptance)
 
                     popt, pcov = curve_fit(func, x, y, maxfev=8000)
                     ax[1][1].errorbar(
@@ -200,9 +204,10 @@ def draw_xsection(rec, mc_rec, thrown, func):
                     )
 
                     plt.plot(xs, func(xs, *popt), c="#9467bd", linewidth=2.0)
+
                 fig.legend()
                 plt.savefig(
-                    f"plots/W[{w.left},{w.right}]_Q2[{q2.left},{q2.right}]_cos(theta)[{cos_t.left},{cos_t.right}].png"
+                    f"{out_folder}/W[{w.left},{w.right}]_Q2[{q2.left},{q2.right}]_cos(theta)[{cos_t.left},{cos_t.right}].png"
                 )
     pbar.close()
 
@@ -219,11 +224,20 @@ if __name__ == "__main__":
         help="Data csv file",
         required=True,
     )
+    parser.add_argument(
+        "--folder",
+        dest="out_folder",
+        type=str,
+        help="Folder for plots",
+        required=False,
+        default="plots",
+    )
 
     args = parser.parse_args()
 
     mc_data_file_path = args.mc_data_file_path
     rec_data_file_path = args.rec_data_file_path
+    out_folder = args.out_folder
 
     mc_df = pd.read_csv(mc_data_file_path, index_col=False, memory_map=True)
     mc_df = mc_df[(mc_df.w > 0) & (mc_df.mm2 > 0.5) & (mc_df.mm2 < 1.5)]
