@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
-import root_pandas as rp
 import pandas as pd
 from tqdm import tqdm
 from scipy.special import erfc
