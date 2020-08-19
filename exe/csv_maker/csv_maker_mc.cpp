@@ -19,6 +19,7 @@ int main(int argc, char **argv) {
   std::string e1d_string = "";
   std::string e1f_string = "";
   std::string outputfile = "test_mc.csv";
+  size_t num_cut = 0;
   bool print_help = false;
   std::vector<std::vector<std::string>> infilenames_e1d(NUM_THREADS);
   std::vector<std::vector<std::string>> infilenames_e1f(NUM_THREADS);
@@ -26,6 +27,7 @@ int main(int argc, char **argv) {
   auto cli = (clipp::option("-h", "--help").set(print_help) % "print help",
               clipp::option("-e1d") & clipp::value("e1d input file path", e1d_string),
               clipp::option("-e1f") & clipp::value("e1f input file path", e1f_string),
+              clipp::option("-cut") & clipp::value("Cut the number of files", num_cut),
               clipp::option("-o") & clipp::value("output filename", outputfile));
 
   if (!clipp::parse(argc, argv, cli)) {
@@ -37,22 +39,24 @@ int main(int argc, char **argv) {
   }
 
   std::vector<std::string> e1d_files = glob(e1d_string);
+  if (num_cut == 0) num_cut = e1d_files.size();
 
   auto e1f_files = glob(e1f_string);
   std::vector<std::vector<std::string>> infilenames(NUM_THREADS);
   int i = 0;
   for (auto &&f : e1d_files) {
-    infilenames[i++ % NUM_THREADS].push_back(f);
+    if (i <= num_cut) infilenames[i++ % NUM_THREADS].push_back(f);
   }
 
   auto start = std::chrono::high_resolution_clock::now();
   std::cout.imbue(std::locale(""));
 
   size_t events = 0;
-  auto csv_file = std::make_shared<SyncFile>(outputfile);
-  auto dh = std::make_unique<mcYeilds>(csv_file);
 
-  auto e1dworker = [&dh](auto &&fls) mutable {
+  auto e1dworker = [&outputfile](auto &&fls, auto &&num) mutable {
+    std::string name = outputfile + "_" + to_string(num) + ".csv";
+    auto csv_file = std::make_shared<SyncFile>(name);
+    auto dh = std::make_unique<mcYeilds>(csv_file);
     size_t total = 0;
     for (auto &&f : fls) {
       total += dh->RunMC<e1d_Cuts>(f);
@@ -64,7 +68,7 @@ int main(int argc, char **argv) {
 
   std::future<size_t> threads[NUM_THREADS];
   for (size_t i = 0; i < NUM_THREADS; i++) {
-    threads[i] = std::async(e1dworker, infilenames.at(i));
+    threads[i] = std::async(e1dworker, infilenames.at(i), i);
   }
 
   for (size_t i = 0; i < NUM_THREADS; i++) {
