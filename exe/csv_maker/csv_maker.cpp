@@ -27,22 +27,26 @@ int main(int argc, char **argv) {
               clipp::option("-e1d") & clipp::value("e1d input file path", e1d_string),
               clipp::option("-e1f") & clipp::value("e1f input file path", e1f_string),
               clipp::option("-o") & clipp::value("output filename", outputfile));
-
-  if (!clipp::parse(argc, argv, cli)) {
+  auto good_args = clipp::parse(argc, argv, cli);
+  if (!good_args) {
     std::cout << clipp::make_man_page(cli, argv[0]);
     exit(2);
-  } else if ((!(e1d_string == "") && !(e1f_string == ""))) {
+  } else if ((e1d_string == "") && (e1f_string == "")) {
     std::cout << clipp::make_man_page(cli, argv[0]);
     exit(2);
   }
 
   std::vector<std::string> e1d_files = glob(e1d_string);
+  std::vector<std::string> e1f_files = glob(e1f_string);
 
-  auto e1f_files = glob(e1f_string);
-  std::vector<std::vector<std::string>> infilenames(NUM_THREADS);
   int i = 0;
   for (auto &&f : e1d_files) {
-    infilenames[i++ % NUM_THREADS].push_back(f);
+    infilenames_e1d[i++ % NUM_THREADS].push_back(f);
+  }
+
+  i = 0;
+  for (auto &&f : e1f_files) {
+    infilenames_e1f[i++ % NUM_THREADS].push_back(f);
   }
 
   auto start = std::chrono::high_resolution_clock::now();
@@ -51,7 +55,7 @@ int main(int argc, char **argv) {
   size_t events = 0;
 
   auto e1dworker = [&outputfile](auto &&fls, auto &&num) mutable {
-    std::string name = outputfile + "_" + to_string(num) + ".csv";
+    std::string name = outputfile + "_" + to_string(num) + "_e1d.csv";
     auto csv_file = std::make_shared<SyncFile>(name);
     auto dh = std::make_unique<Yeilds>(csv_file);
     size_t total = 0;
@@ -62,13 +66,34 @@ int main(int argc, char **argv) {
     return total;
   };
 
+  auto e1fworker = [&outputfile](auto &&fls, auto &&num) mutable {
+    std::string name = outputfile + "_" + to_string(num) + "_e1f.csv";
+    auto csv_file = std::make_shared<SyncFile>(name);
+    auto dh = std::make_unique<Yeilds>(csv_file);
+    size_t total = 0;
+    for (auto &&f : fls) {
+      total += dh->Run<e1f_Cuts>(f, "rec");
+      std::cout << "  " << total << "\r\r" << std::flush;
+    }
+    return total;
+  };
+
   std::future<size_t> threads[NUM_THREADS];
   for (size_t i = 0; i < NUM_THREADS; i++) {
-    threads[i] = std::async(e1dworker, infilenames.at(i), i);
+    threads[i] = std::async(e1dworker, infilenames_e1d.at(i), i);
   }
 
   for (size_t i = 0; i < NUM_THREADS; i++) {
     events += threads[i].get();
+  }
+
+  std::future<size_t> threads_e1f[NUM_THREADS];
+  for (size_t i = 0; i < NUM_THREADS; i++) {
+    threads_e1f[i] = std::async(e1fworker, infilenames_e1f.at(i), i);
+  }
+
+  for (size_t i = 0; i < NUM_THREADS; i++) {
+    events += threads_e1f[i].get();
   }
 
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);

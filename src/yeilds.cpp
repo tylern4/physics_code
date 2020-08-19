@@ -8,7 +8,7 @@
 Yeilds::Yeilds() {}
 
 Yeilds::Yeilds(std::shared_ptr<SyncFile> multi_threaded_csv) : _multi_threaded_csv(multi_threaded_csv) {
-  _multi_threaded_csv->write(Header());
+  // _multi_threaded_csv->write(Header());
 }
 
 Yeilds::Yeilds(std::string output_file_name, bool isRoot = true) {

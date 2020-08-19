@@ -39,13 +39,19 @@ int main(int argc, char **argv) {
   }
 
   std::vector<std::string> e1d_files = glob(e1d_string);
+  std::vector<std::string> e1f_files = glob(e1f_string);
   if (num_cut == 0) num_cut = e1d_files.size();
+  if (num_cut == 0) num_cut = e1f_files.size();
+  if (num_cut == 0) exit(4);
 
-  auto e1f_files = glob(e1f_string);
-  std::vector<std::vector<std::string>> infilenames(NUM_THREADS);
   int i = 0;
   for (auto &&f : e1d_files) {
-    if (i <= num_cut) infilenames[i++ % NUM_THREADS].push_back(f);
+    if (i <= num_cut) infilenames_e1d[i++ % NUM_THREADS].push_back(f);
+  }
+
+  i = 0;
+  for (auto &&f : e1f_files) {
+    if (i <= num_cut) infilenames_e1f[i++ % NUM_THREADS].push_back(f);
   }
 
   auto start = std::chrono::high_resolution_clock::now();
@@ -66,13 +72,22 @@ int main(int argc, char **argv) {
     return total;
   };
 
-  std::future<size_t> threads[NUM_THREADS];
+  std::future<size_t> threads_e1d[NUM_THREADS];
   for (size_t i = 0; i < NUM_THREADS; i++) {
-    threads[i] = std::async(e1dworker, infilenames.at(i), i);
+    threads_e1d[i] = std::async(e1dworker, infilenames_e1d.at(i), i);
   }
 
   for (size_t i = 0; i < NUM_THREADS; i++) {
-    events += threads[i].get();
+    events += threads_e1d[i].get();
+  }
+
+  std::future<size_t> threads_e1f[NUM_THREADS];
+  for (size_t i = 0; i < NUM_THREADS; i++) {
+    threads_e1f[i] = std::async(e1dworker, infilenames_e1f.at(i), i);
+  }
+
+  for (size_t i = 0; i < NUM_THREADS; i++) {
+    events += threads_e1f[i].get();
   }
 
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
