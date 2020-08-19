@@ -49,3 +49,6 @@ current/cython/h10.cpp
 current/cmake-build-debug
 *.png
 current/crossSection/experimental_data
+
+python/analysisNotebooks
+
