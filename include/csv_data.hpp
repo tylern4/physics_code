@@ -16,15 +16,16 @@ struct csv_data {
   size_t hash;
 
   friend std::ostream &operator<<(std::ostream &os, const csv_data &d) {
+    os << std::setprecision(6);
     os << d.electron_sector << ",";
     os << d.w << ",";
     os << d.q2 << ",";
     os << d.theta << ",";
     os << d.phi << ",";
     os << d.mm2 << ",";
-    os << d.helicty << ",";
+    os << std::to_string(d.helicty) << ",";
     os << d.type << ",";
-    os << d.hash;
+    os << std::hex << d.hash;
     return os;
   }
 };
