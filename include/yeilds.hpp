@@ -35,12 +35,14 @@ class Yeilds {
   std::shared_ptr<TNtuple> ntuple = nullptr;
   std::shared_ptr<TFile> Rootout = nullptr;
   std::shared_ptr<SyncFile> _multi_threaded_csv;
+  std::shared_ptr<MomCorr> _mom_corr;
   std::vector<std::string> input_files;
   double _beam_energy = E1D_E0;
 
  public:
   Yeilds();
   Yeilds(std::shared_ptr<SyncFile> multi_threaded_csv);
+  Yeilds(std::shared_ptr<SyncFile> multi_threaded_csv, std::shared_ptr<MomCorr> mom_corr);
   Yeilds(std::string output_file_name, bool isRoot);
   ~Yeilds();
   void WriteData(const csv_data& toWrite);
@@ -58,7 +60,7 @@ class Yeilds {
     for (int current_event = 0; current_event < num_of_events; current_event++) {
       chain->GetEntry(current_event);
       auto check = std::make_unique<CutType>(data);
-      auto event = std::make_shared<Reaction>(data, _beam_energy);
+      auto event = std::make_shared<Reaction>(data, _beam_energy, _mom_corr);
       int pip_num = 0;
       for (int part_num = 1; part_num < data->gpart(); part_num++) {
         if (check->Pip(part_num)) {
@@ -154,6 +156,8 @@ class mcYeilds : public Yeilds {
   mcYeilds() : Yeilds(){};
   mcYeilds(std::shared_ptr<SyncFile> multi_threaded_csv) : Yeilds(multi_threaded_csv){};
   mcYeilds(std::string output_file_name, bool isRoot) : Yeilds(output_file_name, isRoot){};
+  mcYeilds(std::shared_ptr<SyncFile> multi_threaded_csv, std::shared_ptr<MomCorr> mom_corr)
+      : Yeilds(multi_threaded_csv, mom_corr){};
 
   template <class CutType>
   int RunMC(std::string root_file) {

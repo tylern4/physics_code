@@ -237,12 +237,40 @@ if __name__ == "__main__":
     rec_data_file_path = args.rec_data_file_path
     out_folder = args.out_folder
 
-    mc_df = pd.read_csv(mc_data_file_path, index_col=False, memory_map=True)
+    names = [
+        "electron_sector",
+        "w",
+        "q2",
+        "theta",
+        "phi",
+        "mm2",
+        "helicty",
+        "type",
+        "hash",
+    ]
+    dtype = {
+        "electron_sector": "int8",
+        "helicty": "int8",
+        "w": "float32",
+        "q2": "float32",
+        "theta": "float32",
+        "phi": "float32",
+        "mm2": "float32",
+        "type": "category",
+    }
+
+    mc_df = pd.read_csv(
+        mc_data_file_path, names=names, dtype=dtype, index_col=False, low_memory=True
+    )
     mc_df = mc_df[(mc_df.w > 0) & (mc_df.mm2 > 0.5) & (mc_df.mm2 < 1.5)]
     mc_df["cos_theta"] = np.cos(mc_df.theta)
 
+    print(mc_df.info(verbose=False, memory_usage="deep"))
     mc_rec = mc_df[mc_df.type == "mc_rec"]
     mc_thrown = mc_df[mc_df.type == "thrown"]
+
+    print(mc_df.info(verbose=False, memory_usage="deep"))
+    del mc_df
 
     mc_rec = mc_rec.merge(
         mc_thrown, left_on="hash", right_on="hash", suffixes=("", "_thrown")
@@ -254,9 +282,15 @@ if __name__ == "__main__":
     )
     mc_thrown.drop(["type", "hash"], axis=1, inplace=True)
 
-    rec = pd.read_csv(rec_data_file_path, index_col=False, memory_map=True)
+    rec = pd.read_csv(
+        rec_data_file_path, names=names, dtype=dtype, index_col=False, low_memory=True
+    )
     rec = rec[(rec.w > 0) & (rec.mm2 > 0.5) & (rec.mm2 < 1.5)]
     rec["cos_theta"] = np.cos(rec.theta)
+
+    print(mc_rec.info(verbose=False, memory_usage="deep"))
+    print(mc_thrown.info(verbose=False, memory_usage="deep"))
+    print(rec.info(verbose=False, memory_usage="deep"))
 
     sector_cuts = mm_cut(rec)
 

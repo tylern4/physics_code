@@ -7,9 +7,9 @@
 
 Yeilds::Yeilds() {}
 
-Yeilds::Yeilds(std::shared_ptr<SyncFile> multi_threaded_csv) : _multi_threaded_csv(multi_threaded_csv) {
-  // _multi_threaded_csv->write(Header());
-}
+Yeilds::Yeilds(std::shared_ptr<SyncFile> multi_threaded_csv) : _multi_threaded_csv(multi_threaded_csv) {}
+Yeilds::Yeilds(std::shared_ptr<SyncFile> multi_threaded_csv, std::shared_ptr<MomCorr> mom_corr)
+    : _multi_threaded_csv(multi_threaded_csv), _mom_corr(mom_corr) {}
 
 Yeilds::Yeilds(std::string output_file_name, bool isRoot = true) {
   Rootout = std::make_shared<TFile>(output_file_name.c_str(), "RECREATE");
