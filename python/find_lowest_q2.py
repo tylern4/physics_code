@@ -1,11 +1,13 @@
+#!/usr/bin/env python
+
 import ROOT
 from ROOT import TLorentzVector
 import uproot
 import numpy as np
 import matplotlib.pyplot as plt
-import awkward1 as ak
 from tqdm import tqdm
-
+import sys
+from multiprocessing import Pool
 from glob import glob
 
 ME = 0.00051099895
@@ -37,10 +39,15 @@ def get_min_q2(file_name):
         _q2 = q2_calc(_px[0], _py[0], _pz[0])
         min_q2 = np.minimum(_q2, min_q2)
     if min_q2 >= 1.3:
-        print(min_q2, file_name)
+        print(min_q2)
+        print(file_name)
+
+    return
 
 
-files = glob("/Users/tylern/Data/e1d/sim/*.root")
-files = np.sort(files)
-for file_name in tqdm(files):
-    get_min_q2(file_name)
+if __name__ == "__main__":
+    files = glob(sys.argv[2])
+
+    with Pool(int(sys.argv[1])) as p:
+        r = list(tqdm(p.imap(get_min_q2, files), total=len(files)))
+

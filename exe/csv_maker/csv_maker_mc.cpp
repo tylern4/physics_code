@@ -30,10 +30,11 @@ int main(int argc, char **argv) {
               clipp::option("-cut") & clipp::value("Cut the number of files", num_cut),
               clipp::option("-o") & clipp::value("output filename", outputfile));
 
-  if (!clipp::parse(argc, argv, cli)) {
+  auto good_args = clipp::parse(argc, argv, cli);
+  if (!good_args) {
     std::cout << clipp::make_man_page(cli, argv[0]);
     exit(2);
-  } else if ((!(e1d_string == "") && !(e1f_string == ""))) {
+  } else if ((e1d_string == "") && (e1f_string == "")) {
     std::cout << clipp::make_man_page(cli, argv[0]);
     exit(2);
   }
