@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 import matplotlib.pyplot as plt
+import matplotlib
+
+matplotlib.use("agg")
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
