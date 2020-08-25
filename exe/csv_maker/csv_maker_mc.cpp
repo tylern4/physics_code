@@ -60,12 +60,10 @@ int main(int argc, char **argv) {
 
   size_t events = 0;
 
-  auto mom_corr = std::make_shared<MomCorr>();
-
-  auto e1dworker = [mom_corr, &outputfile](auto &&fls, auto &&num) mutable {
+  auto e1dworker = [&outputfile](auto &&fls, auto &&num) mutable {
     std::string name = outputfile + "_" + to_string(num) + "_e1d.csv";
     auto csv_file = std::make_shared<SyncFile>(name);
-    auto dh = std::make_unique<mcYeilds>(csv_file, mom_corr);
+    auto dh = std::make_unique<mcYeilds>(csv_file);
     size_t total = 0;
     for (auto &&f : fls) {
       total += dh->RunMC<e1d_Cuts>(f);
@@ -75,10 +73,10 @@ int main(int argc, char **argv) {
     return total;
   };
 
-  auto e1fworker = [mom_corr, &outputfile](auto &&fls, auto &&num) mutable {
+  auto e1fworker = [&outputfile](auto &&fls, auto &&num) mutable {
     std::string name = outputfile + "_" + to_string(num) + "_e1f.csv";
     auto csv_file = std::make_shared<SyncFile>(name);
-    auto dh = std::make_unique<mcYeilds>(csv_file, mom_corr);
+    auto dh = std::make_unique<mcYeilds>(csv_file);
     size_t total = 0;
     for (auto &&f : fls) {
       total += dh->RunMC<e1f_Cuts>(f);
