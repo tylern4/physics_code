@@ -104,7 +104,7 @@ bool e1f_Cuts::isElecctron() {
   bool _elec = true;
   _elec &= Cuts::isElecctron();
   _elec &= e1f_Cuts::Beam_cut();
-  _elec &= e1f_Cuts::sf_cut(_data->etot(0) / _data->p(0), _data->p(0));
+  //_elec &= e1f_Cuts::sf_cut(_data->etot(0) / _data->p(0), _data->p(0));
   if (!_elec) return _elec;
   // Fid Cuts
   _elec &= fid_chern_cut();

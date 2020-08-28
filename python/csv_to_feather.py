@@ -3,6 +3,7 @@
 import pandas as pd
 
 import sys
+import time
 
 if len(sys.argv) <= 1:
     exit(1)
@@ -21,8 +22,16 @@ dtype = {
     "mm2": "float32",
     "type": "category",
 }
+
+start = time.time()
 df = pd.read_csv(file_name, names=names, index_col=False, dtype=dtype)
+stop = time.time()
+print(f"read time: {stop - start}")
 
 output_name = file_name[:-3] + "feather"
 print(output_name)
+
+start = time.time()
 df.to_feather(output_name)
+stop = time.time()
+print(f"write time: {stop - start}")

@@ -45,6 +45,7 @@ set(PROGRAMS
       exe/momentumCorrections/momemtumCorrections.cpp
       exe/peakFitMomCorr/peakFitMomCorr.cpp
       exe/deltaTFitter/deltaTFitter.cpp
+      exe/deltaTFitter/deltaTFitter_e1f.cpp
       )
     
 foreach(prog ${PROGRAMS} )
