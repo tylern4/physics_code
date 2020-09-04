@@ -38,6 +38,7 @@ set(PROGRAMS
       exe/monteCarlo/analysis_mc.cpp 
       exe/skim/e1d_skim.cpp 
       exe/skim/e1f_skim.cpp 
+      exe/skim/skim_one_sanity.cpp
       exe/csv_maker/csv_maker.cpp 
       exe/csv_maker/csv_maker_mc.cpp 
       exe/ntuple_maker/ntuple_maker.cpp
