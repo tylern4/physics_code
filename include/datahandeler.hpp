@@ -177,8 +177,12 @@ class mcHandeler : public DataHandeler {
     for (size_t current_event = 0; current_event < num_of_events; current_event++) {
       if (_loadbar && current_event % 10000 == 0) DataHandeler::loadbar(current_event, num_of_events);
       DataHandeler::RunEvent<CutType>(current_event);
+    }
+    for (size_t current_event = 0; current_event < num_of_events; current_event++) {
+      if (_loadbar && current_event % 10000 == 0) DataHandeler::loadbar(current_event, num_of_events);
       mcHandeler::RunEvent<CutType>(current_event);
     }
+
     _chain->Reset();
     return num_of_events;
   }

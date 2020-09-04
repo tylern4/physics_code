@@ -62,6 +62,22 @@ float Cuts::hardon_fid_phi(int part) {
   return NAN;
 }
 
+bool Cuts::Sanity() {
+  bool _elec = true;
+  _elec &= (_data->gpart() > 0);  // Number of good particles is greater than 0
+  _elec &= (_data->gpart() < 5);
+  if (!_elec) return false;
+  _elec &= (_data->q(0) == NEGATIVE);
+  _elec &= (_data->ec(0) > 0);
+  _elec &= (_data->cc(0) > 0);
+  _elec &= (_data->stat(0) > 0);  // First Particle stat
+  _elec &= (_data->sc(0) > 0);
+  _elec &= (_data->dc(0) > 0);
+  _elec &= (_data->dc_stat(0) > 0);
+
+  return _elec;
+}
+
 bool Cuts::isElecctron() {
   bool _elec = true;
   _elec &= (_data->gpart() > 0);  // Number of good particles is greater than 0
@@ -235,21 +251,16 @@ bool e1d_Cuts::sf_cut(double sf, double P) {
 }
 
 double e1f_Cuts::sf_top_fit(double P) {
-  /*
-    double par[3] = {0.368209, 0.000961273, 4.8e-07};
-    // double par[3] = {0.3269, 0.000336, 7.731e-7};
-    double x[1] = {P};
-    return func::ec_fit_func(x, par);
-  */
+  double par[3] = {0.405, 0.007693, 4.993e-07};
+  double x[1] = {P};
+  return func::ec_fit_func(x, par);
+
   return true;
 }
 double e1f_Cuts::sf_bot_fit(double P) {
-  /*
-    double par[3] = {0.162189, 0.0134756, -2e-05};
-    // double par[3] = {0.1787, 0.02032, -2.726e-6};
-    double x[1] = {P};
-    return func::ec_fit_func(x, par);
-  */
+  double par[3] = {0.1272, 0.04403, -1.998e-05};
+  double x[1] = {P};
+  return func::ec_fit_func(x, par);
 
   return true;
 }

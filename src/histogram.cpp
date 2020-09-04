@@ -1419,7 +1419,7 @@ void Histogram::EC_slice_fit() {
   if (EC_sampling_fraction_cut->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
   // Header *fit_functions = new Header("EC_fit_functions.hpp", "FF");
 
-  TF1 *peak = new TF1("peak", "gaus", 0.2, 0.4);
+  TF1 *peak = new TF1("peak", "gaus", 0.1, 0.5);
   EC_sampling_fraction_cut->FitSlicesY(peak, 0, -1, 0, "QRG5");
   TH1D *EC_sampling_fraction_cut_0 = (TH1D *)gDirectory->Get("EC_sampling_fraction_cut_0");
   TH1D *EC_sampling_fraction_cut_1 = (TH1D *)gDirectory->Get("EC_sampling_fraction_cut_1");
@@ -1434,10 +1434,10 @@ void Histogram::EC_slice_fit() {
       x[num] = (float)EC_sampling_fraction_cut_1->GetBinCenter(i);
       // mean + 3sigma
       y_plus[num] = (float)EC_sampling_fraction_cut_1->GetBinContent(i) +
-                    3.0 * (float)EC_sampling_fraction_cut_2->GetBinContent(i);
+                    4.0 * (float)EC_sampling_fraction_cut_2->GetBinContent(i);
       // mean - 3simga
       y_minus[num] = (float)EC_sampling_fraction_cut_1->GetBinContent(i) -
-                     3.0 * (float)EC_sampling_fraction_cut_2->GetBinContent(i);
+                     4.0 * (float)EC_sampling_fraction_cut_2->GetBinContent(i);
       num++;
     }
   }
@@ -1465,8 +1465,8 @@ void Histogram::EC_slice_fit() {
 
   TCanvas *EC_canvas = new TCanvas("EC_canvas", "EC canvas", 1280, 720);
   EC_canvas->cd();
-  // EC_sampling_fraction_cut->Draw();
-  EC_sampling_fraction->Draw();
+  EC_sampling_fraction_cut->Draw();
+  // EC_sampling_fraction->Draw();
   EC_P_fit->Draw("same");
   // std::cout << "EC_P_fit " << EC_P_fit->GetParameter(0) << "," << EC_P_fit->GetParameter(1) << ","
   //          << EC_P_fit->GetParameter(2) << std::endl;

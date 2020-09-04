@@ -44,11 +44,13 @@ class Cuts {
   Cuts(const std::shared_ptr<Branches>& data);
   Cuts(const std::shared_ptr<Branches>& data, const std::shared_ptr<Delta_T>& dt);
   ~Cuts();
+  bool Sanity();
   void Set_elec_fid();
   bool isElecctron();
   bool isStrictElecctron();
   bool Fid_cut();
   bool Beam_cut();
+
   const std::shared_ptr<Delta_T>& share_dt() { return _dt; }
 
   bool Electron_fid_arjun();

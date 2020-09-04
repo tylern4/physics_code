@@ -26,12 +26,10 @@ class Skim {
     int num_of_events = (int)_chain->GetEntries();
     std::shared_ptr<TTree> skim(_chain->CloneTree(0));
     auto data = std::make_shared<Branches>(_chain);
-    int total = 0;
     for (int current_event = 0; current_event < num_of_events; current_event++) {
       _chain->GetEntry(current_event);
       auto check = std::make_unique<CutType>(data);
-      if (check->isElecctron()) {
-        total++;
+      if (check->Sanity()) {
         skim->Fill();
       }
     }

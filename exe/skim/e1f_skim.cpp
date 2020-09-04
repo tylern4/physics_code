@@ -79,7 +79,7 @@ int main(int argc, char** argv) {
 
   std::vector<std::string> inputs;
   if (argc > 2) {
-    for (int i = 2; i < argc; i++) inputs.push_back(argv[i]);
+    for (int i = 1; i < argc; i++) inputs.push_back(argv[i]);
   }
   auto file_names = getFileNames(inputs);
 
@@ -110,6 +110,18 @@ int main(int argc, char** argv) {
     }
   }
 
+  for (size_t i = 0; i < number_of_threads; i++) {
+    if (threads[i].valid()) {
+      auto f = threads[i].get();
+      std::cout << Form("%s/skim/%s_%d.root", f.folder.c_str(), "e1f_skim", f.run_num) << std::endl;
+      auto outFile =
+          std::make_unique<TFile>(Form("%s/skim/%s_%d.root", f.folder.c_str(), "e1f_skim", f.run_num), "RECREATE");
+      outFile->cd();
+      f.tree->Write();
+      outFile->Write();
+      outFile->Close();
+    }
+  }
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
   std::cout.imbue(std::locale(""));
   std::cout << RED << elapsed_full.count() << " sec\t";

@@ -100,7 +100,6 @@ void LotsOfHists(const std::string &data_root, const std::string &mc_root) {
           func->SetParameters(par);
           for (int i = 0; i < 10; i++) All_hists[w][q2][theta]->Fit("func", "QMN");
           All_hists[w][q2][theta]->Fit("func", "QM+");
-          // All_hists[w][q2][theta]->Write();
         } else {
           delete All_hists[w][q2][theta];
         }
