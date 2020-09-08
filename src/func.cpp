@@ -180,3 +180,8 @@ bool func::fid_chern(float x, float y) {
   float P1 = -1.75;
   return (x > P0 + P1 * y && x > P0 - P1 * y);
 }
+
+float func::log_sqrt_pol1(std::vector<double> params, float p) {
+  float y = params[0] * log(params[1] * p) + params[2] * p * sqrt(params[3] * p) + params[4] * p + params[5];
+  return y;
+}

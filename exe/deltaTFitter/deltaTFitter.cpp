@@ -26,6 +26,7 @@ int main(int argc, char** argv) {
   }
   auto output_root = std::make_shared<TFile>("mm_for_dt.root", "RECREATE");
   auto mm_hist = std::make_shared<TH1D>("mm_for_dt", "mm_for_dt", 500, 0, 3);
+  auto mm_hist_cut = std::make_shared<TH1D>("mm_for_dt_cut", "mm_for_dt_cut", 500, 0, 3);
   output_root->cd();
   std::cout.imbue(std::locale(""));
 
@@ -43,19 +44,21 @@ int main(int argc, char** argv) {
   for (int current_event = 0; current_event < events; current_event++) {
     if (current_event % progress == 0) std::cout << "%" << std::flush;
     chain->GetEntry(current_event);
-    auto check = std::make_unique<Cuts>(data);
-    if (!check->isStrictElecctron()) continue;
-    if (!check->Fid_cut()) continue;
+    auto check = std::make_unique<e1d_Cuts>(data);
+    if (!check->isElecctron()) continue;
 
-    auto event = std::make_shared<Reaction>(data);
+    auto event = std::make_shared<Reaction>(data, E1D_E0);
 
     for (int part_num = 1; part_num < data->gpart(); part_num++) {
-      if (check->Protish(part_num)) {
-        event->SetProton(part_num);
+      if (check->Pipish(part_num)) {
+        event->SetPip(part_num);
       }
     }
-    if (event->elastic()) {
-      mm_hist->Fill(event->MM2());
+
+    mm_hist->Fill(event->MM2());
+
+    if (event->channel()) {
+      mm_hist_cut->Fill(event->MM2());
       auto dt = std::make_shared<Delta_T>(data);
       csv_output << *dt;
     }

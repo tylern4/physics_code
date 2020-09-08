@@ -46,6 +46,8 @@ double degauss(double *x, double *par);
 float dt_poly4(std::vector<double> params, float p);
 
 bool fid_chern(float x, float y);
+float log_sqrt_pol1(std::vector<double> params, float p);
+
 }  // namespace func
 
 #endif
