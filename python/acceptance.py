@@ -273,6 +273,7 @@ if __name__ == "__main__":
     mc_rec = mc_df[mc_df.type == "mc_rec"]
     mc_thrown = mc_df[mc_df.type == "thrown"]
 
+    print(f"mc_df:\n{mc_df.info(verbose=False, memory_usage='deep')} \n\n")
     del mc_df
 
     mc_rec = mc_rec.merge(
@@ -291,9 +292,9 @@ if __name__ == "__main__":
     rec = rec[(rec.w > 0) & (rec.mm2 > 0.5) & (rec.mm2 < 1.5)]
     rec["cos_theta"] = np.cos(rec.theta)
 
-    print("mc_rec:\n", mc_rec.info(verbose=False, memory_usage="deep"))
-    print("mc_thrown:\n", mc_thrown.info(verbose=False, memory_usage="deep"))
-    print("rec:\n", rec.info(verbose=False, memory_usage="deep"))
+    print(f"mc_rec:\n{mc_rec.info(verbose=False, memory_usage='deep')} \n\n")
+    print(f"mc_thrown:\n{mc_thrown.info(verbose=False, memory_usage='deep')} \n\n")
+    print(f"rec:\n{rec.info(verbose=False, memory_usage='deep')} \n\n")
 
     sector_cuts = mm_cut(rec)
 
