@@ -255,11 +255,11 @@ if __name__ == "__main__":
     dtype = {
         "electron_sector": "int8",
         "helicty": "int8",
-        "w": "float32",
-        "q2": "float32",
-        "theta": "float32",
-        "phi": "float32",
-        "mm2": "float32",
+        "w": "float16",
+        "q2": "float16",
+        "theta": "float16",
+        "phi": "float16",
+        "mm2": "float16",
         "type": "category",
     }
 
