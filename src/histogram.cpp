@@ -1076,16 +1076,16 @@ void Histogram::CC_Write() {
       for (int seg_i = 0; seg_i < segment; seg_i++) {
         cc_fits[sec_i][seg_i][pmt_i] = std::make_unique<Fits>();
 
-        cc_fits[sec_i][seg_i][pmt_i]->Set_lineColor(9);
-        cc_fits[sec_i][seg_i][pmt_i]->Set_min(0.0);
-        cc_fits[sec_i][seg_i][pmt_i]->Set_max(30.0);
-        cc_fits[sec_i][seg_i][pmt_i]->FitLandau(cc_hist[sec_i][seg_i][pmt_i].get());
+        // cc_fits[sec_i][seg_i][pmt_i]->Set_lineColor(9);
+        // cc_fits[sec_i][seg_i][pmt_i]->Set_min(0.0);
+        // cc_fits[sec_i][seg_i][pmt_i]->Set_max(30.0);
+        // cc_fits[sec_i][seg_i][pmt_i]->FitLandau(cc_hist[sec_i][seg_i][pmt_i].get());
 
-        cc_fits[sec_i][seg_i][pmt_i]->Set_lineColor(8);
-        cc_fits[sec_i][seg_i][pmt_i]->Set_min(30.0);
-        cc_fits[sec_i][seg_i][pmt_i]->Set_min(0.0);
-        cc_fits[sec_i][seg_i][pmt_i]->Set_max(250.0);
-        cc_fits[sec_i][seg_i][pmt_i]->FitGaus(cc_hist[sec_i][seg_i][pmt_i].get());
+        // cc_fits[sec_i][seg_i][pmt_i]->Set_lineColor(8);
+        // cc_fits[sec_i][seg_i][pmt_i]->Set_min(30.0);
+        // cc_fits[sec_i][seg_i][pmt_i]->Set_min(0.0);
+        // cc_fits[sec_i][seg_i][pmt_i]->Set_max(250.0);
+        // cc_fits[sec_i][seg_i][pmt_i]->FitGaus(cc_hist[sec_i][seg_i][pmt_i].get());
 
         cc_fits[sec_i][seg_i][pmt_i]->Set_lineColor(10);
         cc_fits[sec_i][seg_i][pmt_i]->FitLandauGaus(cc_hist[sec_i][seg_i][pmt_i].get());

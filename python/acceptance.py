@@ -292,9 +292,12 @@ if __name__ == "__main__":
     rec = rec[(rec.w > 0) & (rec.mm2 > 0.5) & (rec.mm2 < 1.5)]
     rec["cos_theta"] = np.cos(rec.theta)
 
-    print(f"mc_rec:\n{mc_rec.info(verbose=False, memory_usage='deep')} \n\n")
-    print(f"mc_thrown:\n{mc_thrown.info(verbose=False, memory_usage='deep')} \n\n")
-    print(f"rec:\n{rec.info(verbose=False, memory_usage='deep')} \n\n")
+    print(f"mc_rec:\n\n")
+    print(f"{mc_rec.info(verbose=True, memory_usage='deep')}")
+    print(f"mc_thrown:\n\n")
+    print(f"{mc_thrown.info(verbose=True, memory_usage='deep')}")
+    print(f"rec:\n\n")
+    print(f"{rec.info(verbose=True, memory_usage='deep')}")
 
     sector_cuts = mm_cut(rec)
 
@@ -325,7 +328,7 @@ if __name__ == "__main__":
     rec.head()
 
     w_bins = np.arange(1.2, 1.8, 0.025)
-    q2_bins = np.arange(1.0, 3.5, 0.5)
+    q2_bins = np.arange(1.0, 2.0, 0.5)
     theta_bins = np.arange(-1.0, 1.0, 0.25)
 
     mc_rec["w_bin"] = pd.cut(mc_rec["w"], bins=w_bins, include_lowest=True)

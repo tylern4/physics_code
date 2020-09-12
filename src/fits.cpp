@@ -63,15 +63,16 @@ TF1 *Fits::FitLandauGaus(TH1D *hist) {
   if (hist->GetEntries() > 1000) {
     double par[6];
 
-    TF1 *fitFuncGaus = new TF1("gaus", "gaus", 30.0, 250.0);
-    TF1 *fitFuncLandau = new TF1("landau", "landau", 0.0, 30.0);
+    TF1 *fitFuncGaus = new TF1("gaus", "gaus", 0.0, 250.0);
+    TF1 *fitFuncLandau = new TF1("landau", "landau", 0.0, 250.0);
     TF1 *total = new TF1("total", "landau(0)+gaus(3)", 0.0, 250.0);
 
     fitFuncLandau->SetLineColor(9);
     fitFuncLandau->SetParameter(0, 1);
     fitFuncLandau->SetParameter(1, 1);
     fitFuncLandau->SetParameter(2, 1);
-    hist->Fit("landau", "RQM+", "", 0.0, 30.0);
+    hist->Fit("landau", "QRM+", "", 0.0, 30.0);
+    fitFuncLandau->SetRange(0.0, 250.0);
 
     fitFuncGaus->SetLineColor(8);
     par_max = std::isnan(hist->GetMaximum()) ? 0 : hist->GetMaximum();
@@ -81,12 +82,13 @@ TF1 *Fits::FitLandauGaus(TH1D *hist) {
     fitFuncGaus->SetParameter(1, par_mean);
     fitFuncGaus->SetParameter(2, par_RMS);
     fitFuncGaus->SetParNames("constant", "mean", "#sigma");
-    hist->Fit("gaus", "RQM+", "", 30.0, 250.0);
+    hist->Fit("gaus", "QRM+", "", 30.0, 250.0);
+    fitFuncGaus->SetRange(0.0, 250.0);
 
     fitFuncLandau->GetParameters(&par[0]);
     fitFuncGaus->GetParameters(&par[3]);
     total->SetParameters(par);
-    hist->Fit(total, "RQM+", "", 0.0, 250.0);
+    hist->Fit(total, "QRM+", "", 0.0, 250.0);
 
     delete fitFuncGaus;
     delete fitFuncLandau;

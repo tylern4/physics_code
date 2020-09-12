@@ -220,7 +220,7 @@ Garys binning
   // Delta T
 
   // cc hist
-  int bins_CC = 100;
+  int bins_CC = 50;
   float CC_min = 0;
   float CC_max = 250;
   std::unordered_map<int, std::string> L_R_C = {{0, "both"}, {1, "right"}, {2, "left"}};

@@ -182,6 +182,6 @@ bool func::fid_chern(float x, float y) {
 }
 
 float func::log_sqrt_pol1(std::vector<double> params, float p) {
-  float y = params[0] * log(params[1] * p) + params[2] * p * sqrt(params[3] * p) + params[4] * p + params[5];
+  float y = params[0] * logf(params[1] * p) + params[2] * p * sqrtf(params[3] * p) + params[4] * p + params[5];
   return y;
 }
