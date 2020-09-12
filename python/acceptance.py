@@ -12,6 +12,7 @@ import argparse
 from scipy import stats
 from scipy.optimize import curve_fit
 import argparse
+import time
 
 import warnings
 
@@ -263,22 +264,30 @@ if __name__ == "__main__":
         "type": "category",
     }
 
+    start = time.time()
     mc_df = pd.read_csv(
         mc_data_file_path, names=names, dtype=dtype, index_col=False, low_memory=True
     )
+    stop = time.time()
+    print(f"read time: {stop - start}")
+
     mc_df = mc_df[(mc_df.w > 0) & (mc_df.mm2 > 0.5) & (mc_df.mm2 < 1.5)]
     mc_df["cos_theta"] = np.cos(mc_df.theta)
 
-    print("mc_def:\n", mc_df.info(verbose=False, memory_usage="deep"))
+    print("mc_def:\n", mc_df.info(verbose=True, memory_usage="deep"))
     mc_rec = mc_df[mc_df.type == "mc_rec"]
     mc_thrown = mc_df[mc_df.type == "thrown"]
 
-    print(f"mc_df:\n{mc_df.info(verbose=False, memory_usage='deep')} \n\n")
+    print(f"mc_df:\n{mc_df.info(verbose=True, memory_usage='deep')} \n\n")
     del mc_df
 
+    start = time.time()
     mc_rec = mc_rec.merge(
         mc_thrown, left_on="hash", right_on="hash", suffixes=("", "_thrown")
     )
+    stop = time.time()
+    print(f"read time: {stop - start}")
+
     mc_rec.drop(
         ["type", "hash", "type_thrown", "electron_sector_thrown", "helicty_thrown"],
         axis=1,
@@ -286,11 +295,15 @@ if __name__ == "__main__":
     )
     mc_thrown.drop(["type", "hash"], axis=1, inplace=True)
 
+    start = time.time()
     rec = pd.read_csv(
         rec_data_file_path, names=names, dtype=dtype, index_col=False, low_memory=True
     )
+    stop = time.time()
+    print(f"read time: {stop - start}")
+
     rec = rec[(rec.w > 0) & (rec.mm2 > 0.5) & (rec.mm2 < 1.5)]
-    rec["cos_theta"] = np.cos(rec.theta)
+    rec["cos_theta"] = np.cos(rec.theta).astype(np.float32)
 
     print(f"mc_rec:\n\n")
     print(f"{mc_rec.info(verbose=True, memory_usage='deep')}")
