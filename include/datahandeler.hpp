@@ -155,7 +155,7 @@ class mcHandeler : public DataHandeler {
 
   template <class CutType>
   void RunEvent(int current_event) {
-    _chain->GetEntry(current_event);
+    // _chain->GetEntry(current_event);
     _beam_energy = std::is_same<CutType, e1f_Cuts>::value ? E1F_E0 : E1D_E0;
     auto mc_event = std::make_shared<MCReaction>(_data, _beam_energy);
     _mc_hists->Fill_P(_data);
@@ -174,12 +174,10 @@ class mcHandeler : public DataHandeler {
   template <class CutType>
   int Run() {
     size_t num_of_events = (size_t)_chain->GetEntries();
+
     for (size_t current_event = 0; current_event < num_of_events; current_event++) {
       if (_loadbar && current_event % 10000 == 0) DataHandeler::loadbar(current_event, num_of_events);
       DataHandeler::RunEvent<CutType>(current_event);
-    }
-    for (size_t current_event = 0; current_event < num_of_events; current_event++) {
-      if (_loadbar && current_event % 10000 == 0) DataHandeler::loadbar(current_event, num_of_events);
       mcHandeler::RunEvent<CutType>(current_event);
     }
 

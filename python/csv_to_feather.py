@@ -21,6 +21,7 @@ dtype = {
     "phi": "float32",
     "mm2": "float32",
     "type": "category",
+    "hash": "float64",
 }
 
 start = time.time()

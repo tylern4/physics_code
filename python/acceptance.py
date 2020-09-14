@@ -97,12 +97,9 @@ def mm_cut(df):
         plt.axvline(popt[1] + NSIGMA * fwhm / 2.355, c="#9467bd")
         plt.axvline(popt[1] - NSIGMA * fwhm / 2.355, c="#9467bd")
 
-        data[sec] = (popt_g[1] + NSIGMA * popt_g[2], popt_g[1] - NSIGMA * popt_g[2])
+        plt.savefig(f"{out_folder}/MM2_cut_{sec}.png")
 
-        # print("{", end="")
-        # for x in popt_g:
-        #     print(f" {x:.20f},", end="")
-        # print("}")
+        data[sec] = (popt_g[1] + NSIGMA * popt_g[2], popt_g[1] - NSIGMA * popt_g[2])
 
     return data
 
@@ -245,16 +242,18 @@ if __name__ == "__main__":
     start = time.time()
     mc_df = pd.read_feather(mc_data_file_path)
     stop = time.time()
-    print(f"read time mc_df: {stop - start}")
+    print(f"\n\nread time mc_df: {stop - start}\n\n")
 
     mc_df = mc_df[(mc_df.w > 0) & (mc_df.mm2 > 0.5) & (mc_df.mm2 < 1.5)]
     mc_df["cos_theta"] = np.cos(mc_df.theta)
 
-    print("mc_def:\n", mc_df.info(verbose=True, memory_usage="deep"))
+    print("===========================\nmc_def:\n\n")
+    print(mc_df.info(verbose=True, memory_usage="deep"))
+    print(f"\n\n===========================")
+
     mc_rec = mc_df[mc_df.type == "mc_rec"]
     mc_thrown = mc_df[mc_df.type == "thrown"]
 
-    print(f"mc_df:\n{mc_df.info(verbose=True, memory_usage='deep')} \n\n")
     del mc_df
 
     start = time.time()
@@ -262,7 +261,7 @@ if __name__ == "__main__":
         mc_thrown, left_on="hash", right_on="hash", suffixes=("", "_thrown")
     )
     stop = time.time()
-    print(f"Merge time: {stop - start}")
+    print(f"\n\nMerge time: {stop - start}\n\n")
 
     mc_rec.drop(
         ["type", "hash", "type_thrown", "electron_sector_thrown", "helicty_thrown"],
@@ -274,17 +273,20 @@ if __name__ == "__main__":
     start = time.time()
     rec = pd.read_feather(rec_data_file_path)
     stop = time.time()
-    print(f"read time rec: {stop - start}")
-
+    print(f"\n\nread time rec: {stop - start}\n\n")
     rec = rec[(rec.w > 0) & (rec.mm2 > 0.5) & (rec.mm2 < 1.5)]
     rec["cos_theta"] = np.cos(rec.theta).astype(np.float32)
 
-    print(f"mc_rec:\n\n")
+    print(f"===========================\nmc_rec:\n\n")
     print(f"{mc_rec.info(verbose=True, memory_usage='deep')}")
-    print(f"mc_thrown:\n\n")
+    print(f"\n\n===========================")
+
+    print(f"===========================\nmc_thrown:\n\n")
     print(f"{mc_thrown.info(verbose=True, memory_usage='deep')}")
-    print(f"rec:\n\n")
+    print(f"\n\n===========================")
+    print(f"===========================\nrec:\n\n")
     print(f"{rec.info(verbose=True, memory_usage='deep')}")
+    print(f"\n\n===========================")
 
     sector_cuts = mm_cut(rec)
 
