@@ -15,6 +15,7 @@ import time
 import pyarrow as pa
 from pyarrow import csv
 from pyarrow import feather
+import boost_histogram as bh
 
 import warnings
 
@@ -78,7 +79,9 @@ def mm_cut(df):
     data = {}
     for sec in range(1, 7):
         plt.figure(figsize=(12, 9))
-        y, x = np.histogram(df[df.electron_sector == sec].mm2, bins=500, density=True)
+        y, x = bh.numpy.histogram(
+            df[df.electron_sector == sec].mm2, bins=500, density=True
+        )
         x = (x[1:] + x[:-1]) / 2
         popt_g, pcov_g = curve_fit(gauss, x, y, maxfev=8000)
         plt.plot(x, gauss(x, *popt_g), linewidth=2.0)
@@ -138,14 +141,14 @@ def draw_xsection(rec, mc_rec, thrown, func):
                 fig, ax = plt.subplots(2, 2, figsize=(12, 9))
                 fig.suptitle(f"W={w},\t$Q^2$={q2},\tcos($\Theta$)={cos_t}")
                 for bins in range(10, 11):
-                    data_y, data_x = np.histogram(
+                    data_y, data_x = bh.numpy.histogram(
                         data.phi, bins=bins, range=(0, 2 * np.pi)
                     )
                     x = (data_x[1:] + data_x[:-1]) / 2.0
-                    mc_rec_y, _ = np.histogram(
+                    mc_rec_y, _ = bh.numpy.histogram(
                         mc_rec_data.phi, bins=bins, range=(0, 2 * np.pi)
                     )
-                    thrown_y, _ = np.histogram(
+                    thrown_y, _ = bh.numpy.histogram(
                         thrown_data.phi, bins=bins, range=(0, 2 * np.pi)
                     )
 
