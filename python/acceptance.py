@@ -8,7 +8,6 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 from scipy.special import erfc
-import argparse
 from scipy import stats
 from scipy.optimize import curve_fit
 import argparse
@@ -237,7 +236,7 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-
+    total_time = time.start()
     mc_data_file_path = args.mc_data_file_path
     rec_data_file_path = args.rec_data_file_path
     out_folder = args.out_folder
@@ -344,4 +343,7 @@ if __name__ == "__main__":
     rec.dropna(inplace=True)
 
     draw_xsection(rec, mc_rec, mc_thrown, model)
+
+    stop = time.time()
+    print(f"\n\nFull Running time: {stop - total_time}\n\n")
 
