@@ -239,7 +239,7 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    total_time = time.start()
+    total_time = time.time()
     mc_data_file_path = args.mc_data_file_path
     rec_data_file_path = args.rec_data_file_path
     out_folder = args.out_folder
