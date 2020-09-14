@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
 import pandas as pd
+import pyarrow as pa
+from pyarrow import csv
+from pyarrow import feather
 
 import sys
 import time
@@ -20,12 +23,15 @@ dtype = {
     "theta": "float32",
     "phi": "float32",
     "mm2": "float32",
-    "type": "category",
-    "hash": "float64",
 }
 
 start = time.time()
-df = pd.read_csv(file_name, names=names, index_col=False, dtype=dtype)
+# df = pd.read_csv(file_name, names=names, index_col=False, dtype=dtype)
+pyTable = csv.read_csv(
+    file_name,
+    read_options=csv.ReadOptions(use_threads=True, column_names=names),
+    convert_options=csv.ConvertOptions(column_types=dtype),
+)
 stop = time.time()
 print(f"read time: {stop - start}")
 
@@ -33,6 +39,7 @@ output_name = file_name[:-3] + "feather"
 print(output_name)
 
 start = time.time()
-df.to_feather(output_name)
+# df.to_feather(output_name)
+feather.write_feather(pyTable.to_pandas(), output_name)
 stop = time.time()
 print(f"write time: {stop - start}")

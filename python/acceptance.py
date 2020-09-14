@@ -13,6 +13,9 @@ from scipy import stats
 from scipy.optimize import curve_fit
 import argparse
 import time
+import pyarrow as pa
+from pyarrow import csv
+from pyarrow import feather
 
 import warnings
 
@@ -240,7 +243,7 @@ if __name__ == "__main__":
     out_folder = args.out_folder
 
     start = time.time()
-    mc_df = pd.read_feather(mc_data_file_path)
+    mc_df = feather.read_feather(mc_data_file_path)
     stop = time.time()
     print(f"\n\nread time mc_df: {stop - start}\n\n")
 
@@ -271,7 +274,7 @@ if __name__ == "__main__":
     mc_thrown.drop(["type", "hash"], axis=1, inplace=True)
 
     start = time.time()
-    rec = pd.read_feather(rec_data_file_path)
+    rec = feather.read_feather(rec_data_file_path)
     stop = time.time()
     print(f"\n\nread time rec: {stop - start}\n\n")
     rec = rec[(rec.w > 0) & (rec.mm2 > 0.5) & (rec.mm2 < 1.5)]
