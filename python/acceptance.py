@@ -321,9 +321,9 @@ if __name__ == "__main__":
 
     rec.head()
 
-    w_bins = np.arange(1.2, 1.8, 0.025)
-    q2_bins = np.arange(1.0, 2.0, 0.5)
-    theta_bins = np.arange(-1.0, 1.0, 0.25)
+    w_bins = np.arange(1.2, 1.825, 0.025)
+    q2_bins = np.arange(1.0, 2.5, 0.5)
+    theta_bins = np.arange(-1.0, 1.25, 0.25)
 
     mc_rec["w_bin"] = pd.cut(mc_rec["w"], bins=w_bins, include_lowest=True)
     mc_rec["q2_bin"] = pd.cut(mc_rec["q2"], bins=q2_bins, include_lowest=True)
