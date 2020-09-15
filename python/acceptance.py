@@ -22,6 +22,39 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
+def read_csv(file_name):
+    names = [
+        "electron_sector",
+        "w",
+        "q2",
+        "theta",
+        "phi",
+        "mm2",
+        "helicty",
+        "type",
+        "hash",
+    ]
+    dtype = {
+        "electron_sector": "int8",
+        "helicty": "int8",
+        "w": "float32",
+        "q2": "float32",
+        "theta": "float32",
+        "phi": "float32",
+        "mm2": "float32",
+    }
+
+    start = time.time()
+    pyTable = csv.read_csv(
+        file_name,
+        read_options=csv.ReadOptions(use_threads=True, column_names=names),
+        convert_options=csv.ConvertOptions(column_types=dtype),
+    )
+    stop = time.time()
+    print(f"read_csv: {stop - start}")
+    return pyTable.to_pandas()
+
+
 def model(x, a, b, c):
     """
     a => sigma_l + sigma_t
@@ -245,7 +278,7 @@ if __name__ == "__main__":
     out_folder = args.out_folder
 
     start = time.time()
-    mc_df = feather.read_feather(mc_data_file_path)
+    mc_df = read_csv(mc_data_file_path)
     stop = time.time()
     print(f"\n\nread time mc_df: {stop - start}\n\n")
 

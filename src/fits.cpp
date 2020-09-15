@@ -459,13 +459,13 @@ TF1 *Fits::FitDeGauss(TH1D *hist) {
 
   total->SetParameters(40, 0.89, 0.01, 50, 20);
 
-  Double_t par[max_par];
-  for (size_t i = 0; i < 50; i++) hist->Fit(total, "RNQM+", "", min_value, max_value);  // Peak of N at 0.939
+  // Double_t par[max_par];
+  // for (size_t i = 0; i < 50; i++) hist->Fit(total, "QRNM+", "", min_value, max_value);  // Peak of N at 0.939
 
   hist->Fit(total, "RQM+");
 
-  // sigma = total->GetParameter("#Gamma_{N}") / (2 * sqrt(2 * log(2)));
-  // mean = total->GetParameter("#mu_{N}");
+  sigma = total->GetParameter("#Gamma_{N}") / (2 * sqrt(2 * log(2)));
+  mean = total->GetParameter("#mu_{N}");
 
   return total;
 }

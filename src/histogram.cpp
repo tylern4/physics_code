@@ -1235,11 +1235,11 @@ void Histogram::Fill_electron_fid(const std::shared_ptr<Branches> &_data, const 
 
 void Histogram::Fill_neutron_fid(float theta, float phi, int sector) {
   neutron_fid_hist->Fill(phi, theta);
-  // if (sector == 0 || sector > NUM_SECTORS) {
-  //  std::cerr << "Error filling electron fid = " << sector << std::endl;
-  //  return;
-  //}
-  // electron_fid_sec_hist[sector - 1]->Fill(phi, theta);
+  if (sector == 0 || sector > NUM_SECTORS) {
+    std::cerr << "Error filling electron fid = " << sector << std::endl;
+    return;
+  }
+  electron_fid_sec_hist[sector - 1]->Fill(phi, theta);
 }
 
 void Histogram::Fill_hadron_fid(float theta, float phi, int sector, int id) {

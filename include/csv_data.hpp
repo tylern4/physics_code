@@ -16,7 +16,7 @@ struct csv_data {
   size_t hash;
 
   friend std::ostream &operator<<(std::ostream &os, const csv_data &d) {
-    os << std::setprecision(4);
+    os << std::setprecision(6);
     os << d.electron_sector << ",";
     os << d.w << ",";
     os << d.q2 << ",";
