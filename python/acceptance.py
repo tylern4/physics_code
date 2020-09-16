@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-import matplotlib
 
-matplotlib.use("agg")
+# import matplotlib
+
+# matplotlib.use("agg")
 
 import matplotlib.pyplot as plt
 import numpy as np
