@@ -294,18 +294,22 @@ if __name__ == "__main__":
 
     del mc_df
 
-    start = time.time()
-    mc_rec = mc_rec.merge(
-        mc_thrown, left_on="hash", right_on="hash", suffixes=("", "_thrown")
-    )
-    stop = time.time()
-    print(f"\n\nMerge time: {stop - start}\n\n")
+    # start = time.time()
+    # mc_rec = mc_rec.merge(
+    #     mc_thrown, left_on="hash", right_on="hash", suffixes=("", "_thrown")
+    # )
+    # stop = time.time()
+    # print(f"\n\nMerge time: {stop - start}\n\n")
 
+    # mc_rec.drop(
+    #     ["type", "hash", "type_thrown", "electron_sector_thrown", "helicty_thrown"],
+    #     axis=1,
+    #     inplace=True,
+    # )
     mc_rec.drop(
-        ["type", "hash", "type_thrown", "electron_sector_thrown", "helicty_thrown"],
-        axis=1,
-        inplace=True,
+        ["type", "hash"], axis=1, inplace=True,
     )
+
     mc_thrown.drop(["type", "hash"], axis=1, inplace=True)
 
     start = time.time()
