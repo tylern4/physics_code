@@ -4,9 +4,7 @@ set(VERSION 1.0.0)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-# if(UNIX AND NOT APPLE)
-#     define_property(-DLINUX)
-# endif()
+add_subdirectory(${CMAKE_SOURCE_DIR}/external/aao_rad_lund)
 
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
@@ -102,3 +100,5 @@ foreach(exe ${EXAMPLES} )
     target_link_libraries(${exename} PUBLIC ${ROOT_LIBRARIES})
     install(TARGETS ${exename} EXPORT ${PROJECT_NAME}Targets RUNTIME DESTINATION bin)
 endforeach( exe ${EXAMPLES} )
+
+

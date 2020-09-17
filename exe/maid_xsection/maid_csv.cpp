@@ -25,10 +25,10 @@ int main() {
     for (int q = 0; q < q2_size; q++) {
       for (int c = 0; c < c_size; c++) {
         for (int p = 0; p < p_size; p++) {
-          // std::cout << W_bins[w] << ",";
-          // std::cout << Q2_bins[q] << ",";
-          // std::cout << cos_bins[c] << ",";
-          // std::cout << phi_bins[p] << ",";
+          std::cout << W_bins[w] << ",";
+          std::cout << Q2_bins[q] << ",";
+          std::cout << cos_bins[c] << ",";
+          std::cout << phi_bins[p] << ",";
           dsigma = maid_dsigma(  // beam_energy
               4.81726,
               // W
@@ -47,7 +47,7 @@ int main() {
               3,
               // resonance_opt
               0);
-          // std::cout << dsigma << "\n";
+          std::cout << dsigma << "\n";
         }
       }
     }

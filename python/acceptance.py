@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-# import matplotlib
+import matplotlib
 
-# matplotlib.use("agg")
+matplotlib.use("agg")
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -17,6 +17,7 @@ import pyarrow as pa
 from pyarrow import csv
 from pyarrow import feather
 import boost_histogram as bh
+import datetime
 
 import warnings
 
@@ -119,7 +120,7 @@ def mm_cut(df):
         x = (x[1:] + x[:-1]) / 2
         popt_g, pcov_g = curve_fit(gauss, x, y, maxfev=8000)
         plt.plot(x, gauss(x, *popt_g), linewidth=2.0)
-        plt.errorbar(x, y, yerr=np.sqrt(y.shape[0]) / y.shape[0], fmt=".", zorder=1)
+        plt.errorbar(x, y, yerr=stats.sem(y.shape[0]), fmt=".", zorder=1)
 
         plt.axvline(popt_g[1] + NSIGMA * popt_g[2])
         plt.axvline(popt_g[1] - NSIGMA * popt_g[2])
@@ -282,6 +283,7 @@ if __name__ == "__main__":
     mc_df = read_csv(mc_data_file_path)
     stop = time.time()
     print(f"\n\nread time mc_df: {stop - start}\n\n")
+    print(f"\n\ntime: {stop - total_time}\n\n")
 
     mc_df = mc_df[(mc_df.w > 0) & (mc_df.mm2 > 0.5) & (mc_df.mm2 < 1.5)]
     mc_df["cos_theta"] = np.cos(mc_df.theta)
@@ -294,6 +296,7 @@ if __name__ == "__main__":
     mc_thrown = mc_df[mc_df.type == "thrown"]
 
     del mc_df
+    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
 
     # start = time.time()
     # mc_rec = mc_rec.merge(
@@ -310,28 +313,31 @@ if __name__ == "__main__":
     mc_rec.drop(
         ["type", "hash"], axis=1, inplace=True,
     )
-
+    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
     mc_thrown.drop(["type", "hash"], axis=1, inplace=True)
-
+    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
     start = time.time()
     rec = feather.read_feather(rec_data_file_path)
     stop = time.time()
     print(f"\n\nread time rec: {stop - start}\n\n")
     rec = rec[(rec.w > 0) & (rec.mm2 > 0.5) & (rec.mm2 < 1.5)]
     rec["cos_theta"] = np.cos(rec.theta).astype(np.float32)
-
+    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
     print(f"===========================\nmc_rec:\n\n")
     print(f"{mc_rec.info(verbose=True, memory_usage='deep')}")
     print(f"\n\n===========================")
-
+    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
     print(f"===========================\nmc_thrown:\n\n")
     print(f"{mc_thrown.info(verbose=True, memory_usage='deep')}")
     print(f"\n\n===========================")
+    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
     print(f"===========================\nrec:\n\n")
     print(f"{rec.info(verbose=True, memory_usage='deep')}")
     print(f"\n\n===========================")
 
+    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
     sector_cuts = mm_cut(rec)
+    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
 
     cuts = False
     mc_cuts = False
@@ -347,17 +353,16 @@ if __name__ == "__main__":
             & (mc_rec.mm2 >= min_max[0])
             & (mc_rec.mm2 <= min_max[1])
         )
-
+    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
     rec = rec[cuts]
     mc_rec = mc_rec[mc_cuts]
-
+    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
     mc_rec = mc_rec[["w", "q2", "mm2", "cos_theta", "phi", "helicty"]].copy(deep=True)
     mc_thrown = mc_thrown[["w", "q2", "mm2", "cos_theta", "phi", "helicty"]].copy(
         deep=True
     )
     rec = rec[["w", "q2", "mm2", "cos_theta", "phi", "helicty"]].copy(deep=True)
-
-    rec.head()
+    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
 
     w_bins = np.arange(1.2, 1.825, 0.025)
     q2_bins = np.arange(1.0, 2.5, 0.5)
@@ -368,23 +373,29 @@ if __name__ == "__main__":
     mc_rec["theta_bin"] = pd.cut(
         mc_rec["cos_theta"], bins=theta_bins, include_lowest=True
     )
+    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
 
     mc_thrown["w_bin"] = pd.cut(mc_thrown["w"], bins=w_bins, include_lowest=True)
     mc_thrown["q2_bin"] = pd.cut(mc_thrown["q2"], bins=q2_bins, include_lowest=True)
     mc_thrown["theta_bin"] = pd.cut(
         mc_thrown["cos_theta"], bins=theta_bins, include_lowest=True
     )
+    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
 
     rec["w_bin"] = pd.cut(rec["w"], bins=w_bins, include_lowest=True)
     rec["q2_bin"] = pd.cut(rec["q2"], bins=q2_bins, include_lowest=True)
     rec["theta_bin"] = pd.cut(rec["cos_theta"], bins=theta_bins, include_lowest=True)
+    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
 
     mc_rec.dropna(inplace=True)
     mc_thrown.dropna(inplace=True)
     rec.dropna(inplace=True)
+    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
 
     draw_xsection(rec, mc_rec, mc_thrown, model)
+    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
 
     stop = time.time()
     print(f"\n\nFull Running time: {stop - total_time}\n\n")
+    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
 

@@ -606,7 +606,7 @@ void Histogram::Fill_Missing_Mass(const std::shared_ptr<Reaction> &event) {
   Missing_Mass_square->Fill(event->MM2());
   Missing_Mass_small->Fill(event->MM());
   if (event->sector() == 0 || event->sector() > NUM_SECTORS) {
-    std::cerr << "Error filling electron fid = " << event->sector() << std::endl;
+    // std::cerr << "Error filling electron fid = " << event->sector() << std::endl;
     return;
   }
   Missing_Mass_small_sec[event->sector() - 1]->Fill(event->MM());
@@ -1224,7 +1224,7 @@ void Histogram::Fill_electron_fid(const std::shared_ptr<Branches> &_data, const 
   electron_fid_hist->Fill(phi, theta);
   fid_xy_hist->Fill(_data->dc_ysc(0), _data->dc_xsc(0));
   if (sector == 0 || sector > NUM_SECTORS) {
-    std::cerr << "Error filling electron fid = " << sector << std::endl;
+    // std::cerr << "Error filling electron fid = " << sector << std::endl;
     return;
   }
 
@@ -1236,7 +1236,7 @@ void Histogram::Fill_electron_fid(const std::shared_ptr<Branches> &_data, const 
 void Histogram::Fill_neutron_fid(float theta, float phi, int sector) {
   neutron_fid_hist->Fill(phi, theta);
   if (sector == 0 || sector > NUM_SECTORS) {
-    std::cerr << "Error filling electron fid = " << sector << std::endl;
+    // std::cerr << "Error filling electron fid = " << sector << std::endl;
     return;
   }
   electron_fid_sec_hist[sector - 1]->Fill(phi, theta);

@@ -90,6 +90,12 @@ TF1 *Fits::FitLandauGaus(TH1D *hist) {
     total->SetParameters(par);
     hist->Fit(total, "QRM+", "", 0.0, 250.0);
 
+    TF1 *fitFinalGaus = new TF1("gaus_final", "gaus", 0.0, 250.0);
+    fitFinalGaus->SetLineColor(kBlack);
+    fitFinalGaus->SetParameters(&par[3]);
+    hist->Draw();
+    fitFinalGaus->Draw("SAME");
+
     delete fitFuncGaus;
     delete fitFuncLandau;
     return total;

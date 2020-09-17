@@ -1,3 +1,6 @@
 [submodule "external/lz4xx"]
 	path = external/lz4xx
 	url = https://github.com/thyu/lz4xx.git
+[submodule "external/aao_rad_lund"]
+	path = external/aao_rad_lund
+	url = https://github.com/tylern4/aao_rad_lund.git
