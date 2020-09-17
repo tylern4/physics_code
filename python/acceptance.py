@@ -52,9 +52,20 @@ def read_csv(file_name):
         read_options=csv.ReadOptions(use_threads=True, column_names=names),
         convert_options=csv.ConvertOptions(column_types=dtype),
     )
+    pyTable = pyTable.drop(["hash"])
+    df = pyTable.to_pandas(strings_to_categorical=True)
+
+    mc_rec = df[df.type == "mc_rec"]
+    thrown = df[df.type == "thrown"]
+    del df
+
     stop = time.time()
     print(f"read_csv: {stop - start}")
-    return pyTable.to_pandas()
+
+    return (
+        mc_rec,
+        thrown,
+    )
 
 
 def model(x, a, b, c):
@@ -280,22 +291,19 @@ if __name__ == "__main__":
     out_folder = args.out_folder
 
     start = time.time()
-    mc_df = read_csv(mc_data_file_path)
+    mc_rec, mc_thrown = read_csv(mc_data_file_path)
     stop = time.time()
     print(f"\n\nread time mc_df: {stop - start}\n\n")
     print(f"\n\ntime: {stop - total_time}\n\n")
 
-    mc_df = mc_df[(mc_df.w > 0) & (mc_df.mm2 > 0.5) & (mc_df.mm2 < 1.5)]
-    mc_df["cos_theta"] = np.cos(mc_df.theta)
+    mc_rec = mc_rec[(mc_rec.w > 0) & (mc_rec.mm2 > 0.5) & (mc_rec.mm2 < 1.5)]
+    mc_rec["cos_theta"] = np.cos(mc_rec.theta)
 
-    print("===========================\nmc_def:\n\n")
-    print(mc_df.info(verbose=True, memory_usage="deep"))
-    print(f"\n\n===========================")
+    mc_thrown = mc_thrown[
+        (mc_thrown.w > 0) & (mc_thrown.mm2 > 0.5) & (mc_thrown.mm2 < 1.5)
+    ]
+    mc_thrown["cos_theta"] = np.cos(mc_thrown.theta)
 
-    mc_rec = mc_df[mc_df.type == "mc_rec"]
-    mc_thrown = mc_df[mc_df.type == "thrown"]
-
-    del mc_df
     print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
 
     # start = time.time()
@@ -310,12 +318,12 @@ if __name__ == "__main__":
     #     axis=1,
     #     inplace=True,
     # )
-    mc_rec.drop(
-        ["type", "hash"], axis=1, inplace=True,
-    )
-    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
-    mc_thrown.drop(["type", "hash"], axis=1, inplace=True)
-    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
+    # mc_rec.drop(
+    #     ["type", "hash"], axis=1, inplace=True,
+    # )
+    # print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
+    # mc_thrown.drop(["type", "hash"], axis=1, inplace=True)
+    # print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
     start = time.time()
     rec = feather.read_feather(rec_data_file_path)
     stop = time.time()
