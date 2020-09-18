@@ -76,7 +76,7 @@ class Yeilds {
 
       event->boost();
 
-      if ((event->SinglePip() || event->NeutronPip()) && (event->MM2() >= 0.6 && event->MM2() <= 1.1)) {
+      if ((event->SinglePip() || event->NeutronPip()) && (event->MM2() >= 0.6 && event->MM2() <= 1.3)) {
         total++;
         csv_data csv_buffer;
         csv_buffer.electron_sector = data->dc_sect(0);
@@ -87,7 +87,7 @@ class Yeilds {
         csv_buffer.mm2 = event->MM2();
         csv_buffer.helicty = data->helicity();
         csv_buffer.type = type;
-        csv_buffer.hash = std::hash<std::string>{}(root_file + std::to_string(current_event));
+        csv_buffer.hash = "0";  // std::hash<std::string>{}(root_file + std::to_string(current_event));
         WriteData(csv_buffer);
       }
     }
@@ -186,7 +186,7 @@ class mcYeilds : public Yeilds {
         csv_buffer.mm2 = mc_event->MM2();
         csv_buffer.helicty = data->helicity();
         csv_buffer.type = "thrown";
-        csv_buffer.hash = std::hash<std::string>{}(root_file + std::to_string(current_event));
+        csv_buffer.hash = "0";  // std::hash<std::string>{}(root_file + std::to_string(current_event));
         WriteData(csv_buffer);
       }
     }
