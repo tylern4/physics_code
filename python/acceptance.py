@@ -23,6 +23,8 @@ import matplotlib.pyplot as plt
 
 warnings.filterwarnings("ignore")
 
+ENERGY = 4.81726
+
 
 def read_csv(file_name):
     names = [
@@ -224,7 +226,6 @@ def draw_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder):
             label="corrected",
         )
 
-        E1D_E0 = 4.81726
         phi_bins = np.linspace(0, 2 * np.pi, 200)
         crossSections = []
         phis = []
@@ -239,7 +240,7 @@ def draw_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder):
 
         for phi in phi_bins:
             crossSections.append(
-                maid(E1D_E0, _w, _q2, _cos_t, np.degrees(phi)))
+                maid(ENERGY, _w, _q2, _cos_t, np.degrees(phi)))
             phis.append(phi)
 
         _ax = ax[1][1].twinx()
@@ -317,8 +318,15 @@ if __name__ == "__main__":
         required=False,
         default="plots",
     )
+    parser.add_argument(
+        "--e1f",
+        action='store_true'
+    )
 
     args = parser.parse_args()
+    if args.e1f:
+        ENERGY = 5.479
+
     total_time = time.time()
     mc_data_file_path = args.mc_data_file_path
     rec_data_file_path = args.rec_data_file_path
