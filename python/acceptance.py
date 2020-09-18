@@ -255,7 +255,7 @@ def draw_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder):
 
 
 def draw_xsection(rec, mc_rec, thrown, func, out_folder):
-    executor = get_reusable_executor(max_workers=len(np.unique(rec.theta_bin)))
+    #executor = get_reusable_executor(max_workers=len(np.unique(rec.theta_bin)))
     total_num = (
         len(np.unique(rec.w_bin))
         * len(np.unique(rec.q2_bin))
