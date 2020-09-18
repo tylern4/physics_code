@@ -1,25 +1,25 @@
 #!/usr/bin/env python
 
-import matplotlib
-
-matplotlib.use("agg")
-
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-from tqdm import tqdm
-from scipy.special import erfc
-from scipy import stats
-from scipy.optimize import curve_fit
-import argparse
-import time
-import pyarrow as pa
-from pyarrow import csv
-from pyarrow import feather
-import boost_histogram as bh
-import datetime
+import matplotlib  # noqa
+matplotlib.use("agg")  # noqa
 
 import warnings
+#from loky import get_reusable_executor
+from maid_interface import maid_2007_Npi as maid
+import datetime
+import boost_histogram as bh
+from pyarrow import feather
+from pyarrow import csv
+import pyarrow as pa
+import time
+import argparse
+from scipy.optimize import curve_fit
+from scipy import stats
+from scipy.special import erfc
+from tqdm import tqdm
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 
 warnings.filterwarnings("ignore")
 
@@ -150,25 +150,126 @@ def mm_cut(df):
 
         plt.savefig(f"{out_folder}/MM2_cut_{sec}.png")
 
-        data[sec] = (popt_g[1] + NSIGMA * popt_g[2], popt_g[1] - NSIGMA * popt_g[2])
+        data[sec] = (popt_g[1] + NSIGMA * popt_g[2],
+                     popt_g[1] - NSIGMA * popt_g[2])
 
     return data
 
 
-def draw_xsection(rec, mc_rec, thrown, func):
-    xs = np.linspace(0, 2 * np.pi, 100)
+def draw_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder):
+    for bins in range(6, 13):
+        fig, ax = plt.subplots(2, 2, figsize=(12, 9))
+        fig.suptitle(
+            f"W={w},\t$Q^2$={q2},\tcos($\Theta$)={cos_t} {bins} bins in $\phi$"
+        )
+        xs = np.linspace(0, 2 * np.pi, 100)
+        data_y, data_x = bh.numpy.histogram(
+            data.phi, bins=bins, range=(0, 2 * np.pi))
+        x = (data_x[1:] + data_x[:-1]) / 2.0
+        mc_rec_y, _ = bh.numpy.histogram(
+            mc_rec_data.phi, bins=bins, range=(0, 2 * np.pi)
+        )
+        thrown_y, _ = bh.numpy.histogram(
+            thrown_data.phi, bins=bins, range=(0, 2 * np.pi)
+        )
+
+        # Change 0's to 1 for division
+        thrown_y = np.where(thrown_y == 0, 1, thrown_y)
+        mc_rec_y = np.where(mc_rec_y == 0, 1, mc_rec_y)
+
+        ax[0][0].errorbar(
+            x,
+            thrown_y,
+            marker=".",
+            yerr=stats.sem(thrown_y),
+            c="r",
+            linestyle="",
+            label="thrown",
+        )
+        ax[0][0].errorbar(
+            x,
+            mc_rec_y,
+            marker=".",
+            yerr=stats.sem(mc_rec_y),
+            c="orange",
+            linestyle="",
+            label="mc_rec",
+        )
+        ax[0][1].errorbar(
+            x, data_y, yerr=stats.sem(data_y), marker=".", linestyle="", label="data",
+        )
+
+        acceptance = thrown_y / mc_rec_y
+        ax[1][0].errorbar(
+            x,
+            acceptance,
+            yerr=stats.sem(acceptance),
+            marker=".",
+            c="g",
+            linestyle="",
+            label="acceptance",
+        )
+
+        y = data_y * np.nan_to_num(acceptance)
+
+        popt, pcov = curve_fit(func, x, y, maxfev=8000)
+        ax[1][1].errorbar(
+            x,
+            y,
+            yerr=stats.sem(y),
+            marker=".",
+            linestyle="",
+            c="k",
+            zorder=1,
+            label="corrected",
+        )
+
+        E1D_E0 = 4.81726
+        phi_bins = np.linspace(0, 2 * np.pi, 200)
+        crossSections = []
+        phis = []
+
+        _w = (w.left + w.right) / 2.0
+        _q2 = (q2.left + q2.right) / 2.0
+        _cos_t = (cos_t.left + cos_t.right) / 2.0
+
+        # _w = w.left
+        # _q2 = q2.left
+        # _cos_t = cos_t.left
+
+        for phi in phi_bins:
+            crossSections.append(
+                maid(E1D_E0, _w, _q2, _cos_t, np.degrees(phi)))
+            phis.append(phi)
+
+        _ax = ax[1][1].twinx()
+        _ax.plot(phis, crossSections, c='r',
+                 label='maid2007', linestyle='dotted')
+        ax[1][1].plot(xs, func(xs, *popt), c="#9467bd", linewidth=2.0)
+
+        fig.legend()
+
+        plt.savefig(
+            f"{out_folder}/W[{w.left},{w.right}]_Q2[{q2.left},{q2.right}]_cos(theta)[{cos_t.left},{cos_t.right}]_{bins}.png"
+        )
+
+
+def draw_xsection(rec, mc_rec, thrown, func, out_folder):
+    executor = get_reusable_executor(max_workers=len(np.unique(rec.theta_bin)))
     total_num = (
         len(np.unique(rec.w_bin))
         * len(np.unique(rec.q2_bin))
         * len(np.unique(rec.theta_bin))
     )
-    pbar = tqdm(total=total_num)
+    pbar = tqdm(total=total_num * 5)
+
     for w in np.unique(rec.w_bin):
         for q2 in np.unique(rec.q2_bin):
             for cos_t in np.unique(rec.theta_bin):
-                pbar.update(1)
+                pbar.update(5)
                 rec_cut = (
-                    (w == rec.w_bin) & (q2 == rec.q2_bin) & (cos_t == rec.theta_bin)
+                    (w == rec.w_bin) & (q2 == rec.q2_bin) & (
+                        cos_t == rec.theta_bin)
                 )
                 mc_rec_cut = (
                     (w == mc_rec.w_bin)
@@ -184,81 +285,14 @@ def draw_xsection(rec, mc_rec, thrown, func):
                 data = rec[rec_cut]
                 mc_rec_data = mc_rec[mc_rec_cut]
                 thrown_data = thrown[thrown_cut]
-                fig, ax = plt.subplots(2, 2, figsize=(12, 9))
-                fig.suptitle(f"W={w},\t$Q^2$={q2},\tcos($\Theta$)={cos_t}")
-                for bins in range(10, 11):
-                    data_y, data_x = bh.numpy.histogram(
-                        data.phi, bins=bins, range=(0, 2 * np.pi)
-                    )
-                    x = (data_x[1:] + data_x[:-1]) / 2.0
-                    mc_rec_y, _ = bh.numpy.histogram(
-                        mc_rec_data.phi, bins=bins, range=(0, 2 * np.pi)
-                    )
-                    thrown_y, _ = bh.numpy.histogram(
-                        thrown_data.phi, bins=bins, range=(0, 2 * np.pi)
-                    )
 
-                    # Change 0's to 1 for division
-                    thrown_y = np.where(thrown_y == 0, 1, thrown_y)
-                    mc_rec_y = np.where(mc_rec_y == 0, 1, mc_rec_y)
+                # results = executor.map(
+                #     draw_plots,
+                #     (func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder),
+                # )
 
-                    ax[0][0].errorbar(
-                        x,
-                        thrown_y,
-                        marker=".",
-                        yerr=stats.sem(thrown_y),
-                        c="r",
-                        linestyle="",
-                        label="thrown",
-                    )
-                    ax[0][0].errorbar(
-                        x,
-                        mc_rec_y,
-                        marker=".",
-                        yerr=stats.sem(mc_rec_y),
-                        c="orange",
-                        linestyle="",
-                        label="mc_rec",
-                    )
-                    ax[0][1].errorbar(
-                        x,
-                        data_y,
-                        yerr=stats.sem(data_y),
-                        marker=".",
-                        linestyle="",
-                        label="data",
-                    )
-
-                    acceptance = thrown_y / mc_rec_y
-                    ax[1][0].errorbar(
-                        x,
-                        acceptance,
-                        yerr=stats.sem(acceptance),
-                        marker=".",
-                        c="g",
-                        linestyle="",
-                        label="acceptance",
-                    )
-
-                    y = data_y * np.nan_to_num(acceptance)
-
-                    popt, pcov = curve_fit(func, x, y, maxfev=8000)
-                    ax[1][1].errorbar(
-                        x,
-                        y,
-                        yerr=stats.sem(y),
-                        marker=".",
-                        linestyle="",
-                        c="k",
-                        zorder=1,
-                        label="corrected",
-                    )
-
-                    plt.plot(xs, func(xs, *popt), c="#9467bd", linewidth=2.0)
-
-                fig.legend()
-                plt.savefig(
-                    f"{out_folder}/W[{w.left},{w.right}]_Q2[{q2.left},{q2.right}]_cos(theta)[{cos_t.left},{cos_t.right}].png"
+                draw_plots(
+                    func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder
                 )
     pbar.close()
 
@@ -304,48 +338,23 @@ if __name__ == "__main__":
     ]
     mc_thrown["cos_theta"] = np.cos(mc_thrown.theta)
 
-    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
-
-    # start = time.time()
-    # mc_rec = mc_rec.merge(
-    #     mc_thrown, left_on="hash", right_on="hash", suffixes=("", "_thrown")
-    # )
-    # stop = time.time()
-    # print(f"\n\nMerge time: {stop - start}\n\n")
-
-    # mc_rec.drop(
-    #     ["type", "hash", "type_thrown", "electron_sector_thrown", "helicty_thrown"],
-    #     axis=1,
-    #     inplace=True,
-    # )
-    # mc_rec.drop(
-    #     ["type", "hash"], axis=1, inplace=True,
-    # )
-    # print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
-    # mc_thrown.drop(["type", "hash"], axis=1, inplace=True)
-    # print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
     start = time.time()
     rec = feather.read_feather(rec_data_file_path)
     stop = time.time()
     print(f"\n\nread time rec: {stop - start}\n\n")
     rec = rec[(rec.w > 0) & (rec.mm2 > 0.5) & (rec.mm2 < 1.5)]
     rec["cos_theta"] = np.cos(rec.theta).astype(np.float32)
-    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
     print(f"===========================\nmc_rec:\n\n")
     print(f"{mc_rec.info(verbose=True, memory_usage='deep')}")
     print(f"\n\n===========================")
-    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
     print(f"===========================\nmc_thrown:\n\n")
     print(f"{mc_thrown.info(verbose=True, memory_usage='deep')}")
     print(f"\n\n===========================")
-    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
     print(f"===========================\nrec:\n\n")
     print(f"{rec.info(verbose=True, memory_usage='deep')}")
     print(f"\n\n===========================")
 
-    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
     sector_cuts = mm_cut(rec)
-    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
 
     cuts = False
     mc_cuts = False
@@ -361,16 +370,15 @@ if __name__ == "__main__":
             & (mc_rec.mm2 >= min_max[0])
             & (mc_rec.mm2 <= min_max[1])
         )
-    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
     rec = rec[cuts]
     mc_rec = mc_rec[mc_cuts]
-    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
-    mc_rec = mc_rec[["w", "q2", "mm2", "cos_theta", "phi", "helicty"]].copy(deep=True)
+    mc_rec = mc_rec[["w", "q2", "mm2", "cos_theta",
+                     "phi", "helicty"]].copy(deep=True)
     mc_thrown = mc_thrown[["w", "q2", "mm2", "cos_theta", "phi", "helicty"]].copy(
         deep=True
     )
-    rec = rec[["w", "q2", "mm2", "cos_theta", "phi", "helicty"]].copy(deep=True)
-    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
+    rec = rec[["w", "q2", "mm2", "cos_theta",
+               "phi", "helicty"]].copy(deep=True)
 
     w_bins = np.arange(1.2, 1.825, 0.025)
     q2_bins = np.arange(1.0, 2.5, 0.5)
@@ -381,29 +389,28 @@ if __name__ == "__main__":
     mc_rec["theta_bin"] = pd.cut(
         mc_rec["cos_theta"], bins=theta_bins, include_lowest=True
     )
-    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
 
-    mc_thrown["w_bin"] = pd.cut(mc_thrown["w"], bins=w_bins, include_lowest=True)
-    mc_thrown["q2_bin"] = pd.cut(mc_thrown["q2"], bins=q2_bins, include_lowest=True)
+    mc_thrown["w_bin"] = pd.cut(
+        mc_thrown["w"], bins=w_bins, include_lowest=True)
+    mc_thrown["q2_bin"] = pd.cut(
+        mc_thrown["q2"], bins=q2_bins, include_lowest=True)
     mc_thrown["theta_bin"] = pd.cut(
         mc_thrown["cos_theta"], bins=theta_bins, include_lowest=True
     )
-    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
 
     rec["w_bin"] = pd.cut(rec["w"], bins=w_bins, include_lowest=True)
     rec["q2_bin"] = pd.cut(rec["q2"], bins=q2_bins, include_lowest=True)
-    rec["theta_bin"] = pd.cut(rec["cos_theta"], bins=theta_bins, include_lowest=True)
-    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
+    rec["theta_bin"] = pd.cut(
+        rec["cos_theta"], bins=theta_bins, include_lowest=True)
 
     mc_rec.dropna(inplace=True)
     mc_thrown.dropna(inplace=True)
     rec.dropna(inplace=True)
-    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
 
-    draw_xsection(rec, mc_rec, mc_thrown, model)
-    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
+    draw_xsection(rec, mc_rec, mc_thrown, model, out_folder)
 
     stop = time.time()
     print(f"\n\nFull Running time: {stop - total_time}\n\n")
-    print(f"\n\ntime: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n")
-
+    print(
+        f"\n\nFull Running time: {datetime.timedelta(seconds=(time.time() - total_time))}\n\n"
+    )
