@@ -8,6 +8,7 @@ import warnings
 from maid_interface import maid_2007_Npi as maid
 import datetime
 import boost_histogram as bh
+import pyarrow
 from pyarrow import feather
 from pyarrow import csv
 import pyarrow as pa
@@ -328,6 +329,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if args.e1f:
         ENERGY = 5.479
+
+    pyarrow.set_cpu_count(8)
 
     total_time = time.time()
     mc_data_file_path = args.mc_data_file_path
