@@ -179,33 +179,35 @@ def draw_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder):
         thrown_y = np.where(thrown_y == 0, 1, thrown_y)
         mc_rec_y = np.where(mc_rec_y == 0, 1, mc_rec_y)
 
+        # stats.sem(thrown_y)
         ax[0][0].errorbar(
             x,
             thrown_y,
             marker=".",
-            yerr=stats.sem(thrown_y),
+            yerr=0,
             c="r",
             linestyle="",
             label="thrown",
         )
-        ax[0][0].errorbar(
+        _ax = ax[0][0].twinx()
+        _ax.errorbar(
             x,
             mc_rec_y,
             marker=".",
-            yerr=stats.sem(mc_rec_y),
+            yerr=0,
             c="orange",
             linestyle="",
             label="mc_rec",
         )
         ax[0][1].errorbar(
-            x, data_y, yerr=stats.sem(data_y), marker=".", linestyle="", label="data",
+            x, data_y, yerr=0, marker=".", linestyle="", label="data",
         )
 
         acceptance = thrown_y / mc_rec_y
         ax[1][0].errorbar(
             x,
             acceptance,
-            yerr=stats.sem(acceptance),
+            yerr=0,
             marker=".",
             c="g",
             linestyle="",
@@ -218,7 +220,7 @@ def draw_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder):
         ax[1][1].errorbar(
             x,
             y,
-            yerr=stats.sem(y),
+            yerr=0,
             marker=".",
             linestyle="",
             c="k",
