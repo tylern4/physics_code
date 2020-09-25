@@ -160,10 +160,10 @@ def mm_cut(df):
 
 
 def draw_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder):
-    for bins in range(6, 13):
+    for bins in range(10, 11):
         fig, ax = plt.subplots(2, 2, figsize=(12, 9))
         fig.suptitle(
-            f"W={w},\t$Q^2$={q2},\tcos($\Theta$)={cos_t} {bins} bins in $\phi$"
+            f"W={w},\t$Q^2$={q2},\tcos($\Theta$)={cos_t} {bins}\nbins in $\phi$"
         )
         xs = np.linspace(0, 2 * np.pi, 100)
         data_y, data_x = bh.numpy.histogram(
@@ -204,10 +204,10 @@ def draw_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder):
             x, data_y, yerr=0, marker=".", linestyle="", label="data",
         )
 
-        acceptance = thrown_y / mc_rec_y
+        acceptance = np.nan_to_num(thrown_y / mc_rec_y)
         ax[1][0].errorbar(
             x,
-            acceptance,
+            1/acceptance,
             yerr=0,
             marker=".",
             c="g",
@@ -215,7 +215,7 @@ def draw_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder):
             label="acceptance",
         )
 
-        y = data_y * np.nan_to_num(acceptance)
+        y = data_y * acceptance
 
         popt, pcov = curve_fit(func, x, y, maxfev=8000)
         ax[1][1].errorbar(
@@ -265,12 +265,12 @@ def draw_xsection(rec, mc_rec, thrown, func, out_folder):
         * len(np.unique(rec.q2_bin))
         * len(np.unique(rec.theta_bin))
     )
-    pbar = tqdm(total=total_num * 5)
+    pbar = tqdm(total=total_num)
 
     for w in np.unique(rec.w_bin):
         for q2 in np.unique(rec.q2_bin):
             for cos_t in np.unique(rec.theta_bin):
-                pbar.update(5)
+                pbar.update(1)
                 rec_cut = (
                     (w == rec.w_bin) & (q2 == rec.q2_bin) & (
                         cos_t == rec.theta_bin)
@@ -299,6 +299,32 @@ def draw_xsection(rec, mc_rec, thrown, func, out_folder):
                     func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder
                 )
     pbar.close()
+
+
+def draw_kinematics(rec, w_bins, q2_bins, theta_bins):
+    rec = rec.dropna()
+    fig, ax = plt.subplots(figsize=(12, 9))
+    ax.hist2d(rec.w.to_numpy(), rec.q2.to_numpy(),
+              bins=250, range=[[np.min(w_bins), np.max(w_bins)], [np.min(q2_bins), np.max(q2_bins)]])
+
+    for w in w_bins:
+        ax.axvline(w, c='w')
+    for q2 in q2_bins:
+        ax.axhline(q2, c='w')
+
+    plt.savefig(f"{out_folder}/W_vs_Q2.png")
+
+    fig1, ax1 = plt.subplots(figsize=(12, 9))
+
+    ax1.hist2d(rec.cos_theta.to_numpy(), rec.phi.to_numpy(), bins=250)
+
+    for t in theta_bins:
+        ax1.axvline(t, c='w')
+
+    for phi in np.linspace(0, 2*np.pi, 10):
+        ax1.axhline(phi, c='w')
+
+    plt.savefig(f"{out_folder}/theta_vs_phi.png")
 
 
 if __name__ == "__main__":
@@ -393,9 +419,16 @@ if __name__ == "__main__":
     rec = rec[["w", "q2", "mm2", "cos_theta",
                "phi", "helicty"]].copy(deep=True)
 
-    w_bins = np.arange(1.1, 1.82, 0.02)
-    q2_bins = np.arange(1.0, 2.7, 0.2)
-    theta_bins = np.arange(-1.0, 1.2, 0.2)
+    # Specifically put in bin edges
+    w_bins = np.array([1.1, 1.125, 1.15, 1.175, 1.2, 1.225, 1.25, 1.275, 1.3,
+                       1.325, 1.35, 1.375, 1.4, 1.425, 1.45, 1.475, 1.5, 1.525,
+                       1.55, 1.575, 1.6, 1.625, 1.65, 1.675, 1.7, 1.725, 1.75,
+                       1.775, 1.8])
+    q2_bins = np.array([1.0, 1.2, 1.4, 1.8, 2.2, 2.6, 3.0, 3.5])
+    theta_bins = np.array([-1.0, -0.8, -0.6, -0.4, -0.2,
+                           0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2])
+
+    draw_kinematics(rec, w_bins, q2_bins, theta_bins)
 
     mc_rec["w_bin"] = pd.cut(mc_rec["w"], bins=w_bins, include_lowest=True)
     mc_rec["q2_bin"] = pd.cut(mc_rec["q2"], bins=q2_bins, include_lowest=True)
