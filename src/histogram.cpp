@@ -1198,12 +1198,12 @@ void Histogram::makeHists_fid() {
   cerenkov_fid.reserve(6);
   fid_xy.reserve(6);
   electron_fid_sec_hist.reserve(6);
-  fid_xy_hist = std::make_shared<TH2D>(Form("fid_xy"), Form("fid_xy"), BINS, -200, 200, BINS, 0, 400);
+  fid_xy_hist = std::make_shared<TH2D>(Form("fid_xy"), Form("fid_xy"), BINS, -150, 150, BINS, 0, 300);
   for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
     cerenkov_fid[sec_i] = std::make_shared<TH2D>(Form("fid_cher_xy_%d", sec_i + 1), Form("fid_cher_xy_%d", sec_i + 1),
                                                  BINS, -150, 150, BINS, 0, 300);
-    fid_xy[sec_i] = std::make_shared<TH2D>(Form("fid_xy_%d", sec_i + 1), Form("fid_xy_%d", sec_i + 1), BINS, -200, 200,
-                                           BINS, 0, 400);
+    fid_xy[sec_i] = std::make_shared<TH2D>(Form("fid_xy_%d", sec_i + 1), Form("fid_xy_%d", sec_i + 1), BINS, -150, 150,
+                                           BINS, 0, 300);
 
     electron_fid_sec_hist[sec_i] =
         std::make_shared<TH2D>(Form("electron_fid_sec%d", sec_i + 1), Form("electron_fid_sec%d", sec_i + 1), BINS,
