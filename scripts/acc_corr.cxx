@@ -24,8 +24,8 @@ TCanvas *acc_corr(const std::string &data_root, const std::string &mc_root) {
 
   const int DIMENSIONS = ndHist->GetNdimensions();
   int nbins[DIMENSIONS];
-  double xmin[DIMENSIONS];
-  double xmax[DIMENSIONS];
+  float xmin[DIMENSIONS];
+  float xmax[DIMENSIONS];
   int bin[DIMENSIONS];
   for (int i = 0; i < DIMENSIONS; i++) nbins[i] = ndHist->GetAxis(i)->GetNbins();
   for (int i = 0; i < DIMENSIONS; i++) xmin[i] = ndHist->GetAxis(i)->GetBinLowEdge(1);
@@ -47,8 +47,8 @@ TCanvas *acc_corr(const std::string &data_root, const std::string &mc_root) {
           std::cout << w * ((xmax[0] - xmin[0]) / nbins[0] * 1.0) + xmin[0] << ",";
           std::cout << theta * ((xmax[2] - xmin[2]) / nbins[2] * 1.0) + xmin[2] << ",";
           std::cout << phi * ((xmax[3] - xmin[3]) / nbins[3] * 1.0) + xmin[3] << ",";
-          std::cout << static_cast<double>(ndHist->GetBinContent(bin)) << ",";
-          std::cout << static_cast<double>(ndHist->GetBinError(ndHist->GetBin(bin))) << std::endl;
+          std::cout << static_cast<float>(ndHist->GetBinContent(bin)) << ",";
+          std::cout << static_cast<float>(ndHist->GetBinError(ndHist->GetBin(bin))) << std::endl;
         }
       }
     }

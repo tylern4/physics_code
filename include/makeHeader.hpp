@@ -3,8 +3,8 @@
 /*  Created by Nick Tyler             */
 /*	University Of South Carolina      */
 /**************************************/
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <string>
 #include "TString.h"
 #include "constants.hpp"
@@ -36,10 +36,9 @@ class Header {
   void AddLine(std::string LineAdd);
   void AddLine(std::string LineAdd, bool ending);
   void AddComment(std::string CommAdd);
-  void MakeFunction(std::string RetrunType, std::string FuncName, std::string FuncInputs,
-                    std::string Function);
+  void MakeFunction(std::string RetrunType, std::string FuncName, std::string FuncInputs, std::string Function);
   void WriteFunction();
-  void WriteGaussian(std::string name, double a, double m, double s);
+  void WriteGaussian(std::string name, float a, float m, float s);
 };
 
 #endif

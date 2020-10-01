@@ -23,25 +23,25 @@ static const short NUM_THREADS = (getenv("NUM_THREADS") != NULL) ? atoi(getenv("
 static const short NUM_SECTORS = 6;
 static const short MAX_PARTS = 100;
 static const short N_SIGMA = 3;
-static const double PI = TMath::Pi();
-static const double INV_SQRT_2PI = TMath::Sqrt(2 * TMath::Pi());
-static const double D2R = PI / 180.0;
-static const double DEG2RAD = PI / 180.0;
-static const double RAD2DEG = 180.0 / PI;
+static const float PI = TMath::Pi();
+static const float INV_SQRT_2PI = TMath::Sqrt(2 * TMath::Pi());
+static const float D2R = PI / 180.0;
+static const float DEG2RAD = PI / 180.0;
+static const float RAD2DEG = 180.0 / PI;
 static const int POSITIVE = 1;
 static const int NEGATIVE = -1;
-// static const double E1D_E0 = 4.802;   // GeV
+// static const float E1D_E0 = 4.802;   // GeV
 // Run Info 22848 - 23500
 // http://clasweb.jlab.org/clasonline/servlet/runinfo?action=detail&run=22880
-static const double E1D_E0 = 4.81726;  // GeV
-static const double E1F_E0 = 5.479;    // GeV
+static const float E1D_E0 = 4.81726;  // GeV
+static const float E1F_E0 = 5.479;    // GeV
 
-static const double SOL = 29.9792458;
+static const float SOL = 29.9792458;
 // misc. constants
-static const double FSC = 0.00729735253;
-static const double NA = 6.02214129E23;               // Avigadro's number
-static const double QE = 1.60217646E-19;              // Charge or electron
-static const double FS_ALPHA = 0.007297352570866302;  // Fine structure alpha
+static const float FSC = 0.00729735253;
+static const float NA = 6.02214129E23;               // Avigadro's number
+static const float QE = 1.60217646E-19;              // Charge or electron
+static const float FS_ALPHA = 0.007297352570866302;  // Fine structure alpha
 
 // particle codes, usually PDG codes, but always those used in BOS
 static const int PROTON = 2212;
@@ -55,24 +55,24 @@ static const int PHOTON = 22;
 static const int ELECTRON = 11;
 
 // PDG particle masses in GeV/c2
-static const double MASS_P = 0.93827203;
-static const double MASS_N = 0.93956556;
-static const double MASS_E = 0.000511;
-static const double MASS_PIP = 0.13957018;
-static const double MASS_PIM = 0.13957018;
-static const double MASS_PI0 = 0.1349766;
-static const double MASS_KP = 0.493677;
-static const double MASS_KM = 0.493677;
-static const double MASS_G = 0.0;
-static const double MASS_OMEGA = 0.78265;
+static const float MASS_P = 0.93827203;
+static const float MASS_N = 0.93956556;
+static const float MASS_E = 0.000511;
+static const float MASS_PIP = 0.13957018;
+static const float MASS_PIM = 0.13957018;
+static const float MASS_PI0 = 0.1349766;
+static const float MASS_KP = 0.493677;
+static const float MASS_KM = 0.493677;
+static const float MASS_G = 0.0;
+static const float MASS_OMEGA = 0.78265;
 
 // Got from ye/arjun
 // TODO::Get right EC threshhold
 // p_min(in MeV) = 214 + 2.47 × EC_threshold(in mV)
-static const double MIN_P_CUT = 0.005000;
+static const float MIN_P_CUT = 0.005000;
 
-// const double min_phi[6] = {0, 60, 120, -180, -120, -60};
-// const double max_phi[6] = {60, 120, 180, -120, -60, 0};
+// const float min_phi[6] = {0, 60, 120, -180, -120, -60};
+// const float max_phi[6] = {60, 120, 180, -120, -60, 0};
 
 static std::unordered_map<int, std::pair<float, float>> phi_map = {
     {1, std::make_pair(60, 120)},   {2, std::make_pair(0, 60)},      {3, std::make_pair(-60, 0)},
@@ -80,10 +80,10 @@ static std::unordered_map<int, std::pair<float, float>> phi_map = {
 
 static std::unordered_map<int, float> phi_center = {{1, 90}, {2, 30}, {3, -30}, {4, -90}, {5, -150}, {6, 150}};
 
-const double min_phi[6] = {60, 0, -60, -120, -180, 120};
-const double max_phi[6] = {120, 60, 0, -60, -120, 180};
+const float min_phi[6] = {60, 0, -60, -120, -180, 120};
+const float max_phi[6] = {120, 60, 0, -60, -120, 180};
 
-static std::unordered_map<int, double> mass_map = {
+static std::unordered_map<int, float> mass_map = {
     {PROTON, MASS_P}, {-PROTON, MASS_P}, {NEUTRON, MASS_N}, {PIP, MASS_PIP},    {PIM, MASS_PIM},    {PI0, MASS_PI0},
     {KP, MASS_KP},    {KM, MASS_KM},     {PHOTON, MASS_G},  {ELECTRON, MASS_E}, {-ELECTRON, MASS_E}};
 
@@ -116,7 +116,7 @@ static const std::vector<double> dt_pip_bottom = {0.7021097407492168, 1.17542827
                                                   0.8804059391935983, -1.9632091423474742, 0.22761907815192178};
 
 enum mm2_names { A, mu, sigma, lambda1, lambda2 };
-static const std::vector<std::vector<double>> mm2_fit_values = {
+static const std::vector<std::vector<float>> mm2_fit_values = {
     {40.04364142911593660301, 0.89586494546690320639, 0.01421356258481163565, 54.12038299108210281929,
      19.88478985124503850557},
     {24.89731359731760917953, 0.87883493195336415127, 0.01302611651420351735, 48.53601194230342485980,

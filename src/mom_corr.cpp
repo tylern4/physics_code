@@ -21,10 +21,10 @@ MomCorr::MomCorr() {
   }
 }
 
-int MomCorr::GetSector(double phi) {
+int MomCorr::GetSector(float phi) {
   // phi between -180 and 180
   // phi2 between 0 and 360
-  double phi2 = phi;
+  float phi2 = phi;
   if (phi < 0) phi2 = phi2 + 360;
   int sect = 1 + ((int)phi2 + 30) / 60;
   if (sect == 7) sect = 1;
@@ -34,9 +34,9 @@ int MomCorr::GetSector(double phi) {
 void MomCorr::read_theta_par() {
   /* Reading angle correction parameters */
 
-  memset(&c0_theta[0][0], 0, ThetaC_n * NUM_SECTORS * sizeof(double));
-  memset(&c1_theta[0][0], 0, ThetaC_n * NUM_SECTORS * sizeof(double));
-  memset(&c2_theta[0][0], 0, ThetaC_n * NUM_SECTORS * sizeof(double));
+  memset(&c0_theta[0][0], 0, ThetaC_n * NUM_SECTORS * sizeof(float));
+  memset(&c1_theta[0][0], 0, ThetaC_n * NUM_SECTORS * sizeof(float));
+  memset(&c2_theta[0][0], 0, ThetaC_n * NUM_SECTORS * sizeof(float));
 
   char file[100];
   for (int s = 1; s <= NUM_SECTORS; s++) {
@@ -44,12 +44,12 @@ void MomCorr::read_theta_par() {
     FILE *fp = fopen(&file[0], "r");
     if (fp) {
       for (int j = 0; j < ThetaC_n; j++) {
-        double x, y;
-        double a1, a2, a3;
+        float x, y;
+        float a1, a2, a3;
         char str[200];
 
         while (fgets(str, sizeof(str), fp)) {
-          sscanf(str, "%lf %lf %lf %lf %lf %lf %lf", &x, &a1, &y, &a2, &y, &a3, &y);
+          sscanf(str, "%f %f %f %f %f %f %f", &x, &a1, &y, &a2, &y, &a3, &y);
           int bin = (int)((x - ThetaC_min) / ThetaC_wid);
           c0_theta[bin][s - 1] = a1;
           c1_theta[bin][s - 1] = a2;
@@ -65,8 +65,8 @@ void MomCorr::read_theta_par() {
 void MomCorr::read_mom_par() {
   /* Reading momentum correction parameters for electrons */
 
-  memset(&c0_mom[0][0][0], 0, MomC_T_n * NUM_SECTORS * Npar * sizeof(double));
-  memset(&c1_mom[0][0][0], 0, MomC_T_n * NUM_SECTORS * Npar * sizeof(double));
+  memset(&c0_mom[0][0][0], 0, MomC_T_n * NUM_SECTORS * Npar * sizeof(float));
+  memset(&c1_mom[0][0][0], 0, MomC_T_n * NUM_SECTORS * Npar * sizeof(float));
 
   char file[100];
   for (int s = 1; s <= NUM_SECTORS; s++) {
@@ -75,12 +75,12 @@ void MomCorr::read_mom_par() {
       FILE *fp = fopen(&file[0], "r");
       if (fp) {
         for (int j = 0; j < MomC_T_n; j++) {
-          double x1, y;
-          double a1, a2, a3, a4;
+          float x1, y;
+          float a1, a2, a3, a4;
           char str[250];
 
           while (fgets(str, sizeof(str), fp)) {
-            sscanf(str, "%lf %lf %lf %lf %lf %lf %lf %lf %lf", &x1, &a1, &y, &a2, &y, &a3, &y, &a4, &y);
+            sscanf(str, "%f %f %f %f %f %f %f %f %f", &x1, &a1, &y, &a2, &y, &a3, &y, &a4, &y);
 
             int bin = (int)((x1 - MomC_T_min) / MomC_T_wid);
             if (k == 0) {
@@ -111,8 +111,8 @@ void MomCorr::read_mom_par() {
 }
 
 void MomCorr::read_mom_pip_par() {
-  memset(&d0_mom[0][0][0], 0, MomC_T_n * NUM_SECTORS * Npar * sizeof(double));
-  memset(&d1_mom[0][0][0], 0, MomC_T_n * NUM_SECTORS * Npar * sizeof(double));
+  memset(&d0_mom[0][0][0], 0, MomC_T_n * NUM_SECTORS * Npar * sizeof(float));
+  memset(&d1_mom[0][0][0], 0, MomC_T_n * NUM_SECTORS * Npar * sizeof(float));
 
   char file[100];
   for (int s = 1; s <= NUM_SECTORS; s++) {
@@ -121,12 +121,12 @@ void MomCorr::read_mom_pip_par() {
       FILE *fp = fopen(&file[0], "r");
       if (fp) {
         for (int j = 0; j < MomC_T_n; j++) {
-          double x1, y;
-          double a1, a2, a3;
+          float x1, y;
+          float a1, a2, a3;
           char str[250];
 
           while (fgets(str, sizeof(str), fp)) {
-            sscanf(str, "%lf %lf %lf %lf %lf %lf %lf", &x1, &a1, &y, &a2, &y, &a3, &y);
+            sscanf(str, "%f %f %f %f %f %f %f", &x1, &a1, &y, &a2, &y, &a3, &y);
 
             int bin = (int)((x1 - MomC_T_min) / MomC_T_wid);
             if (k == 0) {
@@ -148,100 +148,100 @@ void MomCorr::read_mom_pip_par() {
 }
 
 /* ================================================================= */
-double MomCorr::theta_corr(double ThetaM, double PhiM, int Sector) {
+float MomCorr::theta_corr(float ThetaM, float PhiM, int Sector) {
   /* input: phi between 0 and 360 deg */
 
-  double phis = PhiM - 60 * (Sector - 1);
+  float phis = PhiM - 60 * (Sector - 1);
   if (phis > 330.) phis = phis - 360;
 
   int bin = (int)((ThetaM - ThetaC_min) / ThetaC_wid);
-  double ThetaBin = ThetaC_min + ThetaC_wid * (bin + 0.5);
+  float ThetaBin = ThetaC_min + ThetaC_wid * (bin + 0.5);
 
   int bin2 = bin + 1;
   if (ThetaM < ThetaBin) bin2 = bin - 1;
   if (bin2 < 0) bin2 = 0;
   if (bin2 >= ThetaC_n) bin2 = ThetaC_n - 1;
-  double ThetaBin2 = ThetaC_min + ThetaC_wid * (bin2 + 0.5);
+  float ThetaBin2 = ThetaC_min + ThetaC_wid * (bin2 + 0.5);
 
-  double ThetaC =
+  float ThetaC =
       ThetaM - (c0_theta[bin][Sector - 1] + c1_theta[bin][Sector - 1] * phis + c2_theta[bin][Sector - 1] * phis * phis);
-  double ThetaC2 = ThetaM - (c0_theta[bin2][Sector - 1] + c1_theta[bin2][Sector - 1] * phis +
-                             c2_theta[bin2][Sector - 1] * phis * phis);
-  double fw = abs(ThetaM - ThetaBin) / ThetaC_wid;
-  double fw2 = 1. - fw;
-  double Theta = fw2 * ThetaC + fw * ThetaC2;
+  float ThetaC2 = ThetaM - (c0_theta[bin2][Sector - 1] + c1_theta[bin2][Sector - 1] * phis +
+                            c2_theta[bin2][Sector - 1] * phis * phis);
+  float fw = abs(ThetaM - ThetaBin) / ThetaC_wid;
+  float fw2 = 1. - fw;
+  float Theta = fw2 * ThetaC + fw * ThetaC2;
 
   return Theta;
 }
 
-double MomCorr::mom_corr(double MomM, double ThetaM, double PhiM, int Sector) {
+float MomCorr::mom_corr(float MomM, float ThetaM, float PhiM, int Sector) {
   /* input: phi between 0 and 360 deg */
-  double phis = PhiM - 60 * (Sector - 1);
+  float phis = PhiM - 60 * (Sector - 1);
   if (phis > 330.) phis = phis - 360;
 
   int bin = (int)((ThetaM - MomC_T_min) / MomC_T_wid);
-  double ThetaBin = MomC_T_min + MomC_T_wid * (bin + 0.5);
-  double fw = abs(ThetaM - ThetaBin) / MomC_T_wid;
+  float ThetaBin = MomC_T_min + MomC_T_wid * (bin + 0.5);
+  float fw = abs(ThetaM - ThetaBin) / MomC_T_wid;
 
-  double A0 = 0.;
-  double A1 = 0.;
+  float A0 = 0.;
+  float A1 = 0.;
   for (int j = 0; j < Npar; j++) {
     A0 = A0 + c0_mom[bin][Sector - 1][j] * pow(MomM, j);
     A1 = A1 + c1_mom[bin][Sector - 1][j] * pow(MomM, j);
   }
-  double MomC = MomM - (A0 + A1 * phis);
+  float MomC = MomM - (A0 + A1 * phis);
 
   int bin2 = bin + 1;
   if (ThetaM < ThetaBin) bin2 = bin - 1;
   if (bin2 < 0) bin2 = 0;
   if (bin2 >= MomC_T_n) bin2 = MomC_T_n - 1;
-  double ThetaBin2 = MomC_T_min + MomC_T_wid * (bin2 + 0.5);
-  double fw2 = 1. - fw;
+  float ThetaBin2 = MomC_T_min + MomC_T_wid * (bin2 + 0.5);
+  float fw2 = 1. - fw;
 
   A0 = A1 = 0.;
   for (int j = 0; j < Npar; j++) {
     A0 = A0 + c0_mom[bin2][Sector - 1][j] * pow(MomM, j);
     A1 = A1 + c1_mom[bin2][Sector - 1][j] * pow(MomM, j);
   }
-  double MomC2 = MomM - (A0 + A1 * phis);
+  float MomC2 = MomM - (A0 + A1 * phis);
 
-  double Mom = fw2 * MomC + fw * MomC2;
+  float Mom = fw2 * MomC + fw * MomC2;
 
   return Mom;
 }
 
-double MomCorr::mom_corr_pip(double MomM, double ThetaM, double PhiM, int Sector) {
+float MomCorr::mom_corr_pip(float MomM, float ThetaM, float PhiM, int Sector) {
   /* input: phi between 0 and 360 deg */
-  double phis = PhiM - 60 * (Sector - 1);
+  float phis = PhiM - 60 * (Sector - 1);
   if (phis > 330.) phis = phis - 360;
 
   int bin = (int)((ThetaM - MomC_T_min) / MomC_T_wid);
-  double ThetaBin = MomC_T_min + MomC_T_wid * (bin + 0.5);
-  double fw = abs(ThetaM - ThetaBin) / MomC_T_wid;
+  float ThetaBin = MomC_T_min + MomC_T_wid * (bin + 0.5);
+  float fw = abs(ThetaM - ThetaBin) / MomC_T_wid;
 
-  double A0 = 0.;
-  double A1 = 0.;
+  float A0 = 0.;
+  float A1 = 0.;
   for (int j = 0; j < Npar; j++) {
     A0 = A0 + d0_mom[bin][Sector - 1][j] * pow(MomM, j);
     A1 = A1 + d1_mom[bin][Sector - 1][j] * pow(MomM, j);
   }
-  double MomC = MomM - (A0 + A1 * phis);
+  float MomC = MomM - (A0 + A1 * phis);
 
   int bin2 = bin + 1;
   if (ThetaM < ThetaBin) bin2 = bin - 1;
   if (bin2 < 0) bin2 = 0;
   if (bin2 >= MomC_T_n) bin2 = MomC_T_n - 1;
-  double ThetaBin2 = MomC_T_min + MomC_T_wid * (bin2 + 0.5);
-  double fw2 = 1. - fw;
+  float ThetaBin2 = MomC_T_min + MomC_T_wid * (bin2 + 0.5);
+  float fw2 = 1. - fw;
 
   A0 = A1 = 0.;
   for (int j = 0; j < Npar; j++) {
     A0 = A0 + d0_mom[bin2][Sector - 1][j] * pow(MomM, j);
     A1 = A1 + d1_mom[bin2][Sector - 1][j] * pow(MomM, j);
   }
-  double MomC2 = MomM - (A0 + A1 * phis);
+  float MomC2 = MomM - (A0 + A1 * phis);
 
-  double Mom = fw2 * MomC + fw * MomC2;
+  float Mom = fw2 * MomC + fw * MomC2;
 
   return Mom;
 }
@@ -249,13 +249,13 @@ double MomCorr::mom_corr_pip(double MomM, double ThetaM, double PhiM, int Sector
 /* ================================================================= */
 std::shared_ptr<LorentzVector> MomCorr::CorrectedVector(float px, float py, float pz, int particle_type) {
   auto Pin = std::make_unique<LorentzVector>(px, py, pz, mass_map[particle_type]);
-  double theta = Pin->Theta() * RAD2DEG;
-  double phi = Pin->Phi() * RAD2DEG;
+  float theta = Pin->Theta() * RAD2DEG;
+  float phi = Pin->Phi() * RAD2DEG;
   if (phi < 0) phi = phi + 360.;
   int sect = GetSector(phi);
 
-  double theta_c = theta_corr(theta, phi, sect);
-  double mom_c = Pin->P();
+  float theta_c = theta_corr(theta, phi, sect);
+  float mom_c = Pin->P();
   if (particle_type == ELECTRON)
     mom_c = mom_corr(Pin->P(), theta, phi, sect);
   else if (particle_type == PIM)

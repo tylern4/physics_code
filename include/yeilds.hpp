@@ -37,7 +37,7 @@ class Yeilds {
   std::shared_ptr<SyncFile> _multi_threaded_csv;
   std::shared_ptr<MomCorr> _mom_corr;
   std::vector<std::string> input_files;
-  double _beam_energy = E1D_E0;
+  float _beam_energy = E1D_E0;
 
  public:
   Yeilds();

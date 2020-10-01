@@ -18,8 +18,8 @@ TCanvas *kinematics(std::string data_root) {
   THnSparse *ndHist = (THnSparse *)root_data->Get("ndhist");
   const int DIMENSIONS = ndHist->GetNdimensions();
   int nbins[DIMENSIONS];
-  double xmin[DIMENSIONS];
-  double xmax[DIMENSIONS];
+  float xmin[DIMENSIONS];
+  float xmax[DIMENSIONS];
   int bin[DIMENSIONS];
   for (int i = 0; i < DIMENSIONS; i++) nbins[i] = ndHist->GetAxis(i)->GetNbins();
   for (int i = 0; i < DIMENSIONS; i++) xmin[i] = ndHist->GetAxis(i)->GetBinLowEdge(1);

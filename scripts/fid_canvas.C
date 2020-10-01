@@ -8,7 +8,7 @@
   TH2D *h1 = (TH2D *)f->Get("Fid_cuts/electron_fid_sec1");
 
   TH1D *electron_fid_sec_slice;
-  double slice_width = (500 / 200);
+  float slice_width = (500 / 200);
   char *hname;
   /*
     for (int slice = 0; slice < 200; slice++) {

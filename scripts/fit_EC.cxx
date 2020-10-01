@@ -1,3 +1,4 @@
+#include <iostream>
 #include "Math/Minimizer.h"
 #include "TCanvas.h"
 #include "TF1.h"
@@ -8,7 +9,6 @@
 #include "TLine.h"
 #include "TROOT.h"
 #include "TStyle.h"
-#include <iostream>
 
 #define THETA_BINS 100
 #define PHI_BINS 100
@@ -48,8 +48,8 @@ FitsData FitGenNormal(TH1D *hist, int slice, int sec_i) {
   double min_value = hist->GetXaxis()->GetXmin();
   double max_value = hist->GetXaxis()->GetXmax();
 
-  TCanvas *can = new TCanvas(Form("can_sec%d_slice%d", sec_i, slice),
-                             Form("can_sec%d_slice%d", sec_i, slice), 800, 600);
+  TCanvas *can =
+      new TCanvas(Form("can_sec%d_slice%d", sec_i, slice), Form("can_sec%d_slice%d", sec_i, slice), 800, 600);
   out->cd();
   can->cd();
 
@@ -64,16 +64,13 @@ FitsData FitGenNormal(TH1D *hist, int slice, int sec_i) {
   fitFunc->SetParameter(3, 3000.0);
   fitFunc->SetParNames("alpha", "beta", "mu", "weight");
 
-  for (int i = 0; i < 10; i++)
-    hist->Fit("genNormal", "QMR0+", "", min_value, max_value);
+  for (int i = 0; i < 10; i++) hist->Fit("genNormal", "QMR0+", "", min_value, max_value);
 
   hist->Fit("genNormal", "QMR+", "", min_value, max_value);
   double fwhm_max = fitFunc->GetMaximum() / 2;
 
-  min_fwhm = fitFunc->GetX(fitFunc->GetMaximum() / 2.0, min_value,
-                           max_value / 2.0, 1.E-10, 100000, false);
-  max_fwhm = fitFunc->GetX(fitFunc->GetMaximum() / 2.0, max_value / 2.0,
-                           max_value, 1.E-10, 100000, false);
+  min_fwhm = fitFunc->GetX(fitFunc->GetMaximum() / 2.0, min_value, max_value / 2.0, 1.E-10, 100000, false);
+  max_fwhm = fitFunc->GetX(fitFunc->GetMaximum() / 2.0, max_value / 2.0, max_value, 1.E-10, 100000, false);
 
   for (double m = min_value; m < max_value; m = m + 0.0001) {
     val = fitFunc->Derivative(m);
@@ -160,8 +157,7 @@ FitsData FitTheFit(TGraph *hist, int sec, bool lr) {
 
   fitFunc->SetParNames("a", "b", "c", "d", "e");
 
-  for (int i = 0; i < 10; i++)
-    hist->Fit("fid", "QMR0+", "", min_value, max_value);
+  for (int i = 0; i < 10; i++) hist->Fit("fid", "QMR0+", "", min_value, max_value);
 
   hist->Fit("fid", "QMR+", "", min_value, max_value);
 
@@ -198,12 +194,10 @@ int fit_EC(std::string file = "e1d_all.root") {
 
     for (int slice = 14; slice < FID_SLICES; slice++) {
       electron_fid_sec_slice[sec_i][slice] =
-          (TH1D *)elec_fid[sec_i]->ProjectionX(
-              Form("electron_fid_sec_%d_%d", sec_i + 1, slice + 1),
-              slice_width * slice, slice_width * slice + (slice_width - 1));
+          (TH1D *)elec_fid[sec_i]->ProjectionX(Form("electron_fid_sec_%d_%d", sec_i + 1, slice + 1),
+                                               slice_width * slice, slice_width * slice + (slice_width - 1));
       if (electron_fid_sec_slice[sec_i][slice]->GetEntries() > 100) {
-        FitsData genNormal_fit =
-            FitGenNormal(electron_fid_sec_slice[sec_i][slice], slice, sec_i);
+        FitsData genNormal_fit = FitGenNormal(electron_fid_sec_slice[sec_i][slice], slice, sec_i);
 
         x.push_back(y_width * slice_width * slice);
         y.push_back(genNormal_fit.left_edge);

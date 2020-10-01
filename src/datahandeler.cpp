@@ -27,7 +27,7 @@ void DataHandeler::loadbar(long x, long n) {
   int w = 50;
   if (x >= n) return;
 
-  double ratio = x / (double)n;
+  float ratio = x / (float)n;
   int c = ratio * w;
 
   std::cerr << BLUE << " [";

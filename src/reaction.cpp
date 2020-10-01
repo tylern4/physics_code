@@ -14,7 +14,7 @@ Reaction::Reaction(const std::shared_ptr<Branches>& data) : Reaction(data, E1D_E
 Reaction::Reaction(const std::shared_ptr<Branches>& data, const std::shared_ptr<MomCorr>& mom_corr)
     : Reaction(data, E1D_E0, mom_corr) {}
 
-Reaction::Reaction(const std::shared_ptr<Branches>& data, const double beam_energy)
+Reaction::Reaction(const std::shared_ptr<Branches>& data, const float beam_energy)
     : _beam_energy(beam_energy), _data(data) {
   _hasE = true;
   _sector = data->dc_sect(0);
@@ -27,7 +27,7 @@ Reaction::Reaction(const std::shared_ptr<Branches>& data, const double beam_ener
   _xb = physics::xb_calc(*_gamma);
 }
 
-Reaction::Reaction(const std::shared_ptr<Branches>& data, const double beam_energy,
+Reaction::Reaction(const std::shared_ptr<Branches>& data, const float beam_energy,
                    const std::shared_ptr<MomCorr>& mom_corr)
     : _beam_energy(beam_energy), _data(data), _mom_corr(mom_corr) {
   _hasE = true;
@@ -195,14 +195,14 @@ void Reaction::CalcMassPairs() {
   }
 }
 
-double Reaction::MM() {
+float Reaction::MM() {
   if (!_MM_calc) {
     CalcMissMass();
     _MM_calc = true;
   }
   return _MM;
 }
-double Reaction::MM2() {
+float Reaction::MM2() {
   if (!_MM_calc) {
     CalcMissMass();
     _MM_calc = true;
@@ -337,7 +337,7 @@ void Reaction::_boost_p() {
 
 MCReaction::MCReaction(std::shared_ptr<Branches> data) : MCReaction(data, E1D_E0) {}
 
-MCReaction::MCReaction(std::shared_ptr<Branches> data, const double beam_energy) : Reaction(data, beam_energy) {
+MCReaction::MCReaction(std::shared_ptr<Branches> data, const float beam_energy) : Reaction(data, beam_energy) {
   _elec_thrown = physics::fourVec(_data->pxpart(0), _data->pypart(0), _data->pzpart(0), MASS_E);
   _gamma_thrown = std::make_shared<LorentzVector>(*_beam - *_elec_thrown);
   _W_thrown = physics::W_calc(*_gamma_thrown);
@@ -435,7 +435,7 @@ float MCReaction::Phi_star() {  // TODO: Make this better!!!!!
   return physics::phi_boosted(_temp);
 }
 
-double MCReaction::MM() {
+float MCReaction::MM() {
   if (!_pip_thrown) return NAN;
   auto mm = std::make_shared<LorentzVector>();
   *mm += (*_beam - *_elec_thrown + *_target);
@@ -444,7 +444,7 @@ double MCReaction::MM() {
 
   return _mm_thrown;
 }
-double MCReaction::MM2() {
+float MCReaction::MM2() {
   if (!_pip_thrown) return NAN;
   auto mm = std::make_shared<LorentzVector>();
   *mm += (*_beam - *_elec_thrown + *_target);

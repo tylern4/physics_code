@@ -1,20 +1,15 @@
 
 // Quadratic background function
-Double_t background(Double_t *x, Double_t *par) {
-  return par[0] + par[1] * x[0] + par[2] * x[0] * x[0];
-}
+float background(float *x, float *par) { return par[0] + par[1] * x[0] + par[2] * x[0] * x[0]; }
 
 // Lorenzian Peak function
-Double_t lorentzianPeak(Double_t *x, Double_t *par) {
+float lorentzianPeak(float *x, float *par) {
   return (0.5 * par[0] * par[1] / TMath::Pi()) /
-         TMath::Max(1.e-10,
-                    (x[0] - par[2]) * (x[0] - par[2]) + .25 * par[1] * par[1]);
+         TMath::Max(1.e-10, (x[0] - par[2]) * (x[0] - par[2]) + .25 * par[1] * par[1]);
 }
 
 // Sum of background and peak function
-Double_t fitFunction(Double_t *x, Double_t *par) {
-  return background(x, par) + lorentzianPeak(x, &par[3]);
-}
+float fitFunction(float *x, float *par) { return background(x, par) + lorentzianPeak(x, &par[3]); }
 
 void mm_canvas(std::string name = "v2_all.root") {
   TF1 *fitFcn = new TF1("fitFcn", fitFunction, 0.8, 1.2, 6);

@@ -10,13 +10,13 @@ TCanvas *mc_vs_data_plots(std::string data_root, std::string mc_root) {
   TFile *root_data = new TFile(data_root.c_str());
   TFile *root_mc = new TFile(mc_root.c_str());
   TCanvas *canvas = new TCanvas("c1", "c1", 1600, 900);
-  TH1D *W_data = (TH1D *)root_data->Get("W vs Q2/W_channel");
-  TH1D *W_mc_data = (TH1D *)root_mc->Get("W vs Q2/W_channel");
-  TH1D *W_mc_true = (TH1D *)root_mc->Get("W vs Q2 MC/W_MC");
+  TH1F *W_data = (TH1F *)root_data->Get("W vs Q2/W_channel");
+  TH1F *W_mc_data = (TH1F *)root_mc->Get("W vs Q2/W_channel");
+  TH1F *W_mc_true = (TH1F *)root_mc->Get("W vs Q2 MC/W_MC");
 
   W_data->GetXaxis()->SetRangeUser(1.1, 1.8);
 
-  Double_t norm = 1;
+  float norm = 1;
   W_data->Scale(norm / W_data->GetMaximum());
   W_mc_data->Scale(norm / W_mc_data->GetMaximum());
   W_mc_true->Scale(norm / W_mc_true->GetMaximum());
@@ -40,12 +40,12 @@ TCanvas *plot_acceptance_corrected(std::string data_root, std::string mc_root) {
   TFile *root_data = new TFile(data_root.c_str());
   TFile *root_mc = new TFile(mc_root.c_str());
 
-  TH1D *W_data = (TH1D *)root_data->Get("W vs Q2/W_channel");
-  TH1D *W_channel = (TH1D *)W_data->Clone("W_channel_data");
-  TH1D *W_mc_rec = (TH1D *)root_mc->Get("W vs Q2/W_channel");
-  TH1D *W_mc_thrown = (TH1D *)root_mc->Get("W vs Q2 MC/W_MC");
+  TH1F *W_data = (TH1F *)root_data->Get("W vs Q2/W_channel");
+  TH1F *W_channel = (TH1F *)W_data->Clone("W_channel_data");
+  TH1F *W_mc_rec = (TH1F *)root_mc->Get("W vs Q2/W_channel");
+  TH1F *W_mc_thrown = (TH1F *)root_mc->Get("W vs Q2 MC/W_MC");
 
-  Double_t norm = 1.0;
+  float norm = 1.0;
   // W_channel->Scale(norm / W_channel->GetMaximum());
   // W_data->Scale(norm / W_data->GetMaximum());
   // W_mc_rec->Scale(norm / W_mc_rec->GetMaximum());
@@ -59,7 +59,7 @@ TCanvas *plot_acceptance_corrected(std::string data_root, std::string mc_root) {
   canvas->cd(1);
   W_channel->Draw("SAME PLC PMC");
 
-  TH1D *acceptance = (TH1D *)W_mc_thrown->Clone("Acceptance");
+  TH1F *acceptance = (TH1F *)W_mc_thrown->Clone("Acceptance");
   acceptance->Divide(W_mc_rec);
   canvas->cd(2);
   acceptance->Draw("SAME PLC PMC");

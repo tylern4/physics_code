@@ -13,29 +13,29 @@
 
 class PhotonFlux {
  private:
-  double _beam_energy = E1D_E0;
-  double _target_mass = MASS_P;
-  double _beam_momentum;
-  double _nu;
-  double _scattered_energy;
-  double _scattered_momentum;
-  double _W;
-  double _Q2;
-  double _flux;
+  float _beam_energy = E1D_E0;
+  float _target_mass = MASS_P;
+  float _beam_momentum;
+  float _nu;
+  float _scattered_energy;
+  float _scattered_momentum;
+  float _W;
+  float _Q2;
+  float _flux;
 
-  double Momentum(double E, double M);
-  double photon_energy();
-  double theta_calc();
-  double epsilon_calc();
-  double photon_flux();
+  float Momentum(float E, float M);
+  float photon_energy();
+  float theta_calc();
+  float epsilon_calc();
+  float photon_flux();
 
  public:
   PhotonFlux();
-  PhotonFlux(double W, double Q2);
+  PhotonFlux(float W, float Q2);
   PhotonFlux(LorentzVector e_mu, LorentzVector e_mu_prime);
   ~PhotonFlux();
 
-  double GetVirtualPhotonFlux();
+  float GetVirtualPhotonFlux();
   std::string FluxString();
   void PrintFlux();
 };

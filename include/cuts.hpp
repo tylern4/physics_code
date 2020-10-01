@@ -22,13 +22,13 @@ class Cuts {
   int num_phe = 0;
   int gpart = 0;
   int charge = 0;
-  double electron_p = 0;
-  double samp_frac = 0;
-  double _vx = 0;
-  double _vy = 0;
-  double _vz = 0.3;
-  double _theta = 0.0;
-  double _phi, _phi_cent = 0.0;
+  float electron_p = 0;
+  float samp_frac = 0;
+  float _vx = 0;
+  float _vy = 0;
+  float _vz = 0.3;
+  float _theta = 0.0;
+  float _phi, _phi_cent = 0.0;
   int _sec = 0;
 
   bool ec_cut = false;
@@ -81,9 +81,9 @@ class e1d_Cuts : public Cuts {
   e1d_Cuts(const std::shared_ptr<Branches>& data, const std::shared_ptr<Delta_T>& dt) : Cuts(data, dt){};
   bool isElecctron();
   bool Beam_cut();
-  double sf_top_fit(double P);
-  double sf_bot_fit(double P);
-  bool sf_cut(double sf, double P);
+  float sf_top_fit(float P);
+  float sf_bot_fit(float P);
+  bool sf_cut(float sf, float P);
 };
 
 class e1f_Cuts : public Cuts {
@@ -92,9 +92,9 @@ class e1f_Cuts : public Cuts {
   e1f_Cuts(const std::shared_ptr<Branches>& data, const std::shared_ptr<Delta_T>& dt) : Cuts(data, dt){};
   bool isElecctron();
   bool Beam_cut();
-  double sf_top_fit(double P);
-  double sf_bot_fit(double P);
-  bool sf_cut(double sf, double P);
+  float sf_top_fit(float P);
+  float sf_bot_fit(float P);
+  bool sf_cut(float sf, float P);
 };
 
 #endif

@@ -79,9 +79,9 @@ void Header::WriteFunction() {
   }
 }
 
-void Header::WriteGaussian(std::string name, double a, double m, double s) {
+void Header::WriteGaussian(std::string name, float a, float m, float s) {
   /*
-     double normal_pdf(double x, double m, double s){
+     float normal_pdf(float x, float m, float s){
      static const float inv_sqrt_2pi = 0.3989422804014327;
      float a = (x - m) / s;
 
@@ -89,14 +89,14 @@ void Header::WriteGaussian(std::string name, double a, double m, double s) {
      }
    */
   Header::NewFunction();
-  Header::Set_RetrunType("double");
+  Header::Set_RetrunType("float");
   Header::Set_FuncName("gaussian_" + name);
-  Header::Set_FuncInputs("double x");
+  Header::Set_FuncInputs("float x");
 
-  Header::AddLine("double a = " + std::to_string(a));
-  Header::AddLine("double m = " + std::to_string(m));
-  Header::AddLine("double s = " + std::to_string(s));
-  Header::AddLine("double p = ((x - m) / s)");
+  Header::AddLine("float a = " + std::to_string(a));
+  Header::AddLine("float m = " + std::to_string(m));
+  Header::AddLine("float s = " + std::to_string(s));
+  Header::AddLine("float p = ((x - m) / s)");
 
   Header::Set_Function("(INV_SQRT_2PI / s * a * std::exp(-0.5f * p * p))");
   Header::WriteFunction();
@@ -104,9 +104,9 @@ void Header::WriteGaussian(std::string name, double a, double m, double s) {
   Header::NewFunction();
   Header::Set_RetrunType("bool");
   Header::Set_FuncName("between_" + name);
-  Header::Set_FuncInputs("double x");
-  Header::AddLine("double m = " + std::to_string(m));
-  Header::AddLine("double s = " + std::to_string(s));
+  Header::Set_FuncInputs("float x");
+  Header::AddLine("float m = " + std::to_string(m));
+  Header::AddLine("float s = " + std::to_string(s));
   Header::AddLine("bool above = (x <= m+s*N_SIGMA)");
   Header::AddLine("bool below = (x >= m-s*N_SIGMA)");
   Header::Set_Function("(above && below)");

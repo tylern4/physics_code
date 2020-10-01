@@ -13,25 +13,25 @@ class MomCorr {
   char *_datadir;
   /* Theta Binning for Theta correction */
 #define ThetaC_n 144
-  Double_t ThetaC_min = 0;
-  Double_t ThetaC_max = 144;
-  Double_t ThetaC_wid = 1.;
+  float ThetaC_min = 0;
+  float ThetaC_max = 144;
+  float ThetaC_wid = 1.;
 
 /* Theta Binning for Momentum correction */
 #define MomC_T_n 48
-  Double_t MomC_T_min = 1;
-  Double_t MomC_T_max = 145;
-  Double_t MomC_T_wid = 3.;
+  float MomC_T_min = 1;
+  float MomC_T_max = 145;
+  float MomC_T_wid = 3.;
 
-  Double_t c0_theta[ThetaC_n][NUM_SECTORS];
-  Double_t c1_theta[ThetaC_n][NUM_SECTORS];
-  Double_t c2_theta[ThetaC_n][NUM_SECTORS];
+  float c0_theta[ThetaC_n][NUM_SECTORS];
+  float c1_theta[ThetaC_n][NUM_SECTORS];
+  float c2_theta[ThetaC_n][NUM_SECTORS];
 
-  Double_t c0_mom[MomC_T_n][NUM_SECTORS][Npar];
-  Double_t c1_mom[MomC_T_n][NUM_SECTORS][Npar];
+  float c0_mom[MomC_T_n][NUM_SECTORS][Npar];
+  float c1_mom[MomC_T_n][NUM_SECTORS][Npar];
 
-  Double_t d0_mom[MomC_T_n][NUM_SECTORS][Npar];
-  Double_t d1_mom[MomC_T_n][NUM_SECTORS][Npar];
+  float d0_mom[MomC_T_n][NUM_SECTORS][Npar];
+  float d1_mom[MomC_T_n][NUM_SECTORS][Npar];
 
   /* REad angle correction parameters */
   void read_theta_par();
@@ -41,15 +41,15 @@ class MomCorr {
   void read_mom_pip_par();
 
   /* Angle correction */
-  Double_t theta_corr(Double_t, Double_t, Int_t);
+  float theta_corr(float, float, Int_t);
 
   /* momentum correction for electrons */
-  Double_t mom_corr(Double_t, Double_t, Double_t, Int_t);
+  float mom_corr(float, float, float, Int_t);
 
   /* momentum correction for hadrons */
-  Double_t mom_corr_pip(Double_t, Double_t, Double_t, Int_t);
+  float mom_corr_pip(float, float, float, Int_t);
 
-  Int_t GetSector(Double_t phi);
+  Int_t GetSector(float phi);
 
  public:
   MomCorr();

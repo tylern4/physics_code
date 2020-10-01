@@ -185,7 +185,7 @@ def draw_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder):
             x,
             thrown_y,
             marker=".",
-            yerr=0,
+            yerr=stats.sem(thrown_y),
             c="r",
             linestyle="",
             label="thrown",
@@ -195,13 +195,13 @@ def draw_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder):
             x,
             mc_rec_y,
             marker=".",
-            yerr=0,
+            yerr=stats.sem(mc_rec_y),
             c="orange",
             linestyle="",
             label="mc_rec",
         )
         ax[0][1].errorbar(
-            x, data_y, yerr=0, marker=".", linestyle="", label="data",
+            x, data_y, yerr=stats.sem(data_y), marker=".", linestyle="", label="data",
         )
 
         acceptance = np.nan_to_num(thrown_y / mc_rec_y)
@@ -218,10 +218,23 @@ def draw_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder):
         y = data_y * acceptance
 
         popt, pcov = curve_fit(func, x, y, maxfev=8000)
+
+        # To compute one standard deviation errors on the parameters use
+        # https://stackoverflow.com/questions/49130343/is-there-a-way-to-get-the-error-in-fitting-parameters-from-scipy-stats-norm-fit
+        perr = np.sqrt(np.diag(pcov))
+
+        error_bar = 0
+
+        F = mc_rec_y/thrown_y
+        error = np.sqrt(((thrown_y-mc_rec_y)*mc_rec_y) /
+                        np.power(thrown_y, 3))/F
+        error_bar = np.sqrt(
+            np.power((y*error), 2) + np.power(stats.sem(y), 2))
+
         ax[1][1].errorbar(
             x,
             y,
-            yerr=0,
+            yerr=error_bar,
             marker=".",
             linestyle="",
             c="k",
@@ -249,7 +262,10 @@ def draw_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder):
         _ax = ax[1][1].twinx()
         _ax.plot(phis, crossSections, c='r',
                  label='maid2007', linestyle='dotted')
+
         ax[1][1].plot(xs, func(xs, *popt), c="#9467bd", linewidth=2.0)
+        # ax[1][1].set_ylim(bottom=0)
+        # _ax.set_ylim(bottom=0)
 
         fig.legend()
 

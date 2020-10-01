@@ -33,7 +33,7 @@ class DataHandeler {
   std::shared_ptr<Histogram> _hists;
   std::shared_ptr<Branches> _data;
   std::shared_ptr<MomCorr> _mom_corr = nullptr;
-  double _beam_energy = NAN;
+  float _beam_energy = NAN;
 
  public:
   DataHandeler();
@@ -54,7 +54,7 @@ class DataHandeler {
     _hists->EC_inout(_data->ec_ei(0), _data->ec_eo(0));
     _hists->EC_fill(_data->etot(0), _data->p(0));
     _hists->TM_Fill(_data->p(0), physics::theta_calc(_data->cz(0)));
-    double theta_cc = TMath::ACos(TMath::Abs(_data->p(0) * _data->cz(0)) / TMath::Abs(_data->p(0))) / D2R;
+    float theta_cc = TMath::ACos(TMath::Abs(_data->p(0) * _data->cz(0)) / TMath::Abs(_data->p(0))) / D2R;
     _hists->CC_fill(_data->cc_sect(0), (_data->cc_segm(0) % 1000) / 10, _data->cc_segm(0) / 1000 - 1, _data->nphe(0),
                     theta_cc);
 

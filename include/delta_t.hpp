@@ -13,8 +13,8 @@
 class Delta_T {
  private:
   std::shared_ptr<Branches> _data = nullptr;
-  const double c_special_units = 29.9792458;
-  double _vertex = 0.0;
+  const float c_special_units = 29.9792458;
+  float _vertex = 0.0;
   std::vector<float> _elec_array;
   std::vector<float> _proton_array;
   std::vector<float> _pion_array;
