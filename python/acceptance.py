@@ -258,154 +258,138 @@ def draw_cos_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_
         pool.starmap(draw_cos_bin, inputs)
 
 
+def draw_xsec_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder, bins):
+    fig, ax = plt.subplots(2, 2, figsize=(12, 9))
+    fig.suptitle(
+        f"W={w},\t$Q^2$={q2},\tcos($\Theta$)={cos_t} \n{bins} bins in $\phi$"
+    )
+    xs = np.linspace(0, 2 * np.pi, 100)
+    data_y, data_x = bh.numpy.histogram(
+        data.phi, bins=bins, range=(0, 2 * np.pi))
+    x = (data_x[1:] + data_x[:-1]) / 2.0
+    mc_rec_y, _ = bh.numpy.histogram(
+        mc_rec_data.phi, bins=bins, range=(0, 2 * np.pi)
+    )
+    thrown_y, _ = bh.numpy.histogram(
+        thrown_data.phi, bins=bins, range=(0, 2 * np.pi)
+    )
+
+    # Change 0's to 1 for division
+    thrown_y = np.where(thrown_y == 0, 1, thrown_y)
+    mc_rec_y = np.where(mc_rec_y == 0, 1, mc_rec_y)
+
+    # stats.sem(thrown_y)
+    ax[0][0].errorbar(
+        x,
+        thrown_y,
+        marker=".",
+        yerr=stats.sem(thrown_y),
+        c="r",
+        linestyle="",
+        label="thrown",
+    )
+    _ax = ax[0][0].twinx()
+    _ax.errorbar(
+        x,
+        mc_rec_y,
+        marker=".",
+        yerr=stats.sem(mc_rec_y),
+        c="orange",
+        linestyle="",
+        label="mc_rec",
+    )
+    ax[0][1].errorbar(
+        x, data_y, yerr=stats.sem(data_y), marker=".", linestyle="", label="data",
+    )
+
+    acceptance = np.nan_to_num(thrown_y / mc_rec_y)
+    ax[1][0].errorbar(
+        x,
+        1/acceptance,
+        yerr=0,
+        marker=".",
+        c="g",
+        linestyle="",
+        label="acceptance",
+    )
+
+    y = data_y * acceptance
+
+    error_bar = 0
+
+    F = mc_rec_y/thrown_y
+    error = np.sqrt(((thrown_y-mc_rec_y)*mc_rec_y) /
+                    np.power(thrown_y, 3))/F
+    error_bar = np.sqrt(
+        np.power((y*error), 2) + np.power(stats.sem(y), 2))
+
+    ax[1][1].errorbar(
+        x,
+        y,
+        yerr=error_bar,
+        marker=".",
+        linestyle="",
+        c="k",
+        zorder=1,
+        label="corrected",
+    )
+
+    phi_bins = np.linspace(0, 2 * np.pi, 200)
+    crossSections = []
+    phis = []
+
+    _w = (w.left + w.right) / 2.0
+    _q2 = (q2.left + q2.right) / 2.0
+    _cos_t = (cos_t.left + cos_t.right) / 2.0
+
+    for phi in phi_bins:
+        crossSections.append(
+            maid(ENERGY, _w, _q2, _cos_t, np.degrees(phi)))
+        phis.append(phi)
+
+    _ax = ax[1][1].twinx()
+    _ax.plot(phis, crossSections, c='r',
+             label='maid2007', linestyle='dotted')
+    # ax[1][1].set_ylim(bottom=0)
+    # _ax.set_ylim(bottom=0)
+
+    popt, pcov = curve_fit(func, x, y, maxfev=8000)
+    # To compute one standard deviation errors on the parameters use
+    # https://stackoverflow.com/questions/49130343/is-there-a-way-to-get-the-error-in-fitting-parameters-from-scipy-stats-norm-fit
+    perr = np.sqrt(np.diag(pcov))
+    ax[1][1].plot(xs, func(xs, *popt), c="#9467bd",
+                  linewidth=2.0)
+
+    # y1 = func(xs, *(popt+0.5*perr))
+    # y2 = func(xs, *(popt-0.5*perr))
+
+    # ax[1][1].plot(xs, y1, c="#9467bd", linewidth=2.0, alpha=0.15)
+    # ax[1][1].plot(xs, y2, c="#9467bd", linewidth=2.0, alpha=0.15)
+    # ax[1][1].fill_between(xs, y1, y2, facecolor="gray", alpha=0.15)
+
+    fig.legend()
+    plt.savefig(
+        f"{out_folder}/W[{w.left},{w.right}]_Q2[{q2.left},{q2.right}]_cos(theta)[{cos_t.left},{cos_t.right}]_{bins}.png"
+    )
+
+
 def draw_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder):
-    for bins in range(10, 11):
-        fig, ax = plt.subplots(2, 2, figsize=(12, 9))
-        fig.suptitle(
-            f"W={w},\t$Q^2$={q2},\tcos($\Theta$)={cos_t} \n{bins} bins in $\phi$"
-        )
-        xs = np.linspace(0, 2 * np.pi, 100)
-        data_y, data_x = bh.numpy.histogram(
-            data.phi, bins=bins, range=(0, 2 * np.pi))
-        x = (data_x[1:] + data_x[:-1]) / 2.0
-        mc_rec_y, _ = bh.numpy.histogram(
-            mc_rec_data.phi, bins=bins, range=(0, 2 * np.pi)
-        )
-        thrown_y, _ = bh.numpy.histogram(
-            thrown_data.phi, bins=bins, range=(0, 2 * np.pi)
-        )
+    with multiprocessing.Pool() as pool:
+        inputs = []
+        for bins in range(6, 15):
+            inputs.append((func, data, mc_rec_data, thrown_data,
+                           w, q2, cos_t, out_folder, bins))
 
-        # Change 0's to 1 for division
-        thrown_y = np.where(thrown_y == 0, 1, thrown_y)
-        mc_rec_y = np.where(mc_rec_y == 0, 1, mc_rec_y)
-
-        # stats.sem(thrown_y)
-        ax[0][0].errorbar(
-            x,
-            thrown_y,
-            marker=".",
-            yerr=stats.sem(thrown_y),
-            c="r",
-            linestyle="",
-            label="thrown",
-        )
-        _ax = ax[0][0].twinx()
-        _ax.errorbar(
-            x,
-            mc_rec_y,
-            marker=".",
-            yerr=stats.sem(mc_rec_y),
-            c="orange",
-            linestyle="",
-            label="mc_rec",
-        )
-        ax[0][1].errorbar(
-            x, data_y, yerr=stats.sem(data_y), marker=".", linestyle="", label="data",
-        )
-
-        acceptance = np.nan_to_num(thrown_y / mc_rec_y)
-        ax[1][0].errorbar(
-            x,
-            1/acceptance,
-            yerr=0,
-            marker=".",
-            c="g",
-            linestyle="",
-            label="acceptance",
-        )
-
-        y = data_y * acceptance
-
-        error_bar = 0
-
-        F = mc_rec_y/thrown_y
-        error = np.sqrt(((thrown_y-mc_rec_y)*mc_rec_y) /
-                        np.power(thrown_y, 3))/F
-        error_bar = np.sqrt(
-            np.power((y*error), 2) + np.power(stats.sem(y), 2))
-
-        ax[1][1].errorbar(
-            x,
-            y,
-            yerr=error_bar,
-            marker=".",
-            linestyle="",
-            c="k",
-            zorder=1,
-            label="corrected",
-        )
-
-        phi_bins = np.linspace(0, 2 * np.pi, 200)
-        crossSections = []
-        phis = []
-
-        _w = (w.left + w.right) / 2.0
-        _q2 = (q2.left + q2.right) / 2.0
-        _cos_t = (cos_t.left + cos_t.right) / 2.0
-
-        for phi in phi_bins:
-            crossSections.append(
-                maid(ENERGY, _w, _q2, _cos_t, np.degrees(phi)))
-            phis.append(phi)
-
-        _ax = ax[1][1].twinx()
-        _ax.plot(phis, crossSections, c='r',
-                 label='maid2007', linestyle='dotted')
-        # ax[1][1].set_ylim(bottom=0)
-        # _ax.set_ylim(bottom=0)
-
-        popt, pcov = curve_fit(func, x, y, maxfev=8000)
-        # To compute one standard deviation errors on the parameters use
-        # https://stackoverflow.com/questions/49130343/is-there-a-way-to-get-the-error-in-fitting-parameters-from-scipy-stats-norm-fit
-        perr = np.sqrt(np.diag(pcov))
-        ax[1][1].plot(xs, func(xs, *popt), c="#9467bd",
-                      linewidth=2.0)
-
-        # y1 = func(xs, *(popt+0.5*perr))
-        # y2 = func(xs, *(popt-0.5*perr))
-
-        # ax[1][1].plot(xs, y1, c="#9467bd", linewidth=2.0, alpha=0.15)
-        # ax[1][1].plot(xs, y2, c="#9467bd", linewidth=2.0, alpha=0.15)
-        # ax[1][1].fill_between(xs, y1, y2, facecolor="gray", alpha=0.15)
-
-        fig.legend()
-        plt.savefig(
-            f"{out_folder}/W[{w.left},{w.right}]_Q2[{q2.left},{q2.right}]_cos(theta)[{cos_t.left},{cos_t.right}]_{bins}.png"
-        )
+        pool.starmap(draw_xsec_plots, inputs)
 
 
 def draw_xsection(rec, mc_rec, thrown, func, out_folder):
     # executor = get_reusable_executor(max_workers=len(np.unique(rec.theta_bin)))
     total_num = (
         len(np.unique(rec.w_bin))
-        * len(np.unique(rec.q2_bin)))
-    pbar2 = tqdm(total=total_num)
-    for w in np.unique(rec.w_bin):
-        for q2 in np.unique(rec.q2_bin):
-            pbar2.update(1)
-            rec_cut = (
-                (w == rec.w_bin) & (q2 == rec.q2_bin)
-            )
-            mc_rec_cut = (
-                (w == mc_rec.w_bin)
-                & (q2 == mc_rec.q2_bin)
-            )
-            thrown_cut = (
-                (w == thrown.w_bin)
-                & (q2 == thrown.q2_bin)
-            )
-
-            data = rec[rec_cut]
-            mc_rec_data = mc_rec[mc_rec_cut]
-            thrown_data = thrown[thrown_cut]
-            draw_cos_plots(func, data, mc_rec_data,
-                           thrown_data, w, q2, rec.theta_bin, out_folder)
-    total_num = (
-        len(np.unique(rec.w_bin))
         * len(np.unique(rec.q2_bin))
         * len(np.unique(rec.theta_bin))
     )
-    pbar2.close()
 
     pbar = tqdm(total=total_num)
     for w in np.unique(rec.w_bin):
@@ -440,6 +424,32 @@ def draw_xsection(rec, mc_rec, thrown, func, out_folder):
                     func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder
                 )
     pbar.close()
+
+    total_num = (
+        len(np.unique(rec.w_bin))
+        * len(np.unique(rec.q2_bin)))
+    pbar2 = tqdm(total=total_num)
+    for w in np.unique(rec.w_bin):
+        for q2 in np.unique(rec.q2_bin):
+            pbar2.update(1)
+            rec_cut = (
+                (w == rec.w_bin) & (q2 == rec.q2_bin)
+            )
+            mc_rec_cut = (
+                (w == mc_rec.w_bin)
+                & (q2 == mc_rec.q2_bin)
+            )
+            thrown_cut = (
+                (w == thrown.w_bin)
+                & (q2 == thrown.q2_bin)
+            )
+
+            data = rec[rec_cut]
+            mc_rec_data = mc_rec[mc_rec_cut]
+            thrown_data = thrown[thrown_cut]
+            draw_cos_plots(func, data, mc_rec_data,
+                           thrown_data, w, q2, rec.theta_bin, out_folder)
+    pbar2.close()
 
 
 def draw_kinematics(rec, w_bins, q2_bins, theta_bins):
