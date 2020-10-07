@@ -249,13 +249,14 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
 
 
 def draw_cos_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder):
-    with multiprocessing.Pool() as pool:
-        inputs = []
-        for bins in range(10, 11):
-            inputs.append((func, data, mc_rec_data, thrown_data,
-                           w, q2, cos_t_bins, out_folder, bins))
-
-        pool.starmap(draw_cos_bin, inputs)
+    # with multiprocessing.Pool() as pool:
+    #     inputs = []
+    #     for bins in range(10, 11):
+    #         inputs.append((func, data, mc_rec_data, thrown_data,
+    #                        w, q2, cos_t_bins, out_folder, bins))
+    #     pool.starmap(draw_cos_bin, inputs)
+    draw_cos_bin(func, data, mc_rec_data, thrown_data,
+                 w, q2, cos_t_bins, out_folder, 10)
 
 
 def draw_xsec_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder, bins):
@@ -374,13 +375,15 @@ def draw_xsec_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_fold
 
 
 def draw_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder):
-    with multiprocessing.Pool() as pool:
-        inputs = []
-        for bins in range(10, 11):
-            inputs.append((func, data, mc_rec_data, thrown_data,
-                           w, q2, cos_t, out_folder, bins))
+    # with multiprocessing.Pool() as pool:
+    #     inputs = []
+    #     for bins in range(10, 11):
+    #         inputs.append((func, data, mc_rec_data, thrown_data,
+    #                        w, q2, cos_t, out_folder, bins))
+    #     pool.starmap(draw_xsec_plots, inputs)
 
-        pool.starmap(draw_xsec_plots, inputs)
+    draw_xsec_plots(func, data, mc_rec_data, thrown_data,
+                    w, q2, cos_t, out_folder, 10)
 
 
 def draw_xsection(rec, mc_rec, thrown, func, out_folder):
