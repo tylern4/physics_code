@@ -42,7 +42,7 @@
 #define BINS 500
 #define BINS_MM 250
 
-#define FID_SLICES 50
+#define FID_SLICES 20
 
 #define N_SIGMA 3
 #define NUM_POINTS 20
@@ -310,15 +310,15 @@ Garys binning
       std::make_shared<TH2F>("Target_vertex_zx", "Target_vertex_zx", BINS, -6.0, 6.0, BINS, -6.0, 6.0);
 
   TH1F_ptr Missing_Mass = std::make_shared<TH1F>("Missing_Mass", "Missing Mass", BINS_MM, MM_min, MM_max);
-  TH1F_ptr Missing_Mass_small = std::make_shared<TH1F>("Missing_Mass_small", "e(p,#pi^{+} X)e'", BINS_MM, 0.3, 1.3);
+  TH1F_ptr Missing_Mass_small = std::make_shared<TH1F>("Missing_Mass_small", "e(p,#pi^{+} X)e'", BINS_MM, 0.8, 1.3);
   std::vector<TH1F_ptr> Missing_Mass_small_sec;
   std::vector<TH1F_ptr> Missing_Mass_Sq_small_sec;
   TH1F_ptr Missing_Mass_square =
-      std::make_shared<TH1F>("Missing_Mass_square", "Missing Mass square", BINS_MM, MM_min, MM_max* MM_max);
+      std::make_shared<TH1F>("Missing_Mass_square", "Missing Mass square", BINS_MM, 0.7, 1.5);
 
   TH1F_ptr Missing_Mass_strict = std::make_shared<TH1F>("Missing_Mass_strict", "Missing Mass", BINS_MM, MM_min, MM_max);
   TH1F_ptr Missing_Mass_square_strict =
-      std::make_shared<TH1F>("Missing_Mass_square_strict", "Missing Mass square", BINS_MM, MM_min, MM_max* MM_max);
+      std::make_shared<TH1F>("Missing_Mass_square_strict", "Missing Mass square", BINS_MM, 0.7, 1.5);
 
   TH1F_ptr Missing_Mass_pi0 = std::make_shared<TH1F>("Missing_Mass_pi0", "Missing Mass #pi^{0}", BINS_MM, -1, 1);
   TH1F_ptr Missing_Mass_square_pi0 = std::make_shared<TH1F>("Missing_Mass_pi0_2", "MM^{2} #pi^{0}", BINS_MM, -1, 1);

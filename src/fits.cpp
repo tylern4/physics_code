@@ -21,7 +21,10 @@ float Fits::Get_mean() { return mean; }
 float Fits::Get_FWHM() { return FWHM; }
 
 TF1 *Fits::FitGaus(TH1F *hist) {
-  if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  if (hist->GetEntries() > 1000) {
+    ROOT::Math::MinimizerOptions::SetDefaultMinimizer("GSLSimAn");
+    // std::cerr << "Using GSLSimAn" << std::endl;
+  }
   if (hist->GetEntries() > 100) {
     TF1 *fitFunc = new TF1("fitFunc", func::gausian, -100.0, 100.0, 3);
 
@@ -59,7 +62,10 @@ TF1 *Fits::FitGaus(TH1F *hist) {
 }
 
 TF1 *Fits::FitLandauGaus(TH1F *hist) {
-  if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  if (hist->GetEntries() > 1000) {
+    ROOT::Math::MinimizerOptions::SetDefaultMinimizer("GSLSimAn");
+    // std::cerr << "Using GSLSimAn" << std::endl;
+  }
   if (hist->GetEntries() > 1000) {
     double par[6];
 
@@ -104,7 +110,10 @@ TF1 *Fits::FitLandauGaus(TH1F *hist) {
 }
 
 TF1 *Fits::Fit2Gaus(TH1F *hist) {
-  if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  if (hist->GetEntries() > 1000) {
+    ROOT::Math::MinimizerOptions::SetDefaultMinimizer("GSLSimAn");
+    // std::cerr << "Using GSLSimAn" << std::endl;
+  }
   if (hist->GetEntries() > 1000) {
     TF1 *fitFunc = new TF1("fitFunc", func::gausian2, min_value, max_value, 6);
     fitFunc->SetLineColor(2);
@@ -134,7 +143,10 @@ TF1 *Fits::Fit2Gaus(TH1F *hist) {
 }
 
 TF1 *Fits::FitLandau(TH1F *hist) {
-  if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  if (hist->GetEntries() > 1000) {
+    ROOT::Math::MinimizerOptions::SetDefaultMinimizer("GSLSimAn");
+    // std::cerr << "Using GSLSimAn" << std::endl;
+  }
   if (hist->GetEntries() > 1000) {
     TF1 *fitFunc = new TF1("fitFunc", "landau", -100.0, 100.0);
     fitFunc->SetLineColor(color);
@@ -147,7 +159,10 @@ TF1 *Fits::FitLandau(TH1F *hist) {
 }
 
 TF1 *Fits::FitPoly_1D(TH1F *hist) {
-  if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  if (hist->GetEntries() > 1000) {
+    ROOT::Math::MinimizerOptions::SetDefaultMinimizer("GSLSimAn");
+    // std::cerr << "Using GSLSimAn" << std::endl;
+  }
 
   TF1 *fitFunc = new TF1("fitFunc", func::pol1, min_value, max_value);
   fitFunc->SetLineColor(9);
@@ -166,7 +181,10 @@ TF1 *Fits::FitPoly_1D(TH1F *hist) {
 }
 
 TF1 *Fits::FitPoly_2D(TH1F *hist) {
-  if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  if (hist->GetEntries() > 1000) {
+    ROOT::Math::MinimizerOptions::SetDefaultMinimizer("GSLSimAn");
+    // std::cerr << "Using GSLSimAn" << std::endl;
+  }
 
   TF1 *fitFunc = new TF1("fitFunc", func::pol2, min_value, max_value);
   fitFunc->SetLineColor(30);
@@ -187,7 +205,10 @@ TF1 *Fits::FitPoly_2D(TH1F *hist) {
 }
 
 TF1 *Fits::FitPoly_3D(TH1F *hist) {
-  if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  if (hist->GetEntries() > 1000) {
+    ROOT::Math::MinimizerOptions::SetDefaultMinimizer("GSLSimAn");
+    // std::cerr << "Using GSLSimAn" << std::endl;
+  }
 
   TF1 *fitFunc = new TF1("fitFunc", func::pol3, min_value, max_value);
   fitFunc->SetLineColor(46);
@@ -210,7 +231,10 @@ TF1 *Fits::FitPoly_3D(TH1F *hist) {
 }
 
 TF1 *Fits::FitPoly_4D(TH1F *hist) {
-  if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  if (hist->GetEntries() > 1000) {
+    ROOT::Math::MinimizerOptions::SetDefaultMinimizer("GSLSimAn");
+    // std::cerr << "Using GSLSimAn" << std::endl;
+  }
 
   TF1 *fitFunc = new TF1("fitFunc", func::pol4, min_value, max_value);
   fitFunc->SetLineColor(42);
@@ -278,7 +302,7 @@ TF1 *Fits::FitFiducial(TGraph *profile, int sec) {
 }
 
 TF1 *Fits::FitFiducial_hi(TH2F *hist2d) {
-  if (hist2d->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  if (hist2d->GetEntries() > 1000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("GSLSimAn");
 
   a = b = c = d = 0.5;
   TF1 *fitFunc_hi = new TF1("fitFunc_hi",
@@ -306,7 +330,7 @@ TF1 *Fits::FitFiducial_hi(TH2F *hist2d) {
 }
 
 TF1 *Fits::FitFiducial(TH2F *hist2d) {
-  if (hist2d->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  if (hist2d->GetEntries() > 1000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("GSLSimAn");
 
   a = b = c = d = 0.5;
   TF1 *fitFunc = new TF1("fitFunc",
@@ -334,7 +358,10 @@ TF1 *Fits::FitFiducial(TH2F *hist2d) {
 }
 
 TF1 *Fits::FitGenNormal(TH1F *hist) {
-  if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  if (hist->GetEntries() > 1000) {
+    ROOT::Math::MinimizerOptions::SetDefaultMinimizer("GSLSimAn");
+    // std::cerr << "Using GSLSimAn" << std::endl;
+  }
   TF1 *fitFunc = new TF1("genNormal", func::genNormal, min_value, max_value, 4);
   float min, max, val, min_m, max_m;
   if (hist->GetEntries() < 100) return NULL;
@@ -370,7 +397,10 @@ TF1 *Fits::FitGenNormal(TH1F *hist) {
 }
 
 TF1 *Fits::FitBreitWigner(TH1F *hist) {
-  if (hist->GetEntries() > 1000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  if (hist->GetEntries() > 1000) {
+    ROOT::Math::MinimizerOptions::SetDefaultMinimizer("GSLSimAn");
+    // std::cerr << "Using GSLSimAn" << std::endl;
+  }
 
   TF1 *fitbw = new TF1("bw", func::breit_wigner, min_value, max_value, 3);
   par_max = std::isnan(hist->GetMaximum()) ? 0 : hist->GetMaximum();
@@ -391,7 +421,10 @@ TF1 *Fits::FitBreitWigner(TH1F *hist) {
 TF1 *Fits::FitBreitWigner(std::shared_ptr<TH1F> &hists) { return Fits::FitBreitWigner(hists.get()); }
 
 TF1 *Fits::FitMissMass(TH1F *hist) {
-  if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  if (hist->GetEntries() > 1000) {
+    ROOT::Math::MinimizerOptions::SetDefaultMinimizer("GSLSimAn");
+    // std::cerr << "Using GSLSimAn" << std::endl;
+  }
   if (hist->GetEntries() < 1000) return nullptr;
 
   float fit_min = 0.5;
@@ -450,7 +483,10 @@ TF1 *Fits::FitMissMass(TH1F *hist) {
 }
 
 TF1 *Fits::FitDeGauss(TH1F *hist) {
-  if (hist->GetEntries() > 10000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("Minuit2");
+  if (hist->GetEntries() > 1000) {
+    ROOT::Math::MinimizerOptions::SetDefaultMinimizer("GSLSimAn");
+    // std::cerr << "Using GSLSimAn" << std::endl;
+  }
   if (hist->GetEntries() < 1000) return nullptr;
 
   static const int max_par = 5;
@@ -465,8 +501,8 @@ TF1 *Fits::FitDeGauss(TH1F *hist) {
 
   total->SetParameters(40, 0.89, 0.01, 50, 20);
 
-  // float_t par[max_par];
-  // for (size_t i = 0; i < 50; i++) hist->Fit(total, "QRNM+", "", min_value, max_value);  // Peak of N at 0.939
+  float_t par[max_par];
+  for (size_t i = 0; i < 50; i++) hist->Fit(total, "QRNM+", "", min_value, max_value);  // Peak of N at 0.939
 
   hist->Fit(total, "RQM+");
 

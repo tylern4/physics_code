@@ -221,9 +221,9 @@ void Histogram::makeHists_WvsQ2() {
     W_channel_sec[sec] = std::make_shared<TH1F>(Form("W_channel_sec_%d", sec + 1),
                                                 Form("W N #pi^{+} Sector: %d", sec + 1), BINS / 2, w_min, w_max);
     Missing_Mass_small_sec[sec] = std::make_shared<TH1F>(Form("Missing_Mass_small_%d", sec),
-                                                         Form("e(p,#pi^{+} X)e' Sector %d", sec), BINS_MM, 0.3, 1.3);
+                                                         Form("e(p,#pi^{+} X)e' Sector %d", sec), BINS_MM, 0.8, 1.3);
     Missing_Mass_Sq_small_sec[sec] = std::make_shared<TH1F>(Form("Missing_Mass_Sq_small_%d", sec),
-                                                            Form("e(p,#pi^{+} X)e' Sector %d", sec), BINS_MM, 0.4, 1.3);
+                                                            Form("e(p,#pi^{+} X)e' Sector %d", sec), BINS_MM, 0.7, 1.5);
   }
   W_binned.resize(Q2_BINS);
   for (short y = 0; y < Q2_BINS; y++) {
@@ -684,15 +684,15 @@ void Histogram::Write_Missing_Mass() {
   for (auto &&sec : Missing_Mass_small_sec) {
     auto fit = std::make_shared<Fits>();
     fit->Set_min(0.8);
-    fit->Set_max(1.3);
-    fit->FitGaus(sec);
+    fit->Set_max(1.1);
+    fit->FitDeGauss(sec);
     sec->SetXTitle("Mass (GeV)");
     sec->Write();
   }
 
   for (auto &&sec : Missing_Mass_Sq_small_sec) {
     auto fit = std::make_shared<Fits>();
-    fit->Set_min(0.4);
+    fit->Set_min(0.7);
     fit->Set_max(1.0);
     fit->FitDeGauss(sec);
     sec->SetXTitle("Mass^2 (GeV)");

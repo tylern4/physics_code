@@ -76,7 +76,8 @@ class Yeilds {
 
       event->boost();
 
-      if ((event->SinglePip() || event->NeutronPip()) && (event->MM2() >= 0.6 && event->MM2() <= 1.3)) {
+      if ((event->SinglePip() || event->NeutronPip()) &&
+          (event->MM2() >= 0.3 && event->MM2() <= 1.5 && event->W() <= 2.0 && event->Q2() <= 4.0)) {
         total++;
         csv_data csv_buffer;
         csv_buffer.electron_sector = data->dc_sect(0);

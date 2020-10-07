@@ -251,7 +251,7 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
 def draw_cos_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder):
     with multiprocessing.Pool() as pool:
         inputs = []
-        for bins in range(6, 15):
+        for bins in range(10, 11):
             inputs.append((func, data, mc_rec_data, thrown_data,
                            w, q2, cos_t_bins, out_folder, bins))
 
@@ -376,7 +376,7 @@ def draw_xsec_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_fold
 def draw_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder):
     with multiprocessing.Pool() as pool:
         inputs = []
-        for bins in range(6, 15):
+        for bins in range(10, 11):
             inputs.append((func, data, mc_rec_data, thrown_data,
                            w, q2, cos_t, out_folder, bins))
 
@@ -520,19 +520,17 @@ if __name__ == "__main__":
     print(f"\n\nread time mc_df: {stop - start}\n\n")
     print(f"\n\ntime: {stop - total_time}\n\n")
 
-    mc_rec = mc_rec[(mc_rec.w > 0) & (mc_rec.mm2 > 0.5) & (mc_rec.mm2 < 1.5)]
+    # mc_rec = mc_rec[(mc_rec.w > 0) & (mc_rec.mm2 > 0.5) & (mc_rec.mm2 < 1.5)]
     mc_rec["cos_theta"] = np.cos(mc_rec.theta)
 
-    mc_thrown = mc_thrown[
-        (mc_thrown.w > 0) & (mc_thrown.mm2 > 0.5) & (mc_thrown.mm2 < 1.5)
-    ]
+    mc_thrown = mc_thrown[(mc_thrown.w > 0)]
     mc_thrown["cos_theta"] = np.cos(mc_thrown.theta)
 
     start = time.time()
     rec = feather.read_feather(rec_data_file_path)
     stop = time.time()
     print(f"\n\nread time rec: {stop - start}\n\n")
-    rec = rec[(rec.w > 0) & (rec.mm2 > 0.5) & (rec.mm2 < 1.5)]
+    # rec = rec[(rec.w > 0) & (rec.mm2 > 0.5) & (rec.mm2 < 1.5)]
     rec["cos_theta"] = np.cos(rec.theta).astype(np.float32)
     print(f"===========================\nmc_rec:\n\n")
     print(f"{mc_rec.info(verbose=True, memory_usage='deep')}")
