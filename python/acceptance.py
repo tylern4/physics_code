@@ -6,6 +6,7 @@ matplotlib.use("agg")  # noqa
 import warnings
 # from loky import get_reusable_executor
 import multiprocessing
+import os
 from maid_interface import maid_2007_Npi as maid
 import datetime
 import boost_histogram as bh
@@ -152,7 +153,10 @@ def mm_cut(df):
         plt.axvline(popt[1] + NSIGMA * fwhm / 2.355, c="#9467bd")
         plt.axvline(popt[1] - NSIGMA * fwhm / 2.355, c="#9467bd")
 
-        plt.savefig(f"{out_folder}/MM2_cut_{sec}.png")
+        if not os.path.exists(f'{out_folder}/cuts'):
+            os.makedirs(f'{out_folder}/cuts')
+
+        plt.savefig(f"{out_folder}/cuts/MM2_cut_{sec}.png")
 
         data[sec] = (popt_g[1] + NSIGMA * popt_g[2],
                      popt_g[1] - NSIGMA * popt_g[2])
@@ -242,9 +246,10 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
 
         ax[a][b].plot(xs, func(xs, *popt), c="#9467bd",
                       linewidth=2.0)
-
+    if not os.path.exists(f'{out_folder}/CosT'):
+        os.makedirs(f'{out_folder}/CosT')
     plt.savefig(
-        f"{out_folder}/W[{round(w.left,3)},{round(w.right,3)}]_Q2[{round(q2.left,3)},{round(q2.right,3)}]_{bins}_CosT.png"
+        f"{out_folder}/CosT/W[{round(w.left,3)},{round(w.right,3)}]_Q2[{round(q2.left,3)},{round(q2.right,3)}]_{bins}_CosT.png"
     )
 
 
@@ -369,6 +374,9 @@ def draw_xsec_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_fold
     # ax[1][1].fill_between(xs, y1, y2, facecolor="gray", alpha=0.15)
 
     fig.legend()
+    if not os.path.exists(f'{out_folder}'):
+        os.makedirs(f'{out_folder}')
+
     plt.savefig(
         f"{out_folder}/W[{w.left},{w.right}]_Q2[{q2.left},{q2.right}]_cos(theta)[{cos_t.left},{cos_t.right}]_{bins}.png"
     )
@@ -466,7 +474,10 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins):
     for q2 in q2_bins:
         ax.axhline(q2, c='w')
 
-    plt.savefig(f"{out_folder}/W_vs_Q2.png")
+    if not os.path.exists(f'{out_folder}/kinematics'):
+        os.makedirs(f'{out_folder}/kinematics')
+
+    plt.savefig(f"{out_folder}/kinematics/W_vs_Q2.png")
 
     fig1, ax1 = plt.subplots(figsize=(12, 9))
 
@@ -478,7 +489,7 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins):
     for phi in np.linspace(0, 2*np.pi, 10):
         ax1.axhline(phi, c='w')
 
-    plt.savefig(f"{out_folder}/theta_vs_phi.png")
+    plt.savefig(f"{out_folder}/kinematics/theta_vs_phi.png")
 
 
 if __name__ == "__main__":
