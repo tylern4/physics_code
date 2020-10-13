@@ -309,6 +309,9 @@ Garys binning
   TH2F_ptr target_vertex_zx =
       std::make_shared<TH2F>("Target_vertex_zx", "Target_vertex_zx", BINS, -6.0, 6.0, BINS, -6.0, 6.0);
 
+  TH2F_ptr target_vertex_xz_phi =
+      std::make_shared<TH2F>("target_vertex_xz_phi", "target_vertex_xz_phi", BINS, -6.0, 6.0, BINS, -360.0, 360.0);
+
   TH1F_ptr Missing_Mass = std::make_shared<TH1F>("Missing_Mass", "Missing Mass", BINS_MM, MM_min, MM_max);
   TH1F_ptr Missing_Mass_small = std::make_shared<TH1F>("Missing_Mass_small", "e(p,#pi^{+} X)e'", BINS_MM, 0.8, 1.3);
   std::vector<TH1F_ptr> Missing_Mass_small_sec;

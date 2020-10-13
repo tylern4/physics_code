@@ -87,7 +87,7 @@ class DataHandeler {
       _hists->delta_t_sec_pad(_data->p(part_num), _data->q(part_num), dt->Get_dt_P(part_num), dt->Get_dt_Pi(part_num),
                               dt->Get_dt_E(part_num), _data->sc_sect(part_num), _data->sc_pd(part_num));
 
-      _hists->Fill_Target_Vertex(_data->px(part_num), _data->py(part_num), _data->pz(part_num), _data->vx(part_num),
+      _hists->Fill_Target_Vertex(_data->cx(part_num), _data->cy(part_num), _data->cz(part_num), _data->vx(part_num),
                                  _data->vy(part_num), _data->vz(part_num));
       _hists->MomVsBeta_Fill(_data->p(part_num), _data->b(part_num));
 

@@ -1594,6 +1594,7 @@ void Histogram::Beam_Position_Write() {
 }
 
 void Histogram::Fill_Target_Vertex(float px, float py, float pz, float vertex_x, float vertex_y, float vertex_z) {
+  target_vertex_xz_phi->Fill(vertex_z, physics::phi_calc(px, py));
   if (0 == vertex_x) return;
   if (0 == vertex_y && 0 == vertex_z) return;
 
@@ -1629,6 +1630,11 @@ void Histogram::Target_Vertex_Write() {
   target_vertex_zx->SetYTitle("X");
   target_vertex_zx->SetOption("COLZ");
   target_vertex_zx->Write();
+
+  target_vertex_xz_phi->SetXTitle("vz");
+  target_vertex_xz_phi->SetYTitle("#phi");
+  target_vertex_xz_phi->SetOption("COLZ");
+  target_vertex_xz_phi->Write();
 }
 
 void Histogram::Fill_E_Prime(const LorentzVector &e_prime) {
