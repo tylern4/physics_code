@@ -448,7 +448,7 @@ Garys binning
   void TM_Fill(float momentum, float theta);
 
   // Beam Position
-  void Fill_Beam_Position(float vertex_x, float vertex_y, float vertex_z);
+  void Fill_Beam_Position(const std::shared_ptr<Branches>& _data);
   void Beam_Position_Write();
   void Fill_Target_Vertex(float px, float py, float pz, float vertex_x, float vertex_y, float vertex_z);
   void Target_Vertex_Write();

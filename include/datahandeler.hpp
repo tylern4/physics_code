@@ -62,9 +62,9 @@ class DataHandeler {
 
     _hists->Fill_E_Prime_fid(event->e_mu_prime());
     _hists->Fill_E_Prime(event->e_mu_prime());
+    _hists->Fill_Beam_Position(_data);
 
     if (!check->isElecctron()) return;
-    _hists->Fill_Beam_Position(_data->dc_vx(0), _data->dc_vy(0), _data->dc_vz(0));
 
     auto photon_flux = std::make_unique<PhotonFlux>(event->e_mu(), event->e_mu_prime());
     _hists->Photon_flux_Fill(photon_flux->GetVirtualPhotonFlux());

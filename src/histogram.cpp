@@ -1568,13 +1568,14 @@ void Histogram::EC_Write() {
   ECin_ECout->Write();
 }
 
-void Histogram::Fill_Beam_Position(float vertex_x, float vertex_y, float vertex_z) {
-  Beam_Position->Fill(vertex_x, vertex_y);
-  Beam_Position_X->Fill(vertex_x);
-  Beam_Position_Y->Fill(vertex_y);
-  Beam_Position_Z->Fill(vertex_z);
+void Histogram::Fill_Beam_Position(const std::shared_ptr<Branches> &_data) {
+  Beam_Position->Fill(_data->dc_vx(0), _data->dc_vy(0));
+  Beam_Position_X->Fill(_data->dc_vx(0));
+  Beam_Position_Y->Fill(_data->dc_vy(0));
+  Beam_Position_Z->Fill(_data->dc_vz(0));
 
   // Phi vs vertex
+  target_vertex_xz_phi->Fill(_data->dc_vz(0), physics::phi_calc(_data->cx(0), _data->cy(0)));
 }
 
 void Histogram::Beam_Position_Write() {
@@ -1594,7 +1595,6 @@ void Histogram::Beam_Position_Write() {
 }
 
 void Histogram::Fill_Target_Vertex(float px, float py, float pz, float vertex_x, float vertex_y, float vertex_z) {
-  target_vertex_xz_phi->Fill(vertex_z, physics::phi_calc(px, py));
   if (0 == vertex_x) return;
   if (0 == vertex_y && 0 == vertex_z) return;
 
