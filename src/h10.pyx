@@ -1,4 +1,11 @@
 # distutils: language = c++
+#cython: boundscheck=False
+#cython: nonecheck=False
+#cython: wraparound=False
+#cython: infertypes=True
+#cython: initializedcheck=False
+#cython: cdivision=True
+
 from libcpp.vector cimport vector
 from libcpp.string cimport string
 from libcpp.memory cimport unique_ptr, shared_ptr
@@ -28,7 +35,6 @@ class colors:
   BOLDMAGENTA = b"\033[1m\033[35m"
   BOLDCYAN = b"\033[1m\033[36m"
   BOLDWHITE = b"\033[1m\033[37m"
-
 
 cdef extern from "TChain.h":
   cdef cppclass TChain:
@@ -146,6 +152,8 @@ cdef class h10_data:
     return deref(self.c_chain).GetEntries()
   def get_entry(self, num):
     deref(self.c_chain).GetEntry(num)
+  def reset(self):
+      self.entry = 0
   def __iter__(self):
       return self
   def next(self):
@@ -356,31 +364,96 @@ cdef class h10_data:
   @property
   def cc_c2(self):
     return np.array(deref(self.c_branches).cc_c2())  
-  #@property
-  #def pidpart(self):
-  #  return np.array(deref(self.c_branches).pidpart())
-  #@property
-  #def xpart(self):
-  #  return np.array(deref(self.c_branches).xpart())
-  #@property
-  #def ypart(self):
-  #  return np.array(deref(self.c_branches).ypart())
-  #@property
-  #def zpart(self):
-  #  return np.array(deref(self.c_branches).zpart())
-  #@property
-  #def epart(self):
-  #  return np.array(deref(self.c_branches).epart())
-  #@property
-  #def pxpart(self):
-  #  return np.array(deref(self.c_branches).pxpart())
-  #@property
-  #def pypart(self):
-  #  return np.array(deref(self.c_branches).pypart())
-  #@property
-  #def pzpart(self):
-  #  return np.array(deref(self.c_branches).pzpart())
-  #@property
-  #def qpart(self):
-  #  return np.array(deref(self.c_branches).qpart())
+
+cdef class h10_mc(h10_data):
+  def __cinit__(self):
+    self.entry = 0
+    self.c_chain.reset(new TChain("h10"))
+    self.c_branches.reset(new Branches(self.c_chain, True))
+  @property
+  def pidpart(self):
+   return np.array(deref(self.c_branches).pidpart())
+  @property
+  def xpart(self):
+   return np.array(deref(self.c_branches).xpart())
+  @property
+  def ypart(self):
+   return np.array(deref(self.c_branches).ypart())
+  @property
+  def zpart(self):
+   return np.array(deref(self.c_branches).zpart())
+  @property
+  def epart(self):
+   return np.array(deref(self.c_branches).epart())
+  @property
+  def pxpart(self):
+   return np.array(deref(self.c_branches).pxpart())
+  @property
+  def pypart(self):
+   return np.array(deref(self.c_branches).pypart())
+  @property
+  def pzpart(self):
+   return np.array(deref(self.c_branches).pzpart())
+  @property
+  def qpart(self):
+   return np.array(deref(self.c_branches).qpart())
+
+cdef extern from "reaction.cpp":
+  pass
+
+cdef extern from "reaction.hpp":
+    cdef cppclass Reaction:
+      Reaction(shared_ptr[Branches]) except +
+      Reaction(shared_ptr[Branches],float) except +
+      void SetProton(int)
+      void SetPip(int)
+      void SetPim(int)
+      void SetOther(int)
+      void SetNeutron(int)
+
+      bool Reset()
+      bool SingleP()
+
+      float W()
+      float Q2()
+
+      float MM()
+      float MM2()
+      float pi0_mass()
+      float pi0_mass2()
+
+cdef class reaction:
+  cdef:
+    shared_ptr[Branches] c_branches
+    shared_ptr[Reaction] c_reaction
+  def __cinit__(self, h10_data branch, float beam_E):
+    self.c_branches = branch.c_branches
+    self.c_reaction.reset(new Reaction(self.c_branches, beam_E))
+  def __cinit__(self, h10_data branch):
+    self.c_branches = branch.c_branches
+    self.c_reaction.reset(new Reaction(self.c_branches))
+  def reset(self):
+    deref(self.c_reaction).Reset()
+  def proton(self, int i):
+   deref(self.c_reaction).SetProton(i)
+  def neutron(self, int i):
+   deref(self.c_reaction).SetNeutron(i)
+  def pip(self, int i):
+   deref(self.c_reaction).SetPip(i)
+  def pim(self, int i):
+   deref(self.c_reaction).SetPim(i)
+  def other(self, int i):
+   deref(self.c_reaction).SetOther(i)
+  def pi0_M(self):
+    return deref(self.c_reaction).pi0_mass()
+  def pi0_M2(self):
+    return deref(self.c_reaction).pi0_mass2()
+  @property
+  def w(self):
+    return deref(self.c_reaction).W()
+  @property
+  def q2(self):
+    return deref(self.c_reaction).Q2()
+  def single_P(self):
+    return deref(self.c_reaction).SingleP()
 

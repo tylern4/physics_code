@@ -23,5 +23,5 @@ out = [','.join(x[0:9]) for x in out]
 
 with open("out.csv", "w") as f:
     for c in out[1:]:
-        print(c.encode('utf-8'))
-        print(c.encode('utf-8'), file=f)
+        print(c)
+        print(c, file=f)

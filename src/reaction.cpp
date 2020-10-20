@@ -21,6 +21,9 @@ Reaction::Reaction(const std::shared_ptr<Branches>& data, const float beam_energ
   _beam = physics::fourVec(0.0, 0.0, _beam_energy, MASS_E);
   _elec = physics::fourVec(_data->px(0), _data->py(0), _data->pz(0), MASS_E);
 
+  //_mom_corr = std::make_shared<MomCorr>();
+  //_elec = _mom_corr->CorrectedVector(_data->px(0), _data->py(0), _data->pz(0), ELECTRON);
+
   *_gamma = *_beam - *_elec;
   _W = physics::W_calc(*_gamma);
   _Q2 = physics::Q2_calc(*_gamma);
@@ -46,6 +49,64 @@ Reaction::Reaction(const std::shared_ptr<Branches>& data, const float beam_energ
 }
 
 Reaction::~Reaction() = default;
+
+bool Reaction::Reset() {
+  std::cout << "reset" << std::endl;
+  try {
+    _elec = nullptr;
+    _prot = nullptr;
+    _pip = nullptr;
+    _pim = nullptr;
+    _neutron = nullptr;
+
+    _photons.clear();
+    _pair_mass.clear();
+
+    _hasE = false;
+    _hasP = false;
+    _hasPip = false;
+    _hasPim = false;
+    _hasOther = false;
+    _hasNeutron = false;
+
+    _boosted = false;
+
+    _numProt = 0;
+    _numPip = 0;
+    _numPim = 0;
+    _numPos = 0;
+    _numNeg = 0;
+    _numNeutral = 0;
+    _numPhotons = 0;
+    _numOther = 0;
+
+    _sector = -1;
+
+    _MM_calc = false;
+    _MM = NAN;
+    _MM2 = NAN;
+
+    _pi0_mass = NAN;
+    _pi0_mass2 = NAN;
+
+    _W = NAN;
+    _Q2 = NAN;
+    _xb = NAN;
+
+    _theta_e = NAN;
+    _theta_star = NAN;
+    _phi_star = NAN;
+    _cc_theta = NAN;
+    _cc_phi = NAN;
+
+    _type = "NAN";
+
+    return true;
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << '\n';
+    return false;
+  }
+}
 
 float Reaction::cc_theta() {
   if (std::isnan(_cc_theta)) Reaction::calc_cc_angles();

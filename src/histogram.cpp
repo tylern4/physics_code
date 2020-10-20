@@ -1575,7 +1575,7 @@ void Histogram::Fill_Beam_Position(const std::shared_ptr<Branches> &_data) {
   Beam_Position_Z->Fill(_data->dc_vz(0));
 
   // Phi vs vertex
-  target_vertex_xz_phi->Fill(_data->dc_vz(0), physics::phi_calc(_data->cx(0), _data->cy(0)));
+  target_vertex_vz_phi->Fill(_data->dc_vz(0), physics::phi_calc(_data->cx(0), _data->cy(0)));
 }
 
 void Histogram::Beam_Position_Write() {
@@ -1631,10 +1631,10 @@ void Histogram::Target_Vertex_Write() {
   target_vertex_zx->SetOption("COLZ");
   target_vertex_zx->Write();
 
-  target_vertex_xz_phi->SetXTitle("vz");
-  target_vertex_xz_phi->SetYTitle("#phi");
-  target_vertex_xz_phi->SetOption("COLZ");
-  target_vertex_xz_phi->Write();
+  target_vertex_vz_phi->SetXTitle("vz");
+  target_vertex_vz_phi->SetYTitle("#phi");
+  target_vertex_vz_phi->SetOption("COLZ");
+  target_vertex_vz_phi->Write();
 }
 
 void Histogram::Fill_E_Prime(const LorentzVector &e_prime) {

@@ -48,6 +48,7 @@ class DataHandeler {
     _chain->GetEntry(current_event);
     auto check = std::make_unique<CutType>(_data);
     _beam_energy = std::is_same<CutType, e1f_Cuts>::value ? E1F_E0 : E1D_E0;
+    _hists->Fill_Beam_Position(_data);
 
     if (!check->isElecctron()) return;
 
@@ -62,7 +63,6 @@ class DataHandeler {
 
     _hists->Fill_E_Prime_fid(event->e_mu_prime());
     _hists->Fill_E_Prime(event->e_mu_prime());
-    _hists->Fill_Beam_Position(_data);
 
     if (!check->isElecctron()) return;
 
@@ -75,7 +75,8 @@ class DataHandeler {
 
     float theta = physics::theta_calc(_data->cz(0));
     float phi = physics::phi_calc(_data->cx(0), _data->cy(0));
-    int sector = _data->dc_sect(0);
+    int elec_sector = _data->dc_sect(0);
+    int sector = 0;
 
     _hists->Fill_electron_fid(_data, event);
 

@@ -290,7 +290,7 @@ Garys binning
       std::make_shared<TH1F>("Beam_Position_X", "Beam_Position_X", BINS, -x_y_min_max, x_y_min_max);
   TH1F_ptr Beam_Position_Y =
       std::make_shared<TH1F>("Beam_Position_Y", "Beam_Position_Y", BINS, -x_y_min_max, x_y_min_max);
-  TH1F_ptr Beam_Position_Z = std::make_shared<TH1F>("Beam_Position_Z", "Beam_Position_Z", 10 * BINS, -100.0, 100.0);
+  TH1F_ptr Beam_Position_Z = std::make_shared<TH1F>("Beam_Position_Z", "Beam_Position_Z", 10 * BINS, -10, 15.0);
 
   TH2F_ptr Beam_Position = std::make_shared<TH2F>("Beam_Position", "Beam_Position", BINS, -x_y_min_max, x_y_min_max,
                                                   BINS, -x_y_min_max, x_y_min_max);
@@ -309,8 +309,8 @@ Garys binning
   TH2F_ptr target_vertex_zx =
       std::make_shared<TH2F>("Target_vertex_zx", "Target_vertex_zx", BINS, -6.0, 6.0, BINS, -6.0, 6.0);
 
-  TH2F_ptr target_vertex_xz_phi =
-      std::make_shared<TH2F>("target_vertex_xz_phi", "target_vertex_xz_phi", BINS, -6.0, 6.0, BINS, -360.0, 360.0);
+  TH2F_ptr target_vertex_vz_phi =
+      std::make_shared<TH2F>("target_vertex_vz_phi", "target_vertex_vz_phi", BINS, -10, 15.0, BINS, -200.0, 200.0);
 
   TH1F_ptr Missing_Mass = std::make_shared<TH1F>("Missing_Mass", "Missing Mass", BINS_MM, MM_min, MM_max);
   TH1F_ptr Missing_Mass_small = std::make_shared<TH1F>("Missing_Mass_small", "e(p,#pi^{+} X)e'", BINS_MM, 0.8, 1.3);

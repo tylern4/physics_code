@@ -65,7 +65,7 @@ def read_csv(file_name):
     del df
 
     stop = time.time()
-    print(f"read_csv: {stop - start}")
+    #print(f"read_csv: {stop - start}")
 
     return (
         mc_rec,
@@ -181,7 +181,8 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
     fig.suptitle(
         f"W={w},\t$Q^2$={q2}\t{bins} $\phi$"
     )
-    for c, cos_t in enumerate(np.unique(cos_t_bins)):
+    thetabins = np.unique(cos_t_bins)
+    for c, cos_t in enumerate(thetabins):
         a = which_plot[round(cos_t.left, 1)][0]
         b = which_plot[round(cos_t.left, 1)][1]
 
@@ -394,19 +395,37 @@ def draw_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder):
                     w, q2, cos_t, out_folder, 10)
 
 
-def draw_xsection(rec, mc_rec, thrown, func, out_folder):
+def draw_xsection(rec, mc_rec, thrown, func, out_folder, wbins, q2bins, thetabins):
     # executor = get_reusable_executor(max_workers=len(np.unique(rec.theta_bin)))
     total_num = (
-        len(np.unique(rec.w_bin))
-        * len(np.unique(rec.q2_bin))
-        * len(np.unique(rec.theta_bin))
+        len(wbins)
+        * len(q2bins)
     )
 
     pbar = tqdm(total=total_num)
-    for w in np.unique(rec.w_bin):
-        for q2 in np.unique(rec.q2_bin):
-            for cos_t in np.unique(rec.theta_bin):
-                pbar.update(1)
+
+    for w in wbins:
+        for q2 in q2bins:
+            #################################################
+            rec_cut = (
+                (w == rec.w_bin) & (q2 == rec.q2_bin)
+            )
+            mc_rec_cut = (
+                (w == mc_rec.w_bin)
+                & (q2 == mc_rec.q2_bin)
+            )
+            thrown_cut = (
+                (w == thrown.w_bin)
+                & (q2 == thrown.q2_bin)
+            )
+
+            data = rec[rec_cut]
+            mc_rec_data = mc_rec[mc_rec_cut]
+            thrown_data = thrown[thrown_cut]
+            draw_cos_plots(func, data, mc_rec_data,
+                           thrown_data, w, q2, rec.theta_bin, out_folder)
+            #################################################
+            for cos_t in thetabins:
                 rec_cut = (
                     (w == rec.w_bin) & (q2 == rec.q2_bin) & (
                         cos_t == rec.theta_bin)
@@ -434,33 +453,36 @@ def draw_xsection(rec, mc_rec, thrown, func, out_folder):
                 draw_plots(
                     func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder
                 )
+            pbar.update(1)
+
     pbar.close()
 
-    total_num = (
-        len(np.unique(rec.w_bin))
-        * len(np.unique(rec.q2_bin)))
-    pbar2 = tqdm(total=total_num)
-    for w in np.unique(rec.w_bin):
-        for q2 in np.unique(rec.q2_bin):
-            pbar2.update(1)
-            rec_cut = (
-                (w == rec.w_bin) & (q2 == rec.q2_bin)
-            )
-            mc_rec_cut = (
-                (w == mc_rec.w_bin)
-                & (q2 == mc_rec.q2_bin)
-            )
-            thrown_cut = (
-                (w == thrown.w_bin)
-                & (q2 == thrown.q2_bin)
-            )
+    # total_num = (
+    #     len(wbins)
+    #     * len(q2bins))
 
-            data = rec[rec_cut]
-            mc_rec_data = mc_rec[mc_rec_cut]
-            thrown_data = thrown[thrown_cut]
-            draw_cos_plots(func, data, mc_rec_data,
-                           thrown_data, w, q2, rec.theta_bin, out_folder)
-    pbar2.close()
+    # pbar2 = tqdm(total=total_num)
+    # for w in wbins:
+    #     for q2 in q2bins:
+    #         pbar2.update(1)
+    #         rec_cut = (
+    #             (w == rec.w_bin) & (q2 == rec.q2_bin)
+    #         )
+    #         mc_rec_cut = (
+    #             (w == mc_rec.w_bin)
+    #             & (q2 == mc_rec.q2_bin)
+    #         )
+    #         thrown_cut = (
+    #             (w == thrown.w_bin)
+    #             & (q2 == thrown.q2_bin)
+    #         )
+
+    #         data = rec[rec_cut]
+    #         mc_rec_data = mc_rec[mc_rec_cut]
+    #         thrown_data = thrown[thrown_cut]
+    #         draw_cos_plots(func, data, mc_rec_data,
+    #                        thrown_data, w, q2, rec.theta_bin, out_folder)
+    # pbar2.close()
 
 
 def draw_kinematics(rec, w_bins, q2_bins, theta_bins):
@@ -531,8 +553,8 @@ if __name__ == "__main__":
     start = time.time()
     mc_rec, mc_thrown = read_csv(mc_data_file_path)
     stop = time.time()
-    print(f"\n\nread time mc_df: {stop - start}\n\n")
-    print(f"\n\ntime: {stop - total_time}\n\n")
+    # print(f"\n\nread time mc_df: {stop - start}\n\n")
+    # print(f"\n\ntime: {stop - total_time}\n\n")
 
     # mc_rec = mc_rec[(mc_rec.w > 0) & (mc_rec.mm2 > 0.5) & (mc_rec.mm2 < 1.5)]
     mc_rec["cos_theta"] = np.cos(mc_rec.theta)
@@ -543,18 +565,18 @@ if __name__ == "__main__":
     start = time.time()
     rec = feather.read_feather(rec_data_file_path)
     stop = time.time()
-    print(f"\n\nread time rec: {stop - start}\n\n")
+    # print(f"\n\nread time rec: {stop - start}\n\n")
     # rec = rec[(rec.w > 0) & (rec.mm2 > 0.5) & (rec.mm2 < 1.5)]
     rec["cos_theta"] = np.cos(rec.theta).astype(np.float32)
-    print(f"===========================\nmc_rec:\n\n")
-    print(f"{mc_rec.info(verbose=True, memory_usage='deep')}")
-    print(f"\n\n===========================")
-    print(f"===========================\nmc_thrown:\n\n")
-    print(f"{mc_thrown.info(verbose=True, memory_usage='deep')}")
-    print(f"\n\n===========================")
-    print(f"===========================\nrec:\n\n")
-    print(f"{rec.info(verbose=True, memory_usage='deep')}")
-    print(f"\n\n===========================")
+    # print(f"===========================\nmc_rec:\n\n")
+    # print(f"{mc_rec.info(verbose=True, memory_usage='deep')}")
+    # print(f"\n\n===========================")
+    # print(f"===========================\nmc_thrown:\n\n")
+    # print(f"{mc_thrown.info(verbose=True, memory_usage='deep')}")
+    # print(f"\n\n===========================")
+    # print(f"===========================\nrec:\n\n")
+    # print(f"{rec.info(verbose=True, memory_usage='deep')}")
+    # print(f"\n\n===========================")
 
     sector_cuts = mm_cut(rec)
 
@@ -616,7 +638,12 @@ if __name__ == "__main__":
     mc_thrown.dropna(inplace=True)
     rec.dropna(inplace=True)
 
-    draw_xsection(rec, mc_rec, mc_thrown, model, out_folder)
+    wbins = pd.unique(rec.w_bin)
+    q2bins = pd.unique(rec.q2_bin)
+    thetabins = pd.unique(rec.theta_bin)
+
+    draw_xsection(rec, mc_rec, mc_thrown, model,
+                  out_folder, wbins, q2bins, thetabins)
 
     stop = time.time()
     print(f"\n\nFull Running time: {stop - total_time}\n\n")

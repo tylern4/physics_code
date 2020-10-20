@@ -81,6 +81,8 @@ class Reaction {
   Reaction(const std::shared_ptr<Branches>& data, const float beam_energy, const std::shared_ptr<MomCorr>& mom_corr);
 
   ~Reaction();
+
+  bool Reset();
   // void correct_mom();
   void calc_cc_angles();
   float cc_theta();
@@ -136,7 +138,7 @@ class Reaction {
   }
   inline bool SinglePip() { return ((_numPip == 1) && (_hasE && !_hasP && _hasPip && !_hasPim)); }
   inline bool SingleP() {
-    return ((_numProt == 1) && (_hasE && _hasP && !_hasPip && !_hasPim && !_hasNeutron && !_hasOther));
+    return ((_numProt == 1) && (_hasE && _hasP && !_hasPip && !_hasPim && !_hasNeutron /*&& !_hasOther*/));
   }
 
   inline bool PPi0() {

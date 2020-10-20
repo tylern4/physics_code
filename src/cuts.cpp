@@ -200,12 +200,12 @@ bool e1d_Cuts::Beam_cut() {
 
   _beam &= (_data->dc_vx(0) > 0.2f && _data->dc_vx(0) < 0.4f);
   _beam &= (_data->dc_vy(0) > -0.1f && _data->dc_vy(0) < 0.16f);
-  _beam &= (_data->dc_vz(0) > -2.0f && _data->dc_vz(0) < 2.0f);
+  _beam &= (_data->dc_vz(0) > -5.0f && _data->dc_vz(0) < 5.0f);
 
   for (short i = 0; i < _data->gpart(); i++) {
     _beam &= (_data->vx(i) > -1.0f && _data->vx(i) < 1.0f);
     _beam &= (_data->vy(i) > -1.5f && _data->vy(i) < 1.5f);
-    _beam &= (_data->vz(i) > -2.0f && _data->vz(i) < 2.0f);
+    _beam &= (_data->vz(i) > -5.0f && _data->vz(i) < 5.0f);
   }
 
   return _beam;
