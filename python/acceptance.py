@@ -23,6 +23,7 @@ from tqdm import tqdm
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import numba
 
 warnings.filterwarnings("ignore")
 
@@ -179,7 +180,7 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
     }
     fig, ax = plt.subplots(5, 2, figsize=(12, 9))
     fig.suptitle(
-        f"W={w},\t$Q^2$={q2}\t{bins} $\phi$"
+        f"W={w},\t$Q^2$={q2}\n{bins} in $\phi$"
     )
     thetabins = np.unique(cos_t_bins)
     for c, cos_t in enumerate(thetabins):
@@ -215,7 +216,7 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
                         np.power(thrown_y, 3))/F
         error_bar = np.sqrt(
             np.power((y*error), 2) + np.power(stats.sem(y), 2))
-
+        y = y / np.max(y)
         ax[a][b].errorbar(
             x,
             y,
@@ -225,6 +226,7 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
             c="k",
             zorder=1,
         )
+        ax.set_ylim(bottom=0)
 
         phi_bins = np.linspace(0, 2 * np.pi, 200)
         crossSections = []
@@ -242,6 +244,7 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
         _ax = ax[a][b].twinx()
         _ax.plot(phis, crossSections, c='r',
                  label='maid2007', linestyle='dotted')
+        _ax.set_ylim(bottom=0)
 
         popt, pcov = curve_fit(func, x, y, maxfev=8000)
 
@@ -425,34 +428,34 @@ def draw_xsection(rec, mc_rec, thrown, func, out_folder, wbins, q2bins, thetabin
             draw_cos_plots(func, data, mc_rec_data,
                            thrown_data, w, q2, rec.theta_bin, out_folder)
             #################################################
-            for cos_t in thetabins:
-                rec_cut = (
-                    (w == rec.w_bin) & (q2 == rec.q2_bin) & (
-                        cos_t == rec.theta_bin)
-                )
-                mc_rec_cut = (
-                    (w == mc_rec.w_bin)
-                    & (q2 == mc_rec.q2_bin)
-                    & (cos_t == mc_rec.theta_bin)
-                )
-                thrown_cut = (
-                    (w == thrown.w_bin)
-                    & (q2 == thrown.q2_bin)
-                    & (cos_t == thrown.theta_bin)
-                )
+            # for cos_t in thetabins:
+            #     rec_cut = (
+            #         (w == rec.w_bin) & (q2 == rec.q2_bin) & (
+            #             cos_t == rec.theta_bin)
+            #     )
+            #     mc_rec_cut = (
+            #         (w == mc_rec.w_bin)
+            #         & (q2 == mc_rec.q2_bin)
+            #         & (cos_t == mc_rec.theta_bin)
+            #     )
+            #     thrown_cut = (
+            #         (w == thrown.w_bin)
+            #         & (q2 == thrown.q2_bin)
+            #         & (cos_t == thrown.theta_bin)
+            #     )
 
-                data = rec[rec_cut]
-                mc_rec_data = mc_rec[mc_rec_cut]
-                thrown_data = thrown[thrown_cut]
+            #     data = rec[rec_cut]
+            #     mc_rec_data = mc_rec[mc_rec_cut]
+            #     thrown_data = thrown[thrown_cut]
 
-                # results = executor.map(
-                #     draw_plots,
-                #     (func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder),
-                # )
+            #     # results = executor.map(
+            #     #     draw_plots,
+            #     #     (func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder),
+            #     # )
 
-                draw_plots(
-                    func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder
-                )
+            #     draw_plots(
+            #         func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder
+            #     )
             pbar.update(1)
 
     pbar.close()
