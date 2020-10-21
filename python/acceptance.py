@@ -157,7 +157,8 @@ def mm_cut(df):
         if not os.path.exists(f'{out_folder}/cuts'):
             os.makedirs(f'{out_folder}/cuts')
 
-        plt.savefig(f"{out_folder}/cuts/MM2_cut_{sec}.png")
+        plt.savefig(f"{out_folder}/cuts/MM2_cut_{sec}.png",
+                    bbox_inches='tight')
 
         data[sec] = (popt_g[1] + NSIGMA * popt_g[2],
                      popt_g[1] - NSIGMA * popt_g[2])
@@ -178,14 +179,22 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
         0.6: [4, 0],
         0.8: [4, 1]
     }
-    fig, ax = plt.subplots(5, 2, figsize=(12, 9))
+    fig, ax = plt.subplots(5, 2, figsize=(
+        12, 9), sharex=True, gridspec_kw={'hspace': 0.1})
+    #
     fig.suptitle(
-        f"W={w},\t$Q^2$={q2}\n{bins} in $\phi$"
+        f"W={w},\t$Q^2$={q2}"
     )
     thetabins = np.unique(cos_t_bins)
+    q2_left = 0.0
     for c, cos_t in enumerate(thetabins):
         a = which_plot[round(cos_t.left, 1)][0]
         b = which_plot[round(cos_t.left, 1)][1]
+
+        if np.round(q2.left, 3) == 0.999:
+            q2_left = 1.0
+        else:
+            q2_left = np.round(q2.left, 3)
 
         _data = data[cos_t == data.theta_bin]
         _mc_rec_data = mc_rec_data[cos_t == mc_rec_data.theta_bin]
@@ -209,13 +218,14 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
         acceptance = np.nan_to_num(thrown_y / mc_rec_y)
         y = data_y * acceptance
 
-        error_bar = 0
+        error_bar = np.ones_like(y)
 
         F = mc_rec_y/thrown_y
         error = np.sqrt(((thrown_y-mc_rec_y)*mc_rec_y) /
                         np.power(thrown_y, 3))/F
         error_bar = np.sqrt(
             np.power((y*error), 2) + np.power(stats.sem(y), 2))
+
         y = y / np.max(y)
         ax[a][b].errorbar(
             x,
@@ -226,14 +236,14 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
             c="k",
             zorder=1,
         )
-        ax[a][b].set_ylim(bottom=0)
+        ax[a][b].set_ylim(bottom=0, top=np.max(y)*1.5)
 
         phi_bins = np.linspace(0, 2 * np.pi, 200)
         crossSections = []
         phis = []
 
         _w = (w.left + w.right) / 2.0
-        _q2 = (q2.left + q2.right) / 2.0
+        _q2 = (q2_left + q2.right) / 2.0
         _cos_t = (cos_t.left + cos_t.right) / 2.0
 
         for phi in phi_bins:
@@ -244,7 +254,7 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
         _ax = ax[a][b].twinx()
         _ax.plot(phis, crossSections, c='r',
                  label='maid2007', linestyle='dotted')
-        _ax.set_ylim(bottom=0)
+        _ax.set_ylim(bottom=0, top=np.max(crossSections)*1.5)
 
         popt, pcov = curve_fit(func, x, y, maxfev=8000)
 
@@ -252,8 +262,9 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
                       linewidth=2.0)
     if not os.path.exists(f'{out_folder}/CosT'):
         os.makedirs(f'{out_folder}/CosT')
+
     plt.savefig(
-        f"{out_folder}/CosT/W[{round(w.left,3)},{round(w.right,3)}]_Q2[{round(q2.left,3)},{round(q2.right,3)}]_{bins}_CosT.png"
+        f"{out_folder}/CosT/W[{np.round(w.left,3)},{np.round(w.right,3)}]_Q2[{q2_left},{np.round(q2.right,3)}]_{bins}_CosT.png", bbox_inches='tight'
     )
 
 
@@ -516,7 +527,7 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins):
                         np.min(w_bins), np.max(w_bins)])
     x = (x[1:] + x[:-1])/2.0
 
-    ax2.errorbar(x, y, yerr=stats.sem(y))
+    ax2.errorbar(x, y, yerr=stats.sem(y), linestyle="", marker=".")
     ax2.set_xlabel(f"W [$GeV$]", fontsize=30)
     ax2.tick_params(axis='both', which='major', labelsize=15)
     ax2.set_xlim(np.min(w_bins), np.max(w_bins))
@@ -543,20 +554,23 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins):
     fig1.savefig(f"{out_folder}/kinematics/theta_vs_phi.png",
                  bbox_inches='tight')
     #########################################
-    fig3, ax3 = plt.subplots(ncols=1, nrows=2, figsize=(16, 16))
+    fig3, ax3 = plt.subplots(ncols=1, nrows=2, figsize=(
+        16, 16), sharex=True, gridspec_kw={'hspace': 0.05})
     h = ax3[0].hist2d(rec.w.to_numpy(), rec.q2.to_numpy(),
                       bins=200, range=[[np.min(w_bins), np.max(w_bins)], [np.min(q2_bins), np.max(q2_bins)]])
 
-    ax3[1].errorbar(x, y, yerr=stats.sem(y))
+    ax3[1].errorbar(x, y, yerr=stats.sem(y), linestyle="", marker=".", ms=10)
     ax3[1].set_xlabel(f"W [$GeV$]", fontsize=30)
     ax3[0].set_ylabel(f"$Q^2$ [$GeV/c^2$]", fontsize=30)
-    ax3[0].tick_params(axis='y', which='major', labelsize=15)
-    ax3[1].tick_params(axis='both', which='major', labelsize=15)
-    fig3.suptitle(f"W vs $Q^2$", fontsize=30)
+    ax3[0].tick_params(axis='y', which='major', labelsize=25)
+    ax3[0].tick_params(axis='x', which='major', labelsize=0)
+    ax3[1].tick_params(axis='both', which='major', labelsize=25)
+    ax3[1].set_xlim(np.min(w_bins), np.max(w_bins))
+    for axxx in ax3:
+        axxx.label_outer()
+    ax3[0].set_title(f"W vs $Q^2$", fontsize=30)
     fig3.savefig(f"{out_folder}/kinematics/wq2.png",
                  bbox_inches='tight')
-
-    exit()
 
 
 if __name__ == "__main__":
