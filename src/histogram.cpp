@@ -1568,6 +1568,13 @@ void Histogram::EC_Write() {
   ECin_ECout->Write();
 }
 
+void Histogram::Fill_Beam_Position_cut(const std::shared_ptr<Branches> &_data) {
+  Beam_Position_cut->Fill(_data->dc_vx(0), _data->dc_vy(0));
+  Beam_Position_X_cut->Fill(_data->dc_vx(0));
+  Beam_Position_Y_cut->Fill(_data->dc_vy(0));
+  Beam_Position_Z_cut->Fill(_data->dc_vz(0));
+}
+
 void Histogram::Fill_Beam_Position(const std::shared_ptr<Branches> &_data) {
   Beam_Position->Fill(_data->dc_vx(0), _data->dc_vy(0));
   Beam_Position_X->Fill(_data->dc_vx(0));
@@ -1592,18 +1599,38 @@ void Histogram::Beam_Position_Write() {
 
   Beam_Position_Z->SetXTitle("Z");
   Beam_Position_Z->Write();
+
+  Beam_Position_cut->SetXTitle("X");
+  Beam_Position_cut->SetYTitle("Y");
+  Beam_Position_cut->SetOption("COLZ");
+  Beam_Position_cut->Write();
+
+  Beam_Position_X_cut->SetXTitle("X");
+  Beam_Position_X_cut->Write();
+
+  Beam_Position_Y_cut->SetXTitle("Y");
+  Beam_Position_Y_cut->Write();
+
+  Beam_Position_Z_cut->SetXTitle("Z");
+  Beam_Position_Z_cut->Write();
 }
 
-void Histogram::Fill_Target_Vertex(float px, float py, float pz, float vertex_x, float vertex_y, float vertex_z) {
-  if (0 == vertex_x) return;
-  if (0 == vertex_y && 0 == vertex_z) return;
+void Histogram::Fill_Target_Vertex(const std::shared_ptr<Branches> &_data) {
+  for (int part_num = 1; part_num < _data->gpart(); part_num++) {
+    float vertex_x = _data->dc_vx(part_num);
+    float vertex_y = _data->dc_vy(part_num);
+    float vertex_z = _data->dc_vz(part_num);
 
-  target_vertex_X->Fill(vertex_x);
-  target_vertex_Y->Fill(vertex_y);
-  target_vertex_Z->Fill(vertex_z);
-  target_vertex_xy->Fill(vertex_x, vertex_y);
-  target_vertex_zy->Fill(vertex_z, vertex_y);
-  target_vertex_zx->Fill(vertex_z, vertex_x);
+    if (0 == vertex_x) return;
+    if (0 == vertex_y && 0 == vertex_z) return;
+
+    target_vertex_X->Fill(vertex_x);
+    target_vertex_Y->Fill(vertex_y);
+    target_vertex_Z->Fill(vertex_z);
+    target_vertex_xy->Fill(vertex_x, vertex_y);
+    target_vertex_zy->Fill(vertex_z, vertex_y);
+    target_vertex_zx->Fill(vertex_z, vertex_x);
+  }
 }
 
 void Histogram::Target_Vertex_Write() {

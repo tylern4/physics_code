@@ -297,6 +297,15 @@ Garys binning
   TH2F_ptr Beam_Position = std::make_shared<TH2F>("Beam_Position", "Beam_Position", BINS, -x_y_min_max, x_y_min_max,
                                                   BINS, -x_y_min_max, x_y_min_max);
 
+  TH1F_ptr Beam_Position_X_cut =
+      std::make_shared<TH1F>("Beam_Position_X_cut", "Beam_Position_X_cut", BINS, -x_y_min_max, x_y_min_max);
+  TH1F_ptr Beam_Position_Y_cut =
+      std::make_shared<TH1F>("Beam_Position_Y_cut", "Beam_Position_Y_cut", BINS, -x_y_min_max, x_y_min_max);
+  TH1F_ptr Beam_Position_Z_cut =
+      std::make_shared<TH1F>("Beam_Position_Z_cut", "Beam_Position_Z_cut", 10 * BINS, -10, 15.0);
+  TH2F_ptr Beam_Position_cut = std::make_shared<TH2F>("Beam_Position_cut", "Beam_Position_cut", BINS, -x_y_min_max,
+                                                      x_y_min_max, BINS, -x_y_min_max, x_y_min_max);
+
   // Beam Position
 
   // Vertex
@@ -451,8 +460,9 @@ Garys binning
 
   // Beam Position
   void Fill_Beam_Position(const std::shared_ptr<Branches>& _data);
+  void Fill_Beam_Position_cut(const std::shared_ptr<Branches>& _data);
   void Beam_Position_Write();
-  void Fill_Target_Vertex(float px, float py, float pz, float vertex_x, float vertex_y, float vertex_z);
+  void Fill_Target_Vertex(const std::shared_ptr<Branches>& _data);
   void Target_Vertex_Write();
   void Fill_E_Prime(const LorentzVector& e_prime);
   void Fill_E_Prime_fid(const LorentzVector& e_prime);

@@ -200,8 +200,16 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
         12, 9), sharex=True, gridspec_kw={'hspace': 0.1})
 
     fig.suptitle(
-        f"W=({np.round(w.left,3)}, {np.round(w.right,3)}],\t$Q^2$=({q2_left}, {np.round(q2.right,3)}]"
+        f"W=({np.round(w.left,3)}, {np.round(w.right,3)}],\t$Q^2$=({q2_left}, {np.round(q2.right,3)}]", fontsize=20
     )
+    color = '0.5'
+    alpha = 0.3
+    sizes = fig.get_size_inches()
+    size = 8.0 * np.sqrt(sizes[0]**2.0 + sizes[1]**2.0)
+    fig.text(0.5, 0.5, 'Preliminary',
+             fontsize=size, color=color,
+             ha='center', va='center', alpha=alpha, rotation=45, zorder=0)
+
     thetabins = pd.unique(cos_t_bins)
     q2_left = 0.0
     for c, cos_t in enumerate(thetabins):

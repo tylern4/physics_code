@@ -64,8 +64,6 @@ class DataHandeler {
     _hists->Fill_E_Prime_fid(event->e_mu_prime());
     _hists->Fill_E_Prime(event->e_mu_prime());
 
-    if (!check->isElecctron()) return;
-
     auto photon_flux = std::make_unique<PhotonFlux>(event->e_mu(), event->e_mu_prime());
     _hists->Photon_flux_Fill(photon_flux->GetVirtualPhotonFlux());
     _hists->WvsQ2_Fill(event->W(), event->Q2(), _data->dc_sect(0));
@@ -79,6 +77,8 @@ class DataHandeler {
     int sector = 0;
 
     _hists->Fill_electron_fid(_data, event);
+    _hists->Fill_Beam_Position_cut(_data);
+    _hists->Fill_Target_Vertex(_data);
 
     for (int part_num = 1; part_num < _data->gpart(); part_num++) {
       theta = physics::theta_calc(_data->cz(part_num));
@@ -88,8 +88,6 @@ class DataHandeler {
       _hists->delta_t_sec_pad(_data->p(part_num), _data->q(part_num), dt->Get_dt_P(part_num), dt->Get_dt_Pi(part_num),
                               dt->Get_dt_E(part_num), _data->sc_sect(part_num), _data->sc_pd(part_num));
 
-      _hists->Fill_Target_Vertex(_data->cx(part_num), _data->cy(part_num), _data->cz(part_num), _data->vx(part_num),
-                                 _data->vy(part_num), _data->vz(part_num));
       _hists->MomVsBeta_Fill(_data->p(part_num), _data->b(part_num));
 
       if (_data->q(part_num) == POSITIVE) {
