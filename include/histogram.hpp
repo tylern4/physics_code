@@ -49,6 +49,8 @@
 
 using TH2F_ptr = std::shared_ptr<TH2F>;
 using TH1F_ptr = std::shared_ptr<TH1F>;
+using TH1D_ptr = std::shared_ptr<TH1D>;
+using TH2D_ptr = std::shared_ptr<TH2D>;
 
 class Histogram {
  protected:
@@ -463,11 +465,11 @@ Garys binning
 class mcHistogram : public Histogram {
  private:
   std::unique_ptr<THnSparse> ndhist_mc;
-  TH2F_ptr WvsQ2_MC =
-      std::make_shared<TH2F>("WvsQ2_MC", "W vs Q^{2} #pi^{+} N", BINS, w_min, w_max, BINS, q2_min, q2_max);
-  TH1F_ptr W_MC = std::make_shared<TH1F>("W_MC", "W #pi^{+} N", BINS, w_min, w_max);
+  TH2D_ptr WvsQ2_MC =
+      std::make_shared<TH2D>("WvsQ2_MC", "W vs Q^{2} #pi^{+} N", BINS, w_min, w_max, BINS, q2_min, q2_max);
+  TH1D_ptr W_MC = std::make_shared<TH1D>("W_MC", "W #pi^{+} N", BINS, w_min, w_max);
 
-  TH2F_ptr WvsQ2_binned_MC = std::make_shared<TH2F>("WvsQ2_hist_binned_MC", "W vs Q^{2} binned", W_BINS, w_binned_min,
+  TH2D_ptr WvsQ2_binned_MC = std::make_shared<TH2D>("WvsQ2_hist_binned_MC", "W vs Q^{2} binned", W_BINS, w_binned_min,
                                                     w_binned_max, Q2_BINS, q2_binned_min, q2_binned_max);
 
   TH1F_ptr W_binned_MC[Q2_BINS];

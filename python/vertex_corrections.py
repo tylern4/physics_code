@@ -118,10 +118,16 @@ if __name__ == "__main__":
 
     # Place histograms into dictionary for each sector
     for sec in range(1, 7):
-        vz[sec] = bh.Histogram(bh.axis.Regular(500, -6, 10))
-        vz_vs_phi[sec] = bh.Histogram(bh.axis.Regular(100, -6, 10),
-                                      bh.axis.Regular(100, -np.pi, np.pi))
-
+        vz[sec] = bh.Histogram(bh.axis.Regular(
+            500, -6, 10, metadata="Vertex_z"))
+        vz_vs_phi[sec] = bh.Histogram(bh.axis.Regular(100, -6, 10, metadata="Vertex_z"),
+                                      bh.axis.Regular(100, -np.pi, np.pi, metadata="phi"))
+    vz_vs_phi_all = bh.Histogram(bh.axis.Regular(100, -6, 10, metadata="Vertex_z"),
+                                 bh.axis.Regular(
+                                     100, -np.pi, np.pi, metadata="phi"),
+                                 bh.axis.IntCategory(
+                                     [1, 2, 3, 4, 5, 6], metadata="sector")
+                                 )
     # Open a progress bar
     with tqdm(total=root_reader.num_entries) as pbar:
         # Loop over events in the data
@@ -138,6 +144,7 @@ if __name__ == "__main__":
             vz[sector].fill(event.dc_vz[0])
             phi = np.arctan2(event.cx[0], event.cy[0])
             vz_vs_phi[sector].fill(event.dc_vz[0], phi)
+            vz_vs_phi_all.fill(event.dc_vz[0], phi, sector)
 
     corrections = plot_corretions(vz=vz)
     with open('corrections.json', 'w') as outFile:

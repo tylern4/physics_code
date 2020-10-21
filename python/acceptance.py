@@ -179,22 +179,35 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
         0.6: [4, 0],
         0.8: [4, 1]
     }
+    plot_label = {
+        -1.0: "$\cos(\\theta)=(-1.0,-0.8]$",
+        -0.8: "$\cos(\\theta)=(-0.8,-0.6]$",
+        -0.6: "$\cos(\\theta)=(-0.6,-0.4]$",
+        -0.4: "$\cos(\\theta)=(-0.4,-0.2]$",
+        -0.2: "$\cos(\\theta)=(-0.2,0.0]$",
+        0.0: "$\cos(\\theta)=(0.0,0.2]$",
+        0.2: "$\cos(\\theta)=(0.2,0.4]$",
+        0.4: "$\cos(\\theta)=(0.4,0.6]$",
+        0.6: "$\cos(\\theta)=(0.6,0.8]$",
+        0.8: "$\cos(\\theta)=(0.8,1.0]$"
+    }
+    if str(np.round(q2.left, 3)) == "0.999":
+        q2_left = 1.0
+    else:
+        q2_left = np.round(q2.left, 3)
+
     fig, ax = plt.subplots(5, 2, figsize=(
         12, 9), sharex=True, gridspec_kw={'hspace': 0.1})
-    #
+
     fig.suptitle(
-        f"W={w},\t$Q^2$={q2}"
+        f"W=({np.round(w.left,3)}, {np.round(w.right,3)}],\t$Q^2$=({q2_left}, {np.round(q2.right,3)}]"
     )
-    thetabins = np.unique(cos_t_bins)
+    thetabins = pd.unique(cos_t_bins)
     q2_left = 0.0
     for c, cos_t in enumerate(thetabins):
         a = which_plot[round(cos_t.left, 1)][0]
         b = which_plot[round(cos_t.left, 1)][1]
-
-        if np.round(q2.left, 3) == 0.999:
-            q2_left = 1.0
-        else:
-            q2_left = np.round(q2.left, 3)
+        cos_label = plot_label[round(cos_t.left, 1)]
 
         _data = data[cos_t == data.theta_bin]
         _mc_rec_data = mc_rec_data[cos_t == mc_rec_data.theta_bin]
@@ -252,14 +265,14 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
             phis.append(phi)
 
         _ax = ax[a][b].twinx()
-        _ax.plot(phis, crossSections, c='r',
-                 label='maid2007', linestyle='dotted')
+        _ax.plot(phis, crossSections, c='r', linestyle='dotted')
         _ax.set_ylim(bottom=0, top=np.max(crossSections)*1.5)
 
         popt, pcov = curve_fit(func, x, y, maxfev=8000)
 
         ax[a][b].plot(xs, func(xs, *popt), c="#9467bd",
                       linewidth=2.0)
+        ax[a][b].text(0.0, 1.2, cos_label)
     if not os.path.exists(f'{out_folder}/CosT'):
         os.makedirs(f'{out_folder}/CosT')
 
@@ -355,6 +368,7 @@ def draw_xsec_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_fold
         zorder=1,
         label="corrected",
     )
+    ax[1][1].set_ylim(bottom=0, top=np.max(y)*1.5)
 
     phi_bins = np.linspace(0, 2 * np.pi, 200)
     crossSections = []
@@ -369,11 +383,13 @@ def draw_xsec_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_fold
             maid(ENERGY, _w, _q2, _cos_t, np.degrees(phi)))
         phis.append(phi)
 
+    crossSections = np.array(crossSections)
+    phis = np.array(phis)
     _ax = ax[1][1].twinx()
     _ax.plot(phis, crossSections, c='r',
              label='maid2007', linestyle='dotted')
-    ax[1][1].set_ylim(bottom=0)
-    _ax.set_ylim(bottom=0)
+
+    _ax.set_ylim(bottom=0, top=np.max(crossSections)*1.5)
 
     popt, pcov = curve_fit(func, x, y, maxfev=8000)
     # To compute one standard deviation errors on the parameters use
@@ -382,19 +398,12 @@ def draw_xsec_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_fold
     ax[1][1].plot(xs, func(xs, *popt), c="#9467bd",
                   linewidth=2.0)
 
-    # y1 = func(xs, *(popt+0.5*perr))
-    # y2 = func(xs, *(popt-0.5*perr))
-
-    # ax[1][1].plot(xs, y1, c="#9467bd", linewidth=2.0, alpha=0.15)
-    # ax[1][1].plot(xs, y2, c="#9467bd", linewidth=2.0, alpha=0.15)
-    # ax[1][1].fill_between(xs, y1, y2, facecolor="gray", alpha=0.15)
-
     fig.legend()
-    if not os.path.exists(f'{out_folder}'):
-        os.makedirs(f'{out_folder}')
+    if not os.path.exists(f'{out_folder}/acc'):
+        os.makedirs(f'{out_folder}/acc')
 
     plt.savefig(
-        f"{out_folder}/W[{w.left},{w.right}]_Q2[{q2.left},{q2.right}]_cos(theta)[{cos_t.left},{cos_t.right}]_{bins}.png"
+        f"{out_folder}/acc/W[{w.left},{w.right}]_Q2[{q2.left},{q2.right}]_cos(theta)[{cos_t.left},{cos_t.right}]_{bins}.png"
     )
 
 
@@ -440,64 +449,37 @@ def draw_xsection(rec, mc_rec, thrown, func, out_folder, wbins, q2bins, thetabin
             draw_cos_plots(func, data, mc_rec_data,
                            thrown_data, w, q2, rec.theta_bin, out_folder)
             #################################################
-            # for cos_t in thetabins:
-            #     rec_cut = (
-            #         (w == rec.w_bin) & (q2 == rec.q2_bin) & (
-            #             cos_t == rec.theta_bin)
-            #     )
-            #     mc_rec_cut = (
-            #         (w == mc_rec.w_bin)
-            #         & (q2 == mc_rec.q2_bin)
-            #         & (cos_t == mc_rec.theta_bin)
-            #     )
-            #     thrown_cut = (
-            #         (w == thrown.w_bin)
-            #         & (q2 == thrown.q2_bin)
-            #         & (cos_t == thrown.theta_bin)
-            #     )
+            for cos_t in thetabins:
+                rec_cut = (
+                    (w == rec.w_bin) & (q2 == rec.q2_bin) & (
+                        cos_t == rec.theta_bin)
+                )
+                mc_rec_cut = (
+                    (w == mc_rec.w_bin)
+                    & (q2 == mc_rec.q2_bin)
+                    & (cos_t == mc_rec.theta_bin)
+                )
+                thrown_cut = (
+                    (w == thrown.w_bin)
+                    & (q2 == thrown.q2_bin)
+                    & (cos_t == thrown.theta_bin)
+                )
 
-            #     data = rec[rec_cut]
-            #     mc_rec_data = mc_rec[mc_rec_cut]
-            #     thrown_data = thrown[thrown_cut]
+                data = rec[rec_cut]
+                mc_rec_data = mc_rec[mc_rec_cut]
+                thrown_data = thrown[thrown_cut]
 
-            #     # results = executor.map(
-            #     #     draw_plots,
-            #     #     (func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder),
-            #     # )
+                # results = executor.map(
+                #     draw_plots,
+                #     (func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder),
+                # )
 
-            #     draw_plots(
-            #         func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder
-            #     )
+                draw_plots(
+                    func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder
+                )
             pbar.update(1)
 
     pbar.close()
-
-    # total_num = (
-    #     len(wbins)
-    #     * len(q2bins))
-
-    # pbar2 = tqdm(total=total_num)
-    # for w in wbins:
-    #     for q2 in q2bins:
-    #         pbar2.update(1)
-    #         rec_cut = (
-    #             (w == rec.w_bin) & (q2 == rec.q2_bin)
-    #         )
-    #         mc_rec_cut = (
-    #             (w == mc_rec.w_bin)
-    #             & (q2 == mc_rec.q2_bin)
-    #         )
-    #         thrown_cut = (
-    #             (w == thrown.w_bin)
-    #             & (q2 == thrown.q2_bin)
-    #         )
-
-    #         data = rec[rec_cut]
-    #         mc_rec_data = mc_rec[mc_rec_cut]
-    #         thrown_data = thrown[thrown_cut]
-    #         draw_cos_plots(func, data, mc_rec_data,
-    #                        thrown_data, w, q2, rec.theta_bin, out_folder)
-    # pbar2.close()
 
 
 def draw_kinematics(rec, w_bins, q2_bins, theta_bins):
@@ -524,8 +506,8 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins):
 
     #########################################
     fig2, ax2 = plt.subplots(figsize=(12, 9))
-    y, x = np.histogram(rec.w.to_numpy(), bins=250, range=[
-                        np.min(w_bins), np.max(w_bins)])
+    y, x = bh.numpy.histogram(rec.w.to_numpy(), bins=250, range=[
+        np.min(w_bins), np.max(w_bins)])
     x = (x[1:] + x[:-1])/2.0
 
     ax2.errorbar(x, y, yerr=stats.sem(y), linestyle="", marker=".")
