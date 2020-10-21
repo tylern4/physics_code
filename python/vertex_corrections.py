@@ -64,7 +64,7 @@ def plot_corretions(vz: Dict[int, bh.Histogram], *, folder="plots", **kwargs) ->
         corrections[sec] = np.round(x[x_val], decimals=3)
 
         # Plot the corrected histogram for each sector
-        ax.errorbar(x-corrections[sec], y, yerr=stats.sem(y), marker=".",
+        ax.errorbar(x-corrections[sec], y, marker=".", ms=0.8,
                     linestyle="", label=f'Sec {sec}: {x[x_val]}')
 
     fig.legend()
@@ -118,7 +118,7 @@ if __name__ == "__main__":
 
     # Place histograms into dictionary for each sector
     for sec in range(1, 7):
-        vz[sec] = bh.Histogram(bh.axis.Regular(100, -6, 10))
+        vz[sec] = bh.Histogram(bh.axis.Regular(500, -6, 10))
         vz_vs_phi[sec] = bh.Histogram(bh.axis.Regular(100, -6, 10),
                                       bh.axis.Regular(100, -np.pi, np.pi))
 
