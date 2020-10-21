@@ -226,7 +226,7 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
             c="k",
             zorder=1,
         )
-        ax.set_ylim(bottom=0)
+        ax[a][b].set_ylim(bottom=0)
 
         phi_bins = np.linspace(0, 2 * np.pi, 200)
         crossSections = []
@@ -271,7 +271,7 @@ def draw_cos_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_
 def draw_xsec_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder, bins):
     fig, ax = plt.subplots(2, 2, figsize=(12, 9))
     fig.suptitle(
-        f"W={w},\t$Q^2$={q2},\tcos($\Theta$)={cos_t} \n{bins} bins in $\phi$"
+        f"W={w},\t$Q^2$={q2},\tcos($\\theta$)={cos_t} \n{bins} bins in $\phi$"
     )
     xs = np.linspace(0, 2 * np.pi, 100)
     data_y, data_x = bh.numpy.histogram(
@@ -360,8 +360,8 @@ def draw_xsec_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_fold
     _ax = ax[1][1].twinx()
     _ax.plot(phis, crossSections, c='r',
              label='maid2007', linestyle='dotted')
-    # ax[1][1].set_ylim(bottom=0)
-    # _ax.set_ylim(bottom=0)
+    ax[1][1].set_ylim(bottom=0)
+    _ax.set_ylim(bottom=0)
 
     popt, pcov = curve_fit(func, x, y, maxfev=8000)
     # To compute one standard deviation errors on the parameters use
@@ -490,31 +490,73 @@ def draw_xsection(rec, mc_rec, thrown, func, out_folder, wbins, q2bins, thetabin
 
 def draw_kinematics(rec, w_bins, q2_bins, theta_bins):
     rec = rec.dropna()
+
     fig, ax = plt.subplots(figsize=(12, 9))
-    ax.hist2d(rec.w.to_numpy(), rec.q2.to_numpy(),
-              bins=250, range=[[np.min(w_bins), np.max(w_bins)], [np.min(q2_bins), np.max(q2_bins)]])
+    h = ax.hist2d(rec.w.to_numpy(), rec.q2.to_numpy(),
+                  bins=200, range=[[np.min(w_bins), np.max(w_bins)], [np.min(q2_bins), np.max(q2_bins)]])
 
     for w in w_bins:
         ax.axvline(w, c='w')
     for q2 in q2_bins:
         ax.axhline(q2, c='w')
+    ax.set_xlabel(f"W [$GeV$]", fontsize=30)
+    ax.set_ylabel(f"$Q^2$ [$GeV/c^2$]", fontsize=30)
+    ax.tick_params(axis='both', which='major', labelsize=15)
+    fig.suptitle(f"W vs $Q^2$", fontsize=30)
+    fig.colorbar(h[3], ax=ax)
 
     if not os.path.exists(f'{out_folder}/kinematics'):
         os.makedirs(f'{out_folder}/kinematics')
 
-    plt.savefig(f"{out_folder}/kinematics/W_vs_Q2.png")
+    fig.savefig(f"{out_folder}/kinematics/W_vs_Q2.png", bbox_inches='tight')
+
+    #########################################
+    fig2, ax2 = plt.subplots(figsize=(12, 9))
+    y, x = np.histogram(rec.w.to_numpy(), bins=250, range=[
+                        np.min(w_bins), np.max(w_bins)])
+    x = (x[1:] + x[:-1])/2.0
+
+    ax2.errorbar(x, y, yerr=stats.sem(y))
+    ax2.set_xlabel(f"W [$GeV$]", fontsize=30)
+    ax2.tick_params(axis='both', which='major', labelsize=15)
+    ax2.set_xlim(np.min(w_bins), np.max(w_bins))
+    ax2.set_ylim(bottom=0)
+
+    fig2.suptitle(f"W ($N \pi^+$)", fontsize=30)
+    fig2.savefig(f"{out_folder}/kinematics/W.png", bbox_inches='tight')
+    #########################################
 
     fig1, ax1 = plt.subplots(figsize=(12, 9))
-
-    ax1.hist2d(rec.cos_theta.to_numpy(), rec.phi.to_numpy(), bins=250)
-
+    h = ax1.hist2d(rec.cos_theta.to_numpy(), rec.phi.to_numpy(), bins=100)
     for t in theta_bins:
         ax1.axvline(t, c='w')
 
     for phi in np.linspace(0, 2*np.pi, 10):
         ax1.axhline(phi, c='w')
 
-    plt.savefig(f"{out_folder}/kinematics/theta_vs_phi.png")
+    ax1.set_xlabel(f"$\cos(\\vartheta)$", fontsize=30)
+    ax1.set_ylabel(f"$\\varphi$", fontsize=30)
+    ax1.tick_params(axis='both', which='major', labelsize=15)
+    fig1.suptitle(f"$\\vartheta$ vs $\\varphi$", fontsize=30)
+    fig1.colorbar(h[3], ax=ax1)
+
+    fig1.savefig(f"{out_folder}/kinematics/theta_vs_phi.png",
+                 bbox_inches='tight')
+    #########################################
+    fig3, ax3 = plt.subplots(ncols=1, nrows=2, figsize=(16, 16))
+    h = ax3[0].hist2d(rec.w.to_numpy(), rec.q2.to_numpy(),
+                      bins=200, range=[[np.min(w_bins), np.max(w_bins)], [np.min(q2_bins), np.max(q2_bins)]])
+
+    ax3[1].errorbar(x, y, yerr=stats.sem(y))
+    ax3[1].set_xlabel(f"W [$GeV$]", fontsize=30)
+    ax3[0].set_ylabel(f"$Q^2$ [$GeV/c^2$]", fontsize=30)
+    ax3[0].tick_params(axis='y', which='major', labelsize=15)
+    ax3[1].tick_params(axis='both', which='major', labelsize=15)
+    fig3.suptitle(f"W vs $Q^2$", fontsize=30)
+    fig3.savefig(f"{out_folder}/kinematics/wq2.png",
+                 bbox_inches='tight')
+
+    exit()
 
 
 if __name__ == "__main__":
