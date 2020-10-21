@@ -66,7 +66,7 @@ def read_csv(file_name):
     del df
 
     stop = time.time()
-    #print(f"read_csv: {stop - start}")
+    # print(f"read_csv: {stop - start}")
 
     return (
         mc_rec,
@@ -217,16 +217,16 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
 
         acceptance = np.nan_to_num(thrown_y / mc_rec_y)
         y = data_y * acceptance
+        y = y / np.max(y)
 
         error_bar = np.ones_like(y)
 
-        F = mc_rec_y/thrown_y
+        F = (mc_rec_y/thrown_y)
         error = np.sqrt(((thrown_y-mc_rec_y)*mc_rec_y) /
                         np.power(thrown_y, 3))/F
         error_bar = np.sqrt(
             np.power((y*error), 2) + np.power(stats.sem(y), 2))
 
-        y = y / np.max(y)
         ax[a][b].errorbar(
             x,
             y,
@@ -335,8 +335,9 @@ def draw_xsec_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_fold
     )
 
     y = data_y * acceptance
+    y = y / np.max(y)
 
-    error_bar = 0
+    error_bar = np.ones_like(y)
 
     F = mc_rec_y/thrown_y
     error = np.sqrt(((thrown_y-mc_rec_y)*mc_rec_y) /

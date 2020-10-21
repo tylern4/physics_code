@@ -5,6 +5,7 @@
 #cython: infertypes=True
 #cython: initializedcheck=False
 #cython: cdivision=True
+#cython: embedsignature=True
 
 from libcpp.vector cimport vector
 from libcpp.string cimport string
