@@ -40,8 +40,8 @@ def read_csv(file_name):
         "phi",
         "mm2",
         "helicty",
-        "type",
-        "hash",
+        "photon_flux",
+        "type"
     ]
     dtype = {
         "electron_sector": "int8",
@@ -51,6 +51,7 @@ def read_csv(file_name):
         "theta": "float32",
         "phi": "float32",
         "mm2": "float32",
+        "photon_flux": "float32"
     }
 
     start = time.time()
