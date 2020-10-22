@@ -127,43 +127,71 @@ def half_max_x(x, y):
     ]
 
 
-def mm_cut(df):
-    NSIGMA = 3
+def mm_cut(df, sigma=6):
     data = {}
+    fig, ax = plt.subplots(2, 3, figsize=(
+        12, 9), sharex=True, sharey=True, gridspec_kw={'hspace': 0.0, 'wspace': 0.0})
+    which_plot = {
+        1: [0, 0],
+        2: [0, 1],
+        3: [0, 2],
+        4: [1, 0],
+        5: [1, 1],
+        6: [1, 2],
+    }
     for sec in range(1, 7):
+        a = which_plot[sec][0]
+        b = which_plot[sec][1]
         plt.figure(figsize=(12, 9))
         y, x = bh.numpy.histogram(
             df[df.electron_sector == sec].mm2, bins=500, density=True
         )
         x = (x[1:] + x[:-1]) / 2
         popt_g, pcov_g = curve_fit(gauss, x, y, maxfev=8000)
-        plt.plot(x, gauss(x, *popt_g), linewidth=2.0)
-        plt.errorbar(x, y, yerr=stats.sem(y.shape[0]), fmt=".", zorder=1)
+        #plt.plot(x, gauss(x, *popt_g), linewidth=2.0)
+        plt.errorbar(x, y, yerr=stats.sem(y), fmt=".", zorder=1)
+        ax[a][b].errorbar(
+            x, y, yerr=stats.sem(y), fmt=".", zorder=1)
 
-        plt.axvline(popt_g[1] + NSIGMA * popt_g[2])
-        plt.axvline(popt_g[1] - NSIGMA * popt_g[2])
+        # plt.axvline(popt_g[1] + sigma * popt_g[2])
+        # plt.axvline(popt_g[1] - sigma * popt_g[2])
 
         p0 = [popt_g[0], popt_g[1], popt_g[2], 1.0, 1.0]
         popt, pcov = curve_fit(degauss, x, y, maxfev=8000)
 
         plt.plot(x, degauss(x, *popt), c="#9467bd", linewidth=2.0)
+        ax[a][b].plot(x, degauss(
+            x, *popt), c="#9467bd", linewidth=3.0, label=f"Sector {sec}")
+        ax[a][b].legend()
+        ax[a][b].set_xlabel(f"Mass $[ \mathrm{{{{GeV}}}}/c^2 ]$")
 
         # find the FWHM
         xs = np.linspace(0.7, 1.5, 100000)
         hmx = half_max_x(xs, degauss(xs, *popt))
         fwhm = hmx[1] - hmx[0]
-        plt.axvline(popt[1] + NSIGMA * fwhm / 2.355, c="#9467bd")
-        plt.axvline(popt[1] - NSIGMA * fwhm / 2.355, c="#9467bd")
+        plt.axvline(popt[1] + sigma * fwhm / 2.355, c="#9467bd")
+        plt.axvline(popt[1] - sigma * fwhm / 2.355, c="#9467bd")
+
+        ax[a][b].axvline(
+            popt[1] + sigma * fwhm / 2.355, c="#9467bd", linewidth=3.0)
+        ax[a][b].axvline(
+            popt[1] - sigma * fwhm / 2.355, c="#9467bd", linewidth=3.0)
 
         if not os.path.exists(f'{out_folder}/cuts'):
             os.makedirs(f'{out_folder}/cuts')
 
+        plt.title(
+            f"Missing Mass Squared $e\left( p, \pi^{{{'+'}}} X \\right)$ in sector {sec}")
+
         plt.savefig(f"{out_folder}/cuts/MM2_cut_{sec}.png",
                     bbox_inches='tight')
 
-        data[sec] = (popt_g[1] + NSIGMA * popt_g[2],
-                     popt_g[1] - NSIGMA * popt_g[2])
-
+        data[sec] = (popt[1] - sigma * fwhm / 2.355,
+                     popt[1] + sigma * fwhm / 2.355)
+    fig.suptitle(
+        f"Missing Mass Squared $e\left( p, \pi^{{{'+'}}} X \\right)$", fontsize=20)
+    fig.savefig(f"{out_folder}/cuts/MM2_cut_all.png",
+                bbox_inches='tight')
     return data
 
 
@@ -538,10 +566,10 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins, name="reconstructed"):
     for phi in np.linspace(0, 2*np.pi, 10):
         ax1.axhline(phi, c='w')
 
-    ax1.set_xlabel(f"$\cos(\\vartheta)$", fontsize=30)
-    ax1.set_ylabel(f"$\\varphi$", fontsize=30)
+    ax1.set_xlabel(f"$\cos(\\theta)$", fontsize=30)
+    ax1.set_ylabel(f"$\\phi$", fontsize=30)
     ax1.tick_params(axis='both', which='major', labelsize=15)
-    fig1.suptitle(f"$\\vartheta$ vs $\\varphi$", fontsize=30)
+    fig1.suptitle(f"$\cos(\\theta)$ vs $\\phi$", fontsize=30)
     fig1.colorbar(h[3], ax=ax1)
 
     fig1.savefig(f"{out_folder}/kinematics/theta_vs_phi_{name}.png",
