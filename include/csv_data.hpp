@@ -12,6 +12,7 @@ struct csv_data {
   float phi;
   float mm2;
   int helicty;
+  float photon_flux;
   std::string type;
   size_t hash;
 
@@ -24,8 +25,10 @@ struct csv_data {
     os << d.phi << ",";
     os << d.mm2 << ",";
     os << std::to_string(d.helicty) << ",";
-    os << d.type << ",";
-    os << std::hex << d.hash;
+    os << d.photon_flux << ",";
+    os << d.type;
+    // << ",";
+    // os << std::hex << d.hash;
     return os;
   }
 };

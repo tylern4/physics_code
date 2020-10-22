@@ -24,6 +24,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import numba
+#from fit_functions import gauss, degauss, half_max_x, model
 
 warnings.filterwarnings("ignore")
 
@@ -58,7 +59,7 @@ def read_csv(file_name):
         read_options=csv.ReadOptions(use_threads=True, column_names=names),
         convert_options=csv.ConvertOptions(column_types=dtype),
     )
-    pyTable = pyTable.drop(["hash"])
+    # pyTable = pyTable.drop(["hash"])
     df = pyTable.to_pandas(strings_to_categorical=True)
 
     mc_rec = df[df.type == "mc_rec"]
@@ -98,7 +99,6 @@ def degauss(x, A, mu, sigma, lambda1, lambda2):
             * erfc(-mu2 / (sigma * np.sqrt(2.0)))
         )
     )
-
     return ret
 
 
@@ -655,6 +655,7 @@ if __name__ == "__main__":
                "phi", "helicty"]].copy(deep=True)
 
     # Specifically put in bin edges
+    # TODO ##################### BINS ######################
     w_bins = np.array([1.1, 1.125, 1.15, 1.175, 1.2, 1.225, 1.25, 1.275, 1.3,
                        1.325, 1.35, 1.375, 1.4, 1.425, 1.45, 1.475, 1.5, 1.525,
                        1.55, 1.575, 1.6, 1.625, 1.65, 1.675, 1.7, 1.725, 1.75,
@@ -662,6 +663,8 @@ if __name__ == "__main__":
     q2_bins = np.array([1.0, 1.4, 1.8, 2.6, 3.5])
     theta_bins = np.array([-1.0, -0.8, -0.6, -0.4, -0.2,
                            0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2])
+
+    # TODO ##################### BINS ######################
 
     draw_kinematics(rec, w_bins, q2_bins, theta_bins)
 

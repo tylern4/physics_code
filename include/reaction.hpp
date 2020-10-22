@@ -11,6 +11,7 @@
 #include "branches.hpp"
 #include "constants.hpp"
 #include "mom_corr.hpp"
+#include "photon_flux.hpp"
 #include "physics.hpp"
 
 class Reaction {
@@ -25,6 +26,7 @@ class Reaction {
   std::shared_ptr<LorentzVector> _pip = nullptr;
   std::shared_ptr<LorentzVector> _pim = nullptr;
   std::shared_ptr<LorentzVector> _neutron = nullptr;
+  std::shared_ptr<PhotonFlux> _photon_flux = nullptr;
   std::vector<std::shared_ptr<LorentzVector>> _photons;
 
   std::vector<float> _pair_mass;
@@ -116,6 +118,8 @@ class Reaction {
   inline float W() { return _W; }
   inline float Q2() { return _Q2; }
   inline float xb() { return _xb; }
+
+  inline float photon_flux() { return _photon_flux->GetVirtualPhotonFlux(); }
 
   inline float Theta_star() {
     if (!_boosted) boost();

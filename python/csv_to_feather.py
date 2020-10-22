@@ -20,8 +20,8 @@ names = [
     "phi",
     "mm2",
     "helicty",
-    "type",
-    "hash",
+    "photon_flux",
+    "type"
 ]
 dtype = {
     "electron_sector": "int8",
@@ -31,6 +31,7 @@ dtype = {
     "theta": "float32",
     "phi": "float32",
     "mm2": "float32",
+    "photon_flux": "float32"
 }
 
 
@@ -58,4 +59,3 @@ def convert_data(file_name):
 if __name__ == "__main__":
     file_name = str(sys.argv[1])
     convert_data(file_name)
-

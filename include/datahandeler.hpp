@@ -64,8 +64,7 @@ class DataHandeler {
     _hists->Fill_E_Prime_fid(event->e_mu_prime());
     _hists->Fill_E_Prime(event->e_mu_prime());
 
-    auto photon_flux = std::make_unique<PhotonFlux>(event->e_mu(), event->e_mu_prime());
-    _hists->Photon_flux_Fill(photon_flux->GetVirtualPhotonFlux());
+    _hists->Photon_flux_Fill(event->photon_flux());
     _hists->WvsQ2_Fill(event->W(), event->Q2(), _data->dc_sect(0));
 
     auto dt = check->share_dt();  // std::make_unique<Delta_T>(_data);
