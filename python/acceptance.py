@@ -491,7 +491,7 @@ def draw_xsection(rec, mc_rec, thrown, func, out_folder, wbins, q2bins, thetabin
     pbar.close()
 
 
-def draw_kinematics(rec, w_bins, q2_bins, theta_bins):
+def draw_kinematics(rec, w_bins, q2_bins, theta_bins, name="reconstructed"):
     rec = rec.dropna()
 
     fig, ax = plt.subplots(figsize=(12, 9))
@@ -511,7 +511,8 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins):
     if not os.path.exists(f'{out_folder}/kinematics'):
         os.makedirs(f'{out_folder}/kinematics')
 
-    fig.savefig(f"{out_folder}/kinematics/W_vs_Q2.png", bbox_inches='tight')
+    fig.savefig(f"{out_folder}/kinematics/W_vs_Q2_{name}.png",
+                bbox_inches='tight')
 
     #########################################
     fig2, ax2 = plt.subplots(figsize=(12, 9))
@@ -526,7 +527,7 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins):
     ax2.set_ylim(bottom=0)
 
     fig2.suptitle(f"W ($N \pi^+$)", fontsize=30)
-    fig2.savefig(f"{out_folder}/kinematics/W.png", bbox_inches='tight')
+    fig2.savefig(f"{out_folder}/kinematics/W_{name}.png", bbox_inches='tight')
     #########################################
 
     fig1, ax1 = plt.subplots(figsize=(12, 9))
@@ -543,7 +544,7 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins):
     fig1.suptitle(f"$\\vartheta$ vs $\\varphi$", fontsize=30)
     fig1.colorbar(h[3], ax=ax1)
 
-    fig1.savefig(f"{out_folder}/kinematics/theta_vs_phi.png",
+    fig1.savefig(f"{out_folder}/kinematics/theta_vs_phi_{name}.png",
                  bbox_inches='tight')
     #########################################
     fig3, ax3 = plt.subplots(ncols=1, nrows=2, figsize=(
@@ -561,7 +562,7 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins):
     for axxx in ax3:
         axxx.label_outer()
     ax3[0].set_title(f"W vs $Q^2$", fontsize=30)
-    fig3.savefig(f"{out_folder}/kinematics/wq2.png",
+    fig3.savefig(f"{out_folder}/kinematics/wq2_{name}.png",
                  bbox_inches='tight')
 
 
@@ -668,6 +669,8 @@ if __name__ == "__main__":
     # TODO ##################### BINS ######################
 
     draw_kinematics(rec, w_bins, q2_bins, theta_bins)
+    draw_kinematics(mc_rec, w_bins, q2_bins, theta_bins, "mc_rec")
+    draw_kinematics(mc_thrown, w_bins, q2_bins, theta_bins, "thrown")
 
     mc_rec["w_bin"] = pd.cut(mc_rec["w"], bins=w_bins, include_lowest=True)
     mc_rec["q2_bin"] = pd.cut(mc_rec["q2"], bins=q2_bins, include_lowest=True)
