@@ -265,7 +265,7 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
         phis = []
 
         _w = (w.left + w.right) / 2.0
-        _q2 = (q2_left + q2.right) / 2.0
+        _q2 = (q2.left + q2.right) / 2.0
         _cos_t = (cos_t.left + cos_t.right) / 2.0
 
         for phi in phi_bins:
@@ -286,7 +286,7 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
         os.makedirs(f'{out_folder}/CosT')
 
     plt.savefig(
-        f"{out_folder}/CosT/W[{np.round(w.left,3)},{np.round(w.right,3)}]_Q2[{q2_left},{np.round(q2.right,3)}]_{bins}_CosT.png", bbox_inches='tight'
+        f"{out_folder}/CosT/W[{np.round(w.left,3)},{np.round(w.right,3)}]_Q2[{np.round(q2.left,3)},{np.round(q2.right,3)}]_{bins}_CosT.png", bbox_inches='tight'
     )
 
 
