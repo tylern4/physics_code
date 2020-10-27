@@ -67,4 +67,14 @@ size_t run_e1f_file(const std::vector<std::string>& in, const std::shared_ptr<Hi
   return tot;
 }
 
+size_t run_e16_file(const std::vector<std::string>& in, const std::shared_ptr<Histogram>& hists,
+                    const std::shared_ptr<MomCorr>& mom_corr, int thread_id) {
+  auto dh = std::make_unique<DataHandeler>(in, hists, mom_corr);
+  dh->setLoadBar(false);
+  if (thread_id == 0) dh->setLoadBar(true);
+  size_t tot = 0;
+  tot += dh->Run<e16_Cuts>();
+  return tot;
+}
+
 #endif

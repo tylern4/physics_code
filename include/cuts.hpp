@@ -97,4 +97,12 @@ class e1f_Cuts : public Cuts {
   bool sf_cut(float sf, float P);
 };
 
+class e16_Cuts : public Cuts {
+ public:
+  e16_Cuts(const std::shared_ptr<Branches>& data) : Cuts(data){};
+  e16_Cuts(const std::shared_ptr<Branches>& data, const std::shared_ptr<Delta_T>& dt) : Cuts(data, dt){};
+  bool isElecctron();
+  bool Beam_cut();
+};
+
 #endif

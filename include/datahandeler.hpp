@@ -47,7 +47,14 @@ class DataHandeler {
   void RunEvent(size_t current_event) {
     _chain->GetEntry(current_event);
     auto check = std::make_unique<CutType>(_data);
-    _beam_energy = std::is_same<CutType, e1f_Cuts>::value ? E1F_E0 : E1D_E0;
+    if (std::is_same<CutType, e1f_Cuts>::value) {
+      _beam_energy = E1F_E0;
+    } else if (std::is_same<CutType, e16_Cuts>::value) {
+      _beam_energy = E16_E0;
+    } else {
+      _beam_energy = E1D_E0;
+    }
+
     _hists->Fill_Beam_Position(_data);
 
     if (!check->isElecctron()) return;

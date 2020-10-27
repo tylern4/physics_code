@@ -127,6 +127,17 @@ bool e1f_Cuts::isElecctron() {
   return _elec;
 }
 
+bool e16_Cuts::isElecctron() {
+  bool _elec = true;
+  _elec &= Cuts::isElecctron();
+  _elec &= e16_Cuts::Beam_cut();
+
+  if (!_elec) return _elec;
+  // Fid Cuts
+  _elec &= fid_chern_cut();
+  return _elec;
+}
+
 float Cuts::hadron_fid_phi_min(float theta, int idx) {
   return -(a0mh[idx] * (1.0 - expf(-a1mh[idx] * (theta - a2mh[idx]))) - a3mh[idx]);
 }
@@ -210,6 +221,15 @@ bool e1f_Cuts::Beam_cut() {
 
   _beam &= (abs(_data->dc_vx(0)) < 0.3f);
   _beam &= (abs(_data->dc_vy(0)) < 0.4f);
+
+  return _beam;
+}
+
+bool e16_Cuts::Beam_cut() {
+  bool _beam = true;
+
+  //_beam &= (abs(_data->dc_vx(0)) < 0.3f);
+  //_beam &= (abs(_data->dc_vy(0)) < 0.4f);
 
   return _beam;
 }

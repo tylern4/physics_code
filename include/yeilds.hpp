@@ -76,9 +76,10 @@ class Yeilds {
 
       event->boost();
 
-      bool cut_angles =
-          (cos(event->Theta_star()) == -1.0 && event->Phi_star() >= 1.57079 && event->Phi_star() <= 1.57082) ||
-          (cos(event->Theta_star()) == -1.0 && event->Phi_star() >= 4.71238 && event->Phi_star() <= 4.71240);
+      // bool cut_angles =
+      //     (cos(event->Theta_star()) == -1.0 && event->Phi_star() >= 1.57079 && event->Phi_star() <= 1.57082) ||
+      //     (cos(event->Theta_star()) == -1.0 && event->Phi_star() >= 4.71238 && event->Phi_star() <= 4.71240);
+      bool cut_angles = (cos(event->Theta_star()) == -1.0);
 
       if ((event->SinglePip() || event->NeutronPip()) &&
           (event->MM2() >= 0.3 && event->MM2() <= 1.5 && event->W() <= 2.0 && event->Q2() <= 4.0) && !cut_angles) {

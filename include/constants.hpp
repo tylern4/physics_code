@@ -35,6 +35,7 @@ static const int NEGATIVE = -1;
 // http://clasweb.jlab.org/clasonline/servlet/runinfo?action=detail&run=22880
 static const float E1D_E0 = 4.81726;  // GeV
 static const float E1F_E0 = 5.479;    // GeV
+static const float E16_E0 = 5.76959;
 
 static const float SOL = 29.9792458;
 // misc. constants

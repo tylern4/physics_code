@@ -30,6 +30,7 @@ set(CMAKE_C_FLAGS "-Ofast ${ROOT_CXX_FLAGS}")
 set(PROGRAMS 
       exe/cpp/e1d.cpp 
       exe/cpp/e1f.cpp 
+      exe/cpp/e16.cpp 
       exe/cpp/analysis.cpp
       exe/monteCarlo/e1d_mc.cpp 
       exe/monteCarlo/e1f_mc.cpp 

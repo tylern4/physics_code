@@ -163,7 +163,7 @@ def mm_cut(df, sigma=6):
         ax[a][b].plot(x, degauss(
             x, *popt), c="#9467bd", linewidth=3.0, label=f"Sector {sec}")
         ax[a][b].legend()
-        ax[a][b].set_xlabel(f"Mass $[ \mathrm{{{{GeV}}}}/c^2 ]$")
+        ax[a][b].set_xlabel(f"Mass $[ $\mathrm{{{{GeV}}}}^2 ]$")
 
         # find the FWHM
         xs = np.linspace(0.7, 1.5, 100000)
@@ -250,15 +250,18 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
         _mc_rec_data = mc_rec_data[cos_t == mc_rec_data.theta_bin]
         _thrown_data = thrown_data[cos_t == thrown_data.theta_bin]
 
+        flux = np.sum(_data['photon_flux'].to_numpy()) / \
+            len(_data['photon_flux'].to_numpy())
+
         xs = np.linspace(0, 2 * np.pi, 100)
         data_y, data_x = bh.numpy.histogram(
-            _data.phi, bins=bins, range=(0, 2 * np.pi))
+            _data.phi.to_numpy(), bins=bins, range=(0, 2 * np.pi))
         x = (data_x[1:] + data_x[:-1]) / 2.0
         mc_rec_y, _ = bh.numpy.histogram(
-            _mc_rec_data.phi, bins=bins, range=(0, 2 * np.pi)
+            _mc_rec_data.phi.to_numpy(), bins=bins, range=(0, 2 * np.pi)
         )
         thrown_y, _ = bh.numpy.histogram(
-            _thrown_data.phi, bins=bins, range=(0, 2 * np.pi)
+            _thrown_data.phi.to_numpy(), bins=bins, range=(0, 2 * np.pi)
         )
 
         # Change 0's to 1 for division
@@ -266,6 +269,7 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
         mc_rec_y = np.where(mc_rec_y == 0, 1, mc_rec_y)
 
         acceptance = np.nan_to_num(thrown_y / mc_rec_y)
+        data_y = data_y / np.max(data_y)
         y = data_y * acceptance
         y = y / np.max(y)
 
@@ -277,6 +281,7 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
         error_bar = np.sqrt(
             np.power((y*error), 2) + np.power(stats.sem(y), 2))
 
+        ax[a][b].set_ylim(bottom=0, top=np.max(y)*1.5)
         ax[a][b].errorbar(
             x,
             y,
@@ -286,7 +291,6 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
             c="k",
             zorder=1,
         )
-        ax[a][b].set_ylim(bottom=0, top=np.max(y)*1.5)
 
         phi_bins = np.linspace(0, 2 * np.pi, 200)
         crossSections = []
@@ -530,8 +534,8 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins, name="reconstructed"):
         ax.axvline(w, c='w')
     for q2 in q2_bins:
         ax.axhline(q2, c='w')
-    ax.set_xlabel(f"W [$GeV$]", fontsize=30)
-    ax.set_ylabel(f"$Q^2$ [$GeV/c^2$]", fontsize=30)
+    ax.set_xlabel(f"W [$\mathrm{{{{GeV}}}}$]", fontsize=30)
+    ax.set_ylabel(f"$Q^2$ [$\mathrm{{{{GeV}}}}^2$]", fontsize=30)
     ax.tick_params(axis='both', which='major', labelsize=15)
     fig.suptitle(f"W vs $Q^2$", fontsize=30)
     fig.colorbar(h[3], ax=ax)
@@ -549,12 +553,12 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins, name="reconstructed"):
     x = (x[1:] + x[:-1])/2.0
 
     ax2.errorbar(x, y, yerr=stats.sem(y), linestyle="", marker=".")
-    ax2.set_xlabel(f"W [$GeV$]", fontsize=30)
+    ax2.set_xlabel(f"W [$\mathrm{{{{GeV}}}}$]", fontsize=30)
     ax2.tick_params(axis='both', which='major', labelsize=15)
     ax2.set_xlim(np.min(w_bins), np.max(w_bins))
     ax2.set_ylim(bottom=0)
 
-    fig2.suptitle(f"W ($N \pi^+$)", fontsize=30)
+    fig2.suptitle(f"W (n$\pi^+$)", fontsize=30)
     fig2.savefig(f"{out_folder}/kinematics/W_{name}.png", bbox_inches='tight')
     #########################################
 
@@ -581,8 +585,8 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins, name="reconstructed"):
                       bins=200, range=[[np.min(w_bins), np.max(w_bins)], [np.min(q2_bins), np.max(q2_bins)]])
 
     ax3[1].errorbar(x, y, yerr=stats.sem(y), linestyle="", marker=".", ms=10)
-    ax3[1].set_xlabel(f"W [$GeV$]", fontsize=30)
-    ax3[0].set_ylabel(f"$Q^2$ [$GeV/c^2$]", fontsize=30)
+    ax3[1].set_xlabel(f"W [$\mathrm{{{{GeV}}}}$]", fontsize=30)
+    ax3[0].set_ylabel(f"$Q^2$ [$\mathrm{{{{GeV}}}}^2$]", fontsize=30)
     ax3[0].tick_params(axis='y', which='major', labelsize=25)
     ax3[0].tick_params(axis='x', which='major', labelsize=0)
     ax3[1].tick_params(axis='both', which='major', labelsize=25)
@@ -682,7 +686,7 @@ if __name__ == "__main__":
         deep=True
     )
     rec = rec[["w", "q2", "mm2", "cos_theta",
-               "phi", "helicty"]].copy(deep=True)
+               "phi", "helicty", "photon_flux"]].copy(deep=True)
 
     # Specifically put in bin edges
     # TODO ##################### BINS ######################
