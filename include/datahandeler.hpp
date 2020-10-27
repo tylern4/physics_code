@@ -56,6 +56,9 @@ class DataHandeler {
     }
 
     _hists->Fill_Beam_Position(_data);
+    auto event = std::make_shared<Reaction>(_data, _beam_energy, _mom_corr);
+
+    _hists->Fill_electron_fid(_data, event);
 
     if (!check->isElecctron()) return;
 
@@ -66,7 +69,7 @@ class DataHandeler {
     _hists->CC_fill(_data->cc_sect(0), (_data->cc_segm(0) % 1000) / 10, _data->cc_segm(0) / 1000 - 1, _data->nphe(0),
                     theta_cc);
 
-    auto event = std::make_shared<Reaction>(_data, _beam_energy, _mom_corr);
+    // auto event = std::make_shared<Reaction>(_data, _beam_energy, _mom_corr);
 
     _hists->Fill_E_Prime_fid(event->e_mu_prime());
     _hists->Fill_E_Prime(event->e_mu_prime());
@@ -82,7 +85,6 @@ class DataHandeler {
     int elec_sector = _data->dc_sect(0);
     int sector = 0;
 
-    _hists->Fill_electron_fid(_data, event);
     _hists->Fill_Beam_Position_cut(_data);
     _hists->Fill_Target_Vertex(_data);
 

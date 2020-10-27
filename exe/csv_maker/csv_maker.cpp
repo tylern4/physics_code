@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
     size_t total = 0;
     for (auto &&f : fls) {
       total += dh->Run<e1d_Cuts>(f, "rec");
-      std::cout << "  " << total << "\r\r" << std::flush;
+      std::cerr << "  " << total << "\r\r" << std::flush;
     }
     return total;
   };
@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
     size_t total = 0;
     for (auto &&f : fls) {
       total += dh->Run<e1f_Cuts>(f, "rec");
-      std::cout << "  " << total << "\r\r" << std::flush;
+      std::cerr << "  " << total << "\r\r" << std::flush;
     }
     return total;
   };
@@ -101,7 +101,7 @@ int main(int argc, char **argv) {
   }
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
   std::cout << RED << elapsed_full.count() << " sec" << DEF << std::endl;
-  std::cout << BOLDYELLOW << "\n\n" << events / elapsed_full.count() << " Hz" << DEF << std::endl;
+  std::cerr << BOLDYELLOW << "\n\n" << events / elapsed_full.count() << " Hz" << DEF << std::endl;
 
   return 0;
 }
