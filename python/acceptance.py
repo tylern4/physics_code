@@ -528,7 +528,7 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins, name="reconstructed"):
 
     fig, ax = plt.subplots(figsize=(12, 9))
     h = ax.hist2d(rec.w.to_numpy(), rec.q2.to_numpy(),
-                  bins=200, range=[[np.min(w_bins), np.max(w_bins)], [np.min(q2_bins), np.max(q2_bins)]])
+                  bins=200, range=[[np.min(w_bins), np.max(w_bins)], [np.min(q2_bins), np.max(q2_bins)]], cmin=1)
 
     for w in w_bins:
         ax.axvline(w, c='w')
@@ -563,7 +563,8 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins, name="reconstructed"):
     #########################################
 
     fig1, ax1 = plt.subplots(figsize=(12, 9))
-    h = ax1.hist2d(rec.cos_theta.to_numpy(), rec.phi.to_numpy(), bins=100)
+    h = ax1.hist2d(rec.cos_theta.to_numpy(),
+                   rec.phi.to_numpy(), bins=100, cmin=1)
     for t in theta_bins:
         ax1.axvline(t, c='w')
 
@@ -686,7 +687,7 @@ if __name__ == "__main__":
         deep=True
     )
     rec = rec[["w", "q2", "mm2", "cos_theta",
-               "phi", "helicty", "photon_flux"]].copy(deep=True)
+               "phi", "helicty", "photon_flux", "electron_sector"]].copy(deep=True)
 
     # Specifically put in bin edges
     # TODO ##################### BINS ######################
@@ -701,6 +702,10 @@ if __name__ == "__main__":
     # TODO ##################### BINS ######################
 
     draw_kinematics(rec, w_bins, q2_bins, theta_bins)
+    for sec in range(1, 7):
+        sec_data = rec[rec.electron_sector == sec]
+        draw_kinematics(sec_data, w_bins, q2_bins, theta_bins, f"rec_{sec}")
+
     draw_kinematics(mc_rec, w_bins, q2_bins, theta_bins, "mc_rec")
     draw_kinematics(mc_thrown, w_bins, q2_bins, theta_bins, "thrown")
 
