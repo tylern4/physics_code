@@ -23,7 +23,6 @@ from tqdm import tqdm
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import numba
 #from fit_functions import gauss, degauss, half_max_x, model
 
 warnings.filterwarnings("ignore")
@@ -255,13 +254,13 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
 
         xs = np.linspace(0, 2 * np.pi, 100)
         data_y, data_x = bh.numpy.histogram(
-            _data.phi.to_numpy(), bins=bins, range=(0, 2 * np.pi))
+            _data.phi.to_numpy(), bins=bins, range=(0, 2 * np.pi), threads=4)
         x = (data_x[1:] + data_x[:-1]) / 2.0
         mc_rec_y, _ = bh.numpy.histogram(
-            _mc_rec_data.phi.to_numpy(), bins=bins, range=(0, 2 * np.pi)
+            _mc_rec_data.phi.to_numpy(), bins=bins, range=(0, 2 * np.pi),  threads=4
         )
         thrown_y, _ = bh.numpy.histogram(
-            _thrown_data.phi.to_numpy(), bins=bins, range=(0, 2 * np.pi)
+            _thrown_data.phi.to_numpy(), bins=bins, range=(0, 2 * np.pi), threads=4
         )
 
         # Change 0's to 1 for division
@@ -340,13 +339,13 @@ def draw_xsec_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_fold
     )
     xs = np.linspace(0, 2 * np.pi, 100)
     data_y, data_x = bh.numpy.histogram(
-        data.phi, bins=bins, range=(0, 2 * np.pi))
+        data.phi, bins=bins, range=(0, 2 * np.pi), threads=4)
     x = (data_x[1:] + data_x[:-1]) / 2.0
     mc_rec_y, _ = bh.numpy.histogram(
-        mc_rec_data.phi, bins=bins, range=(0, 2 * np.pi)
+        mc_rec_data.phi, bins=bins, range=(0, 2 * np.pi), threads=4
     )
     thrown_y, _ = bh.numpy.histogram(
-        thrown_data.phi, bins=bins, range=(0, 2 * np.pi)
+        thrown_data.phi, bins=bins, range=(0, 2 * np.pi), threads=4
     )
 
     # Change 0's to 1 for division
