@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(DataHandeler C CXX Fortran)
+project(DataHandler C CXX Fortran)
 set(VERSION 1.0.0)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)

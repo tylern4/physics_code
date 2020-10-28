@@ -30,7 +30,7 @@ void loadbar(long x, long n) {
 
 size_t run_e1d_file(const std::vector<std::string>& in, const std::shared_ptr<mcHistogram>& hists,
                     const std::shared_ptr<MomCorr>& mom_corr, int thread_id) {
-  auto dh = std::make_unique<mcHandeler>(in, hists, mom_corr);
+  auto dh = std::make_unique<mcHandler>(in, hists, mom_corr);
   dh->setLoadBar(false);
   if (thread_id == 0) dh->setLoadBar(true);
   size_t tot = 0;
@@ -40,7 +40,7 @@ size_t run_e1d_file(const std::vector<std::string>& in, const std::shared_ptr<mc
 
 size_t run_e1f_file(const std::vector<std::string>& in, const std::shared_ptr<mcHistogram>& hists,
                     const std::shared_ptr<MomCorr>& mom_corr, int thread_id) {
-  auto dh = std::make_unique<mcHandeler>(in, hists, mom_corr);
+  auto dh = std::make_unique<mcHandler>(in, hists, mom_corr);
   dh->setLoadBar(false);
   if (thread_id == 0) dh->setLoadBar(true);
   size_t tot = 0;

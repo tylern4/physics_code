@@ -25,7 +25,7 @@
 #include "physics.hpp"
 #include "reaction.hpp"
 
-class DataHandeler {
+class DataHandler {
  protected:
   bool _loadbar = false;
   std::shared_ptr<TChain> _chain;
@@ -36,11 +36,13 @@ class DataHandeler {
   float _beam_energy = NAN;
 
  public:
-  DataHandeler();
-  DataHandeler(const std::vector<std::string>& fin, const std::shared_ptr<Histogram>& hists,
-               const std::shared_ptr<MomCorr>& mom_corr);
-  DataHandeler(const std::vector<std::string>& fin, const std::shared_ptr<Histogram>& hists);
-  ~DataHandeler();
+  DataHandler();
+  DataHandler(const std::vector<std::string>& fin, const std::shared_ptr<Histogram>& hists,
+              const std::shared_ptr<MomCorr>& mom_corr);
+  DataHandler(const std::vector<std::string>& fin, const std::shared_ptr<Histogram>& hists);
+  DataHandler(const std::string& fin, const std::shared_ptr<Histogram>& hists,
+              const std::shared_ptr<MomCorr>& mom_corr);
+  ~DataHandler();
   void setLoadBar(bool load);
 
   template <class CutType>
@@ -138,8 +140,8 @@ class DataHandeler {
     if (_hists == nullptr) return 0;
     size_t num_of_events = (size_t)_chain->GetEntries();
     for (size_t current_event = 0; current_event < num_of_events; current_event++) {
-      if (_loadbar && current_event % 10000 == 0) DataHandeler::loadbar(current_event, num_of_events);
-      DataHandeler::RunEvent<CutType>(current_event);
+      if (_loadbar && current_event % 10000 == 0) DataHandler::loadbar(current_event, num_of_events);
+      DataHandler::RunEvent<CutType>(current_event);
     }
 
     _chain->Reset();
@@ -149,16 +151,16 @@ class DataHandeler {
   void loadbar(long x, long n);
 };
 
-class mcHandeler : public DataHandeler {
+class mcHandler : public DataHandler {
  protected:
   std::shared_ptr<BranchesMC> _data_mc;
   std::shared_ptr<mcHistogram> _mc_hists;
 
  public:
-  mcHandeler() : DataHandeler() {}
-  mcHandeler(const std::vector<std::string>& fin, const std::shared_ptr<mcHistogram>& hists);
-  mcHandeler(const std::vector<std::string>& fin, const std::shared_ptr<mcHistogram>& hists,
-             const std::shared_ptr<MomCorr>& mom_corr);
+  mcHandler() : DataHandler() {}
+  mcHandler(const std::vector<std::string>& fin, const std::shared_ptr<mcHistogram>& hists);
+  mcHandler(const std::vector<std::string>& fin, const std::shared_ptr<mcHistogram>& hists,
+            const std::shared_ptr<MomCorr>& mom_corr);
 
   template <class CutType>
   void RunEvent(int current_event) {
@@ -183,9 +185,9 @@ class mcHandeler : public DataHandeler {
     size_t num_of_events = (size_t)_chain->GetEntries();
 
     for (size_t current_event = 0; current_event < num_of_events; current_event++) {
-      if (_loadbar && current_event % 10000 == 0) DataHandeler::loadbar(current_event, num_of_events);
-      DataHandeler::RunEvent<CutType>(current_event);
-      mcHandeler::RunEvent<CutType>(current_event);
+      if (_loadbar && current_event % 10000 == 0) DataHandler::loadbar(current_event, num_of_events);
+      DataHandler::RunEvent<CutType>(current_event);
+      mcHandler::RunEvent<CutType>(current_event);
     }
 
     _chain->Reset();

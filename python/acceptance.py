@@ -163,7 +163,7 @@ def mm_cut(df, sigma=6):
         ax[a][b].plot(x, degauss(
             x, *popt), c="#9467bd", linewidth=3.0, label=f"Sector {sec}")
         ax[a][b].legend()
-        ax[a][b].set_xlabel(f"Mass $[ $\mathrm{{{{GeV}}}}^2 ]$")
+        ax[a][b].set_xlabel(f"Mass [ $\mathrm{{{{GeV}}}}^2$]")
 
         # find the FWHM
         xs = np.linspace(0.7, 1.5, 100000)

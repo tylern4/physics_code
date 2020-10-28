@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
     outfilename = argv[2];
   }
 
-  DataHandeler *dh = new DataHandeler(files, outfilename);
+  DataHandler *dh = new DataHandler(files, outfilename);
   dh->BinnedCSV();
   delete dh;
 
