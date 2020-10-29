@@ -126,6 +126,24 @@ def half_max_x(x, y):
     ]
 
 
+def virtual_photon(W: float, Q2: float, beam_energy: float) -> float:
+    MASS_E = 0.000511
+    target_mass = 0.93827203
+    FS_ALPHA = 0.007297352570866302
+    beam_momentum = np.sqrt(beam_energy * beam_energy - MASS_E * MASS_E)
+    nu = (((W * W + Q2) / target_mass) - target_mass) / 2  # Photon Energy
+    scattered_energy = (beam_energy - nu)
+    scattered_momentum = np.sqrt(
+        scattered_energy * scattered_energy - MASS_E * MASS_E)
+    theta = np.arccos((beam_energy * scattered_energy - Q2 / 2.0 - MASS_E * MASS_E) /
+                      (beam_momentum * scattered_momentum))
+    epsilon = (np.power(
+        (1 + (2 * (1 + ((nu * nu) / Q2)) * np.power(np.tan((theta / 2)), 2))), -1))
+    flux = FS_ALPHA / (4 * np.pi * Q2) * W / (beam_energy * beam_energy * target_mass *
+                                              target_mass) * (W * W - target_mass * target_mass) / (1 - epsilon)
+    return flux
+
+
 def mm_cut(df, sigma=6):
     data = {}
     fig, ax = plt.subplots(2, 3, figsize=(
@@ -249,8 +267,8 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
         _mc_rec_data = mc_rec_data[cos_t == mc_rec_data.theta_bin]
         _thrown_data = thrown_data[cos_t == thrown_data.theta_bin]
 
-        flux = np.sum(_data['photon_flux'].to_numpy()) / \
-            len(_data['photon_flux'].to_numpy())
+        photon_flux = _data['photon_flux'].to_numpy()
+        flux = np.sum(photon_flux) / photon_flux.size
 
         xs = np.linspace(0, 2 * np.pi, 100)
         data_y, data_x = bh.numpy.histogram(
@@ -269,8 +287,7 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
 
         acceptance = np.nan_to_num(thrown_y / mc_rec_y)
         data_y = data_y / np.max(data_y)
-        y = data_y * acceptance
-        y = y / np.max(y)
+        y = (data_y * acceptance) * flux
 
         error_bar = np.ones_like(y)
 
@@ -290,11 +307,23 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
             c="k",
             zorder=1,
         )
+        ax[a][b].text(0.0, 1.2*np.max(y), cos_label)
 
+        popt, pcov = curve_fit(func, x, y, maxfev=8000)
+
+        ax[a][b].plot(xs, func(xs, *popt), c="#9467bd",
+                      linewidth=2.0)
+
+        perr = np.sqrt(np.diag(pcov))
+
+        ax[a][b].fill_between(xs, func(xs, *popt) + perr[1],
+                              func(xs, *popt) - perr[1],
+                              interpolate=True, color="#9467bd", alpha=0.3)
+
+        _ax = ax[a][b].twinx()
         phi_bins = np.linspace(0, 2 * np.pi, 200)
         crossSections = []
         phis = []
-
         _w = (w.left + w.right) / 2.0
         _q2 = (q2.left + q2.right) / 2.0
         _cos_t = (cos_t.left + cos_t.right) / 2.0
@@ -304,15 +333,15 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
                 maid(ENERGY, _w, _q2, _cos_t, np.degrees(phi)))
             phis.append(phi)
 
-        _ax = ax[a][b].twinx()
+        crossSections = np.array(crossSections)
+        phis = np.array(phis)
+
         _ax.plot(phis, crossSections, c='r', linestyle='dotted')
         _ax.set_ylim(bottom=0, top=np.max(crossSections)*1.5)
+        _ax.fill_between(phis, crossSections*1.05,
+                         crossSections*0.95,
+                         interpolate=True, color="r", alpha=0.3)
 
-        popt, pcov = curve_fit(func, x, y, maxfev=8000)
-
-        ax[a][b].plot(xs, func(xs, *popt), c="#9467bd",
-                      linewidth=2.0)
-        ax[a][b].text(0.0, 1.2, cos_label)
     if not os.path.exists(f'{out_folder}/CosT'):
         os.makedirs(f'{out_folder}/CosT')
 
