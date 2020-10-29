@@ -267,8 +267,9 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
         _mc_rec_data = mc_rec_data[cos_t == mc_rec_data.theta_bin]
         _thrown_data = thrown_data[cos_t == thrown_data.theta_bin]
 
-        photon_flux = _data['photon_flux'].to_numpy()
-        flux = np.sum(photon_flux) / photon_flux.size
+        #photon_flux = _data['photon_flux'].to_numpy()
+        #flux = np.sum(photon_flux) / photon_flux.size
+        flux = virtual_photon(w.left, q2.left, ENERGY)
 
         xs = np.linspace(0, 2 * np.pi, 100)
         data_y, data_x = bh.numpy.histogram(
