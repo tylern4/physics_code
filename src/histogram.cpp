@@ -1220,9 +1220,9 @@ void Histogram::CC_canvas() {
 }
 
 void Histogram::makeHists_fid() {
-  cerenkov_fid.reserve(6);
-  fid_xy.reserve(6);
-  electron_fid_sec_hist.reserve(6);
+  cerenkov_fid.reserve(NUM_SECTORS);
+  fid_xy.reserve(NUM_SECTORS);
+  electron_fid_sec_hist.reserve(NUM_SECTORS);
   fid_xy_hist = std::make_shared<TH2F>(Form("fid_xy"), Form("fid_xy"), BINS, -150, 150, BINS, 0, 300);
   for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
     cerenkov_fid[sec_i] = std::make_shared<TH2F>(Form("fid_cher_xy_%d", sec_i + 1), Form("fid_cher_xy_%d", sec_i + 1),
@@ -1407,6 +1407,12 @@ void Histogram::makeHists_EC() {
     EC_hist[n] = new TH1F(Form("ec_%d", n), Form("Sampling Fraction %d", n), BINS, EC_min, EC_max);
     EC_hist_cut[n] = new TH1F(Form("ec_cut_%d", n), Form("Sampling Fraction cut %d", n), BINS, EC_min, EC_max);
   }
+
+  Theta_vs_mom_sec.reserve(NUM_SECTORS);
+  for (short sec = 0; sec < NUM_SECTORS; sec++) {
+    Theta_vs_mom_sec[sec] = std::make_shared<TH2F>(Form("Theta_vs_mom_%d", sec + 1), Form("Theta_vs_mom_%d", sec + 1),
+                                                   BINS, p_min, p_max, BINS, 0, 70);
+  }
 }
 
 void Histogram::EC_fill(float etot, float momentum) {
@@ -1428,6 +1434,11 @@ void Histogram::EC_inout(float Ein, float Eout) {
 }
 
 void Histogram::TM_Fill(float momentum, float theta) { Theta_vs_mom->Fill(momentum, theta); }
+void Histogram::Theta_vs_p_Fill(const std::shared_ptr<Branches> &_data) {
+  short sector = _data->dc_sect(0);
+  if (sector == 0 || sector > NUM_SECTORS) return;
+  Theta_vs_mom_sec[sector - 1]->Fill(_data->p(0), physics::theta_calc(_data->cz(0)));
+}
 
 void Histogram::EC_cut_fill(float etot, float momentum) {
   float sampling_frac = etot / momentum;
@@ -1561,6 +1572,13 @@ void Histogram::EC_Write() {
   Theta_vs_mom->SetYTitle("Theta #theta");
   Theta_vs_mom->SetOption("COLZ");
   Theta_vs_mom->Write();
+
+  for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
+    Theta_vs_mom_sec[sec_i]->SetXTitle("Momentum (GeV)");
+    Theta_vs_mom_sec[sec_i]->SetYTitle("Theta #theta");
+    Theta_vs_mom_sec[sec_i]->SetOption("COLZ LOGZ");
+    Theta_vs_mom_sec[sec_i]->Write();
+  }
 
   ECin_ECout->SetXTitle("EC_{inner}");
   ECin_ECout->SetYTitle("EC_{outer}");

@@ -279,7 +279,9 @@ Garys binning
                                                              BINS, p_min, p_max, BINS, EC_min, EC_max);
   TH1F* EC_hist[NUM_POINTS];
   TH1F* EC_hist_cut[NUM_POINTS];
-  TH2F_ptr Theta_vs_mom = std::make_shared<TH2F>("Theta_vs_mom", "Theta_vs_mom", BINS, p_min, p_max, BINS, 0, 100);
+  TH2F_ptr Theta_vs_mom = std::make_shared<TH2F>("Theta_vs_mom", "Theta_vs_mom", BINS, p_min, p_max, BINS, 0, 70);
+  std::vector<TH2F_ptr> Theta_vs_mom_sec;
+
   TH2F_ptr ECin_ECout = std::make_shared<TH2F>("ECin_ECout", "ECin_ECout", BINS, 0.0, 0.5, BINS, 0.0, 0.5);
 
   TH1F_ptr EC_tot_energy = std::make_shared<TH1F>("EC_tot_energy", "EC_tot_energy", BINS, 0, 1.5);
@@ -457,6 +459,7 @@ Garys binning
   void EC_slice_fit();
   void EC_Write();
   void TM_Fill(float momentum, float theta);
+  void Theta_vs_p_Fill(const std::shared_ptr<Branches>& _data);
 
   // Beam Position
   void Fill_Beam_Position(const std::shared_ptr<Branches>& _data);
