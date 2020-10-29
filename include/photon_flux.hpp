@@ -13,7 +13,7 @@
 
 class PhotonFlux {
  private:
-  float _beam_energy = E1D_E0;
+  float _beam_energy = NAN;
   float _target_mass = MASS_P;
   float _beam_momentum;
   float _nu;
@@ -32,7 +32,7 @@ class PhotonFlux {
  public:
   PhotonFlux();
   PhotonFlux(float W, float Q2);
-  PhotonFlux(LorentzVector e_mu, LorentzVector e_mu_prime);
+  PhotonFlux(float W, float Q2, float beam_e);
   ~PhotonFlux();
 
   float GetVirtualPhotonFlux();

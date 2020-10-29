@@ -21,11 +21,11 @@ Reaction::Reaction(const std::shared_ptr<Branches>& data, const float beam_energ
   _beam = physics::fourVec(0.0, 0.0, _beam_energy, MASS_E);
   _elec = physics::fourVec(_data->px(0), _data->py(0), _data->pz(0), MASS_E);
 
-  _photon_flux = std::make_shared<PhotonFlux>(this->e_mu(), this->e_mu_prime());
-
   *_gamma = *_beam - *_elec;
   _W = physics::W_calc(*_gamma);
   _Q2 = physics::Q2_calc(*_gamma);
+  _photon_flux = std::make_shared<PhotonFlux>(_W, _Q2, _beam_energy);
+
   _xb = physics::xb_calc(*_gamma);
 }
 
@@ -41,11 +41,10 @@ Reaction::Reaction(const std::shared_ptr<Branches>& data, const float beam_energ
   else
     _elec = physics::fourVec(_data->px(0), _data->py(0), _data->pz(0), MASS_E);
 
-  _photon_flux = std::make_shared<PhotonFlux>(this->e_mu(), this->e_mu_prime());
-
   *_gamma = *_beam - *_elec;
   _W = physics::W_calc(*_gamma);
   _Q2 = physics::Q2_calc(*_gamma);
+  _photon_flux = std::make_shared<PhotonFlux>(_W, _Q2, _beam_energy);
   _xb = physics::xb_calc(*_gamma);
 }
 

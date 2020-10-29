@@ -148,7 +148,7 @@ class DataHandler {
     return num_of_events;
   }
 
-  void loadbar(long x, long n);
+  static void loadbar(long x, long n);
 };
 
 class mcHandler : public DataHandler {
