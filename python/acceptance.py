@@ -243,7 +243,7 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
         q2_left = np.round(q2.left, 3)
 
     fig, ax = plt.subplots(5, 2, figsize=(
-        12, 9), sharex=True, gridspec_kw={'hspace': 0.1})
+        12, 9), sharex=True, gridspec_kw={'hspace': 0.1}, subplot_kw={'projection': 'polar'})
 
     fig.suptitle(
         f"W=({np.round(w.left,3)}, {np.round(w.right,3)}],\t$Q^2$=({q2_left}, {np.round(q2.right,3)}]", fontsize=20
@@ -711,8 +711,8 @@ if __name__ == "__main__":
     rec = rec[cuts]
     mc_rec = mc_rec[mc_cuts]
     mc_rec = mc_rec[["w", "q2", "mm2", "cos_theta",
-                     "phi", "helicty"]].copy(deep=True)
-    mc_thrown = mc_thrown[["w", "q2", "mm2", "cos_theta", "phi", "helicty"]].copy(
+                     "phi", "helicty", "electron_sector"]].copy(deep=True)
+    mc_thrown = mc_thrown[["w", "q2", "mm2", "cos_theta", "phi", "helicty", "electron_sector"]].copy(
         deep=True
     )
     rec = rec[["w", "q2", "mm2", "cos_theta",
@@ -731,12 +731,20 @@ if __name__ == "__main__":
     # TODO ##################### BINS ######################
 
     draw_kinematics(rec, w_bins, q2_bins, theta_bins)
+    draw_kinematics(mc_rec, w_bins, q2_bins, theta_bins, "mc_rec")
+    draw_kinematics(mc_thrown, w_bins, q2_bins, theta_bins, "thrown")
+
     for sec in range(1, 7):
         sec_data = rec[rec.electron_sector == sec]
         draw_kinematics(sec_data, w_bins, q2_bins, theta_bins, f"rec_{sec}")
 
-    draw_kinematics(mc_rec, w_bins, q2_bins, theta_bins, "mc_rec")
-    draw_kinematics(mc_thrown, w_bins, q2_bins, theta_bins, "thrown")
+        sec_mc_rec = mc_rec[mc_rec.electron_sector == sec]
+        draw_kinematics(sec_mc_rec, w_bins, q2_bins,
+                        theta_bins, f"mc_rec_{sec}")
+
+        sec_mc_thrown = mc_thrown[mc_thrown.electron_sector == sec]
+        draw_kinematics(sec_mc_thrown, w_bins, q2_bins,
+                        theta_bins, f"thrown_{sec}")
 
     mc_rec["w_bin"] = pd.cut(mc_rec["w"], bins=w_bins, include_lowest=True)
     mc_rec["q2_bin"] = pd.cut(mc_rec["q2"], bins=q2_bins, include_lowest=True)
