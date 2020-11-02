@@ -243,7 +243,8 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
         q2_left = np.round(q2.left, 3)
 
     fig, ax = plt.subplots(5, 2, figsize=(
-        12, 9), sharex=True, gridspec_kw={'hspace': 0.1}, subplot_kw={'projection': 'polar'})
+        12, 9), sharex=True, gridspec_kw={'hspace': 0.1})
+    # subplot_kw={'projection': 'polar'}
 
     fig.suptitle(
         f"W=({np.round(w.left,3)}, {np.round(w.right,3)}],\t$Q^2$=({q2_left}, {np.round(q2.right,3)}]", fontsize=20

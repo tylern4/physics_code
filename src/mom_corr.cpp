@@ -254,6 +254,11 @@ std::shared_ptr<LorentzVector> MomCorr::CorrectedVector(float px, float py, floa
   if (phi < 0) phi = phi + 360.;
   int sect = GetSector(phi);
 
+  // if anything is bad then just return an uncorrected vector and let ROOT handle it
+  // Only really effects MC events
+  if (sect == 0 || sect > NUM_SECTORS || std::isnan(theta) || std::isnan(phi))
+    return std::make_shared<LorentzVector>(px, py, pz, mass_map[particle_type]);
+
   float theta_c = theta_corr(theta, phi, sect);
   float mom_c = Pin->P();
   if (particle_type == ELECTRON)

@@ -1436,7 +1436,7 @@ void Histogram::EC_inout(float Ein, float Eout) {
 void Histogram::TM_Fill(float momentum, float theta) { Theta_vs_mom->Fill(momentum, theta); }
 void Histogram::Theta_vs_p_Fill(const std::shared_ptr<Branches> &_data) {
   short sector = _data->dc_sect(0);
-  if (sector == 0 || sector > NUM_SECTORS) return;
+  if (sector == 0 || sector > NUM_SECTORS || sector == int(NULL)) return;
   Theta_vs_mom_sec[sector - 1]->Fill(_data->p(0), physics::theta_calc(_data->cz(0)));
 }
 
