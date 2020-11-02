@@ -359,8 +359,9 @@ def draw_cos_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_
     #         inputs.append((func, data, mc_rec_data, thrown_data,
     #                        w, q2, cos_t_bins, out_folder, bins))
     #     pool.starmap(draw_cos_bin, inputs)
-    draw_cos_bin(func, data, mc_rec_data, thrown_data,
-                 w, q2, cos_t_bins, out_folder, 10)
+    for bins in range(10, 24, 2):
+        draw_cos_bin(func, data, mc_rec_data, thrown_data,
+                     w, q2, cos_t_bins, out_folder, bins)
 
 
 def draw_xsec_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder, bins):
