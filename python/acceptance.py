@@ -283,9 +283,9 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
             _thrown_data.phi.to_numpy(), bins=bins, range=(0, 2 * np.pi), threads=4
         )
 
-        # Change 0's to 1 for division
-        thrown_y = np.where(thrown_y == 0, 1, thrown_y)
-        mc_rec_y = np.where(mc_rec_y == 0, 1, mc_rec_y)
+        # Change 0's to mean for division
+        thrown_y = np.where(thrown_y == 0, np.min(thrown_y), thrown_y)
+        mc_rec_y = np.where(mc_rec_y == 0, np.min(mc_rec_y), mc_rec_y)
 
         acceptance = np.nan_to_num(thrown_y / mc_rec_y)
         data_y = data_y / np.max(data_y)

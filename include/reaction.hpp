@@ -178,9 +178,9 @@ class Reaction {
 
   inline bool elastic() {
     bool elastic = SingleP();
-    elastic &= (abs(MM2()) < 0.005);
+    elastic &= (abs(MM2()) < 0.05f);
     if (elastic && _prot != nullptr) {
-      elastic &= (phi_diff() > (3.125) && phi_diff() < (3.165));
+      elastic &= (phi_diff() > 3.125f && phi_diff() < 3.165f);
     } else {
       elastic = false;
     }
