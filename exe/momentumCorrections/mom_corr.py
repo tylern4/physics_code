@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 
-from typing import Dict
-from matplotlib.pyplot import legend
 import pyarrow  # noqa
-pyarrow.set_cpu_count(8)  # noqa
-import matplotlib  # noqa
-matplotlib.use("agg")  # noqa
+pyarrow.set_cpu_count(16)  # noqa
+# import matplotlib  # noqa
+# matplotlib.use("agg")  # noqa
 import warnings  # noqa
 warnings.filterwarnings('ignore')  # noqa
 
@@ -18,6 +16,9 @@ import matplotlib.pyplot as plt
 from pyarrow import csv
 from lmfit.models import GaussianModel, PolynomialModel, BreitWignerModel, LognormalModel, Model
 from multiprocessing import Pool
+import sys
+from typing import Dict
+from matplotlib.pyplot import legend
 
 
 MASS_P = 0.93827208816
@@ -25,16 +26,18 @@ E0 = 4.81726
 MASS_E = 0.00051099895
 
 
-def ms_to_time(millis: float) -> str:
-    seconds = (millis/1000) % 60
-    minutes = (millis/(1000*60)) % 60
-    hours = (millis/(1000*60*60)) % 24
+def clock_to_time(clock: float) -> str:
+    millis = clock * 1000
+    hours = int((millis/(1000*60*60)) % 24)
+    seconds = int((millis/1000) % 60)
+    minutes = int((millis/(1000*60)) % 60)
+    hours = int((millis/(1000*60*60)) % 24)
     if hours > 1:
         return f"{hours}:{minutes}:{seconds}"
     elif minutes > 1:
-        return f"{minutes}:{seconds}"
+        return f"{minutes} min {seconds} sec"
     elif seconds > 1:
-        return f"{seconds} s"
+        return f"{seconds} sec"
     else:
         return f"{millis} ms"
 
@@ -45,7 +48,7 @@ def timeit(method):
         result = method(*args, **kw)
         te = time.time()
 
-        print(f'{method.__name__ }\t{ms_to_time((te - ts) * 1000)}')
+        print(f'{method.__name__ }  {clock_to_time(te - ts)}')
         return result
     return timed
 
@@ -273,9 +276,10 @@ def dtheta_vs_phi(sector_data: pd.DataFrame) -> Dict:
         ax.set_xlabel(f"$\phi$")
         ax.set_ylabel(f"$\Delta \\theta$")
         ax.legend()
-        fig.savefig(f'plots/fit_{sec}_{theta}.png')
+        fig.savefig(f'plots/fit_sec_{sec}_theta_{theta}.png')
+        outputs[f'sec_{sec}_theta_{theta}'] = tuple(z)
         del fig, ax
-        #outputs[f'sec_{sec}_theta_{theta}'] = z
+
     return outputs
 
 
@@ -320,15 +324,21 @@ def slices(df: pd.DataFrame, num_points: int = 25) -> pd.DataFrame:
 
 if __name__ == "__main__":
     print(np.__version__)
-    df = read_file("/Users/tylern/Data/momCorr.csv")
+    if len(sys.argv) <= 1:
+        exit()
 
-    data_to_fit = [df[df.sector == sec] for sec in range(1, 7)]
+    print(sys.argv[1])
+    df = read_file(sys.argv[1])
+
+    data_to_fit = [df[df.sector == sec] for sec in range(1, 2)]
     del df
+    fit_data = dict()
+    for sec, data in enumerate(data_to_fit):
+        fit_data[sec] = dtheta_vs_phi(data)
 
-    for data in data_to_fit:
-        dtheta_vs_phi(data)
+    print(fit_data)
     # with Pool(6) as p:
-    #     p.map(dtheta_vs_phi, data_to_fit)
+    #     data_to_fit = p.map(dtheta_vs_phi, data_to_fit)
 
     # for sec in range(1, 7):
     #     fig, ax = plt.subplots(figsize=(12, 9))

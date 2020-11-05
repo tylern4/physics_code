@@ -196,7 +196,7 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
             out = model.fit(y, pars, x=x)
             xs = np.linspace(0.3, 1.5, 1000)
             plt.plot(xs, out.eval(params=out.params, x=xs),
-                     'r-', linewidth=2.0, alpha=0.4)
+                     'r-', linewidth=2.0, alpha=0.4, label=f"Peak Center: {out.params['peak_center']}")
             plt.axvline(out.params['peak_center']+sigma *
                         out.params['peak_fwhm'] / 2.355, c='r', alpha=0.4)
             plt.axvline(out.params['peak_center']-sigma *
@@ -238,6 +238,8 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
         if not os.path.exists(f'{out_folder}/cuts'):
             os.makedirs(f'{out_folder}/cuts')
 
+        plt.set_xlabel(f"Mass [ $\mathrm{{{{GeV}}}}^2$]")
+        plt.legend()
         plt.title(
             f"Missing Mass Squared $e\left( p, \pi^{{{'+'}}} X \\right)$ in sector {sec}")
 
