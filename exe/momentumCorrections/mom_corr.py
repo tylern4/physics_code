@@ -17,6 +17,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from pyarrow import csv
 from lmfit.models import GaussianModel, PolynomialModel, BreitWignerModel, LognormalModel, Model
+from multiprocessing import Pool
 
 
 MASS_P = 0.93827208816
@@ -123,7 +124,7 @@ def Dtheta(e_phi, theta_e, A, B, C, D):
     """
     Mom Corrections for e6 (CLAS-NOTE 2003-005)
     """
-    #e_phi = np.rad2deg(e_phi)
+    # e_phi = np.rad2deg(e_phi)
     first = (A+B*e_phi)*(np.cos(theta_e)/np.cos(e_phi))
     second = (C+D*e_phi)*np.sin(theta_e)
     return first + second
@@ -173,7 +174,7 @@ def read_file(file_name: str) -> pd.DataFrame:
     # df['q2_corr'] = q2_calc(df.e_p, df.e_theta, df.e_phi)
     df['p_p_calc'] = Theta_e_calc(df.e_theta_calc)
     df.dropna(inplace=True)
-    print(df.info(verbose=True, memory_usage='deep'))
+
     dtype_pd = {
         "e_p": "float16",
         "e_theta": "float16",
@@ -190,7 +191,6 @@ def read_file(file_name: str) -> pd.DataFrame:
         "p_p_calc":      "float16"
     }
     df = df.astype(dtype_pd)
-    print(df.info(verbose=True, memory_usage='deep'))
 
     return df
 
@@ -203,36 +203,35 @@ def get_min_max(x, past=0.1):
     return ((1-past)*a, (1+past)*b)
 
 
-def dtheta_vs_phi(df: pd.DataFrame) -> Dict:
+@timeit
+def dtheta_vs_phi(sector_data: pd.DataFrame) -> Dict:
     outputs = dict()
-    for sec in range(1, 7):
-        sector_data = df[(df.sector == sec)]
+    sec = int(np.mean(sector_data.sector))
 
-        phi_step = 0.5
-        phi_steps = np.arange(-30, 30, phi_step)
-        theta_step = 1
-        theta_steps = np.arange(13, 25, 1)
-        for theta in theta_steps:
-            phi_theta = []
-            fig, ax = plt.subplots(figsize=(12, 9))
-            dt_theta = sector_data[(np.rad2deg(sector_data.e_theta) > theta) & (
-                (np.rad2deg(sector_data.e_theta)) <= theta+theta_step)]
-            ax.hist2d(dt_theta.e_phi_center.to_numpy(),
-                      dt_theta.delta_theta.to_numpy(), bins=250, range=[[-30, 30], [-0.01, 0.01]])
+    phi_step = 0.5
+    phi_steps = np.arange(-30, 30, phi_step)
+    theta_step = 1
+    theta_steps = np.arange(13, 25, 1)
 
-            for phi in phi_steps:
-                dt = dt_theta[(dt_theta.e_phi_center > phi) & (
-                    dt_theta.e_phi_center <= phi+phi_step)]
+    for theta in theta_steps:
+        phi_theta = []
+        fig, ax = plt.subplots(figsize=(12, 9))
+        dt_theta = sector_data[(np.rad2deg(sector_data.e_theta) > theta) & (
+            (np.rad2deg(sector_data.e_theta)) <= theta+theta_step)]
+        ax.hist2d(dt_theta.e_phi_center.to_numpy(),
+                  dt_theta.delta_theta.to_numpy(), bins=250, range=[[-30, 30], [-0.01, 0.01]])
 
-                if len(dt) < 100:
-                    continue
+        for phi in phi_steps:
+            dt = dt_theta[(dt_theta.e_phi_center > phi) & (
+                dt_theta.e_phi_center <= phi+phi_step)]
 
-                # ax.errorbar(dt["e_phi"].to_numpy(), dt["delta_theta"].to_numpy(),
-                #             fmt='.', c='blue', alpha=0.01)
+            if len(dt) < 100:
+                continue
 
-                phi = np.mean(dt.e_phi_center.to_numpy())
-                delta_t = np.mean(dt.delta_theta.to_numpy())
+            phi = np.mean(dt.e_phi_center.to_numpy())
+            delta_t = np.mean(dt.delta_theta.to_numpy())
 
+            try:
                 fig2, ax2 = plt.subplots(figsize=(12, 9))
                 yy, xx, _ = ax2.hist(dt.delta_theta.to_numpy(),
                                      bins=1000, range=(-0.05, 0.05))
@@ -243,42 +242,40 @@ def dtheta_vs_phi(df: pd.DataFrame) -> Dict:
                 np.mean(dt.delta_theta.to_numpy())-g_out.best_values['center']
                 xxs = np.linspace(-0.05, 0.05, 2000)
                 ax2.plot(xxs, g_mod.eval(params=g_out.params, x=xxs))
-
-                fig2.savefig(f"plots/slices/slice_{theta}_{phi}_{sec}.png")
+                delta_t = g_out.best_values['center']
+                yerr = g_out.best_values['sigma']
+                # fig2.savefig(f"plots/slices/slice_{theta}_{phi}_{sec}.png")
+                ax.errorbar(phi, delta_t,
+                            yerr=yerr, fmt='.', c='red')
                 del fig2
                 del ax2
+            except ValueError:
+                pass
 
-                delta_t = g_out.best_values['center']
-                yerr = g_out.best_values['sigma']/2
-                ax.errorbar(phi, delta_t, yerr=yerr, fmt='.', c='red')
+            phi_theta.append([phi, delta_t])
 
-                phi_theta.append([phi, delta_t, yerr])
+        x = np.transpose(phi_theta)[0]
+        y = np.transpose(phi_theta)[1]
 
-            x = np.transpose(phi_theta)[0]
-            y = np.transpose(phi_theta)[1]
-            yerr = np.transpose(phi_theta)[2]
+        n = 4
+        z = np.polyfit(x, y, n)
 
-            n = 4
-            z = np.polyfit(x, y, n, w=yerr)
-            func = np.poly1d(z)
-            # _min, _max = get_min_max(x)
-            # xs = np.linspace(_min, _max, 100)
-            xs = np.linspace(-30, 30, 2000)
+        func = np.poly1d(z)
+        xs = np.linspace(-30, 30, 2000)
+        ax.plot(xs, func(xs), label=f'{z}')
 
-            ax.plot(xs, func(xs), label=f'{z}')
+        # popt, pcov = curve_fit(Dtheta, x, y, maxfev=3400)
+        # ax.plot(xs, Dtheta(xs, *popt), label=f'{popt}')
 
-            # popt, pcov = curve_fit(Dtheta, x, y, maxfev=3400)
-            # ax.plot(xs, Dtheta(xs, *popt), label=f'{popt}')
-
-            # popt, pcov = curve_fit(FitFunc, x, y, maxfev=3400)
-            # ax.plot(xs, FitFunc(xs, *popt), label=f'{popt}')
-            ax.set_ylim(-0.01, 0.01)
-            ax.set_xlabel(f"$\phi$")
-            ax.set_ylabel(f"$\Delta \\theta$")
-            ax.legend()
-            fig.savefig(f'plots/fit_{sec}_{theta}.png')
-            del fig, ax
-            outputs[f'sec_{sec}_theta_{theta}'] = z
+        # popt, pcov = curve_fit(FitFunc, x, y, maxfev=3400)
+        # ax.plot(xs, FitFunc(xs, *popt), label=f'{popt}')
+        ax.set_ylim(-0.01, 0.01)
+        ax.set_xlabel(f"$\phi$")
+        ax.set_ylabel(f"$\Delta \\theta$")
+        ax.legend()
+        fig.savefig(f'plots/fit_{sec}_{theta}.png')
+        del fig, ax
+        #outputs[f'sec_{sec}_theta_{theta}'] = z
     return outputs
 
 
@@ -325,7 +322,13 @@ if __name__ == "__main__":
     print(np.__version__)
     df = read_file("/Users/tylern/Data/momCorr.csv")
 
-    # dtheta_vs_phi(df)
+    data_to_fit = [df[df.sector == sec] for sec in range(1, 7)]
+    del df
+
+    for data in data_to_fit:
+        dtheta_vs_phi(data)
+    # with Pool(6) as p:
+    #     p.map(dtheta_vs_phi, data_to_fit)
 
     # for sec in range(1, 7):
     #     fig, ax = plt.subplots(figsize=(12, 9))
