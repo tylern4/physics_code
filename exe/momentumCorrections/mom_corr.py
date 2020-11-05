@@ -50,7 +50,7 @@ def timeit(method):
 
 
 def vec(method):
-    return np.vectorize(method, cache=True, otypes=["float32"])
+    return np.vectorize(method, cache=True, otypes=["float16"])
 
 
 @vec
@@ -173,7 +173,23 @@ def read_file(file_name: str) -> pd.DataFrame:
     # df['q2_corr'] = q2_calc(df.e_p, df.e_theta, df.e_phi)
     df['p_p_calc'] = Theta_e_calc(df.e_theta_calc)
     df.dropna(inplace=True)
-
+    print(df.info(verbose=True, memory_usage='deep'))
+    dtype_pd = {
+        "e_p": "float16",
+        "e_theta": "float16",
+        "e_phi": "float16",
+        "p_p": "float16",
+        "p_theta": "float16",
+        "p_phi": "float16",
+        "W_uncorr": "float16",
+        "Q2_uncorr": "float16",
+        "sector": "int8",
+        "e_phi_center": "float16",
+        "e_theta_calc": "float16",
+        "delta_theta":   "float16",
+        "p_p_calc":      "float16"
+    }
+    df = df.astype(dtype_pd)
     print(df.info(verbose=True, memory_usage='deep'))
 
     return df
@@ -264,6 +280,45 @@ def dtheta_vs_phi(df: pd.DataFrame) -> Dict:
             del fig, ax
             outputs[f'sec_{sec}_theta_{theta}'] = z
     return outputs
+
+
+def slices(df: pd.DataFrame, num_points: int = 25) -> pd.DataFrame:
+    grr = []
+    for sec in range(1, 7):
+        for deg in range(13, 20):
+            df2 = df[(df.sector == sec) & (np.rad2deg(df.e_theta) >= deg)
+                     & (np.rad2deg(df.e_theta) < deg+1)]
+            if len(df2) < 2:
+                pass
+            phis = np.linspace(np.min(df2.e_phi_center),
+                               np.max(df2.e_phi_center), num_points+1)
+            for phi in range(0, num_points):
+                phi_min = phis[phi]
+                phi_max = phis[phi+1]
+                data = df2[(df2.e_phi_center > phi_min) &
+                           (df2.e_phi_center <= phi_max)]
+                y, x = np.histogram(data['delta_theta'],
+                                    bins=100, range=(-0.006, 0.006))
+                y = y/np.max(y)
+                x = (x[:-1]+x[1:])/2.0
+                # plt.errorbar(x,y,fmt='o-',alpha=0.4)
+                if not np.any(np.isnan(y)) and len(y) >= 50:
+                    try:
+                        mod = GaussianModel()
+                        pars = mod.guess(y, x=x)
+                        out = mod.fit(y, pars, x=x)
+
+                        if np.abs(out.params['center']) < 0.2:
+                            plt.plot(x, out.best_fit /
+                                     np.max(out.best_fit), alpha=0.1)
+                            grr.append(
+                                [((phi_min+phi_max) / 2.0), out.params['center'], out.params['fwhm'], sec, deg])
+                    except RuntimeError:
+                        pass
+
+    plt.show()
+    grr = np.array(grr)
+    return pd.DataFrame(data=grr, columns=["phi", "dtheta", "sigma", "sec", "min_deg"])
 
 
 if __name__ == "__main__":

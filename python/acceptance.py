@@ -73,6 +73,19 @@ def read_csv(file_name):
     stop = time.time()
     # print(f"read_csv: {stop - start}")
 
+    dtype_pd = {
+        "electron_sector": "int8",
+        "helicty": "int8",
+        "w": "float16",
+        "q2": "float16",
+        "theta": "float16",
+        "phi": "float16",
+        "mm2": "float16",
+        "photon_flux": "float16"
+    }
+    mc_rec = mc_rec.astype(dtype_pd)
+    thrown = thrown.astype(dtype_pd)
+
     return (
         mc_rec,
         thrown,
