@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from typing import Dict
+import lmfit
 import matplotlib  # noqa
 matplotlib.use("agg")  # noqa
 
@@ -23,6 +25,8 @@ from tqdm import tqdm
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from lmfit import Model, Parameters
+from lmfit.models import *
 #from fit_functions import gauss, degauss, half_max_x, model
 
 warnings.filterwarnings("ignore")
@@ -144,7 +148,7 @@ def virtual_photon(W: float, Q2: float, beam_energy: float) -> float:
     return flux
 
 
-def mm_cut(df, sigma=6):
+def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict:
     data = {}
     fig, ax = plt.subplots(2, 3, figsize=(
         12, 9), sharex=True, sharey=True, gridspec_kw={'hspace': 0.0, 'wspace': 0.0})
@@ -164,35 +168,59 @@ def mm_cut(df, sigma=6):
             df[df.electron_sector == sec].mm2, bins=500, density=True
         )
         x = (x[1:] + x[:-1]) / 2
-        popt_g, pcov_g = curve_fit(gauss, x, y, maxfev=8000)
-        #plt.plot(x, gauss(x, *popt_g), linewidth=2.0)
+
         plt.errorbar(x, y, yerr=stats.sem(y), fmt=".", zorder=1)
         ax[a][b].errorbar(
             x, y, yerr=stats.sem(y), fmt=".", zorder=1)
 
-        # plt.axvline(popt_g[1] + sigma * popt_g[2])
-        # plt.axvline(popt_g[1] - sigma * popt_g[2])
+        if lmfit_fitter:
+            peak = PseudoVoigtModel(prefix="peak_")
+            pars = peak.guess(y, x=x)
+            background = GaussianModel(prefix="back_")
+            pars.update(background.make_params())
+            model = peak * background
 
-        p0 = [popt_g[0], popt_g[1], popt_g[2], 1.0, 1.0]
-        popt, pcov = curve_fit(degauss, x, y, maxfev=8000)
+            out = model.fit(y, pars, x=x)
+            xs = np.linspace(0.3, 1.5, 1000)
+            plt.plot(xs, out.eval(params=out.params, x=xs),
+                     'r-', linewidth=2.0, alpha=0.4)
+            plt.axvline(out.params['peak_center']+sigma *
+                        out.params['peak_fwhm'] / 2.355, c='r', alpha=0.4)
+            plt.axvline(out.params['peak_center']-sigma *
+                        out.params['peak_fwhm'] / 2.355, c='r', alpha=0.4)
+            ax[a][b].plot(xs, out.eval(params=out.params, x=xs),
+                          'r-', linewidth=2.0, alpha=0.6, label=f"Sector {sec}")
+            ax[a][b].axvline(out.params['peak_center']+sigma *
+                             out.params['peak_fwhm'] / 2.355, c='r', alpha=0.6)
+            ax[a][b].axvline(out.params['peak_center']-sigma *
+                             out.params['peak_fwhm'] / 2.355, c='r', alpha=0.6)
+        else:
+            popt_g, pcov_g = curve_fit(gauss, x, y, maxfev=8000)
+            plt.plot(x, gauss(x, *popt_g), linewidth=2.0, alpha=0.4)
 
-        plt.plot(x, degauss(x, *popt), c="#9467bd", linewidth=2.0)
-        ax[a][b].plot(x, degauss(
-            x, *popt), c="#9467bd", linewidth=3.0, label=f"Sector {sec}")
+            p0 = [popt_g[0], popt_g[1], popt_g[2], 1.0, 1.0]
+            popt, pcov = curve_fit(degauss, x, y, maxfev=8000)
+
+            plt.plot(x, degauss(x, *popt), c="#9467bd",
+                     linewidth=2.0, alpha=0.4)
+
+            ax[a][b].plot(x, degauss(
+                x, *popt), c="#9467bd", linewidth=3.0, label=f"Sector {sec}")
+
+            # find the FWHM
+            xs = np.linspace(0.7, 1.5, 100000)
+            hmx = half_max_x(xs, degauss(xs, *popt))
+            fwhm = hmx[1] - hmx[0]
+            plt.axvline(popt[1] + sigma * fwhm / 2.355, c="#9467bd")
+            plt.axvline(popt[1] - sigma * fwhm / 2.355, c="#9467bd")
+
+            ax[a][b].axvline(
+                popt[1] + sigma * fwhm / 2.355, c="#9467bd", linewidth=3.0)
+            ax[a][b].axvline(
+                popt[1] - sigma * fwhm / 2.355, c="#9467bd", linewidth=3.0)
+
         ax[a][b].legend()
         ax[a][b].set_xlabel(f"Mass [ $\mathrm{{{{GeV}}}}^2$]")
-
-        # find the FWHM
-        xs = np.linspace(0.7, 1.5, 100000)
-        hmx = half_max_x(xs, degauss(xs, *popt))
-        fwhm = hmx[1] - hmx[0]
-        plt.axvline(popt[1] + sigma * fwhm / 2.355, c="#9467bd")
-        plt.axvline(popt[1] - sigma * fwhm / 2.355, c="#9467bd")
-
-        ax[a][b].axvline(
-            popt[1] + sigma * fwhm / 2.355, c="#9467bd", linewidth=3.0)
-        ax[a][b].axvline(
-            popt[1] - sigma * fwhm / 2.355, c="#9467bd", linewidth=3.0)
 
         if not os.path.exists(f'{out_folder}/cuts'):
             os.makedirs(f'{out_folder}/cuts')
@@ -203,8 +231,13 @@ def mm_cut(df, sigma=6):
         plt.savefig(f"{out_folder}/cuts/MM2_cut_{sec}.png",
                     bbox_inches='tight')
 
-        data[sec] = (popt[1] - sigma * fwhm / 2.355,
-                     popt[1] + sigma * fwhm / 2.355)
+        if lmfit_fitter:
+            data[sec] = (out.params['peak_center']-sigma*out.params['peak_fwhm'] / 2.355,
+                         out.params['peak_center']+sigma*out.params['peak_fwhm'] / 2.355)
+        else:
+            data[sec] = (popt[1] - sigma * fwhm / 2.355,
+                         popt[1] + sigma * fwhm / 2.355)
+
     fig.suptitle(
         f"Missing Mass Squared $e\left( p, \pi^{{{'+'}}} X \\right)$", fontsize=20)
     fig.savefig(f"{out_folder}/cuts/MM2_cut_all.png",
@@ -284,8 +317,14 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
         )
 
         # Change 0's to mean for division
-        thrown_y = np.where(thrown_y == 0, np.min(thrown_y), thrown_y)
-        mc_rec_y = np.where(mc_rec_y == 0, np.min(mc_rec_y), mc_rec_y)
+        # thrown_y = np.where(thrown_y == 0, np.min(thrown_y), thrown_y)
+        # mc_rec_y = np.where(mc_rec_y == 0, np.min(mc_rec_y), mc_rec_y)
+
+        # Drop places with 0 acceptance
+        x = x[~(mc_rec_y == 0)]
+        data_y = data_y[~(mc_rec_y == 0)]
+        thrown_y = thrown_y[~(mc_rec_y == 0)]
+        mc_rec_y = mc_rec_y[~(mc_rec_y == 0)]
 
         acceptance = np.nan_to_num(thrown_y / mc_rec_y)
         data_y = data_y / np.max(data_y)
@@ -311,17 +350,6 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
         )
         ax[a][b].text(0.0, 1.2*np.max(y), cos_label)
 
-        popt, pcov = curve_fit(func, x, y, maxfev=8000)
-
-        ax[a][b].plot(xs, func(xs, *popt), c="#9467bd",
-                      linewidth=2.0)
-
-        perr = np.sqrt(np.diag(pcov))
-
-        ax[a][b].fill_between(xs, func(xs, *popt) + perr[1],
-                              func(xs, *popt) - perr[1],
-                              interpolate=True, color="#9467bd", alpha=0.3)
-
         _ax = ax[a][b].twinx()
         phi_bins = np.linspace(0, 2 * np.pi, 200)
         crossSections = []
@@ -343,6 +371,29 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
         _ax.fill_between(phis, crossSections*1.05,
                          crossSections*0.95,
                          interpolate=True, color="r", alpha=0.3)
+
+        # Try dropping 0's before fitting
+        if y.size <= 5:
+            continue
+
+        popt, pcov = curve_fit(func, x, y, maxfev=8000)
+        ax[a][b].plot(xs, func(xs, *popt), c="#9467bd",
+                      linewidth=2.0)
+        perr = np.sqrt(np.diag(pcov))
+        ax[a][b].fill_between(xs, func(xs, *popt) + perr[1],
+                              func(xs, *popt) - perr[1],
+                              interpolate=True, color="#9467bd", alpha=0.3)
+
+        # mod = Model(func)
+        # pars = Parameters()
+        # pars.add("a", value=popt[0], min=0)
+        # pars.add("b", value=popt[1])
+        # pars.add("c", value=popt[2])
+
+        # result = mod.fit(y, params=pars, x=x,
+        #                  nan_policy='omit', method='ampgo')
+        # ax[a][b].plot(xs, result.eval(params=result.params, x=xs),
+        #               'r-', label='best fit')
 
     if not os.path.exists(f'{out_folder}/CosT'):
         os.makedirs(f'{out_folder}/CosT')
@@ -694,7 +745,7 @@ if __name__ == "__main__":
     # print(f"{rec.info(verbose=True, memory_usage='deep')}")
     # print(f"\n\n===========================")
 
-    sector_cuts = mm_cut(rec)
+    sector_cuts = mm_cut(rec, sigma=6, lmfit_fitter=True)
 
     cuts = False
     mc_cuts = False
