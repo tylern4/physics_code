@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import pyarrow  # noqa
-pyarrow.set_cpu_count(16)  # noqa
+pyarrow.set_cpu_count(8)  # noqa
 # import matplotlib  # noqa
 # matplotlib.use("agg")  # noqa
 import warnings  # noqa
@@ -206,7 +206,6 @@ def get_min_max(x, past=0.1):
     return ((1-past)*a, (1+past)*b)
 
 
-@timeit
 def dtheta_vs_phi(sector_data: pd.DataFrame) -> Dict:
     outputs = dict()
     sec = int(np.mean(sector_data.sector))
