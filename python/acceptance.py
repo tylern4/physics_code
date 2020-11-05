@@ -343,7 +343,8 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
 
         acceptance = np.nan_to_num(thrown_y / mc_rec_y)
         data_y = data_y / np.max(data_y)
-        y = (data_y * acceptance) * flux
+        #y = (data_y * acceptance) * flux
+        y = (data_y * acceptance)
 
         error_bar = np.ones_like(y)
 

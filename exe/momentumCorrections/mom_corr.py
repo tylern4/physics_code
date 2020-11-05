@@ -330,15 +330,14 @@ if __name__ == "__main__":
     print(sys.argv[1])
     df = read_file(sys.argv[1])
 
-    data_to_fit = [df[df.sector == sec] for sec in range(1, 2)]
+    data_to_fit = [df[df.sector == sec] for sec in range(1, 7)]
     del df
-    fit_data = dict()
-    for sec, data in enumerate(data_to_fit):
-        fit_data[sec] = dtheta_vs_phi(data)
+    # fit_data = dict()
+    # for sec, data in enumerate(data_to_fit):
+    #     fit_data[sec] = dtheta_vs_phi(data)
 
-    print(fit_data)
-    # with Pool(6) as p:
-    #     data_to_fit = p.map(dtheta_vs_phi, data_to_fit)
+    with Pool(6) as p:
+        data_to_fit = p.map(dtheta_vs_phi, data_to_fit)
 
     # for sec in range(1, 7):
     #     fig, ax = plt.subplots(figsize=(12, 9))
