@@ -213,7 +213,7 @@ def dtheta_vs_phi(sector_data: pd.DataFrame, directory: str = ".") -> Dict:
     phi_step = 0.5
     phi_steps = np.arange(-30, 30, phi_step)
     theta_step = 1
-    theta_steps = np.arange(2, 45, theta_step)
+    theta_steps = np.arange(13, 45, theta_step)
 
     for theta in theta_steps:
         phi_theta = []
@@ -256,15 +256,18 @@ def dtheta_vs_phi(sector_data: pd.DataFrame, directory: str = ".") -> Dict:
 
             phi_theta.append([phi, delta_t])
 
-        x = np.transpose(phi_theta)[0]
-        y = np.transpose(phi_theta)[1]
+        if len(phi_theta) > 3:
+            x = np.transpose(phi_theta)[0]
+            y = np.transpose(phi_theta)[1]
 
-        n = 4
-        z = np.polyfit(x, y, n)
+            n = 4
+            z = np.polyfit(x, y, n)
 
-        func = np.poly1d(z)
-        xs = np.linspace(-30, 30, 2000)
-        ax.plot(xs, func(xs), label=f'{z}')
+            func = np.poly1d(z)
+            xs = np.linspace(-30, 30, 2000)
+            ax.plot(xs, func(xs), label=f'{z}')
+            ax.legend()
+            outputs[f'sec_{sec}_theta_{theta}'] = tuple(z)
 
         # popt, pcov = curve_fit(Dtheta, x, y, maxfev=3400)
         # ax.plot(xs, Dtheta(xs, *popt), label=f'{popt}')
@@ -274,9 +277,8 @@ def dtheta_vs_phi(sector_data: pd.DataFrame, directory: str = ".") -> Dict:
         ax.set_ylim(-0.01, 0.01)
         ax.set_xlabel(f"$\phi$")
         ax.set_ylabel(f"$\Delta \\theta$")
-        ax.legend()
         fig.savefig(f'{directory}/fit_sec_{sec}_theta_{theta}.png')
-        outputs[f'sec_{sec}_theta_{theta}'] = tuple(z)
+
         del fig, ax
 
     return outputs
