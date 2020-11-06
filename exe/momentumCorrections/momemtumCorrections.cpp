@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
 
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
   std::cout.imbue(std::locale(""));
-  std::cout << RED << total / elapsed_full.count() << " Hz\t";
+  std::cout << RED << NUM_THREADS << " " << total / elapsed_full.count() << " Hz\t";
   std::cout << DEF << std::endl;
   return 0;
 }

@@ -102,6 +102,23 @@ def model(x, a, b, c):
     return f
 
 
+def A(M, B, C):
+    if (C > 0 and np.abs(B) <= 4*C):
+        return M**2 + B**2/(8*C) + C
+    else:
+        return M**2 + np.abs(B) - C
+
+
+def model_new(x, M, b, c):
+    """
+    a => sigma_l + sigma_t
+    b => epsilon*sigma_tt
+    c => Sqrt(2epsilon(1+epsilon))* sigma_lt
+    """
+    f = A(M, b, c) + b * np.cos(2*x) + c * np.cos(x)
+    return f
+
+
 def degauss(x, A, mu, sigma, lambda1, lambda2):
     mu1 = sigma * sigma * lambda1 + x - mu
     mu2 = -sigma * sigma * lambda2 + x - mu
@@ -238,7 +255,7 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
         if not os.path.exists(f'{out_folder}/cuts'):
             os.makedirs(f'{out_folder}/cuts')
 
-        plt.set_xlabel(f"Mass [ $\mathrm{{{{GeV}}}}^2$]")
+        plt.xlabel(f"Mass [ $\mathrm{{{{GeV}}}}^2$]")
         plt.legend()
         plt.title(
             f"Missing Mass Squared $e\left( p, \pi^{{{'+'}}} X \\right)$ in sector {sec}")
@@ -260,7 +277,7 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
     return data
 
 
-def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, bins):
+def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, bins, models_fits={"model": model}):
     which_plot = {
         -1.0: [0, 0],
         -0.8: [0, 1],
@@ -391,15 +408,16 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
         # Try dropping 0's before fitting
         if y.size <= 5:
             continue
-
-        popt, pcov = curve_fit(func, x, y, maxfev=8000)
-        ax[a][b].plot(xs, func(xs, *popt), c="#9467bd",
-                      linewidth=2.0)
-        perr = np.sqrt(np.diag(pcov))
-        ax[a][b].fill_between(xs, func(xs, *popt) + perr[1],
-                              func(xs, *popt) - perr[1],
-                              interpolate=True, color="#9467bd", alpha=0.3)
-
+        for name, func in models_fits.items():
+            # c="#9467bd"
+            popt, pcov = curve_fit(func, x, y, maxfev=8000)
+            ax[a][b].plot(xs, func(xs, *popt),
+                          linewidth=2.0)
+            perr = np.sqrt(np.diag(pcov))
+            ax[a][b].fill_between(xs, func(xs, *popt) + perr[1],
+                                  func(xs, *popt) - perr[1],
+                                  interpolate=True, alpha=0.3)
+        ax[a][b].legend()
         # mod = Model(func)
         # pars = Parameters()
         # pars.add("a", value=popt[0], min=0)
@@ -414,7 +432,7 @@ def draw_cos_bin(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_fo
     if not os.path.exists(f'{out_folder}/CosT'):
         os.makedirs(f'{out_folder}/CosT')
 
-    plt.savefig(
+    fig.savefig(
         f"{out_folder}/CosT/W[{np.round(w.left,3)},{np.round(w.right,3)}]_Q2[{np.round(q2.left,3)},{np.round(q2.right,3)}]_{bins}_CosT.png", bbox_inches='tight'
     )
 
@@ -427,8 +445,8 @@ def draw_cos_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_
     #                        w, q2, cos_t_bins, out_folder, bins))
     #     pool.starmap(draw_cos_bin, inputs)
     for bins in range(10, 24, 2):
-        draw_cos_bin(func, data, mc_rec_data, thrown_data,
-                     w, q2, cos_t_bins, out_folder, bins)
+        draw_cos_bin(data, mc_rec_data, thrown_data,
+                     w, q2, cos_t_bins, out_folder, bins, models_fits={"regular": model, "new": model_new})
 
 
 def draw_xsec_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder, bins):
