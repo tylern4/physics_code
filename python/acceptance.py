@@ -73,18 +73,18 @@ def read_csv(file_name):
     stop = time.time()
     # print(f"read_csv: {stop - start}")
 
-    dtype_pd = {
-        "electron_sector": "int8",
-        "helicty": "int8",
-        "w": "float16",
-        "q2": "float16",
-        "theta": "float16",
-        "phi": "float16",
-        "mm2": "float16",
-        "photon_flux": "float16"
-    }
-    mc_rec = mc_rec.astype(dtype_pd)
-    thrown = thrown.astype(dtype_pd)
+    # dtype_pd = {
+    #     "electron_sector": "int8",
+    #     "helicty": "int8",
+    #     "w": "float16",
+    #     "q2": "float16",
+    #     "theta": "float16",
+    #     "phi": "float16",
+    #     "mm2": "float16",
+    #     "photon_flux": "float16"
+    # }
+    # mc_rec = mc_rec.astype(dtype_pd)
+    # thrown = thrown.astype(dtype_pd)
 
     return (
         mc_rec,
@@ -213,7 +213,7 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
             out = model.fit(y, pars, x=x)
             xs = np.linspace(0.3, 1.5, 1000)
             plt.plot(xs, out.eval(params=out.params, x=xs),
-                     'r-', linewidth=2.0, alpha=0.4, label=f"Peak Center: {out.params['peak_center']}")
+                     'r-', linewidth=2.0, alpha=0.4, label=f"Peak Center: {out.params['peak_center'].value}")
             plt.axvline(out.params['peak_center']+sigma *
                         out.params['peak_fwhm'] / 2.355, c='r', alpha=0.4)
             plt.axvline(out.params['peak_center']-sigma *
@@ -417,7 +417,7 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
             ax[a][b].fill_between(xs, func(xs, *popt) + perr[1],
                                   func(xs, *popt) - perr[1],
                                   interpolate=True, alpha=0.3)
-        ax[a][b].legend()
+
         # mod = Model(func)
         # pars = Parameters()
         # pars.add("a", value=popt[0], min=0)
@@ -779,7 +779,7 @@ if __name__ == "__main__":
     # print(f"{rec.info(verbose=True, memory_usage='deep')}")
     # print(f"\n\n===========================")
 
-    sector_cuts = mm_cut(rec, sigma=6, lmfit_fitter=True)
+    sector_cuts = mm_cut(rec, sigma=10, lmfit_fitter=True)
 
     cuts = False
     mc_cuts = False
