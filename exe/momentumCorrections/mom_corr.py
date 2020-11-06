@@ -206,7 +206,7 @@ def get_min_max(x, past=0.1):
     return ((1-past)*a, (1+past)*b)
 
 
-def dtheta_vs_phi(sector_data: pd.DataFrame) -> Dict:
+def dtheta_vs_phi(sector_data: pd.DataFrame, directory: str = ".") -> Dict:
     outputs = dict()
     sec = int(np.mean(sector_data.sector))
 
@@ -275,7 +275,7 @@ def dtheta_vs_phi(sector_data: pd.DataFrame) -> Dict:
         ax.set_xlabel(f"$\phi$")
         ax.set_ylabel(f"$\Delta \\theta$")
         ax.legend()
-        fig.savefig(f'plots/fit_sec_{sec}_theta_{theta}.png')
+        fig.savefig(f'{directory}/plots/fit_sec_{sec}_theta_{theta}.png')
         outputs[f'sec_{sec}_theta_{theta}'] = tuple(z)
         del fig, ax
 
@@ -326,8 +326,11 @@ if __name__ == "__main__":
     if len(sys.argv) <= 1:
         exit()
 
-    print(sys.argv[1])
     df = read_file(sys.argv[1])
+    if len(sys.argv) == 3:
+        output_folder = sys.argv[2]
+    else:
+        output_folder = "."
 
     data_to_fit = [df[df.sector == sec] for sec in range(1, 7)]
     del df
@@ -336,7 +339,7 @@ if __name__ == "__main__":
     #     fit_data[sec] = dtheta_vs_phi(data)
 
     with Pool(6) as p:
-        data_to_fit = p.map(dtheta_vs_phi, data_to_fit)
+        data_to_fit = p.map(dtheta_vs_phi, (data_to_fit, output_folder))
 
     # for sec in range(1, 7):
     #     fig, ax = plt.subplots(figsize=(12, 9))
