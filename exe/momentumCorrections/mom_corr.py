@@ -275,7 +275,7 @@ def dtheta_vs_phi(sector_data: pd.DataFrame, directory: str = ".") -> Dict:
         ax.set_xlabel(f"$\phi$")
         ax.set_ylabel(f"$\Delta \\theta$")
         ax.legend()
-        fig.savefig(f'{directory}/plots/fit_sec_{sec}_theta_{theta}.png')
+        fig.savefig(f'{directory}/fit_sec_{sec}_theta_{theta}.png')
         outputs[f'sec_{sec}_theta_{theta}'] = tuple(z)
         del fig, ax
 
@@ -333,13 +333,15 @@ if __name__ == "__main__":
         output_folder = "."
 
     data_to_fit = [df[df.sector == sec] for sec in range(1, 7)]
+    output_folders = [output_folder for sec in range(1, 7)]
     del df
     # fit_data = dict()
     # for sec, data in enumerate(data_to_fit):
     #     fit_data[sec] = dtheta_vs_phi(data)
 
     with Pool(6) as p:
-        data_to_fit = p.map(dtheta_vs_phi, (data_to_fit, output_folder))
+        data_to_fit = p.starmap(
+            dtheta_vs_phi, zip(data_to_fit, output_folders))
 
     # for sec in range(1, 7):
     #     fig, ax = plt.subplots(figsize=(12, 9))
