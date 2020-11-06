@@ -213,7 +213,7 @@ def dtheta_vs_phi(sector_data: pd.DataFrame, directory: str = ".") -> Dict:
     phi_step = 0.5
     phi_steps = np.arange(-30, 30, phi_step)
     theta_step = 1
-    theta_steps = np.arange(13, 25, 1)
+    theta_steps = np.arange(2, 45, theta_step)
 
     for theta in theta_steps:
         phi_theta = []
