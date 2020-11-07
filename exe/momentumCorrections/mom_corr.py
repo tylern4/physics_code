@@ -334,17 +334,17 @@ if __name__ == "__main__":
     data_to_fit = [df[df.sector == sec] for sec in range(1, 7)]
     output_folders = [output_folder for sec in range(1, 7)]
     del df
-    ts = time.time()
 
+    ts = time.time()
     with Pool(6) as p:
         fit_ABCDE = p.starmap(
             dtheta_vs_phi, zip(data_to_fit, output_folders))
 
+    te = time.time()
+    print(f'First fits {clock_to_time(te - ts)}')
+
     for sec, fit in enumerate(fit_ABCDE):
         second_fit(sec, fit, output_folder)
-
-    te = time.time()
-    print(f'{clock_to_time(te - ts)}')
 
     # with Pool(6) as p:
     #     fit_ABCD = p.starmap(
