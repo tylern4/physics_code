@@ -312,7 +312,7 @@ def second_fit(sector, fit_ABCDE, directory):
     xs = np.linspace(10, 30, 1000)
     n = 4
     fig, ax = plt.subplots(figsize=(12, 9))
-    ax.set_ylim(-0.005, 0.005)
+    #ax.set_ylim(-0.005, 0.005)
 
     ax.scatter(thetas, 10E5*AS, label="A", alpha=0.5, marker='o')
     z = np.polyfit(thetas, AS, n)
