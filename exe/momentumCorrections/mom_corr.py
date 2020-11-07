@@ -295,12 +295,13 @@ def second_fit(sector, fit_ABCDE, directory):
     ES = []
 
     for theta in theta_steps:
-        thetas.append(theta)
-        AS.append(fit_ABCDE[f'theta_{theta}'][0])
-        BS.append(fit_ABCDE[f'theta_{theta}'][1])
-        CS.append(fit_ABCDE[f'theta_{theta}'][2])
-        DS.append(fit_ABCDE[f'theta_{theta}'][3])
-        ES.append(fit_ABCDE[f'theta_{theta}'][4])
+        if fit_ABCDE.has_key(f'theta_{theta}'):
+            thetas.append(theta)
+            AS.append(fit_ABCDE[f'theta_{theta}'][0])
+            BS.append(fit_ABCDE[f'theta_{theta}'][1])
+            CS.append(fit_ABCDE[f'theta_{theta}'][2])
+            DS.append(fit_ABCDE[f'theta_{theta}'][3])
+            ES.append(fit_ABCDE[f'theta_{theta}'][4])
 
     thetas = np.array(thetas)
     AS = np.array(AS)
