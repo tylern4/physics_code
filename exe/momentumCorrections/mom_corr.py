@@ -339,9 +339,8 @@ if __name__ == "__main__":
         fit_ABCDE = p.starmap(
             dtheta_vs_phi, zip(data_to_fit, output_folders))
 
-    print(fit_ABCDE)
-    for fit in fit_ABCDE:
-        second_fit(fit)
+    for sec, fit in enumerate(fit_ABCDE):
+        second_fit(sec, fit, output_folder)
 
     te = time.time()
     print(f'{clock_to_time(te - ts)}')
