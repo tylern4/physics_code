@@ -284,8 +284,39 @@ def dtheta_vs_phi(sector_data: pd.DataFrame, directory: str = ".") -> Dict:
     return outputs
 
 
-def second_fit(fit_ABCDE):
-    print(fit_ABCDE)
+def second_fit(sector, fit_ABCDE, directory):
+    theta_step = 1
+    theta_steps = np.arange(13, 45, theta_step)
+    thetas = []
+    AS = []
+    BS = []
+    CS = []
+    DS = []
+    ES = []
+
+    for theta in theta_steps:
+        thetas.append(theta)
+        AS.append(fit_ABCDE[f'theta_{theta}'][0])
+        BS.append(fit_ABCDE[f'theta_{theta}'][1])
+        CS.append(fit_ABCDE[f'theta_{theta}'][2])
+        DS.append(fit_ABCDE[f'theta_{theta}'][3])
+        ES.append(fit_ABCDE[f'theta_{theta}'][4])
+
+    thetas = np.array(thetas)
+    AS = np.array(AS)
+    BS = np.array(BS)
+    CS = np.array(CS)
+    DS = np.array(DS)
+    ES = np.array(ES)
+
+    fig, ax = plt.subplots(figsize=(12, 9))
+    ax.scatter(thetas, AS)
+    ax.scatter(thetas, BS)
+    ax.scatter(thetas, CS)
+    ax.scatter(thetas, DS)
+    ax.scatter(thetas, ES)
+
+    fig.savefig(f"{directory}/fit_{sector}.png")
 
 
 if __name__ == "__main__":
@@ -302,6 +333,7 @@ if __name__ == "__main__":
     data_to_fit = [df[df.sector == sec] for sec in range(1, 7)]
     output_folders = [output_folder for sec in range(1, 7)]
     del df
+    ts = time.time()
 
     with Pool(6) as p:
         fit_ABCDE = p.starmap(
@@ -310,6 +342,9 @@ if __name__ == "__main__":
     print(fit_ABCDE)
     for fit in fit_ABCDE:
         second_fit(fit)
+
+    te = time.time()
+    print(f'{clock_to_time(te - ts)}')
 
     # with Pool(6) as p:
     #     fit_ABCD = p.starmap(

@@ -2,8 +2,8 @@
 
 from typing import Dict
 import lmfit
-import matplotlib  # noqa
-matplotlib.use("agg")  # noqa
+# import matplotlib  # noqa
+# matplotlib.use("agg")  # noqa
 
 import warnings
 # from loky import get_reusable_executor
