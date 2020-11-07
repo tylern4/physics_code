@@ -295,7 +295,7 @@ def second_fit(sector, fit_ABCDE, directory):
     ES = []
 
     for theta in theta_steps:
-        if fit_ABCDE.has_key(f'theta_{theta}'):
+        if f'theta_{theta}' in fit_ABCDE:
             thetas.append(theta)
             AS.append(fit_ABCDE[f'theta_{theta}'][0])
             BS.append(fit_ABCDE[f'theta_{theta}'][1])
