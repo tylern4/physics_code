@@ -267,7 +267,7 @@ def dtheta_vs_phi(sector_data: pd.DataFrame, directory: str = ".") -> Dict:
             xs = np.linspace(-30, 30, 2000)
             ax.plot(xs, func(xs), label=f'{z}')
             ax.legend()
-            outputs[f'sec_{sec}_theta_{theta}'] = tuple(z)
+            outputs[f'theta_{theta}'] = tuple(z)
 
         # popt, pcov = curve_fit(Dtheta, x, y, maxfev=3400)
         # ax.plot(xs, Dtheta(xs, *popt), label=f'{popt}')
@@ -284,43 +284,8 @@ def dtheta_vs_phi(sector_data: pd.DataFrame, directory: str = ".") -> Dict:
     return outputs
 
 
-def slices(df: pd.DataFrame, num_points: int = 25) -> pd.DataFrame:
-    grr = []
-    for sec in range(1, 7):
-        for deg in range(13, 20):
-            df2 = df[(df.sector == sec) & (np.rad2deg(df.e_theta) >= deg)
-                     & (np.rad2deg(df.e_theta) < deg+1)]
-            if len(df2) < 2:
-                pass
-            phis = np.linspace(np.min(df2.e_phi_center),
-                               np.max(df2.e_phi_center), num_points+1)
-            for phi in range(0, num_points):
-                phi_min = phis[phi]
-                phi_max = phis[phi+1]
-                data = df2[(df2.e_phi_center > phi_min) &
-                           (df2.e_phi_center <= phi_max)]
-                y, x = np.histogram(data['delta_theta'],
-                                    bins=100, range=(-0.006, 0.006))
-                y = y/np.max(y)
-                x = (x[:-1]+x[1:])/2.0
-                # plt.errorbar(x,y,fmt='o-',alpha=0.4)
-                if not np.any(np.isnan(y)) and len(y) >= 50:
-                    try:
-                        mod = GaussianModel()
-                        pars = mod.guess(y, x=x)
-                        out = mod.fit(y, pars, x=x)
-
-                        if np.abs(out.params['center']) < 0.2:
-                            plt.plot(x, out.best_fit /
-                                     np.max(out.best_fit), alpha=0.1)
-                            grr.append(
-                                [((phi_min+phi_max) / 2.0), out.params['center'], out.params['fwhm'], sec, deg])
-                    except RuntimeError:
-                        pass
-
-    plt.show()
-    grr = np.array(grr)
-    return pd.DataFrame(data=grr, columns=["phi", "dtheta", "sigma", "sec", "min_deg"])
+def second_fit(fit_ABCDE):
+    print(fit_ABCDE)
 
 
 if __name__ == "__main__":
@@ -337,22 +302,15 @@ if __name__ == "__main__":
     data_to_fit = [df[df.sector == sec] for sec in range(1, 7)]
     output_folders = [output_folder for sec in range(1, 7)]
     del df
-    # fit_data = dict()
-    # for sec, data in enumerate(data_to_fit):
-    #     fit_data[sec] = dtheta_vs_phi(data)
 
     with Pool(6) as p:
-        data_to_fit = p.starmap(
+        fit_ABCDE = p.starmap(
             dtheta_vs_phi, zip(data_to_fit, output_folders))
 
-    # for sec in range(1, 7):
-    #     fig, ax = plt.subplots(figsize=(12, 9))
-    #     data = df[(df.sector == sec)]
-    #     step_size = 1
-    #     for phi in np.arange(min(np.degrees(data.e_phi)), max(np.degrees(data.e_phi)), step_size):
-    #         dt = data[(np.degrees(data.e_phi) > phi) & (
-    #             np.degrees(data.e_phi) <= phi+step_size)]
-    #         if len(dt) < 10:
-    #             continue
-    #         ax.hist(dt.W_uncorr, bins=100, range=(0.8, 1.05), alpha=0.2)
-    #     plt.savefig(f'plots/w_{sec}.png')
+    print(fit_ABCDE)
+    for fit in fit_ABCDE:
+        second_fit(fit)
+
+    # with Pool(6) as p:
+    #     fit_ABCD = p.starmap(
+    #         dtheta_vs_phi, zip(data_to_fit, output_folders))
