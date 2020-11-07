@@ -262,7 +262,6 @@ def dtheta_vs_phi(sector_data: pd.DataFrame, directory: str = ".") -> Dict:
 
             n = 4
             z = np.polyfit(x, y, n)
-
             func = np.poly1d(z)
             xs = np.linspace(-30, 30, 2000)
             ax.plot(xs, func(xs), label=f'{z}')
@@ -310,13 +309,36 @@ def second_fit(sector, fit_ABCDE, directory):
     DS = np.array(DS)
     ES = np.array(ES)
 
+    xs = np.linspace(10, 30, 1000)
+    n = 4
     fig, ax = plt.subplots(figsize=(12, 9))
-    ax.scatter(thetas, AS)
-    ax.scatter(thetas, BS)
-    ax.scatter(thetas, CS)
-    ax.scatter(thetas, DS)
-    ax.scatter(thetas, ES)
 
+    ax.scatter(thetas, AS, label="A", alpha=0.5, marker='o')
+    z = np.polyfit(thetas, AS, n)
+    func = np.poly1d(z)
+    ax.plot(xs, func(xs), label=f'{z}')
+
+    ax.scatter(thetas, BS, label="B", alpha=0.5, marker='s')
+    z = np.polyfit(thetas, BS, n)
+    func = np.poly1d(z)
+    ax.plot(xs, func(xs), label=f'{z}')
+
+    ax.scatter(thetas, CS, label="C", alpha=0.5, marker='^')
+    z = np.polyfit(thetas, CS, n)
+    func = np.poly1d(z)
+    ax.plot(xs, func(xs), label=f'{z}')
+
+    ax.scatter(thetas, DS, label="D", alpha=0.5, marker='v')
+    z = np.polyfit(thetas, DS, n)
+    func = np.poly1d(z)
+    ax.plot(xs, func(xs), label=f'{z}')
+
+    ax.scatter(thetas, ES, label="E", alpha=0.5, marker='>')
+    z = np.polyfit(thetas, ES, n)
+    func = np.poly1d(z)
+    ax.plot(xs, func(xs), label=f'{z}')
+
+    ax.legend()
     fig.savefig(f"{directory}/fit_{sector}.png")
 
 
