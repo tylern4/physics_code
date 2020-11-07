@@ -312,6 +312,7 @@ def second_fit(sector, fit_ABCDE, directory):
     xs = np.linspace(10, 30, 1000)
     n = 4
     fig, ax = plt.subplots(figsize=(12, 9))
+    ax.set_ylim(-0.005, 0.005)
 
     ax.scatter(thetas, AS, label="A", alpha=0.5, marker='o')
     z = np.polyfit(thetas, AS, n)
@@ -365,8 +366,12 @@ if __name__ == "__main__":
     te = time.time()
     print(f'First fits {clock_to_time(te - ts)}')
 
+    ts = time.time()
     for sec, fit in enumerate(fit_ABCDE):
         second_fit(sec, fit, output_folder)
+
+    te = time.time()
+    print(f'Second fits {clock_to_time(te - ts)}')
 
     # with Pool(6) as p:
     #     fit_ABCD = p.starmap(
