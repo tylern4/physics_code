@@ -63,9 +63,6 @@ int main(int argc, char **argv) {
     size_t num_files = 0;
     for (auto &&f : fls) {
       total += dh->Run<e1d_Cuts>(f, "rec");
-      if (num == 0) {
-        std::cerr << "  " << 100.0 * (++num_files / float(fls.size())) << "\r\r" << std::flush;
-      }
     }
     return total;
   };
@@ -77,7 +74,6 @@ int main(int argc, char **argv) {
     size_t total = 0;
     for (auto &&f : fls) {
       total += dh->Run<e1f_Cuts>(f, "rec");
-      std::cerr << "  " << total << "\r\r" << std::flush;
     }
     return total;
   };
