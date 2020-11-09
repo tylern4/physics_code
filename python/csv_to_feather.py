@@ -20,7 +20,6 @@ names = [
     "phi",
     "mm2",
     "helicty",
-    "photon_flux",
     "type"
 ]
 dtype = {
@@ -31,7 +30,6 @@ dtype = {
     "theta": "float32",
     "phi": "float32",
     "mm2": "float32",
-    "photon_flux": "float32"
 }
 
 
