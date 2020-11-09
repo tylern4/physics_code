@@ -10,6 +10,7 @@
 
 class MomCorr {
  private:
+  std::mutex _readerMutex;
   char *_datadir;
   /* Theta Binning for Theta correction */
 #define ThetaC_n 144

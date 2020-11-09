@@ -43,7 +43,6 @@ def read_csv(file_name):
         "phi",
         "mm2",
         "helicty",
-        "photon_flux",
         "type"
     ]
     dtype = {
@@ -54,7 +53,6 @@ def read_csv(file_name):
         "theta": "float32",
         "phi": "float32",
         "mm2": "float32",
-        "photon_flux": "float32"
     }
 
     start = time.time()
@@ -71,20 +69,6 @@ def read_csv(file_name):
     del df
 
     stop = time.time()
-    # print(f"read_csv: {stop - start}")
-
-    # dtype_pd = {
-    #     "electron_sector": "int8",
-    #     "helicty": "int8",
-    #     "w": "float16",
-    #     "q2": "float16",
-    #     "theta": "float16",
-    #     "phi": "float16",
-    #     "mm2": "float16",
-    #     "photon_flux": "float16"
-    # }
-    # mc_rec = mc_rec.astype(dtype_pd)
-    # thrown = thrown.astype(dtype_pd)
 
     return (
         mc_rec,
@@ -333,8 +317,6 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
         _mc_rec_data = mc_rec_data[cos_t == mc_rec_data.theta_bin]
         _thrown_data = thrown_data[cos_t == thrown_data.theta_bin]
 
-        #photon_flux = _data['photon_flux'].to_numpy()
-        #flux = np.sum(photon_flux) / photon_flux.size
         flux = virtual_photon(w.left, q2.left, ENERGY)
 
         xs = np.linspace(0, 2 * np.pi, 100)
@@ -803,7 +785,7 @@ if __name__ == "__main__":
         deep=True
     )
     rec = rec[["w", "q2", "mm2", "cos_theta",
-               "phi", "helicty", "photon_flux", "electron_sector"]].copy(deep=True)
+               "phi", "helicty",  "electron_sector"]].copy(deep=True)
 
     # Specifically put in bin edges
     # TODO ##################### BINS ######################

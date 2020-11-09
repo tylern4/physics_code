@@ -12,12 +12,11 @@ struct csv_data {
   float phi;
   float mm2;
   int helicty;
-  float photon_flux;
   std::string type;
   size_t hash;
 
   friend std::ostream &operator<<(std::ostream &os, const csv_data &d) {
-    os << std::setprecision(6);
+    os << std::setprecision(10);
     os << d.electron_sector << ",";
     os << d.w << ",";
     os << d.q2 << ",";
@@ -25,7 +24,6 @@ struct csv_data {
     os << d.phi << ",";
     os << d.mm2 << ",";
     os << std::to_string(d.helicty) << ",";
-    os << d.photon_flux << ",";
     os << d.type;
     // << ",";
     // os << std::hex << d.hash;
