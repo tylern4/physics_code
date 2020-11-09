@@ -70,17 +70,17 @@ int main(int argc, char **argv) {
     return total;
   };
 
-  // auto e1fworker = [&outputfile](auto &&fls, auto &&num) mutable {
-  //   std::string name = outputfile + "_" + to_string(num) + "_e1f.csv";
-  //   auto csv_file = std::make_shared<SyncFile>(name);
-  //   auto dh = std::make_unique<Yeilds>(csv_file);
-  //   size_t total = 0;
-  //   for (auto &&f : fls) {
-  //     total += dh->Run<e1f_Cuts>(f, "rec");
-  //     std::cerr << "  " << total << "\r\r" << std::flush;
-  //   }
-  //   return total;
-  // };
+  name = outputfile + "_e1f.csv";
+  auto csv_file_e1f = std::make_shared<SyncFile>(name);
+  auto e1fworker = [&outputfile, &mom_corr, &csv_file_e1f](auto &&fls, auto &&num) mutable {
+    auto dh = std::make_unique<Yeilds>(csv_file_e1f);
+    size_t total = 0;
+    for (auto &&f : fls) {
+      total += dh->Run<e1f_Cuts>(f, "rec");
+      std::cerr << "  " << total << "\r\r" << std::flush;
+    }
+    return total;
+  };
 
   if (e1d_files.size() > 0) {
     std::future<size_t> threads[NUM_THREADS];
@@ -93,16 +93,16 @@ int main(int argc, char **argv) {
     }
   }
 
-  // if (e1f_files.size() > 0) {
-  //   std::future<size_t> threads_e1f[NUM_THREADS];
-  //   for (size_t i = 0; i < NUM_THREADS; i++) {
-  //     threads_e1f[i] = std::async(e1fworker, infilenames_e1f.at(i), i);
-  //   }
+  if (e1f_files.size() > 0) {
+    std::future<size_t> threads_e1f[NUM_THREADS];
+    for (size_t i = 0; i < NUM_THREADS; i++) {
+      threads_e1f[i] = std::async(e1fworker, infilenames_e1f.at(i), i);
+    }
 
-  //   for (size_t i = 0; i < NUM_THREADS; i++) {
-  //     events += threads_e1f[i].get();
-  //   }
-  // }
+    for (size_t i = 0; i < NUM_THREADS; i++) {
+      events += threads_e1f[i].get();
+    }
+  }
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
   std::cout << RED << elapsed_full.count() << " sec" << DEF << std::endl;
   std::cerr << BOLDYELLOW << "\n\n" << events / elapsed_full.count() << " Hz" << DEF << std::endl;
