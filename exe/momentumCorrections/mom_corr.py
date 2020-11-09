@@ -2,8 +2,8 @@
 
 import pyarrow  # noqa
 pyarrow.set_cpu_count(8)  # noqa
-# import matplotlib  # noqa
-# matplotlib.use("agg")  # noqa
+import matplotlib  # noqa
+matplotlib.use("agg")  # noqa
 import warnings  # noqa
 warnings.filterwarnings('ignore')  # noqa
 
@@ -54,7 +54,7 @@ def timeit(method):
 
 
 def vec(method):
-    return np.vectorize(method, cache=True, otypes=["float16"])
+    return np.vectorize(method, cache=True, otypes=["float32"])
 
 
 @vec
@@ -105,12 +105,12 @@ def Theta_e_calc(theta_p):
     return 2 * np.arctan(MASS_P/((E0+MASS_P)*np.tan(theta_p)))
 
 
-def FitFunc(e_phi, theta_e,
-            alpha_A, beta_A, gamma_A,
-            alpha_B, beta_B, gamma_B,
-            alpha_C, beta_C, gamma_C,
-            alpha_D, beta_D, gamma_D,
-            alpha_E, beta_E, gamma_E):
+def G(e_phi, theta_e,
+      alpha_A, beta_A, gamma_A,
+      alpha_B, beta_B, gamma_B,
+      alpha_C, beta_C, gamma_C,
+      alpha_D, beta_D, gamma_D,
+      alpha_E, beta_E, gamma_E):
     """
     Equations 5.20 - 5.22 in KPark thesis (p. 71)
     """
@@ -119,6 +119,25 @@ def FitFunc(e_phi, theta_e,
     C = (alpha_C * theta_e**2 + beta_C * theta_e + gamma_C) * e_phi**2
     D = (alpha_D * theta_e**2 + beta_D * theta_e + gamma_D) * e_phi
     E = (alpha_E * theta_e**2 + beta_E * theta_e + gamma_E)
+
+    return A + B + C + D + E
+
+
+@vec
+def correction(e_phi, theta_e, parms):
+    """
+    Equations 5.20 - 5.22 in KPark thesis (p. 71)
+    """
+    A = (parms['alpha_A'] * theta_e**2 + parms['beta_A']
+         * theta_e + parms['gamma_A']) * e_phi**4
+    B = (parms['alpha_B'] * theta_e**2 + parms['beta_B']
+         * theta_e + parms['gamma_B']) * e_phi**3
+    C = (parms['alpha_C'] * theta_e**2 + parms['beta_C']
+         * theta_e + parms['gamma_C']) * e_phi**2
+    D = (parms['alpha_D'] * theta_e**2 + parms['beta_D']
+         * theta_e + parms['gamma_D']) * e_phi
+    E = (parms['alpha_E'] * theta_e**2 +
+         parms['beta_E'] * theta_e + parms['gamma_E'])
 
     return A + B + C + D + E
 
@@ -213,7 +232,7 @@ def dtheta_vs_phi(sector_data: pd.DataFrame, directory: str = ".") -> Dict:
     phi_step = 0.5
     phi_steps = np.arange(-30, 30, phi_step)
     theta_step = 1
-    theta_steps = np.arange(13, 45, theta_step)
+    theta_steps = np.arange(13, 27, theta_step)
 
     for theta in theta_steps:
         phi_theta = []
@@ -227,30 +246,34 @@ def dtheta_vs_phi(sector_data: pd.DataFrame, directory: str = ".") -> Dict:
             dt = dt_theta[(dt_theta.e_phi_center > phi) & (
                 dt_theta.e_phi_center <= phi+phi_step)]
 
-            if len(dt) < 100:
+            if len(dt) < 20:
                 continue
 
             phi = np.mean(dt.e_phi_center.to_numpy())
             delta_t = np.mean(dt.delta_theta.to_numpy())
 
             try:
-                fig2, ax2 = plt.subplots(figsize=(12, 9))
-                yy, xx, _ = ax2.hist(dt.delta_theta.to_numpy(),
-                                     bins=1000, range=(-0.05, 0.05))
+                # fig2, ax2 = plt.subplots(figsize=(12, 9))
+                yy, xx = np.histogram(dt.delta_theta.to_numpy(),
+                                      bins=1000, range=(-0.05, 0.05))
+                # yy, xx, _ = ax2.hist(dt.delta_theta.to_numpy(), bins=1000, range=(-0.05, 0.05))
                 xx = (xx[1:]+xx[:-1])/2.0
                 g_mod = BreitWignerModel()
                 g_pars = g_mod.guess(yy, x=xx)
                 g_out = g_mod.fit(yy, g_pars, x=xx)
-                np.mean(dt.delta_theta.to_numpy())-g_out.best_values['center']
-                xxs = np.linspace(-0.05, 0.05, 2000)
-                ax2.plot(xxs, g_mod.eval(params=g_out.params, x=xxs))
+                # np.mean(dt.delta_theta.to_numpy())-g_out.best_values['center']
+                # xxs = np.linspace(-0.05, 0.05, 2000)
+                # ax2.plot(xxs, g_mod.eval(params=g_out.params, x=xxs))
                 delta_t = g_out.best_values['center']
                 yerr = g_out.best_values['sigma']
+
+                if yerr > 0.01:
+                    yerr = 0
                 # fig2.savefig(f"plots/slices/slice_{theta}_{phi}_{sec}.png")
                 ax.errorbar(phi, delta_t,
                             yerr=yerr, fmt='.', c='red')
-                del fig2
-                del ax2
+                # del fig2
+                # del ax2
             except ValueError:
                 pass
 
@@ -271,8 +294,6 @@ def dtheta_vs_phi(sector_data: pd.DataFrame, directory: str = ".") -> Dict:
         # popt, pcov = curve_fit(Dtheta, x, y, maxfev=3400)
         # ax.plot(xs, Dtheta(xs, *popt), label=f'{popt}')
 
-        # popt, pcov = curve_fit(FitFunc, x, y, maxfev=3400)
-        # ax.plot(xs, FitFunc(xs, *popt), label=f'{popt}')
         ax.set_ylim(-0.01, 0.01)
         ax.set_xlabel(f"$\phi$")
         ax.set_ylabel(f"$\Delta \\theta$")
@@ -283,68 +304,114 @@ def dtheta_vs_phi(sector_data: pd.DataFrame, directory: str = ".") -> Dict:
     return outputs
 
 
-def second_fit(sector, fit_ABCDE, directory):
+def dtheta_vs_phi_corrected(sector_data: pd.DataFrame, directory: str = "."):
+    sec = int(np.mean(sector_data.sector))
+
+    phi_step = 0.5
+    phi_steps = np.arange(-30, 30, phi_step)
     theta_step = 1
-    theta_steps = np.arange(13, 45, theta_step)
-    thetas = []
-    AS = []
-    BS = []
-    CS = []
-    DS = []
-    ES = []
+    theta_steps = np.arange(13, 27, theta_step)
 
     for theta in theta_steps:
-        if f'theta_{theta}' in fit_ABCDE:
-            thetas.append(theta)
-            AS.append(fit_ABCDE[f'theta_{theta}'][0])
-            BS.append(fit_ABCDE[f'theta_{theta}'][1])
-            CS.append(fit_ABCDE[f'theta_{theta}'][2])
-            DS.append(fit_ABCDE[f'theta_{theta}'][3])
-            ES.append(fit_ABCDE[f'theta_{theta}'][4])
+        phi_theta = []
+        phi_theta_corr = []
+        fig, ax = plt.subplots(figsize=(12, 9))
+        dt_theta = sector_data[(np.rad2deg(sector_data.e_theta) > theta) & (
+            (np.rad2deg(sector_data.e_theta)) <= theta+theta_step)]
 
-    thetas = np.array(thetas)
-    AS = np.array(AS)
-    BS = np.array(BS)
-    CS = np.array(CS)
-    DS = np.array(DS)
-    ES = np.array(ES)
+        for phi in phi_steps:
+            dt = dt_theta[(dt_theta.e_phi_center > phi) & (
+                dt_theta.e_phi_center <= phi+phi_step)]
 
-    xs = np.linspace(10, 30, 1000)
-    n = 4
+            if len(dt) < 20:
+                continue
+
+            phi = np.mean(dt.e_phi_center.to_numpy())
+            delta_t = np.mean(dt.delta_theta.to_numpy())
+            delta_t_corr = np.mean(dt.delta_theta_corr.to_numpy())
+
+            try:
+                yy, xx = np.histogram(dt.delta_theta.to_numpy(),
+                                      bins=1000, range=(-0.05, 0.05))
+                xx = (xx[1:]+xx[:-1])/2.0
+                g_mod = BreitWignerModel()
+                g_pars = g_mod.guess(yy, x=xx)
+                g_out = g_mod.fit(yy, g_pars, x=xx)
+                delta_t = g_out.best_values['center']
+                ax.errorbar(phi, delta_t, fmt='+', c='red')
+
+                yy, xx = np.histogram(dt.delta_theta_corr.to_numpy(),
+                                      bins=1000, range=(-0.05, 0.05))
+                xx = (xx[1:]+xx[:-1])/2.0
+                g_mod = BreitWignerModel()
+                g_pars = g_mod.guess(yy, x=xx)
+                g_out = g_mod.fit(yy, g_pars, x=xx)
+                delta_t_corr = g_out.best_values['center']
+                ax.errorbar(phi, delta_t_corr, fmt='.', c='blue', alpha=0.3)
+
+            except ValueError:
+                pass
+
+            phi_theta.append([phi, delta_t])
+            phi_theta_corr.append([phi, delta_t_corr])
+
+        if len(phi_theta) > 3:
+            x = np.transpose(phi_theta)[0]
+            y = np.transpose(phi_theta)[1]
+            y_corr = np.transpose(phi_theta_corr)[1]
+
+            n = 4
+            z = np.polyfit(x, y, n)
+            func = np.poly1d(z)
+            xs = np.linspace(-30, 30, 2000)
+            ax.plot(xs, func(xs), label=f'{z}')
+
+            z = np.polyfit(x, y_corr, n)
+            func = np.poly1d(z)
+            xs = np.linspace(-30, 30, 2000)
+            ax.plot(xs, func(xs), label=f'{z}')
+
+            ax.legend()
+
+        #ax.set_ylim(-0.01, 0.01)
+        ax.set_xlabel(f"$\phi$")
+        ax.set_ylabel(f"$\Delta \\theta$")
+        fig.savefig(f'{directory}/after_fit_sec_{sec}_theta_{theta}.png')
+
+        del fig, ax
+
+
+def second_fit(sector, fit_ABCDE, directory):
+    theta_step = 1
+    theta_steps = np.arange(13, 27, theta_step)
+    outputs = dict()
+
     fig, ax = plt.subplots(figsize=(12, 9))
-    #ax.set_ylim(-0.005, 0.005)
+    xs = np.linspace(10, 30, 1000)
+    n = 3
+    markers = "os^v>"
+    for i, letter in enumerate("ABCDE"):
+        data = []
+        thetas = []
+        for theta in theta_steps:
+            if f'theta_{theta}' in fit_ABCDE:
+                thetas.append(theta)
+                data.append(fit_ABCDE[f'theta_{theta}'][i] * 10**(5-i))
 
-    ax.scatter(thetas, 10E6*AS, label="A", alpha=0.5, marker='o')
-    z = np.polyfit(thetas, AS, n)
-    func = np.poly1d(z)
-    ax.plot(xs, 10E6*func(xs), label=f'{z}')
+        ax.scatter(thetas, data, label=letter, alpha=0.5, marker=markers[i])
+        z = np.polyfit(thetas, data, n)
+        func = np.poly1d(z)
+        ax.plot(xs, func(xs), label=f'{z}')
 
-    ax.scatter(thetas, 10E5*BS, label="B", alpha=0.5, marker='s')
-    z = np.polyfit(thetas, BS, n)
-    func = np.poly1d(z)
-    ax.plot(xs, 10E5*func(xs), label=f'{z}')
-
-    ax.scatter(thetas, 10E4*CS, label="C", alpha=0.5, marker='^')
-    z = np.polyfit(thetas, CS, n)
-    func = np.poly1d(z)
-    ax.plot(xs, 10E4*func(xs), label=f'{z}')
-
-    ax.scatter(thetas, 10E3*DS, label="D", alpha=0.5, marker='v')
-    z = np.polyfit(thetas, DS, n)
-    func = np.poly1d(z)
-    ax.plot(xs, 10E3*func(xs), label=f'{z}')
-
-    ax.scatter(thetas, 10E2*ES, label="E", alpha=0.5, marker='>')
-    z = np.polyfit(thetas, ES, n)
-    func = np.poly1d(z)
-    ax.plot(xs, 10E2*func(xs), label=f'{z}')
-
+        for j, greek in enumerate(['alpha', 'beta', 'gamma']):
+            outputs[f'{greek}_{letter}'] = z[j]
     ax.legend()
     fig.savefig(f"{directory}/fit_{sector}.png")
 
+    return outputs
+
 
 if __name__ == "__main__":
-    print(np.__version__)
     if len(sys.argv) <= 1:
         exit()
 
@@ -356,7 +423,7 @@ if __name__ == "__main__":
 
     data_to_fit = [df[df.sector == sec] for sec in range(1, 7)]
     output_folders = [output_folder for sec in range(1, 7)]
-    del df
+    # del df
 
     ts = time.time()
     with Pool(6) as p:
@@ -367,12 +434,51 @@ if __name__ == "__main__":
     print(f'First fits {clock_to_time(te - ts)}')
 
     ts = time.time()
+    fit_params_G = dict()
     for sec, fit in enumerate(fit_ABCDE):
-        second_fit(sec, fit, output_folder)
+        fit_params_G[sec+1] = second_fit(sec, fit, output_folder)
 
     te = time.time()
     print(f'Second fits {clock_to_time(te - ts)}')
 
-    # with Pool(6) as p:
-    #     fit_ABCD = p.starmap(
-    #         dtheta_vs_phi, zip(data_to_fit, output_folders))
+    ts = time.time()
+    for fitted_data in data_to_fit:
+        sec = int(np.mean(fitted_data.sector))
+        parms = fit_params_G[sec]
+
+        fitted_data['e_theta_corr'] = fitted_data.e_theta + correction(fitted_data.e_phi,
+                                                                       fitted_data.e_theta, parms)
+        fitted_data['delta_theta_corr'] = fitted_data['e_theta_calc'] - \
+            fitted_data['e_theta_corr']
+
+        dtheta_vs_phi_corrected(fitted_data, output_folder)
+
+    te = time.time()
+    print(f'After fits {clock_to_time(te - ts)}')
+
+    # ts = time.time()
+
+    # for fitted_data in data_to_fit:
+    #     sec = int(np.mean(fitted_data.sector))
+    #     parms = fit_params_G[sec]
+
+    #     fitted_data['e_theta_corr'] = fitted_data.e_theta * \
+    #         (1.0 + correction(fitted_data.e_phi,
+    #                           fitted_data.e_theta, parms))
+
+    #     fitted_data.dropna(inplace=True)
+
+    #     fitted_data['W_corr'] = calc_W(
+    #         fitted_data.e_p, fitted_data.e_theta_corr, fitted_data.e_phi)
+    #     fitted_data['Q2_corr'] = q2_calc(
+    #         fitted_data.e_p, fitted_data.e_theta_corr, fitted_data.e_phi)
+
+    #     # TODO: Make new corrected plots
+    #     fig, ax = plt.subplots(nrows=2, figsize=(12, 9))
+    #     ax[0].hist2d(fitted_data['W_uncorr'].to_numpy(),
+    #                  fitted_data['Q2_uncorr'].to_numpy(), bins=200)
+    #     ax[1].hist2d(fitted_data['W_corr'].to_numpy(),
+    #                  fitted_data['Q2_corr'].to_numpy(), bins=200)
+    #     fig.savefig(f"{output_folder}/Corrected_WvsQ2_{sec}.png")
+    # te = time.time()
+    # print(f'Done! {clock_to_time(te - ts)}')

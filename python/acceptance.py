@@ -401,9 +401,9 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
 
         _ax.plot(phis, crossSections, c='r', linestyle='dotted')
         _ax.set_ylim(bottom=0, top=np.max(crossSections)*1.5)
-        _ax.fill_between(phis, crossSections*1.05,
-                         crossSections*0.95,
-                         interpolate=True, color="r", alpha=0.3)
+        # _ax.fill_between(phis, crossSections*1.05,
+        #                  crossSections*0.95,
+        #                  interpolate=True, color="r", alpha=0.3)
 
         # Try dropping 0's before fitting
         if y.size <= 5:
@@ -413,10 +413,10 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
             popt, pcov = curve_fit(func, x, y, maxfev=8000)
             ax[a][b].plot(xs, func(xs, *popt),
                           linewidth=2.0)
-            perr = np.sqrt(np.diag(pcov))
-            ax[a][b].fill_between(xs, func(xs, *popt) + perr[1],
-                                  func(xs, *popt) - perr[1],
-                                  interpolate=True, alpha=0.3)
+            # perr = np.sqrt(np.diag(pcov))
+            # ax[a][b].fill_between(xs, func(xs, *popt) + perr[1],
+            #                       func(xs, *popt) - perr[1],
+            #                       interpolate=True, alpha=0.3)
 
         # mod = Model(func)
         # pars = Parameters()
