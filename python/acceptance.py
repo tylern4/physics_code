@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
+
+import matplotlib  # noqa
+matplotlib.use("agg")  # noqa
+import warnings  # noqa
+warnings.filterwarnings("ignore")  # noqa
+
 from typing import Dict
 import lmfit
-# import matplotlib  # noqa
-# matplotlib.use("agg")  # noqa
-
-import warnings
 # from loky import get_reusable_executor
 import multiprocessing
 import os
@@ -29,7 +31,6 @@ from lmfit import Model, Parameters
 from lmfit.models import *
 #from fit_functions import gauss, degauss, half_max_x, model
 
-warnings.filterwarnings("ignore")
 
 ENERGY = 4.81726
 
