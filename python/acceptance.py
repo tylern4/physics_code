@@ -397,7 +397,7 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
             perr = np.sqrt(np.diag(pcov))
             ax[a][b].fill_between(xs, func(xs, *popt) + perr[1],
                                   func(xs, *popt) - perr[1],
-                                  interpolate=True, alpha=0.3, c="#9467bd")
+                                  interpolate=True, alpha=0.3, color="#9467bd")
 
         # mod = Model(func)
         # pars = Parameters()
@@ -425,9 +425,12 @@ def draw_cos_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_
     #         inputs.append((func, data, mc_rec_data, thrown_data,
     #                        w, q2, cos_t_bins, out_folder, bins))
     #     pool.starmap(draw_cos_bin, inputs)
-    for bins in range(10, 24, 2):
-        draw_cos_bin(data, mc_rec_data, thrown_data,
-                     w, q2, cos_t_bins, out_folder, bins, models_fits={"new": model_new})
+    # for bins in range(10, 24, 2):
+    #     draw_cos_bin(data, mc_rec_data, thrown_data,
+    #                  w, q2, cos_t_bins, out_folder, bins, models_fits={"new": model_new})
+
+    draw_cos_bin(data, mc_rec_data, thrown_data,
+                 w, q2, cos_t_bins, out_folder, 10, models_fits={"new": model_new})
 
 
 def draw_xsec_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder, bins):
@@ -587,34 +590,29 @@ def draw_xsection(rec, mc_rec, thrown, func, out_folder, wbins, q2bins, thetabin
             draw_cos_plots(func, data, mc_rec_data,
                            thrown_data, w, q2, rec.theta_bin, out_folder)
             #################################################
-            for cos_t in thetabins:
-                rec_cut = (
-                    (w == rec.w_bin) & (q2 == rec.q2_bin) & (
-                        cos_t == rec.theta_bin)
-                )
-                mc_rec_cut = (
-                    (w == mc_rec.w_bin)
-                    & (q2 == mc_rec.q2_bin)
-                    & (cos_t == mc_rec.theta_bin)
-                )
-                thrown_cut = (
-                    (w == thrown.w_bin)
-                    & (q2 == thrown.q2_bin)
-                    & (cos_t == thrown.theta_bin)
-                )
+            # for cos_t in thetabins:
+            #     rec_cut = (
+            #         (w == rec.w_bin) & (q2 == rec.q2_bin) & (
+            #             cos_t == rec.theta_bin)
+            #     )
+            #     mc_rec_cut = (
+            #         (w == mc_rec.w_bin)
+            #         & (q2 == mc_rec.q2_bin)
+            #         & (cos_t == mc_rec.theta_bin)
+            #     )
+            #     thrown_cut = (
+            #         (w == thrown.w_bin)
+            #         & (q2 == thrown.q2_bin)
+            #         & (cos_t == thrown.theta_bin)
+            #     )
 
-                data = rec[rec_cut]
-                mc_rec_data = mc_rec[mc_rec_cut]
-                thrown_data = thrown[thrown_cut]
+            #     data = rec[rec_cut]
+            #     mc_rec_data = mc_rec[mc_rec_cut]
+            #     thrown_data = thrown[thrown_cut]
 
-                # results = executor.map(
-                #     draw_plots,
-                #     (func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder),
-                # )
-
-                draw_plots(
-                    func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder
-                )
+            #     # draw_plots(
+            #     #     func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder
+            #     # )
             pbar.update(1)
 
     pbar.close()
