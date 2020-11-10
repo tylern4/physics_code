@@ -392,14 +392,12 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
         if y.size <= 5:
             continue
         for name, func in models_fits.items():
-            # c="#9467bd"
             popt, pcov = curve_fit(func, x, y, maxfev=8000)
-            ax[a][b].plot(xs, func(xs, *popt),
-                          linewidth=2.0)
-            # perr = np.sqrt(np.diag(pcov))
-            # ax[a][b].fill_between(xs, func(xs, *popt) + perr[1],
-            #                       func(xs, *popt) - perr[1],
-            #                       interpolate=True, alpha=0.3)
+            ax[a][b].plot(xs, func(xs, *popt), linewidth=2.0, c="#9467bd")
+            perr = np.sqrt(np.diag(pcov))
+            ax[a][b].fill_between(xs, func(xs, *popt) + perr[1],
+                                  func(xs, *popt) - perr[1],
+                                  interpolate=True, alpha=0.3, c="#9467bd")
 
         # mod = Model(func)
         # pars = Parameters()
@@ -429,7 +427,7 @@ def draw_cos_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_
     #     pool.starmap(draw_cos_bin, inputs)
     for bins in range(10, 24, 2):
         draw_cos_bin(data, mc_rec_data, thrown_data,
-                     w, q2, cos_t_bins, out_folder, bins, models_fits={"regular": model, "new": model_new})
+                     w, q2, cos_t_bins, out_folder, bins, models_fits={"new": model_new})
 
 
 def draw_xsec_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder, bins):
@@ -627,7 +625,11 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins, name="reconstructed"):
 
     fig, ax = plt.subplots(figsize=(12, 9))
     h = ax.hist2d(rec.w.to_numpy(), rec.q2.to_numpy(),
-                  bins=200, range=[[np.min(w_bins), np.max(w_bins)], [np.min(q2_bins), np.max(q2_bins)]], cmin=1)
+                  bins=200,
+                  range=[[np.min(w_bins), np.max(w_bins)],
+                         [np.min(q2_bins), np.max(q2_bins)]],
+                  # cmin=1
+                  )
 
     for w in w_bins:
         ax.axvline(w, c='w')
@@ -652,18 +654,18 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins, name="reconstructed"):
     x = (x[1:] + x[:-1])/2.0
 
     ax2.errorbar(x, y, yerr=stats.sem(y), linestyle="", marker=".")
-    ax2.set_xlabel(f"W [$\mathrm{{{{GeV}}}}$]", fontsize=30)
+    ax2.set_xlabel(f"W [$GeV/c^2$]", fontsize=30)
     ax2.tick_params(axis='both', which='major', labelsize=15)
     ax2.set_xlim(np.min(w_bins), np.max(w_bins))
     ax2.set_ylim(bottom=0)
 
-    fig2.suptitle(f"W (n$\pi^+$)", fontsize=30)
+    fig2.suptitle(f"W $(\mathrm{{{{n}}}}\pi^+)$", fontsize=30)
     fig2.savefig(f"{out_folder}/kinematics/W_{name}.png", bbox_inches='tight')
     #########################################
 
     fig1, ax1 = plt.subplots(figsize=(12, 9))
     h = ax1.hist2d(rec.cos_theta.to_numpy(),
-                   rec.phi.to_numpy(), bins=100, cmin=1)
+                   rec.phi.to_numpy(), bins=100)
     for t in theta_bins:
         ax1.axvline(t, c='w')
 
@@ -695,6 +697,34 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins, name="reconstructed"):
         axxx.label_outer()
     ax3[0].set_title(f"W vs $Q^2$", fontsize=30)
     fig3.savefig(f"{out_folder}/kinematics/wq2_{name}.png",
+                 bbox_inches='tight')
+
+    fig4, ax4 = plt.subplots(figsize=(12, 9))
+    H, xedges, yedges = bh.numpy.histogram2d(
+        rec.w.to_numpy(), rec.q2.to_numpy(), bins=(w_bins, q2_bins))
+    H = H.T  # Let each row list bins with common y range.
+    X, Y = np.meshgrid(xedges, yedges)
+    im = ax4.pcolormesh(X, Y, H)
+    fig4.colorbar(im, ax=ax4)
+    ax4.set_title(f"W vs $Q^2$", fontsize=30)
+    ax4.set_xlabel(f"W [$\mathrm{{{{GeV}}}}$]", fontsize=30)
+    ax4.set_ylabel(f"$Q^2$ [$\mathrm{{{{GeV}}}}^2$]", fontsize=30)
+    fig4.savefig(f"{out_folder}/kinematics/wq2_binned_{name}.png",
+                 bbox_inches='tight')
+
+    fig4, ax4 = plt.subplots(figsize=(12, 9))
+    H, xedges, yedges = bh.numpy.histogram2d(
+        rec.cos_theta.to_numpy(),
+        rec.phi.to_numpy(), bins=(11, 10))
+    H = H.T  # Let each row list bins with common y range.
+    X, Y = np.meshgrid(xedges, yedges)
+    im = ax4.pcolormesh(X, Y, H)
+    fig4.colorbar(im, ax=ax4)
+    ax4.set_xlabel(f"$\cos(\\theta)$", fontsize=30)
+    ax4.set_ylabel(f"$\\phi$", fontsize=30)
+    ax4.tick_params(axis='both', which='major', labelsize=15)
+    fig1.suptitle(f"$\cos(\\theta)$ vs $\\phi$", fontsize=30)
+    fig4.savefig(f"{out_folder}/kinematics/cos_phi_binned_{name}.png",
                  bbox_inches='tight')
 
 
