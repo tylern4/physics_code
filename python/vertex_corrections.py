@@ -34,11 +34,11 @@ def good_event(event) -> bool:
     return True
 
 
-def plot_corretions(vz: Dict[int, bh.Histogram], *, folder="plots", **kwargs) -> Dict[int, float]:
-    """Plots vertex uncorrected and vertex corrected hists and retruns the correction
+def plot_corretions(vertex_z: Dict[int, bh.Histogram], *, folder="plots", **kwargs) -> Dict[int, float]:
+    """Plots vertex uncorrected and vertex corrected hists and retruns the correction for each sector
 
     Args:
-        vz (Dict[int, bh.Histogram]): Dict of sector to vertex histograms
+        vertex_z (Dict[int, bh.Histogram]): Dict of sector to vertex histograms
 
     Returns:
         Dict[int, float]: Dict of sector to correction factor for that sector
@@ -51,7 +51,7 @@ def plot_corretions(vz: Dict[int, bh.Histogram], *, folder="plots", **kwargs) ->
     # For each sector in 1 to 6
     for sec in range(1, 7):
         # Get results of np.histogram from boost histogram
-        y, x = vz[sec].to_numpy()
+        y, x = vertex_z[sec].to_numpy()
         # Normalize the y values
         y = y / np.max(y)
         # Get bin centers for each point
@@ -68,7 +68,7 @@ def plot_corretions(vz: Dict[int, bh.Histogram], *, folder="plots", **kwargs) ->
                     linestyle="", label=f'Sec {sec}: {x[x_val]}')
 
     fig.legend()
-    fig.savefig("plots/corrected.png")
+    fig.savefig(f"{folder}/corrected.png")
 
     return corrections
 
@@ -77,13 +77,13 @@ def plot_2d(vz_vs_phi: Dict[int, bh.Histogram]) -> None:
     for sec in range(1, 7):
         # Compute the areas of each bin
         areas = functools.reduce(operator.mul, vz_vs_phi[sec].axes.widths)
-
         # Compute the density
         density = vz_vs_phi[sec].view() / vz_vs_phi[sec].sum() / areas
-
         # Make the plot
         fig, ax = plt.subplots()
         mesh = ax.pcolormesh(*vz_vs_phi[sec].axes.edges.T, density.T)
+
+        fig.savefig(f"vertex_{sec}.png")
 
 
 if __name__ == "__main__":
@@ -122,12 +122,13 @@ if __name__ == "__main__":
             500, -6, 10, metadata="Vertex_z"))
         vz_vs_phi[sec] = bh.Histogram(bh.axis.Regular(100, -6, 10, metadata="Vertex_z"),
                                       bh.axis.Regular(100, -np.pi, np.pi, metadata="phi"))
+
+    # Vertex in z vs phi for all sectors
     vz_vs_phi_all = bh.Histogram(bh.axis.Regular(100, -6, 10, metadata="Vertex_z"),
                                  bh.axis.Regular(
                                      100, -np.pi, np.pi, metadata="phi"),
-                                 bh.axis.IntCategory(
-                                     [1, 2, 3, 4, 5, 6], metadata="sector")
-                                 )
+                                 bh.axis.IntCategory([1, 2, 3, 4, 5, 6], metadata="sector"))
+
     # Open a progress bar
     with tqdm(total=root_reader.num_entries) as pbar:
         # Loop over events in the data
@@ -144,6 +145,7 @@ if __name__ == "__main__":
             vz[sector].fill(event.dc_vz[0])
             phi = np.arctan2(event.cx[0], event.cy[0])
             vz_vs_phi[sector].fill(event.dc_vz[0], phi)
+
             vz_vs_phi_all.fill(event.dc_vz[0], phi, sector)
 
     corrections = plot_corretions(vz=vz)

@@ -57,12 +57,13 @@ def read_csv(file_name):
     }
 
     start = time.time()
+
+    # Load file into pyTable before changing to pandas
     pyTable = csv.read_csv(
         file_name,
         read_options=csv.ReadOptions(use_threads=True, column_names=names),
         convert_options=csv.ConvertOptions(column_types=dtype),
     )
-    # pyTable = pyTable.drop(["hash"])
     df = pyTable.to_pandas(strings_to_categorical=True)
 
     mc_rec = df[df.type == "mc_rec"]
@@ -560,17 +561,17 @@ def draw_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder):
                     w, q2, cos_t, out_folder, 10)
 
 
-def draw_xsection(rec, mc_rec, thrown, func, out_folder, wbins, q2bins, thetabins):
+def draw_xsection(rec: pd.DataFrame, mc_rec: pd.DataFrame, thrown: pd.DataFrame, func, out_folder: str, binning: Dict):
     # executor = get_reusable_executor(max_workers=len(np.unique(rec.theta_bin)))
     total_num = (
-        len(wbins)
-        * len(q2bins)
+        len(binning["wbins"])
+        * len(binning["q2bins"])
     )
 
     pbar = tqdm(total=total_num)
 
-    for w in wbins:
-        for q2 in q2bins:
+    for w in binning["wbins"]:
+        for q2 in binning["q2bins"]:
             #################################################
             rec_cut = (
                 (w == rec.w_bin) & (q2 == rec.q2_bin)
@@ -867,12 +868,13 @@ if __name__ == "__main__":
     mc_thrown.dropna(inplace=True)
     rec.dropna(inplace=True)
 
-    wbins = pd.unique(rec.w_bin)
-    q2bins = pd.unique(rec.q2_bin)
-    thetabins = pd.unique(rec.theta_bin)
+    binning = dict()
+    binning["wbins"] = pd.unique(rec.w_bin)
+    binning["q2bins"] = pd.unique(rec.q2_bin)
+    binning["thetabins"] = pd.unique(rec.theta_bin)
 
     draw_xsection(rec, mc_rec, mc_thrown, model,
-                  out_folder, wbins, q2bins, thetabins)
+                  out_folder, binning)
 
     stop = time.time()
     print(f"\n\nFull Running time: {stop - total_time}\n\n")

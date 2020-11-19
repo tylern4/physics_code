@@ -63,26 +63,30 @@ int main(int argc, char **argv) {
   auto e1dworker = [&outputfile](auto &&fls, auto &&num) mutable {
     std::string name = outputfile + "_" + to_string(num) + "_e1d.csv";
     auto csv_file = std::make_shared<SyncFile>(name);
-    auto dh = std::make_unique<mcYeilds>(csv_file);
+    auto dh = std::make_shared<mcYeilds>(csv_file);
     size_t total = 0;
+    auto chain = std::make_shared<TChain>("h10");
     for (auto &&f : fls) {
-      total += dh->RunMC<e1d_Cuts>(f);
-      total += dh->Run<e1d_Cuts>(f, "mc_rec");
-      std::cout << "  " << total << "\r\r" << std::flush;
+      chain->Add(f.c_str());
     }
+    total += dh->RunMC<e1d_Cuts>(chain);
+    total += dh->Run<e1d_Cuts>(chain, "mc_rec");
+
     return total;
   };
 
   auto e1fworker = [&outputfile](auto &&fls, auto &&num) mutable {
     std::string name = outputfile + "_" + to_string(num) + "_e1f.csv";
     auto csv_file = std::make_shared<SyncFile>(name);
-    auto dh = std::make_unique<mcYeilds>(csv_file);
+    auto dh = std::make_shared<mcYeilds>(csv_file);
     size_t total = 0;
+    auto chain = std::make_shared<TChain>("h10");
     for (auto &&f : fls) {
-      total += dh->RunMC<e1f_Cuts>(f);
-      total += dh->Run<e1f_Cuts>(f, "mc_rec");
-      std::cout << "  " << total << "\r\r" << std::flush;
+      chain->Add(f.c_str());
     }
+    total += dh->RunMC<e1f_Cuts>(chain);
+    total += dh->Run<e1f_Cuts>(chain, "mc_rec");
+
     return total;
   };
 

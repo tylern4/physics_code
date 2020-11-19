@@ -49,11 +49,10 @@ class Yeilds {
   std::string Header();
 
   template <class CutType>
-  int Run(std::string root_file, std::string type) {
-    auto chain = std::make_shared<TChain>("h10");
+  int Run(std::shared_ptr<TChain> chain, std::string type) {
     int num_of_events = 0;
-    chain->Add(root_file.c_str());
     num_of_events = (int)chain->GetEntries();
+
     auto data = std::make_shared<Branches>(chain, false);
     _beam_energy = std::is_same<CutType, e1f_Cuts>::value ? E1F_E0 : E1D_E0;
     int total = 0;
@@ -110,13 +109,12 @@ class Yeilds {
     size_t total = 0;
 
     for (size_t current_event = 0; current_event < num_of_events; current_event++) {
-      total++;
       chain->GetEntry(current_event);
       auto check = std::make_unique<CutType>(data);
       auto event = std::make_unique<Reaction>(data);
 
       if (!check->isElecctron()) continue;
-      // total++;
+      total++;
       auto dt = std::make_unique<Delta_T>(data);
 
       float theta = physics::theta_calc(data->cz(0));
@@ -166,16 +164,14 @@ class mcYeilds : public Yeilds {
       : Yeilds(multi_threaded_csv, mom_corr){};
 
   template <class CutType>
-  int RunMC(std::string root_file) {
+  int RunMC(std::shared_ptr<TChain> chain) {
     int total = 0;
-    auto chain = std::make_shared<TChain>("h10");
-    int num_of_events = 0;
-    chain->Add(root_file.c_str());
-    num_of_events = (int)chain->GetEntries();
+
+    size_t num_of_events = (size_t)chain->GetEntries();
     auto data = std::make_shared<Branches>(chain, true);
     _beam_energy = std::is_same<CutType, e1f_Cuts>::value ? E1F_E0 : E1D_E0;
 
-    for (int current_event = 0; current_event < num_of_events; current_event++) {
+    for (size_t current_event = 0; current_event < num_of_events; current_event++) {
       chain->GetEntry(current_event);
       auto mc_event = std::make_shared<MCReaction>(data, _beam_energy);
       int pip_num = 1;

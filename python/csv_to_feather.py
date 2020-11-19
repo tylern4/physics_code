@@ -35,7 +35,7 @@ dtype = {
 
 def convert_data(file_name):
     start = time.time()
-    # df = pd.read_csv(file_name, names=names, index_col=False, dtype=dtype)
+
     pyTable = csv.read_csv(
         file_name,
         read_options=csv.ReadOptions(use_threads=True, column_names=names),
