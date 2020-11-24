@@ -210,6 +210,8 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
                              out.params['peak_fwhm'] / 2.355, c='r', alpha=0.6)
             ax[a][b].axvline(out.params['peak_center']-sigma *
                              out.params['peak_fwhm'] / 2.355, c='r', alpha=0.6)
+            data[sec] = (out.params['peak_center']-sigma*out.params['peak_fwhm'] / 2.355,
+                         out.params['peak_center']+sigma*out.params['peak_fwhm'] / 2.355)
         else:
             popt_g, pcov_g = curve_fit(gauss, x, y, maxfev=8000)
             plt.plot(x, gauss(x, *popt_g), linewidth=2.0, alpha=0.4)
@@ -234,6 +236,8 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
                 popt[1] + sigma * fwhm / 2.355, c="#9467bd", linewidth=3.0)
             ax[a][b].axvline(
                 popt[1] - sigma * fwhm / 2.355, c="#9467bd", linewidth=3.0)
+            data[sec] = (popt[1] - sigma * fwhm / 2.355,
+                         popt[1] + sigma * fwhm / 2.355)
 
         ax[a][b].legend()
         ax[a][b].set_xlabel(f"Mass [ $\mathrm{{{{GeV}}}}^2$]")
@@ -248,13 +252,6 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
 
         plt.savefig(f"{out_folder}/cuts/MM2_cut_{sec}.png",
                     bbox_inches='tight')
-
-        if lmfit_fitter:
-            data[sec] = (out.params['peak_center']-sigma*out.params['peak_fwhm'] / 2.355,
-                         out.params['peak_center']+sigma*out.params['peak_fwhm'] / 2.355)
-        else:
-            data[sec] = (popt[1] - sigma * fwhm / 2.355,
-                         popt[1] + sigma * fwhm / 2.355)
 
     fig.suptitle(
         f"Missing Mass Squared $e\left( p, \pi^{{{'+'}}} X \\right)$", fontsize=20)
@@ -343,9 +340,15 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
         mc_rec_y = mc_rec_y[~(mc_rec_y == 0)]
 
         acceptance = np.nan_to_num(thrown_y / mc_rec_y)
-        data_y = data_y / np.max(data_y)
-        #y = (data_y * acceptance) * flux
-        y = (data_y * acceptance)
+
+        try:
+            data_y = data_y / np.max(data_y)
+        except ValueError as e:
+            print(e)
+            continue
+
+        y = (data_y * acceptance) * flux
+        #y = (data_y * acceptance)
 
         error_bar = np.ones_like(y)
 
@@ -393,23 +396,27 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
         if y.size <= 5:
             continue
         for name, func in models_fits.items():
-            popt, pcov = curve_fit(func, x, y, maxfev=8000)
-            ax[a][b].plot(xs, func(xs, *popt), linewidth=2.0, c="#9467bd")
-            perr = np.sqrt(np.diag(pcov))
-            ax[a][b].fill_between(xs, func(xs, *popt) + perr[1],
-                                  func(xs, *popt) - perr[1],
-                                  interpolate=True, alpha=0.3, color="#9467bd")
+            # Make model from function
+            model = Model(func)
+            # Make fit parameters
+            params = model.make_params()
+            # Make sure to set inital values to 1
+            # so fit doesn't fail
+            for p in params:
+                params[p].set(value=1)
 
-        # mod = Model(func)
-        # pars = Parameters()
-        # pars.add("a", value=popt[0], min=0)
-        # pars.add("b", value=popt[1])
-        # pars.add("c", value=popt[2])
+            # Fit the model
+            out = model.fit(y, params, x=x)
+            # Plot the fitted model with output parameters and same x's as model
+            ax[a][b].plot(xs, out.eval(params=out.params, x=xs),
+                          linewidth=2.0, c="#9467bd")
 
-        # result = mod.fit(y, params=pars, x=x,
-        #                  nan_policy='omit', method='ampgo')
-        # ax[a][b].plot(xs, result.eval(params=result.params, x=xs),
-        #               'r-', label='best fit')
+            # Get uncertinty and plot between 2 sigmas
+            dely = out.eval_uncertainty(sigma=2, x=xs)
+            ax[a][b].fill_between(xs, out.eval(params=out.params, x=xs)-dely,
+                                  out.eval(params=out.params, x=xs)+dely,
+                                  color="#9467bd", alpha=0.2,
+                                  label='2-$\sigma$ uncertainty band')
 
     if not os.path.exists(f'{out_folder}/CosT'):
         os.makedirs(f'{out_folder}/CosT')
