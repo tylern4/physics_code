@@ -719,9 +719,16 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins, name="reconstructed"):
                  bbox_inches='tight')
 
     fig4, ax4 = plt.subplots(figsize=(12, 9))
-    H, xedges, yedges = bh.numpy.histogram2d(
-        rec.cos_theta.to_numpy(),
-        rec.phi.to_numpy(), bins=(11, 10))
+    try:
+        H, xedges, yedges = bh.numpy.histogram2d(
+            rec.cos_theta.to_numpy(),
+            rec.phi.to_numpy(),
+            bins=(11, 10))
+    except ValueError as ve:
+        print(rec.cos_theta.to_numpy().size)
+        print(rec.phi.to_numpy().size)
+        return
+
     H = H.T  # Let each row list bins with common y range.
     X, Y = np.meshgrid(xedges, yedges)
     im = ax4.pcolormesh(X, Y, H)
