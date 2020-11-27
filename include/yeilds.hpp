@@ -49,9 +49,8 @@ class Yeilds {
   std::string Header();
 
   template <class CutType>
-  int Run(std::shared_ptr<TChain> chain, std::string type) {
-    int num_of_events = 0;
-    num_of_events = (int)chain->GetEntries();
+  int Run(const std::shared_ptr<TChain>& chain, std::string type) {
+    size_t num_of_events = (size_t)chain->GetEntries();
 
     auto data = std::make_shared<Branches>(chain, false);
     _beam_energy = std::is_same<CutType, e1f_Cuts>::value ? E1F_E0 : E1D_E0;
@@ -164,7 +163,7 @@ class mcYeilds : public Yeilds {
       : Yeilds(multi_threaded_csv, mom_corr){};
 
   template <class CutType>
-  int RunMC(std::shared_ptr<TChain> chain) {
+  int RunMC(const std::shared_ptr<TChain>& chain) {
     int total = 0;
 
     size_t num_of_events = (size_t)chain->GetEntries();

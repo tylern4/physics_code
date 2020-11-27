@@ -65,12 +65,18 @@ int main(int argc, char **argv) {
     auto csv_file = std::make_shared<SyncFile>(name);
     auto dh = std::make_shared<mcYeilds>(csv_file);
     size_t total = 0;
-    auto chain = std::make_shared<TChain>("h10");
+
+    auto data_chain = std::make_shared<TChain>("h10");
     for (auto &&f : fls) {
-      chain->Add(f.c_str());
+      data_chain->Add(f.c_str());
     }
-    total += dh->RunMC<e1d_Cuts>(chain);
-    total += dh->Run<e1d_Cuts>(chain, "mc_rec");
+    total += dh->Run<e1d_Cuts>(data_chain, "mc_rec");
+
+    auto mc_chain = std::make_shared<TChain>("h10");
+    for (auto &&f : fls) {
+      mc_chain->Add(f.c_str());
+    }
+    total += dh->RunMC<e1d_Cuts>(mc_chain);
 
     return total;
   };
