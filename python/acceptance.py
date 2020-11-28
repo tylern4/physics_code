@@ -14,10 +14,7 @@ import os
 from maid_interface import maid_2007_Npi as maid
 import datetime
 import boost_histogram as bh
-import pyarrow
-from pyarrow import feather
-from pyarrow import csv
-import pyarrow as pa
+from pyarrow import csv, feather
 import time
 import argparse
 from scipy.optimize import curve_fit
@@ -61,7 +58,8 @@ def read_csv(file_name):
     # Load file into pyTable before changing to pandas
     pyTable = csv.read_csv(
         file_name,
-        read_options=csv.ReadOptions(use_threads=True, column_names=names),
+        read_options=csv.ReadOptions(
+            use_threads=True, column_names=names),
         convert_options=csv.ConvertOptions(column_types=dtype),
     )
     df = pyTable.to_pandas(strings_to_categorical=True)
@@ -78,14 +76,14 @@ def read_csv(file_name):
     )
 
 
-def model(x, a, b, c):
-    """
-    a => sigma_l + sigma_t
-    b => epsilon*sigma_tt
-    c => Sqrt(2epsilon(1+epsilon))* sigma_lt
-    """
-    f = a + b * np.cos(2 * x) + c * np.cos(x)
-    return f
+# def model(x, a, b, c):
+#     """
+#     a => sigma_l + sigma_t
+#     b => epsilon*sigma_tt
+#     c => Sqrt(2epsilon(1+epsilon))* sigma_lt
+#     """
+#     f = a + b * np.cos(2 * x) + c * np.cos(x)
+#     return f
 
 
 def A(M, B, C):
@@ -260,7 +258,7 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
     return data
 
 
-def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, bins, models_fits={"model": model}):
+def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, bins, models_fits={"model": model_new}):
     which_plot = {
         -1.0: [0, 0],
         -0.8: [0, 1],
@@ -770,8 +768,6 @@ if __name__ == "__main__":
     if args.e1f:
         ENERGY = 5.479
 
-    pyarrow.set_cpu_count(8)
-
     total_time = time.time()
     mc_data_file_path = args.mc_data_file_path
     rec_data_file_path = args.rec_data_file_path
@@ -887,7 +883,7 @@ if __name__ == "__main__":
     binning["q2bins"] = pd.unique(rec.q2_bin)
     binning["thetabins"] = pd.unique(rec.theta_bin)
 
-    draw_xsection(rec, mc_rec, mc_thrown, model,
+    draw_xsection(rec, mc_rec, mc_thrown, model_new,
                   out_folder, binning)
 
     stop = time.time()
