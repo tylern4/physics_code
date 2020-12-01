@@ -10,6 +10,7 @@
 #include <vector>
 #include "TStopwatch.h"
 #include "branches.hpp"
+#include "clipp.h"
 #include "constants.hpp"
 #include "datahandeler.hpp"
 #include "glob_files.hpp"
@@ -18,13 +19,29 @@
 
 int main(int argc, char** argv) {
   ROOT::EnableThreadSafety();
+  std::string file_string = "";
   std::vector<std::vector<std::string>> infilenames(NUM_THREADS);
-  std::string outfilename;
-  if (argc >= 2) {
-    outfilename = argv[1];
-    for (int i = 2; i < argc; i++) infilenames[i % NUM_THREADS].push_back(argv[i]);
-  } else {
-    return 1;
+  std::string outfilename = "e1f_mc.root";
+  bool print_help = false;
+
+  auto cli = (clipp::option("-h", "--help").set(print_help) % "print help",
+              clipp::option("-i") & clipp::value("e1f input file path", file_string),
+              clipp::option("-o") & clipp::value("output filename", outfilename));
+
+  auto good_args = clipp::parse(argc, argv, cli);
+  if (!good_args) {
+    std::cout << clipp::make_man_page(cli, argv[0]);
+    exit(2);
+  } else if (file_string == "") {
+    std::cout << clipp::make_man_page(cli, argv[0]);
+    exit(2);
+  }
+
+  std::vector<std::string> e1f_files = glob(file_string);
+
+  int i = 0;
+  for (auto&& f : e1f_files) {
+    infilenames[i++ % NUM_THREADS].push_back(f);
   }
 
   auto start = std::chrono::high_resolution_clock::now();
