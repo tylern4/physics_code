@@ -258,7 +258,8 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
     return data
 
 
-def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, bins, models_fits={"model": model_new}):
+def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, bins, models_fits={"model": model_new}) -> Dict:
+    return_data = {}
     which_plot = {
         -1.0: [0, 0],
         -0.8: [0, 1],
@@ -328,8 +329,8 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
         )
 
         # Change 0's to mean for division
-        # thrown_y = np.where(thrown_y == 0, np.min(thrown_y), thrown_y)
-        # mc_rec_y = np.where(mc_rec_y == 0, np.min(mc_rec_y), mc_rec_y)
+        thrown_y = thrown_y/np.max(thrown_y)
+        mc_rec_y = mc_rec_y/np.max(mc_rec_y)
 
         # Drop places with 0 acceptance
         x = x[~(mc_rec_y == 0)]
@@ -346,9 +347,8 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
             continue
 
         y = (data_y * acceptance) * flux
-        #y = (data_y * acceptance)
 
-        error_bar = np.ones_like(y)
+        # error_bar = np.ones_like(y)
 
         F = (mc_rec_y/thrown_y)
         error = np.sqrt(((thrown_y-mc_rec_y)*mc_rec_y) /
@@ -422,6 +422,8 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
     fig.savefig(
         f"{out_folder}/CosT/W[{np.round(w.left,3)},{np.round(w.right,3)}]_Q2[{np.round(q2.left,3)},{np.round(q2.right,3)}]_{bins}_CosT.png", bbox_inches='tight'
     )
+
+    return return_data
 
 
 def draw_cos_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder):
@@ -760,6 +762,10 @@ if __name__ == "__main__":
         default="plots",
     )
     parser.add_argument(
+        "--draw_kin",
+        action='store_true'
+    )
+    parser.add_argument(
         "--e1f",
         action='store_true'
     )
@@ -838,22 +844,23 @@ if __name__ == "__main__":
                            0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2])
 
     # TODO ##################### BINS ######################
+    if args.draw_kin:
+        draw_kinematics(rec, w_bins, q2_bins, theta_bins)
+        draw_kinematics(mc_rec, w_bins, q2_bins, theta_bins, "mc_rec")
+        draw_kinematics(mc_thrown, w_bins, q2_bins, theta_bins, "thrown")
 
-    draw_kinematics(rec, w_bins, q2_bins, theta_bins)
-    draw_kinematics(mc_rec, w_bins, q2_bins, theta_bins, "mc_rec")
-    draw_kinematics(mc_thrown, w_bins, q2_bins, theta_bins, "thrown")
+        for sec in range(1, 7):
+            sec_data = rec[rec.electron_sector == sec]
+            draw_kinematics(sec_data, w_bins, q2_bins,
+                            theta_bins, f"rec_{sec}")
 
-    for sec in range(1, 7):
-        sec_data = rec[rec.electron_sector == sec]
-        draw_kinematics(sec_data, w_bins, q2_bins, theta_bins, f"rec_{sec}")
+            sec_mc_rec = mc_rec[mc_rec.electron_sector == sec]
+            draw_kinematics(sec_mc_rec, w_bins, q2_bins,
+                            theta_bins, f"mc_rec_{sec}")
 
-        sec_mc_rec = mc_rec[mc_rec.electron_sector == sec]
-        draw_kinematics(sec_mc_rec, w_bins, q2_bins,
-                        theta_bins, f"mc_rec_{sec}")
-
-        sec_mc_thrown = mc_thrown[mc_thrown.electron_sector == sec]
-        draw_kinematics(sec_mc_thrown, w_bins, q2_bins,
-                        theta_bins, f"thrown_{sec}")
+            sec_mc_thrown = mc_thrown[mc_thrown.electron_sector == sec]
+            draw_kinematics(sec_mc_thrown, w_bins, q2_bins,
+                            theta_bins, f"thrown_{sec}")
 
     mc_rec["w_bin"] = pd.cut(mc_rec["w"], bins=w_bins, include_lowest=True)
     mc_rec["q2_bin"] = pd.cut(mc_rec["q2"], bins=q2_bins, include_lowest=True)

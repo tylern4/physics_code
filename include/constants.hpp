@@ -13,6 +13,8 @@
 #include "Math/Vector4D.h"
 #include "TMath.h"
 
+#define print(x) std::cout << x << std::endl
+
 typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzM4D<float>> LorentzVector;
 typedef ROOT::Math::Rotation3D LorentzRotation;
 typedef ROOT::Math::XYZVectorD Vector3;
