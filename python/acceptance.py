@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-
 import matplotlib  # noqa
 matplotlib.use("agg")  # noqa
 import warnings  # noqa
@@ -258,8 +257,7 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
     return data
 
 
-def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, bins, models_fits={"model": model_new}) -> Dict:
-    return_data = {}
+def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, bins, models_fits={"model": model_new}):
     which_plot = {
         -1.0: [0, 0],
         -0.8: [0, 1],
@@ -329,8 +327,8 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
         )
 
         # Change 0's to mean for division
-        thrown_y = thrown_y/np.max(thrown_y)
-        mc_rec_y = mc_rec_y/np.max(mc_rec_y)
+        # thrown_y = thrown_y/np.max(thrown_y)
+        # mc_rec_y = mc_rec_y/np.max(mc_rec_y)
 
         # Drop places with 0 acceptance
         x = x[~(mc_rec_y == 0)]
@@ -422,8 +420,6 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
     fig.savefig(
         f"{out_folder}/CosT/W[{np.round(w.left,3)},{np.round(w.right,3)}]_Q2[{np.round(q2.left,3)},{np.round(q2.right,3)}]_{bins}_CosT.png", bbox_inches='tight'
     )
-
-    return return_data
 
 
 def draw_cos_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder):

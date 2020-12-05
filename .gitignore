@@ -52,3 +52,4 @@ current/crossSection/experimental_data
 
 python/analysisNotebooks
 
+*.pkl

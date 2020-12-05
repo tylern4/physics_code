@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
   }
   std::string outfilename = argv[1];
   auto syncFile = std::make_shared<SyncFile>(outfilename);
-  syncFile->write("e_p,e_theta,e_phi,p_p,p_theta,p_phi,W_uncorr,Q2_uncorr,sector");
+  syncFile->write("e_p,e_theta,e_phi,p_p,p_theta,p_phi,W_uncorr,Q2_uncorr,sector,type");
 
   std::vector<std::vector<std::string>> infilenames(NUM_THREADS);
   for (int i = 2; i < argc; i++) infilenames[i % NUM_THREADS].push_back(argv[i]);
