@@ -130,6 +130,7 @@ def yeilds(rec, mc_rec, thrown, binning):
     )
 
     args = []
+    total_data = []
     pbar = tqdm(total=total_num)
     for w in binning["wbins"]:
         for q2 in binning["q2bins"]:
@@ -154,12 +155,13 @@ def yeilds(rec, mc_rec, thrown, binning):
                 mc_rec_data = mc_rec[mc_rec_cut].copy()
                 thrown_data = thrown[thrown_cut].copy()
 
-                args.append((data, mc_rec_data, thrown_data, w, q2, cos_t))
+                total_data.append(get_yeilds(
+                    data, mc_rec_data, thrown_data, w, q2, cos_t))
 
     pbar.close()
 
-    with Pool(8) as p:
-        total_data = p.starmap(get_yeilds, args)
+    # with Pool(8) as p:
+    #     total_data = p.starmap(get_yeilds, args)
 
     return pd.DataFrame(total_data)
 
@@ -180,6 +182,14 @@ if __name__ == "__main__":
         "--e1f",
         action='store_true'
     )
+    parser.add_argument(
+        "--folder",
+        dest="out_folder",
+        type=str,
+        help="Folder for yeilds",
+        required=False,
+        default="yeilds",
+    )
 
     args = parser.parse_args()
     if args.e1f:
@@ -188,6 +198,7 @@ if __name__ == "__main__":
     total_time = time.time()
     mc_data_file_path = args.mc_data_file_path
     rec_data_file_path = args.rec_data_file_path
+    out_folder = args.out_folder
 
     mc_rec, mc_thrown = read_csv(mc_data_file_path)
     mc_rec["cos_theta"] = np.cos(mc_rec.theta)
@@ -275,8 +286,8 @@ if __name__ == "__main__":
     binning["thetabins"] = pd.unique(rec.theta_bin)
 
     out = yeilds(rec, mc_rec, mc_thrown, binning)
-    out.to_csv("yeilds.csv")
-    out.to_pickle("yeilds.pkl")
+    out.to_csv("{out_folder}/yeilds.csv")
+    out.to_pickle("{out_folder}/yeilds.pkl")
 
     stop = time.time()
     print(f"\n\nFull Running time: {stop - total_time}\n\n")
