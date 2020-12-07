@@ -13,7 +13,11 @@
 #include "Math/Vector4D.h"
 #include "TMath.h"
 
-// #define _print_(x) std::cout << x << std::endl
+#define PRINT_TIMEING(start_time, name)                                                                             \
+  std::cout                                                                                                         \
+      << name                                                                                                       \
+      << static_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now() - start_time).count() \
+      << " sec" << std::endl
 
 typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzM4D<float>> LorentzVector;
 typedef ROOT::Math::Rotation3D LorentzRotation;

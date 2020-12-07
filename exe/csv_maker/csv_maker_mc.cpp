@@ -16,6 +16,8 @@ using namespace std;
 
 int main(int argc, char **argv) {
   ROOT::EnableThreadSafety();
+  std::cout.imbue(std::locale(""));
+
   std::string e1d_string = "";
   std::string e1f_string = "";
   std::string outputfile = "test_mc.csv";
@@ -38,6 +40,7 @@ int main(int argc, char **argv) {
     std::cout << clipp::make_man_page(cli, argv[0]);
     exit(2);
   }
+  auto start = std::chrono::high_resolution_clock::now();
 
   std::vector<std::string> e1d_files = glob(e1d_string);
   std::vector<std::string> e1f_files = glob(e1f_string);
@@ -55,10 +58,7 @@ int main(int argc, char **argv) {
     if (i <= num_cut) infilenames_e1f[i++ % NUM_THREADS].push_back(f);
   }
 
-  auto start = std::chrono::high_resolution_clock::now();
-  std::cout.imbue(std::locale(""));
-
-  size_t events = 0;
+  PRINT_TIMEING(start, "Read in files: ");
 
   auto e1dworker = [&outputfile](auto &&fls, auto &&num) mutable {
     std::string name = outputfile + "_" + to_string(num) + "_e1d.csv";
@@ -96,13 +96,18 @@ int main(int argc, char **argv) {
     return total;
   };
 
+  PRINT_TIMEING(start, "Make lambdas: ");
+
+  size_t events = 0;
   if (e1d_files.size() > 0) {
     std::future<size_t> threads_e1d[NUM_THREADS];
     for (size_t i = 0; i < NUM_THREADS; i++) {
+      PRINT_TIMEING(start, "Make thread " << i << ": ");
       threads_e1d[i] = std::async(e1dworker, infilenames_e1d.at(i), i);
     }
 
     for (size_t i = 0; i < NUM_THREADS; i++) {
+      PRINT_TIMEING(start, "Get thread " << i << ": ");
       events += threads_e1d[i].get();
     }
   }

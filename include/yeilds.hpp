@@ -50,12 +50,16 @@ class Yeilds {
 
   template <class CutType>
   int Run(const std::shared_ptr<TChain>& chain, std::string type) {
+    auto start = std::chrono::high_resolution_clock::now();
     size_t num_of_events = (size_t)chain->GetEntries();
+    PRINT_TIMEING(start, "Got number of events from chain " << num_of_events << " : ");
 
     auto data = std::make_shared<Branches>(chain, false);
     _beam_energy = std::is_same<CutType, e1f_Cuts>::value ? E1F_E0 : E1D_E0;
     int total = 0;
-    for (int current_event = 0; current_event < num_of_events; current_event++) {
+    int current_event = 0;
+    // #pragma omp parallel for private(current_event) num_threads(2)
+    for (current_event = 0; current_event < num_of_events; current_event++) {
       chain->GetEntry(current_event);
       auto check = std::make_unique<CutType>(data);
       auto event = std::make_shared<Reaction>(data, _beam_energy, _mom_corr);
