@@ -70,13 +70,13 @@ int main(int argc, char **argv) {
     for (auto &&f : fls) {
       data_chain->Add(f.c_str());
     }
-    total += dh->Run<e1d_Cuts>(data_chain, "mc_rec");
+    total += dh->Run<e1d_Cuts>(data_chain, "mc_rec", num);
 
     auto mc_chain = std::make_shared<TChain>("h10");
     for (auto &&f : fls) {
       mc_chain->Add(f.c_str());
     }
-    total += dh->RunMC<e1d_Cuts>(mc_chain);
+    total += dh->RunMC<e1d_Cuts>(mc_chain, num);
 
     return total;
   };
@@ -90,8 +90,8 @@ int main(int argc, char **argv) {
     for (auto &&f : fls) {
       chain->Add(f.c_str());
     }
-    total += dh->RunMC<e1f_Cuts>(chain);
-    total += dh->Run<e1f_Cuts>(chain, "mc_rec");
+    total += dh->RunMC<e1f_Cuts>(chain, num);
+    total += dh->Run<e1f_Cuts>(chain, "mc_rec", num);
 
     return total;
   };

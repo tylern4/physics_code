@@ -49,7 +49,7 @@ class Yeilds {
   std::string Header();
 
   template <class CutType>
-  int Run(const std::shared_ptr<TChain>& chain, std::string type) {
+  int Run(const std::shared_ptr<TChain>& chain, const std::string& type, const size_t& thread_id) {
     auto start = std::chrono::high_resolution_clock::now();
     size_t num_of_events = (size_t)chain->GetEntries();
     PRINT_TIMEING(start, "Got number of events from chain " << num_of_events << " : ");
@@ -60,6 +60,7 @@ class Yeilds {
     int current_event = 0;
     // #pragma omp parallel for private(current_event) num_threads(2)
     for (current_event = 0; current_event < num_of_events; current_event++) {
+      if (thread_id == 0 && current_event % 100000 == 0) std::cerr << 100 * current_event / num_of_events << std::endl;
       chain->GetEntry(current_event);
       auto check = std::make_unique<CutType>(data);
       auto event = std::make_shared<Reaction>(data, _beam_energy, _mom_corr);
@@ -167,14 +168,17 @@ class mcYeilds : public Yeilds {
       : Yeilds(multi_threaded_csv, mom_corr){};
 
   template <class CutType>
-  int RunMC(const std::shared_ptr<TChain>& chain) {
-    int total = 0;
-
+  int RunMC(const std::shared_ptr<TChain>& chain, const size_t& thread_id) {
+    auto start = std::chrono::high_resolution_clock::now();
     size_t num_of_events = (size_t)chain->GetEntries();
+    PRINT_TIMEING(start, "Got number of events from chain " << num_of_events << " : ");
+
     auto data = std::make_shared<Branches>(chain, true);
     _beam_energy = std::is_same<CutType, e1f_Cuts>::value ? E1F_E0 : E1D_E0;
 
+    int total = 0;
     for (size_t current_event = 0; current_event < num_of_events; current_event++) {
+      if (thread_id == 0 && current_event % 100000 == 0) std::cerr << 100 * current_event / num_of_events << std::endl;
       chain->GetEntry(current_event);
       auto mc_event = std::make_shared<MCReaction>(data, _beam_energy);
       int pip_num = 1;
