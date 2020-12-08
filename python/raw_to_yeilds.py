@@ -286,8 +286,8 @@ if __name__ == "__main__":
     binning["thetabins"] = pd.unique(rec.theta_bin)
 
     out = yeilds(rec, mc_rec, mc_thrown, binning)
-    out.to_csv("{out_folder}/yeilds.csv")
-    out.to_pickle("{out_folder}/yeilds.pkl")
+    out.to_csv(f"{out_folder}/yeilds.csv")
+    out.to_pickle(f"{out_folder}/yeilds.pkl")
 
     stop = time.time()
     print(f"\n\nFull Running time: {stop - total_time}\n\n")
