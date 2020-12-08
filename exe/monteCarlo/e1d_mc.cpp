@@ -47,7 +47,7 @@ int main(int argc, char** argv) {
   auto start = std::chrono::high_resolution_clock::now();
 
   auto hist = std::make_shared<mcHistogram>(outfilename);
-  auto mom_corr = std::make_shared<MomCorr>();
+  auto mom_corr = nullptr;  // std::make_shared<MomCorr>();
   std::cout.imbue(std::locale(""));
   size_t events = 0;
 
