@@ -8,40 +8,41 @@
 #include <cmath>
 #include "TMath.h"
 #include "TSpline.h"
+#include "VectorizedTMath.h"
 
 namespace func {
-double ec_fit_func(double *x, double *par);
-double ec_fit_func_arjun(double *x, double *par);
-double ec_fit_func_invert(double *x, double *par);
-double genNormal(double *x, double *par);
-double breit_wigner(double *x, double *par);
-double fiducial_phi(double theta, double e_p);
-double fiducial_phi(double *x, double *par);
-double fiducial(double *x, double *par);
+ROOT::Double_v ec_fit_func(const ROOT::Double_v *x, const double *par);
+ROOT::Double_v ec_fit_func_arjun(const ROOT::Double_v *x, const double *par);
+ROOT::Double_v ec_fit_func_invert(const ROOT::Double_v *x, const double *par);
+ROOT::Double_v genNormal(const ROOT::Double_v *x, const double *par);
+ROOT::Double_v breit_wigner(const ROOT::Double_v *x, const double *par);
+ROOT::Double_v fiducial_phi(double theta, double e_p);
+ROOT::Double_v fiducial_phi(const ROOT::Double_v *x, const double *par);
+ROOT::Double_v fiducial(const ROOT::Double_v *x, const double *par);
 
-double gausian(double *x, double *par);
-double gausian2(double *x, double *par);
-double landau(double *x, double *par);
-double peak(double *x, double *par);
+ROOT::Double_v gausian(const ROOT::Double_v *x, const double *par);
+ROOT::Double_v gausian2(const ROOT::Double_v *x, const double *par);
+ROOT::Double_v landau(const ROOT::Double_v *x, const double *par);
+ROOT::Double_v peak(const ROOT::Double_v *x, const double *par);
 
-double horizontal(double *x, double *par);
-double line(double *x, double *par);
-double quad(double *x, double *par);
+ROOT::Double_v horizontal(const ROOT::Double_v *x, const double *par);
+ROOT::Double_v line(const ROOT::Double_v *x, const double *par);
+ROOT::Double_v quad(const ROOT::Double_v *x, const double *par);
 
-double pol0(double *x, double *par);
-double pol1(double *x, double *par);
-double pol2(double *x, double *par);
-double pol3(double *x, double *par);
-double pol4(double *x, double *par);
-double pol5(double *x, double *par);
-double fid(double *x, double *par);
-double dt_fit(double *x, double *par);
-double theta_cc_fit(double *x, double *par);
+ROOT::Double_v pol0(const ROOT::Double_v *x, const double *par);
+ROOT::Double_v pol1(const ROOT::Double_v *x, const double *par);
+ROOT::Double_v pol2(const ROOT::Double_v *x, const double *par);
+ROOT::Double_v pol3(const ROOT::Double_v *x, const double *par);
+ROOT::Double_v pol4(const ROOT::Double_v *x, const double *par);
+ROOT::Double_v pol5(const ROOT::Double_v *x, const double *par);
+ROOT::Double_v fid(const ROOT::Double_v *x, const double *par);
+ROOT::Double_v dt_fit(const ROOT::Double_v *x, const double *par);
+ROOT::Double_v theta_cc_fit(const ROOT::Double_v *x, const double *par);
 
-double missMasspeak(double *x, double *par);
-double missMassbackground(double *x, double *par);
-double missMassfitFunction(double *x, double *par);
-double degauss(double *x, double *par);
+ROOT::Double_v missMasspeak(const ROOT::Double_v *x, const double *par);
+ROOT::Double_v missMassbackground(const ROOT::Double_v *x, const double *par);
+ROOT::Double_v missMassfitFunction(const ROOT::Double_v *x, const double *par);
+ROOT::Double_v degauss(const ROOT::Double_v *x, const double *par);
 
 float dt_poly4(std::vector<double> params, float p);
 

@@ -16,8 +16,6 @@
 #include "physics.hpp"
 
 int main(int argc, char** argv) {
-  int nthreads = 4;
-  ROOT::EnableImplicitMT(nthreads);
   auto start = std::chrono::high_resolution_clock::now();
   std::vector<std::string> infilenames;
   std::string outfilename;
@@ -44,8 +42,7 @@ int main(int argc, char** argv) {
   int progress = (events / 100);
 
   std::cout << " [" << std::flush;
-  for (auto&& current_event : ROOT::TSeqUL(events)) {
-    // for (int current_event = 0; current_event < events; current_event++) {
+  for (int current_event = 0; current_event < events; current_event++) {
     if (current_event % progress == 0) std::cout << "%" << std::flush;
     chain->GetEntry(current_event);
     auto check = std::make_unique<e1d_Cuts>(data);

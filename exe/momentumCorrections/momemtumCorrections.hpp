@@ -31,8 +31,10 @@ size_t mom_correction_csv(const std::vector<std::string>& fins, const std::share
 
     for (int part_num = 1; part_num < data->gpart(); part_num++) {
       if (cuts->Pip(part_num)) {
+        prot_num = part_num;
         event->SetPip(part_num);
       } else if (cuts->Prot(part_num)) {
+        prot_num = part_num;
         event->SetProton(part_num);
       } else if (cuts->Pim(part_num)) {
         event->SetPim(part_num);
@@ -40,19 +42,18 @@ size_t mom_correction_csv(const std::vector<std::string>& fins, const std::share
         event->SetOther(part_num);
     }
 
-    if (event->elastic() || event->channel() || true) {
+    if (event->elastic() || true) {
       std::string type = "none";
-      if (event->elastic())
-        type = "elastic";
-      else if (event->channel())
-        type = "channel";
+      if (event->elastic()) type = "elastic";
+      if (event->channel()) type = "channel";
 
       auto mom_correction =
-          std::to_string(data->p(0)) + "," + std::to_string(physics::theta_calc(data->cz(0))) + "," +
-          std::to_string(physics::phi_calc(data->cx(0), data->cy(0))) + "," + std::to_string(data->p(prot_num)) + "," +
-          std::to_string(physics::theta_calc(data->cz(prot_num))) + "," +
-          std::to_string(physics::phi_calc(data->cx(prot_num), data->cy(prot_num))) + "," + std::to_string(event->W()) +
-          "," + std::to_string(event->Q2()) + "," + std::to_string(event->sector()) + "," + type;
+          std::to_string(data->p(0)) + "," + std::to_string(physics::theta_calc(data->cz(0)) * DEG2RAD) + "," +
+          std::to_string(physics::phi_calc(data->cx(0), data->cy(0)) * DEG2RAD) + "," +
+          std::to_string(data->p(prot_num)) + "," + std::to_string(physics::theta_calc(data->cz(prot_num)) * DEG2RAD) +
+          "," + std::to_string(physics::phi_calc(data->cx(prot_num), data->cy(prot_num)) * DEG2RAD) + "," +
+          std::to_string(event->W()) + "," + std::to_string(event->Q2()) + "," + std::to_string(event->sector()) + "," +
+          type;
       sync->write(mom_correction);
     }
   }
