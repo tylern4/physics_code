@@ -55,14 +55,13 @@ double physics::xb_calc(const LorentzVector &gamma_mu) {
 }
 
 double physics::theta_rad(double cosz) { return acos(cosz); }
-
 double physics::phi_rad(double cosx, double cosy) { return atan2(cosx, cosy); }
-
 double physics::theta_calc(double cosz) { return acos(cosz) * RAD2DEG; }
-
 double physics::phi_calc(double cosx, double cosy) { return atan2(cosx, cosy) * RAD2DEG; }
+double physics::theta_calc_rad(double cosz) { return acos(cosz); }
+double physics::phi_calc_rad(double cosx, double cosy) { return atan2(cosx, cosy); }
 
-float physics::invTan(float y, float x) {
+float physics::invTan(const float &y, const float &x) {
   if (x > 0 && y > 0)
     return atan(y / x);  // 1st Quad.
   else if (x < 0 && y > 0)

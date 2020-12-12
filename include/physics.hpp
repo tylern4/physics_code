@@ -27,6 +27,8 @@ double theta_rad(double cosz);
 double phi_rad(double cosx, double cosy);
 double theta_calc(double cosz);
 double phi_calc(double cosx, double cosy);
+double theta_calc_rad(double cosz);
+double phi_calc_rad(double cosx, double cosy);
 double center_phi_calc(double cosx, double cosy);
 int get_sector(double phi);
 double Get_Mass(int ID);
@@ -35,7 +37,7 @@ std::shared_ptr<LorentzVector> fourVec(double px, double py, double pz, double m
 std::shared_ptr<LorentzVector> fourVec(double p, double cx, double cy, double cz, double mass);
 std::shared_ptr<LorentzVector> fourVec(double px, double py, double pz, int pid);
 std::shared_ptr<LorentzVector> fourVec(double p, double cx, double cy, double cz, int pid);
-float invTan(float y, float x);
+float invTan(const float& y, const float& x);
 float phi_boosted(const std::shared_ptr<LorentzVector>& vec);
 
 }  // namespace physics

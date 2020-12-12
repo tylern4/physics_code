@@ -21,20 +21,20 @@ size_t mom_correction_csv(const std::vector<std::string>& fins, const std::share
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
-    auto cuts = std::make_unique<Cuts>(data);
+    auto cuts = std::make_unique<e1d_Cuts>(data);
 
     if (!cuts->isElecctron()) continue;
     if (!cuts->Beam_cut()) continue;
 
     auto event = std::make_shared<Reaction>(data);
-    int prot_num = -1;
+    int positive_num = -1;
 
     for (int part_num = 1; part_num < data->gpart(); part_num++) {
       if (cuts->Pip(part_num)) {
-        prot_num = part_num;
+        positive_num = part_num;
         event->SetPip(part_num);
       } else if (cuts->Prot(part_num)) {
-        prot_num = part_num;
+        positive_num = part_num;
         event->SetProton(part_num);
       } else if (cuts->Pim(part_num)) {
         event->SetPim(part_num);
@@ -47,13 +47,13 @@ size_t mom_correction_csv(const std::vector<std::string>& fins, const std::share
       if (event->elastic()) type = "elastic";
       if (event->channel()) type = "channel";
 
-      auto mom_correction =
-          std::to_string(data->p(0)) + "," + std::to_string(physics::theta_calc(data->cz(0)) * DEG2RAD) + "," +
-          std::to_string(physics::phi_calc(data->cx(0), data->cy(0)) * DEG2RAD) + "," +
-          std::to_string(data->p(prot_num)) + "," + std::to_string(physics::theta_calc(data->cz(prot_num)) * DEG2RAD) +
-          "," + std::to_string(physics::phi_calc(data->cx(prot_num), data->cy(prot_num)) * DEG2RAD) + "," +
-          std::to_string(event->W()) + "," + std::to_string(event->Q2()) + "," + std::to_string(event->sector()) + "," +
-          type;
+      auto mom_correction = std::to_string(data->p(0)) + "," + std::to_string(physics::theta_calc_rad(data->cz(0))) +
+                            "," + std::to_string(physics::phi_calc_rad(data->cx(0), data->cy(0))) + "," +
+                            std::to_string(data->p(positive_num)) + "," +
+                            std::to_string(physics::theta_calc_rad(data->cz(positive_num))) + "," +
+                            std::to_string(physics::phi_calc_rad(data->cx(positive_num), data->cy(positive_num))) +
+                            "," + std::to_string(event->W()) + "," + std::to_string(event->Q2()) + "," +
+                            std::to_string(event->sector()) + "," + type;
       sync->write(mom_correction);
     }
   }
