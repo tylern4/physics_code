@@ -74,13 +74,7 @@ int main(int argc, char **argv) {
     size_t num_events = (size_t)data_chain->GetEntries();
 
     total += dh->Run<e1d_Cuts>(data_chain, "mc_rec", num);
-
-    auto mc_chain = std::make_shared<TChain>("h10");
-    for (auto &&f : fls) {
-      mc_chain->Add(f.c_str());
-    }
-
-    total += dh->RunMC<e1d_Cuts>(mc_chain, num);
+    total += dh->RunMC<e1d_Cuts>(data_chain, num);
 
     return total;
   };

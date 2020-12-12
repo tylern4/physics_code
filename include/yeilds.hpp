@@ -51,10 +51,11 @@ class Yeilds {
   template <class CutType>
   int Run(const std::shared_ptr<TChain>& chain, const std::string& type, const size_t& thread_id) {
     auto start = std::chrono::high_resolution_clock::now();
+    auto data = std::make_shared<Branches>(chain, false);
     size_t num_of_events = (size_t)chain->GetEntries();
     PRINT_TIMEING(start, "Got number of events from chain " << num_of_events << " : ");
 
-    auto data = std::make_shared<Branches>(chain, false);
+    // auto data = std::make_shared<Branches>(chain, false);
     _beam_energy = std::is_same<CutType, e1f_Cuts>::value ? E1F_E0 : E1D_E0;
     int total = 0;
     int current_event = 0;
@@ -170,10 +171,11 @@ class mcYeilds : public Yeilds {
   template <class CutType>
   int RunMC(const std::shared_ptr<TChain>& chain, const size_t& thread_id) {
     auto start = std::chrono::high_resolution_clock::now();
+    auto data = std::make_shared<Branches>(chain, true);
     size_t num_of_events = (size_t)chain->GetEntries();
     PRINT_TIMEING(start, "Got number of events from chain " << num_of_events << " : ");
 
-    auto data = std::make_shared<Branches>(chain, true);
+    // auto data = std::make_shared<Branches>(chain, true);
     _beam_energy = std::is_same<CutType, e1f_Cuts>::value ? E1F_E0 : E1D_E0;
 
     int total = 0;
