@@ -53,7 +53,7 @@ class Yeilds {
     auto start = std::chrono::high_resolution_clock::now();
     auto data = std::make_shared<Branches>(chain, false);
     size_t num_of_events = (size_t)chain->GetEntries();
-    PRINT_TIMEING(start, "Got number of events from chain " << num_of_events << " : ");
+    // PRINT_TIMEING(start, "Got number of events from chain " << num_of_events << " : ");
 
     // auto data = std::make_shared<Branches>(chain, false);
     _beam_energy = std::is_same<CutType, e1f_Cuts>::value ? E1F_E0 : E1D_E0;
@@ -173,14 +173,15 @@ class mcYeilds : public Yeilds {
     auto start = std::chrono::high_resolution_clock::now();
     auto data = std::make_shared<Branches>(chain, true);
     size_t num_of_events = (size_t)chain->GetEntries();
-    PRINT_TIMEING(start, "Got number of events from chain " << num_of_events << " : ");
+    // PRINT_TIMEING(start, "Got number of events from chain " << num_of_events << " : ");
 
     // auto data = std::make_shared<Branches>(chain, true);
     _beam_energy = std::is_same<CutType, e1f_Cuts>::value ? E1F_E0 : E1D_E0;
 
     int total = 0;
     for (size_t current_event = 0; current_event < num_of_events; current_event++) {
-      if (thread_id == 0 && current_event % 100000 == 0) std::cerr << 100 * current_event / num_of_events << std::endl;
+      if (thread_id == 0 && current_event % 100000 == 0)
+        std::cerr << "\t" << (100 * current_event / num_of_events) + 1 << "\r\r" << std::flush;
       chain->GetEntry(current_event);
       auto mc_event = std::make_shared<MCReaction>(data, _beam_energy);
       int pip_num = 1;

@@ -58,7 +58,7 @@ int main(int argc, char **argv) {
     if (i <= num_cut) infilenames_e1f[i++ % NUM_THREADS].push_back(f);
   }
 
-  PRINT_TIMEING(start, "Read in files: ");
+  // PRINT_TIMEING(start, "Read in files: ");
   std::string name = outputfile + "_e1d.csv";  //+ "_" + to_string(num)
   auto csv_file = std::make_shared<SyncFile>(name);
 
@@ -94,18 +94,18 @@ int main(int argc, char **argv) {
   //   return total;
   // };
 
-  PRINT_TIMEING(start, "Make lambdas: ");
+  // PRINT_TIMEING(start, "Make lambdas: ");
 
   size_t events = 0;
   if (e1d_files.size() > 0) {
     std::future<size_t> threads_e1d[NUM_THREADS];
     for (size_t i = 0; i < NUM_THREADS; i++) {
-      PRINT_TIMEING(start, "Make thread " << i << ": ");
+      // PRINT_TIMEING(start, "Make thread " << i << ": ");
       threads_e1d[i] = std::async(e1dworker, infilenames_e1d.at(i), i);
     }
 
     for (size_t i = 0; i < NUM_THREADS; i++) {
-      PRINT_TIMEING(start, "Get thread " << i << ": ");
+      // PRINT_TIMEING(start, "Get thread " << i << ": ");
       events += threads_e1d[i].get();
     }
   }
