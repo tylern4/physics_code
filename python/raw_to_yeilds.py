@@ -286,6 +286,9 @@ if __name__ == "__main__":
     binning["thetabins"] = pd.unique(rec.theta_bin)
 
     out = yeilds(rec, mc_rec, mc_thrown, binning)
+    if not os.path.exists(f'{out_folder}'):
+        os.makedirs(f'{out_folder}')
+
     out.to_csv(f"{out_folder}/yeilds.csv")
     out.to_pickle(f"{out_folder}/yeilds.pkl")
 
