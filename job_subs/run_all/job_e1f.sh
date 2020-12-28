@@ -5,12 +5,12 @@
 #SBATCH -J e1f_data
 #SBATCH -n 28
 #SBATCH -N 1
-#SBATCH -p defq,BigMem,defq-48core,gpu-v100-16gb,gpu-v100-32gb
-#SBATCH --output=log/clas6_e1f_%A.out
-#SBATCH --error=log/clas6_e1f_%A.err
+#SBATCH -p defq,BigMem,defq-48core,gpu-v100-16gb,gpu-v100-32gb,msmoms
+#SBATCH --output=log/e1f_data_%A.out
+#SBATCH --error=log/e1f_data_%A.err
 
 module load gcc/6.4.0
-module load python3/anaconda/5.2.0
+module load python3/anaconda/2020.02
 
 export CC=$(which gcc)
 export CXX=$(which g++)
@@ -25,6 +25,7 @@ export PATH=$ROOTSYS/bin:$PATH
 export PYTHONDIR=$ROOTSYS
 export LD_LIBRARY_PATH=$ROOTSYS/lib:$PYTHONDIR/lib:$ROOTSYS/bindings/pyroot:$LD_LIBRARY_PATH
 export PYTHONPATH=/usr/local/lib:$ROOTSYS/lib:$PYTHONPATH:$ROOTSYS/bindings/pyroot
+
 
 cd /home/tylerns/physics_code/build
 

@@ -32,8 +32,6 @@ echo $HOSTNAME
 ./csv_maker_mc -o /work/tylerns/e1f/outputs/csv/mc_osg -e1f /work/gothelab/clas6/e1f/sim/npip
 
 cat /work/tylerns/e1f/outputs/csv/mc_osg_*_e1f.csv > /work/tylerns/e1f/outputs/csv/mc_osg_e1f.csv
-
-/work/apps/python3/anaconda3/2020.02/bin/python /home/tylerns/physics_code/python/csv_to_feather.py /work/tylerns/e1f/outputs/csv/mc_osg_e1f.csv
-
+#/work/apps/python3/anaconda3/2020.02/bin/python /home/tylerns/physics_code/python/csv_to_feather.py /work/tylerns/e1f/outputs/csv/mc_osg_e1f.csv
 rm -rf /work/tylerns/e1f/outputs/csv/mc_osg_*_e1f.csv
 

@@ -3,14 +3,14 @@
 #INPUT Sequences file
 
 #SBATCH -J e1d_mc
-#SBATCH -n 48
+#SBATCH -n 28
 #SBATCH -N 1
-#SBATCH -p defq-48core,gpu-v100-16gb,gpu-v100-32gb
+#SBATCH -p defq,defq-48core,BigMem,msmoms
 #SBATCH --output=log/e1d_mc_%A.out
 #SBATCH --error=log/e1d_mc_%A.err
 
 module load gcc/6.4.0
-module load python3/anaconda/5.2.0
+module load python3/anaconda/2020.02
 
 export CC=$(which gcc)
 export CXX=$(which g++)
@@ -31,5 +31,5 @@ cd /home/tylerns/physics_code/build
 export NUM_THREADS=$SLURM_JOB_CPUS_PER_NODE 
 echo $SLURM_JOB_CPUS_PER_NODE
 
-./e1d_mc /work/tylerns/e1d/outputs/e1d_sim.root /work/gothelab/clas6/e1d/sim/osg/*.root
+./e1d_mc -o /work/tylerns/e1d/outputs/e1d_sim.root -i /work/gothelab/clas6/e1d/sim/npip
 

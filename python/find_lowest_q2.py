@@ -38,11 +38,8 @@ def get_min_q2(file_name):
     for _px, _py, _pz in zip(px, py, pz):
         _q2 = q2_calc(_px[0], _py[0], _pz[0])
         min_q2 = np.minimum(_q2, min_q2)
-    if min_q2 >= 1.3:
-        print(min_q2)
-        print(file_name)
 
-    return
+    return f"{min_q2}: {file_name}"
 
 
 if __name__ == "__main__":
@@ -50,4 +47,7 @@ if __name__ == "__main__":
 
     with Pool(int(sys.argv[1])) as p:
         r = list(tqdm(p.imap(get_min_q2, files), total=len(files)))
+
+    for x in r:
+        print(x)
 
