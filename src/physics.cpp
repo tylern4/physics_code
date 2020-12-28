@@ -87,6 +87,11 @@ double physics::center_phi_calc(double cosx, double cosy) {
   return phi0;
 }
 
+double physics::center_phi_calc_rad(double cosx, double cosy) {
+  double phi0 = invTan(cosx, cosy);
+  return phi0;
+}
+
 int physics::get_sector(double phi) {
   if (phi >= 60 && phi < 120) {
     return 1;

@@ -262,9 +262,11 @@ Garys binning
       std::make_shared<TH2F>("electron_fid", "electron_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
   TH2F_ptr neutron_fid_hist = std::make_shared<TH2F>("neutron_fid", "neutron_fid", BINS, -360, 360, BINS, -360, 360);
 
-  TH2F* hadron_fid_sec_hist[3][NUM_SECTORS];
+  std::array<std::array<TH2F_ptr, 3>, NUM_SECTORS> hadron_fid_sec_hist;
+  std::array<std::array<TH2F_ptr, 3>, NUM_SECTORS> hadron_fid_xy_sec_hist;
   TH1F* hadron_fid_sec_slice[NUM_SECTORS][FID_SLICES];
-  TH2F* hadron_fid_hist[3];
+  std::array<TH2F_ptr, 3> hadron_fid_hist;
+  std::array<TH2F_ptr, 3> hadron_fid_xy_hist;
 
   std::vector<TH2F_ptr> cerenkov_fid;
 
@@ -446,7 +448,7 @@ Garys binning
   // fiducial hist
   void Fill_electron_fid(const std::shared_ptr<Branches>& _data, const std::shared_ptr<Reaction>& _r);
   void Fill_neutron_fid(float theta, float phi, int sector);
-  void Fill_hadron_fid(float theta, float phi, int sector, int id);
+  void Fill_hadron_fid(const std::shared_ptr<Branches>& _data, int part_num, int id);
   void Fid_Write();
   void fid_canvas();
 

@@ -625,7 +625,54 @@ float Branches::cc_c2(int i) {
     return std::nanf("NULL");
   }
 }  //[cc_part]
+//// THIS IS THE BAD WAY TO DO THIS
+//// Don't try this at home...make a class to do this or something....
+float Branches::cc_x(int i) {
+  float A = -0.000785;
+  float B = 0;
+  float C = -0.00168;
+  float D = 1;
 
+  auto p0_vec = TVector3(this->dc_xsc(i), this->dc_ysc(i), this->dc_zsc(i));
+  auto n_vec = TVector3(this->dc_cxsc(i), this->dc_cysc(i), this->dc_czsc(i));
+  auto S_vec = TVector3(A, B, C);
+
+  auto numer = A * this->dc_xsc(i) + B * this->dc_ysc(i) + C * this->dc_zsc(i) + D;
+  auto denom = S_vec.Dot(n_vec);
+
+  auto t_vec = n_vec * abs(numer / denom);
+
+  p0_vec += t_vec;
+  float cc_theta = acosf(p0_vec.Z() / p0_vec.Mag());
+  float cc_phi = atanf(p0_vec.Y() / p0_vec.X());
+
+  return this->cc_r(i) * sinf(cc_theta) * cosf(cc_phi);
+}
+float Branches::cc_y(int i) {
+  float A = -0.000785;
+  float B = 0;
+  float C = -0.00168;
+  float D = 1;
+
+  auto p0_vec = TVector3(this->dc_xsc(i), this->dc_ysc(i), this->dc_zsc(i));
+  auto n_vec = TVector3(this->dc_cxsc(i), this->dc_cysc(i), this->dc_czsc(i));
+  auto S_vec = TVector3(A, B, C);
+
+  auto numer = A * this->dc_xsc(i) + B * this->dc_ysc(i) + C * this->dc_zsc(i) + D;
+  auto denom = S_vec.Dot(n_vec);
+
+  auto t_vec = n_vec * abs(numer / denom);
+
+  p0_vec += t_vec;
+  float cc_theta = acosf(p0_vec.Z() / p0_vec.Mag());
+  float cc_phi = atanf(p0_vec.Y() / p0_vec.X());
+
+  return this->cc_r(i) * sinf(cc_theta) * sinf(cc_phi);
+}
+//// THIS IS THE BAD WAY TO DO THIS ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+//// Don't try this at home...make a class to do this or something....
+
+////
 int Branches::pidpart(int i) {
   if (i < _nprt) {
     return _pidpart[i];

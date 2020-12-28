@@ -180,7 +180,7 @@ class Reaction {
     bool elastic = SingleP();
     elastic &= (abs(MM2()) < 0.05f);
     if (elastic && _prot != nullptr) {
-      elastic &= (phi_diff() > 3.125f && phi_diff() < 3.165f);
+      elastic &= (phi_diff() > 3.1f && phi_diff() < 3.2f);
     } else {
       elastic = false;
     }

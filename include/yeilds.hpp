@@ -97,7 +97,7 @@ class Yeilds {
         csv_buffer.mm2 = event->MM2();
         csv_buffer.helicty = data->helicity();
         csv_buffer.type = type;
-        csv_buffer.hash = 0;  // std::hash<std::string>{}(root_file + std::to_string(current_event));
+        // csv_buffer.hash = 0;  // std::hash<std::string>{}(root_file + std::to_string(current_event));
         WriteData(csv_buffer);
       }
     }
@@ -158,6 +158,56 @@ class Yeilds {
 
     return total;
   }
+
+  template <class CutType>
+  size_t Run_fidFits(const std::shared_ptr<TChain>& chain, const size_t& thread_id) {
+    auto start = std::chrono::high_resolution_clock::now();
+    auto data = std::make_shared<Branches>(chain, false);
+    size_t num_of_events = (size_t)chain->GetEntries();
+
+    _beam_energy = std::is_same<CutType, e1f_Cuts>::value ? E1F_E0 : E1D_E0;
+    size_t total = 0;
+    size_t current_event = 0;
+    for (current_event = 0; current_event < num_of_events; current_event++) {
+      if (thread_id == 0 && current_event % 100000 == 0)
+        std::cerr << 1 + (100 * current_event / num_of_events) << std::endl;
+
+      chain->GetEntry(current_event);
+      auto event = std::make_shared<Reaction>(data, _beam_energy, nullptr);
+      auto check = std::make_unique<CutType>(data);
+
+      for (int part_num = 1; part_num < data->gpart(); part_num++) {
+        if (check->Pip(part_num)) {
+          event->SetPip(part_num);
+        } else if (check->Prot(part_num)) {
+          event->SetProton(part_num);
+        } else if (check->Pim(part_num)) {
+          event->SetPim(part_num);
+        } else
+          event->SetOther(part_num);
+      }
+      std::string type = "other";
+      if (event->channel()) type = "channel";
+      total++;
+      fid_data csv_buffer;
+      csv_buffer.sector = data->dc_sect(0);
+      csv_buffer.e_p = data->p(0);
+      csv_buffer.e_theta = physics::theta_calc_rad(data->cz(0));
+      csv_buffer.e_phi = physics::phi_calc_rad(data->cx(0), data->cy(0));
+      csv_buffer.theta = physics::theta_calc_rad(data->cz(0));
+      csv_buffer.phi = physics::center_phi_calc_rad(data->cx(0), data->cy(0));
+      csv_buffer.x = event->cc_x();
+      csv_buffer.y = event->cc_y();
+      csv_buffer.type = type;
+
+      _multi_threaded_csv->write(csv_buffer.print());
+      // std::cout << csv_buffer << std::endl;
+    }
+
+    chain->Reset();
+
+    return total;
+  }
 };
 
 class mcYeilds : public Yeilds {
@@ -198,7 +248,7 @@ class mcYeilds : public Yeilds {
         csv_buffer.mm2 = mc_event->MM2();
         csv_buffer.helicty = data->helicity();
         csv_buffer.type = "thrown";
-        csv_buffer.hash = 0;  // std::hash<std::string>{}(root_file + std::to_string(current_event));
+        // csv_buffer.hash = 0;  // std::hash<std::string>{}(root_file + std::to_string(current_event));
         WriteData(csv_buffer);
       }
     }

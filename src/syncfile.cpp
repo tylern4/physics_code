@@ -12,7 +12,7 @@ bool SyncFile::writeToFile() {
     std::lock_guard<std::mutex> lock(_writerMutex);
     // loop over queue wring out events to the file before closing
     while (!_writeQueue.empty()) {
-      _csv_output << _writeQueue.front() << "\n";
+      _csv_output << _writeQueue.front();
       _writeQueue.pop();
     }
     return true;
@@ -25,7 +25,7 @@ bool SyncFile::writeToFile() {
 bool SyncFile::write(const std::string& data) {
   try {
     std::lock_guard<std::mutex> lock(_writerMutex);
-    _csv_output << data << std::endl;
+    _csv_output << data;
     return true;
   } catch (const std::exception& e) {
     std::cerr << e.what() << '\n';

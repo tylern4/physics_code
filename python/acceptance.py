@@ -147,17 +147,27 @@ def virtual_photon(W: float, Q2: float, beam_energy: float) -> float:
     MASS_E = 0.000511
     target_mass = 0.93827203
     FS_ALPHA = 0.007297352570866302
-    beam_momentum = np.sqrt(beam_energy * beam_energy - MASS_E * MASS_E)
-    nu = (((W * W + Q2) / target_mass) - target_mass) / 2  # Photon Energy
-    scattered_energy = (beam_energy - nu)
-    scattered_momentum = np.sqrt(
-        scattered_energy * scattered_energy - MASS_E * MASS_E)
-    theta = np.arccos((beam_energy * scattered_energy - Q2 / 2.0 - MASS_E * MASS_E) /
-                      (beam_momentum * scattered_momentum))
-    epsilon = (np.power(
-        (1 + (2 * (1 + ((nu * nu) / Q2)) * np.power(np.tan((theta / 2)), 2))), -1))
-    flux = FS_ALPHA / (4 * np.pi * Q2) * W / (beam_energy * beam_energy * target_mass *
-                                              target_mass) * (W * W - target_mass * target_mass) / (1 - epsilon)
+
+    one = FS_ALPHA/(4*np.pi*Q2)
+    two = W/(beam_energy**2 * target_mass**2)
+
+    # beam_momentum = np.sqrt(beam_energy**2 - MASS_E**2)
+    # nu = (((W**2 + Q2) / target_mass) - target_mass) / 2  # Photon Energy
+    # scattered_energy = (beam_energy - nu)
+    # scattered_momentum = np.sqrt(scattered_energy**2 - MASS_E**2)
+
+    # theta = np.arccos((beam_energy * scattered_energy - Q2 / 2.0 - MASS_E * MASS_E) /
+    #                   (beam_momentum * scattered_momentum))
+    # epsilon = (np.power(
+    #     (1 + (2 * (1 + ((nu * nu) / Q2)) * np.power(np.tan((theta / 2)), 2))), -1))
+
+    # three = (W**2 - target_mass**2)/(1 - epsilon)
+
+    epsilon = 2*(1)
+    epsilon = 1/epsilon
+    three = (W**2 - target_mass**2)/(1 - epsilon)
+
+    flux = one * two * three
     return flux
 
 
@@ -302,12 +312,27 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
              fontsize=size, color=color,
              ha='center', va='center', alpha=alpha, rotation=45, zorder=0)
 
+    phi_bins = np.linspace(0, 2 * np.pi, 200)
     thetabins = pd.unique(cos_t_bins)
     q2_left = 0.0
     for c, cos_t in enumerate(thetabins):
         a = which_plot[round(cos_t.left, 1)][0]
         b = which_plot[round(cos_t.left, 1)][1]
         cos_label = plot_label[round(cos_t.left, 1)]
+
+        _w = (w.left + w.right) / 2.0
+        _q2 = (q2.left + q2.right) / 2.0
+        _cos_t = (cos_t.left + cos_t.right) / 2.0
+
+        crossSections = []
+        phis = []
+        for phi in phi_bins:
+            crossSections.append(
+                maid(ENERGY, _w, _q2, _cos_t, np.degrees(phi)))
+            phis.append(phi)
+
+        crossSections = np.array(crossSections)
+        phis = np.array(phis)
 
         _data = data[cos_t == data.theta_bin]
         _mc_rec_data = mc_rec_data[cos_t == mc_rec_data.theta_bin]
@@ -367,20 +392,6 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
         ax[a][b].text(0.0, 1.2*np.max(y), cos_label)
 
         _ax = ax[a][b].twinx()
-        phi_bins = np.linspace(0, 2 * np.pi, 200)
-        crossSections = []
-        phis = []
-        _w = (w.left + w.right) / 2.0
-        _q2 = (q2.left + q2.right) / 2.0
-        _cos_t = (cos_t.left + cos_t.right) / 2.0
-
-        for phi in phi_bins:
-            crossSections.append(
-                maid(ENERGY, _w, _q2, _cos_t, np.degrees(phi)))
-            phis.append(phi)
-
-        crossSections = np.array(crossSections)
-        phis = np.array(phis)
 
         _ax.plot(phis, crossSections, c='r', linestyle='dotted')
         _ax.set_ylim(bottom=0, top=np.max(crossSections)*1.5)

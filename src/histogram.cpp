@@ -12,9 +12,6 @@ Histogram::Histogram() {
   makeHists_EC();
   makeHists_CC();
   makeHists_fid();
-  hadron_fid_hist[0] = new TH2F("hadron_fid", "hadron_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
-  hadron_fid_hist[1] = new TH2F("proton_fid", "proton_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
-  hadron_fid_hist[2] = new TH2F("pip_fid", "pip_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
 
   ndhist_nPip = std::make_unique<THnD>("ndhist", "ndhist", DIMENSIONS, nbins, xmin, xmax);
   ndhist_nPip->GetAxis(0)->SetName("W");
@@ -1220,6 +1217,19 @@ void Histogram::CC_canvas() {
 }
 
 void Histogram::makeHists_fid() {
+  hadron_fid_hist[fid_part::hadron] =
+      std::make_unique<TH2F>("hadron_fid", "hadron_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
+  hadron_fid_hist[fid_part::proton] =
+      std::make_unique<TH2F>("proton_fid", "proton_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
+  hadron_fid_hist[fid_part::pip] =
+      std::make_unique<TH2F>("pip_fid", "pip_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
+
+  hadron_fid_xy_hist[fid_part::hadron] =
+      std::make_unique<TH2F>("hadron_fid_xy", "hadron_fid_xy", BINS, -200, 200, BINS, 0, 500);
+  hadron_fid_xy_hist[fid_part::proton] =
+      std::make_unique<TH2F>("proton_fid_xy", "proton_fid_xy", BINS, -200, 200, BINS, 0, 500);
+  hadron_fid_xy_hist[fid_part::pip] = std::make_unique<TH2F>("pip_fid_xy", "pip_fid_xy", BINS, -200, 200, BINS, 0, 500);
+
   cerenkov_fid.reserve(NUM_SECTORS);
   fid_xy.reserve(NUM_SECTORS);
   electron_fid_sec_hist.reserve(NUM_SECTORS);
@@ -1236,8 +1246,11 @@ void Histogram::makeHists_fid() {
 
     for (int t = 0; t < 3; t++) {
       hadron_fid_sec_hist[t][sec_i] =
-          new TH2F(Form("hadron_fid_sec%d_%d", sec_i + 1, t), Form("hadron_fid_sec%d_%d", sec_i + 1, t), BINS,
-                   min_phi[sec_i], max_phi[sec_i], BINS, theta_min, theta_max);
+          std::make_shared<TH2F>(Form("hadron_fid_sec%d_%d", sec_i + 1, t), Form("hadron_fid_sec%d_%d", sec_i + 1, t),
+                                 BINS, min_phi[sec_i], max_phi[sec_i], BINS, theta_min, theta_max);
+      hadron_fid_xy_sec_hist[t][sec_i] =
+          std::make_shared<TH2F>(Form("hadron_fid_xy_sec%d_%d", sec_i + 1, t),
+                                 Form("hadron_fid_xy_sec%d_%d", sec_i + 1, t), BINS, -200, 200, BINS, 0, 500);
     }
   }
 }
@@ -1267,18 +1280,30 @@ void Histogram::Fill_neutron_fid(float theta, float phi, int sector) {
   electron_fid_sec_hist[sector - 1]->Fill(phi, theta);
 }
 
-void Histogram::Fill_hadron_fid(float theta, float phi, int sector, int id) {
+void Histogram::Fill_hadron_fid(const std::shared_ptr<Branches> &_data, int part_num, int id) {
+  short sector = _data->dc_sect(part_num);
   if (sector == 0 || sector > NUM_SECTORS) return;
+
+  float phi = physics::phi_calc(_data->cx(part_num), _data->cy(part_num));
+  float theta = physics::theta_calc(_data->cz(part_num));
+
+  hadron_fid_hist[fid_part::hadron]->Fill(phi, theta);
+  hadron_fid_sec_hist[fid_part::hadron][sector - 1]->Fill(phi, theta);
+
+  hadron_fid_xy_hist[fid_part::hadron]->Fill(_data->dc_ysc(part_num), _data->dc_xsc(part_num));
+  hadron_fid_xy_sec_hist[fid_part::hadron][sector - 1]->Fill(_data->dc_ysc(part_num), _data->dc_xsc(part_num));
+
   if (id == PROTON) {
-    hadron_fid_hist[0]->Fill(phi, theta);
-    hadron_fid_sec_hist[0][sector - 1]->Fill(phi, theta);
-    hadron_fid_hist[1]->Fill(phi, theta);
-    hadron_fid_sec_hist[1][sector - 1]->Fill(phi, theta);
+    hadron_fid_hist[fid_part::proton]->Fill(phi, theta);
+    hadron_fid_sec_hist[fid_part::proton][sector - 1]->Fill(phi, theta);
+    hadron_fid_xy_hist[fid_part::proton]->Fill(_data->dc_ysc(part_num), _data->dc_xsc(part_num));
+    hadron_fid_xy_sec_hist[fid_part::proton][sector - 1]->Fill(_data->dc_ysc(part_num), _data->dc_xsc(part_num));
+
   } else if (id == PIP) {
-    hadron_fid_hist[0]->Fill(phi, theta);
-    hadron_fid_sec_hist[0][sector - 1]->Fill(phi, theta);
-    hadron_fid_hist[2]->Fill(phi, theta);
-    hadron_fid_sec_hist[2][sector - 1]->Fill(phi, theta);
+    hadron_fid_hist[fid_part::pip]->Fill(phi, theta);
+    hadron_fid_sec_hist[fid_part::pip][sector - 1]->Fill(phi, theta);
+    hadron_fid_xy_hist[fid_part::pip]->Fill(_data->dc_ysc(part_num), _data->dc_xsc(part_num));
+    hadron_fid_xy_sec_hist[fid_part::pip][sector - 1]->Fill(_data->dc_ysc(part_num), _data->dc_xsc(part_num));
   }
 }
 
@@ -1298,6 +1323,11 @@ void Histogram::Fid_Write() {
     hadron_fid_hist[t]->SetXTitle("#phi");
     hadron_fid_hist[t]->SetOption("COLZ");
     hadron_fid_hist[t]->Write();
+
+    hadron_fid_xy_hist[t]->SetYTitle("#theta");
+    hadron_fid_xy_hist[t]->SetXTitle("#phi");
+    hadron_fid_xy_hist[t]->SetOption("COLZ");
+    hadron_fid_xy_hist[t]->Write();
   }
 
   fid_xy_hist->SetXTitle("X");
@@ -1326,6 +1356,11 @@ void Histogram::Fid_Write() {
       hadron_fid_sec_hist[t][sec_i]->SetXTitle("#phi");
       hadron_fid_sec_hist[t][sec_i]->SetOption("COLZ");
       hadron_fid_sec_hist[t][sec_i]->Write();
+
+      hadron_fid_xy_sec_hist[t][sec_i]->SetYTitle("#theta");
+      hadron_fid_xy_sec_hist[t][sec_i]->SetXTitle("#phi");
+      hadron_fid_xy_sec_hist[t][sec_i]->SetOption("COLZ");
+      hadron_fid_xy_sec_hist[t][sec_i]->Write();
     }
   }
 

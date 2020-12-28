@@ -12,6 +12,7 @@
 #include "TTree.h"
 #include "TTreeCache.h"
 #include "TTreePerfStats.h"
+#include "TVector3.h"
 #include "constants.hpp"
 
 /*
@@ -391,6 +392,8 @@ class Branches {
   float cc_t(int i);
   float cc_r(int i);
   float cc_c2(int i);
+  float cc_x(int i);
+  float cc_y(int i);
   //////////
   int pidpart(int i);
   float xpart(int i);

@@ -30,6 +30,7 @@ double phi_calc(double cosx, double cosy);
 double theta_calc_rad(double cosz);
 double phi_calc_rad(double cosx, double cosy);
 double center_phi_calc(double cosx, double cosy);
+double center_phi_calc_rad(double cosx, double cosy);
 int get_sector(double phi);
 double Get_Mass(int ID);
 double fiducial_phi(double theta_e, double e_p);

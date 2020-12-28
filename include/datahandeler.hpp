@@ -115,16 +115,16 @@ class DataHandler {
 
       if (check->Pip(part_num)) {
         event->SetPip(part_num);
-        _hists->Fill_hadron_fid(theta, phi, sector, PIP);
+        _hists->Fill_hadron_fid(_data, part_num, PIP);
         _hists->Fill_pion_WQ2(event->W(), event->Q2());
         _hists->Fill_Pi_ID_P(_data->p(part_num), _data->b(part_num));
       } else if (check->Prot(part_num)) {
         event->SetProton(part_num);
-        _hists->Fill_hadron_fid(theta, phi, sector, PROTON);
+        _hists->Fill_hadron_fid(_data, part_num, PROTON);
         _hists->Fill_proton_WQ2(event->W(), event->Q2());
         _hists->Fill_proton_ID_P(_data->p(part_num), _data->b(part_num));
       } else if (check->Pim(part_num)) {
-        _hists->Fill_hadron_fid(theta, phi, sector, PIM);
+        _hists->Fill_hadron_fid(_data, part_num, PIM);
         event->SetPim(part_num);
       } else
         event->SetOther(part_num);

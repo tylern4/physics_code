@@ -80,6 +80,7 @@ static const float MIN_P_CUT = 0.005000;
 
 // const float min_phi[6] = {0, 60, 120, -180, -120, -60};
 // const float max_phi[6] = {60, 120, 180, -120, -60, 0};
+enum fid_part { hadron, proton, pip };
 
 static std::unordered_map<int, std::pair<float, float>> phi_map = {
     {1, std::make_pair(60, 120)},   {2, std::make_pair(0, 60)},      {3, std::make_pair(-60, 0)},

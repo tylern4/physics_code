@@ -161,21 +161,21 @@ bool Cuts::Hardon_fid_arjun(int part) {
 bool Cuts::Pip(int part) {
   bool _pip = true;
   _pip &= (_data->q(part) == POSITIVE);
-  _pip &= Hardon_fid_arjun(part);
+  // _pip &= Hardon_fid_arjun(part);
   _pip &= dt_Pip_cut(part);
   return _pip;
 }
 bool Cuts::Pim(int part) {
   bool _pim = true;
   _pim &= (_data->q(part) == NEGATIVE);
-  _pim &= Hardon_fid_arjun(part);
+  //_pim &= Hardon_fid_arjun(part);
   _pim &= dt_Pip_cut(part);
   return _pim;
 }
 bool Cuts::Prot(int part) {
   bool _prot = true;
   _prot &= (_data->q(part) == POSITIVE);
-  _prot &= Hardon_fid_arjun(part);
+  //_prot &= Hardon_fid_arjun(part);
   _prot &= dt_P_cut(part);
   return _prot;
 }
@@ -183,19 +183,19 @@ bool Cuts::Prot(int part) {
 bool Cuts::Pipish(int part) {
   bool _pip = true;
   _pip &= (_data->q(part) == POSITIVE);
-  _pip &= Hardon_fid_arjun(part);
+  //_pip &= Hardon_fid_arjun(part);
   return _pip;
 }
 bool Cuts::Pimish(int part) {
   bool _pim = true;
   _pim &= (_data->q(part) == NEGATIVE);
-  _pim &= Hardon_fid_arjun(part);
+  //_pim &= Hardon_fid_arjun(part);
   return _pim;
 }
 bool Cuts::Protish(int part) {
   bool _prot = true;
   _prot &= (_data->q(part) == POSITIVE);
-  _prot &= Hardon_fid_arjun(part);
+  //_prot &= Hardon_fid_arjun(part);
   return _prot;
 }
 

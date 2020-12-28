@@ -27,27 +27,28 @@ set_target_properties(lz4xx PROPERTIES CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS "-Ofast ${ROOT_CXX_FLAGS}")
 set(CMAKE_C_FLAGS "-Ofast ${ROOT_CXX_FLAGS}")
 
-set(PROGRAMS 
-      exe/cpp/e1d.cpp 
-      exe/cpp/e1f.cpp 
-      exe/cpp/e16.cpp 
+set(PROGRAMS
+      exe/cpp/e1d.cpp
+      exe/cpp/e1f.cpp
+      exe/cpp/e16.cpp
       exe/cpp/analysis.cpp
-      exe/monteCarlo/e1d_mc.cpp 
-      exe/monteCarlo/e1f_mc.cpp 
-      exe/monteCarlo/analysis_mc.cpp 
-      exe/skim/e1d_skim.cpp 
-      exe/skim/e1f_skim.cpp 
+      exe/monteCarlo/e1d_mc.cpp
+      exe/monteCarlo/e1f_mc.cpp
+      exe/monteCarlo/analysis_mc.cpp
+      exe/skim/e1d_skim.cpp
+      exe/skim/e1f_skim.cpp
       exe/skim/skim_one_sanity.cpp
-      exe/csv_maker/csv_maker.cpp 
-      exe/csv_maker/csv_maker_mc.cpp 
+      exe/csv_maker/csv_maker.cpp
+      exe/csv_maker/csv_maker_mc.cpp
       exe/ntuple_maker/ntuple_maker.cpp
       exe/golden_run/golden_run.cpp
       exe/momentumCorrections/momemtumCorrections.cpp
       exe/peakFitMomCorr/peakFitMomCorr.cpp
       exe/deltaTFitter/deltaTFitter.cpp
       exe/deltaTFitter/deltaTFitter_e1f.cpp
+      exe/fidFitter/fidFitter.cpp
       )
-    
+
 foreach(prog ${PROGRAMS} )
     get_filename_component(progname ${prog} NAME)
     string( REPLACE ".cpp" "" progname ${progname} )
@@ -59,16 +60,12 @@ endforeach( prog ${PROGRAMS} )
 
 find_package(Cython)
 IF(Cython_FOUND)
-  find_package(PythonInterp REQUIRED)
-  find_package(PythonLibs REQUIRED)
+  find_package(PythonInterp 3.5 REQUIRED)
+  find_package(PythonLibs 3.5 REQUIRED)
   find_package(PythonExtensions REQUIRED)
   find_package(NumPy REQUIRED)
-  if(${PYTHON_VERSION_MAJOR} STREQUAL "2")
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
-  else()
-    set(CMAKE_CXX_STANDARD 14)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
-  endif()
+  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
   include_directories(${PYTHON_INCLUDE_DIRS} ${NumPy_INCLUDE_DIR})
 
