@@ -12,7 +12,6 @@
 #include "branches.hpp"
 #include "constants.hpp"
 #include "datahandeler.hpp"
-#include "main.h"
 #include "physics.hpp"
 
 int main(int argc, char** argv) {
@@ -37,10 +36,18 @@ int main(int argc, char** argv) {
   // Make an array of futures which return an integer
   std::future<size_t> threads[NUM_THREADS];
 
+  auto run_e16_file = [&hist, &mom_corr](const std::vector<std::string>& in, int thread_id) {
+    auto dh = std::make_unique<DataHandler>(in, hist, mom_corr);
+    if (thread_id == 0) dh->setLoadBar(true);
+    size_t tot = 0;
+    tot += dh->Run<e16_Cuts>();
+    return tot;
+  };
+
   auto start = std::chrono::high_resolution_clock::now();
   // For the number of threads run the list of file
   for (size_t i = 0; i < NUM_THREADS; i++) {
-    threads[i] = std::async(run_e16_file, infilenames.at(i), hist, mom_corr, i);
+    threads[i] = std::async(run_e16_file, infilenames.at(i), i);
   }
 
   // Let the threads run and get the results when they're done
