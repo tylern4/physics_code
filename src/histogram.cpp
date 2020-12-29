@@ -659,7 +659,7 @@ void Histogram::Fill_W_Missing_Mass(float W, float mm, float mm2) {
   }
 }
 
-void Histogram::Fill_Mass_photons(std::shared_ptr<Reaction> _e) {
+void Histogram::Fill_Mass_photons(const std::shared_ptr<Reaction> &_e) {
   Mass_pi0->Fill(_e->pi0_mass());
   Mass_square_pi0->Fill(_e->pi0_mass2());
 
@@ -1806,10 +1806,10 @@ void mcHistogram::Fill_WQ2_MC(const std::shared_ptr<MCReaction> &_e) {
 }
 
 void mcHistogram::Fill(const std::shared_ptr<MCReaction> &event) {
-  std::lock_guard<std::mutex> lk(mutex);
-  std::array<double, DIMENSIONS> to_fill = {event->W_thrown(), event->Q2_thrown(), cos(event->Theta_star()),
-                                            event->Phi_star() * RAD2DEG};
-  ndhist_mc->Fill(to_fill.data());
+  // std::lock_guard<std::mutex> lk(mutex);
+  // std::array<double, DIMENSIONS> to_fill = {event->W_thrown(), event->Q2_thrown(), cos(event->Theta_star()),
+  //                                           event->Phi_star() * RAD2DEG};
+  // ndhist_mc->Fill(to_fill.data());
 }
 
 void mcHistogram::Fill_P(const std::shared_ptr<Branches> &d) {

@@ -411,7 +411,7 @@ Garys binning
   // void Fill_Mass(float mass);
   void Fill_Missing_Mass_square(float miss_mass_2);
 
-  void Fill_Mass_photons(std::shared_ptr<Reaction> _e);
+  void Fill_Mass_photons(const std::shared_ptr<Reaction>& _e);
   void Write_Missing_Mass();
 
   void Fill_Missing_Mass_pi0(float mm, float mm2);
