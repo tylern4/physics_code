@@ -61,7 +61,8 @@ class Yeilds {
     int current_event = 0;
     // #pragma omp parallel for private(current_event) num_threads(2)
     for (current_event = 0; current_event < num_of_events; current_event++) {
-      if (thread_id == 0 && current_event % 100000 == 0) std::cerr << 100 * current_event / num_of_events << std::endl;
+      if (thread_id == 0 && current_event % 100000 == 0)
+        std::cerr << "\t" << 100 * (current_event / (float)num_of_events) + 1 << "\r\r" << std::flush;
       chain->GetEntry(current_event);
       auto check = std::make_unique<CutType>(data);
       auto event = std::make_shared<Reaction>(data, _beam_energy, _mom_corr);
@@ -231,7 +232,7 @@ class mcYeilds : public Yeilds {
     int total = 0;
     for (size_t current_event = 0; current_event < num_of_events; current_event++) {
       if (thread_id == 0 && current_event % 100000 == 0)
-        std::cerr << "\t" << (100 * current_event / num_of_events) + 1 << "\r\r" << std::flush;
+        std::cerr << "\t" << 100 * (current_event / (float)num_of_events) + 1 << "\r\r" << std::flush;
       chain->GetEntry(current_event);
       auto mc_event = std::make_shared<MCReaction>(data, _beam_energy);
       int pip_num = 1;
