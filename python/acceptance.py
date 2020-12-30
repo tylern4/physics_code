@@ -433,19 +433,19 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
     )
 
 
-def draw_cos_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder):
+def draw_cos_plots(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder):
     # with multiprocessing.Pool() as pool:
     #     inputs = []
     #     for bins in range(10, 11):
     #         inputs.append((func, data, mc_rec_data, thrown_data,
     #                        w, q2, cos_t_bins, out_folder, bins))
     #     pool.starmap(draw_cos_bin, inputs)
-    # for bins in range(10, 24, 2):
-    #     draw_cos_bin(data, mc_rec_data, thrown_data,
-    #                  w, q2, cos_t_bins, out_folder, bins, models_fits={"new": model_new})
+    for bins in range(10, 26, 2):
+        draw_cos_bin(data, mc_rec_data, thrown_data,
+                     w, q2, cos_t_bins, out_folder, bins, models_fits={"new": model_new})
 
-    draw_cos_bin(data, mc_rec_data, thrown_data,
-                 w, q2, cos_t_bins, out_folder, 10, models_fits={"new": model_new})
+    # draw_cos_bin(data, mc_rec_data, thrown_data,
+    #              w, q2, cos_t_bins, out_folder, 10, models_fits={"new": model_new})
 
 
 def draw_xsec_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder, bins):
@@ -602,7 +602,7 @@ def draw_xsection(rec: pd.DataFrame, mc_rec: pd.DataFrame, thrown: pd.DataFrame,
             data = rec[rec_cut]
             mc_rec_data = mc_rec[mc_rec_cut]
             thrown_data = thrown[thrown_cut]
-            draw_cos_plots(func, data, mc_rec_data,
+            draw_cos_plots(data, mc_rec_data,
                            thrown_data, w, q2, rec.theta_bin, out_folder)
             #################################################
             # for cos_t in thetabins:
