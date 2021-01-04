@@ -96,6 +96,7 @@ class Yeilds {
         csv_buffer.theta = event->Theta_star();
         csv_buffer.phi = event->Phi_star();
         csv_buffer.mm2 = event->MM2();
+        csv_buffer.weight = event->photon_flux();
         csv_buffer.helicty = data->helicity();
         csv_buffer.type = type;
         // csv_buffer.hash = 0;  // std::hash<std::string>{}(root_file + std::to_string(current_event));
@@ -247,6 +248,7 @@ class mcYeilds : public Yeilds {
         csv_buffer.theta = mc_event->Theta_star();
         csv_buffer.phi = mc_event->Phi_star();
         csv_buffer.mm2 = mc_event->MM2();
+        csv_buffer.weight = mc_event->photon_flux();
         csv_buffer.helicty = data->helicity();
         csv_buffer.type = "thrown";
         // csv_buffer.hash = 0;  // std::hash<std::string>{}(root_file + std::to_string(current_event));

@@ -30,7 +30,7 @@ from lmfit.models import *
 ENERGY = 4.81726
 
 
-def read_csv(file_name):
+def read_csv(file_name: str = "", data: bool = False):
     names = [
         "electron_sector",
         "w",
@@ -38,6 +38,7 @@ def read_csv(file_name):
         "theta",
         "phi",
         "mm2",
+        "weights",
         "helicty",
         "type"
     ]
@@ -49,6 +50,7 @@ def read_csv(file_name):
         "theta": "float32",
         "phi": "float32",
         "mm2": "float32",
+        "weights": "float32",
     }
 
     start = time.time()
@@ -61,6 +63,9 @@ def read_csv(file_name):
         convert_options=csv.ConvertOptions(column_types=dtype),
     )
     df = pyTable.to_pandas(strings_to_categorical=True)
+
+    if data:
+        return df
 
     mc_rec = df[df.type == "mc_rec"]
     thrown = df[df.type == "thrown"]
@@ -147,26 +152,23 @@ def virtual_photon(W: float, Q2: float, beam_energy: float) -> float:
     target_mass = 0.93827203
     FS_ALPHA = 0.007297352570866302
 
-    one = FS_ALPHA/(4*np.pi*Q2)
-    two = W/(beam_energy**2 * target_mass**2)
+    one = FS_ALPHA/(4 * np.pi)
+    two = W/(beam_energy**2 * target_mass**2 * Q2)
+    three = (W**2 - target_mass**2)
 
-    # beam_momentum = np.sqrt(beam_energy**2 - MASS_E**2)
-    # nu = (((W**2 + Q2) / target_mass) - target_mass) / 2  # Photon Energy
-    # scattered_energy = (beam_energy - nu)
-    # scattered_momentum = np.sqrt(scattered_energy**2 - MASS_E**2)
+    beam_momentum = np.sqrt(beam_energy**2 - MASS_E**2)
+    nu = (((W**2 + Q2) / target_mass) - target_mass) / 2  # Photon Energy
+    scattered_energy = (beam_energy - nu)
+    scattered_momentum = np.sqrt(scattered_energy**2 - MASS_E**2)
+    theta = np.arccos((beam_energy * scattered_energy - Q2 / 2.0 - MASS_E**2) /
+                      (beam_momentum * scattered_momentum))
+    epsilon = 1/(1 + (2 * (1 + ((nu**2) / Q2)) * np.tan(theta / 2)**2))
 
-    # theta = np.arccos((beam_energy * scattered_energy - Q2 / 2.0 - MASS_E * MASS_E) /
-    #                   (beam_momentum * scattered_momentum))
-    # epsilon = (np.power(
-    #     (1 + (2 * (1 + ((nu * nu) / Q2)) * np.power(np.tan((theta / 2)), 2))), -1))
+    four = 1/(1 - epsilon)
 
-    # three = (W**2 - target_mass**2)/(1 - epsilon)
+    # This makes it look closer? Where am I off?
+    flux = one * two * three * four * 10**3
 
-    epsilon = 2*(1)
-    epsilon = 1/epsilon
-    three = (W**2 - target_mass**2)/(1 - epsilon)
-
-    flux = one * two * three
     return flux
 
 
@@ -340,8 +342,9 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
         flux = virtual_photon(w.left, q2.left, ENERGY)
 
         xs = np.linspace(0, 2 * np.pi, 100)
+        # print(len(_data.weights.to_numpy()), len(_data.phi.to_numpy()))
         data_y, data_x = bh.numpy.histogram(
-            _data.phi.to_numpy(), bins=bins, range=(0, 2 * np.pi), threads=4)
+            _data.phi.to_numpy(), bins=bins, range=(0, 2 * np.pi))
         x = (data_x[1:] + data_x[:-1]) / 2.0
         mc_rec_y, _ = bh.numpy.histogram(
             _mc_rec_data.phi.to_numpy(), bins=bins, range=(0, 2 * np.pi),  threads=4
@@ -378,7 +381,11 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
         error_bar = np.sqrt(
             np.power((y*error), 2) + np.power(stats.sem(y), 2))
 
-        ax[a][b].set_ylim(bottom=0, top=np.max(y)*1.5)
+        try:
+            ax[a][b].set_ylim(bottom=0, top=np.max(y)*1.5)
+        except ValueError:
+            print("?")
+
         ax[a][b].errorbar(
             x,
             y,
@@ -798,7 +805,8 @@ if __name__ == "__main__":
     mc_thrown["cos_theta"] = np.cos(mc_thrown.theta)
 
     start = time.time()
-    rec = feather.read_feather(rec_data_file_path)
+    # rec = feather.read_feather(rec_data_file_path)
+    rec = read_csv(rec_data_file_path, True)
     stop = time.time()
     # print(f"\n\nread time rec: {stop - start}\n\n")
     # rec = rec[(rec.w > 0) & (rec.mm2 > 0.5) & (rec.mm2 < 1.5)]
@@ -837,7 +845,7 @@ if __name__ == "__main__":
         deep=True
     )
     rec = rec[["w", "q2", "mm2", "cos_theta",
-               "phi", "helicty",  "electron_sector"]].copy(deep=True)
+               "phi", "weights", "helicty",  "electron_sector"]].copy(deep=True)
 
     # Specifically put in bin edges
     # TODO ##################### BINS ######################

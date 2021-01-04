@@ -12,10 +12,11 @@ struct csv_data {
   float theta;
   float phi;
   float mm2;
+  float weight;
   int helicty;
   std::string type;
 
-  static std::string header() { return "electron_sector,w,q2,theta,phi,mm2,helicty,type"; }
+  static std::string header() { return "electron_sector,w,q2,theta,phi,mm2,weight,helicty,type"; }
 
   friend std::ostream &operator<<(std::ostream &os, const csv_data &d) {
     os << std::setprecision(10);
@@ -25,6 +26,7 @@ struct csv_data {
     os << d.theta << ",";
     os << d.phi << ",";
     os << d.mm2 << ",";
+    os << d.weight << ",";
     os << std::to_string(d.helicty) << ",";
     os << d.type << "\n";
     return os;
