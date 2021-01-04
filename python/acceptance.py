@@ -25,7 +25,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from lmfit import Model, Parameters
 from lmfit.models import *
-#from fit_functions import gauss, degauss, half_max_x, model
 
 
 ENERGY = 4.81726
