@@ -172,6 +172,35 @@ def virtual_photon(W: float, Q2: float, beam_energy: float) -> float:
     return flux
 
 
+def momentum_fn(energy, mass):
+    return np.sqrt(energy**2 - mass**2)
+
+
+def virtual_photon_energy_fn(target_mass, w, q2):
+    return (((w**2 + q2) / target_mass) - target_mass) / 2
+
+
+def costheta_e_fn(beam_energy, target_mass, w, q2):
+    electron_mass = 5.109989433549345e-4
+    nu = virtual_photon_energy_fn(target_mass, w, q2)
+    scattered_energy = ((beam_energy) - (nu))
+    beam_momentum = momentum_fn(beam_energy, electron_mass)
+    scattered_momentum = momentum_fn(scattered_energy, electron_mass)
+    return (beam_energy * scattered_energy - q2 / 2.0 - electron_mass**2) / (beam_momentum * scattered_momentum)
+
+
+def virtual_photon_epsilon_fn(beam_energy, target_mass, w, q2):
+    theta_e = np.arccos(costheta_e_fn(beam_energy, target_mass, w, q2))
+    nu = virtual_photon_energy_fn(target_mass, w, q2)
+    return np.power(1 + 2 * (1 + nu**2 / q2) * np.power(np.tan(theta_e / 2), 2), -1)
+
+
+def virtual_photon_flux(w: float, q2: float, beam_energy: float = 4.81726, target_mass: float = 0.93827203) -> float:
+    alpha = 0.007297352570866302
+    epsilon = virtual_photon_epsilon_fn(beam_energy, target_mass, w, q2)
+    return alpha / (4 * np.pi * q2) * w / (beam_energy**2 * target_mass**2) * (w**2 - target_mass**2) / (1 - epsilon)
+
+
 def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict:
     data = {}
     fig, ax = plt.subplots(2, 3, figsize=(
@@ -339,7 +368,8 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
         _mc_rec_data = mc_rec_data[cos_t == mc_rec_data.theta_bin]
         _thrown_data = thrown_data[cos_t == thrown_data.theta_bin]
 
-        flux = virtual_photon(w.left, q2.left, ENERGY)
+        # flux = virtual_photon(w.left, q2.left, ENERGY)
+        flux = virtual_photon_flux(w.left, q2.left)
 
         xs = np.linspace(0, 2 * np.pi, 100)
         # print(len(_data.weights.to_numpy()), len(_data.phi.to_numpy()))
