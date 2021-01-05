@@ -20,7 +20,7 @@ from lmfit.models import *
 ENERGY = 4.81726
 
 
-def read_csv(file_name):
+def read_csv(file_name: str = "", data: bool = False):
     names = [
         "electron_sector",
         "w",
@@ -28,6 +28,7 @@ def read_csv(file_name):
         "theta",
         "phi",
         "mm2",
+        "weights",
         "helicty",
         "type"
     ]
@@ -39,6 +40,7 @@ def read_csv(file_name):
         "theta": "float32",
         "phi": "float32",
         "mm2": "float32",
+        "weights": "float32",
     }
 
     start = time.time()
@@ -51,6 +53,9 @@ def read_csv(file_name):
         convert_options=csv.ConvertOptions(column_types=dtype),
     )
     df = pyTable.to_pandas(strings_to_categorical=True)
+
+    if data:
+        return df
 
     mc_rec = df[df.type == "mc_rec"]
     thrown = df[df.type == "thrown"]
@@ -206,7 +211,7 @@ if __name__ == "__main__":
     mc_thrown = mc_thrown[(mc_thrown.w > 0)]
     mc_thrown["cos_theta"] = np.cos(mc_thrown.theta)
 
-    rec = feather.read_feather(rec_data_file_path)
+    rec = read_csv(rec_data_file_path, True)
 
     rec["cos_theta"] = np.cos(rec.theta).astype(np.float32)
     # print(f"===========================\nmc_rec:\n\n")
