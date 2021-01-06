@@ -36,26 +36,26 @@ class Fits {
  public:
   Fits();
   ~Fits();
-  TF1 *FitGaus(TH1F *hist);
-  TF1 *FitGaus(std::shared_ptr<TH1F> &hists);
-  TF1 *FitLandauGaus(TH1F *hist);
-  TF1 *Fit2Gaus(TH1F *hist);
-  TF1 *FitLandau(TH1F *hist);
-  TF1 *FitPoly_1D(TH1F *hist);
-  TF1 *FitPoly_2D(TH1F *hist);
-  TF1 *FitPoly_3D(TH1F *hist);
-  TF1 *FitPoly_4D(TH1F *hist);
+  TF1 *FitGaus(TH1D *hist);
+  TF1 *FitGaus(std::shared_ptr<TH1D> &hists);
+  TF1 *FitLandauGaus(TH1D *hist);
+  TF1 *Fit2Gaus(TH1D *hist);
+  TF1 *FitLandau(TH1D *hist);
+  TF1 *FitPoly_1D(TH1D *hist);
+  TF1 *FitPoly_2D(TH1D *hist);
+  TF1 *FitPoly_3D(TH1D *hist);
+  TF1 *FitPoly_4D(TH1D *hist);
   TF1 *FitPoly_fid(TGraph *hist);
   TF1 *FitFiducial(TGraph *profile, int sec);
-  TF1 *FitFiducial_hi(TH2F *hist2d);
-  TF1 *FitFiducial(TH2F *hist2d);
-  TF1 *FitGenNormal(TH1F *hist);
-  TF1 *FitBreitWigner(TH1F *hist);
-  TF1 *FitBreitWigner(std::shared_ptr<TH1F> &hist);
-  TF1 *FitMissMass(TH1F *hist);
+  TF1 *FitFiducial_hi(TH2D *hist2d);
+  TF1 *FitFiducial(TH2D *hist2d);
+  TF1 *FitGenNormal(TH1D *hist);
+  TF1 *FitBreitWigner(TH1D *hist);
+  TF1 *FitBreitWigner(std::shared_ptr<TH1D> &hist);
+  TF1 *FitMissMass(TH1D *hist);
 
-  TF1 *FitDeGauss(std::shared_ptr<TH1F> &hist);
-  TF1 *FitDeGauss(TH1F *hist);
+  TF1 *FitDeGauss(std::shared_ptr<TH1D> &hist);
+  TF1 *FitDeGauss(TH1D *hist);
 
   void Set_min(float val);
   void Set_max(float val);

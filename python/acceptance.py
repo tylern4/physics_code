@@ -401,7 +401,7 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
             print(e)
             continue
 
-        y = (data_y * acceptance) * flux
+        y = (data_y * acceptance)  # * flux
 
         # error_bar = np.ones_like(y)
 
@@ -413,8 +413,8 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
 
         try:
             ax[a][b].set_ylim(bottom=0, top=np.max(y)*1.5)
-        except ValueError:
-            print("?")
+        except ValueError as e:
+            print(e)
 
         ax[a][b].errorbar(
             x,
@@ -449,7 +449,10 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
                 params[p].set(value=1)
 
             # Fit the model
-            out = model.fit(y, params, x=x)
+            try:
+                out = model.fit(y, params, x=x)
+            except ValueError as e:
+                print(e)
             # Plot the fitted model with output parameters and same x's as model
             ax[a][b].plot(xs, out.eval(params=out.params, x=xs),
                           linewidth=2.0, c="#9467bd")
@@ -879,7 +882,11 @@ if __name__ == "__main__":
 
     # Specifically put in bin edges
     # TODO ##################### BINS ######################
-    w_bins = np.array([1.1, 1.125, 1.15, 1.175, 1.2, 1.225, 1.25, 1.275, 1.3,
+    # w_bins = np.array([1.1, 1.125, 1.15, 1.175, 1.2, 1.225, 1.25, 1.275, 1.3,
+    #                    1.325, 1.35, 1.375, 1.4, 1.425, 1.45, 1.475, 1.5, 1.525,
+    #                    1.55, 1.575, 1.6, 1.625, 1.65, 1.675, 1.7, 1.725, 1.75,
+    #                    1.775, 1.8])
+    w_bins = np.array([1.25, 1.275, 1.3,
                        1.325, 1.35, 1.375, 1.4, 1.425, 1.45, 1.475, 1.5, 1.525,
                        1.55, 1.575, 1.6, 1.625, 1.65, 1.675, 1.7, 1.725, 1.75,
                        1.775, 1.8])
@@ -930,9 +937,9 @@ if __name__ == "__main__":
     rec.dropna(inplace=True)
 
     binning = dict()
-    binning["wbins"] = pd.unique(rec.w_bin)
-    binning["q2bins"] = pd.unique(rec.q2_bin)
-    binning["thetabins"] = pd.unique(rec.theta_bin)
+    binning["wbins"] = pd.Index.sort_values(pd.unique(rec.w_bin))
+    binning["q2bins"] = pd.Index.sort_values(pd.unique(rec.q2_bin))
+    binning["thetabins"] = pd.Index.sort_values(pd.unique(rec.theta_bin))
 
     draw_xsection(rec, mc_rec, mc_thrown, model_new,
                   out_folder, binning)

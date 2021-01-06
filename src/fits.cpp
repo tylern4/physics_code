@@ -20,7 +20,7 @@ float Fits::Get_sigma() { return sigma; }
 float Fits::Get_mean() { return mean; }
 float Fits::Get_FWHM() { return FWHM; }
 
-TF1 *Fits::FitGaus(TH1F *hist) {
+TF1 *Fits::FitGaus(TH1D *hist) {
   if (hist->GetEntries() > 1000) {
     ROOT::Math::MinimizerOptions::SetDefaultMinimizer("GSLSimAn");
     // std::cerr << "Using GSLSimAn" << std::endl;
@@ -61,7 +61,7 @@ TF1 *Fits::FitGaus(TH1F *hist) {
   return NULL;
 }
 
-TF1 *Fits::FitLandauGaus(TH1F *hist) {
+TF1 *Fits::FitLandauGaus(TH1D *hist) {
   if (hist->GetEntries() > 1000) {
     ROOT::Math::MinimizerOptions::SetDefaultMinimizer("GSLSimAn");
     // std::cerr << "Using GSLSimAn" << std::endl;
@@ -109,7 +109,7 @@ TF1 *Fits::FitLandauGaus(TH1F *hist) {
   return NULL;
 }
 
-TF1 *Fits::Fit2Gaus(TH1F *hist) {
+TF1 *Fits::Fit2Gaus(TH1D *hist) {
   if (hist->GetEntries() > 1000) {
     ROOT::Math::MinimizerOptions::SetDefaultMinimizer("GSLSimAn");
     // std::cerr << "Using GSLSimAn" << std::endl;
@@ -142,7 +142,7 @@ TF1 *Fits::Fit2Gaus(TH1F *hist) {
   return NULL;
 }
 
-TF1 *Fits::FitLandau(TH1F *hist) {
+TF1 *Fits::FitLandau(TH1D *hist) {
   if (hist->GetEntries() > 1000) {
     ROOT::Math::MinimizerOptions::SetDefaultMinimizer("GSLSimAn");
     // std::cerr << "Using GSLSimAn" << std::endl;
@@ -158,7 +158,7 @@ TF1 *Fits::FitLandau(TH1F *hist) {
   return NULL;
 }
 
-TF1 *Fits::FitPoly_1D(TH1F *hist) {
+TF1 *Fits::FitPoly_1D(TH1D *hist) {
   if (hist->GetEntries() > 1000) {
     ROOT::Math::MinimizerOptions::SetDefaultMinimizer("GSLSimAn");
     // std::cerr << "Using GSLSimAn" << std::endl;
@@ -180,7 +180,7 @@ TF1 *Fits::FitPoly_1D(TH1F *hist) {
   return fitFunc;
 }
 
-TF1 *Fits::FitPoly_2D(TH1F *hist) {
+TF1 *Fits::FitPoly_2D(TH1D *hist) {
   if (hist->GetEntries() > 1000) {
     ROOT::Math::MinimizerOptions::SetDefaultMinimizer("GSLSimAn");
     // std::cerr << "Using GSLSimAn" << std::endl;
@@ -204,7 +204,7 @@ TF1 *Fits::FitPoly_2D(TH1F *hist) {
   return fitFunc;
 }
 
-TF1 *Fits::FitPoly_3D(TH1F *hist) {
+TF1 *Fits::FitPoly_3D(TH1D *hist) {
   if (hist->GetEntries() > 1000) {
     ROOT::Math::MinimizerOptions::SetDefaultMinimizer("GSLSimAn");
     // std::cerr << "Using GSLSimAn" << std::endl;
@@ -230,7 +230,7 @@ TF1 *Fits::FitPoly_3D(TH1F *hist) {
   return fitFunc;
 }
 
-TF1 *Fits::FitPoly_4D(TH1F *hist) {
+TF1 *Fits::FitPoly_4D(TH1D *hist) {
   if (hist->GetEntries() > 1000) {
     ROOT::Math::MinimizerOptions::SetDefaultMinimizer("GSLSimAn");
     // std::cerr << "Using GSLSimAn" << std::endl;
@@ -301,7 +301,7 @@ TF1 *Fits::FitFiducial(TGraph *profile, int sec) {
   return fitFunc;
 }
 
-TF1 *Fits::FitFiducial_hi(TH2F *hist2d) {
+TF1 *Fits::FitFiducial_hi(TH2D *hist2d) {
   if (hist2d->GetEntries() > 1000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("GSLSimAn");
 
   a = b = c = d = 0.5;
@@ -329,7 +329,7 @@ TF1 *Fits::FitFiducial_hi(TH2F *hist2d) {
   return fitFunc_hi;
 }
 
-TF1 *Fits::FitFiducial(TH2F *hist2d) {
+TF1 *Fits::FitFiducial(TH2D *hist2d) {
   if (hist2d->GetEntries() > 1000) ROOT::Math::MinimizerOptions::SetDefaultMinimizer("GSLSimAn");
 
   a = b = c = d = 0.5;
@@ -357,7 +357,7 @@ TF1 *Fits::FitFiducial(TH2F *hist2d) {
   return fitFunc;
 }
 
-TF1 *Fits::FitGenNormal(TH1F *hist) {
+TF1 *Fits::FitGenNormal(TH1D *hist) {
   if (hist->GetEntries() > 1000) {
     ROOT::Math::MinimizerOptions::SetDefaultMinimizer("GSLSimAn");
     // std::cerr << "Using GSLSimAn" << std::endl;
@@ -396,7 +396,7 @@ TF1 *Fits::FitGenNormal(TH1F *hist) {
   return fitFunc;
 }
 
-TF1 *Fits::FitBreitWigner(TH1F *hist) {
+TF1 *Fits::FitBreitWigner(TH1D *hist) {
   if (hist->GetEntries() > 1000) {
     ROOT::Math::MinimizerOptions::SetDefaultMinimizer("GSLSimAn");
     // std::cerr << "Using GSLSimAn" << std::endl;
@@ -418,9 +418,9 @@ TF1 *Fits::FitBreitWigner(TH1F *hist) {
   return fitbw;
 }
 
-TF1 *Fits::FitBreitWigner(std::shared_ptr<TH1F> &hists) { return Fits::FitBreitWigner(hists.get()); }
+TF1 *Fits::FitBreitWigner(std::shared_ptr<TH1D> &hists) { return Fits::FitBreitWigner(hists.get()); }
 
-TF1 *Fits::FitMissMass(TH1F *hist) {
+TF1 *Fits::FitMissMass(TH1D *hist) {
   if (hist->GetEntries() > 1000) {
     ROOT::Math::MinimizerOptions::SetDefaultMinimizer("GSLSimAn");
     // std::cerr << "Using GSLSimAn" << std::endl;
@@ -482,7 +482,7 @@ TF1 *Fits::FitMissMass(TH1F *hist) {
   return total;
 }
 
-TF1 *Fits::FitDeGauss(TH1F *hist) {
+TF1 *Fits::FitDeGauss(TH1D *hist) {
   if (hist->GetEntries() > 1000) {
     ROOT::Math::MinimizerOptions::SetDefaultMinimizer("GSLSimAn");
     // std::cerr << "Using GSLSimAn" << std::endl;
@@ -512,5 +512,5 @@ TF1 *Fits::FitDeGauss(TH1F *hist) {
   return total;
 }
 
-TF1 *Fits::FitDeGauss(std::shared_ptr<TH1F> &hists) { return Fits::FitDeGauss(hists.get()); }
-TF1 *Fits::FitGaus(std::shared_ptr<TH1F> &hists) { return Fits::FitGaus(hists.get()); }
+TF1 *Fits::FitDeGauss(std::shared_ptr<TH1D> &hists) { return Fits::FitDeGauss(hists.get()); }
+TF1 *Fits::FitGaus(std::shared_ptr<TH1D> &hists) { return Fits::FitGaus(hists.get()); }
