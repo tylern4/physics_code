@@ -23,7 +23,7 @@ size_t mom_correction_csv(const std::vector<std::string>& fins, const std::share
     chain->GetEntry(current_event);
     auto cuts = std::make_unique<e1d_Cuts>(data);
 
-    if (!cuts->Sanity()) continue;
+    if (!cuts->check_banks()) continue;
     if (!cuts->isElecctron()) continue;
     if (!cuts->Beam_cut()) continue;
 

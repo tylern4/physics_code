@@ -62,7 +62,7 @@ float Cuts::hardon_fid_phi(int part) {
   return NAN;
 }
 
-bool Cuts::Sanity() {
+bool Cuts::check_banks() {
   bool _elec = true;
   _elec &= (_data->gpart() > 0);  // Number of good particles is greater than 0
   _elec &= (_data->gpart() < 5);
@@ -80,8 +80,8 @@ bool Cuts::Sanity() {
 
 bool Cuts::isElecctron() {
   bool _elec = true;
-  _elec &= Cuts::Sanity();
-  _elec &= _data->nphe(0) < 20;
+  _elec &= Cuts::check_banks();
+  //_elec &= _data->nphe(0) > 5;
 
   // Cut out low ec inner
   _elec &= (_data->ec_ei(0) >= 0.05);
@@ -100,8 +100,8 @@ bool e1d_Cuts::isElecctron() {
   if (!_elec) return _elec;
   // Fid Cuts
   _elec &= fid_chern_cut();
-  if (!_elec) return _elec;
-  _elec &= Fid_cut();
+  // if (!_elec) return _elec;
+  // _elec &= Fid_cut();
 
   return _elec;
 }

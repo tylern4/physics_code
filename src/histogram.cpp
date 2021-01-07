@@ -1231,18 +1231,45 @@ void Histogram::makeHists_fid() {
   hadron_fid_xy_hist[fid_part::pip] = std::make_unique<TH2D>("pip_fid_xy", "pip_fid_xy", BINS, -200, 200, BINS, 0, 500);
 
   cerenkov_fid.reserve(NUM_SECTORS);
+  cerenkov_fid_cut.reserve(NUM_SECTORS);
+  cerenkov_fid_anti.reserve(NUM_SECTORS);
+
   fid_xy.reserve(NUM_SECTORS);
+  fid_xy_cut.reserve(NUM_SECTORS);
+  fid_xy_anti.reserve(NUM_SECTORS);
+
   electron_fid_sec_hist.reserve(NUM_SECTORS);
-  fid_xy_hist = std::make_shared<TH2D>(Form("fid_xy"), Form("fid_xy"), BINS, -150, 150, BINS, 0, 300);
+  electron_fid_sec_cut_hist.reserve(NUM_SECTORS);
+  electron_fid_sec_anti_hist.reserve(NUM_SECTORS);
+
+  fid_xy_hist = std::make_shared<TH2D>("fid_xy", "fid_xy", BINS, -150, 150, BINS, 0, 300);
+  fid_xy_cut_hist = std::make_shared<TH2D>("fid_xy_cut", "fid_xy_cut", BINS, -150, 150, BINS, 0, 300);
+  fid_xy_anti_hist = std::make_shared<TH2D>("fid_xy_anti", "fid_xy_anti", BINS, -150, 150, BINS, 0, 300);
   for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
     cerenkov_fid[sec_i] = std::make_shared<TH2D>(Form("fid_cher_xy_%d", sec_i + 1), Form("fid_cher_xy_%d", sec_i + 1),
                                                  BINS, -150, 150, BINS, 0, 300);
+    cerenkov_fid_cut[sec_i] = std::make_shared<TH2D>(
+        Form("fid_cher_xy_cut_%d", sec_i + 1), Form("fid_cher_xy_cut_%d", sec_i + 1), BINS, -150, 150, BINS, 0, 300);
+    cerenkov_fid_anti[sec_i] = std::make_shared<TH2D>(
+        Form("fid_cher_xy_anti_%d", sec_i + 1), Form("fid_cher_xy_anti_%d", sec_i + 1), BINS, -150, 150, BINS, 0, 300);
     fid_xy[sec_i] = std::make_shared<TH2D>(Form("fid_xy_%d", sec_i + 1), Form("fid_xy_%d", sec_i + 1), BINS, -150, 150,
                                            BINS, 0, 300);
+    fid_xy_cut[sec_i] = std::make_shared<TH2D>(Form("fid_xy_cut_%d", sec_i + 1), Form("fid_xy_cut_%d", sec_i + 1), BINS,
+                                               -150, 150, BINS, 0, 300);
+    fid_xy_anti[sec_i] = std::make_shared<TH2D>(Form("fid_xy_anti_%d", sec_i + 1), Form("fid_xy_anti_%d", sec_i + 1),
+                                                BINS, -150, 150, BINS, 0, 300);
 
     electron_fid_sec_hist[sec_i] =
         std::make_shared<TH2D>(Form("electron_fid_sec%d", sec_i + 1), Form("electron_fid_sec%d", sec_i + 1), BINS,
                                min_phi[sec_i], max_phi[sec_i], BINS, theta_min, theta_max);
+
+    electron_fid_sec_cut_hist[sec_i] =
+        std::make_shared<TH2D>(Form("electron_fid_sec_cut_%d", sec_i + 1), Form("electron_fid_sec_cut_%d", sec_i + 1),
+                               BINS, min_phi[sec_i], max_phi[sec_i], BINS, theta_min, theta_max);
+
+    electron_fid_sec_anti_hist[sec_i] =
+        std::make_shared<TH2D>(Form("electron_fid_sec_anti_%d", sec_i + 1), Form("electron_fid_sec_anti_%d", sec_i + 1),
+                               BINS, min_phi[sec_i], max_phi[sec_i], BINS, theta_min, theta_max);
 
     for (int t = 0; t < 3; t++) {
       hadron_fid_sec_hist[t][sec_i] =
@@ -1270,6 +1297,40 @@ void Histogram::Fill_electron_fid(const std::shared_ptr<Branches> &_data, const 
   cerenkov_fid[sector - 1]->Fill(_r->cc_y(), _r->cc_x());
   fid_xy[sector - 1]->Fill(_data->dc_ysc(0), _data->dc_xsc(0));
   electron_fid_sec_hist[sector - 1]->Fill(phi, theta);
+}
+
+void Histogram::Fill_electron_fid_cut(const std::shared_ptr<Branches> &_data, const std::shared_ptr<Reaction> &_r) {
+  float theta = physics::theta_calc(_data->cz(0));
+  float phi = physics::phi_calc(_data->cx(0), _data->cy(0));
+  int sector = _data->dc_sect(0);
+
+  electron_fid_cut_hist->Fill(phi, theta);
+  fid_xy_cut_hist->Fill(_data->dc_ysc(0), _data->dc_xsc(0));
+  if (sector == 0 || sector > NUM_SECTORS) {
+    // std::cerr << "Error filling electron fid = " << sector << std::endl;
+    return;
+  }
+
+  cerenkov_fid_cut[sector - 1]->Fill(_r->cc_y(), _r->cc_x());
+  fid_xy_cut[sector - 1]->Fill(_data->dc_ysc(0), _data->dc_xsc(0));
+  electron_fid_sec_cut_hist[sector - 1]->Fill(phi, theta);
+}
+
+void Histogram::Fill_electron_fid_anti(const std::shared_ptr<Branches> &_data, const std::shared_ptr<Reaction> &_r) {
+  float theta = physics::theta_calc(_data->cz(0));
+  float phi = physics::phi_calc(_data->cx(0), _data->cy(0));
+  int sector = _data->dc_sect(0);
+
+  electron_fid_anti_hist->Fill(phi, theta);
+  fid_xy_anti_hist->Fill(_data->dc_ysc(0), _data->dc_xsc(0));
+  if (sector == 0 || sector > NUM_SECTORS) {
+    // std::cerr << "Error filling electron fid = " << sector << std::endl;
+    return;
+  }
+
+  cerenkov_fid_anti[sector - 1]->Fill(_r->cc_y(), _r->cc_x());
+  fid_xy_anti[sector - 1]->Fill(_data->dc_ysc(0), _data->dc_xsc(0));
+  electron_fid_sec_anti_hist[sector - 1]->Fill(phi, theta);
 }
 
 void Histogram::Fill_neutron_fid(float theta, float phi, int sector) {
@@ -1314,10 +1375,15 @@ void Histogram::Fid_Write() {
   electron_fid_hist->SetOption("COLZ");
   electron_fid_hist->Write();
 
-  neutron_fid_hist->SetYTitle("#theta");
-  neutron_fid_hist->SetXTitle("#phi");
-  neutron_fid_hist->SetOption("COLZ");
-  neutron_fid_hist->Write();
+  electron_fid_cut_hist->SetYTitle("#theta");
+  electron_fid_cut_hist->SetXTitle("#phi");
+  electron_fid_cut_hist->SetOption("COLZ");
+  electron_fid_cut_hist->Write();
+
+  electron_fid_anti_hist->SetYTitle("#theta");
+  electron_fid_anti_hist->SetXTitle("#phi");
+  electron_fid_anti_hist->SetOption("COLZ");
+  electron_fid_anti_hist->Write();
 
   for (int t = 0; t < 3; t++) {
     hadron_fid_hist[t]->SetYTitle("#theta");
@@ -1335,16 +1401,47 @@ void Histogram::Fid_Write() {
   fid_xy_hist->SetYTitle("Y");
   fid_xy_hist->SetOption("COLZ");
   fid_xy_hist->Write();
+
+  fid_xy_cut_hist->SetXTitle("X");
+  fid_xy_cut_hist->SetYTitle("Y");
+  fid_xy_cut_hist->SetOption("COLZ");
+  fid_xy_cut_hist->Write();
+
+  fid_xy_anti_hist->SetXTitle("X");
+  fid_xy_anti_hist->SetYTitle("Y");
+  fid_xy_anti_hist->SetOption("COLZ");
+  fid_xy_anti_hist->Write();
+
   for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
     cerenkov_fid[sec_i]->SetXTitle("X");
     cerenkov_fid[sec_i]->SetYTitle("Y");
     cerenkov_fid[sec_i]->SetOption("COLZ");
     cerenkov_fid[sec_i]->Write();
 
+    cerenkov_fid_cut[sec_i]->SetXTitle("X");
+    cerenkov_fid_cut[sec_i]->SetYTitle("Y");
+    cerenkov_fid_cut[sec_i]->SetOption("COLZ");
+    cerenkov_fid_cut[sec_i]->Write();
+
+    cerenkov_fid_anti[sec_i]->SetXTitle("X");
+    cerenkov_fid_anti[sec_i]->SetYTitle("Y");
+    cerenkov_fid_anti[sec_i]->SetOption("COLZ");
+    cerenkov_fid_anti[sec_i]->Write();
+
     fid_xy[sec_i]->SetXTitle("X");
     fid_xy[sec_i]->SetYTitle("Y");
     fid_xy[sec_i]->SetOption("COLZ");
     fid_xy[sec_i]->Write();
+
+    fid_xy_cut[sec_i]->SetXTitle("X");
+    fid_xy_cut[sec_i]->SetYTitle("Y");
+    fid_xy_cut[sec_i]->SetOption("COLZ");
+    fid_xy_cut[sec_i]->Write();
+
+    fid_xy_anti[sec_i]->SetXTitle("X");
+    fid_xy_anti[sec_i]->SetYTitle("Y");
+    fid_xy_anti[sec_i]->SetOption("COLZ");
+    fid_xy_anti[sec_i]->Write();
   }
 
   for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
@@ -1352,6 +1449,11 @@ void Histogram::Fid_Write() {
     electron_fid_sec_hist[sec_i]->SetYTitle("#theta");
     electron_fid_sec_hist[sec_i]->SetOption("COLZ");
     electron_fid_sec_hist[sec_i]->Write();
+
+    electron_fid_sec_cut_hist[sec_i]->SetXTitle("#phi");
+    electron_fid_sec_cut_hist[sec_i]->SetYTitle("#theta");
+    electron_fid_sec_cut_hist[sec_i]->SetOption("COLZ");
+    electron_fid_sec_cut_hist[sec_i]->Write();
     for (int t = 0; t < 3; t++) {
       hadron_fid_sec_hist[t][sec_i]->SetYTitle("#theta");
       hadron_fid_sec_hist[t][sec_i]->SetXTitle("#phi");

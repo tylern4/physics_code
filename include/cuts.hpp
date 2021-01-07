@@ -44,7 +44,7 @@ class Cuts {
   Cuts(const std::shared_ptr<Branches>& data);
   Cuts(const std::shared_ptr<Branches>& data, const std::shared_ptr<Delta_T>& dt);
   ~Cuts();
-  bool Sanity();
+  bool check_banks();
   void Set_elec_fid();
   bool isElecctron();
   bool isStrictElecctron();
