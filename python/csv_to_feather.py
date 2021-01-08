@@ -10,7 +10,7 @@ import sys
 import time
 
 if len(sys.argv) <= 1:
-    exit(1)
+    sys.exit(1)
 
 names = [
     "electron_sector",

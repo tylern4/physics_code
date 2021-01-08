@@ -114,34 +114,24 @@ double physics::Get_Mass(int ID) {
   switch (ID) {
     case 2212:
       return MASS_P;
-      break;
     case 2112:
       return MASS_N;
-      break;
     case 211:
       return MASS_PIP;
-      break;
     case -211:
       return MASS_PIM;
-      break;
     case 111:
       return MASS_PI0;
-      break;
     case 321:
       return MASS_KP;
-      break;
     case -321:
       return MASS_KM;
-      break;
     case 22:
       return MASS_G;
-      break;
     case 11:
       return MASS_E;
-      break;
     case 0:
       return 0.0;
-      break;
   }
   return 0;
 }

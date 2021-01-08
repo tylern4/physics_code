@@ -135,7 +135,6 @@ int Branches::helicity() {
     return -1;
   else
     return 0;
-  return 0;
 }
 
 float Branches::q_l() { return _q_l; }

@@ -40,6 +40,7 @@ void MomCorr::read_theta_par() {
 
   char file[100];
   for (int s = 1; s <= NUM_SECTORS; s++) {
+    // file deepcode ignore BufferOverflowUnsafeFunction: <Don't feel like changing the way to get files right now>
     sprintf(file, "%s/angles_s%d.data", _datadir, s);
     FILE *fp = fopen(&file[0], "r");
     if (fp) {

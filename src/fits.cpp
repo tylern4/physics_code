@@ -104,6 +104,7 @@ TF1 *Fits::FitLandauGaus(TH1D *hist) {
 
     delete fitFuncGaus;
     delete fitFuncLandau;
+    delete fitFinalGaus;
     return total;
   }
   return NULL;

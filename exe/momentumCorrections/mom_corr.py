@@ -496,7 +496,7 @@ def second_fit(sector, fit_ABCDE, directory):
 
 if __name__ == "__main__":
     if len(sys.argv) <= 1:
-        exit()
+        sys.exit()
 
     df = read_file(sys.argv[1])
     if len(sys.argv) == 3:

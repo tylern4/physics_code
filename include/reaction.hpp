@@ -197,7 +197,7 @@ class Reaction {
   }
 
   inline std::vector<float> pair_mass() {
-    if (_pair_mass.size() == 0) CalcMassPairs();
+    if (_pair_mass.empty()) CalcMassPairs();
     return _pair_mass;
   }
 
