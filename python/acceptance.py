@@ -65,10 +65,10 @@ def read_csv(file_name: str = "", data: bool = False):
     df = pyTable.to_pandas(strings_to_categorical=True)
 
     if data:
-        return df
+        return df.dropna()
 
-    mc_rec = df[df.type == "mc_rec"]
-    thrown = df[df.type == "thrown"]
+    mc_rec = df[df.type == "mc_rec"].dropna()
+    thrown = df[df.type == "thrown"].dropna()
     del df
 
     stop = time.time()
@@ -387,11 +387,12 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
         # thrown_y = thrown_y/np.max(thrown_y)
         # mc_rec_y = mc_rec_y/np.max(mc_rec_y)
 
-        # Drop places with 0 acceptance
-        x = x[~(mc_rec_y == 0)]
-        data_y = data_y[~(mc_rec_y == 0)]
-        thrown_y = thrown_y[~(mc_rec_y == 0)]
-        mc_rec_y = mc_rec_y[~(mc_rec_y == 0)]
+        # Drop places with 0's
+        cut = ~(mc_rec_y == 0) & ~(data_y == 0)
+        x = x[cut]
+        data_y = data_y[cut]
+        thrown_y = thrown_y[cut]
+        mc_rec_y = mc_rec_y[cut]
 
         acceptance = np.nan_to_num(thrown_y / mc_rec_y)
 
@@ -401,9 +402,11 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
             print(e)
             continue
 
+        print(acceptance)
         y = (data_y * acceptance)  # * flux
+        # y = data_y
 
-        # error_bar = np.ones_like(y)
+        # error_bar = np.ones_like(y) * 0.1
 
         F = (mc_rec_y/thrown_y)
         error = np.sqrt(((thrown_y-mc_rec_y)*mc_rec_y) /
@@ -414,6 +417,7 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
         try:
             ax[a][b].set_ylim(bottom=0, top=np.max(y)*1.5)
         except ValueError as e:
+            print(y, data_y)
             print(e)
 
         ax[a][b].errorbar(
@@ -882,18 +886,14 @@ if __name__ == "__main__":
 
     # Specifically put in bin edges
     # TODO ##################### BINS ######################
-    # w_bins = np.array([1.1, 1.125, 1.15, 1.175, 1.2, 1.225, 1.25, 1.275, 1.3,
-    #                    1.325, 1.35, 1.375, 1.4, 1.425, 1.45, 1.475, 1.5, 1.525,
-    #                    1.55, 1.575, 1.6, 1.625, 1.65, 1.675, 1.7, 1.725, 1.75,
-    #                    1.775, 1.8])
-    w_bins = np.array([1.25, 1.275, 1.3,
+    w_bins = np.array([1.1, 1.125, 1.15, 1.175, 1.2, 1.225, 1.25, 1.275, 1.3,
                        1.325, 1.35, 1.375, 1.4, 1.425, 1.45, 1.475, 1.5, 1.525,
                        1.55, 1.575, 1.6, 1.625, 1.65, 1.675, 1.7, 1.725, 1.75,
                        1.775, 1.8])
-    q2_bins = np.array([1.0, 1.4, 1.8, 2.6, 3.5])
+    #q2_bins = np.array([1.0, 1.4, 1.8, 2.6, 3.5])
+    q2_bins = np.array([1.2, 1.6, 1.8, 2.2, 2.6, 3.5])
     theta_bins = np.array([-1.0, -0.8, -0.6, -0.4, -0.2,
                            0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2])
-
     # TODO ##################### BINS ######################
     if args.draw_kin:
         draw_kinematics(rec, w_bins, q2_bins, theta_bins)

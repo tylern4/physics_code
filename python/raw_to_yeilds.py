@@ -213,6 +213,7 @@ if __name__ == "__main__":
 
     rec = read_csv(rec_data_file_path, True)
 
+    # file deepcode ignore StoreToImmutable: <Assigning a new column to df>
     rec["cos_theta"] = np.cos(rec.theta).astype(np.float32)
     # print(f"===========================\nmc_rec:\n\n")
     # print(f"{mc_rec.info(verbose=True, memory_usage='deep')}")
@@ -256,10 +257,10 @@ if __name__ == "__main__":
                        1.325, 1.35, 1.375, 1.4, 1.425, 1.45, 1.475, 1.5, 1.525,
                        1.55, 1.575, 1.6, 1.625, 1.65, 1.675, 1.7, 1.725, 1.75,
                        1.775, 1.8])
-    q2_bins = np.array([1.0, 1.4, 1.8, 2.6, 3.5])
+    #q2_bins = np.array([1.0, 1.4, 1.8, 2.6, 3.5])
+    q2_bins = np.array([1.2, 1.6, 1.8, 2.2, 2.6, 3.5])
     theta_bins = np.array([-1.0, -0.8, -0.6, -0.4, -0.2,
                            0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2])
-
     # TODO ##################### BINS ######################
 
     mc_rec["w_bin"] = pd.cut(mc_rec["w"], bins=w_bins, include_lowest=True)

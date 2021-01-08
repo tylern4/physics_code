@@ -24,7 +24,7 @@ size_t mom_correction_csv(const std::vector<std::string>& fins, const std::share
     auto cuts = std::make_unique<e1d_Cuts>(data);
 
     if (!cuts->check_banks()) continue;
-    if (!cuts->isElecctron()) continue;
+    if (!cuts->isElectron()) continue;
     if (!cuts->Beam_cut()) continue;
 
     auto event = std::make_shared<Reaction>(data);

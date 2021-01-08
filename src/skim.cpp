@@ -18,7 +18,7 @@ std::shared_ptr<TTree> Skim::Final() {
     _chain->GetEntry(current_event);
     if (data->ec_ei(0) < 0.01 || data->ec_eo(0) < 0.01) continue;
     auto check = std::make_unique<Cuts>(data);
-    if (!check->isElecctron()) continue;
+    if (!check->isElectron()) continue;
 
     auto event = std::make_unique<Reaction>(data);
 

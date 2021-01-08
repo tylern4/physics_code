@@ -77,25 +77,25 @@ int main(int argc, char **argv) {
     return total;
   };
 
-  csv_name = outputfile + "_e1f.csv";
-  auto csv_file_e1f = std::make_shared<SyncFile>(csv_name);
-  // Pass shared momentum corrections and csv file to worker function
-  auto e1fworker = [&mom_corr, &csv_file_e1f](auto &&fls, auto &&num) mutable {
-    // Create a data handeler per thread
-    auto dh = std::make_unique<Yeilds>(csv_file_e1f, mom_corr);
-    // Init total sum of events
-    size_t total = 0;
-    // Load all the root files into a chain for proessing
-    auto chain = std::make_shared<TChain>("h10");
-    for (auto &&f : fls) {
-      chain->Add(f.c_str());
-    }
+  // csv_name = outputfile + "_e1f.csv";
+  // auto csv_file_e1f = std::make_shared<SyncFile>(csv_name);
+  // // Pass shared momentum corrections and csv file to worker function
+  // auto e1fworker = [&mom_corr, &csv_file_e1f](auto &&fls, auto &&num) mutable {
+  //   // Create a data handeler per thread
+  //   auto dh = std::make_unique<Yeilds>(csv_file_e1f, mom_corr);
+  //   // Init total sum of events
+  //   size_t total = 0;
+  //   // Load all the root files into a chain for proessing
+  //   auto chain = std::make_shared<TChain>("h10");
+  //   for (auto &&f : fls) {
+  //     chain->Add(f.c_str());
+  //   }
 
-    // Have datahandler run the chian of files with e1f cuts
-    total += dh->Run<e1f_Cuts>(chain, "rec", num);
+  //   // Have datahandler run the chian of files with e1f cuts
+  //   total += dh->Run<e1f_Cuts>(chain, "rec", num);
 
-    return total;
-  };
+  //   return total;
+  // };
 
   if (e1d_files.size() > 0) {
     // Make futures to store total counts
@@ -110,16 +110,17 @@ int main(int argc, char **argv) {
     }
   }
 
-  if (e1f_files.size() > 0) {
-    std::future<size_t> threads_e1f[NUM_THREADS];
-    for (size_t i = 0; i < NUM_THREADS; i++) {
-      threads_e1f[i] = std::async(e1fworker, infilenames_e1f.at(i), i);
-    }
+  // if (e1f_files.size() > 0) {
+  //   std::future<size_t> threads_e1f[NUM_THREADS];
+  //   for (size_t i = 0; i < NUM_THREADS; i++) {
+  //     threads_e1f[i] = std::async(e1fworker, infilenames_e1f.at(i), i);
+  //   }
 
-    for (size_t i = 0; i < NUM_THREADS; i++) {
-      events += threads_e1f[i].get();
-    }
-  }
+  //   for (size_t i = 0; i < NUM_THREADS; i++) {
+  //     events += threads_e1f[i].get();
+  //   }
+  // }
+
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
   std::cout << RED << elapsed_full.count() << " sec" << DEF << std::endl;
   std::cerr << BOLDYELLOW << "\n\n" << events / elapsed_full.count() << " Hz" << DEF << std::endl;

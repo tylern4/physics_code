@@ -51,3 +51,5 @@ current/cmake-build-debug
 current/crossSection/experimental_data
 
 *.pkl
+.dccache
+python/prof.prof

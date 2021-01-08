@@ -57,7 +57,7 @@ size_t Ntuple::Run(const std::shared_ptr<TChain> &chain) {
     auto check = std::make_unique<Cuts>(data);
     auto event = std::make_unique<Reaction>(data);
 
-    if (!check->isElecctron()) continue;
+    if (!check->isElectron()) continue;
 
     auto dt = std::make_unique<Delta_T>(data);
 

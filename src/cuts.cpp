@@ -78,10 +78,10 @@ bool Cuts::check_banks() {
   return _elec;
 }
 
-bool Cuts::isElecctron() {
+bool Cuts::isElectron() {
   bool _elec = true;
   _elec &= Cuts::check_banks();
-  //_elec &= _data->nphe(0) > 5;
+  _elec &= _data->nphe(0) > 5;
 
   // Cut out low ec inner
   _elec &= (_data->ec_ei(0) >= 0.05);
@@ -91,9 +91,9 @@ bool Cuts::isElecctron() {
   return _elec;
 }
 
-bool e1d_Cuts::isElecctron() {
+bool e1d_Cuts::isElectron() {
   bool _elec = true;
-  _elec &= Cuts::isElecctron();
+  _elec &= Cuts::isElectron();
   _elec &= e1d_Cuts::Beam_cut();
   // Sampling fraction cut
   _elec &= e1d_Cuts::sf_cut(_data->etot(0) / _data->p(0), _data->p(0));
@@ -106,9 +106,9 @@ bool e1d_Cuts::isElecctron() {
   return _elec;
 }
 
-bool e1f_Cuts::isElecctron() {
+bool e1f_Cuts::isElectron() {
   bool _elec = true;
-  _elec &= Cuts::isElecctron();
+  _elec &= Cuts::isElectron();
   _elec &= e1f_Cuts::Beam_cut();
   //_elec &= e1f_Cuts::sf_cut(_data->etot(0) / _data->p(0), _data->p(0));
   if (!_elec) return _elec;
@@ -117,9 +117,9 @@ bool e1f_Cuts::isElecctron() {
   return _elec;
 }
 
-bool e16_Cuts::isElecctron() {
+bool e16_Cuts::isElectron() {
   bool _elec = true;
-  _elec &= Cuts::isElecctron();
+  _elec &= Cuts::isElectron();
   _elec &= e16_Cuts::Beam_cut();
 
   if (!_elec) return _elec;
@@ -224,9 +224,9 @@ bool e16_Cuts::Beam_cut() {
   return _beam;
 }
 
-bool Cuts::isStrictElecctron() {
+bool Cuts::isStrictElectron() {
   bool _elec = true;
-  _elec &= isElecctron();
+  _elec &= isElectron();
   _elec &= (_data->nphe(0) > 15);
   return _elec;
 }
@@ -249,16 +249,14 @@ float e1f_Cuts::sf_top_fit(float P) {
   double par[3] = {0.405, 0.007693, 4.993e-07};
   double x[1] = {P};
   return func::ec_fit_func(x, par);
-
-  return true;
 }
+
 float e1f_Cuts::sf_bot_fit(float P) {
   double par[3] = {0.1272, 0.04403, -1.998e-05};
   double x[1] = {P};
   return func::ec_fit_func(x, par);
-
-  return true;
 }
+
 bool e1f_Cuts::sf_cut(float sf, float P) { return ((sf > e1f_Cuts::sf_bot_fit(P)) && (sf < e1f_Cuts::sf_top_fit(P))); }
 
 bool Cuts::dt_P_cut(int i) {

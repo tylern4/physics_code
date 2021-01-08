@@ -46,8 +46,8 @@ class Cuts {
   ~Cuts();
   bool check_banks();
   void Set_elec_fid();
-  bool isElecctron();
-  bool isStrictElecctron();
+  bool isElectron();
+  bool isStrictElectron();
   bool Fid_cut();
   bool Beam_cut();
 
@@ -79,7 +79,7 @@ class e1d_Cuts : public Cuts {
  public:
   e1d_Cuts(const std::shared_ptr<Branches>& data) : Cuts(data){};
   e1d_Cuts(const std::shared_ptr<Branches>& data, const std::shared_ptr<Delta_T>& dt) : Cuts(data, dt){};
-  bool isElecctron();
+  bool isElectron();
   bool Beam_cut();
   float sf_top_fit(float P);
   float sf_bot_fit(float P);
@@ -90,7 +90,7 @@ class e1f_Cuts : public Cuts {
  public:
   e1f_Cuts(const std::shared_ptr<Branches>& data) : Cuts(data){};
   e1f_Cuts(const std::shared_ptr<Branches>& data, const std::shared_ptr<Delta_T>& dt) : Cuts(data, dt){};
-  bool isElecctron();
+  bool isElectron();
   bool Beam_cut();
   float sf_top_fit(float P);
   float sf_bot_fit(float P);
@@ -101,7 +101,7 @@ class e16_Cuts : public Cuts {
  public:
   e16_Cuts(const std::shared_ptr<Branches>& data) : Cuts(data){};
   e16_Cuts(const std::shared_ptr<Branches>& data, const std::shared_ptr<Delta_T>& dt) : Cuts(data, dt){};
-  bool isElecctron();
+  bool isElectron();
   bool Beam_cut();
 };
 

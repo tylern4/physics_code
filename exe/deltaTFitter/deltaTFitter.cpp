@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
     if (current_event % progress == 0) std::cout << "%" << std::flush;
     chain->GetEntry(current_event);
     auto check = std::make_unique<e1d_Cuts>(data);
-    if (!check->isElecctron()) continue;
+    if (!check->isElectron()) continue;
 
     auto event = std::make_shared<Reaction>(data, E1D_E0);
 

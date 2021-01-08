@@ -65,6 +65,9 @@ class Yeilds {
         std::cerr << "\t" << 100 * (current_event / (float)num_of_events) + 1 << "\r\r" << std::flush;
       chain->GetEntry(current_event);
       auto check = std::make_unique<CutType>(data);
+
+      if (!check->isElectron()) continue;
+
       auto event = std::make_shared<Reaction>(data, _beam_energy, _mom_corr);
       int pip_num = 0;
       for (int part_num = 1; part_num < data->gpart(); part_num++) {
@@ -120,7 +123,7 @@ class Yeilds {
       auto check = std::make_unique<CutType>(data);
       auto event = std::make_unique<Reaction>(data);
 
-      if (!check->isElecctron()) continue;
+      if (!check->isElectron()) continue;
       total++;
       auto dt = std::make_unique<Delta_T>(data);
 
@@ -172,10 +175,12 @@ class Yeilds {
     size_t current_event = 0;
     for (current_event = 0; current_event < num_of_events; current_event++) {
       if (thread_id == 0 && current_event % 100000 == 0)
-        std::cerr << 1 + (100 * current_event / num_of_events) << std::endl;
+        std::cerr << "\t" << 100 * (current_event / (float)num_of_events) + 1 << "\r\r" << std::flush;
 
       chain->GetEntry(current_event);
+      if (std::isnan(data->p(0))) continue;
       auto event = std::make_shared<Reaction>(data, _beam_energy, nullptr);
+      if (event->cc_x() == 0 || event->cc_y() == 0) continue;
       auto check = std::make_unique<CutType>(data);
 
       for (int part_num = 1; part_num < data->gpart(); part_num++) {
@@ -188,6 +193,7 @@ class Yeilds {
         } else
           event->SetOther(part_num);
       }
+
       std::string type = "other";
       if (event->channel()) type = "channel";
       total++;

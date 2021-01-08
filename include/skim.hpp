@@ -54,7 +54,7 @@ class Skim {
     for (int current_event = 0; current_event < num_of_events; current_event++) {
       _chain->GetEntry(current_event);
       auto check = std::make_unique<CutType>(data);
-      if (!check->isElecctron()) continue;
+      if (!check->isElectron()) continue;
 
       auto event = std::make_shared<Reaction>(data, beam_energy);
       for (int part_num = 1; part_num < data->gpart(); part_num++) {

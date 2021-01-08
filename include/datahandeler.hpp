@@ -62,7 +62,7 @@ class DataHandler {
 
     _hists->Fill_electron_fid(_data, event);
     if (!check->fid_chern_cut()) _hists->Fill_electron_fid_anti(_data, event);
-    if (!check->isElecctron()) return;
+    if (!check->isElectron()) return;
 
     _hists->Fill_electron_fid_cut(_data, event);
 

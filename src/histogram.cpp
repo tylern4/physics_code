@@ -1021,8 +1021,8 @@ void Histogram::delta_T_canvas() {
       else if (particle_i == 2)
         P_PIP_E = "Electron";
 
-      sprintf(can_name, "Sector %d %s", sec_i + 1, P_PIP_E.c_str());
-      can_dt[sec_i][particle_i] = new TCanvas(can_name, can_name, 1200, 800);
+      can_dt[sec_i][particle_i] = new TCanvas(Form("Sector %d %s", sec_i + 1, P_PIP_E.c_str()),
+                                              Form("Sector %d %s", sec_i + 1, P_PIP_E.c_str()), 1200, 800);
       can_dt[sec_i][particle_i]->Divide(6, 8);
       for (int pad_i = 0; pad_i < SC_PADDLE_NUM; pad_i++) {
         can_dt[sec_i][particle_i]->cd((int)pad_i + 1);
@@ -1140,12 +1140,9 @@ void Histogram::theta_cc_slice_fit() {
     peak[sec_i] = new TF1("peak", "landau", 10, 60);
 
     Theta_CC_Sec[sec_i]->FitSlicesY(peak[sec_i], 0, -1, 20, "QRM+");
-    sprintf(get_name, "Theta_CC_sec%d_%d", sec_i + 1, 0);
-    Theta_CC_0[sec_i] = (TH1D *)gDirectory->Get(get_name);
-    sprintf(get_name, "Theta_CC_sec%d_%d", sec_i + 1, 1);
-    Theta_CC_1[sec_i] = (TH1D *)gDirectory->Get(get_name);
-    sprintf(get_name, "Theta_CC_sec%d_%d", sec_i + 1, 2);
-    Theta_CC_2[sec_i] = (TH1D *)gDirectory->Get(get_name);
+    Theta_CC_0[sec_i] = (TH1D *)gDirectory->Get(Form("Theta_CC_sec%d_%d", sec_i + 1, 0));
+    Theta_CC_1[sec_i] = (TH1D *)gDirectory->Get(Form("Theta_CC_sec%d_%d", sec_i + 1, 1));
+    Theta_CC_2[sec_i] = (TH1D *)gDirectory->Get(Form("Theta_CC_sec%d_%d", sec_i + 1, 2));
 
     float x[20];
     float y_plus[20];
@@ -1167,23 +1164,21 @@ void Histogram::theta_cc_slice_fit() {
 
     CC_P[sec_i] = new TGraph(num, x, y_plus);
     CC_M[sec_i] = new TGraph(num, x, y_minus);
-    sprintf(get_name, "Theta_CC_sec%d_pos_fit", sec_i + 1);
+
     // Theta_CC_Pos_fit[sec_i] = new TF1(get_name, func::pol1, 0, 14, 2);
-    Theta_CC_Pos_fit[sec_i] = new TF1(get_name, func::theta_cc_fit, 1, 14, 4);
+    Theta_CC_Pos_fit[sec_i] = new TF1(Form("Theta_CC_sec%d_pos_fit", sec_i + 1), func::theta_cc_fit, 1, 14, 4);
     Theta_CC_Pos_fit[sec_i]->SetParNames("intercept", "slope", "a", "exp^c*x");
     Theta_CC_Pos_fit[sec_i]->SetParLimits(3, 0, 10);
 
-    sprintf(get_name, "Theta_CC_sec%d_neg_fit", sec_i + 1);
     // Theta_CC_Neg_fit[sec_i] = new TF1(get_name, func::pol1, 0, 14, 2);
-    Theta_CC_Neg_fit[sec_i] = new TF1(get_name, func::theta_cc_fit, 1, 14, 4);
+    Theta_CC_Neg_fit[sec_i] = new TF1(Form("Theta_CC_sec%d_neg_fit", sec_i + 1), func::theta_cc_fit, 1, 14, 4);
     Theta_CC_Neg_fit[sec_i]->SetParNames("intercept", "slope", "a", "exp^c*x");
     Theta_CC_Neg_fit[sec_i]->SetParLimits(3, 0, 10);
     CC_P[sec_i]->Fit(Theta_CC_Pos_fit[sec_i], "QRM+", "", 1, 14);
     CC_M[sec_i]->Fit(Theta_CC_Neg_fit[sec_i], "QRM+", "", 1, 14);
 
-    sprintf(can_name, "Theta_CC_sec%d", sec_i + 1);
-    sprintf(can_title, "Theta CC sec_i %d", sec_i + 1);
-    Theta_CC_canvas[sec_i] = new TCanvas(can_name, can_title, 1280, 720);
+    Theta_CC_canvas[sec_i] =
+        new TCanvas(Form("Theta_CC_sec%d", sec_i + 1), Form("Theta CC sec_i %d", sec_i + 1), 1280, 720);
     Theta_CC_canvas[sec_i]->cd();
     Theta_CC_Sec[sec_i]->Draw();
     Theta_CC_Pos_fit[sec_i]->Draw("same");
@@ -1650,6 +1645,9 @@ void Histogram::EC_slice_fit() {
   EC_P->Draw("*same");
   EC_M->Draw("*same");
   EC_canvas->Write();
+  delete EC_canvas;
+  delete EC_P;
+  delete EC_M;
   /*
     fit_functions->NewFunction();
     fit_functions->Set_RetrunType("float");
@@ -1855,7 +1853,7 @@ void mcHistogram::Write() {
 
   Histogram::Write();
   // Start of cuts
-  Fits *MM_neutron_cut = new Fits();
+  auto MM_neutron_cut = std::make_unique<Fits>();
   MM_neutron_cut->Set_min(0.8);
   MM_neutron_cut->Set_max(1.2);
   MM_neutron_cut->FitBreitWigner(Missing_Mass.get());

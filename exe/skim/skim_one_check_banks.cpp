@@ -32,7 +32,13 @@ int main(int argc, char** argv) {
   std::string in_file = argv[1];
 
   auto skimmed_tree = run_file(in_file);
-  auto outFile = std::make_unique<TFile>("skim.root", "RECREATE");
+
+  auto filename = "skim.root";
+  if (argc == 3) {
+    filename = argv[2];
+  }
+
+  auto outFile = std::make_unique<TFile>(filename, "RECREATE");
   outFile->cd();
   skimmed_tree->Write();
   outFile->Write();

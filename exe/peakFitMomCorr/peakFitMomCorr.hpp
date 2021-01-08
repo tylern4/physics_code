@@ -26,7 +26,7 @@ std::string mom_correction_csv(const std::vector<std::string>& fins, bool MC, si
 
     auto e_mc = LorentzVector(data->pxpart(0), data->pypart(0), data->pzpart(0), mass_map[ELECTRON]);
     mom_correction += std::to_string(e_mc.P()) + "," + std::to_string(e_mc.Theta()) + "," + std::to_string(e_mc.Phi());
-    if (!cuts->isElecctron()) {
+    if (!cuts->isElectron()) {
       mom_correction += ",,,,,None\n";
       continue;
     }
