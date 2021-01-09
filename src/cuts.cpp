@@ -99,7 +99,7 @@ bool e1d_Cuts::isElectron() {
   _elec &= e1d_Cuts::sf_cut(_data->etot(0) / _data->p(0), _data->p(0));
   if (!_elec) return _elec;
   // Fid Cuts
-  _elec &= fid_chern_cut();
+  // _elec &= fid_chern_cut();
   // if (!_elec) return _elec;
   // _elec &= Fid_cut();
 

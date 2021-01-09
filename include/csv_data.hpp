@@ -12,7 +12,7 @@ struct csv_data {
   float theta;
   float phi;
   float mm2;
-  float weight;
+  bool cut_fid;
   int helicty;
   std::string type;
 
@@ -26,7 +26,8 @@ struct csv_data {
     os << d.theta << ",";
     os << d.phi << ",";
     os << d.mm2 << ",";
-    os << d.weight << ",";
+    std::string cut = d.cut_fid ? "1" : "0";
+    os << cut << ",";
     os << std::to_string(d.helicty) << ",";
     os << d.type << "\n";
     return os;

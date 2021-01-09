@@ -849,6 +849,8 @@ void Histogram::delta_t_slice_fit() {
   M->Write();
   Proton_Pos_fit->Write();
   Proton_Neg_fit->Write();
+  delete P;
+  delete M;
 
   TCanvas *dt_proton_canvas = new TCanvas("dt_proton_canvas", "#dt Proton", 1280, 720);
   dt_proton_canvas->cd();
@@ -858,6 +860,7 @@ void Histogram::delta_t_slice_fit() {
   P->Draw("*same");
   M->Draw("*same");
   dt_proton_canvas->Write();
+  delete dt_proton_canvas;
 
   delta_t_mass_PIP->FitSlicesY(peak, 0, 300, 10, "QRG5");
   TH1D *delta_t_mass_PIP_const = (TH1D *)gDirectory->Get("delta_t_mass_PIP_0");
@@ -893,6 +896,8 @@ void Histogram::delta_t_slice_fit() {
   M_pip->Write();
   Pip_Pos_fit->Write();
   Pip_Neg_fit->Write();
+  delete P_pip;
+  delete M_pip;
 
   TCanvas *dt_Pip_canvas = new TCanvas("dt_Pip_canvas", "#dt #pi^{+}", 1280, 720);
   dt_Pip_canvas->cd();
@@ -902,6 +907,7 @@ void Histogram::delta_t_slice_fit() {
   P_pip->Draw("*same");
   M_pip->Draw("*same");
   dt_Pip_canvas->Write();
+  delete dt_Pip_canvas;
 }
 
 void Histogram::delta_t_Write() {

@@ -38,7 +38,7 @@ def read_csv(file_name: str = "", data: bool = False):
         "theta",
         "phi",
         "mm2",
-        "weights",
+        "cut_fid",
         "helicty",
         "type"
     ]
@@ -50,7 +50,7 @@ def read_csv(file_name: str = "", data: bool = False):
         "theta": "float32",
         "phi": "float32",
         "mm2": "float32",
-        "weights": "float32",
+        "cut_fid": "bool",
     }
 
     start = time.time()
@@ -364,109 +364,125 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
         crossSections = np.array(crossSections)
         phis = np.array(phis)
 
-        _data = data[cos_t == data.theta_bin]
-        _mc_rec_data = mc_rec_data[cos_t == mc_rec_data.theta_bin]
-        _thrown_data = thrown_data[cos_t == thrown_data.theta_bin]
+        _data = data[cos_t == data.theta_bin].copy()
+        _mc_rec_data = mc_rec_data[cos_t == mc_rec_data.theta_bin].copy()
+        _thrown_data = thrown_data[cos_t == thrown_data.theta_bin].copy()
 
         # flux = virtual_photon(w.left, q2.left, ENERGY)
         flux = virtual_photon_flux(w.left, q2.left)
 
         xs = np.linspace(0, 2 * np.pi, 100)
-        # print(len(_data.weights.to_numpy()), len(_data.phi.to_numpy()))
-        data_y, data_x = bh.numpy.histogram(
-            _data.phi.to_numpy(), bins=bins, range=(0, 2 * np.pi))
-        x = (data_x[1:] + data_x[:-1]) / 2.0
-        mc_rec_y, _ = bh.numpy.histogram(
-            _mc_rec_data.phi.to_numpy(), bins=bins, range=(0, 2 * np.pi),  threads=4
-        )
-        thrown_y, _ = bh.numpy.histogram(
-            _thrown_data.phi.to_numpy(), bins=bins, range=(0, 2 * np.pi), threads=4
-        )
+        # print(len(_data.cut_fid.to_numpy()), len(_data.phi.to_numpy()))
+        cut_fids = {
+            "fid_false": 0,
+            "fid_true": 1,
+            "all": 2,
+        }
+        for name, fids in cut_fids.items():
+            if fids < 2:
+                __data = _data[_data.cut_fid == fids]
+                __mc_rec_data = _mc_rec_data[mc_rec_data.cut_fid == fids]
+                __thrown_data = thrown_data[thrown_data.cut_fid == fids]
+            else:
+                __data = _data
+                __mc_rec_data = _mc_rec_data
+                __thrown_data = thrown_data
 
-        # Change 0's to mean for division
-        # thrown_y = thrown_y/np.max(thrown_y)
-        # mc_rec_y = mc_rec_y/np.max(mc_rec_y)
+            data_y, data_x = bh.numpy.histogram(
+                __data.phi.to_numpy(), bins=bins, range=(0, 2 * np.pi))
+            x = (data_x[1:] + data_x[:-1]) / 2.0
+            mc_rec_y, _ = bh.numpy.histogram(
+                __mc_rec_data.phi.to_numpy(), bins=bins, range=(0, 2 * np.pi),  threads=4
+            )
+            thrown_y, _ = bh.numpy.histogram(
+                __thrown_data.phi.to_numpy(), bins=bins, range=(0, 2 * np.pi), threads=4
+            )
 
-        # Drop places with 0's
-        cut = ~(mc_rec_y == 0) & ~(data_y == 0)
-        x = x[cut]
-        data_y = data_y[cut]
-        thrown_y = thrown_y[cut]
-        mc_rec_y = mc_rec_y[cut]
+            # Change 0's to mean for division
+            # thrown_y = thrown_y/np.max(thrown_y)
+            # mc_rec_y = mc_rec_y/np.max(mc_rec_y)
 
-        acceptance = np.nan_to_num(thrown_y / mc_rec_y)
+            # Drop places with 0's
+            cut = ~(mc_rec_y == 0) & ~(data_y == 0)
+            x = x[cut]
+            data_y = data_y[cut]
+            thrown_y = thrown_y[cut]
+            mc_rec_y = mc_rec_y[cut]
 
-        try:
-            data_y = data_y / np.max(data_y)
-        except ValueError as e:
-            print(e)
-            continue
+            acceptance = np.nan_to_num(thrown_y / mc_rec_y)
 
-        print(acceptance)
-        y = (data_y * acceptance)  # * flux
-        # y = data_y
-
-        # error_bar = np.ones_like(y) * 0.1
-
-        F = (mc_rec_y/thrown_y)
-        error = np.sqrt(((thrown_y-mc_rec_y)*mc_rec_y) /
-                        np.power(thrown_y, 3))/F
-        error_bar = np.sqrt(
-            np.power((y*error), 2) + np.power(stats.sem(y), 2))
-
-        try:
-            ax[a][b].set_ylim(bottom=0, top=np.max(y)*1.5)
-        except ValueError as e:
-            print(y, data_y)
-            print(e)
-
-        ax[a][b].errorbar(
-            x,
-            y,
-            yerr=error_bar,
-            marker=".",
-            linestyle="",
-            c="k",
-            zorder=1,
-        )
-        ax[a][b].text(0.0, 1.2*np.max(y), cos_label)
-
-        _ax = ax[a][b].twinx()
-
-        _ax.plot(phis, crossSections, c='r', linestyle='dotted')
-        _ax.set_ylim(bottom=0, top=np.max(crossSections)*1.5)
-        # _ax.fill_between(phis, crossSections*1.05,
-        #                  crossSections*0.95,
-        #                  interpolate=True, color="r", alpha=0.3)
-
-        # Try dropping 0's before fitting
-        if y.size <= 5:
-            continue
-        for name, func in models_fits.items():
-            # Make model from function
-            model = Model(func)
-            # Make fit parameters
-            params = model.make_params()
-            # Make sure to set inital values to 1
-            # so fit doesn't fail
-            for p in params:
-                params[p].set(value=1)
-
-            # Fit the model
             try:
-                out = model.fit(y, params, x=x)
+                data_y = data_y / np.max(data_y)
             except ValueError as e:
                 print(e)
-            # Plot the fitted model with output parameters and same x's as model
-            ax[a][b].plot(xs, out.eval(params=out.params, x=xs),
-                          linewidth=2.0, c="#9467bd")
+                continue
 
-            # Get uncertinty and plot between 2 sigmas
-            dely = out.eval_uncertainty(sigma=2, x=xs)
-            ax[a][b].fill_between(xs, out.eval(params=out.params, x=xs)-dely,
-                                  out.eval(params=out.params, x=xs)+dely,
-                                  color="#9467bd", alpha=0.2,
-                                  label='2-$\sigma$ uncertainty band')
+            y = (data_y * acceptance)  # * flux
+
+            # error_bar = np.ones_like(y) * 0.1
+
+            F = (mc_rec_y/thrown_y)
+            error = np.sqrt(((thrown_y-mc_rec_y)*mc_rec_y) /
+                            np.power(thrown_y, 3))/F
+            error_bar = np.sqrt(
+                np.power((y*error), 2) + np.power(stats.sem(y), 2))
+
+            try:
+                ax[a][b].set_ylim(bottom=0, top=np.max(y)*1.5)
+            except ValueError as e:
+                print(e)
+
+            ax[a][b].errorbar(
+                x,
+                y,
+                yerr=error_bar,
+                marker=".",
+                linestyle="",
+                # c="k",
+                zorder=1,
+                label=f"{name}",
+            )
+
+            if fids == 2:
+                ax[a][b].legend()
+                ax[a][b].text(0.0, 1.2*np.max(y), cos_label)
+                _ax = ax[a][b].twinx()
+
+                _ax.plot(phis, crossSections, c='r', linestyle='dotted')
+                _ax.set_ylim(bottom=0, top=np.max(crossSections)*1.5)
+                # _ax.fill_between(phis, crossSections*1.05,
+                #                  crossSections*0.95,
+                #                  interpolate=True, color="r", alpha=0.3)
+            if fids == 1:
+                # Try dropping 0's before fitting
+                if y.size <= 5:
+                    continue
+                for name, func in models_fits.items():
+                    # Make model from function
+                    model = Model(func)
+                    # Make fit parameters
+                    params = model.make_params()
+                    # Make sure to set inital values to 1
+                    # so fit doesn't fail
+                    for p in params:
+                        params[p].set(value=1)
+
+                    # Fit the model
+                    try:
+                        out = model.fit(y, params, x=x)
+                    except ValueError as e:
+                        print(e)
+                    # Plot the fitted model with output parameters and same x's as model
+                    ax[a][b].plot(xs, out.eval(params=out.params, x=xs),
+                                  linewidth=2.0, c="#9467bd")
+
+                    # Get uncertinty and plot between 2 sigmas
+                    dely = out.eval_uncertainty(sigma=2, x=xs)
+                    ax[a][b].fill_between(xs, out.eval(params=out.params, x=xs)-dely,
+                                          out.eval(
+                                              params=out.params, x=xs)+dely,
+                                          color="#9467bd", alpha=0.2,
+                                          label='2-$\sigma$ uncertainty band')
 
     if not os.path.exists(f'{out_folder}/CosT'):
         os.makedirs(f'{out_folder}/CosT')
@@ -836,10 +852,10 @@ if __name__ == "__main__":
     # print(f"\n\ntime: {stop - total_time}\n\n")
 
     # mc_rec = mc_rec[(mc_rec.w > 0) & (mc_rec.mm2 > 0.5) & (mc_rec.mm2 < 1.5)]
-    mc_rec["cos_theta"] = np.cos(mc_rec.theta)
+    mc_rec["cos_theta"] = np.cos(mc_rec.theta).astype(np.float32)
 
     mc_thrown = mc_thrown[(mc_thrown.w > 0)]
-    mc_thrown["cos_theta"] = np.cos(mc_thrown.theta)
+    mc_thrown["cos_theta"] = np.cos(mc_thrown.theta).astype(np.float32)
 
     start = time.time()
     # rec = feather.read_feather(rec_data_file_path)
@@ -877,12 +893,12 @@ if __name__ == "__main__":
     rec = rec[cuts]
     mc_rec = mc_rec[mc_cuts]
     mc_rec = mc_rec[["w", "q2", "mm2", "cos_theta",
-                     "phi", "helicty", "electron_sector"]].copy(deep=True)
-    mc_thrown = mc_thrown[["w", "q2", "mm2", "cos_theta", "phi", "helicty", "electron_sector"]].copy(
+                     "phi", "helicty", "electron_sector", "cut_fid"]].copy(deep=True)
+    mc_thrown = mc_thrown[["w", "q2", "mm2", "cos_theta", "phi", "helicty", "electron_sector", "cut_fid"]].copy(
         deep=True
     )
     rec = rec[["w", "q2", "mm2", "cos_theta",
-               "phi", "weights", "helicty",  "electron_sector"]].copy(deep=True)
+               "phi", "cut_fid", "helicty",  "electron_sector"]].copy(deep=True)
 
     # Specifically put in bin edges
     # TODO ##################### BINS ######################
@@ -890,7 +906,7 @@ if __name__ == "__main__":
                        1.325, 1.35, 1.375, 1.4, 1.425, 1.45, 1.475, 1.5, 1.525,
                        1.55, 1.575, 1.6, 1.625, 1.65, 1.675, 1.7, 1.725, 1.75,
                        1.775, 1.8])
-    #q2_bins = np.array([1.0, 1.4, 1.8, 2.6, 3.5])
+    # q2_bins = np.array([1.0, 1.4, 1.8, 2.6, 3.5])
     q2_bins = np.array([1.2, 1.6, 1.8, 2.2, 2.6, 3.5])
     theta_bins = np.array([-1.0, -0.8, -0.6, -0.4, -0.2,
                            0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2])

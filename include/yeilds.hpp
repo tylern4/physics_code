@@ -83,6 +83,7 @@ class Yeilds {
       }
 
       event->boost();
+      bool cut_fid = check->fid_chern_cut();
 
       // bool cut_angles =
       //     (cos(event->Theta_star()) == -1.0 && event->Phi_star() >= 1.57079 && event->Phi_star() <= 1.57082) ||
@@ -99,7 +100,7 @@ class Yeilds {
         csv_buffer.theta = event->Theta_star();
         csv_buffer.phi = event->Phi_star();
         csv_buffer.mm2 = event->MM2();
-        csv_buffer.weight = event->photon_flux();
+        csv_buffer.cut_fid = cut_fid;
         csv_buffer.helicty = data->helicity();
         csv_buffer.type = type;
         // csv_buffer.hash = 0;  // std::hash<std::string>{}(root_file + std::to_string(current_event));
@@ -254,7 +255,7 @@ class mcYeilds : public Yeilds {
         csv_buffer.theta = mc_event->Theta_star();
         csv_buffer.phi = mc_event->Phi_star();
         csv_buffer.mm2 = mc_event->MM2();
-        csv_buffer.weight = mc_event->photon_flux();
+        csv_buffer.cut_fid = true;
         csv_buffer.helicty = data->helicity();
         csv_buffer.type = "thrown";
         // csv_buffer.hash = 0;  // std::hash<std::string>{}(root_file + std::to_string(current_event));

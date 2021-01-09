@@ -28,7 +28,7 @@ def read_csv(file_name: str = "", data: bool = False):
         "theta",
         "phi",
         "mm2",
-        "weights",
+        "cut_fid",
         "helicty",
         "type"
     ]
@@ -40,7 +40,7 @@ def read_csv(file_name: str = "", data: bool = False):
         "theta": "float32",
         "phi": "float32",
         "mm2": "float32",
-        "weights": "float32",
+        "cut_fid": "bool",
     }
 
     start = time.time()
