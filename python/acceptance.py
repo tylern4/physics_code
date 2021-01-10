@@ -417,7 +417,8 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
                 print(e)
                 continue
 
-            y = (data_y * acceptance)  # * flux
+            # y = (data_y * acceptance)  # * flux
+            y = data_y
 
             # error_bar = np.ones_like(y) * 0.1
 
@@ -444,7 +445,7 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
             )
 
             if fids == 2:
-                ax[a][b].legend()
+                # ax[a][b].legend()
                 ax[a][b].text(0.0, 1.2*np.max(y), cos_label)
                 _ax = ax[a][b].twinx()
 
@@ -906,6 +907,7 @@ if __name__ == "__main__":
                        1.325, 1.35, 1.375, 1.4, 1.425, 1.45, 1.475, 1.5, 1.525,
                        1.55, 1.575, 1.6, 1.625, 1.65, 1.675, 1.7, 1.725, 1.75,
                        1.775, 1.8])
+    w_bins = np.array([1.1, 1.2, 1.3, 1.4, 1.5, 1.6,  1.7,  1.8])
     # q2_bins = np.array([1.0, 1.4, 1.8, 2.6, 3.5])
     q2_bins = np.array([1.2, 1.6, 1.8, 2.2, 2.6, 3.5])
     theta_bins = np.array([-1.0, -0.8, -0.6, -0.4, -0.2,

@@ -81,12 +81,12 @@ bool Cuts::check_banks() {
 bool Cuts::isElectron() {
   bool _elec = true;
   _elec &= Cuts::check_banks();
-  _elec &= _data->nphe(0) > 5;
+  //_elec &= _data->nphe(0) > 5;
 
   // Cut out low ec inner
   _elec &= (_data->ec_ei(0) >= 0.05);
   // Minimum momentum cut
-  _elec &= (_data->p(0) > MIN_P_CUT);
+  //_elec &= (_data->p(0) > MIN_P_CUT);
 
   return _elec;
 }
