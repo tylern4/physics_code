@@ -66,10 +66,7 @@ class Yeilds {
       chain->GetEntry(current_event);
       auto check = std::make_unique<CutType>(data);
 
-      if (!check->isElectron()) {
-        total++;
-        continue;
-      }
+      total++;
 
       auto event = std::make_shared<Reaction>(data, _beam_energy, _mom_corr);
       int pip_num = 0;
@@ -86,7 +83,7 @@ class Yeilds {
       }
 
       event->boost();
-      bool cut_fid = check->fid_chern_cut();
+      bool cut_fid = (check->isElectron() && check->fid_chern_cut());
 
       // bool cut_angles =
       //     (cos(event->Theta_star()) == -1.0 && event->Phi_star() >= 1.57079 && event->Phi_star() <= 1.57082) ||

@@ -152,7 +152,7 @@ def read_csv(file_name: str = "", data: bool = False):
 
 def hist_data(data, density=True):
     data_y, data_x = bh.numpy.histogram(
-        data.phi.to_numpy(), bins=10, range=(0, 2 * np.pi), density=True, threads=4)
+        data.phi.to_numpy(), bins=10, range=(0, 2 * np.pi), density=density, threads=4)
     x = (data_x[1:] + data_x[:-1]) / 2.0
     return data_y, x
 
@@ -245,14 +245,14 @@ def fit_model(ax, func, x, y, xs, color, name):
 
     # Plot the fitted model with output parameters and same x's as model
     ax.plot(xs, out.eval(params=out.params, x=xs),
-            linewidth=2.0, c=color, label=f'{name}')
+            linewidth=2.0, c=color, label=f'{name}', alpha=0.2)
 
     # Get uncertinty and plot between 2 sigmas
-    dely = out.eval_uncertainty(sigma=2, x=xs)
-    ax.fill_between(xs, out.eval(params=out.params, x=xs)-dely,
-                    out.eval(
-        params=out.params, x=xs)+dely,
-        color=color, alpha=0.1)
+    # dely = out.eval_uncertainty(sigma=2, x=xs)
+    # ax.fill_between(xs, out.eval(params=out.params, x=xs)-dely,
+    #                 out.eval(
+    #     params=out.params, x=xs)+dely,
+    #     color=color, alpha=0.1)
 
     return out
 
@@ -266,7 +266,7 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots"):
         for q2 in binning["q2bins"]:
             for theta in binning["thetabins"]:
                 fig = plt.figure(figsize=(12, 9), constrained_layout=True)
-                gs = fig.add_gridspec(2, 1, height_ratios=[3, 1])
+                gs = fig.add_gridspec(2, 1, height_ratios=[2, 1])
                 ax1 = fig.add_subplot(gs[0])
                 ax2 = fig.add_subplot(gs[1])
 
@@ -277,20 +277,28 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots"):
                 data_mc = mc_rec[make_cuts(mc_rec, w, q2, theta)].copy()
                 thrown = mc_thrown[make_cuts(mc_thrown, w, q2, theta)].copy()
 
-                cut_fids = {"fid cuts": True, "no fid cuts": False}
+                cut_fids = {"With Fid cuts": True, "No fid cuts": False}
                 for name, cut in cut_fids.items():
                     if cut:
+                        data_y, x = hist_data(
+                            data[data.cut_fid], density=False)
+                        ax2.errorbar(x, data_y, marker=".",
+                                     linestyle="", zorder=1, markersize=15, label=f"Counts: {name}")
                         # Histogram the data for plotting
                         data_y, x = hist_data(data[data.cut_fid], density=True)
                         mc_rec_y, _ = hist_data(
                             data_mc[data_mc.cut_fid], density=True)
-                        thrown_y, _ = hist_data(
-                            thrown[thrown.cut_fid], density=True)
                     else:
+                        data_y, x = hist_data(data, density=False)
+                        ax2.errorbar(x, data_y, marker=".",
+                                     linestyle="", zorder=1, markersize=15, label=f"Counts: {name}")
                         # Histogram the data for plotting
                         data_y, x = hist_data(data, density=True)
                         mc_rec_y, _ = hist_data(data_mc, density=True)
-                        thrown_y, _ = hist_data(thrown, density=True)
+
+                    thrown_y, _ = hist_data(thrown, density=True)
+
+                    ax2.legend()
 
                     cut = ~(mc_rec_y == 0)
                     x = x[cut]
@@ -300,14 +308,12 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots"):
 
                     # Calculate acceptance and correct data
                     acceptance = np.nan_to_num(thrown_y / mc_rec_y)
-                    ax2.errorbar(x, 1/acceptance, marker=".",
-                                 linestyle="", zorder=1, label=f"{name}")
-
-                    y = (data_y * acceptance)
+                    y = (data_y * acceptance)  # * flux
                     # Calc errorbars
                     error_bar = get_error_bars(y, mc_rec_y, thrown_y)
-                    ebar = ax1.errorbar(
-                        x, y, yerr=error_bar, marker=".", linestyle="", zorder=1, label=f"{name}")
+                    ebar = ax1.errorbar(x, y, yerr=error_bar,
+                                        marker=".", linestyle="",
+                                        zorder=1, label=f"{name}", markersize=15)
                     out = fit_model(ax1, model_new, x, y, xs,
                                     ebar[0].get_color(), name)
                     ax1.legend()
@@ -349,6 +355,7 @@ if __name__ == "__main__":
     # TODO ##################### BINS ######################
 
     print("Start setup")
+    start = time.time_ns()
     # Load mc file
     mc_rec, mc_thrown = read_csv(args.mc_data_file_path)
     # Load reconstructed file
@@ -367,6 +374,7 @@ if __name__ == "__main__":
     binning["wbins"] = pd.Index.sort_values(pd.unique(rec.w_bin))
     binning["q2bins"] = pd.Index.sort_values(pd.unique(rec.q2_bin))
     binning["thetabins"] = pd.Index.sort_values(pd.unique(rec.theta_bin))
-    print("Done setup")
+    end = time.time_ns()
+    print(f"Done setup: {(end-start)/1E9:0.2f}Sec")
 
     main(rec, mc_rec, mc_thrown, binning, out_folder=args.out_folder)
