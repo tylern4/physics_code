@@ -172,6 +172,13 @@ def virtual_photon(W: float, Q2: float, beam_energy: float) -> float:
     return flux
 
 
+def hist_data(data, density=True, bins=10):
+    data_y, data_x = bh.numpy.histogram(
+        data.phi.to_numpy(), bins=bins, range=(0, 2 * np.pi), density=density, threads=4)
+    x = (data_x[1:] + data_x[:-1]) / 2.0
+    return data_y, x
+
+
 def momentum_fn(energy, mass):
     return np.sqrt(energy**2 - mass**2)
 
@@ -373,30 +380,24 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
 
         xs = np.linspace(0, 2 * np.pi, 100)
         # print(len(_data.cut_fid.to_numpy()), len(_data.phi.to_numpy()))
-        cut_fids = {
-            "fid_false": 0,
-            "fid_true": 1,
-            "all": 2,
-        }
-        for name, fids in cut_fids.items():
-            if fids < 2:
-                __data = _data[_data.cut_fid == fids]
-                __mc_rec_data = _mc_rec_data[mc_rec_data.cut_fid == fids]
-                __thrown_data = thrown_data[thrown_data.cut_fid == fids]
+        cut_fids = {"With Fid cuts": True, "No fid cuts": False}
+        for name, cuts in cut_fids.items():
+            if cuts:
+                # Histogram the data for plotting
+                data_y, x = hist_data(
+                    _data[_data.cut_fid], density=True, bins=bins)
+                mc_rec_y, _ = hist_data(
+                    _mc_rec_data[_mc_rec_data.cut_fid], density=True, bins=bins)
             else:
-                __data = _data
-                __mc_rec_data = _mc_rec_data
-                __thrown_data = thrown_data
+                # Histogram the data for plotting
+                data_y, x = hist_data(data, density=True, bins=bins)
+                mc_rec_y, _ = hist_data(_mc_rec_data, density=True, bins=bins)
+                _ax = ax[a][b].twinx()
+                _ax.plot(phis, crossSections, c='r', linestyle='dotted')
+                _ax.set_ylim(bottom=0, top=np.max(crossSections)*1.5)
+                _ax.text(0.0, 1.2*np.max(crossSections), cos_label)
 
-            data_y, data_x = bh.numpy.histogram(
-                __data.phi.to_numpy(), bins=bins, range=(0, 2 * np.pi))
-            x = (data_x[1:] + data_x[:-1]) / 2.0
-            mc_rec_y, _ = bh.numpy.histogram(
-                __mc_rec_data.phi.to_numpy(), bins=bins, range=(0, 2 * np.pi),  threads=4
-            )
-            thrown_y, _ = bh.numpy.histogram(
-                __thrown_data.phi.to_numpy(), bins=bins, range=(0, 2 * np.pi), threads=4
-            )
+            thrown_y, _ = hist_data(_thrown_data, density=True, bins=bins)
 
             # Change 0's to mean for division
             # thrown_y = thrown_y/np.max(thrown_y)
@@ -417,8 +418,7 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
                 print(e)
                 continue
 
-            # y = (data_y * acceptance)  # * flux
-            y = data_y
+            y = (data_y * acceptance)  # * flux
 
             # error_bar = np.ones_like(y) * 0.1
 
@@ -433,7 +433,7 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
             except ValueError as e:
                 print(e)
 
-            ax[a][b].errorbar(
+            ebar = ax[a][b].errorbar(
                 x,
                 y,
                 yerr=error_bar,
@@ -444,46 +444,35 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
                 label=f"{name}",
             )
 
-            if fids == 2:
-                # ax[a][b].legend()
-                ax[a][b].text(0.0, 1.2*np.max(y), cos_label)
-                _ax = ax[a][b].twinx()
+            # Try dropping 0's before fitting
+            if y.size <= 5:
+                continue
+            for name, func in models_fits.items():
+                # Make model from function
+                model = Model(func)
+                # Make fit parameters
+                params = model.make_params()
+                # Make sure to set inital values to 1
+                # so fit doesn't fail
+                for p in params:
+                    params[p].set(value=1)
 
-                _ax.plot(phis, crossSections, c='r', linestyle='dotted')
-                _ax.set_ylim(bottom=0, top=np.max(crossSections)*1.5)
-                # _ax.fill_between(phis, crossSections*1.05,
-                #                  crossSections*0.95,
-                #                  interpolate=True, color="r", alpha=0.3)
-            if fids == 1:
-                # Try dropping 0's before fitting
-                if y.size <= 5:
-                    continue
-                for name, func in models_fits.items():
-                    # Make model from function
-                    model = Model(func)
-                    # Make fit parameters
-                    params = model.make_params()
-                    # Make sure to set inital values to 1
-                    # so fit doesn't fail
-                    for p in params:
-                        params[p].set(value=1)
-
-                    # Fit the model
-                    try:
-                        out = model.fit(y, params, x=x)
-                    except ValueError as e:
-                        print(e)
-                    # Plot the fitted model with output parameters and same x's as model
+                # Fit the model
+                try:
+                    out = model.fit(y, params, x=x)
                     ax[a][b].plot(xs, out.eval(params=out.params, x=xs),
-                                  linewidth=2.0, c="#9467bd")
+                                  linewidth=2.0, c=ebar[0].get_color())
+                except ValueError as e:
+                    print(e)
+                # Plot the fitted model with output parameters and same x's as model
 
-                    # Get uncertinty and plot between 2 sigmas
-                    dely = out.eval_uncertainty(sigma=2, x=xs)
-                    ax[a][b].fill_between(xs, out.eval(params=out.params, x=xs)-dely,
-                                          out.eval(
-                                              params=out.params, x=xs)+dely,
-                                          color="#9467bd", alpha=0.2,
-                                          label='2-$\sigma$ uncertainty band')
+                # # Get uncertinty and plot between 2 sigmas
+                # dely = out.eval_uncertainty(sigma=2, x=xs)
+                # ax[a][b].fill_between(xs, out.eval(params=out.params, x=xs)-dely,
+                #                       out.eval(
+                #     params=out.params, x=xs)+dely,
+                #     color=ebar[0].get_color(), alpha=0.1,
+                #     label='2-$\sigma$ uncertainty band')
 
     if not os.path.exists(f'{out_folder}/CosT'):
         os.makedirs(f'{out_folder}/CosT')
