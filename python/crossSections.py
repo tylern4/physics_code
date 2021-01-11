@@ -310,7 +310,8 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots"):
                     acceptance = np.nan_to_num(thrown_y / mc_rec_y)
                     y = (data_y * acceptance)  # * flux
                     # Calc errorbars
-                    error_bar = get_error_bars(y, mc_rec_y, thrown_y)
+                    # error_bar = get_error_bars(y, mc_rec_y, thrown_y)
+                    error_bar = np.ones_like(y)*0.01
                     ebar = ax1.errorbar(x, y, yerr=error_bar,
                                         marker=".", linestyle="",
                                         zorder=1, label=f"{name}", markersize=15)
