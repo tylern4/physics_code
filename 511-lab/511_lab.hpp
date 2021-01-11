@@ -98,6 +98,9 @@ void make_electron_csv(std::string fin) {
   lab->Write();
   OutputFile->Close();
 
+  delete lab;
+  delete OutputFile;
+
   csv_output.close();
 }
 
@@ -194,6 +197,8 @@ void make_mm_csv(std::string fin) {
   OutputFile->cd();
   lab->Write();
   OutputFile->Close();
+  delete lab;
+  delete OutputFile;
 
   csv_output.close();
 }
@@ -240,6 +245,11 @@ void analyze_wq2(std::string fin, std::string fout) {
   hist_W->Write();
   hist_Q2->Write();
   OutputFile->Close();
+
+  delete hist;
+  delete hist_Q2;
+  delete hist_W;
+  delete OutputFile;
 }
 
 double missing_mass(LorentzVector gamma_mu, LorentzVector pip_mu) {
@@ -338,5 +348,17 @@ void analyze_MM(std::string fin, std::string fout) {
   hist_W_2_after->Write();
   hist_Q2_2_after->Write();
   OutputFile->Close();
+
+  delete w_vs_mm;
+  delete hist_Q2_2;
+  delete bw;
+  delete OutputFile;
+  delete hist_2;
+  delete hist_W_2;
+  delete MM;
+  delete MM_after;
+  delete hist_2_after;
+  delete hist_W_2_after;
+  delete hist_Q2_2_after;
 }
 #endif

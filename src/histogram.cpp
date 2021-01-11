@@ -942,7 +942,7 @@ void Histogram::delta_t_Write() {
   delta_t_mass_kp_PID->SetYTitle("#Deltat");
   delta_t_mass_kp_PID->SetOption("COLZ");
 
-  delta_t_slice_fit();
+  // delta_t_slice_fit();
 
   delta_t_mass_P->Write();
   delta_t_mass_P_PID->Write();
@@ -1243,9 +1243,9 @@ void Histogram::makeHists_fid() {
   electron_fid_sec_cut_hist.reserve(NUM_SECTORS);
   electron_fid_sec_anti_hist.reserve(NUM_SECTORS);
 
-  fid_xy_hist = std::make_shared<TH2D>("fid_xy", "fid_xy", BINS, -150, 150, BINS, 0, 300);
-  fid_xy_cut_hist = std::make_shared<TH2D>("fid_xy_cut", "fid_xy_cut", BINS, -150, 150, BINS, 0, 300);
-  fid_xy_anti_hist = std::make_shared<TH2D>("fid_xy_anti", "fid_xy_anti", BINS, -150, 150, BINS, 0, 300);
+  fid_xy_hist = std::make_shared<TH2D>("fid_dc_xy", "fid_dc_xy", BINS, -150, 150, BINS, 0, 300);
+  fid_xy_cut_hist = std::make_shared<TH2D>("fid_dc_xy_cut", "fid_dc_xy_cut", BINS, -150, 150, BINS, 0, 300);
+  fid_xy_anti_hist = std::make_shared<TH2D>("fid_dc_xy_anti", "fid_dc_xy_anti", BINS, -150, 150, BINS, 0, 300);
   for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
     cerenkov_fid[sec_i] = std::make_shared<TH2D>(Form("fid_cher_xy_%d", sec_i + 1), Form("fid_cher_xy_%d", sec_i + 1),
                                                  BINS, -150, 150, BINS, 0, 300);
@@ -1253,12 +1253,12 @@ void Histogram::makeHists_fid() {
         Form("fid_cher_xy_cut_%d", sec_i + 1), Form("fid_cher_xy_cut_%d", sec_i + 1), BINS, -150, 150, BINS, 0, 300);
     cerenkov_fid_anti[sec_i] = std::make_shared<TH2D>(
         Form("fid_cher_xy_anti_%d", sec_i + 1), Form("fid_cher_xy_anti_%d", sec_i + 1), BINS, -150, 150, BINS, 0, 300);
-    fid_xy[sec_i] = std::make_shared<TH2D>(Form("fid_xy_%d", sec_i + 1), Form("fid_xy_%d", sec_i + 1), BINS, -150, 150,
-                                           BINS, 0, 300);
-    fid_xy_cut[sec_i] = std::make_shared<TH2D>(Form("fid_xy_cut_%d", sec_i + 1), Form("fid_xy_cut_%d", sec_i + 1), BINS,
-                                               -150, 150, BINS, 0, 300);
-    fid_xy_anti[sec_i] = std::make_shared<TH2D>(Form("fid_xy_anti_%d", sec_i + 1), Form("fid_xy_anti_%d", sec_i + 1),
-                                                BINS, -150, 150, BINS, 0, 300);
+    fid_xy[sec_i] = std::make_shared<TH2D>(Form("fid_dc_xy_%d", sec_i + 1), Form("fid_dc_xy_%d", sec_i + 1), BINS, -150,
+                                           150, BINS, 0, 300);
+    fid_xy_cut[sec_i] = std::make_shared<TH2D>(Form("fid_dc_xy_cut_%d", sec_i + 1), Form("fid_dc_xy_cut_%d", sec_i + 1),
+                                               BINS, -150, 150, BINS, 0, 300);
+    fid_xy_anti[sec_i] = std::make_shared<TH2D>(Form("fid_dc_xy_anti_%d", sec_i + 1),
+                                                Form("fid_dc_xy_anti_%d", sec_i + 1), BINS, -150, 150, BINS, 0, 300);
 
     electron_fid_sec_hist[sec_i] =
         std::make_shared<TH2D>(Form("electron_fid_sec%d", sec_i + 1), Form("electron_fid_sec%d", sec_i + 1), BINS,
@@ -1284,6 +1284,8 @@ void Histogram::makeHists_fid() {
 }
 
 void Histogram::Fill_electron_fid(const std::shared_ptr<Branches> &_data, const std::shared_ptr<Reaction> &_r) {
+  if ((_r->cc_y() == 0 && _r->cc_x() == 0) || (_data->dc_ysc(0) == 0 && _data->dc_xsc(0) == 0)) return;
+
   float theta = physics::theta_calc(_data->cz(0));
   float phi = physics::phi_calc(_data->cx(0), _data->cy(0));
   int sector = _data->dc_sect(0);
@@ -1301,6 +1303,7 @@ void Histogram::Fill_electron_fid(const std::shared_ptr<Branches> &_data, const 
 }
 
 void Histogram::Fill_electron_fid_cut(const std::shared_ptr<Branches> &_data, const std::shared_ptr<Reaction> &_r) {
+  if ((_r->cc_y() == 0 && _r->cc_x() == 0) || (_data->dc_ysc(0) == 0 && _data->dc_xsc(0) == 0)) return;
   float theta = physics::theta_calc(_data->cz(0));
   float phi = physics::phi_calc(_data->cx(0), _data->cy(0));
   int sector = _data->dc_sect(0);
@@ -1318,6 +1321,7 @@ void Histogram::Fill_electron_fid_cut(const std::shared_ptr<Branches> &_data, co
 }
 
 void Histogram::Fill_electron_fid_anti(const std::shared_ptr<Branches> &_data, const std::shared_ptr<Reaction> &_r) {
+  if ((_r->cc_y() == 0 && _r->cc_x() == 0) || (_data->dc_ysc(0) == 0 && _data->dc_xsc(0) == 0)) return;
   float theta = physics::theta_calc(_data->cz(0));
   float phi = physics::phi_calc(_data->cx(0), _data->cy(0));
   int sector = _data->dc_sect(0);

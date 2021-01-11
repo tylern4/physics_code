@@ -32,6 +32,7 @@ int main(int argc, char** argv) {
 
   std::ofstream csv_output;
   csv_output.open(outfilename);
+  if (!csv_output.is_open()) return 1;
   csv_output << "sec,theta,phi,charge,vertex,p,sc_t,sc_r\n";
 
   auto chain = std::make_shared<TChain>("h10");
