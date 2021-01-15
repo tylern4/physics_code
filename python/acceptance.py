@@ -428,6 +428,8 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
             error_bar = np.sqrt(
                 np.power((y*error), 2) + np.power(stats.sem(y), 2))
 
+            error_bar = stats.sem(acceptance)
+
             try:
                 ax[a][b].set_ylim(bottom=0, top=np.max(y)*1.5)
             except ValueError as e:
