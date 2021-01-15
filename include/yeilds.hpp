@@ -50,7 +50,7 @@ class Yeilds {
 
   template <class CutType>
   int Run(const std::shared_ptr<TChain>& chain, const std::string& type, const size_t& thread_id) {
-    auto start = std::chrono::high_resolution_clock::now();
+    // auto start = std::chrono::high_resolution_clock::now();
     auto data = std::make_shared<Branches>(chain, false);
     size_t num_of_events = (size_t)chain->GetEntries();
     // PRINT_TIMEING(start, "Got number of events from chain " << num_of_events << " : ");

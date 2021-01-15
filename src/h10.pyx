@@ -143,6 +143,7 @@ cdef class h10_data:
     int entry
     shared_ptr[TChain] c_chain
     shared_ptr[Branches] c_branches
+    int total_num_entries
   def __cinit__(h10_data self):
     self.entry = 0
     self.c_chain.reset(new TChain("h10"))
@@ -151,7 +152,12 @@ cdef class h10_data:
     deref(self.c_chain).Add(file_name.encode())
   @property
   def num_entries(self):
-    return deref(self.c_chain).GetEntries()
+    if not self.total_num_entries:
+      self.total_num_entries = deref(self.c_chain).GetEntries()
+    return self.total_num_entries
+  @property
+  def entry(self):
+    return self.entry - 1
   def get_entry(self, num):
     deref(self.c_chain).GetEntry(num)
   def reset(self):
@@ -159,14 +165,14 @@ cdef class h10_data:
   def __iter__(self):
       return self
   def next(self):
-    if(self.entry <= deref(self.c_chain).GetEntries()):
+    if(self.entry <= self.total_num_entries):
       deref(self.c_chain).GetEntry(self.entry)
       self.entry += 1
       return self
     else:
       raise StopIteration
   def __next__(self):
-    if(self.entry <= deref(self.c_chain).GetEntries()):
+    if(self.entry <= self.total_num_entries):
       deref(self.c_chain).GetEntry(self.entry)
       self.entry += 1
       return self

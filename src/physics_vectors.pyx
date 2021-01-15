@@ -4,6 +4,25 @@ from libc.stdlib cimport free
 from libcpp.memory cimport unique_ptr, shared_ptr
 from cython.operator cimport dereference as deref
 from libcpp cimport bool
+import numpy as np
+cimport numpy as np
+from libc.math cimport sin, cos, sqrt
+from scipy import stats
+cimport cython
+
+cdef float MP = 0.93827208816
+cdef float E0 = 4.81726
+cdef float ME = 0.00051099895
+
+cdef float p_targ_px = 0.0
+cdef float p_targ_py = 0.0
+cdef float p_targ_pz = 0.0
+cdef float p_targ_E = MP
+
+cdef float e_beam_px = 0.0
+cdef float e_beam_py = 0.0
+cdef float e_beam_pz = sqrt(E0**2-ME**2)
+cdef float e_beam_E = E0
 
 cdef dict get_id = {'PROTON': 2212, 'NEUTRON': 2112, 'PIP': 211, 'PIM': -211, 'PI0': 111, 'KP': 321, 'KM': -321, 'PHOTON': 22, 'ELECTRON': 11}
 cdef dict part_mass = {11: 0.000511, 211: 0.13957, -211: 0.13957, 2212: 0.93827, 2112: 0.939565, 321: 0.493667, -321: 0.493667, 22: 0}
@@ -88,7 +107,7 @@ cdef class LorentzVector:
     cdef double E = deref(self.c_TLorentzVector).E() - deref(other.c_TLorentzVector).E()
     return LorentzVector(X, Y, Z, energy=E)
   def __str__(self):
-    return "Px {0: 0.2f} | Py {1: 0.2f} | Pz {2: 0.2f} | E {3: 0.2f}".format(self.Px,self.Py ,self.Pz, self.E)
+    return f"Px {self.Px: 0.4f} | Py {self.Py: 0.4f} | Pz {self.Pz: 0.4f} | E {self.E: 0.4f} | M {self.mass: 0.4f}"
   def __repr__(self):
     return self.__str__()
   def SetPxPyPzM(LorentzVector self, double px, double py, double pz, double mass):
@@ -102,14 +121,14 @@ cdef class LorentzVector:
   @property
   def pz(LorentzVector self):
     return deref(self.c_TLorentzVector).Pz()
-  @property
-  def Px(LorentzVector self):
+
+  cdef float Px(LorentzVector self):
     return deref(self.c_TLorentzVector).Px()
-  @property
-  def Py(LorentzVector self):
+
+  cdef float Py(LorentzVector self):
     return deref(self.c_TLorentzVector).Py()
-  @property
-  def Pz(LorentzVector self):
+
+  cdef float Pz(LorentzVector self):
     return deref(self.c_TLorentzVector).Pz()
   @property
   def P(LorentzVector self):
@@ -117,8 +136,7 @@ cdef class LorentzVector:
   @property
   def E(LorentzVector self):
     return deref(self.c_TLorentzVector).E()
-  @property
-  def Energy(LorentzVector self):
+  cdef float Energy(LorentzVector self):
     return deref(self.c_TLorentzVector).E()
   @property
   def Theta(LorentzVector self):
@@ -189,3 +207,37 @@ cdef class LorentzVector:
   @property
   def PseudoRapidity(LorentzVector self):
     return deref(self.c_TLorentzVector).PseudoRapidity()
+
+
+def calc_W(LorentzVector x):
+    cdef float e_prime_px = x.Px()
+    cdef float e_prime_py = x.Py()
+    cdef float e_prime_pz = x.Pz()
+    cdef float e_prime_E = x.Energy()
+    
+    cdef float temp_px = e_beam_px - e_prime_px + p_targ_px
+    cdef float temp_py = e_beam_py - e_prime_py + p_targ_py
+    cdef float temp_pz = e_beam_pz - e_prime_pz + p_targ_pz
+    cdef float temp_E = e_beam_E - e_prime_E + p_targ_E
+    
+    
+    cdef float temp2 = temp_px**2+temp_py**2+temp_pz**2-temp_E**2
+    cdef float temp3 = sqrt(-temp2)
+    
+    return temp3
+
+
+def calc_q2(LorentzVector x):
+    cdef float e_prime_px = x.Px()
+    cdef float e_prime_py = x.Py()
+    cdef float e_prime_pz = x.Pz()
+    cdef float e_prime_E = x.Energy()
+    
+    cdef float temp_px = e_beam_px - e_prime_px
+    cdef float temp_py = e_beam_py - e_prime_py
+    cdef float temp_pz = e_beam_pz - e_prime_pz
+    cdef float temp_E = e_beam_E - e_prime_E
+
+    cdef float temp2 = temp_px**2+temp_py**2+temp_pz**2-temp_E**2
+
+    return temp2

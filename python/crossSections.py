@@ -24,6 +24,72 @@ import boost_histogram as bh
 import os
 
 
+def luminosity():
+    Q_tot = 15623.89E-6  # mCE-6 -> C
+    l = 5  # cm
+    rho = 0.0708  # g/cm3
+    Avigadro = 6.022E23  # mol^−1
+    qe = 1.602E-19  # C
+    MH = 1.007  # g/mol
+    conv_cm2_to_fm2 = 1E-39  # From wolfram alpha
+
+    return conv_cm2_to_fm2*(Q_tot*l*rho*Avigadro)/(qe*MH)
+
+
+def virtual_photon(W: float, Q2: float, beam_energy: float) -> float:
+    MASS_E = 0.000511
+    target_mass = 0.93827203
+    FS_ALPHA = 0.007297352570866302
+
+    one = FS_ALPHA/(4 * np.pi)
+    two = W/(beam_energy**2 * target_mass**2 * Q2)
+    three = (W**2 - target_mass**2)
+
+    beam_momentum = np.sqrt(beam_energy**2 - MASS_E**2)
+    nu = (((W**2 + Q2) / target_mass) - target_mass) / 2  # Photon Energy
+    scattered_energy = (beam_energy - nu)
+    scattered_momentum = np.sqrt(scattered_energy**2 - MASS_E**2)
+    theta = np.arccos((beam_energy * scattered_energy - Q2 / 2.0 - MASS_E**2) /
+                      (beam_momentum * scattered_momentum))
+    epsilon = 1/(1 + (2 * (1 + ((nu**2) / Q2)) * np.tan(theta / 2)**2))
+
+    four = 1/(1 - epsilon)
+
+    # This makes it look closer? Where am I off?
+    flux = one * two * three * four * 10**3
+
+    return flux * luminosity()
+
+
+def momentum_fn(energy, mass):
+    return np.sqrt(energy**2 - mass**2)
+
+
+def virtual_photon_energy_fn(target_mass, w, q2):
+    return (((w**2 + q2) / target_mass) - target_mass) / 2
+
+
+def costheta_e_fn(beam_energy, target_mass, w, q2):
+    electron_mass = 5.109989433549345e-4
+    nu = virtual_photon_energy_fn(target_mass, w, q2)
+    scattered_energy = ((beam_energy) - (nu))
+    beam_momentum = momentum_fn(beam_energy, electron_mass)
+    scattered_momentum = momentum_fn(scattered_energy, electron_mass)
+    return (beam_energy * scattered_energy - q2 / 2.0 - electron_mass**2) / (beam_momentum * scattered_momentum)
+
+
+def virtual_photon_epsilon_fn(beam_energy, target_mass, w, q2):
+    theta_e = np.arccos(costheta_e_fn(beam_energy, target_mass, w, q2))
+    nu = virtual_photon_energy_fn(target_mass, w, q2)
+    return np.power(1 + 2 * (1 + nu**2 / q2) * np.power(np.tan(theta_e / 2), 2), -1)
+
+
+def virtual_photon_flux(w: float, q2: float, beam_energy: float = 4.81726, target_mass: float = 0.93827203) -> float:
+    alpha = 0.007297352570866302
+    epsilon = virtual_photon_epsilon_fn(beam_energy, target_mass, w, q2)
+    return alpha / (4 * np.pi * q2) * w / (beam_energy**2 * target_mass**2) * (w**2 - target_mass**2) / (1 - epsilon)
+
+
 def degauss(x, A, mu, sigma, lambda1, lambda2):
     mu1 = sigma * sigma * lambda1 + x - mu
     mu2 = -sigma * sigma * lambda2 + x - mu
@@ -150,9 +216,9 @@ def read_csv(file_name: str = "", data: bool = False):
     )
 
 
-def hist_data(data, density=True):
+def hist_data(data, density=True, bins=10):
     data_y, data_x = bh.numpy.histogram(
-        data.phi.to_numpy(), bins=10, range=(0, 2 * np.pi), density=density, threads=4)
+        data.phi.to_numpy(), bins=bins, range=(0, 2 * np.pi), density=density, threads=4)
     x = (data_x[1:] + data_x[:-1]) / 2.0
     return data_y, x
 
@@ -185,9 +251,12 @@ def get_maid_values(xs, w, q2, theta):
 
 
 def get_error_bars(y, mc_rec_y, thrown_y):
-    F = (mc_rec_y/thrown_y)
-    error = np.sqrt(((thrown_y-mc_rec_y)*mc_rec_y) / np.power(thrown_y, 3))/F
-    error_bar = np.sqrt(np.power((y*error), 2) + np.power(stats.sem(y), 2))
+    F = mc_rec_y/thrown_y
+    error = (thrown_y-mc_rec_y)*mc_rec_y
+    error = error / (thrown_y**3)
+    error = np.sqrt(error)
+    error = (error/F)
+    error_bar = np.sqrt(y*error**2 + stats.sem(y)**2)
 
     return error_bar
 
@@ -257,7 +326,7 @@ def fit_model(ax, func, x, y, xs, color, name):
     return out
 
 
-def main(rec, mc_rec, mc_thrown, binning, out_folder="plots"):
+def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=18):
     if not os.path.exists(f'{out_folder}/crossSections'):
         os.makedirs(f'{out_folder}/crossSections')
     # Make a set of values from 0 to 2Pi for plotting
@@ -277,28 +346,50 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots"):
                 data_mc = mc_rec[make_cuts(mc_rec, w, q2, theta)].copy()
                 thrown = mc_thrown[make_cuts(mc_thrown, w, q2, theta)].copy()
 
-                cut_fids = {"With Fid cuts": True, "No fid cuts": False}
-                for name, cut in cut_fids.items():
-                    if cut:
-                        data_y, x = hist_data(
-                            data[data.cut_fid], density=False)
-                        ax2.errorbar(x, data_y, marker=".",
-                                     linestyle="", zorder=1, markersize=15, label=f"Counts: {name}")
+                cut_fids = {"Fid cuts True": 0,
+                            "Fid cuts False": 1, "All Data": 2}
+                for name, cuts in cut_fids.items():
+                    if cuts == 0:
                         # Histogram the data for plotting
-                        data_y, x = hist_data(data[data.cut_fid], density=True)
-                        mc_rec_y, _ = hist_data(
-                            data_mc[data_mc.cut_fid], density=True)
-                    else:
-                        data_y, x = hist_data(data, density=False)
-                        ax2.errorbar(x, data_y, marker=".",
-                                     linestyle="", zorder=1, markersize=15, label=f"Counts: {name}")
+                        marker = 'o'
+                        _data_y, _x = hist_data(
+                            data[data.cut_fid], density=False, bins=bins)
+                        _mc_rec_y, _ = hist_data(
+                            data_mc[data_mc.cut_fid], density=False, bins=bins)
+                    elif cuts == 1:
                         # Histogram the data for plotting
-                        data_y, x = hist_data(data, density=True)
-                        mc_rec_y, _ = hist_data(data_mc, density=True)
+                        marker = "^"
+                        _data_y, _x = hist_data(
+                            data[~data.cut_fid], density=False, bins=bins)
+                        _mc_rec_y, _ = hist_data(
+                            data_mc[~data_mc.cut_fid], density=False, bins=bins)
 
-                    thrown_y, _ = hist_data(thrown, density=True)
+                    else:
+                        marker = 'd'
+                        _data_y, _x = hist_data(
+                            data, density=False, bins=bins)
+                        _mc_rec_y, _ = hist_data(
+                            data_mc, density=False, bins=bins)
+
+                    _thrown_y, _ = hist_data(thrown, density=False, bins=bins)
+
+                    _x = _x[~(_data_y == 0)]
+                    _mc_rec_y = _mc_rec_y[~(_data_y == 0)]
+                    _thrown_y = _thrown_y[~(_data_y == 0)]
+                    _data_y = _data_y[~(_data_y == 0)]
+                    ax2.errorbar(_x, _data_y, marker=marker,
+                                 linestyle="", zorder=1,
+                                 markersize=10, label=f"Counts: {name}", alpha=0.4)
 
                     ax2.legend()
+
+                    try:
+                        x = _x
+                        data_y = _data_y/np.max(_data_y)
+                        mc_rec_y = _mc_rec_y/np.max(_mc_rec_y)
+                        thrown_y = _thrown_y/np.max(_thrown_y)
+                    except ValueError:
+                        continue
 
                     cut = ~(mc_rec_y == 0)
                     x = x[cut]
@@ -307,19 +398,26 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots"):
                     mc_rec_y = mc_rec_y[cut]
 
                     # Calculate acceptance and correct data
+                    flux = virtual_photon_flux(w.left, q2.left)
+                    # * luminosity()
                     acceptance = np.nan_to_num(thrown_y / mc_rec_y)
-                    y = (data_y * acceptance)  # * flux
+                    y = (data_y * acceptance) * flux
                     # Calc errorbars
                     # error_bar = get_error_bars(y, mc_rec_y, thrown_y)
-                    error_bar = np.ones_like(y)*0.01
+                    error_bar = stats.sem(y)
+
                     ebar = ax1.errorbar(x, y, yerr=error_bar,
-                                        marker=".", linestyle="",
-                                        zorder=1, label=f"{name}", markersize=15)
+                                        marker=marker, linestyle="",
+                                        zorder=1, label=f"{name}", markersize=10, alpha=0.4)
                     out = fit_model(ax1, model_new, x, y, xs,
                                     ebar[0].get_color(), name)
                     ax1.legend()
 
-                    top = np.max(y)*1.5
+                    try:
+                        top = np.max(y)*1.5
+                    except ValueError:
+                        top = np.nan
+
                     if np.isnan(top):
                         ax1.set_ylim(bottom=0, top=1.0)
                     else:

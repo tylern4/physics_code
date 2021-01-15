@@ -854,15 +854,6 @@ if __name__ == "__main__":
     # print(f"\n\nread time rec: {stop - start}\n\n")
     # rec = rec[(rec.w > 0) & (rec.mm2 > 0.5) & (rec.mm2 < 1.5)]
     rec["cos_theta"] = np.cos(rec.theta).astype(np.float32)
-    print(f"===========================\nmc_rec:\n\n")
-    print(f"{mc_rec.info(verbose=True, memory_usage='deep')}")
-    print(f"\n\n===========================")
-    print(f"===========================\nmc_thrown:\n\n")
-    print(f"{mc_thrown.info(verbose=True, memory_usage='deep')}")
-    print(f"\n\n===========================")
-    print(f"===========================\nrec:\n\n")
-    print(f"{rec.info(verbose=True, memory_usage='deep')}")
-    print(f"\n\n===========================")
 
     sector_cuts = mm_cut(rec, sigma=10, lmfit_fitter=True)
 
@@ -920,28 +911,38 @@ if __name__ == "__main__":
             draw_kinematics(sec_mc_thrown, w_bins, q2_bins,
                             theta_bins, f"thrown_{sec}")
 
-    mc_rec["w_bin"] = pd.cut(mc_rec["w"], bins=w_bins, include_lowest=True)
-    mc_rec["q2_bin"] = pd.cut(mc_rec["q2"], bins=q2_bins, include_lowest=True)
+    mc_rec["w_bin"] = pd.cut(mc_rec["w"], bins=w_bins, include_lowest=False)
+    mc_rec["q2_bin"] = pd.cut(mc_rec["q2"], bins=q2_bins, include_lowest=False)
     mc_rec["theta_bin"] = pd.cut(
-        mc_rec["cos_theta"], bins=theta_bins, include_lowest=True
+        mc_rec["cos_theta"], bins=theta_bins, include_lowest=False
     )
 
     mc_thrown["w_bin"] = pd.cut(
-        mc_thrown["w"], bins=w_bins, include_lowest=True)
+        mc_thrown["w"], bins=w_bins, include_lowest=False)
     mc_thrown["q2_bin"] = pd.cut(
-        mc_thrown["q2"], bins=q2_bins, include_lowest=True)
+        mc_thrown["q2"], bins=q2_bins, include_lowest=False)
     mc_thrown["theta_bin"] = pd.cut(
-        mc_thrown["cos_theta"], bins=theta_bins, include_lowest=True
+        mc_thrown["cos_theta"], bins=theta_bins, include_lowest=False
     )
 
-    rec["w_bin"] = pd.cut(rec["w"], bins=w_bins, include_lowest=True)
-    rec["q2_bin"] = pd.cut(rec["q2"], bins=q2_bins, include_lowest=True)
+    rec["w_bin"] = pd.cut(rec["w"], bins=w_bins, include_lowest=False)
+    rec["q2_bin"] = pd.cut(rec["q2"], bins=q2_bins, include_lowest=False)
     rec["theta_bin"] = pd.cut(
-        rec["cos_theta"], bins=theta_bins, include_lowest=True)
+        rec["cos_theta"], bins=theta_bins, include_lowest=False)
 
     mc_rec.dropna(inplace=True)
     mc_thrown.dropna(inplace=True)
     rec.dropna(inplace=True)
+
+    print(f"===========================\nmc_rec:\n\n")
+    print(f"{mc_rec.info(verbose=True, memory_usage='deep')}")
+    print(f"\n\n===========================")
+    print(f"===========================\nmc_thrown:\n\n")
+    print(f"{mc_thrown.info(verbose=True, memory_usage='deep')}")
+    print(f"\n\n===========================")
+    print(f"===========================\nrec:\n\n")
+    print(f"{rec.info(verbose=True, memory_usage='deep')}")
+    print(f"\n\n===========================")
 
     binning = dict()
     binning["wbins"] = pd.Index.sort_values(pd.unique(rec.w_bin))

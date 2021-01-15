@@ -16,6 +16,8 @@ using namespace std;
 
 int main(int argc, char **argv) {
   ROOT::EnableThreadSafety();
+  std::cout.imbue(std::locale(""));
+
   std::string e1d_string = "";
   std::string e1f_string = "";
   std::string outputfile = "test.csv";

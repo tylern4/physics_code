@@ -7,9 +7,9 @@ SyncFile::~SyncFile() {
 }
 
 bool SyncFile::writeToFile() {
+  // Get the file lock for this thread
+  std::lock_guard<std::mutex> lock(_writerMutex);
   try {
-    // Get the file lock for this thread
-    std::lock_guard<std::mutex> lock(_writerMutex);
     // loop over queue wring out events to the file before closing
     while (!_writeQueue.empty()) {
       _csv_output << _writeQueue.front();

@@ -6,18 +6,23 @@
 // Only My Includes. All others in main.h
 #include "golden_run.hpp"
 #include <future>
+#include <iostream>
 #include <thread>
 #include "branches.hpp"
 #include "constants.hpp"
 
 int main(int argc, char **argv) {
   ROOT::EnableThreadSafety();
+
   if (argc < 3) {
     exit(1);
   }
+
   std::string outfilename = argv[1];
   std::ofstream myfile;
   myfile.open(outfilename);
+  if (!myfile.is_open()) exit(1);
+
   std::vector<std::string> out;
   std::vector<std::vector<std::string>> infilenames(NUM_THREADS);
   for (int i = 2; i < argc; i++) infilenames[i % NUM_THREADS].push_back(argv[i]);

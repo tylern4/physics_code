@@ -79,6 +79,8 @@ int main(int argc, char **argv) {
     num_events = (size_t)mc_chain->GetEntries();
     total += dh->RunMC<e1d_Cuts>(mc_chain, num);
 
+    if (num == 0) puts("");
+
     return total;
   };
 
