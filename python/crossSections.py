@@ -326,7 +326,7 @@ def fit_model(ax, func, x, y, xs, color, name):
     return out
 
 
-def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=18):
+def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=10):
     if not os.path.exists(f'{out_folder}/crossSections'):
         os.makedirs(f'{out_folder}/crossSections')
     # Make a set of values from 0 to 2Pi for plotting
@@ -346,8 +346,11 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=18):
                 data_mc = mc_rec[make_cuts(mc_rec, w, q2, theta)].copy()
                 thrown = mc_thrown[make_cuts(mc_thrown, w, q2, theta)].copy()
 
-                cut_fids = {"Fid cuts True": 0,
-                            "Fid cuts False": 1, "All Data": 2}
+                cut_fids = {
+                    "Fid cuts True": 0,
+                    # "Fid cuts False": 1,
+                    "All Data": 2
+                }
                 for name, cuts in cut_fids.items():
                     if cuts == 0:
                         # Histogram the data for plotting
@@ -401,10 +404,10 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=18):
                     flux = virtual_photon_flux(w.left, q2.left)
                     # * luminosity()
                     acceptance = np.nan_to_num(thrown_y / mc_rec_y)
-                    y = (data_y * acceptance) * flux
+                    y = (data_y * acceptance)  # * flux
                     # Calc errorbars
                     # error_bar = get_error_bars(y, mc_rec_y, thrown_y)
-                    error_bar = stats.sem(y)
+                    error_bar = stats.sem(acceptance)
 
                     ebar = ax1.errorbar(x, y, yerr=error_bar,
                                         marker=marker, linestyle="",

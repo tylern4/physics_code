@@ -67,17 +67,18 @@ int main(int argc, char **argv) {
     size_t total = 0;
 
     auto data_chain = std::make_shared<TChain>("h10");
-    auto mc_chain = std::make_shared<TChain>("h10");
+    // auto mc_chain = std::make_shared<TChain>("h10");
     for (auto &&f : fls) {
       data_chain->Add(f.c_str());
-      mc_chain->Add(f.c_str());
+      // mc_chain->Add(f.c_str());
     }
     size_t num_events = (size_t)data_chain->GetEntries();
     total += dh->Run<e1d_Cuts>(data_chain, "mc_rec", num);
 
     if (num == 0) puts("");
-    num_events = (size_t)mc_chain->GetEntries();
-    total += dh->RunMC<e1d_Cuts>(mc_chain, num);
+    // num_events = (size_t)mc_chain->GetEntries();
+    // total += dh->RunMC<e1d_Cuts>(mc_chain, num);
+    total += dh->RunMC<e1d_Cuts>(data_chain, num);
 
     if (num == 0) puts("");
 

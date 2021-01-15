@@ -61,10 +61,14 @@ class DataHandler {
     auto event = std::make_shared<Reaction>(_data, _beam_energy, _mom_corr);
 
     _hists->Fill_electron_fid(_data, event);
-    if (!check->fid_chern_cut()) _hists->Fill_electron_fid_anti(_data, event);
-    if (!check->isElectron()) return;
+    bool electron_cut = (check->isElectron() && check->fid_chern_cut());
 
-    _hists->Fill_electron_fid_cut(_data, event);
+    if (check->fid_chern_cut())
+      _hists->Fill_electron_fid_cut(_data, event);
+    else
+      _hists->Fill_electron_fid_anti(_data, event);
+
+    if (!electron_cut) return;
 
     _hists->EC_inout(_data->ec_ei(0), _data->ec_eo(0));
     _hists->EC_fill(_data->etot(0), _data->p(0));
