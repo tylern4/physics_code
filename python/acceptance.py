@@ -443,7 +443,7 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
                 linestyle="",
                 # c="k",
                 zorder=1,
-                label=f"{name}",
+                label=f"{name}" if c == 0 else None,
             )
 
             # Try dropping 0's before fitting
@@ -478,7 +478,7 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
 
     if not os.path.exists(f'{out_folder}/CosT'):
         os.makedirs(f'{out_folder}/CosT')
-
+    fig.legend(loc="upper right")
     fig.savefig(
         f"{out_folder}/CosT/W[{np.round(w.left,3)},{np.round(w.right,3)}]_Q2[{np.round(q2.left,3)},{np.round(q2.right,3)}]_{bins}_CosT.png", bbox_inches='tight'
     )

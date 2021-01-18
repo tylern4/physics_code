@@ -193,6 +193,8 @@ class Yeilds {
 
       std::string type = "other";
       if (event->channel()) type = "channel";
+      if (event->PPi0()) type = "PPi0";
+
       total++;
       fid_data csv_buffer;
       csv_buffer.sector = data->dc_sect(0);
