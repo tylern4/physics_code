@@ -366,7 +366,6 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=10):
                             data[~data.cut_fid], density=False, bins=bins)
                         _mc_rec_y, _ = hist_data(
                             data_mc[~data_mc.cut_fid], density=False, bins=bins)
-
                     else:
                         marker = 'd'
                         _data_y, _x = hist_data(

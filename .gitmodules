@@ -4,3 +4,6 @@
 [submodule "external/aao_rad_lund"]
 	path = external/aao_rad_lund
 	url = https://github.com/tylern4/aao_rad_lund.git
+[submodule "external/zstr"]
+	path = external/zstr
+	url = https://github.com/mateidavid/zstr.git

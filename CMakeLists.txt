@@ -16,13 +16,15 @@ set(CMAKE_MODULE_PATH
    ${PROJECT_SOURCE_DIR}/cmake
    ${PROJECT_SOURCE_DIR}/cmake/modules)
 
+include_directories(${CMAKE_SOURCE_DIR}/external/zstr/src)
 include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_SOURCE_DIR}/include)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)
 
-include_directories(${CMAKE_SOURCE_DIR}/external/lz4xx/include)
-add_subdirectory(${CMAKE_SOURCE_DIR}/external/lz4xx)
-set_target_properties(lz4xx PROPERTIES CXX_STANDARD 11)
+
+# include_directories(${CMAKE_SOURCE_DIR}/external/lz4xx/include)
+# add_subdirectory(${CMAKE_SOURCE_DIR}/external/lz4xx)
+# set_target_properties(lz4xx PROPERTIES CXX_STANDARD 11)
 
 set(CMAKE_CXX_FLAGS "-Ofast ${ROOT_CXX_FLAGS}")
 set(CMAKE_C_FLAGS "-Ofast ${ROOT_CXX_FLAGS}")
@@ -39,6 +41,7 @@ set(PROGRAMS
       exe/skim/e1f_skim.cpp
       exe/skim/skim_one_check_banks.cpp
       exe/csv_maker/csv_maker.cpp
+      exe/csv_maker/csv_maker_PPi0.cpp
       exe/csv_maker/csv_maker_mc.cpp
       exe/ntuple_maker/ntuple_maker.cpp
       exe/golden_run/golden_run.cpp

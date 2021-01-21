@@ -110,6 +110,60 @@ class Yeilds {
   }
 
   template <class CutType>
+  int RunPPi0(const std::shared_ptr<TChain>& chain, const std::string& type, const size_t& thread_id) {
+    auto data = std::make_shared<Branches>(chain, false);
+    size_t num_of_events = (size_t)chain->GetEntries();
+
+    _beam_energy = std::is_same<CutType, e1f_Cuts>::value ? E1F_E0 : E1D_E0;
+    int total = 0;
+    for (size_t current_event = 0; current_event < num_of_events; current_event++) {
+      if (thread_id == 0 && current_event % 100000 == 0)
+        std::cerr << "\t" << 100 * (current_event / (float)num_of_events) + 1 << "\r\r" << std::flush;
+
+      chain->GetEntry(current_event);
+      auto check = std::make_unique<CutType>(data);
+
+      total++;
+
+      auto event = std::make_shared<Reaction>(data, _beam_energy, _mom_corr);
+      int pip_num = 0;
+      for (int part_num = 1; part_num < data->gpart(); part_num++) {
+        if (check->Pip(part_num)) {
+          pip_num = part_num;
+          event->SetPip(part_num);
+        } else if (check->Prot(part_num)) {
+          event->SetProton(part_num);
+        } else if (check->Pim(part_num)) {
+          event->SetPim(part_num);
+        } else
+          event->SetOther(part_num);
+      }
+
+      event->boost();
+
+      bool cut_fid = (check->isElectron() && check->fid_chern_cut());
+
+      if (event->PPi0()) {
+        csv_data csv_buffer;
+        csv_buffer.electron_sector = data->dc_sect(0);
+        csv_buffer.w = event->W();
+        csv_buffer.q2 = event->Q2();
+        csv_buffer.theta = event->Theta_star();
+        csv_buffer.phi = event->Phi_star();
+        csv_buffer.mm2 = event->pi0_mass2();
+        csv_buffer.cut_fid = cut_fid;
+        csv_buffer.helicty = data->helicity();
+        csv_buffer.type = type;
+        WriteData(csv_buffer);
+      }
+    }
+
+    // chain->Reset();
+
+    return total;
+  }
+
+  template <class CutType>
   int RunNtuple(const std::shared_ptr<TChain>& chain) {
     size_t num_of_events = (size_t)chain->GetEntries();
     auto data = std::make_shared<Branches>(chain);
