@@ -73,7 +73,9 @@ int main(int argc, char **argv) {
     }
     size_t num_events = (size_t)data_chain->GetEntries();
     total += dh->Run<e1d_Cuts>(data_chain, "mc_rec", num);
+    csv_file->writeToFile();
     total += dh->RunMC<e1d_Cuts>(data_chain, num);
+    csv_file->writeToFile();
 
     return total;
   };
@@ -96,7 +98,7 @@ int main(int argc, char **argv) {
   std::cout << RED << elapsed.count() << " sec" << DEF << "\n";
   std::cout << BOLDYELLOW << "\n\n" << events / elapsed.count() << " Hz" << DEF << "\n";
   // Write out to csv file
-  csv_file->writeToFile();
+  // csv_file->writeToFile();
 
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
   std::cout << RED << elapsed_full.count() << " sec" << DEF << "\n";
