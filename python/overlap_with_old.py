@@ -493,7 +493,8 @@ def draw_cos_plots(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder
     #         inputs.append((func, data, mc_rec_data, thrown_data,
     #                        w, q2, cos_t_bins, out_folder, bins))
     #     pool.starmap(draw_cos_bin, inputs)
-    for bins in range(10, 26, 2):
+    # for bins in range(10, 26, 2):
+    for bins in [10, 24]:
         draw_cos_bin(data, mc_rec_data, thrown_data,
                      w, q2, cos_t_bins, out_folder, bins, models_fits={"new": model_new})
 
@@ -891,7 +892,7 @@ if __name__ == "__main__":
                        1.32, 1.34, 1.36, 1.38, 1.4, 1.42, 1.44, 1.46, 1.48, 1.5, 1.52,
                        1.54, 1.56, 1.58, 1.6, 1.62, 1.64, 1.66, 1.68, 1.7, 1.72, 1.74,
                        1.76, 1.78, 1.8])
-    q2_bins = np.array([1.0, 1.30, 1.56, 1.87, 2.23, 2.66])
+    q2_bins = np.array([1.1, 1.30, 1.56, 1.87, 2.23, 2.66])
     theta_bins = np.array([-1.0, -0.8, -0.6, -0.4, -0.2,
                            0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2])
     # TODO ##################### BINS ######################
