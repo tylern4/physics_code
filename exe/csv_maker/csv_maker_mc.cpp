@@ -67,40 +67,16 @@ int main(int argc, char **argv) {
     size_t total = 0;
 
     auto data_chain = std::make_shared<TChain>("h10");
-    // auto mc_chain = std::make_shared<TChain>("h10");
+
     for (auto &&f : fls) {
       data_chain->Add(f.c_str());
-      // mc_chain->Add(f.c_str());
     }
     size_t num_events = (size_t)data_chain->GetEntries();
     total += dh->Run<e1d_Cuts>(data_chain, "mc_rec", num);
-
-    if (num == 0) puts("");
-    // num_events = (size_t)mc_chain->GetEntries();
-    // total += dh->RunMC<e1d_Cuts>(mc_chain, num);
     total += dh->RunMC<e1d_Cuts>(data_chain, num);
-
-    if (num == 0) puts("");
 
     return total;
   };
-
-  // auto e1fworker = [&outputfile](auto &&fls, auto &&num) mutable {
-  //   std::string name = outputfile + "_" + to_string(num) + "_e1f.csv";
-  //   auto csv_file = std::make_shared<SyncFile>(name);
-  //   auto dh = std::make_shared<mcYeilds>(csv_file);
-  //   size_t total = 0;
-  //   auto chain = std::make_shared<TChain>("h10");
-  //   for (auto &&f : fls) {
-  //     chain->Add(f.c_str());
-  //   }
-  //   total += dh->RunMC<e1f_Cuts>(chain, num);
-  //   total += dh->Run<e1f_Cuts>(chain, "mc_rec", num);
-
-  //   return total;
-  // };
-
-  // PRINT_TIMEING(start, "Make lambdas: ");
 
   size_t events = 0;
   if (e1d_files.size() > 0) {
@@ -115,23 +91,16 @@ int main(int argc, char **argv) {
       events += threads_e1d[i].get();
     }
   }
+
+  std::chrono::duration<double> elapsed = (std::chrono::high_resolution_clock::now() - start);
+  std::cout << RED << elapsed.count() << " sec" << DEF << "\n";
+  std::cout << BOLDYELLOW << "\n\n" << events / elapsed.count() << " Hz" << DEF << "\n";
   // Write out to csv file
   csv_file->writeToFile();
 
-  // if (e1f_files.size() > 0) {
-  //   std::future<size_t> threads_e1f[NUM_THREADS];
-  //   for (size_t i = 0; i < NUM_THREADS; i++) {
-  //     threads_e1f[i] = std::async(e1fworker, infilenames_e1f.at(i), i);
-  //   }
-
-  //   for (size_t i = 0; i < NUM_THREADS; i++) {
-  //     events += threads_e1f[i].get();
-  //   }
-  // }
-
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
-  std::cout << RED << elapsed_full.count() << " sec" << DEF << std::endl;
-  std::cout << BOLDYELLOW << "\n\n" << events / elapsed_full.count() << " Hz" << DEF << std::endl;
+  std::cout << RED << elapsed_full.count() << " sec" << DEF << "\n";
+  std::cout << BOLDYELLOW << "\n\n" << events / elapsed_full.count() << " Hz" << DEF << "\n";
 
   return 0;
 }
