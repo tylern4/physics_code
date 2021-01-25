@@ -10,7 +10,7 @@ import lmfit
 # from loky import get_reusable_executor
 import multiprocessing
 import os
-from maid_interface import maid_2007_Npi as maid
+# from maid_interface import maid_2007_Npi as maid
 import datetime
 import boost_histogram as bh
 from pyarrow import csv, feather
@@ -353,15 +353,15 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
         _q2 = (q2.left + q2.right) / 2.0
         _cos_t = (cos_t.left + cos_t.right) / 2.0
 
-        crossSections = []
-        phis = []
-        for phi in phi_bins:
-            crossSections.append(
-                maid(ENERGY, _w, _q2, _cos_t, np.degrees(phi)))
-            phis.append(phi)
+        # crossSections = []
+        # phis = []
+        # for phi in phi_bins:
+        #     crossSections.append(
+        #         maid(ENERGY, _w, _q2, _cos_t, np.degrees(phi)))
+        #     phis.append(phi)
 
-        crossSections = np.array(crossSections)
-        phis = np.array(phis)
+        # crossSections = np.array(crossSections)
+        # phis = np.array(phis)
 
         _data = data[cos_t == data.theta_bin].copy()
         _mc_rec_data = mc_rec_data[cos_t == mc_rec_data.theta_bin].copy()
@@ -372,7 +372,9 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
 
         xs = np.linspace(0, 2 * np.pi, 100)
         # print(len(_data.cut_fid.to_numpy()), len(_data.phi.to_numpy()))
-        cut_fids = {"With Fid cuts": True, "No fid cuts": False}
+        cut_fids = {"With Fid cuts": True,
+                    "No fid cuts": False
+                    }
         for name, cuts in cut_fids.items():
             if cuts:
                 # Histogram the data for plotting
@@ -380,10 +382,6 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
                     _data[_data.cut_fid], density=True, bins=bins)
                 mc_rec_y, _ = hist_data(
                     _mc_rec_data[_mc_rec_data.cut_fid], density=True, bins=bins)
-            else:
-                # Histogram the data for plotting
-                data_y, x = hist_data(data, density=True, bins=bins)
-                mc_rec_y, _ = hist_data(_mc_rec_data, density=True, bins=bins)
                 _ax = ax[a][b].twinx()
                 _ax.errorbar(
                     old_data.phi,
@@ -395,9 +393,13 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
                     zorder=1,
                     label=f"E-99-107" if c == 0 else None,
                 )
-                _ax.plot(phis, crossSections, c='r', linestyle='dotted')
-                _ax.set_ylim(bottom=0, top=np.max(crossSections)*1.5)
-                _ax.text(0.0, 1.2*np.max(crossSections), cos_label)
+            else:
+                # Histogram the data for plotting
+                data_y, x = hist_data(data, density=True, bins=bins)
+                mc_rec_y, _ = hist_data(_mc_rec_data, density=True, bins=bins)
+                # _ax.plot(phis, crossSections, c='r', linestyle='dotted')
+                # _ax.set_ylim(bottom=0, top=np.max(crossSections)*1.5)
+                # _ax.text(0.0, 1.2*np.max(crossSections), cos_label)
 
             thrown_y, _ = hist_data(_thrown_data, density=True, bins=bins)
 
@@ -494,7 +496,7 @@ def draw_cos_plots(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder
     #                        w, q2, cos_t_bins, out_folder, bins))
     #     pool.starmap(draw_cos_bin, inputs)
     # for bins in range(10, 26, 2):
-    for bins in [10, 24]:
+    for bins in [24]:
         draw_cos_bin(data, mc_rec_data, thrown_data,
                      w, q2, cos_t_bins, out_folder, bins, models_fits={"new": model_new})
 

@@ -25,15 +25,18 @@ import os
 
 
 def luminosity():
-    Q_tot = 15623.89E-6  # mCE-6 -> C
+    # Q_tot = 15623.89E-6  # mC E-6 -> C
+    Q_tot = 15623.89E-7  # mC E-6 -> C
     l = 5  # cm
     rho = 0.0708  # g/cm3
     Avigadro = 6.022E23  # mol^−1
     qe = 1.602E-19  # C
     MH = 1.007  # g/mol
     conv_cm2_to_fm2 = 1E-39  # From wolfram alpha
+    conv_cm2_to_mubarn = 1E-30  # From wolfram alpha
 
-    return conv_cm2_to_fm2*(Q_tot*l*rho*Avigadro)/(qe*MH)
+    # * conv_cm2_to_fm2
+    return (Q_tot*l*rho*Avigadro)/(qe*MH) * conv_cm2_to_mubarn
 
 
 def virtual_photon(W: float, Q2: float, beam_energy: float) -> float:
@@ -268,11 +271,11 @@ def plot_maid_model(ax, w, q2, theta, xs):
     _theta = (theta.left + theta.right) / 2.0
     # Get the cross section values from maid
     crossSections = get_maid_values(xs, _w, _q2, _theta)
-    _ax = ax.twinx()
-    _ax.plot(xs, crossSections, c='r', linestyle='dotted')
-    _ax.set_ylim(bottom=0, top=np.max(crossSections)*1.5)
+    #_ax = ax.twinx()
+    ax.plot(xs, crossSections, c='r', linestyle='dotted')
+    ax.set_ylim(bottom=0, top=np.max(crossSections)*1.5)
 
-    return _ax
+    return ax
 
 
 def A(M, B, C):
@@ -326,7 +329,7 @@ def fit_model(ax, func, x, y, xs, color, name):
     return out
 
 
-def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24):
+def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=10):
     if not os.path.exists(f'{out_folder}/crossSections'):
         os.makedirs(f'{out_folder}/crossSections')
     # Make a set of values from 0 to 2Pi for plotting
@@ -348,8 +351,8 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24):
 
                 cut_fids = {
                     "Fid cuts True": 0,
+                    "All Data": 2,
                     # "Fid cuts False": 1,
-                    "All Data": 2
                 }
                 for name, cuts in cut_fids.items():
                     if cuts == 0:
@@ -375,38 +378,53 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24):
 
                     _thrown_y, _ = hist_data(thrown, density=False, bins=bins)
 
-                    _x = _x[~(_data_y == 0)]
-                    _mc_rec_y = _mc_rec_y[~(_data_y == 0)]
-                    _thrown_y = _thrown_y[~(_data_y == 0)]
-                    _data_y = _data_y[~(_data_y == 0)]
-                    ax2.errorbar(_x, _data_y, marker=marker,
-                                 linestyle="", zorder=1,
-                                 markersize=10, label=f"Counts: {name}", alpha=0.4)
+                    # Remove points with 0 data count
+                    cut = ~(_data_y == 0)
+                    x = _x[cut]
+                    mc_rec_y = _mc_rec_y[cut]
+                    thrown_y = _thrown_y[cut]
+                    data_y = _data_y[cut]
 
-                    ax2.legend()
+                    # Remove points with 0 mc_rec count and put 1???
+                    mc_rec_y = np.where(mc_rec_y == 0, 1, mc_rec_y)
+                    thrown_y = np.where(thrown_y == 0, 1, thrown_y)
+                    acceptance = mc_rec_y / thrown_y
 
+                    # Plot intergrated yeils to compare with/without fid cuts
                     try:
-                        x = _x
-                        data_y = _data_y/np.max(_data_y)
-                        mc_rec_y = _mc_rec_y/np.max(_mc_rec_y)
-                        thrown_y = _thrown_y/np.max(_thrown_y)
+                        # ax2.errorbar(x, 1/acceptance, marker=marker,
+                        #              linestyle="", zorder=1,
+                        #              markersize=10, label=f"Counts: {name}", alpha=0.4)
+                        ax2.errorbar(x, data_y, marker=marker,
+                                     linestyle="", zorder=1,
+                                     markersize=10, label=f"Counts: {name}", alpha=0.4)
+                        ax2.legend()
+                    except ValueError:
+                        pass
+
+                    # Get bin widths
+                    delta_W = (w.right-w.left)
+                    delta_Q2 = (q2.right-q2.left)
+                    delta_Theta = (theta.right-theta.left)
+                    __phis = np.linspace(0, 2 * np.pi, bins)
+                    delta_phi = __phis[1] - __phis[0]
+                    kin_bin_width = delta_W * delta_Q2 * delta_Theta * delta_phi
+
+                    # Normalize with bin widths
+                    try:
+                        data_y = data_y/kin_bin_width
                     except ValueError:
                         continue
 
-                    cut = ~(mc_rec_y == 0)
-                    x = x[cut]
-                    data_y = data_y[cut]
-                    thrown_y = thrown_y[cut]
-                    mc_rec_y = mc_rec_y[cut]
-
                     # Calculate acceptance and correct data
-                    flux = virtual_photon_flux(w.left, q2.left)
-                    # * luminosity()
-                    acceptance = np.nan_to_num(thrown_y / mc_rec_y)
-                    y = (data_y * acceptance)  # * flux
+                    flux = virtual_photon_flux(w.left, q2.left) * luminosity()
+
+                    y = data_y / acceptance / flux
+
+                    # y = (data_y * acceptance) / flux
                     # Calc errorbars
-                    # error_bar = get_error_bars(y, mc_rec_y, thrown_y)
-                    error_bar = stats.sem(acceptance)
+                    error_bar = get_error_bars(y, mc_rec_y, thrown_y)
+                    # error_bar = stats.sem(acceptance)
 
                     ebar = ax1.errorbar(x, y, yerr=error_bar,
                                         marker=marker, linestyle="",
@@ -415,15 +433,14 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24):
                                     ebar[0].get_color(), name)
                     ax1.legend()
 
-                    try:
-                        top = np.max(y)*1.5
-                    except ValueError:
-                        top = np.nan
-
-                    if np.isnan(top):
-                        ax1.set_ylim(bottom=0, top=1.0)
-                    else:
-                        ax1.set_ylim(bottom=0, top=top)
+                    # try:
+                    #     top = np.max(y)*1.5
+                    # except ValueError:
+                    #     top = np.nan
+                    # if np.isnan(top) or np.isinf(top):
+                    #    ax1.set_ylim(bottom=0, top=1.0)
+                    # else:
+                    #    ax1.set_ylim(bottom=0, top=top)
 
                 ax1.set_title(f"$W$ : {w} , $Q^2$ : {q2} $\\theta$ : {theta}")
                 fig.savefig(f"{out_folder}/crossSections/w_{w.left}_q2_{q2.left}_theta_{theta.left}.png",
@@ -444,22 +461,21 @@ if __name__ == "__main__":
 
     # Specifically put in bin edges
     # TODO ##################### BINS ######################
-    # w_bins = np.array([1.1, 1.125, 1.15, 1.175, 1.2, 1.225, 1.25, 1.275, 1.3,
-    #                    1.325, 1.35, 1.375, 1.4, 1.425, 1.45, 1.475, 1.5, 1.525,
-    #                    1.55, 1.575, 1.6, 1.625, 1.65, 1.675, 1.7, 1.725, 1.75,
-    #                    1.775, 1.8])
-    # q2_bins = np.array([1.2, 1.6, 2.0, 2.4, 3.5])
-    # theta_bins = np.array([-1.0, -0.8, -0.6, -0.4, -0.2,
-    #                        0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2])
-
-    # TODO ##################### BINS that overlap with KPark ######################
-    w_bins = np.array([1.1, 1.12, 1.14, 1.16, 1.18, 1.2, 1.22, 1.24, 1.26, 1.28, 1.3,
-                       1.32, 1.34, 1.36, 1.38, 1.4, 1.42, 1.44, 1.46, 1.48, 1.5, 1.52,
-                       1.54, 1.56, 1.58, 1.6, 1.62, 1.64, 1.66, 1.68, 1.7, 1.72, 1.74,
-                       1.76, 1.78, 1.8])
-    q2_bins = np.array([1.1, 1.30, 1.56, 1.87, 2.23, 2.66])
+    w_bins = np.array([1.1, 1.125, 1.15, 1.175, 1.2, 1.225, 1.25, 1.275, 1.3,
+                       1.325, 1.35, 1.375, 1.4, 1.425, 1.45, 1.475, 1.5, 1.525,
+                       1.55, 1.575, 1.6, 1.625, 1.65, 1.675, 1.7, 1.725, 1.75,
+                       1.775, 1.8])
+    q2_bins = np.array([1.2, 1.6, 2.0, 2.4, 3.5])
     theta_bins = np.array([-1.0, -0.8, -0.6, -0.4, -0.2,
                            0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2])
+    # TODO ##################### BINS that overlap with KPark ######################
+    # w_bins = np.array([1.1, 1.12, 1.14, 1.16, 1.18, 1.2, 1.22, 1.24, 1.26, 1.28, 1.3,
+    #                    1.32, 1.34, 1.36, 1.38, 1.4, 1.42, 1.44, 1.46, 1.48, 1.5, 1.52,
+    #                    1.54, 1.56, 1.58, 1.6, 1.62, 1.64, 1.66, 1.68, 1.7, 1.72, 1.74,
+    #                    1.76, 1.78, 1.8])
+    # q2_bins = np.array([1.1, 1.30, 1.56, 1.87, 2.23, 2.66])
+    # theta_bins = np.array([-1.0, -0.8, -0.6, -0.4, -0.2,
+    #                        0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2])
     # TODO ##################### BINS ######################
 
     print("Start setup")
