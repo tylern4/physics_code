@@ -24,14 +24,14 @@ std::string golden_run(const std::vector<std::string>& fins) {
 
   for (auto& fin : fins) {
     line_num++;
-    // run_num = fin.substr(fin.find("/h10") + 6, 5);
-    // file_num = fin.substr(fin.find("/h10") + 12, 2);
+    run_num = fin.substr(fin.find("/h10") + 6, 5);
+    file_num = fin.substr(fin.find("/h10") + 12, 2);
 
     // run_num = fin.substr(fin.find("run") + 4, 5);
     // file_num = fin.substr(fin.find("pass1") + 7, 2);
 
-    run_num = fin.substr(fin.find("skim_r") + 6, 5);
-    file_num = fin.substr(fin.find("skim_r") + 12, 2);
+    // run_num = fin.substr(fin.find("skim_r") + 6, 5);
+    // file_num = fin.substr(fin.find("skim_r") + 12, 2);
 
     // std::cout << run_num << "\n";
     // std::cout << file_num << "\n";
