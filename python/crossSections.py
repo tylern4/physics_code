@@ -28,14 +28,15 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
                     figsize=(12, 9), constrained_layout=True)
                 gs = fig.add_gridspec(2, 1, height_ratios=[2, 1])
                 ax1 = fig.add_subplot(gs[0])
-                ax2 = fig.add_subplot(gs[1])
+                ax2 = fig.add_subplot(gs[1], sharex=ax1)
                 if overlap is not None:
                     df = pd.read_csv(overlap, index_col=0)
                     old_data = df[(df.W_min == w.left) & (
                         df.Q2_min == q2.left) & (df.cos_t == theta.left)]
                     ebar = ax1.errorbar(old_data.phi, old_data.y, yerr=old_data.yerr,
                                         marker='*', linestyle="",
-                                        zorder=1, label=f"E-99-107", markersize=10, alpha=0.4, c='r')
+                                        zorder=1, label=f"E-99-107",
+                                        markersize=10, alpha=0.4, c='r')
 
                 plot_maid_model(ax1, w, q2, theta, xs)
 
@@ -43,10 +44,17 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
                 data = rec[make_cuts(rec, w, q2, theta)].copy()
                 data_mc = mc_rec[make_cuts(mc_rec, w, q2, theta)].copy()
                 thrown = mc_thrown[make_cuts(mc_thrown, w, q2, theta)].copy()
+                num_good = np.sum(data.cut_fid)
+                if num_good < 6:
+                    bins = 200
+                elif num_good <= 24:
+                    bins = 100
+                else:
+                    bins = 24
 
                 cut_fids = {
-                    "Fid cuts True": 0,
-                    "All Data": 2,
+                    "Fiducial Cuts": 0,
+                    # "All Data": 2,
                     # "Fid cuts False": 1,
                 }
                 for name, cuts in cut_fids.items():
@@ -93,7 +101,7 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
                         ax2.errorbar(x, data_y, marker=marker,
                                      linestyle="", zorder=1,
                                      markersize=10, label=f"Counts: {name}", alpha=0.4)
-                        ax2.legend()
+                        ax2.legend(loc='upper right')
                     except ValueError:
                         pass
 
@@ -123,7 +131,7 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
                                         zorder=1, label=f"{name}", markersize=10, alpha=0.4)
                     out = fit_model(ax1, model_new, x, y, xs,
                                     ebar[0].get_color(), name)
-                    ax1.legend()
+                    ax1.legend(loc='upper right')
 
                     if cuts == 0:
                         try:
