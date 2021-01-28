@@ -46,9 +46,9 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
                 thrown = mc_thrown[make_cuts(mc_thrown, w, q2, theta)].copy()
                 num_good = np.sum(data.cut_fid)
                 if num_good < 6:
-                    continue
+                    bins = 200
                 elif num_good <= 24:
-                    bins = 10
+                    bins = 100
                 else:
                     bins = 24
 
