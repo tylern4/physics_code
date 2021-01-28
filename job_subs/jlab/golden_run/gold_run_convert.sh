@@ -18,7 +18,18 @@ export OUTPUT_FOLDER=/work/clas/clase1/tylern/e1d/data/golden_run
 
 mkdir -p $OUTPUT_FOLDER
 
+echo $HOSTNAME
+
+lscpu
+
+echo "STARTING RUN"
+
+START=`date +%s`
+
 cat golden_run.list | parallel --dry-run -j$NUM_THREADS singularity exec /cvmfs/singularity.opensciencegrid.org/tylern4/clas6:latest h10maker -r $INPUT_FOLDER/{} $OUTPUT_FOLDER/h10_gr_{.}.root
+
+END=`date +%s`
+echo Execution time was `expr $end - $start` seconds.
 
 
 echo "DONE!!"
