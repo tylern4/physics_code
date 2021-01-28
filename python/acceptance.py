@@ -238,18 +238,27 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
             pars = peak.guess(y, x=x)
             background = GaussianModel(prefix="back_")
             pars.update(background.make_params())
-            model = peak * background
+            model = peak + background
 
             out = model.fit(y, pars, x=x)
             xs = np.linspace(0.3, 1.5, 1000)
-            plt.plot(xs, out.eval(params=out.params, x=xs),
-                     'r-', linewidth=2.0, alpha=0.4, label=f"Peak Center: {out.params['peak_center'].value}")
+            comps = out.eval_components(x=xs)
+            out.params.pretty_print()
+            ys = out.eval(params=out.params, x=xs)
+
+            plt.plot(xs, comps['peak_'],
+                     'r-', label='Peak Component')
+            plt.plot(xs, comps['back_'],
+                     'k--', label='Background Component')
+
+            plt.plot(xs, ys, 'r-', linewidth=2.0, alpha=0.4,
+                     label=f"Peak Center: {out.params['peak_center'].value:0.4f}")
             plt.axvline(out.params['peak_center']+sigma *
                         out.params['peak_fwhm'] / 2.355, c='r', alpha=0.4)
             plt.axvline(out.params['peak_center']-sigma *
                         out.params['peak_fwhm'] / 2.355, c='r', alpha=0.4)
-            ax[a][b].plot(xs, out.eval(params=out.params, x=xs),
-                          'r-', linewidth=2.0, alpha=0.6, label=f"Sector {sec}")
+            ax[a][b].plot(xs, ys, 'r-', linewidth=2.0,
+                          alpha=0.6, label=f"Sector {sec}")
             ax[a][b].axvline(out.params['peak_center']+sigma *
                              out.params['peak_fwhm'] / 2.355, c='r', alpha=0.6)
             ax[a][b].axvline(out.params['peak_center']-sigma *
@@ -290,7 +299,7 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
             os.makedirs(f'{out_folder}/cuts')
 
         plt.xlabel(f"Mass [ $\mathrm{{{{GeV}}}}^2$]")
-        plt.legend()
+        plt.legend(loc='upper right')
         plt.title(
             f"Missing Mass Squared $e\left( p, \pi^{{{'+'}}} X \\right)$ in sector {sec}")
 
