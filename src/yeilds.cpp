@@ -22,3 +22,4 @@ Yeilds::~Yeilds() {
 std::string Yeilds::Header() { return "electron_sector,w,q2,theta,phi,mm2,helicty,type,hash"; }
 
 void Yeilds::WriteData(const csv_data& toWrite) { _multi_threaded_csv->write(toWrite); };
+void Yeilds::Save() { _multi_threaded_csv->writeToFile(); };

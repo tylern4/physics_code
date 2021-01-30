@@ -46,6 +46,7 @@ class Yeilds {
   Yeilds(std::string output_file_name, bool isRoot);
   ~Yeilds();
   void WriteData(const csv_data& toWrite);
+  void Save();
   std::string Header();
 
   template <class CutType>
@@ -56,8 +57,10 @@ class Yeilds {
     _beam_energy = std::is_same<CutType, e1f_Cuts>::value ? E1F_E0 : E1D_E0;
     int total = 0;
     for (size_t current_event = 0; current_event < num_of_events; current_event++) {
-      if (thread_id == 0 && current_event % 100000 == 0)
+      if (thread_id == 0 && current_event % 100000 == 0) {
         std::cerr << "\t" << 100 * (current_event / (float)num_of_events) + 1 << "\r\r" << std::flush;
+        Save();
+      }
 
       chain->GetEntry(current_event);
       auto check = std::make_unique<CutType>(data);
