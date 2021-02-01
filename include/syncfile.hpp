@@ -8,7 +8,6 @@
 #include <queue>
 #include <string>
 #include "csv_data.hpp"
-#include "zstr.hpp"
 
 // https://stackoverflow.com/questions/33596910/c-how-to-have-multiple-threads-write-to-a-file
 
