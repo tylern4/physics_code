@@ -29,6 +29,9 @@
 #include "reaction.hpp"
 #include "syncfile.hpp"
 
+// 10,000 Ten Thousand
+#define WRITEBUFF 10000
+
 class Yeilds {
  protected:
   int PID;
@@ -55,12 +58,11 @@ class Yeilds {
     size_t num_of_events = (size_t)chain->GetEntries();
 
     _beam_energy = std::is_same<CutType, e1f_Cuts>::value ? E1F_E0 : E1D_E0;
-    int total = 0;
+    size_t total = 0;
+    size_t written = 0;
     for (size_t current_event = 0; current_event < num_of_events; current_event++) {
-      if (thread_id == 0 && current_event % 100000 == 0) {
+      if (thread_id == 0 && current_event % 100000 == 0)
         std::cerr << "\t" << 100 * (current_event / (float)num_of_events) + 1 << "\r\r" << std::flush;
-        Save();
-      }
 
       chain->GetEntry(current_event);
       auto check = std::make_unique<CutType>(data);
@@ -92,6 +94,7 @@ class Yeilds {
 
       if ((event->SinglePip() || event->NeutronPip()) &&
           (event->MM2() >= 0.3 && event->MM2() <= 1.5 && event->W() <= 2.0 && event->Q2() <= 4.0)) {
+        written++;
         csv_data csv_buffer;
         csv_buffer.electron_sector = data->dc_sect(0);
         csv_buffer.w = event->W();
@@ -105,6 +108,7 @@ class Yeilds {
         // csv_buffer.hash = 0;  // std::hash<std::string>{}(root_file + std::to_string(current_event));
         WriteData(csv_buffer);
       }
+      if (thread_id == 0 && written % WRITEBUFF == 0) Save();
     }
 
     // chain->Reset();
@@ -316,6 +320,7 @@ class mcYeilds : public Yeilds {
         // csv_buffer.hash = 0;  // std::hash<std::string>{}(root_file + std::to_string(current_event));
         WriteData(csv_buffer);
       }
+      if (thread_id == 0 && total % WRITEBUFF == 0) Save();
     }
 
     // chain->Reset();

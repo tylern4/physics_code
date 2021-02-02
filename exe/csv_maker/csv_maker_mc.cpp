@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
   std::string name = outputfile + "_e1d.csv";  //+ "_" + to_string(num)
   auto csv_file = std::make_shared<SyncFile>(name);
 
-  auto e1dworker = [&csv_file](auto &&fls, auto &&num) mutable {
+  auto e1dworker = [&csv_file, &start](auto &&fls, auto &&num) mutable {
     auto dh = std::make_shared<mcYeilds>(csv_file);
     size_t total = 0;
 
@@ -73,9 +73,18 @@ int main(int argc, char **argv) {
     }
     size_t num_events = (size_t)data_chain->GetEntries();
     total += dh->Run<e1d_Cuts>(data_chain, "mc_rec", num);
-    csv_file->writeToFile();
+    {
+      std::chrono::duration<double> elapsed = (std::chrono::high_resolution_clock::now() - start);
+      std::cout << RED << elapsed.count() << " sec" << DEF << "\n";
+      std::cout << BOLDYELLOW << total / elapsed.count() << " Hz" << DEF << "\n";
+    }
+
     total += dh->RunMC<e1d_Cuts>(data_chain, num);
-    csv_file->writeToFile();
+    {
+      std::chrono::duration<double> elapsed = (std::chrono::high_resolution_clock::now() - start);
+      std::cout << RED << elapsed.count() << " sec" << DEF << "\n";
+      std::cout << BOLDYELLOW << total / elapsed.count() << " Hz" << DEF << "\n";
+    }
 
     return total;
   };

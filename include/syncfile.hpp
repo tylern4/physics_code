@@ -21,7 +21,7 @@ class SyncFile {
 
  private:
   std::string _path;
-  std::ofstream _csv_output;
+  std::fstream _csv_output;
   std::mutex _writerMutex;
   std::queue<csv_data> _writeQueue;
 };

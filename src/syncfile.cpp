@@ -1,6 +1,6 @@
 #include "syncfile.hpp"
 
-SyncFile::SyncFile(const std::string& path) : _path(path) { _csv_output.open(_path); }
+SyncFile::SyncFile(const std::string& path) : _path(path) { _csv_output.open(_path, std::ios::out | std::ios::binary); }
 SyncFile::~SyncFile() {
   writeToFile();
   _csv_output.close();

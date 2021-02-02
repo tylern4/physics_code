@@ -54,7 +54,7 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
 
                 cut_fids = {
                     "Fiducial Cuts": 0,
-                    # "All Data": 2,
+                    "All Data": 2,
                     # "Fid cuts False": 1,
                 }
                 for name, cuts in cut_fids.items():
@@ -131,6 +131,7 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
                                         zorder=1, label=f"{name}", markersize=10, alpha=0.4)
                     out = fit_model(ax1, model_new, x, y, xs,
                                     ebar[0].get_color(), name)
+
                     ax1.legend(loc='upper right')
 
                     if cuts == 0:
