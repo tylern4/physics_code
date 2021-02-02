@@ -24,6 +24,18 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
     for w in tqdm(binning["wbins"]):
         for q2 in binning["q2bins"]:
             for theta in binning["thetabins"]:
+                # Cut data/mc for the w/q2/theta bin we're in
+                data = rec[make_cuts(rec, w, q2, theta)].copy()
+                data_mc = mc_rec[make_cuts(mc_rec, w, q2, theta)].copy()
+                thrown = mc_thrown[make_cuts(mc_thrown, w, q2, theta)].copy()
+                num_good = np.sum(data.cut_fid)
+                if num_good < 6:
+                    continue
+                elif num_good <= 24:
+                    bins = 12
+                else:
+                    bins = 24
+
                 fig = plt.figure(
                     figsize=(12, 9), constrained_layout=True)
                 gs = fig.add_gridspec(2, 1, height_ratios=[2, 1])
@@ -39,18 +51,6 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
                                         markersize=10, alpha=0.4, c='r')
 
                 plot_maid_model(ax1, w, q2, theta, xs)
-
-                # Cut data/mc for the w/q2/theta bin we're in
-                data = rec[make_cuts(rec, w, q2, theta)].copy()
-                data_mc = mc_rec[make_cuts(mc_rec, w, q2, theta)].copy()
-                thrown = mc_thrown[make_cuts(mc_thrown, w, q2, theta)].copy()
-                num_good = np.sum(data.cut_fid)
-                if num_good < 6:
-                    bins = 200
-                elif num_good <= 24:
-                    bins = 100
-                else:
-                    bins = 24
 
                 cut_fids = {
                     "Fiducial Cuts": 0,
