@@ -18,9 +18,10 @@ void acc_corr(const std::string &data_root, const std::string &mc_root) {
   THnSparse *ndHist = (THnSparse *)root_data->Get("ndhist");
   THnSparse *ndHist_rec = (THnSparse *)root_mc->Get("ndhist");
   THnSparse *ndHist_thrown = (THnSparse *)root_mc->Get("ndhist_mc");
+
   // calculate acceptance
   ndHist_rec->Divide(ndHist_thrown);
-  ndHist->Multiply(ndHist_rec);
+  ndHist->Divide(ndHist_rec);
   // Now ndHist shouild be acceptance corrected yeilds
 
   // Get number of dimentions from THnD
@@ -35,6 +36,7 @@ void acc_corr(const std::string &data_root, const std::string &mc_root) {
   float xmax[DIMENSIONS];
 
   // Loop over the number of dimentions and
+  // save information into bin/xmin/xmax arrays
   for (int i = 0; i < DIMENSIONS; i++) {
     nbins[i] = ndHist->GetAxis(i)->GetNbins();
     xmin[i] = ndHist->GetAxis(i)->GetBinLowEdge(1);
@@ -66,6 +68,9 @@ void acc_corr(const std::string &data_root, const std::string &mc_root) {
       }
     }
   }
+
+  delete root_data;
+  delete root_mc;
 }
 
 // Hack to compile if not running at `root -l script.cxx`
