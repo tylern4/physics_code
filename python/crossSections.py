@@ -32,9 +32,9 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
                 if num_good < 6:
                     continue
                 elif num_good <= 24:
-                    bins = 12
+                    bins = 6
                 else:
-                    bins = 24
+                    bins = 12
 
                 fig = plt.figure(
                     figsize=(12, 9), constrained_layout=True)
@@ -54,7 +54,7 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
 
                 cut_fids = {
                     "Fiducial Cuts": 0,
-                    "All Data": 2,
+                    # "All Data": 2,
                     # "Fid cuts False": 1,
                 }
                 for name, cuts in cut_fids.items():

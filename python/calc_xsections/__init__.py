@@ -283,11 +283,11 @@ def fit_model(ax, func, x, y, xs, color, name):
             linewidth=2.0, c=color, label=f'{name}', alpha=0.2)
 
     # Get uncertinty and plot between 2 sigmas
-    dely = out.eval_uncertainty(sigma=3, x=xs)
-    ax.fill_between(xs,
-                    out.eval(params=out.params, x=xs)-dely,
-                    out.eval(params=out.params, x=xs)+dely,
-                    color=color, alpha=0.1,
-                    label='$3 \sigma$')
+    # dely = out.eval_uncertainty(sigma=3, x=xs)
+    # ax.fill_between(xs,
+    #                 out.eval(params=out.params, x=xs)-dely,
+    #                 out.eval(params=out.params, x=xs)+dely,
+    #                 color=color, alpha=0.1,
+    #                 label='$3 \sigma$')
 
     return out
