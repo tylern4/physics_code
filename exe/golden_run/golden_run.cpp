@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
   myfile.open(outfilename, std::ios::out | std::ios::binary);
   if (!myfile.is_open()) exit(1);
 
-  myfile << "run_num,file_num,num_of_events,total_q" << std::endl;
+  myfile << "run_num,file_num,num_elec,num_of_events,total_q" << std::endl;
   for (int i = 2; i < argc; i++) myfile << golden_run(argv[i]);
 
   return 0;

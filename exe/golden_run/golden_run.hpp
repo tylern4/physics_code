@@ -51,7 +51,8 @@ std::string golden_run(const std::string& fin) {
       }
     }
   }
-  if (n_evnt != 0 && total_q != 0) golden_run += run_num + "," + file_num + "," + n_evnt + "," + total_q + "\n";
+  if (n_evnt != 0 && total_q != 0)
+    golden_run += run_num + "," + file_num + "," + n_evnt + "," + num_of_events + "," + total_q + "\n";
   std::cout << golden_run;
   return golden_run;
 }
