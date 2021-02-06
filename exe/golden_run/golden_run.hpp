@@ -37,9 +37,9 @@ std::string golden_run(const std::string& fin) {
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
-    auto check = std::make_unique<e1d_Cuts>(data);
+    // auto check = std::make_unique<e1d_Cuts>(data);
 
-    if (check->check_banks()) {
+    if (data->gpart() > 0 && data->q(0) == NEGATIVE) {
       n_evnt++;
       curr_q = data->q_l();
       if (curr_q > 0.0) {
