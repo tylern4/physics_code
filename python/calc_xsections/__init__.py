@@ -63,7 +63,8 @@ def read_csv(file_name: str = "", data: bool = False):
 
 def luminosity():
     # Q_tot = 15623.89E-6  # mC E-6 -> C
-    Q_tot = 2742.5087E-6
+    Q_tot = 2906.9858369E-6
+    # Q_tot = 2742.5087E-6
     l = 5  # cm
     rho = 0.0708  # g/cm3
     Avigadro = 6.022E23  # mol^−1
