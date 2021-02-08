@@ -39,7 +39,7 @@ std::string golden_run(const std::string& fin) {
     chain->GetEntry(current_event);
     // auto check = std::make_unique<e1d_Cuts>(data);
 
-    if (data->gpart() > 0 && data->q(0) == NEGATIVE) {
+    if (data->gpart() > 0) {
       n_evnt++;
       curr_q = data->q_l();
       if (curr_q > 0.0) {
@@ -51,8 +51,7 @@ std::string golden_run(const std::string& fin) {
       }
     }
   }
-  if (n_evnt != 0 && total_q != 0)
-    golden_run += run_num + "," + file_num + "," + n_evnt + "," + num_of_events + "," + total_q + "\n";
+  golden_run += run_num + "," + file_num + "," + n_evnt + "," + num_of_events + "," + total_q + "\n";
   std::cout << golden_run;
   return golden_run;
 }
