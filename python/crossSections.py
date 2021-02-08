@@ -25,7 +25,7 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
         for q2 in binning["q2bins"]:
             CosTfig = plt.figure(
                 figsize=(12, 9), constrained_layout=True)
-            ct_gs = CosTfig.add_gridspec(5, 2)
+            ct_gs = CosTfig.add_gridspec(5, 2, hspace=0.1)
             _left_ax = CosTfig.add_subplot(ct_gs[0, 0])
             _right_ax = CosTfig.add_subplot(ct_gs[0, 1])
             ct_ax = {
@@ -76,7 +76,7 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
 
                 cut_fids = {
                     "Fiducial Cuts": 0,
-                    # "All Data": 2,
+                    "All Data": 2,
                     # "Fid cuts False": 1,
                 }
                 for name, cuts in cut_fids.items():
@@ -160,9 +160,14 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
                                                zorder=1,
                                                label=f"{plot_label[theta.left]}",
                                                markersize=5, alpha=0.8)
-                    ct_ax[theta.left].legend(loc='upper right')
 
                     if cuts == 0:
+                        ct_ax[theta.left].set_ylabel(
+                            '$d \sigma / d \omega [\mu b/sr]$')
+                        ct_ax[theta.left].set_xlabel('$\phi_{\pi}^{*}$')
+                        ct_ax[theta.left].legend(loc='upper right')
+                        out = fit_model(ct_ax[theta.left], model_new, x, y, xs,
+                                        ebar[0].get_color(), "")
                         try:
                             top = np.max(y)*1.5
                         except ValueError:
@@ -175,8 +180,9 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
                 ax1.set_title(f"$W$ : {w} , $Q^2$ : {q2} $\\theta$ : {theta}")
                 fig.savefig(f"{out_folder}/crossSections/w_{w.left}_q2_{q2.left}_theta_{theta.left}.png",
                             bbox_inches='tight')
+            CosTfig.align_ylabels()
             CosTfig.savefig(f"{out_folder}/crossSections/cost_w_{w.left}_q2_{q2.left}.png",
-                            bbox_inches='tight')
+                            bbox_inches='tight', dpi=250)
 
 
 if __name__ == "__main__":
