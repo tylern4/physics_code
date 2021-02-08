@@ -37,10 +37,9 @@ std::string golden_run(const std::string& fin) {
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
     chain->GetEntry(current_event);
-    // auto check = std::make_unique<e1d_Cuts>(data);
+    auto check = std::make_unique<e1d_Cuts>(data);
 
     if (data->gpart() > 0) {
-      n_evnt++;
       curr_q = data->q_l();
       if (curr_q > 0.0) {
         if (curr_q > prev_q) {
@@ -48,6 +47,21 @@ std::string golden_run(const std::string& fin) {
           total_q += delta_q;
         }
         prev_q = curr_q;
+      }
+
+      if (check->isElectron()) {
+        auto event = std::make_shared<Reaction>(data, E1D_E0);
+        for (int part_num = 1; part_num < data->gpart(); part_num++) {
+          if (check->Pip(part_num)) {
+            event->SetPip(part_num);
+          } else if (check->Prot(part_num)) {
+            event->SetProton(part_num);
+          } else if (check->Pim(part_num)) {
+            event->SetPim(part_num);
+          } else
+            event->SetOther(part_num);
+        }
+        if (event->channel()) n_evnt++;
       }
     }
   }

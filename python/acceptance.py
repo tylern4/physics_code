@@ -292,7 +292,7 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
             data[sec] = (popt[1] - sigma * fwhm / 2.355,
                          popt[1] + sigma * fwhm / 2.355)
 
-        ax[a][b].legend()
+        ax[a][b].legend(loc='upper right')
         ax[a][b].set_xlabel(f"Mass [ $\mathrm{{{{GeV}}}}^2$]")
 
         if not os.path.exists(f'{out_folder}/cuts'):

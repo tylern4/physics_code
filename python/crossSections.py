@@ -23,6 +23,24 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
     xs = np.linspace(0, 2 * np.pi, 250)
     for w in tqdm(binning["wbins"]):
         for q2 in binning["q2bins"]:
+            CosTfig = plt.figure(
+                figsize=(12, 9), constrained_layout=True)
+            ct_gs = CosTfig.add_gridspec(5, 2)
+            _left_ax = CosTfig.add_subplot(ct_gs[0, 0])
+            _right_ax = CosTfig.add_subplot(ct_gs[0, 1])
+            ct_ax = {
+                -1.0: _left_ax,
+                -0.8: _right_ax,
+                -0.6: CosTfig.add_subplot(ct_gs[1, 0], sharex=_left_ax),
+                -0.4: CosTfig.add_subplot(ct_gs[1, 1], sharex=_right_ax),
+                -0.2: CosTfig.add_subplot(ct_gs[2, 0], sharex=_left_ax),
+                0.0: CosTfig.add_subplot(ct_gs[2, 1], sharex=_right_ax),
+                0.2: CosTfig.add_subplot(ct_gs[3, 0], sharex=_left_ax),
+                0.4: CosTfig.add_subplot(ct_gs[3, 1], sharex=_right_ax),
+                0.6: CosTfig.add_subplot(ct_gs[4, 0], sharex=_left_ax),
+                0.8: CosTfig.add_subplot(ct_gs[4, 1], sharex=_right_ax),
+            }
+
             for theta in binning["thetabins"]:
                 # Cut data/mc for the w/q2/theta bin we're in
                 data = rec[make_cuts(rec, w, q2, theta)].copy()
@@ -49,8 +67,12 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
                                         marker='*', linestyle="",
                                         zorder=1, label=f"E-99-107",
                                         markersize=10, alpha=0.4, c='r')
+                    ct_ax[theta.left].errorbar(old_data.phi, old_data.y, yerr=old_data.yerr,
+                                               marker='*', linestyle="",
+                                               markersize=5, alpha=0.4, c='r')
 
                 plot_maid_model(ax1, w, q2, theta, xs)
+                plot_maid_model(ct_ax[theta.left], w, q2, theta, xs)
 
                 cut_fids = {
                     "Fiducial Cuts": 0,
@@ -131,8 +153,14 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
                                         zorder=1, label=f"{name}", markersize=10, alpha=0.4)
                     out = fit_model(ax1, model_new, x, y, xs,
                                     ebar[0].get_color(), name)
-
                     ax1.legend(loc='upper right')
+
+                    ct_ax[theta.left].errorbar(x, y, yerr=error_bar,
+                                               marker=marker, linestyle="",
+                                               zorder=1,
+                                               label=f"{plot_label[theta.left]}",
+                                               markersize=5, alpha=0.8)
+                    ct_ax[theta.left].legend(loc='upper right')
 
                     if cuts == 0:
                         try:
@@ -146,6 +174,8 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
 
                 ax1.set_title(f"$W$ : {w} , $Q^2$ : {q2} $\\theta$ : {theta}")
                 fig.savefig(f"{out_folder}/crossSections/w_{w.left}_q2_{q2.left}_theta_{theta.left}.png",
+                            bbox_inches='tight')
+            CosTfig.savefig(f"{out_folder}/crossSections/cost_w_{w.left}_q2_{q2.left}.png",
                             bbox_inches='tight')
 
 
