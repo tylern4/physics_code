@@ -76,7 +76,7 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
 
                 cut_fids = {
                     "Fiducial Cuts": 0,
-                    "All Data": 2,
+                    # "All Data": 2,
                     # "Fid cuts False": 1,
                 }
                 for name, cuts in cut_fids.items():
