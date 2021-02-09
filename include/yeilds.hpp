@@ -86,6 +86,8 @@ class Yeilds {
       event->boost();
 
       bool cut_fid = (check->isElectron() && check->fid_chern_cut());
+      auto electron_sector = data->dc_sect(0);
+      if (electron_sector <= 0 | electron_sector > 6) continue;
 
       // bool cut_angles =
       //     (cos(event->Theta_star()) == -1.0 && event->Phi_star() >= 1.57079 && event->Phi_star() <= 1.57082) ||
@@ -96,7 +98,7 @@ class Yeilds {
           (event->MM2() >= 0.3 && event->MM2() <= 1.5 && event->W() <= 2.0 && event->Q2() <= 4.0)) {
         written++;
         csv_data csv_buffer;
-        csv_buffer.electron_sector = data->dc_sect(0);
+        csv_buffer.electron_sector = electron_sector;
         csv_buffer.w = event->W();
         csv_buffer.q2 = event->Q2();
         csv_buffer.theta = event->Theta_star();
@@ -304,11 +306,13 @@ class mcYeilds : public Yeilds {
       auto mc_event = std::make_shared<MCReaction>(data, _beam_energy);
       int pip_num = 1;
       mc_event->SetPip(pip_num);
+      auto electron_sector = data->dc_sect(0);
+      if (electron_sector <= 0 | electron_sector > 6) continue;
 
       if (!std::isnan(mc_event->W_thrown()) && !std::isnan(mc_event->Q2_thrown())) {
         total++;
         csv_data csv_buffer;
-        csv_buffer.electron_sector = data->dc_sect(0);
+        csv_buffer.electron_sector = electron_sector;
         csv_buffer.w = mc_event->W_thrown();
         csv_buffer.q2 = mc_event->Q2_thrown();
         csv_buffer.theta = mc_event->Theta_star();
