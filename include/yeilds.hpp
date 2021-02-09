@@ -87,7 +87,10 @@ class Yeilds {
 
       bool cut_fid = (check->isElectron() && check->fid_chern_cut());
       auto electron_sector = data->dc_sect(0);
-      if (electron_sector <= 0 | electron_sector > 6) continue;
+      if (electron_sector <= 0 | electron_sector > 6) {
+        std::cerr << "Bad sector number: " << electron_sector << "\n" << std::endl;
+        continue;
+      }
 
       // bool cut_angles =
       //     (cos(event->Theta_star()) == -1.0 && event->Phi_star() >= 1.57079 && event->Phi_star() <= 1.57082) ||
@@ -307,7 +310,10 @@ class mcYeilds : public Yeilds {
       int pip_num = 1;
       mc_event->SetPip(pip_num);
       auto electron_sector = data->dc_sect(0);
-      if (electron_sector <= 0 | electron_sector > 6) continue;
+      if (electron_sector <= 0 | electron_sector > 6) {
+        std::cerr << "Bad sector number: " << electron_sector << "\n" << std::endl;
+        continue;
+      }
 
       if (!std::isnan(mc_event->W_thrown()) && !std::isnan(mc_event->Q2_thrown())) {
         total++;
