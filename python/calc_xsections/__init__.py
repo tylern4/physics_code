@@ -249,7 +249,9 @@ def get_error_bars(y, mc_rec_y, thrown_y):
     error = error / (thrown_y**3)
     error = np.sqrt(error)
     error = (error/F)
-    error_bar = np.sqrt(y*error**2 + stats.sem(y)**2)
+    # error_bar = np.sqrt(y*error**2 + stats.sem(y)**2)
+    # error_bar = np.sqrt(y*error**2 + np.std(y)**2)
+    error_bar = np.sqrt(y*error**2 + (1/np.sqrt(y.size))**2)
 
     return error_bar
 
