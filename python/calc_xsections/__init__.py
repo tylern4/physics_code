@@ -243,7 +243,9 @@ def get_maid_values(xs, w, q2, theta):
     return np.array(crossSections)
 
 
-def get_error_bars(y, mc_rec_y, thrown_y):
+def get_error_bars(y, mc_rec_y, thrown_y, N=None):
+    if N is None:
+        N = y
     F = mc_rec_y/thrown_y
     error = (thrown_y-mc_rec_y)*mc_rec_y
     error = error / (thrown_y**3)
@@ -251,7 +253,8 @@ def get_error_bars(y, mc_rec_y, thrown_y):
     error = (error/F)
     # error_bar = np.sqrt(y*error**2 + stats.sem(y)**2)
     # error_bar = np.sqrt(y*error**2 + np.std(y)**2)
-    error_bar = np.sqrt(y*error**2 + np.std(y)**2)
+
+    error_bar = np.sqrt(y*error**2 + np.sqrt(y)**2)
 
     return error_bar
 

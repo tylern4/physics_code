@@ -40,6 +40,7 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
                 0.6: CosTfig.add_subplot(ct_gs[4, 0], sharex=_left_ax),
                 0.8: CosTfig.add_subplot(ct_gs[4, 1], sharex=_right_ax),
             }
+            pass_plotting = False
 
             for theta in binning["thetabins"]:
                 # Cut data/mc for the w/q2/theta bin we're in
@@ -50,9 +51,11 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
                 if num_good < 6:
                     continue
                 elif num_good <= 24:
-                    bins = 6
+                    bins = 24
                 else:
-                    bins = 12
+                    bins = 10
+                # Passes the plot section  at least once
+                pass_plotting = True
 
                 fig = plt.figure(
                     figsize=(12, 9), constrained_layout=True)
@@ -109,6 +112,7 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
                     mc_rec_y = _mc_rec_y[cut]
                     thrown_y = _thrown_y[cut]
                     data_y = _data_y[cut]
+                    N_y = _data_y[cut]
 
                     # Remove points with 0 mc_rec count and put 1???
                     mc_rec_y = np.where(mc_rec_y == 0, 1, mc_rec_y)
@@ -146,7 +150,7 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
 
                     y = data_y / acceptance / flux
 
-                    error_bar = get_error_bars(y, mc_rec_y, thrown_y)
+                    error_bar = get_error_bars(y, mc_rec_y, thrown_y, N_y)
 
                     ebar = ax1.errorbar(x, y, yerr=error_bar,
                                         marker=marker, linestyle="",
@@ -160,6 +164,7 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
                                                zorder=1,
                                                label=f"{plot_label[theta.left]}",
                                                markersize=5, alpha=0.8)
+                    ct_ax[theta.left].set_ylim(bottom=0.0)
 
                     if cuts == 0:
                         ct_ax[theta.left].set_ylabel(
@@ -180,9 +185,10 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
                 ax1.set_title(f"$W$ : {w} , $Q^2$ : {q2} $\\theta$ : {theta}")
                 fig.savefig(f"{out_folder}/crossSections/w_{w.left}_q2_{q2.left}_theta_{theta.left}.png",
                             bbox_inches='tight')
-            CosTfig.align_ylabels()
-            CosTfig.savefig(f"{out_folder}/crossSections/cost_w_{w.left}_q2_{q2.left}.png",
-                            bbox_inches='tight', dpi=250)
+            if pass_plotting:
+                CosTfig.align_ylabels()
+                CosTfig.savefig(f"{out_folder}/crossSections/cost_w_{w.left}_q2_{q2.left}.png",
+                                bbox_inches='tight', dpi=250)
 
 
 if __name__ == "__main__":
