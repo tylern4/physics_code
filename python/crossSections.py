@@ -75,7 +75,7 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
                                                markersize=5, alpha=0.4, c='r')
 
                 plot_maid_model(ax1, w, q2, theta, xs)
-                plot_maid_model(ct_ax[theta.left], w, q2, theta, xs)
+                top = plot_maid_model(ct_ax[theta.left], w, q2, theta, xs)
 
                 cut_fids = {
                     "Fiducial Cuts": 0,
@@ -164,8 +164,7 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
                                                zorder=1,
                                                label=f"{plot_label[theta.left]}",
                                                markersize=5, alpha=0.8)
-                    ct_ax[theta.left].set_ylim(bottom=0.0)
-
+                    ct_ax[theta.left].set_ylim(bottom=0.0, top=top)
                     if cuts == 0:
                         ct_ax[theta.left].set_ylabel(
                             '$d \sigma / d \omega [\mu b/sr]$')
@@ -173,6 +172,7 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
                         ct_ax[theta.left].legend(loc='upper right')
                         out = fit_model(ct_ax[theta.left], model_new, x, y, xs,
                                         ebar[0].get_color(), "")
+
                         try:
                             top = np.max(y)*1.5
                         except ValueError:

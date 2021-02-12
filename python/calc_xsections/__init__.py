@@ -254,7 +254,8 @@ def get_error_bars(y, mc_rec_y, thrown_y, N=None):
     # error_bar = np.sqrt(y*error**2 + stats.sem(y)**2)
     # error_bar = np.sqrt(y*error**2 + np.std(y)**2)
 
-    error_bar = np.sqrt(y*error**2 + np.sqrt(y)**2)
+    # error_bar = np.sqrt(y*error**2 + np.sqrt(np.sum(N))**2)
+    error_bar = np.sqrt(y*error**2 + y*np.sqrt(N)**2)
 
     return error_bar
 
@@ -270,7 +271,7 @@ def plot_maid_model(ax, w, q2, theta, xs):
     ax.plot(xs, crossSections, c='r', linestyle='dotted')
     # ax.set_ylim(bottom=0, top=np.max(crossSections)*1.5)
 
-    return ax
+    return np.max(crossSections)*1.8
 
 
 def A(M, B, C):
