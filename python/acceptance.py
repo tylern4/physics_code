@@ -25,6 +25,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from lmfit import Model, Parameters
 from lmfit.models import *
+from calc_xsections import *
 
 
 ENERGY = 4.81726
@@ -892,27 +893,6 @@ if __name__ == "__main__":
     rec = rec[["w", "q2", "mm2", "cos_theta",
                "phi", "cut_fid", "helicty",  "electron_sector"]].copy(deep=True)
 
-    # Specifically put in bin edges
-    # TODO ##################### BINS ######################
-    # w_bins = np.array([1.1, 1.125, 1.15, 1.175, 1.2, 1.225, 1.25, 1.275, 1.3,
-    #                    1.325, 1.35, 1.375, 1.4, 1.425, 1.45, 1.475, 1.5, 1.525,
-    #                    1.55, 1.575, 1.6, 1.625, 1.65, 1.675, 1.7, 1.725, 1.75,
-    #                    1.775, 1.8])
-    # # w_bins = np.array([1.1, 1.2, 1.3, 1.4, 1.5, 1.6,  1.7,  1.8])
-    # # q2_bins = np.array([1.0, 1.4, 1.8, 2.6, 3.5])
-    # q2_bins = np.array([1.2, 1.6, 2.0, 2.4, 3.5])
-    # theta_bins = np.array([-1.0, -0.8, -0.6, -0.4, -0.2,
-    #                        0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2])
-
-    # TODO ##################### BINS that overlap with KPark ######################
-    w_bins = np.array([1.1, 1.12, 1.14, 1.16, 1.18, 1.2, 1.22, 1.24, 1.26, 1.28, 1.3,
-                       1.32, 1.34, 1.36, 1.38, 1.4, 1.42, 1.44, 1.46, 1.48, 1.5, 1.52,
-                       1.54, 1.56, 1.58, 1.6, 1.62, 1.64, 1.66, 1.68, 1.7, 1.72, 1.74,
-                       1.76, 1.78, 1.8])
-    q2_bins = np.array([1.1, 1.30, 1.56, 1.87, 2.23, 2.66])
-    theta_bins = np.array([-1.0, -0.8, -0.6, -0.4, -0.2,
-                           0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2])
-    # TODO ##################### BINS ######################
     if args.draw_kin:
         draw_kinematics(rec, w_bins, q2_bins, theta_bins)
         draw_kinematics(mc_rec, w_bins, q2_bins, theta_bins, "mc_rec")
@@ -931,28 +911,28 @@ if __name__ == "__main__":
             draw_kinematics(sec_mc_thrown, w_bins, q2_bins,
                             theta_bins, f"thrown_{sec}")
 
-    mc_rec["w_bin"] = pd.cut(mc_rec["w"], bins=w_bins, include_lowest=False)
-    mc_rec["q2_bin"] = pd.cut(mc_rec["q2"], bins=q2_bins, include_lowest=False)
-    mc_rec["theta_bin"] = pd.cut(
-        mc_rec["cos_theta"], bins=theta_bins, include_lowest=False
-    )
+    # mc_rec["w_bin"] = pd.cut(mc_rec["w"], bins=w_bins, include_lowest=False)
+    # mc_rec["q2_bin"] = pd.cut(mc_rec["q2"], bins=q2_bins, include_lowest=False)
+    # mc_rec["theta_bin"] = pd.cut(
+    #     mc_rec["cos_theta"], bins=theta_bins, include_lowest=False
+    # )
 
-    mc_thrown["w_bin"] = pd.cut(
-        mc_thrown["w"], bins=w_bins, include_lowest=False)
-    mc_thrown["q2_bin"] = pd.cut(
-        mc_thrown["q2"], bins=q2_bins, include_lowest=False)
-    mc_thrown["theta_bin"] = pd.cut(
-        mc_thrown["cos_theta"], bins=theta_bins, include_lowest=False
-    )
+    # mc_thrown["w_bin"] = pd.cut(
+    #     mc_thrown["w"], bins=w_bins, include_lowest=False)
+    # mc_thrown["q2_bin"] = pd.cut(
+    #     mc_thrown["q2"], bins=q2_bins, include_lowest=False)
+    # mc_thrown["theta_bin"] = pd.cut(
+    #     mc_thrown["cos_theta"], bins=theta_bins, include_lowest=False
+    # )
 
-    rec["w_bin"] = pd.cut(rec["w"], bins=w_bins, include_lowest=False)
-    rec["q2_bin"] = pd.cut(rec["q2"], bins=q2_bins, include_lowest=False)
-    rec["theta_bin"] = pd.cut(
-        rec["cos_theta"], bins=theta_bins, include_lowest=False)
+    # rec["w_bin"] = pd.cut(rec["w"], bins=w_bins, include_lowest=False)
+    # rec["q2_bin"] = pd.cut(rec["q2"], bins=q2_bins, include_lowest=False)
+    # rec["theta_bin"] = pd.cut(
+    #     rec["cos_theta"], bins=theta_bins, include_lowest=False)
 
-    mc_rec.dropna(inplace=True)
-    mc_thrown.dropna(inplace=True)
-    rec.dropna(inplace=True)
+    # mc_rec.dropna(inplace=True)
+    # mc_thrown.dropna(inplace=True)
+    # rec.dropna(inplace=True)
 
     print(f"===========================\nmc_rec:\n\n")
     print(f"{mc_rec.info(verbose=True, memory_usage='deep')}")
@@ -964,13 +944,13 @@ if __name__ == "__main__":
     print(f"{rec.info(verbose=True, memory_usage='deep')}")
     print(f"\n\n===========================")
 
-    binning = dict()
-    binning["wbins"] = pd.Index.sort_values(pd.unique(rec.w_bin))
-    binning["q2bins"] = pd.Index.sort_values(pd.unique(rec.q2_bin))
-    binning["thetabins"] = pd.Index.sort_values(pd.unique(rec.theta_bin))
+    # binning = dict()
+    # binning["wbins"] = pd.Index.sort_values(pd.unique(rec.w_bin))
+    # binning["q2bins"] = pd.Index.sort_values(pd.unique(rec.q2_bin))
+    # binning["thetabins"] = pd.Index.sort_values(pd.unique(rec.theta_bin))
 
-    draw_xsection(rec, mc_rec, mc_thrown, model_new,
-                  out_folder, binning)
+    # draw_xsection(rec, mc_rec, mc_thrown, model_new,
+    #               out_folder, binning)
 
     stop = time.time()
     print(f"\n\nFull Running time: {stop - total_time}\n\n")

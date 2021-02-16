@@ -15,7 +15,16 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from calc_xsections import *
 
+# try:
+#     from memory_profiler import profile
+# except ImportError:
+#     def profile(func, *args, **kwargs):
+#         def wrap(*args, **kwargs):
+#             return func(*args, **kwargs)
+#         return wrap
 
+
+# @profile
 def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=None):
     if not os.path.exists(f'{out_folder}/crossSections'):
         os.makedirs(f'{out_folder}/crossSections')
@@ -204,27 +213,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Start to main
-
-    # Specifically put in bin edges
-    # TODO ##################### BINS ######################
-    if args.overlap is None:
-        w_bins = np.array([1.1, 1.125, 1.15, 1.175, 1.2, 1.225, 1.25, 1.275, 1.3,
-                           1.325, 1.35, 1.375, 1.4, 1.425, 1.45, 1.475, 1.5, 1.525,
-                           1.55, 1.575, 1.6, 1.625, 1.65, 1.675, 1.7, 1.725, 1.75,
-                           1.775, 1.8])
-        q2_bins = np.array([1.2, 1.6, 2.0, 2.4, 3.5])
-        theta_bins = np.array([-1.0, -0.8, -0.6, -0.4, -0.2,
-                               0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2])
-    else:
-        # TODO ##################### BINS that overlap with KPark ######################
-        w_bins = np.array([1.1, 1.12, 1.14, 1.16, 1.18, 1.2, 1.22, 1.24, 1.26, 1.28, 1.3,
-                           1.32, 1.34, 1.36, 1.38, 1.4, 1.42, 1.44, 1.46, 1.48, 1.5, 1.52,
-                           1.54, 1.56, 1.58, 1.6, 1.62, 1.64, 1.66, 1.68, 1.7, 1.72, 1.74,
-                           1.76, 1.78, 1.8])
-        q2_bins = np.array([1.1, 1.30, 1.56, 1.87, 2.23, 2.66])
-        theta_bins = np.array([-1.0, -0.8, -0.6, -0.4, -0.2,
-                               0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2])
-    # TODO ##################### BINS ######################
 
     print("Start setup")
     start = time.time_ns()
