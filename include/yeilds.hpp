@@ -212,7 +212,7 @@ class Yeilds {
       }
 
       if (event->W() < 0) continue;
-      if (event->Q2() > 6) continue;
+      if (event->Q2() < 1.1 || event->Q2() > 3.5) continue;
       if (event->SinglePip() && event->MM() < 0) continue;
 
       if (event->SinglePip() || event->NeutronPip()) {
@@ -310,6 +310,8 @@ class mcYeilds : public Yeilds {
       mc_event->SetPip(pip_num);
       short electron_sector = data->dc_sect(0);
       if (electron_sector < 0 || electron_sector > 6) electron_sector = 0;
+
+      if (mc_event->Q2_thrown() < 1.1 || mc_event->Q2_thrown() > 3.5) continue;
 
       if (!std::isnan(mc_event->W_thrown()) && !std::isnan(mc_event->Q2_thrown())) {
         total++;

@@ -41,7 +41,7 @@ w_bins = np.array([1.1, 1.12, 1.14, 1.16, 1.18, 1.2, 1.22, 1.24, 1.26, 1.28, 1.3
                    1.54, 1.56, 1.58, 1.6, 1.62, 1.64, 1.66, 1.68, 1.7, 1.72, 1.74,
                    1.76, 1.78, 1.8])
 
-q2_bins = np.array([1.1, 1.30, 1.56, 1.87, 2.23, 2.66])
+q2_bins = np.array([1.1, 1.30, 1.56, 1.87, 2.23, 2.66, 3.5])
 
 theta_bins = np.array([-1.0, -0.8, -0.6, -0.4, -0.2,
                        0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2])
@@ -261,7 +261,8 @@ def get_error_bars(y, mc_rec_y, thrown_y, N=None):
     error = error / (thrown_y**3)
     error = np.sqrt(error)
     error = (error/F)
-    error_bar = np.sqrt(y*error**2 + stats.sem(y)**2)
+    std_error = (8.9/100.0)*y
+    error_bar = np.sqrt(y*error**2 + std_error**2)
     # error_bar = np.sqrt(y*error**2 + np.std(y)**2)
     # error_bar = np.sqrt(y*error**2 + np.sqrt(np.sum(N))**2)
     # error_bar = np.sqrt(y*error**2 + np.sqrt(N)**2)

@@ -15,16 +15,7 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from calc_xsections import *
 
-# try:
-#     from memory_profiler import profile
-# except ImportError:
-#     def profile(func, *args, **kwargs):
-#         def wrap(*args, **kwargs):
-#             return func(*args, **kwargs)
-#         return wrap
 
-
-# @profile
 def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=None):
     if not os.path.exists(f'{out_folder}/crossSections'):
         os.makedirs(f'{out_folder}/crossSections')
@@ -59,10 +50,11 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
                 num_good = np.sum(data.cut_fid)
                 if num_good < 6:
                     continue
-                elif num_good <= 24:
-                    bins = 24
-                else:
-                    bins = 10
+                # elif num_good <= 24:
+                #     bins = 24
+                # else:
+                #     bins = 10
+
                 # Passes the plot section  at least once
                 pass_plotting = True
 
