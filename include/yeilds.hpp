@@ -70,6 +70,8 @@ class Yeilds {
       total++;
 
       auto event = std::make_shared<Reaction>(data, _beam_energy, _mom_corr);
+      if (event->Q2() < 1.1 || event->Q2() > 3.5) continue;
+
       int pip_num = 0;
       for (int part_num = 1; part_num < data->gpart(); part_num++) {
         if (check->Pip(part_num)) {
@@ -151,6 +153,7 @@ class Yeilds {
       event->boost();
       short electron_sector = data->dc_sect(0);
       if (electron_sector < 0 || electron_sector > 6) electron_sector = 0;
+      if (event->Q2() < 1.1 || event->Q2() > 3.5) continue;
 
       bool cut_fid = (check->isElectron() && check->fid_chern_cut());
 
@@ -306,12 +309,13 @@ class mcYeilds : public Yeilds {
         std::cerr << "\t" << 100 * (current_event / (float)num_of_events) + 1 << "\r\r" << std::flush;
       chain->GetEntry(current_event);
       auto mc_event = std::make_shared<MCReaction>(data, _beam_energy);
+      if (mc_event->Q2_thrown() < 1.1 || mc_event->Q2_thrown() > 3.5) continue;
+
       int pip_num = 1;
       mc_event->SetPip(pip_num);
+
       short electron_sector = data->dc_sect(0);
       if (electron_sector < 0 || electron_sector > 6) electron_sector = 0;
-
-      if (mc_event->Q2_thrown() < 1.1 || mc_event->Q2_thrown() > 3.5) continue;
 
       if (!std::isnan(mc_event->W_thrown()) && !std::isnan(mc_event->Q2_thrown())) {
         total++;
