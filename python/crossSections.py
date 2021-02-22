@@ -1,22 +1,23 @@
 #!/usr/bin/env python
-
 import matplotlib  # noqa
-
-matplotlib.use("agg")  # noqa
+matplotlib.use('pgf')  # noqa
 import warnings  # noqa
-
 warnings.filterwarnings("ignore")  # noqa
 
+
+from calc_xsections import *
+from tqdm import tqdm
 import argparse
 import inspect
 import os
 import time
 import matplotlib.pyplot as plt
-from tqdm import tqdm
-from calc_xsections import *
+
+plt.rcParams.update({'text.usetex': True,
+                     'text.latex.preamble': r'\usepackage{amsmath}'})
 
 
-def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=None):
+def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=12, overlap=None):
     if not os.path.exists(f'{out_folder}/crossSections'):
         os.makedirs(f'{out_folder}/crossSections')
     # Make a set of values from 0 to 2Pi for plotting
@@ -76,7 +77,7 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
                                                markersize=5, alpha=0.4, c='r')
 
                 plot_maid_model(ax1, w, q2, theta, xs)
-                top = plot_maid_model(ct_ax[theta.left], w, q2, theta, xs)
+                maid_top = plot_maid_model(ct_ax[theta.left], w, q2, theta, xs)
 
                 cut_fids = {
                     "Fiducial Cuts": 0,
@@ -165,7 +166,7 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
                                                zorder=1,
                                                label=f"{plot_label[theta.left]}",
                                                markersize=5, alpha=0.8)
-                    ct_ax[theta.left].set_ylim(bottom=0.0, top=top)
+
                     if cuts == 0:
                         ct_ax[theta.left].set_ylabel(
                             '$d \sigma / d \omega [\mu b/sr]$')
@@ -181,7 +182,9 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=24, overlap=N
                         if np.isnan(top) or np.isinf(top):
                             ax1.set_ylim(bottom=0, top=1.0)
                         else:
-                            ax1.set_ylim(bottom=0, top=top)
+                            ax1.set_ylim(bottom=0, top=max(top, maid_top))
+                            ct_ax[theta.left].set_ylim(
+                                bottom=0.0, top=max(top, maid_top))
 
                 ax1.set_title(f"$W$ : {w} , $Q^2$ : {q2} $\\theta$ : {theta}")
                 fig.savefig(f"{out_folder}/crossSections/w_{w.left}_q2_{q2.left}_theta_{theta.left}.png",

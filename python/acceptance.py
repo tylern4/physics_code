@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import matplotlib  # noqa
-matplotlib.use("agg")  # noqa
+matplotlib.use('agg')  # noqa
 import warnings  # noqa
 warnings.filterwarnings("ignore")  # noqa
 
@@ -26,6 +26,9 @@ import matplotlib.pyplot as plt
 from lmfit import Model, Parameters
 from lmfit.models import *
 from calc_xsections import *
+
+plt.rcParams.update({'text.usetex': True,
+                     'text.latex.preamble': r'\usepackage{amsmath}'})
 
 
 ENERGY = 4.81726
@@ -294,21 +297,21 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
                          popt[1] + sigma * fwhm / 2.355)
 
         ax[a][b].legend(loc='upper right')
-        ax[a][b].set_xlabel(f"Mass [ $\mathrm{{{{GeV}}}}^2$]")
+        ax[a][b].set_xlabel(f"Mass $[GeV^2]$")
 
         if not os.path.exists(f'{out_folder}/cuts'):
             os.makedirs(f'{out_folder}/cuts')
 
-        plt.xlabel(f"Mass [ $\mathrm{{{{GeV}}}}^2$]")
+        plt.xlabel(f"Mass $[GeV^2]$")
         plt.legend(loc='upper right')
         plt.title(
-            f"Missing Mass Squared $e\left( p, \pi^{{{'+'}}} X \\right)$ in sector {sec}")
+            r"Missing Mass Squared $e\left( p, \pi^{+} X \right) e^{\prime}$ in sector "+str(sec))
 
         plt.savefig(f"{out_folder}/cuts/MM2_cut_{sec}.png",
                     bbox_inches='tight')
 
     fig.suptitle(
-        f"Missing Mass Squared $e\left( p, \pi^{{{'+'}}} X \\right)$", fontsize=20)
+        r"Missing Mass Squared $e\left( p, \pi^{+} X \right) e^{\prime}$", fontsize=20)
     fig.savefig(f"{out_folder}/cuts/MM2_cut_all.png",
                 bbox_inches='tight')
     return data
@@ -328,16 +331,16 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
         0.8: [4, 1]
     }
     plot_label = {
-        -1.0: "$\cos(\\theta)=(-1.0,-0.8]$",
-        -0.8: "$\cos(\\theta)=(-0.8,-0.6]$",
-        -0.6: "$\cos(\\theta)=(-0.6,-0.4]$",
-        -0.4: "$\cos(\\theta)=(-0.4,-0.2]$",
-        -0.2: "$\cos(\\theta)=(-0.2,0.0]$",
-        0.0: "$\cos(\\theta)=(0.0,0.2]$",
-        0.2: "$\cos(\\theta)=(0.2,0.4]$",
-        0.4: "$\cos(\\theta)=(0.4,0.6]$",
-        0.6: "$\cos(\\theta)=(0.6,0.8]$",
-        0.8: "$\cos(\\theta)=(0.8,1.0]$"
+        -1.0: "$\cos(\\theta^{*})=(-1.0,-0.8]$",
+        -0.8: "$\cos(\\theta^{*})=(-0.8,-0.6]$",
+        -0.6: "$\cos(\\theta^{*})=(-0.6,-0.4]$",
+        -0.4: "$\cos(\\theta^{*})=(-0.4,-0.2]$",
+        -0.2: "$\cos(\\theta^{*})=(-0.2,0.0]$",
+        0.0: "$\cos(\\theta^{*})=(0.0,0.2]$",
+        0.2: "$\cos(\\theta^{*})=(0.2,0.4]$",
+        0.4: "$\cos(\\theta^{*})=(0.4,0.6]$",
+        0.6: "$\cos(\\theta^{*})=(0.6,0.8]$",
+        0.8: "$\cos(\\theta^{*})=(0.8,1.0]$"
     }
     if str(np.round(q2.left, 3)) == "0.999":
         q2_left = 1.0
@@ -401,7 +404,8 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
             else:
                 # Histogram the data for plotting
                 data_y, x = hist_data(data, density=True, bins=bins)
-                mc_rec_y, _ = hist_data(_mc_rec_data, density=True, bins=bins)
+                mc_rec_y, _ = hist_data(
+                    _mc_rec_data, density=True, bins=bins)
                 _ax = ax[a][b].twinx()
                 _ax.plot(phis, crossSections, c='r', linestyle='dotted')
                 _ax.set_ylim(bottom=0, top=np.max(crossSections)*1.5)
@@ -512,7 +516,7 @@ def draw_cos_plots(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder
 def draw_xsec_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder, bins):
     fig, ax = plt.subplots(2, 2, figsize=(12, 9))
     fig.suptitle(
-        f"W={w},\t$Q^2$={q2},\tcos($\\theta$)={cos_t} \n{bins} bins in $\phi$"
+        f"W={w},\t$Q^2$={q2},\tcos($\\theta^{{{'*'}}}$)={cos_t} \n{bins} bins in $\phi$"
     )
     xs = np.linspace(0, 2 * np.pi, 100)
     data_y, data_x = bh.numpy.histogram(
@@ -706,13 +710,14 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins, name="reconstructed"):
                   )
 
     for w in w_bins:
-        ax.axvline(w, c='w')
+        ax.axvline(w, c='w', alpha=0.5)
     for q2 in q2_bins:
-        ax.axhline(q2, c='w')
-    ax.set_xlabel(f"W [$\mathrm{{{{GeV}}}}$]", fontsize=30)
-    ax.set_ylabel(f"$Q^2$ [$\mathrm{{{{GeV}}}}^2$]", fontsize=30)
+        ax.axhline(q2, c='w', alpha=0.5)
+
+    ax.set_xlabel(r"$W~[GeV]$", fontsize=30)
+    ax.set_ylabel(r"$Q^2~[GeV^2]$", fontsize=30)
     ax.tick_params(axis='both', which='major', labelsize=15)
-    fig.suptitle(f"W vs $Q^2$", fontsize=30)
+    fig.suptitle(r"$W$ vs $Q^2$", fontsize=30)
     fig.colorbar(h[3], ax=ax)
 
     if not os.path.exists(f'{out_folder}/kinematics'):
@@ -728,12 +733,12 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins, name="reconstructed"):
     x = (x[1:] + x[:-1])/2.0
 
     ax2.errorbar(x, y, yerr=stats.sem(y), linestyle="", marker=".")
-    ax2.set_xlabel(f"W [$GeV/c^2$]", fontsize=30)
+    ax2.set_xlabel(r"$W~[GeV]$", fontsize=30)
     ax2.tick_params(axis='both', which='major', labelsize=15)
     ax2.set_xlim(np.min(w_bins), np.max(w_bins))
     ax2.set_ylim(bottom=0)
 
-    fig2.suptitle(f"W $(\mathrm{{{{n}}}}\pi^+)$", fontsize=30)
+    fig2.suptitle(r"$W~(n\pi^+)$", fontsize=30)
     fig2.savefig(f"{out_folder}/kinematics/W_{name}.png", bbox_inches='tight')
     #########################################
 
@@ -741,15 +746,16 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins, name="reconstructed"):
     h = ax1.hist2d(rec.cos_theta.to_numpy(),
                    rec.phi.to_numpy(), bins=100)
     for t in theta_bins:
-        ax1.axvline(t, c='w')
+        ax1.axvline(t, c='w', alpha=0.5)
 
-    for phi in np.linspace(0, 2*np.pi, 10):
-        ax1.axhline(phi, c='w')
+    for phi in np.linspace(0, 2*np.pi, 24):
+        ax1.axhline(phi, c='w', alpha=0.5)
 
-    ax1.set_xlabel(f"$\cos(\\theta)$", fontsize=30)
-    ax1.set_ylabel(f"$\\phi$", fontsize=30)
+    ax1.set_xlabel(r"$\cos(\theta^{*})$", fontsize=30)
+    ax1.set_ylabel(r"$\phi^{*}$", fontsize=30)
     ax1.tick_params(axis='both', which='major', labelsize=15)
-    fig1.suptitle(f"$\cos(\\theta)$ vs $\\phi$", fontsize=30)
+    fig1.suptitle(
+        r"$\cos(\theta^{*})$ vs $\phi^{*} n\pi^{+}$", fontsize=30)
     fig1.colorbar(h[3], ax=ax1)
 
     fig1.savefig(f"{out_folder}/kinematics/theta_vs_phi_{name}.png",
@@ -761,15 +767,15 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins, name="reconstructed"):
                       bins=200, range=[[np.min(w_bins), np.max(w_bins)], [np.min(q2_bins), np.max(q2_bins)]])
 
     ax3[1].errorbar(x, y, yerr=stats.sem(y), linestyle="", marker=".", ms=10)
-    ax3[1].set_xlabel(f"W [$\mathrm{{{{GeV}}}}$]", fontsize=30)
-    ax3[0].set_ylabel(f"$Q^2$ [$\mathrm{{{{GeV}}}}^2$]", fontsize=30)
+    ax3[1].set_xlabel(r"$W~[GeV]$", fontsize=30)
+    ax3[0].set_ylabel(r"$Q^2~[GeV^2]$", fontsize=30)
     ax3[0].tick_params(axis='y', which='major', labelsize=25)
     ax3[0].tick_params(axis='x', which='major', labelsize=0)
     ax3[1].tick_params(axis='both', which='major', labelsize=25)
     ax3[1].set_xlim(np.min(w_bins), np.max(w_bins))
     for axxx in ax3:
         axxx.label_outer()
-    ax3[0].set_title(f"W vs $Q^2$", fontsize=30)
+    ax3[0].set_title(r"$W$ vs $Q^2$", fontsize=30)
     fig3.savefig(f"{out_folder}/kinematics/wq2_{name}.png",
                  bbox_inches='tight')
 
@@ -780,9 +786,9 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins, name="reconstructed"):
     X, Y = np.meshgrid(xedges, yedges)
     im = ax4.pcolormesh(X, Y, H)
     fig4.colorbar(im, ax=ax4)
-    ax4.set_title(f"W vs $Q^2$", fontsize=30)
-    ax4.set_xlabel(f"W [$\mathrm{{{{GeV}}}}$]", fontsize=30)
-    ax4.set_ylabel(f"$Q^2$ [$\mathrm{{{{GeV}}}}^2$]", fontsize=30)
+    ax4.set_title(r"$W$ vs $Q^2$", fontsize=30)
+    ax4.set_xlabel(r"$W~[GeV]$", fontsize=30)
+    ax4.set_ylabel(r"$Q^2~[GeV^2]$", fontsize=30)
     fig4.savefig(f"{out_folder}/kinematics/wq2_binned_{name}.png",
                  bbox_inches='tight')
 
@@ -791,7 +797,7 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins, name="reconstructed"):
         H, xedges, yedges = bh.numpy.histogram2d(
             rec.cos_theta.to_numpy(),
             rec.phi.to_numpy(),
-            bins=(11, 10))
+            bins=(10, 24))
     except ValueError as ve:
         print(rec.cos_theta.to_numpy().size)
         print(rec.phi.to_numpy().size)
@@ -801,10 +807,10 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins, name="reconstructed"):
     X, Y = np.meshgrid(xedges, yedges)
     im = ax4.pcolormesh(X, Y, H)
     fig4.colorbar(im, ax=ax4)
-    ax4.set_xlabel(f"$\cos(\\theta)$", fontsize=30)
-    ax4.set_ylabel(f"$\\phi$", fontsize=30)
+    ax4.set_xlabel(r"$\cos(\theta^{*})$", fontsize=30)
+    ax4.set_ylabel(r"$\phi^{*}$", fontsize=30)
     ax4.tick_params(axis='both', which='major', labelsize=15)
-    fig1.suptitle(f"$\cos(\\theta)$ vs $\\phi$", fontsize=30)
+    fig1.suptitle(r"$\cos(\theta^{*})$ vs $\phi^{*}$", fontsize=30)
     fig4.savefig(f"{out_folder}/kinematics/cos_phi_binned_{name}.png",
                  bbox_inches='tight')
 

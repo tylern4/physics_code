@@ -232,14 +232,18 @@ bool Cuts::isStrictElectron() {
 }
 
 float e1d_Cuts::sf_top_fit(float P) {
-  double par[3] = {0.368209, 0.000961273, 4.8e-07};
+  // double par[3] = {0.368209, 0.000961273, 4.8e-07};  // before 2021
   // double par[3] = {0.3269, 0.000336, 7.731e-7};
+
+  double par[3] = {0.4128860178888431, -0.014187665284655775, 1.6610245247603538e-05};
   double x[1] = {P};
   return func::ec_fit_func(x, par);
 }
 float e1d_Cuts::sf_bot_fit(float P) {
-  double par[3] = {0.162189, 0.0134756, -2e-05};
+  // double par[3] = {0.162189, 0.0134756, -2e-05};  // before 2021
   // double par[3] = {0.1787, 0.02032, -2.726e-6};
+
+  double par[3] = {0.08883889850547949, 0.04546759865840269, -4.28522184014871e-05};
   double x[1] = {P};
   return func::ec_fit_func(x, par);
 }
@@ -282,6 +286,7 @@ bool Cuts::dt_K_cut(int i) {
   bool _cut = true;
   _cut &= (dt <= func::dt_poly4(dt_pip_const_top, p));
   _cut &= (dt >= func::dt_poly4(dt_pip_const_bottom, p));
+  _cut &= (p < 3.0);
 
   return _cut;
 }

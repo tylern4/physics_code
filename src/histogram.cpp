@@ -1561,7 +1561,7 @@ void Histogram::makeHists_EC() {
 void Histogram::EC_fill(float etot, float momentum) {
   EC_etot_vs_P->Fill(momentum, etot);
   float sampling_frac = etot / momentum;
-  EC_sampling_fraction->Fill(momentum, sampling_frac);
+  if (sampling_frac > 0.01) EC_sampling_fraction->Fill(momentum, sampling_frac);
 
   EC_tot_energy->Fill(etot);
 
