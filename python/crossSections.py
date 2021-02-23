@@ -12,7 +12,7 @@ import os
 import time
 import matplotlib.pyplot as plt
 
-plt.rcParams.update({'text.usetex': True,
+plt.rcParams.update({'text.usetex': False,
                      'text.latex.preamble': r'\usepackage{amsmath}'})
 
 
