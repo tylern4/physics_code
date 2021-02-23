@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 import matplotlib  # noqa
-matplotlib.use('pgf')  # noqa
+matplotlib.use('agg')  # noqa
 import warnings  # noqa
 warnings.filterwarnings("ignore")  # noqa
-
 
 from calc_xsections import *
 from tqdm import tqdm
@@ -189,6 +188,7 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=12, overlap=N
                 ax1.set_title(f"$W$ : {w} , $Q^2$ : {q2} $\\theta$ : {theta}")
                 fig.savefig(f"{out_folder}/crossSections/w_{w.left}_q2_{q2.left}_theta_{theta.left}.png",
                             bbox_inches='tight')
+
             if pass_plotting:
                 CosTfig.align_ylabels()
                 CosTfig.savefig(f"{out_folder}/crossSections/cost_w_{w.left}_q2_{q2.left}.png",
