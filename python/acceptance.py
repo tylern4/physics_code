@@ -27,7 +27,10 @@ from lmfit import Model, Parameters
 from lmfit.models import *
 from calc_xsections import *
 
-plt.rcParams.update({'text.usetex': False,
+
+# plt.rcParams.update({'mathtext.fontset': 'stix'})
+
+plt.rcParams.update({'text.usetex': True,
                      'text.latex.preamble': r'\usepackage{amsmath}'})
 
 

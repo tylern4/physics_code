@@ -12,8 +12,7 @@ import os
 import time
 import matplotlib.pyplot as plt
 
-plt.rcParams.update({'text.usetex': False,
-                     'text.latex.preamble': r'\usepackage{amsmath}'})
+plt.rcParams.update({'mathtext.fontset': 'stix'})
 
 
 def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=12, overlap=None):
