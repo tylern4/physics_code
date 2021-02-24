@@ -27,11 +27,7 @@ from lmfit import Model, Parameters
 from lmfit.models import *
 from calc_xsections import *
 
-
-# plt.rcParams.update({'mathtext.fontset': 'stix'})
-
-plt.rcParams.update({'text.usetex': True,
-                     'text.latex.preamble': r'\usepackage{amsmath}'})
+plt.rcParams.update({'mathtext.fontset': 'stix'})
 
 
 ENERGY = 4.81726
