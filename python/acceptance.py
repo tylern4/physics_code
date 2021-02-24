@@ -308,13 +308,13 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
         plt.xlabel(f"Mass $[GeV^2]$")
         plt.legend(loc='upper right')
         plt.title(
-            r"Missing Mass Squared $e\left( p, \pi^{+} X \right) e^{\prime}$ in sector "+str(sec))
+            r"Missing Mass Squared $e ( p, \pi^{+} X ) e^{\prime}$ in sector "+str(sec))
 
         plt.savefig(f"{out_folder}/cuts/MM2_cut_{sec}.png",
                     bbox_inches='tight')
 
     fig.suptitle(
-        r"Missing Mass Squared $e\left( p, \pi^{+} X \right) e^{\prime}$", fontsize=20)
+        r"Missing Mass Squared $e ( p, \pi^{+} X ) e^{\prime}$", fontsize=20)
     fig.savefig(f"{out_folder}/cuts/MM2_cut_all.png",
                 bbox_inches='tight')
     return data

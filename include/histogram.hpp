@@ -344,7 +344,8 @@ Garys binning
       std::make_shared<TH2D>("target_vertex_vz_phi", "target_vertex_vz_phi", BINS, -10, 15.0, BINS, -200.0, 200.0);
 
   TH1D_ptr Missing_Mass = std::make_shared<TH1D>("Missing_Mass", "Missing Mass", BINS_MM, MM_min, MM_max);
-  TH1D_ptr Missing_Mass_small = std::make_shared<TH1D>("Missing_Mass_small", "e(p,#pi^{+} X)e'", BINS_MM, 0.8, 1.3);
+  TH1D_ptr Missing_Mass_small =
+      std::make_shared<TH1D>("Missing_Mass_small", "e(p,#pi^{+} X)e^{'}'", BINS * 2, 0.8, 1.8);
   std::vector<TH1D_ptr> Missing_Mass_small_sec;
   std::vector<TH1D_ptr> Missing_Mass_Sq_small_sec;
   TH1D_ptr Missing_Mass_square =
