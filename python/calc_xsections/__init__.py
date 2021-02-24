@@ -11,6 +11,10 @@ import boost_histogram as bh
 
 ENERGY = 4.81726
 
+#  Q_FULL = 31426.514045353397E-7  # 02/07/2021
+Q_FULL = 31426.514045353397E-6  # 02/07/2021
+Q_EMPTY = 3756.08E-6  # ????
+
 which_plot = {
     -1.0: [0, 0],
     -0.8: [0, 1],
@@ -96,9 +100,14 @@ def read_csv(file_name: str = "", data: bool = False):
     )
 
 
-def luminosity():
+def luminosity(empty=False):
     # Q_tot = 15623.89E-6  # mC E-6 -> C
-    Q_tot = 31426.514045353397E-7  # 02/07/2021
+
+    if not empty:
+        Q_tot = Q_FULL
+    else:
+        Q_tot = Q_EMPTY
+
     # Q_tot = 2906.9858369E-6 # 2nd attempt
     # Q_tot = 2742.5087E-6 # 1st attempt
     l = 5  # cm
@@ -196,11 +205,12 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4):
     return data
 
 
-def cut_for_MM(rec, mc_rec):
+def cut_for_MM(rec, mc_rec, empty=None):
     sector_cuts = mm_cut(rec, sigma=10)
 
     cuts = False
     mc_cuts = False
+    empty_cuts = False
 
     for sec, min_max in sector_cuts.items():
         cuts |= (
@@ -213,10 +223,18 @@ def cut_for_MM(rec, mc_rec):
             & (mc_rec.mm2 >= min_max[0])
             & (mc_rec.mm2 <= min_max[1])
         )
+        if not empty.empty:
+            empty_cuts |= (
+                (empty.electron_sector == sec)
+                & (empty.mm2 >= min_max[0])
+                & (empty.mm2 <= min_max[1])
+            )
     rec = rec[cuts]
     mc_rec = mc_rec[mc_cuts]
+    if not empty.empty:
+        empty = empty[empty_cuts]
 
-    return rec, mc_rec
+    return (rec, mc_rec) if empty.empty else (rec, mc_rec, empty)
 
 
 def hist_data(data, density=True, bins=10):
@@ -253,19 +271,26 @@ def get_maid_values(xs, w, q2, theta):
     return np.array(crossSections)
 
 
-def get_error_bars(y, mc_rec_y, thrown_y, N=None):
-    if N is None:
-        N = y
+def statistical(DN_full, DN_empty, kin_bin_width, acceptance, flux):
+    print("1", DN_full/Q_FULL**2)
+    print("2", DN_empty/Q_EMPTY**2)
+
+    error = (DN_full/Q_FULL**2) + (DN_empty/Q_EMPTY**2)
+    error = np.sqrt(error) / (kin_bin_width*acceptance*flux)
+
+    return error
+
+
+def get_error_bars(y, mc_rec_y, thrown_y, stat_error):
     F = mc_rec_y/thrown_y
     error = (thrown_y-mc_rec_y)*mc_rec_y
     error = error / (thrown_y**3)
     error = np.sqrt(error)
-    error = (error/F)
-    std_error = (8.9/100.0)*y
-    error_bar = np.sqrt(y*error**2 + std_error**2)
-    # error_bar = np.sqrt(y*error**2 + np.std(y)**2)
-    # error_bar = np.sqrt(y*error**2 + np.sqrt(np.sum(N))**2)
-    # error_bar = np.sqrt(y*error**2 + np.sqrt(N)**2)
+    error = y*(error/F)
+
+    error_bar = np.sqrt(error**2 + stat_error**2)
+
+    print("####", error_bar)
 
     return error_bar
 

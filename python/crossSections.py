@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 plt.rcParams.update({'mathtext.fontset': 'stix'})
 
 
-def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=12, overlap=None):
+def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, overlap=None):
     if not os.path.exists(f'{out_folder}/crossSections'):
         os.makedirs(f'{out_folder}/crossSections')
     # Make a set of values from 0 to 2Pi for plotting
@@ -44,6 +44,7 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=12, overlap=N
             for theta in binning["thetabins"]:
                 # Cut data/mc for the w/q2/theta bin we're in
                 data = rec[make_cuts(rec, w, q2, theta)].copy()
+                data_e = empty[make_cuts(empty, w, q2, theta)].copy()
                 data_mc = mc_rec[make_cuts(mc_rec, w, q2, theta)].copy()
                 thrown = mc_thrown[make_cuts(mc_thrown, w, q2, theta)].copy()
                 num_good = np.sum(data.cut_fid)
@@ -88,6 +89,8 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=12, overlap=N
                         marker = 'o'
                         _data_y, _x = hist_data(
                             data[data.cut_fid], density=False, bins=bins)
+                        _empty_y, _ = hist_data(
+                            data_e[data_e.cut_fid], density=False, bins=bins)
                         _mc_rec_y, _ = hist_data(
                             data_mc[data_mc.cut_fid], density=False, bins=bins)
                     elif cuts == 1:
@@ -95,16 +98,21 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=12, overlap=N
                         marker = "^"
                         _data_y, _x = hist_data(
                             data[~data.cut_fid], density=False, bins=bins)
+                        _empty_y, _ = hist_data(
+                            data_e[~data_e.cut_fid], density=False, bins=bins)
                         _mc_rec_y, _ = hist_data(
                             data_mc[~data_mc.cut_fid], density=False, bins=bins)
                     else:
                         marker = 'd'
                         _data_y, _x = hist_data(
                             data, density=False, bins=bins)
+                        _empty_y, _ = hist_data(
+                            data_e, density=False, bins=bins)
                         _mc_rec_y, _ = hist_data(
                             data_mc, density=False, bins=bins)
 
                     _thrown_y, _ = hist_data(thrown, density=False, bins=bins)
+                    _data_y = (_data_y/Q_FULL - _empty_y/Q_EMPTY)
 
                     # Remove points with 0 data count
                     cut = ~(_data_y == 0)
@@ -113,6 +121,7 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=12, overlap=N
                     thrown_y = _thrown_y[cut]
                     data_y = _data_y[cut]
                     N_y = _data_y[cut]
+                    N_empty = _empty_y[cut]
 
                     # Remove points with 0 mc_rec count and put 1???
                     mc_rec_y = np.where(mc_rec_y == 0, 1, mc_rec_y)
@@ -139,18 +148,21 @@ def main(rec, mc_rec, mc_thrown, binning, out_folder="plots", bins=12, overlap=N
                     delta_phi = __phis[1] - __phis[0]
                     kin_bin_width = delta_W * delta_Q2 * delta_Theta * delta_phi
 
+                    # Calculate acceptance and correct data
+                    flux = virtual_photon_flux(w.left, q2.left) * luminosity()
+                    stat_error = statistical(
+                        N_y, N_empty, kin_bin_width, acceptance, flux)
+
                     # Normalize with bin widths
                     try:
                         data_y = data_y/kin_bin_width
                     except ValueError:
                         continue
 
-                    # Calculate acceptance and correct data
-                    flux = virtual_photon_flux(w.left, q2.left) * luminosity()
-
                     y = data_y / acceptance / flux
 
-                    error_bar = get_error_bars(y, mc_rec_y, thrown_y, N_y)
+                    error_bar = get_error_bars(
+                        y, mc_rec_y, thrown_y, stat_error)
 
                     ebar = ax1.errorbar(x, y, yerr=error_bar,
                                         marker=marker, linestyle="",
@@ -200,6 +212,8 @@ if __name__ == "__main__":
                         type=str, help="MC csv file", required=True)
     parser.add_argument("--data", dest="rec_data_file_path",
                         type=str, help="Data csv file", required=True)
+    parser.add_argument("--empty", dest="empty_file_path",
+                        type=str, help="Empty run csv file", required=True)
     parser.add_argument("--folder", dest="out_folder", type=str,
                         help="Folder for plots", required=False, default="plots")
     parser.add_argument("--overlap", dest="overlap", type=str, help="Location of overlap data csv", required=False,
@@ -214,12 +228,14 @@ if __name__ == "__main__":
     mc_rec, mc_thrown = read_csv(args.mc_data_file_path)
     # Load reconstructed file
     rec = read_csv(args.rec_data_file_path, True)
+    empty_target = read_csv(args.empty_file_path, True)
 
     # Cut for missing mass
-    rec, mc_rec = cut_for_MM(rec, mc_rec)
+    rec, mc_rec, empty_target = cut_for_MM(rec, mc_rec, empty_target)
 
     # Make bins in the dataframes from the bins above
     rec = prep_for_ana(rec, w_bins, q2_bins, theta_bins)
+    empty_target = prep_for_ana(empty_target, w_bins, q2_bins, theta_bins)
     mc_rec = prep_for_ana(mc_rec, w_bins, q2_bins, theta_bins)
     mc_thrown = prep_for_ana(mc_thrown, w_bins, q2_bins, theta_bins)
 
@@ -231,5 +247,5 @@ if __name__ == "__main__":
     end = time.time_ns()
     print(f"Done setup: {(end-start)/1E9:0.2f}Sec")
 
-    main(rec, mc_rec, mc_thrown, binning,
+    main(rec, mc_rec, mc_thrown, empty_target, binning,
          out_folder=args.out_folder, overlap=args.overlap)
