@@ -11,9 +11,9 @@ import boost_histogram as bh
 
 ENERGY = 4.81726
 
-#  Q_FULL = 31426.514045353397E-7  # 02/07/2021
-Q_FULL = 31426.514045353397E-6  # 02/07/2021
-Q_EMPTY = 3756.08E-6  # ????
+Q_FULL = 31426.514045353397E-7  # 02/07/2021
+# Q_FULL = 31426.514045353397E-6  # 02/07/2021
+Q_EMPTY = 3756.08E-7  # ????
 
 which_plot = {
     -1.0: [0, 0],
@@ -272,7 +272,8 @@ def get_maid_values(xs, w, q2, theta):
 
 
 def statistical(DN_full, DN_empty, kin_bin_width, acceptance, flux):
-    error = (DN_full/Q_FULL**2) + (DN_empty/Q_EMPTY**2)
+    # error = (DN_full/Q_FULL**2) + (DN_empty/Q_EMPTY**2)
+    error = (DN_full) + (DN_empty)
     error = np.sqrt(error) / (kin_bin_width*acceptance*flux)
 
     return error

@@ -201,7 +201,8 @@ bool e1d_Cuts::Beam_cut() {
 
   _beam &= (_data->dc_vx(0) > 0.2f && _data->dc_vx(0) < 0.4f);
   _beam &= (_data->dc_vy(0) > -0.1f && _data->dc_vy(0) < 0.16f);
-  _beam &= (_data->dc_vz(0) > -5.0f && _data->dc_vz(0) < 5.0f);
+  _beam &= (_data->dc_vz(0) > -2.5f && _data->dc_vz(0) < 2.5f);
+  // _beam &= (_data->dc_vz(0) > -5.0f && _data->dc_vz(0) < 5.0f);
 
   return _beam;
 }

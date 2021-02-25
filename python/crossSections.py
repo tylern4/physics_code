@@ -112,7 +112,7 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                             data_mc, density=False, bins=bins)
 
                     _thrown_y, _ = hist_data(thrown, density=False, bins=bins)
-                    _data_y = (_data_y/Q_FULL - _empty_y/Q_EMPTY)
+                    # _data_y = (_data_y/Q_FULL - _empty_y/Q_EMPTY)
 
                     # Remove points with 0 data count
                     cut = ~(_data_y == 0)
