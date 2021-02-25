@@ -76,7 +76,7 @@ static const float MASS_OMEGA = 0.78265;
 // Got from ye/arjun
 // TODO::Get right EC threshhold
 // p_min(in MeV) = 214 + 2.47 × EC_threshold(in mV)
-static const float MIN_P_CUT = 0.005000;
+static const float MIN_P_CUT = 0.005f;
 
 // const float min_phi[6] = {0, 60, 120, -180, -120, -60};
 // const float max_phi[6] = {60, 120, 180, -120, -60, 0};
