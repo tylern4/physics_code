@@ -112,7 +112,7 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                             data_mc, density=False, bins=bins)
 
                     _thrown_y, _ = hist_data(thrown, density=False, bins=bins)
-                    # _data_y = (_data_y/Q_FULL - _empty_y/Q_EMPTY)
+                    # _data_y = (_data_y - _empty_y/Q_EMPTY)
 
                     # Remove points with 0 data count
                     cut = ~(_data_y == 0)
@@ -170,6 +170,9 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                     out = fit_model(ax1, model_new, x, y, xs,
                                     ebar[0].get_color(), name)
                     ax1.legend(loc='upper right')
+                    ax1.set_ylabel(
+                        r'$\frac{\mathbf{d}\sigma}{\mathbf{d} \omega} \left[\frac{\mu b}{sr}\right]$')
+                    ax1.set_xlabel(r'$\phi_{\pi}^{*}$')
 
                     ct_ax[theta.left].errorbar(x, y, yerr=error_bar,
                                                marker=marker, linestyle="",
@@ -179,8 +182,8 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
 
                     if cuts == 0:
                         ct_ax[theta.left].set_ylabel(
-                            '$d \sigma / d \omega [\mu b/sr]$')
-                        ct_ax[theta.left].set_xlabel('$\phi_{\pi}^{*}$')
+                            r'$\frac{\mathbf{d}\sigma}{\mathbf{d} \omega} \left[\frac{\mu b}{sr}\right]$')
+                        ct_ax[theta.left].set_xlabel(r'$\phi_{\pi}^{*}$')
                         ct_ax[theta.left].legend(loc='upper right')
                         out = fit_model(ct_ax[theta.left], model_new, x, y, xs,
                                         ebar[0].get_color(), "")

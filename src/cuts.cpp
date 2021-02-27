@@ -273,8 +273,11 @@ bool Cuts::dt_P_cut(int i) {
   //_cut &= (dt <= func::dt_poly4(dt_P_const_top, p));
   //_cut &= (dt >= func::dt_poly4(dt_P_const_bottom, p));
 
-  _cut &= (dt <= func::log_sqrt_pol1(dt_pip_top, p));
-  _cut &= (dt >= func::log_sqrt_pol1(dt_pip_bottom, p));
+  // _cut &= (dt <= func::log_sqrt_pol1(dt_pip_top, p));
+  // _cut &= (dt >= func::log_sqrt_pol1(dt_pip_bottom, p));
+
+  _cut &= (dt <= func::log_pol2(dt_P_top, p));
+  _cut &= (dt >= func::log_pol2(dt_P_bot, p));
 
   return _cut;
 }
@@ -293,17 +296,21 @@ bool Cuts::dt_K_cut(int i) {
 }
 
 bool Cuts::dt_Pip_cut(int i) {
+  bool _cut = true;
+
   float dt = _dt->Get_dt_Pi(i);
   short sec = _data->dc_sect(i) - 1;
   if (sec == -1) return false;
   float p = _data->p(i);
-  bool _cut = true;
 
   //_cut &= (dt <= func::dt_poly4(dt_pip_const_top, p));
   //_cut &= (dt >= func::dt_poly4(dt_pip_const_bottom, p));
 
-  _cut &= (dt <= func::log_sqrt_pol1(dt_pip_top, p));
-  _cut &= (dt >= func::log_sqrt_pol1(dt_pip_bottom, p));
+  // _cut &= (dt <= func::log_sqrt_pol1(dt_pip_top, p));
+  // _cut &= (dt >= func::log_sqrt_pol1(dt_pip_bottom, p));
+
+  _cut &= (dt <= func::log_pol2(dt_pip_top, p));
+  _cut &= (dt >= func::log_pol2(dt_pip_bottom, p));
 
   return _cut;
 }

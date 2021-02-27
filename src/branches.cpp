@@ -334,7 +334,7 @@ float Branches::dc_vx(int i) {
     if (_dc_vx[_dc[i] - 1] != 0)
       return _dc_vx[_dc[i] - 1];
     else
-      NAN;
+      return NAN;
   } else {
     return NAN;
   }
@@ -344,7 +344,7 @@ float Branches::dc_vy(int i) {
     if (_dc_vy[_dc[i] - 1] != 0)
       return _dc_vy[_dc[i] - 1];
     else
-      NAN;
+      return NAN;
   } else {
     return NAN;
   }
@@ -361,7 +361,10 @@ float Branches::dc_vz(int i) {
 }  //[dc_part]
 float Branches::dc_vr(int i) {
   if (i < _dc_part) {
-    if (_dc_vr[_dc[i] - 1] != 0) return _dc_vr[_dc[i] - 1];
+    if (_dc_vr[_dc[i] - 1] != 0)
+      return _dc_vr[_dc[i] - 1];
+    else
+      return NAN;
   } else {
     return NAN;
   }

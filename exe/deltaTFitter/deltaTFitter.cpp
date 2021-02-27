@@ -49,21 +49,21 @@ int main(int argc, char** argv) {
     auto check = std::make_unique<e1d_Cuts>(data);
     if (!check->isElectron()) continue;
 
-    auto event = std::make_shared<Reaction>(data, E1D_E0);
+    // auto event = std::make_shared<Reaction>(data, E1D_E0);
 
-    for (int part_num = 1; part_num < data->gpart(); part_num++) {
-      if (check->Pipish(part_num)) {
-        event->SetPip(part_num);
-      }
-    }
+    // for (int part_num = 1; part_num < data->gpart(); part_num++) {
+    //   if (check->Pipish(part_num)) {
+    //     event->SetPip(part_num);
+    //   }
+    // }
 
-    mm_hist->Fill(event->MM2());
+    // mm_hist->Fill(event->MM2());
 
-    if (event->channel()) {
-      mm_hist_cut->Fill(event->MM2());
-      auto dt = std::make_shared<Delta_T>(data);
-      csv_output << *dt;
-    }
+    // if (event->channel()) {
+    //   mm_hist_cut->Fill(event->MM2());
+    // }
+    auto dt = std::make_shared<Delta_T>(data);
+    csv_output << *dt;
   }
   std::cout << "]\n";
 

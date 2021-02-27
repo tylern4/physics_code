@@ -361,8 +361,8 @@ Garys binning
   TH1D_ptr Mass_pi0 = std::make_shared<TH1D>("Mass_pi0", "Mass #pi^{0}", BINS_MM, 0, 0.5);
   TH1D_ptr Mass_square_pi0 = std::make_shared<TH1D>("Mass_pi0_2", "#pi^{0} mass^{2}", BINS_MM, 0, 0.05);
 
-  TH1D_ptr Mass_eta = std::make_shared<TH1D>("Mass_eta", "Mass #eta", BINS_MM, 0.2, 1.0);
-  TH1D_ptr Mass_square_eta = std::make_shared<TH1D>("Mass_eta_2", "#eta mass^{2}", BINS_MM, 0.2, 1.0);
+  TH1D_ptr Mass_eta = std::make_shared<TH1D>("Mass_eta", "Mass #eta", 1000, 0.0, 1.0);
+  TH1D_ptr Mass_square_eta = std::make_shared<TH1D>("Mass_eta_2", "#eta mass^{2}", 1000, 0.0, 1.0);
 
   TH1D_ptr Missing_Mass_pi0_otherCut =
       std::make_shared<TH1D>("Missing_Mass_pi0_otherCut", "Missing Mass #pi^{0}", BINS_MM, -1, 1);

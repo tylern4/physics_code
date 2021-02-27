@@ -660,10 +660,12 @@ void Histogram::Fill_W_Missing_Mass(float W, float mm, float mm2) {
 }
 
 void Histogram::Fill_Mass_photons(const std::shared_ptr<Reaction> &_e) {
-  Mass_pi0->Fill(_e->pi0_mass());
-  Mass_square_pi0->Fill(_e->pi0_mass2());
+  // Mass_pi0->Fill(_e->pi0_mass());
+  // Mass_square_pi0->Fill(_e->pi0_mass2());
 
   for (auto &&_m : _e->pair_mass()) {
+    Mass_pi0->Fill(_m);
+    Mass_square_pi0->Fill(_m * _m);
     Mass_eta->Fill(_m);
     Mass_square_eta->Fill(_m * _m);
   }
