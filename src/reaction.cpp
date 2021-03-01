@@ -245,7 +245,6 @@ void Reaction::CalcMassPairs() {
         // if (_p->E() < _min_photon_E || _rp->E() < _min_photon_E) continue;
 
         auto phi = ROOT::Math::VectorUtil::Angle(*_p, *_rp);
-        std::cout << phi << "\t" << phi * RAD2DEG << std::endl;
 
         if (phi < 0.1) continue;
         // if (phi * RAD2DEG > 30) continue;

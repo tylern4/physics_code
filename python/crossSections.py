@@ -250,9 +250,5 @@ if __name__ == "__main__":
     end = time.time_ns()
     print(f"Done setup: {(end-start)/1E9:0.2f}Sec")
 
-    # main(rec, mc_rec, mc_thrown, empty_target, binning,
-    #      out_folder=args.out_folder, overlap=args.overlap)
-
-    for bins in [6, 10, 12, 24]:
-        main(rec, mc_rec, mc_thrown, empty_target, binning, bins=bins,
-             out_folder=args.out_folder+"_bins_"+str(bins), overlap=args.overlap)
+    main(rec, mc_rec, mc_thrown, empty_target, binning, bins=6,
+         out_folder=args.out_folder, overlap=args.overlap)
