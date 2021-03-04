@@ -250,5 +250,5 @@ if __name__ == "__main__":
     end = time.time_ns()
     print(f"Done setup: {(end-start)/1E9:0.2f}Sec")
 
-    main(rec, mc_rec, mc_thrown, empty_target, binning, bins=6,
+    main(rec, mc_rec, mc_thrown, empty_target, binning, bins=10,
          out_folder=args.out_folder, overlap=args.overlap)
