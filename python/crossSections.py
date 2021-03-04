@@ -200,7 +200,7 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                                 bottom=0.0, top=max(top, maid_top))
 
                 ax1.set_title(f"$W$ : {w} , $Q^2$ : {q2} $\\theta$ : {theta}")
-                fig.savefig(f"{out_folder}/crossSections/w_{w.left}_q2_{q2.left}_theta_{theta.left}.png",
+                fig.savefig(f"{out_folder}/crossSections/w_{w.left:0.2f}_q2_{q2.left:0.2f}_theta_{theta.left}.png",
                             bbox_inches='tight')
 
             if pass_plotting:
