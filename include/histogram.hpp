@@ -179,7 +179,8 @@ Garys binning
   TH2D_ptr MomVsBeta_hist_neutral = std::make_shared<TH2D>("MomVsBeta_Fill_neutral", "Momentum versus #beta neutral",
                                                            BINS, p_min, p_max, BINS, b_min, b_max);
   TH1D_ptr Mom = std::make_shared<TH1D>("Momentum", "Momentum", BINS, 0, 2.5);
-  TH1D_ptr Energy_hist = std::make_shared<TH1D>("Energy_hist", "Energy_hist", BINS, 0.0, 2.5);
+  TH1D_ptr Energy_hist_elec = std::make_shared<TH1D>("Energy_hist_elec", "Energy_hist_elec", BINS, 0.0, 50);
+  TH1D_ptr Energy_hist_pip = std::make_shared<TH1D>("Energy_hist_pip", "Energy_hist_pip", BINS, 0.0, 50);
   TH2D_ptr MomVsBeta_proton_ID =
       std::make_shared<TH2D>("MomVsBeta_proton_ID", "Momentum versus #beta p", BINS, p_min, p_max, BINS, b_min, b_max);
   TH2D_ptr MomVsBeta_Pi_ID = std::make_shared<TH2D>("MomVsBeta_Pi_ID", "Momentum versus #beta #pi^{+}", BINS, p_min,

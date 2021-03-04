@@ -612,7 +612,9 @@ void Histogram::MomVsBeta_Write() {
   MomVsBeta_proton_Pi_ID->SetOption("COLZ");
   MomVsBeta_proton_Pi_ID->Write();
 
-  Energy_hist->Write();
+  Energy_hist_elec->Write();
+  Energy_hist_pip->Write();
+
   MomVsBeta_hist->Write();
   MomVsBeta_hist_pos->Write();
   MomVsBeta_hist_neg->Write();
@@ -1353,6 +1355,8 @@ void Histogram::Fill_hadron_fid(const std::shared_ptr<Branches> &_data, int part
   short sector = _data->dc_sect(part_num);
   if (sector == 0 || sector > NUM_SECTORS) return;
 
+  Energy_hist_pip->Fill(_data->edep(part_num));
+
   float phi = physics::phi_calc(_data->cx(part_num), _data->cy(part_num));
   float theta = physics::theta_calc(_data->cz(part_num));
 
@@ -1583,6 +1587,7 @@ void Histogram::Theta_vs_p_Fill(const std::shared_ptr<Branches> &_data) {
   short sector = _data->dc_sect(0);
   if (sector == 0 || sector > NUM_SECTORS || sector == int(NULL)) return;
   Theta_vs_mom_sec[sector - 1]->Fill(_data->p(0), physics::theta_calc(_data->cz(0)));
+  Energy_hist_elec->Fill(_data->edep(0));
 }
 
 void Histogram::EC_cut_fill(float etot, float momentum) {
@@ -1967,7 +1972,7 @@ void mcHistogram::Write_DeltaP() {
   auto f2 = std::make_unique<TF2>("f2", "[0]*TMath::Gaus(x,[1],[2])*TMath::Gaus(y,[3],[4])", -0.1, 0.1, -0.1, 0.1);
   f2->SetParameters(10, 0.0, 0.1, 0.0, 0.1);
   delta_px_py_electron->Fit(f2.get(), "MR+", "");
-  delta_px_py_electron->SetOption("SURF3");
+  delta_px_py_electron->SetOption("COLZ");
   delta_px_py_electron->SetXTitle("Px");
   delta_px_py_electron->SetYTitle("Py");
   delta_px_py_electron->Write();

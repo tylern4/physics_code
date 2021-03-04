@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 from __future__ import print_function
-from lxml.html import fromstring
 import lxml.html as PARSER
 import sys
 
@@ -21,7 +20,10 @@ out = [x for x in out if ",,," not in x]
 out = [x.split(",") for x in out]
 out = [','.join(x[0:9]) for x in out]
 
-with open("out.csv", "w") as f:
+
+output = sys.argv[2] if len(sys.argv) > 2 else "out.csv"
+
+with open(output, "w") as f:
     for c in out[1:]:
         print(c)
         print(c, file=f)

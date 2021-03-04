@@ -81,7 +81,7 @@ bool Cuts::check_banks() {
 bool Cuts::isElectron() {
   bool _elec = true;
   _elec &= Cuts::check_banks();
-  _elec &= _data->nphe(0) > 15;
+  _elec &= _data->nphe(0) > 5;
 
   // Cut out low ec inner
   _elec &= (_data->ec_ei(0) >= 0.05);

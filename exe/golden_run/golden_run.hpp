@@ -12,8 +12,7 @@
 std::string golden_run(const std::string& fin) {
   std::string golden_run;
   std::string file_num, run_num;
-  int n_evnt = 0;
-  double total_q = 0.0, curr_q = 0.0, prev_q = 0.0, delta_q = 0.0;
+  size_t n_evnt = 0;
 
   // run_num = fin.substr(fin.find("/h10") + 6, 5);
   // file_num = fin.substr(fin.find("/h10") + 12, 2);
@@ -33,39 +32,47 @@ std::string golden_run(const std::string& fin) {
   auto data = std::make_shared<Branches>(chain);
 
   size_t num_of_events = chain->GetEntries();
-  total_q = 0.0;
+  float total_q = 0.0;
+  float qcurr;
+  float qprev;
+  float deltaq;
+  float q_temp;
 
   for (int current_event = 0; current_event < num_of_events; current_event++) {
+    int npip = 0;
     chain->GetEntry(current_event);
-    auto check = std::make_unique<e1d_Cuts>(data);
+    auto check = std::make_unique<Cuts>(data);
 
-    if (data->gpart() > 0) {
-      curr_q = data->q_l();
-      if (curr_q > 0.0) {
-        if (curr_q > prev_q) {
-          delta_q = curr_q - prev_q;
-          total_q += delta_q;
-        }
-        prev_q = curr_q;
-      }
+    if (data->gpart() < 0) continue;
+    q_temp = data->q_l();
+    qcurr = q_temp;
+    // cout<<"q_l="<<q_l<<endl;
 
-      if (check->isElectron()) {
-        auto event = std::make_shared<Reaction>(data, E1D_E0);
-        for (int part_num = 1; part_num < data->gpart(); part_num++) {
-          if (check->Pip(part_num)) {
-            event->SetPip(part_num);
-          } else if (check->Prot(part_num)) {
-            event->SetProton(part_num);
-          } else if (check->Pim(part_num)) {
-            event->SetPim(part_num);
-          } else
-            event->SetOther(part_num);
-        }
-        if (event->channel()) n_evnt++;
+    if (q_temp > 0.) {
+      // cout<<"q_l"<<q_temp<<"qcurr"<<qcurr<<endl;
+      if ((qcurr > qprev)) {
+        deltaq = qcurr - qprev;
+        total_q += deltaq;
+        // cout << setw(10) << "qcurr= " << qcurr << setw(10) << " qprev= " << qprev << setw(10) << " deltaq= " <<
+        // deltaq
+        //      << endl;
+        // cout<<"q_l"<<q_temp<<"qcurr"<<qcurr<<"qprev"<<qprev<<"deltaq"<<deltaq<<endl;
       }
+      qprev = qcurr;
+    }
+
+    if (check->isElectron()) {
+      auto event = std::make_shared<Reaction>(data, E1D_E0);
+      for (int part_num = 1; part_num < data->gpart(); part_num++) {
+        if (check->Pip(part_num)) {
+          npip++;
+        }
+      }
+      if (npip >= 1) n_evnt++;
     }
   }
-  golden_run += run_num + "," + file_num + "," + n_evnt + "," + num_of_events + "," + total_q + "\n";
+  golden_run += run_num + "," + file_num + "," + n_evnt + "," + num_of_events + "," + total_q + "," +
+                num_of_events / total_q + "\n";
   std::cout << golden_run;
   return golden_run;
 }

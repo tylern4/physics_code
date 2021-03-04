@@ -58,6 +58,8 @@ class DataHandler {
     }
 
     _hists->Fill_Beam_Position(_data);
+    // if (check->Cuts::check_banks()) _hists->EC_inout(_data->ec_ei(0), _data->ec_eo(0));
+
     if (check->Cuts::isElectron()) _hists->EC_fill(_data->etot(0), _data->p(0));
     auto event = std::make_shared<Reaction>(_data, _beam_energy, _mom_corr);
 
@@ -70,8 +72,6 @@ class DataHandler {
       _hists->Fill_electron_fid_anti(_data, event);
 
     if (!electron_cut) return;
-
-    _hists->EC_inout(_data->ec_ei(0), _data->ec_eo(0));
 
     _hists->TM_Fill(_data->p(0), physics::theta_calc(_data->cz(0)));
     _hists->Theta_vs_p_Fill(_data);

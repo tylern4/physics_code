@@ -205,7 +205,7 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
 
             if pass_plotting:
                 CosTfig.align_ylabels()
-                CosTfig.savefig(f"{out_folder}/crossSections/cost_w_{w.left}_q2_{q2.left}.png",
+                CosTfig.savefig(f"{out_folder}/crossSections/cost_w_{w.left:0.2f}_q2_{q2.left:0.2f}.png",
                                 bbox_inches='tight', dpi=250)
 
 
