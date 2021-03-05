@@ -5,14 +5,24 @@
 #include "TMath.h"
 #include "TROOT.h"
 #include "branches.hpp"
+#include "color.hpp"
 #include "constants.hpp"
-
-#define Npar 4
+#include "physics.hpp"
 
 class MomCorr {
+  float correctionFactor(float phi_e, float theta_e, short sec);
+
+ public:
+  MomCorr() { std::cout << RED << "===== " << BLUE << "Momentum Corrections" << RED << " =====" << DEF << std::endl; }
+  std::shared_ptr<LorentzVector> CorrectedElectron(const std::shared_ptr<Branches>& data);
+  std::shared_ptr<LorentzVector> CorrectedVector(float px, float py, float pz, int particle_type);
+};
+
+#define Npar 4
+class MomCorrEvan : public MomCorr {
  private:
   std::mutex _readerMutex;
-  char *_datadir;
+  char* _datadir;
   /* Theta Binning for Theta correction */
 #define ThetaC_n 144
   float ThetaC_min = 0;
@@ -54,7 +64,7 @@ class MomCorr {
   Int_t GetSector(float phi);
 
  public:
-  MomCorr();
+  MomCorrEvan();
   std::shared_ptr<LorentzVector> CorrectedVector(float px, float py, float pz, int particle_type);
 };
 

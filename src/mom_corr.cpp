@@ -1,15 +1,63 @@
 #include "mom_corr.hpp"
 #include <thread>
-#include "color.hpp"
 
-MomCorr::MomCorr() {
+float MomCorr::correctionFactor(float phi_e, float theta_e, short sec) {
+  // Equations 5.20 - 5.22 in KPark thesis (p. 71)
+  if (sec == 0 || sec > 6)
+    return 0.0;
+  else if (sec == 2)
+    return 0.0;
+  else if (sec == 4)
+    sec = 1;
+
+  float A = (mom_corr_electron[sec - 1][0][0] * powf(theta_e, 2) + mom_corr_electron[sec - 1][0][1] * theta_e +
+             mom_corr_electron[sec - 1][0][2]) *
+            powf(phi_e, 4);
+  float B = (mom_corr_electron[sec - 1][1][0] * powf(theta_e, 2) + mom_corr_electron[sec - 1][1][1] * theta_e +
+             mom_corr_electron[sec - 1][1][2]) *
+            powf(phi_e, 3);
+  float C = (mom_corr_electron[sec - 1][2][0] * powf(theta_e, 2) + mom_corr_electron[sec - 1][2][1] * theta_e +
+             mom_corr_electron[sec - 1][2][2]) *
+            powf(phi_e, 2);
+  float D = (mom_corr_electron[sec - 1][3][0] * powf(theta_e, 2) + mom_corr_electron[sec - 1][3][1] * theta_e +
+             mom_corr_electron[sec - 1][3][2]) *
+            phi_e;
+  float E = (mom_corr_electron[sec - 1][4][0] * powf(theta_e, 2) + mom_corr_electron[sec - 1][4][1] * theta_e +
+             mom_corr_electron[sec - 1][4][2]);
+
+  return A + B + C + D + E;
+}
+
+std::shared_ptr<LorentzVector> MomCorr::CorrectedVector(float px, float py, float pz, int particle_type) {
+  return std::make_shared<LorentzVector>(px, py, pz, mass_map[particle_type]);
+}
+
+std::shared_ptr<LorentzVector> MomCorr::CorrectedElectron(const std::shared_ptr<Branches> &data) {
+  float p = data->p(0);
+  short sec = data->dc_sect(0);
+
+  auto temp = physics::fourVec(data->px(0), data->py(0), data->pz(0), mass_map[ELECTRON]);
+
+  float theta = temp->Theta();
+  float phi = temp->Phi();
+
+  float theta_corr = theta + correctionFactor(phi, theta, sec);
+
+  float px = p * sinf(theta_corr) * cosf(phi);
+  float py = p * sinf(theta_corr) * sinf(phi);
+  float pz = p * cosf(theta_corr);
+
+  return physics::fourVec(px, py, pz, mass_map[ELECTRON]);
+};
+
+MomCorrEvan::MomCorrEvan() {
   std::cout << RED << "===== " << BLUE << "Using Momentum Corrections" << RED << " =====" << DEF << std::endl;
   if (getenv("MOM_CORR") != NULL) {
     _datadir = getenv("MOM_CORR");
     // Make a new thread to load each set of parameters
-    std::thread theta_par(&MomCorr::read_theta_par, this);
-    std::thread mom_par(&MomCorr::read_mom_par, this);
-    std::thread mom_pip_par(&MomCorr::read_mom_pip_par, this);
+    std::thread theta_par(&MomCorrEvan::read_theta_par, this);
+    std::thread mom_par(&MomCorrEvan::read_mom_par, this);
+    std::thread mom_pip_par(&MomCorrEvan::read_mom_pip_par, this);
 
     theta_par.join();
     mom_par.join();
@@ -21,7 +69,7 @@ MomCorr::MomCorr() {
   }
 }
 
-int MomCorr::GetSector(float phi) {
+int MomCorrEvan::GetSector(float phi) {
   // phi between -180 and 180
   // phi2 between 0 and 360
   float phi2 = phi;
@@ -31,7 +79,7 @@ int MomCorr::GetSector(float phi) {
   return sect;
 }
 
-void MomCorr::read_theta_par() {
+void MomCorrEvan::read_theta_par() {
   /* Reading angle correction parameters */
 
   memset(&c0_theta[0][0], 0, ThetaC_n * NUM_SECTORS * sizeof(float));
@@ -63,7 +111,7 @@ void MomCorr::read_theta_par() {
   }
 }
 
-void MomCorr::read_mom_par() {
+void MomCorrEvan::read_mom_par() {
   /* Reading momentum correction parameters for electrons */
 
   memset(&c0_mom[0][0][0], 0, MomC_T_n * NUM_SECTORS * Npar * sizeof(float));
@@ -111,7 +159,7 @@ void MomCorr::read_mom_par() {
   }
 }
 
-void MomCorr::read_mom_pip_par() {
+void MomCorrEvan::read_mom_pip_par() {
   memset(&d0_mom[0][0][0], 0, MomC_T_n * NUM_SECTORS * Npar * sizeof(float));
   memset(&d1_mom[0][0][0], 0, MomC_T_n * NUM_SECTORS * Npar * sizeof(float));
 
@@ -149,7 +197,7 @@ void MomCorr::read_mom_pip_par() {
 }
 
 /* ================================================================= */
-float MomCorr::theta_corr(float ThetaM, float PhiM, int Sector) {
+float MomCorrEvan::theta_corr(float ThetaM, float PhiM, int Sector) {
   /* input: phi between 0 and 360 deg */
 
   float phis = PhiM - 60 * (Sector - 1);
@@ -175,7 +223,7 @@ float MomCorr::theta_corr(float ThetaM, float PhiM, int Sector) {
   return Theta;
 }
 
-float MomCorr::mom_corr(float MomM, float ThetaM, float PhiM, int Sector) {
+float MomCorrEvan::mom_corr(float MomM, float ThetaM, float PhiM, int Sector) {
   /* input: phi between 0 and 360 deg */
   float phis = PhiM - 60 * (Sector - 1);
   if (phis > 330.) phis = phis - 360;
@@ -211,7 +259,7 @@ float MomCorr::mom_corr(float MomM, float ThetaM, float PhiM, int Sector) {
   return Mom;
 }
 
-float MomCorr::mom_corr_pip(float MomM, float ThetaM, float PhiM, int Sector) {
+float MomCorrEvan::mom_corr_pip(float MomM, float ThetaM, float PhiM, int Sector) {
   /* input: phi between 0 and 360 deg */
   float phis = PhiM - 60 * (Sector - 1);
   if (phis > 330.) phis = phis - 360;
@@ -248,7 +296,7 @@ float MomCorr::mom_corr_pip(float MomM, float ThetaM, float PhiM, int Sector) {
 }
 
 /* ================================================================= */
-std::shared_ptr<LorentzVector> MomCorr::CorrectedVector(float px, float py, float pz, int particle_type) {
+std::shared_ptr<LorentzVector> MomCorrEvan::CorrectedVector(float px, float py, float pz, int particle_type) {
   auto Pin = std::make_unique<LorentzVector>(px, py, pz, mass_map[particle_type]);
   float theta = Pin->Theta() * RAD2DEG;
   float phi = Pin->Phi() * RAD2DEG;

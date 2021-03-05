@@ -36,9 +36,10 @@ Reaction::Reaction(const std::shared_ptr<Branches>& data, const float beam_energ
   _sector = data->dc_sect(0);
   _beam = physics::fourVec(0.0, 0.0, _beam_energy, MASS_E);
 
-  if (mom_corr != nullptr)
-    _elec = _mom_corr->CorrectedVector(_data->px(0), _data->py(0), _data->pz(0), ELECTRON);
-  else
+  if (mom_corr != nullptr) {
+    // _elec = _mom_corr->CorrectedVector(_data->px(0), _data->py(0), _data->pz(0), ELECTRON);
+    _elec = _mom_corr->CorrectedElectron(_data);
+  } else
     _elec = physics::fourVec(_data->px(0), _data->py(0), _data->pz(0), MASS_E);
 
   *_gamma = *_beam - *_elec;
