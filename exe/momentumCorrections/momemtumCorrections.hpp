@@ -11,7 +11,8 @@
 #include "cuts.hpp"
 #include "syncfile.hpp"
 
-size_t mom_correction_csv(const std::vector<std::string>& fins, const std::shared_ptr<SyncFile>& sync) {
+size_t mom_correction_csv(const std::vector<std::string>& fins, const std::shared_ptr<SyncFile>& sync,
+                          const std::shared_ptr<MomCorr>& mom_corr) {
   std::string mom_correction;
   auto chain = std::make_shared<TChain>("h10");
   for (auto& fin : fins) chain->Add(fin.c_str());
@@ -27,7 +28,7 @@ size_t mom_correction_csv(const std::vector<std::string>& fins, const std::share
     if (!cuts->isElectron()) continue;
     if (!cuts->Beam_cut()) continue;
 
-    auto event = std::make_shared<Reaction>(data);
+    auto event = std::make_shared<Reaction>(data, mom_corr);
     int positive_num = -1;
 
     for (int part_num = 1; part_num < data->gpart(); part_num++) {
@@ -54,7 +55,7 @@ size_t mom_correction_csv(const std::vector<std::string>& fins, const std::share
                             std::to_string(physics::theta_calc_rad(data->cz(positive_num))) + "," +
                             std::to_string(physics::phi_calc_rad(data->cx(positive_num), data->cy(positive_num))) +
                             "," + std::to_string(event->W()) + "," + std::to_string(event->Q2()) + "," +
-                            std::to_string(event->sector()) + "," + type;
+                            std::to_string(event->sector()) + "," + type + "\n";
       sync->write(mom_correction);
     }
   }

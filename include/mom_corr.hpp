@@ -10,7 +10,8 @@
 #include "physics.hpp"
 
 class MomCorr {
-  float correctionFactor(float phi_e, float theta_e, short sec);
+  float thetaCorrectionFactor(float phi_e, float theta_e, short sec);
+  float pCorrectionFactor(float phi_e, float theta_e, short sec);
 
  public:
   MomCorr() { std::cout << RED << "===== " << BLUE << "Momentum Corrections" << RED << " =====" << DEF << std::endl; }

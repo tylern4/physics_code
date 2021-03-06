@@ -16,7 +16,6 @@ using namespace std;
 
 int main(int argc, char **argv) {
   ROOT::EnableThreadSafety();
-  std::cout.imbue(std::locale(""));
 
   std::string e1d_string = "";
   std::string e1f_string = "";
@@ -103,6 +102,7 @@ int main(int argc, char **argv) {
     }
   }
 
+  std::cout.imbue(std::locale(""));
   std::chrono::duration<double> elapsed = (std::chrono::high_resolution_clock::now() - start);
   std::cout << RED << elapsed.count() << " sec" << DEF << "\n";
   std::cout << BOLDYELLOW << "\n\n" << events / elapsed.count() << " Hz" << DEF << "\n";

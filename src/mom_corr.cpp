@@ -1,7 +1,7 @@
 #include "mom_corr.hpp"
 #include <thread>
 
-float MomCorr::correctionFactor(float phi_e, float theta_e, short sec) {
+float MomCorr::thetaCorrectionFactor(float phi_e, float theta_e, short sec) {
   // Equations 5.20 - 5.22 in KPark thesis (p. 71)
   if (sec == 0 || sec > 6)
     return 0.0;
@@ -28,6 +28,31 @@ float MomCorr::correctionFactor(float phi_e, float theta_e, short sec) {
   return A + B + C + D + E;
 }
 
+float MomCorr::pCorrectionFactor(float phi_e, float theta_e, short sec) {
+  // Equations 5.20 - 5.22 in KPark thesis (p. 71)
+  if (sec == 0 || sec > 6)
+    return 1.0;
+  else if (sec == 2)
+    return 1.0;
+
+  float A = (mom_corr_electron_p[sec - 1][0][0] * powf(theta_e, 2) + mom_corr_electron_p[sec - 1][0][1] * theta_e +
+             mom_corr_electron_p[sec - 1][0][2]) *
+            powf(phi_e, 4);
+  float B = (mom_corr_electron_p[sec - 1][1][0] * powf(theta_e, 2) + mom_corr_electron_p[sec - 1][1][1] * theta_e +
+             mom_corr_electron_p[sec - 1][1][2]) *
+            powf(phi_e, 3);
+  float C = (mom_corr_electron_p[sec - 1][2][0] * powf(theta_e, 2) + mom_corr_electron_p[sec - 1][2][1] * theta_e +
+             mom_corr_electron_p[sec - 1][2][2]) *
+            powf(phi_e, 2);
+  float D = (mom_corr_electron_p[sec - 1][3][0] * powf(theta_e, 2) + mom_corr_electron_p[sec - 1][3][1] * theta_e +
+             mom_corr_electron_p[sec - 1][3][2]) *
+            phi_e;
+  float E = (mom_corr_electron_p[sec - 1][4][0] * powf(theta_e, 2) + mom_corr_electron_p[sec - 1][4][1] * theta_e +
+             mom_corr_electron_p[sec - 1][4][2]);
+
+  return A + B + C + D + E;
+}
+
 std::shared_ptr<LorentzVector> MomCorr::CorrectedVector(float px, float py, float pz, int particle_type) {
   return std::make_shared<LorentzVector>(px, py, pz, mass_map[particle_type]);
 }
@@ -41,11 +66,12 @@ std::shared_ptr<LorentzVector> MomCorr::CorrectedElectron(const std::shared_ptr<
   float theta = temp->Theta();
   float phi = temp->Phi();
 
-  float theta_corr = theta + correctionFactor(phi, theta, sec);
+  float theta_corr = theta + thetaCorrectionFactor(phi, theta, sec);
+  float p_corr = p;  // * pCorrectionFactor(phi, theta, sec);
 
-  float px = p * sinf(theta_corr) * cosf(phi);
-  float py = p * sinf(theta_corr) * sinf(phi);
-  float pz = p * cosf(theta_corr);
+  float px = p_corr * sinf(theta_corr) * cosf(phi);
+  float py = p_corr * sinf(theta_corr) * sinf(phi);
+  float pz = p_corr * cosf(theta_corr);
 
   return physics::fourVec(px, py, pz, mass_map[ELECTRON]);
 };

@@ -16,7 +16,6 @@ using namespace std;
 
 int main(int argc, char **argv) {
   ROOT::EnableThreadSafety();
-  std::cout.imbue(std::locale(""));
 
   std::string e1d_string = "";
   std::string e1f_string = "";
@@ -122,7 +121,7 @@ int main(int argc, char **argv) {
   //     events += threads_e1f[i].get();
   //   }
   // }
-
+  std::cout.imbue(std::locale(""));
   std::chrono::duration<double> elapsed_full = (std::chrono::high_resolution_clock::now() - start);
   std::cout << RED << elapsed_full.count() << " sec" << DEF << std::endl;
   std::cerr << BOLDYELLOW << "\n\n" << events / elapsed_full.count() << " Hz" << DEF << std::endl;
