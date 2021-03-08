@@ -145,8 +145,8 @@ Garys binning
   TH1D_ptr W_channel = std::make_shared<TH1D>("W_channel", "W #pi^{+} N", BINS, w_min, w_max);
   TH1D_ptr Q2_channel = std::make_shared<TH1D>("Q2_channel", "Q^{2} #pi^{+} N", BINS, q2_min, q2_max);
   TH2D_ptr WvsQ2_Ppi0 =
-      std::make_shared<TH2D>("WvsQ2_Ppi0", "W vs Q^{2} P #pi^{0}", BINS, w_min, w_max, BINS, q2_min, q2_max);
-  TH1D_ptr W_Ppi0 = std::make_shared<TH1D>("W_Ppi0", "W P #pi^{0}", BINS, w_min, w_max);
+      std::make_shared<TH2D>("WvsQ2_Ppi0", "W vs Q^{2} P #pi^{0}", 250, w_min, w_max, 250, q2_min, q2_max);
+  TH1D_ptr W_Ppi0 = std::make_shared<TH1D>("W_Ppi0", "W P #pi^{0}", 250, w_min, w_max);
   TH1D_ptr Q2_Ppi0 = std::make_shared<TH1D>("Q2_Ppi0", "Q^{2} P #pi^{0}", BINS, q2_min, q2_max);
   TH2D_ptr WvsQ2_elastic =
       std::make_shared<TH2D>("WvsQ2_elastic", "W vs Q^{2} P", BINS, w_min, 2.0, BINS, q2_min, q2_max);

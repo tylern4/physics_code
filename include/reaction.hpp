@@ -146,7 +146,7 @@ class Reaction {
   }
 
   inline bool PPi0() {
-    return (SingleP() && (abs(this->MM()) <= 0.3 || (this->pi0_mass() >= 0.09068 && this->pi0_mass() <= 0.1652)));
+    return (SingleP() && (abs(this->MM()) <= 0.4 && (this->pi0_mass() >= 0.053397 && this->pi0_mass() <= 0.202516)));
   }
   inline bool NeutronPip() {
     return ((_numPip == 1 && _numNeutral == 1) && (_hasE && !_hasP && _hasPip && !_hasPim && _hasNeutron));

@@ -186,7 +186,7 @@ void Reaction::SetNeutron(int i) {
 
 void Reaction::SetOther(int i) {
   if (_data->id(i) == NEUTRON)
-    Reaction::SetNeutron(i);
+    this->SetNeutron(i);
   else if (_data->id(i) == PHOTON) {
     _photons.push_back(physics::fourVec(_data->px(i), _data->py(i), _data->pz(i), 0));
     _numPhotons++;

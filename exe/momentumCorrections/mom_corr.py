@@ -431,14 +431,15 @@ def deltap_vs_phi(sector_data: pd.DataFrame, directory: str = ".") -> Dict:
                 yerr = g_out.best_values['sigma']
 
                 # fig2.savefig(f"plots/slices/slice_{theta}_{phi}_{sec}.png")
-                ax.errorbar(phi, delta_t,
-                            yerr=yerr, fmt='.', c='red')
+                if delta_t < 0.001 and yerr < 0.1:
+                    ax.errorbar(phi, delta_t,
+                                yerr=yerr, fmt='.', c='red')
                 # del fig2
                 # del ax2
             except ValueError:
                 pass
-
-            phi_theta.append([phi, delta_t])
+            if delta_t < 0.001 and yerr < 0.001:
+                phi_theta.append([phi, delta_t])
 
         if len(phi_theta) > 3:
             x = np.transpose(phi_theta)[0]

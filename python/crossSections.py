@@ -78,6 +78,8 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                 plot_maid_model(ax1, w, q2, theta, xs)
                 maid_top = plot_maid_model(ct_ax[theta.left], w, q2, theta, xs)
 
+                binCenter = binCetnerCorrection(w, q2, theta, num_bins=bins)
+
                 cut_fids = {
                     "Fiducial Cuts": 0,
                     # "All Data": 2,
@@ -159,7 +161,7 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                     except ValueError:
                         continue
 
-                    y = data_y / acceptance / flux
+                    y = data_y / acceptance / flux / binCenter(x)
 
                     error_bar = get_error_bars(
                         y, mc_rec_y, thrown_y, stat_error)
@@ -167,6 +169,7 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                     ebar = ax1.errorbar(x, y, yerr=error_bar,
                                         marker=marker, linestyle="",
                                         zorder=1, label=f"{name}", markersize=10, alpha=0.4)
+
                     out = fit_model(ax1, model_new, x, y, xs,
                                     ebar[0].get_color(), name)
                     ax1.legend(loc='upper right')

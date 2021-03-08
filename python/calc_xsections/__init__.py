@@ -6,7 +6,7 @@ import time
 from lmfit import Model
 from lmfit.models import *
 from scipy.special import erfc
-from scipy import stats
+from scipy.interpolate import interp1d
 import boost_histogram as bh
 
 ENERGY = 4.81726
@@ -305,6 +305,29 @@ def plot_maid_model(ax, w, q2, theta, xs):
     # ax.set_ylim(bottom=0, top=np.max(crossSections)*1.5)
 
     return np.max(crossSections)*1.8
+
+
+def binCetnerCorrection(w, q2, theta, num_bins=10):
+    # Get bin centers
+    _w = (w.left + w.right) / 2.0
+    _q2 = (q2.left + q2.right) / 2.0
+    _theta = (theta.left + theta.right) / 2.0
+    # make a huge space of phis
+    width = np.linspace(0,  2*np.pi, num_bins)
+    left = np.linspace(-np.pi,  3*np.pi, num_bins*4)
+    right = np.linspace(-np.pi+width[1], 3 * np.pi+width[1],
+                        num_bins*4, endpoint=True)
+    center = (left+right)/2.0
+    ys = []
+    for xs in [left, right, center]:
+        # Get the cross section values from maid
+        crossSections = get_maid_values(xs, _w, _q2, _theta)
+        ys.append(crossSections)
+
+    avg = (ys[0]+ys[1])/2
+
+    bin_center_corr = interp1d(center, avg/ys[2], kind='cubic')
+    return bin_center_corr
 
 
 def A(M, B, C):

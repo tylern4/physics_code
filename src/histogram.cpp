@@ -59,11 +59,11 @@ void Histogram::FillEvent(const std::shared_ptr<Reaction> &event) {
   if (event->SingleP()) {
     this->Fill_Missing_Mass_pi0(event->MM(), event->MM2());
     this->Fill_elastic(event);
-    if (event->MM() >= 0.05 && event->MM() <= 0.3) {
+    if (event->MM() <= 0.4) {
       Mass_pi0_otherCut->Fill(event->pi0_mass());
       Mass_square_pi0_otherCut->Fill(event->pi0_mass2());
     }
-    if (event->pi0_mass() >= 0.05 && event->pi0_mass() <= 0.2) {
+    if (event->pi0_mass() >= 0.053397 && event->pi0_mass() <= 0.202516) {
       Missing_Mass_pi0_otherCut->Fill(event->MM());
       Missing_Mass_square_pi0_otherCut->Fill(event->MM2());
     }

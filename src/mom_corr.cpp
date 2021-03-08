@@ -5,10 +5,8 @@ float MomCorr::thetaCorrectionFactor(float phi_e, float theta_e, short sec) {
   // Equations 5.20 - 5.22 in KPark thesis (p. 71)
   if (sec == 0 || sec > 6)
     return 0.0;
-  else if (sec == 2)
+  else if (sec == 2 || sec == 4)
     return 0.0;
-  else if (sec == 4)
-    sec = 1;
 
   float A = (mom_corr_electron[sec - 1][0][0] * powf(theta_e, 2) + mom_corr_electron[sec - 1][0][1] * theta_e +
              mom_corr_electron[sec - 1][0][2]) *
