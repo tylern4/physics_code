@@ -69,7 +69,7 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                         df.Q2_min == q2.left) & (df.cos_t == theta.left)]
                     ebar = ax1.errorbar(old_data.phi, old_data.y, yerr=old_data.yerr,
                                         marker='*', linestyle="",
-                                        zorder=1, label=f"E-99-107",
+                                        zorder=1, label=f"",
                                         markersize=10, alpha=0.4, c='r')
                     ct_ax[theta.left].errorbar(old_data.phi, old_data.y, yerr=old_data.yerr,
                                                marker='*', linestyle="",
@@ -253,5 +253,5 @@ if __name__ == "__main__":
     end = time.time_ns()
     print(f"Done setup: {(end-start)/1E9:0.2f}Sec")
 
-    main(rec, mc_rec, mc_thrown, empty_target, binning, bins=10,
+    main(rec, mc_rec, mc_thrown, empty_target, binning, bins=12,
          out_folder=args.out_folder, overlap=args.overlap)
