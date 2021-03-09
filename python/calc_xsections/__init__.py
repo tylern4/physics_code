@@ -313,10 +313,10 @@ def binCetnerCorrection(w, q2, theta, num_bins=10):
     _q2 = (q2.left + q2.right) / 2.0
     _theta = (theta.left + theta.right) / 2.0
     # make a huge space of phis
-    width = np.linspace(0,  2*np.pi, num_bins)
-    left = np.linspace(-np.pi,  3*np.pi, num_bins*4)
-    right = np.linspace(-np.pi+width[1], 3 * np.pi+width[1],
-                        num_bins*4, endpoint=True)
+    width = np.linspace(0,  2*np.pi, num_bins, endpoint=True)[1]
+    left = np.array([i*width for i in range(num_bins+2)])
+    right = np.array([(i-1)*width for i in range(num_bins+2)])
+
     center = (left+right)/2.0
     ys = []
     for xs in [left, right, center]:

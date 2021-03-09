@@ -64,7 +64,7 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                 ax1 = fig.add_subplot(gs[0])
                 ax2 = fig.add_subplot(gs[1], sharex=ax1)
                 if overlap is not None:
-                    df = pd.read_csv(overlap, index_col=0)
+                    df = pd.read_csv(overlap)
                     old_data = df[(df.W_min == w.left) & (
                         df.Q2_min == q2.left) & (df.cos_t == theta.left)]
                     ebar = ax1.errorbar(old_data.phi, old_data.y, yerr=old_data.yerr,
