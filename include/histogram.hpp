@@ -256,7 +256,7 @@ Garys binning
 
   // fiducial
   float theta_min = 0;
-  float theta_max = 60;
+  float theta_max = 80;
   float phi_min = -360 / 2.0;
   float phi_max = 360 / 2.0;
 

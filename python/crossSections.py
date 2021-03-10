@@ -20,6 +20,8 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
         os.makedirs(f'{out_folder}/crossSections')
     # Make a set of values from 0 to 2Pi for plotting
     xs = np.linspace(0, 2 * np.pi, 250)
+    if overlap is not None:
+        overlap_df = pd.read_csv(overlap)
     for w in tqdm(binning["wbins"]):
         for q2 in binning["q2bins"]:
             CosTfig = plt.figure(
@@ -64,16 +66,19 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                 ax1 = fig.add_subplot(gs[0])
                 ax2 = fig.add_subplot(gs[1], sharex=ax1)
                 if overlap is not None:
-                    df = pd.read_csv(overlap)
-                    old_data = df[(df.W_min == w.left) & (
-                        df.Q2_min == q2.left) & (df.cos_t == theta.left)]
-                    ebar = ax1.errorbar(old_data.phi, old_data.y, yerr=old_data.yerr,
-                                        marker='*', linestyle="",
-                                        zorder=1, label=f"",
-                                        markersize=10, alpha=0.4, c='r')
-                    ct_ax[theta.left].errorbar(old_data.phi, old_data.y, yerr=old_data.yerr,
-                                               marker='*', linestyle="",
-                                               markersize=5, alpha=0.4, c='r')
+                    for k, v in overlapSettings.items():
+                        old_data = overlap_df[(overlap_df.W_min == w.left)
+                                              & (overlap_df.Q2_min == q2.left)
+                                              & (overlap_df.cos_t == theta.left)
+                                              & (overlap_df.experiment == k)]
+
+                        ebar = ax1.errorbar(old_data.phi, old_data.y, yerr=old_data.yerr,
+                                            marker=v['symbol'], linestyle="",
+                                            zorder=1, label=f"",
+                                            markersize=10, alpha=0.4, c=v['color'])
+                        ct_ax[theta.left].errorbar(old_data.phi, old_data.y, yerr=old_data.yerr,
+                                                   marker=v['symbol'], linestyle="",
+                                                   markersize=5, alpha=0.4, c=v['color'])
 
                 plot_maid_model(ax1, w, q2, theta, xs)
                 maid_top = plot_maid_model(ct_ax[theta.left], w, q2, theta, xs)
@@ -203,12 +208,14 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                                 bottom=0.0, top=max(top, maid_top))
 
                 ax1.set_title(f"$W$ : {w} , $Q^2$ : {q2} $\\theta$ : {theta}")
-                fig.savefig(f"{out_folder}/crossSections/w_{w.left:0.2f}_q2_{q2.left:0.2f}_theta_{theta.left}.png",
+                fig.savefig(f"{out_folder}/crossSections/w_{w.left:0.3f}_q2_{q2.left:0.3f}_theta_{theta.left}.png",
                             bbox_inches='tight')
 
             if pass_plotting:
+                CosTfig.suptitle(
+                    f'$W~~[{w.left:0.3f},{w.right:0.3f})~~~~Q^2~~[{q2.left:0.3f}, {q2.right:0.3f})$', fontsize=16)
                 CosTfig.align_ylabels()
-                CosTfig.savefig(f"{out_folder}/crossSections/cost_w_{w.left:0.2f}_q2_{q2.left:0.2f}.png",
+                CosTfig.savefig(f"{out_folder}/crossSections/cost_w_{w.left:0.3f}_q2_{q2.left:0.3f}.png",
                                 bbox_inches='tight', dpi=250)
 
 

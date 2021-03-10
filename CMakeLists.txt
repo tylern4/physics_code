@@ -63,11 +63,9 @@ endforeach( prog ${PROGRAMS} )
 
 find_package(Cython)
 IF(Cython_FOUND)
-  find_package(PythonInterp 3.5 REQUIRED)
-  find_package(PythonLibs 3.5 REQUIRED)
-  find_package(PythonExtensions REQUIRED)
+  find_package(Python3 REQUIRED)
   find_package(NumPy REQUIRED)
-  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD 17)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
   include_directories(${PYTHON_INCLUDE_DIRS} ${NumPy_INCLUDE_DIR})
