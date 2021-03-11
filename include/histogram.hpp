@@ -141,6 +141,8 @@ Garys binning
       std::make_shared<TH2D>("ThetaVsPhi_channel", "Theta vs Phi #pi^{+} N", 100, 0, PI, 100, 0, 2 * PI);
   TH2D_ptr CosThetaVsPhi_channel =
       std::make_shared<TH2D>("CosThetaVsPhi_channel", "Cos Theta vs Phi #pi^{+} N", 100, -1.0, 1.0, 100, 0, 2 * PI);
+  TH2D_ptr CosThetaVsPhi_mc =
+      std::make_shared<TH2D>("CosThetaVsPhi_mc", "Cos Theta vs Phi #pi^{+} N", 100, -1.0, 1.0, 100, 0, 2 * PI);
 
   TH1D_ptr W_channel = std::make_shared<TH1D>("W_channel", "W #pi^{+} N", BINS, w_min, w_max);
   TH1D_ptr Q2_channel = std::make_shared<TH1D>("Q2_channel", "Q^{2} #pi^{+} N", BINS, q2_min, q2_max);

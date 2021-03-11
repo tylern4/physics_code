@@ -1915,12 +1915,14 @@ void mcHistogram::Fill_WQ2_MC(const std::shared_ptr<MCReaction> &_e) {
   WvsQ2_MC->Fill(_e->W_thrown(), _e->Q2_thrown());
   W_MC->Fill(_e->W_thrown());
   WvsQ2_binned_MC->Fill(_e->W_thrown(), _e->Q2_thrown());
-  for (int y = 0; y < Q2_BINS; y++) {
-    if (q2_binned_min + (Q2_width * y) <= _e->Q2_thrown() && q2_binned_min + (Q2_width * (y + 1)) >= _e->Q2_thrown()) {
-      W_binned_MC[y]->Fill(_e->W_thrown());
-      continue;
-    }
-  }
+  // for (int y = 0; y < Q2_BINS; y++) {
+  //   if (q2_binned_min + (Q2_width * y) <= _e->Q2_thrown() && q2_binned_min + (Q2_width * (y + 1)) >= _e->Q2_thrown())
+  //   {
+  //     W_binned_MC[y]->Fill(_e->W_thrown());
+  //     continue;
+  //   }
+  // }
+  CosThetaVsPhi_mc->Fill(cosf(_e->Theta_star()), _e->Phi_star());
 }
 
 void mcHistogram::Fill(const std::shared_ptr<MCReaction> &event) {
@@ -1960,6 +1962,11 @@ void mcHistogram::WvsQ2_MC_Write() {
 
   W_MC->SetXTitle("W (GeV/c^{2})");
   W_MC->Write();
+
+  CosThetaVsPhi_mc->SetXTitle("#cos(#theta)");
+  CosThetaVsPhi_mc->SetYTitle("#phi");
+  CosThetaVsPhi_mc->SetOption("COLZ");
+  CosThetaVsPhi_mc->Write();
 }
 
 void mcHistogram::Write_DeltaP() {
