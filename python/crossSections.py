@@ -15,15 +15,24 @@ import matplotlib.pyplot as plt
 plt.rcParams.update({'mathtext.fontset': 'stix'})
 
 
-def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, overlap=None):
+@np.vectorize
+def isclose(a, b, rel_tol=1e-4, abs_tol=0.0):
+    return np.abs(a-b) <= np.maximum(rel_tol * np.maximum(np.abs(a), np.abs(b)), abs_tol)
+
+
+def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, overlap=None, radcorr=None):
     if not os.path.exists(f'{out_folder}/crossSections'):
         os.makedirs(f'{out_folder}/crossSections')
     # Make a set of values from 0 to 2Pi for plotting
     xs = np.linspace(0, 2 * np.pi, 250)
     if overlap is not None:
         overlap_df = pd.read_csv(overlap)
+    if radcorr is not None:
+        radcorr_df = pd.read_csv(radcorr)
+
     for w in tqdm(binning["wbins"]):
         for q2 in binning["q2bins"]:
+
             CosTfig = plt.figure(
                 figsize=(12, 9), constrained_layout=True)
             ct_gs = CosTfig.add_gridspec(5, 2, hspace=0.1)
@@ -42,6 +51,16 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                 0.8: CosTfig.add_subplot(ct_gs[4, 1], sharex=_right_ax),
             }
             pass_plotting = False
+
+            radcor_R = 1.0
+            if radcorr is not None:
+                cut = isclose(radcorr_df.w_left, w.left) & isclose(
+                    radcorr_df.q2_left, q2.left)
+
+                if(radcorr_df[cut].R.size == 0):
+                    radcor_R = 1.0
+                else:
+                    radcor_R = np.array(radcorr_df[cut].R)
 
             for theta in binning["thetabins"]:
                 # Cut data/mc for the w/q2/theta bin we're in
@@ -65,6 +84,7 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                 gs = fig.add_gridspec(2, 1, height_ratios=[2, 1])
                 ax1 = fig.add_subplot(gs[0])
                 ax2 = fig.add_subplot(gs[1], sharex=ax1)
+                maxs = None
                 if overlap is not None:
                     for k, v in overlapSettings.items():
                         old_data = overlap_df[(overlap_df.W_min == w.left)
@@ -76,6 +96,7 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                                             marker=v['symbol'], linestyle="",
                                             zorder=1, label=f"",
                                             markersize=10, alpha=0.4, c=v['color'])
+                        maxs = np.max(old_data.y)*1.5
                         ct_ax[theta.left].errorbar(old_data.phi, old_data.y, yerr=old_data.yerr,
                                                    marker=v['symbol'], linestyle="",
                                                    markersize=5, alpha=0.4, c=v['color'])
@@ -166,7 +187,7 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                     except ValueError:
                         continue
 
-                    y = data_y / acceptance / flux / binCenter(x)
+                    y = data_y / acceptance / flux / binCenter(x) / radcor_R
 
                     error_bar = get_error_bars(
                         y, mc_rec_y, thrown_y, stat_error)
@@ -203,7 +224,8 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                         if np.isnan(top) or np.isinf(top):
                             ax1.set_ylim(bottom=0, top=1.0)
                         else:
-                            ax1.set_ylim(bottom=0, top=max(top, maid_top))
+                            ax1.set_ylim(bottom=0, top=max(
+                                top, max(maid_top, maxs)))
                             ct_ax[theta.left].set_ylim(
                                 bottom=0.0, top=max(top, maid_top))
 
@@ -230,6 +252,8 @@ if __name__ == "__main__":
     parser.add_argument("--folder", dest="out_folder", type=str,
                         help="Folder for plots", required=False, default="plots")
     parser.add_argument("--overlap", dest="overlap", type=str, help="Location of overlap data csv", required=False,
+                        default=None)
+    parser.add_argument("--radcorr", dest="radcorr", type=str, help="Location of radcorr data csv", required=False,
                         default=None)
     args = parser.parse_args()
 
@@ -261,4 +285,4 @@ if __name__ == "__main__":
     print(f"Done setup: {(end-start)/1E9:0.2f}Sec")
 
     main(rec, mc_rec, mc_thrown, empty_target, binning, bins=12,
-         out_folder=args.out_folder, overlap=args.overlap)
+         out_folder=args.out_folder, overlap=args.overlap, radcorr=args.radcorr)
