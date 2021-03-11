@@ -35,13 +35,16 @@ echo $SLURM_JOB_CPUS_PER_NODE
 
 #valgrind --tool=callgrind --callgrind-out-file=/work/tylerns/e1d_$SLURM_JOB_ID.callgrind.out ./e1d /work/tylerns/e1d/outputs/e1d_new.root /work/gothelab/clas6/e1d/skimmed/pass2/v2/full/*.root
 
-./e1d /work/tylerns/e1d/outputs/e1d_new.root /work/gothelab/clas6/e1d/skimmed/pass2/v2/full/*.root
+# ./e1d /work/tylerns/e1d/outputs/e1d_skim.root /work/gothelab/clas6/e1d/skimmed/pass2/v2/full/*.root
+./e1d /work/tylerns/e1d/outputs/e1d_data.root /work/gothelab/clas6/e1d/golden_run/*.root
+./e1d /work/tylerns/e1d/outputs/e1d_empty.root /work/gothelab/clas6/e1d/empty/*.root
 
-
-./csv_maker -o /work/tylerns/e1d/outputs/csv/data -e1d /work/gothelab/clas6/e1d/skimmed/pass2/v2/full
+# ./csv_maker -o /work/tylerns/e1d/outputs/csv/skim -e1d /work/gothelab/clas6/e1d/skimmed/pass2/v2/full
+./csv_maker -o /work/tylerns/e1d/outputs/csv/data -e1d /work/gothelab/clas6/e1d/golden_run
+./csv_maker -o /work/tylerns/e1d/outputs/csv/empty -e1d /work/gothelab/clas6/e1d/empty
 
 
 #cat /work/tylerns/e1d/outputs/csv/data_*_e1d.csv > /work/tylerns/e1d/outputs/csv/data_e1d.csv
 #rm -rf /work/tylerns/e1d/outputs/csv/data_*_e1d.csv
-/work/apps/python3/anaconda3/2020.02/bin/python /home/tylerns/physics_code/python/csv_to_feather.py /work/tylerns/e1d/outputs/csv/data_e1d.csv
+#/work/apps/python3/anaconda3/2020.02/bin/python /home/tylerns/physics_code/python/csv_to_feather.py /work/tylerns/e1d/outputs/csv/data_e1d.csv
 
