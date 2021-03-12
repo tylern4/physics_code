@@ -97,7 +97,7 @@ class Yeilds {
       //     (cos(event->Theta_star()) == -1.0 && event->Phi_star() >= 4.71238 && event->Phi_star() <= 4.71240);
       // bool cut_angles = ;
 
-      if ((event->SinglePip() || event->NeutronPip()) &&
+      if ((event->SinglePip() || event->NeutronPip()) && cut_fid &&
           (event->MM2() >= 0.3 && event->MM2() <= 1.5 && event->W() <= 2.0 && event->Q2() <= 4.0)) {
         written++;
         csv_data csv_buffer;

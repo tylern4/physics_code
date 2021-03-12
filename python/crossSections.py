@@ -145,6 +145,9 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
 
                     _thrown_y, _ = hist_data(thrown, density=False, bins=bins)
 
+                    # Get numbers for error
+                    N_y = _data_y
+                    N_empty = _empty_y
                     # Empty target subtraction
                     _data_y = (_data_y/Q_FULL - _empty_y/Q_EMPTY)
                     # Remove points with 0 data count
@@ -153,8 +156,8 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                     mc_rec_y = _mc_rec_y[cut]
                     thrown_y = _thrown_y[cut]
                     data_y = _data_y[cut]
-                    N_y = _data_y[cut] * Q_FULL
-                    N_empty = _empty_y[cut] * Q_EMPTY
+                    N_y = N_y[cut]
+                    N_empty = N_empty[cut]
 
                     # Remove points with 0 mc_rec count and put 1???
                     mc_rec_y = np.where(mc_rec_y == 0, 1, mc_rec_y)
@@ -181,17 +184,16 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                     delta_phi = __phis[1] - __phis[0]
                     kin_bin_width = delta_W * delta_Q2 * delta_Theta * delta_phi
 
-                    # Calculate acceptance and correct data
-                    flux = virtual_photon_flux(
-                        w.left, q2.left) * luminosity()
-                    stat_error = statistical(
-                        N_y, N_empty, kin_bin_width, acceptance, flux)
-
                     # Normalize with bin widths
                     try:
                         data_y = data_y/kin_bin_width
                     except ValueError:
                         continue
+
+                    # Calculate acceptance and correct data
+                    flux = virtual_photon_flux(w.left, q2.left) * luminosity()
+                    denom = kin_bin_width * flux * radcor_R * binCenter(x)
+                    stat_error = statistical(N_y, N_empty, denom)
 
                     y = data_y / acceptance / flux / binCenter(x) / radcor_R
 
@@ -200,7 +202,8 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
 
                     ebar = ax1.errorbar(x, y, yerr=error_bar,
                                         marker=marker, linestyle="",
-                                        zorder=1, label=f"{name}", markersize=10, alpha=0.4)
+                                        zorder=1, label=f"{name}",
+                                        markersize=10, alpha=0.4)
 
                     out = fit_model(ax1, model_new, x, y, xs,
                                     ebar[0].get_color(), name)
