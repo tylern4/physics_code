@@ -10,6 +10,8 @@ from scipy.interpolate import interp1d
 import boost_histogram as bh
 
 ENERGY = 4.81726
+EK = 5.499
+E16 = 5.75
 
 Q_FULL = 4348.46636E-6  # 03/04/2021
 # Q_FULL = 3142.6514E-6  # 02/07/2021
@@ -19,11 +21,12 @@ Q_EMPTY = 3756.08E-6  # ????
 
 overlapSettings = {"E99-107": {"name": "",
                                "color": 'r',
-                               "symbol": '*'},
+                               "symbol": '*',
+                               "energy": E16},
                    "kijun": {"name": "",
                              "color": 'g',
-                             "symbol": 'd'
-                             },
+                             "symbol": 'd',
+                             "energy": EK, },
                    }
 
 which_plot = {
@@ -53,11 +56,6 @@ plot_label = {
 
 # w_bins = np.array([1.1, 1.12, 1.14, 1.16, 1.18, 1.2, 1.22, 1.24, 1.26, 1.28, 1.3,
 #                    1.32, 1.34, 1.36, 1.38, 1.4, 1.42, 1.44, 1.46, 1.48, 1.5, 1.52,
-#                    1.54, 1.56, 1.58, 1.6, 1.62, 1.64, 1.66, 1.68, 1.7, 1.72, 1.74,
-#                    1.76, 1.78, 1.8])
-
-# w_bins = np.array([1.1, 1.12, 1.14, 1.16, 1.18, 1.2, 1.22, 1.24, 1.26, 1.28, 1.3,
-#                    1.32, 1.34, 1.36, 1.38, 1.4, 1.42, 1.44, 1.46, 1.48, 1.5, 1.52,
 #                    1.54, 1.56, 1.58, 1.605, 1.615, 1.625, 1.635, 1.645, 1.655, 1.665,
 #                    1.675, 1.685, 1.695, 1.705, 1.715, 1.725, 1.735, 1.745, 1.755,
 #                    1.765, 1.775, 1.78,  1.83,  1.89,  1.95,  2.01])
@@ -67,15 +65,20 @@ plot_label = {
 #                    1.54, 1.56, 1.58, 1.605, 1.615, 1.625, 1.635, 1.645, 1.655, 1.665, 1.675, 1.685, 1.695,
 #                    1.705, 1.715, 1.725, 1.735, 1.745, 1.755, 1.765, 1.775, 1.78,  1.83,  1.89,  1.95,  2.01])
 
-w_bins = np.array([1.605, 1.615, 1.625, 1.635, 1.645, 1.655, 1.665, 1.675, 1.685, 1.695,
-                   1.705, 1.715, 1.725, 1.735, 1.745, 1.755, 1.765, 1.775, 1.78,  1.83])
 
-# q2_bins = np.array([1.1, 1.30, 1.56, 1.87, 2.23, 2.66, 3.5])
+w_bins_e99 = np.array([1.1, 1.12, 1.14, 1.16, 1.18, 1.2, 1.22, 1.24, 1.26, 1.28, 1.3,
+                       1.32, 1.34, 1.36, 1.38, 1.4, 1.42, 1.44, 1.46, 1.48, 1.5, 1.52,
+                       1.54, 1.56, 1.58, 1.6, 1.62, 1.64, 1.66, 1.68, 1.7, 1.72, 1.74,
+                       1.76, 1.78, 1.8])
 
-q2_bins = np.array([1.1, 1.30, 1.56,  1.8,  2.2,  2.6,  3.15, 4.0])
+w_bins_k = np.array([1.605, 1.615, 1.625, 1.635, 1.645, 1.655, 1.665, 1.675, 1.685, 1.695,
+                     1.705, 1.715, 1.725, 1.735, 1.745, 1.755, 1.765, 1.775, 1.78,  1.83])
+
+q2_bins_e99 = np.array([1.1, 1.30, 1.56, 1.87, 2.23, 2.66, 3.5])
+q2_bins_k = np.array([1.1, 1.30, 1.56, 1.8,  2.2,  2.6,  3.15, 4.0])
 
 theta_bins = np.array([-1.0, -0.8, -0.6, -0.4, -0.2,
-                       0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2])
+                       0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
 
 
 def read_csv(file_name: str = "", data: bool = False):
@@ -166,7 +169,7 @@ def costheta_e_fn(beam_energy, target_mass, w, q2):
     return (beam_energy * scattered_energy - q2 / 2.0 - electron_mass**2) / (beam_momentum * scattered_momentum)
 
 
-def virtual_photon_epsilon_fn(beam_energy, target_mass, w, q2):
+def virtual_photon_epsilon_fn(beam_energy, w, q2, target_mass: float = 0.93827203):
     theta_e = np.arccos(costheta_e_fn(beam_energy, target_mass, w, q2))
     nu = virtual_photon_energy_fn(target_mass, w, q2)
     return np.power(1 + 2 * (1 + nu**2 / q2) * np.power(np.tan(theta_e / 2), 2), -1)
@@ -174,7 +177,7 @@ def virtual_photon_epsilon_fn(beam_energy, target_mass, w, q2):
 
 def virtual_photon_flux(w: float, q2: float, beam_energy: float = 4.81726, target_mass: float = 0.93827203) -> float:
     alpha = 0.007297352570866302
-    epsilon = virtual_photon_epsilon_fn(beam_energy, target_mass, w, q2)
+    epsilon = virtual_photon_epsilon_fn(beam_energy, w, q2, target_mass)
     return alpha / (4 * np.pi * q2) * w / (beam_energy**2 * target_mass**2) * (w**2 - target_mass**2) / (1 - epsilon)
 
 

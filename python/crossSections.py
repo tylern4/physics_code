@@ -87,17 +87,21 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                 maxs = None
                 if overlap is not None:
                     for k, v in overlapSettings.items():
+                        e1 = virtual_photon_epsilon_fn(ENERGY, w.left, q2.left)
+                        e2 = virtual_photon_epsilon_fn(
+                            v['energy'], w.left, q2.left)
+
                         old_data = overlap_df[(overlap_df.W_min == w.left)
                                               & (overlap_df.Q2_min == q2.left)
                                               & (overlap_df.cos_t == theta.left)
                                               & (overlap_df.experiment == k)]
 
-                        ebar = ax1.errorbar(old_data.phi, old_data.y, yerr=old_data.yerr,
+                        ebar = ax1.errorbar(old_data.phi, old_data.y * e2, yerr=old_data.yerr,
                                             marker=v['symbol'], linestyle="",
                                             zorder=1, label=f"",
                                             markersize=10, alpha=0.4, c=v['color'])
-                        maxs = np.max(old_data.y)*1.5
-                        ct_ax[theta.left].errorbar(old_data.phi, old_data.y, yerr=old_data.yerr,
+                        maxs = np.max(old_data.y * e2)*1.5
+                        ct_ax[theta.left].errorbar(old_data.phi, old_data.y * e2, yerr=old_data.yerr,
                                                    marker=v['symbol'], linestyle="",
                                                    markersize=5, alpha=0.4, c=v['color'])
 
@@ -140,6 +144,8 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                             data_mc, density=False, bins=bins)
 
                     _thrown_y, _ = hist_data(thrown, density=False, bins=bins)
+
+                    # Empty target subtraction
                     _data_y = (_data_y/Q_FULL - _empty_y/Q_EMPTY)
                     # Remove points with 0 data count
                     cut = ~(_data_y == 0)
@@ -147,8 +153,8 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                     mc_rec_y = _mc_rec_y[cut]
                     thrown_y = _thrown_y[cut]
                     data_y = _data_y[cut]
-                    N_y = _data_y[cut]
-                    N_empty = _empty_y[cut]
+                    N_y = _data_y[cut] * Q_FULL
+                    N_empty = _empty_y[cut] * Q_EMPTY
 
                     # Remove points with 0 mc_rec count and put 1???
                     mc_rec_y = np.where(mc_rec_y == 0, 1, mc_rec_y)
@@ -271,20 +277,28 @@ if __name__ == "__main__":
 
     # Cut for missing mass
     rec, mc_rec, empty_target = cut_for_MM(rec, mc_rec, empty_target)
-
-    # Make bins in the dataframes from the bins above
-    rec = prep_for_ana(rec, w_bins, q2_bins, theta_bins)
-    empty_target = prep_for_ana(empty_target, w_bins, q2_bins, theta_bins)
-    mc_rec = prep_for_ana(mc_rec, w_bins, q2_bins, theta_bins)
-    mc_thrown = prep_for_ana(mc_thrown, w_bins, q2_bins, theta_bins)
-
-    # Create dict of sorted bins
-    binning = dict()
-    binning["wbins"] = pd.Index.sort_values(pd.unique(rec.w_bin))
-    binning["q2bins"] = pd.Index.sort_values(pd.unique(rec.q2_bin))
-    binning["thetabins"] = pd.Index.sort_values(pd.unique(rec.theta_bin))
     end = time.time_ns()
     print(f"Done setup: {(end-start)/1E9:0.2f}Sec")
 
-    main(rec, mc_rec, mc_thrown, empty_target, binning, bins=12,
-         out_folder=args.out_folder, overlap=args.overlap, radcorr=args.radcorr)
+    for i in range(2):
+        if i == 0:
+            w_bins = w_bins_e99
+            q2_bins = q2_bins_e99
+        else:
+            w_bins = w_bins_k
+            q2_bins = q2_bins_k
+
+        # Make bins in the dataframes from the bins above
+        _rec = prep_for_ana(rec, w_bins, q2_bins, theta_bins)
+        _empty_target = prep_for_ana(empty_target, w_bins, q2_bins, theta_bins)
+        _mc_rec = prep_for_ana(mc_rec, w_bins, q2_bins, theta_bins)
+        _mc_thrown = prep_for_ana(mc_thrown, w_bins, q2_bins, theta_bins)
+
+        # Create dict of sorted bins
+        _binning = dict()
+        _binning["wbins"] = pd.Index.sort_values(pd.unique(_rec.w_bin))
+        _binning["q2bins"] = pd.Index.sort_values(pd.unique(_rec.q2_bin))
+        _binning["thetabins"] = pd.Index.sort_values(pd.unique(_rec.theta_bin))
+
+        main(_rec, _mc_rec, _mc_thrown, _empty_target, _binning, bins=12,
+             out_folder=args.out_folder, overlap=args.overlap, radcorr=args.radcorr)

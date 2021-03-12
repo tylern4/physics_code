@@ -67,6 +67,9 @@ int radCorr(const std::string &norad_root, const std::string &rad_root) {
   auto wVsQ2_norad = new TH2D("wvsq2_norad", "wvsq2_norad", 500, 1.1, 2.0, 500, 1.0, 3.5);
   auto wVsQ2_rad = new TH2D("wvsq2_rad", "wvsq2_rad", 500, 1.1, 2.0, 500, 1.0, 3.5);
 
+  auto thetaPhi_norad = new TH2D("thetaPhi_norad", "thetaPhi_norad", 500, 1.1, 2.0, 500, 1.0, 3.5);
+  auto thetaPhi_rad = new TH2D("thetaPhi_rad", "thetaPhi_rad", 500, 1.1, 2.0, 500, 1.0, 3.5);
+
   size_t numNoRad = noradChain->GetEntries();
   for (size_t part = 0; part < numNoRad; part++) {
     if (part % 10000 == 0) std::cout << part << "\r\r" << std::flush;
@@ -76,7 +79,10 @@ int radCorr(const std::string &norad_root, const std::string &rad_root) {
     auto Q2 = Q2_calc(e_mu, e_mu_prime);
     wVsQ2_norad->Fill(W, Q2);
     if (std::isnan(W) || std::isnan(Q2)) continue;
-    myfile << "norad," << W << "," << Q2 << "\n";
+    auto theta = 0;
+    auto phi = 0;
+    thetaPhi_norad->Fill(theta, phi);
+    myfile << "norad," << W << "," << Q2 << "," << theta << "," << phi << "\n";
   }
 
   auto radChain = std::make_shared<TChain>("h10");
@@ -98,7 +104,10 @@ int radCorr(const std::string &norad_root, const std::string &rad_root) {
     auto Q2 = Q2_calc(e_mu, e_mu_prime);
     wVsQ2_rad->Fill(W, Q2);
     if (std::isnan(W) || std::isnan(Q2)) continue;
-    myfile << "rad," << W << "," << Q2 << "\n";
+    auto theta = 0;
+    auto phi = 0;
+    thetaPhi_rad->Fill(theta, phi);
+    myfile << "rad," << W << "," << Q2 << "," << theta << "," << phi << "\n";
   }
 
   TCanvas *c1 = new TCanvas("c1", "c1", 800, 600);
