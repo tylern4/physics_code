@@ -302,8 +302,8 @@ def get_maid_values(xs, w, q2, theta):
 
 
 def statistical(DN_full, DN_empty, kin_bin_width, acceptance, flux):
-    # error = (DN_full/Q_FULL**2) + (DN_empty/Q_EMPTY**2)
-    error = (DN_full) + (DN_empty)
+    error = (DN_full/Q_FULL)**2 + (DN_empty/Q_EMPTY)**2
+    #error = (DN_full**2) + (DN_empty**2)
     error = np.sqrt(error) / (kin_bin_width*acceptance*flux)
 
     return error
