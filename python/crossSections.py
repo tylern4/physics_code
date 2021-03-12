@@ -140,8 +140,7 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                             data_mc, density=False, bins=bins)
 
                     _thrown_y, _ = hist_data(thrown, density=False, bins=bins)
-                    # _data_y = (_data_y - _empty_y/Q_EMPTY)
-
+                    _data_y = (_data_y/Q_FULL - _empty_y/Q_EMPTY)
                     # Remove points with 0 data count
                     cut = ~(_data_y == 0)
                     x = _x[cut]
@@ -158,13 +157,13 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
 
                     # Plot intergrated yeils to compare with/without fid cuts
                     try:
-                        # ax2.errorbar(x, 1/acceptance, marker=marker,
+                        ax2.errorbar(x, acceptance, marker=marker,
+                                     linestyle="", zorder=1,
+                                     markersize=10, label=f"Acceptence", alpha=0.4)
+                        # ax2.errorbar(x, data_y, marker=marker,
                         #              linestyle="", zorder=1,
                         #              markersize=10, label=f"Counts: {name}", alpha=0.4)
-                        ax2.errorbar(x, data_y, marker=marker,
-                                     linestyle="", zorder=1,
-                                     markersize=10, label=f"Counts: {name}", alpha=0.4)
-                        ax2.legend(loc='upper right')
+                        # ax2.legend(loc='upper right')
                     except ValueError:
                         pass
 
@@ -177,7 +176,8 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                     kin_bin_width = delta_W * delta_Q2 * delta_Theta * delta_phi
 
                     # Calculate acceptance and correct data
-                    flux = virtual_photon_flux(w.left, q2.left) * luminosity()
+                    flux = virtual_photon_flux(
+                        w.left, q2.left) * luminosity()
                     stat_error = statistical(
                         N_y, N_empty, kin_bin_width, acceptance, flux)
 
@@ -221,13 +221,15 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                             top = np.max(y)*1.5
                         except ValueError:
                             top = np.nan
+
                         if np.isnan(top) or np.isinf(top):
                             ax1.set_ylim(bottom=0, top=1.0)
                         else:
-                            ax1.set_ylim(bottom=0, top=max(
-                                top, max(maid_top, maxs)))
+                            ax1.set_ylim(bottom=0,
+                                         top=max(max(top, maid_top), maxs))
                             ct_ax[theta.left].set_ylim(
-                                bottom=0.0, top=max(top, maid_top))
+                                bottom=0.0,
+                                top=max(max(top, maid_top), maxs))
 
                 ax1.set_title(f"$W$ : {w} , $Q^2$ : {q2} $\\theta$ : {theta}")
                 fig.savefig(f"{out_folder}/crossSections/w_{w.left:0.3f}_q2_{q2.left:0.3f}_theta_{theta.left}.png",

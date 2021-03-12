@@ -17,13 +17,13 @@ Q_FULL = 4348.46636E-6  # 03/04/2021
 # Q_FULL = 2822.038E-6  # Older
 Q_EMPTY = 3756.08E-6  # ????
 
-overlapSettings = {"kijun": {"name": "",
+overlapSettings = {"E99-107": {"name": "",
+                               "color": 'r',
+                               "symbol": '*'},
+                   "kijun": {"name": "",
                              "color": 'g',
                              "symbol": 'd'
                              },
-                   "E99-107": {"name": "",
-                               "color": 'r',
-                               "symbol": '*'}
                    }
 
 which_plot = {
@@ -69,6 +69,7 @@ plot_label = {
 
 w_bins = np.array([1.605, 1.615, 1.625, 1.635, 1.645, 1.655, 1.665, 1.675, 1.685, 1.695,
                    1.705, 1.715, 1.725, 1.735, 1.745, 1.755, 1.765, 1.775, 1.78,  1.83])
+
 # q2_bins = np.array([1.1, 1.30, 1.56, 1.87, 2.23, 2.66, 3.5])
 
 q2_bins = np.array([1.1, 1.30, 1.56,  1.8,  2.2,  2.6,  3.15, 4.0])
@@ -145,7 +146,7 @@ def luminosity(empty=False):
     conv_cm2_to_mubarn = 1E-30  # From wolfram alpha
 
     # * conv_cm2_to_fm2
-    return (Q_tot*l*rho*Avigadro)/(qe*MH) * conv_cm2_to_mubarn
+    return (l*rho*Avigadro)/(qe*MH) * conv_cm2_to_mubarn
 
 
 def momentum_fn(energy, mass):
