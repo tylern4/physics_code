@@ -898,6 +898,8 @@ if __name__ == "__main__":
     rec = rec[["w", "q2", "mm2", "cos_theta",
                "phi", "cut_fid", "helicty",  "electron_sector"]].copy(deep=True)
 
+    w_bins = w_bins_e99
+    q2_bins = q2_bins_e99
     if args.draw_kin:
         draw_kinematics(rec, w_bins, q2_bins, theta_bins)
         draw_kinematics(mc_rec, w_bins, q2_bins, theta_bins, "mc_rec")
