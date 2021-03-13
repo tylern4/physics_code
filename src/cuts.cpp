@@ -152,6 +152,7 @@ bool Cuts::Pip(int part) {
   bool _pip = true;
   _pip &= (_data->q(part) == POSITIVE);
   _pip &= Hardon_fid_arjun(part);
+  _pip &= (physics::theta_calc(_data->cz(part)) > 10);
   _pip &= dt_Pip_cut(part);
   return _pip;
 }
@@ -189,9 +190,16 @@ bool Cuts::Protish(int part) {
   return _prot;
 }
 
-bool Cuts::Fid_cut() {
-  Set_elec_fid();
-  return elec_fid_cut();
+bool Cuts::Fid_cut() { return true; }
+
+// bool Cuts::Fid_cut() {
+//   Set_elec_fid();
+//   return elec_fid_cut();
+// }
+
+bool e1d_Cuts::Fid_cut() {
+  if (physics::theta_calc(_data->cz(0)) < 15) return false;
+  return true;
 }
 
 bool Cuts::Beam_cut() { return true; }

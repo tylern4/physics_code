@@ -68,13 +68,14 @@ class DataHandler {
     float theta_cc = TMath::ACos(TMath::Abs(_data->p(0) * _data->cz(0)) / TMath::Abs(_data->p(0))) / DEG2RAD;
 
     if (check->fid_chern_cut()) {
-      _hists->Fill_electron_fid_cut(_data, event);
       _hists->CC_fill(_data->cc_sect(0), (_data->cc_segm(0) % 1000) / 10, _data->cc_segm(0) / 1000 - 1, _data->nphe(0),
                       theta_cc);
     } else
       _hists->Fill_electron_fid_anti(_data, event);
 
     if (!electron_cut) return;
+
+    _hists->Fill_electron_fid_cut(_data, event);
 
     _hists->TM_Fill(_data->p(0), physics::theta_calc(_data->cz(0)));
     _hists->Theta_vs_p_Fill(_data);

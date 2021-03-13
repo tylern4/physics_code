@@ -84,6 +84,7 @@ class e1d_Cuts : public Cuts {
   float sf_top_fit(float P);
   float sf_bot_fit(float P);
   bool sf_cut(float sf, float P);
+  bool Fid_cut();
 };
 
 class e1f_Cuts : public Cuts {

@@ -324,8 +324,7 @@ Garys binning
       std::make_shared<TH1D>("Beam_Position_X_cut", "Beam_Position_X_cut", BINS, -x_y_min_max, x_y_min_max);
   TH1D_ptr Beam_Position_Y_cut =
       std::make_shared<TH1D>("Beam_Position_Y_cut", "Beam_Position_Y_cut", BINS, -x_y_min_max, x_y_min_max);
-  TH1D_ptr Beam_Position_Z_cut =
-      std::make_shared<TH1D>("Beam_Position_Z_cut", "Beam_Position_Z_cut", 10 * BINS, -10, 15.0);
+  TH1D_ptr Beam_Position_Z_cut = std::make_shared<TH1D>("Beam_Position_Z_cut", "Beam_Position_Z_cut", 150, -10, 15.0);
   TH2D_ptr Beam_Position_cut = std::make_shared<TH2D>("Beam_Position_cut", "Beam_Position_cut", BINS, -x_y_min_max,
                                                       x_y_min_max, BINS, -x_y_min_max, x_y_min_max);
 
@@ -334,7 +333,7 @@ Garys binning
   // Vertex
   TH1D_ptr target_vertex_X = std::make_shared<TH1D>("Target_vertex_X", "Target_vertex_X", BINS, -6.0, 6.0);
   TH1D_ptr target_vertex_Y = std::make_shared<TH1D>("Target_vertex_Y", "Target_vertex_Y", BINS, -6.0, 6.0);
-  TH1D_ptr target_vertex_Z = std::make_shared<TH1D>("Target_vertex_Z", "Target_vertex_Z", BINS, -6.0, 6.0);
+  TH1D_ptr target_vertex_Z = std::make_shared<TH1D>("Target_vertex_Z", "Target_vertex_Z", 100, -6.0, 6.0);
 
   TH2D_ptr target_vertex_xy =
       std::make_shared<TH2D>("Target_vertex_xy", "Target_vertex_xy", BINS, -6.0, 6.0, BINS, -6.0, 6.0);

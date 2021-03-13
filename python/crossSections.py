@@ -82,9 +82,12 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                 maxs = 0.0
                 if overlap is not None:
                     for k, v in overlapSettings.items():
-                        e2 = virtual_photon_flux(w.mid, q2.mid, v['energy'])
-                        e1 = virtual_photon_flux(w.mid, q2.mid)
-                        factor = (e1/e2)
+                        # e2 = virtual_photon_flux(w.mid, q2.mid, v['energy'])
+                        e1 = virtual_photon_epsilon_fn(
+                            ENERGY, w.mid, q2.mid)
+                        e2 = virtual_photon_epsilon_fn(
+                            v['energy'], w.mid, q2.mid)
+                        factor = e1/e2
 
                         old_data = overlap_df[(overlap_df.W_min == w.left)
                                               & (overlap_df.Q2_min == q2.left)
@@ -160,18 +163,6 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                     thrown_y = np.where(thrown_y == 0, 1, thrown_y)
                     acceptance = mc_rec_y / thrown_y
 
-                    # Plot intergrated yeils to compare with/without fid cuts
-                    try:
-                        ax2.errorbar(x, acceptance, marker=marker,
-                                     linestyle="", zorder=1,
-                                     markersize=10, label=f"Acceptence", alpha=0.4)
-                        # ax2.errorbar(x, data_y, marker=marker,
-                        #              linestyle="", zorder=1,
-                        #              markersize=10, label=f"Counts: {name}", alpha=0.4)
-                        # ax2.legend(loc='upper right')
-                    except ValueError:
-                        pass
-
                     # Get bin widths
                     delta_W = (w.right-w.left)
                     delta_Q2 = (q2.right-q2.left)
@@ -200,6 +191,18 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                                         marker=marker, linestyle="",
                                         zorder=1, label=f"{name}",
                                         markersize=10, alpha=0.4)
+
+                    # Plot intergrated yeils to compare with/without fid cuts
+                    try:
+                        ax2.errorbar(x, (old_data.y * factor)/y, marker=marker,
+                                     linestyle="", zorder=1,
+                                     markersize=10, label=f"Ratio", alpha=0.4)
+                        # ax2.errorbar(x, data_y, marker=marker,
+                        #              linestyle="", zorder=1,
+                        #              markersize=10, label=f"Counts: {name}", alpha=0.4)
+                        # ax2.legend(loc='upper right')
+                    except ValueError:
+                        pass
 
                     out = fit_model(ax1, model_new, x, y, xs,
                                     ebar[0].get_color(), name)
