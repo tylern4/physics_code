@@ -82,8 +82,9 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                 maxs = 0.0
                 if overlap is not None:
                     for k, v in overlapSettings.items():
-                        e2 = virtual_photon_epsilon_fn(
-                            v['energy'], w.mid, q2.mid)
+                        e2 = virtual_photon_flux(w.mid, q2.mid, v['energy'])
+                        e1 = virtual_photon_flux(w.mid, q2.mid)
+                        factor = (e1/e2)
 
                         old_data = overlap_df[(overlap_df.W_min == w.left)
                                               & (overlap_df.Q2_min == q2.left)
@@ -91,12 +92,12 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                                               & (overlap_df.experiment == k)]
                         if len(old_data) == 0:
                             continue
-                        ebar = ax1.errorbar(old_data.phi, old_data.y * e2, yerr=old_data.yerr,
+                        ebar = ax1.errorbar(old_data.phi, old_data.y * factor, yerr=old_data.yerr,
                                             marker=v['symbol'], linestyle="",
                                             zorder=1, label=f"",
                                             markersize=10, alpha=0.4, c=v['color'])
-                        maxs = np.max(old_data.y * e2)*1.5
-                        ct_ax[theta.left].errorbar(old_data.phi, old_data.y * e2, yerr=old_data.yerr,
+                        maxs = np.max(old_data.y * factor)*1.5
+                        ct_ax[theta.left].errorbar(old_data.phi, old_data.y * factor, yerr=old_data.yerr,
                                                    marker=v['symbol'], linestyle="",
                                                    markersize=5, alpha=0.4, c=v['color'])
 
