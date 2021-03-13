@@ -79,7 +79,7 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                 gs = fig.add_gridspec(2, 1, height_ratios=[2, 1])
                 ax1 = fig.add_subplot(gs[0])
                 ax2 = fig.add_subplot(gs[1], sharex=ax1)
-                maxs = None
+                maxs = 0.0
                 if overlap is not None:
                     for k, v in overlapSettings.items():
                         e2 = virtual_photon_epsilon_fn(
