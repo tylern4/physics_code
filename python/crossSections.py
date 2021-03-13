@@ -15,11 +15,6 @@ import matplotlib.pyplot as plt
 plt.rcParams.update({'mathtext.fontset': 'stix'})
 
 
-@np.vectorize
-def isclose(a, b, rel_tol=1e-4, abs_tol=0.0):
-    return np.abs(a-b) <= np.maximum(rel_tol * np.maximum(np.abs(a), np.abs(b)), abs_tol)
-
-
 def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, overlap=None, radcorr=None):
     if not os.path.exists(f'{out_folder}/crossSections'):
         os.makedirs(f'{out_folder}/crossSections')
@@ -87,15 +82,15 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                 maxs = None
                 if overlap is not None:
                     for k, v in overlapSettings.items():
-                        e1 = virtual_photon_epsilon_fn(ENERGY, w.left, q2.left)
                         e2 = virtual_photon_epsilon_fn(
-                            v['energy'], w.left, q2.left)
+                            v['energy'], w.mid, q2.mid)
 
                         old_data = overlap_df[(overlap_df.W_min == w.left)
                                               & (overlap_df.Q2_min == q2.left)
                                               & (overlap_df.cos_t == theta.left)
                                               & (overlap_df.experiment == k)]
-
+                        if len(old_data) == 0:
+                            continue
                         ebar = ax1.errorbar(old_data.phi, old_data.y * e2, yerr=old_data.yerr,
                                             marker=v['symbol'], linestyle="",
                                             zorder=1, label=f"",
@@ -191,7 +186,7 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                         continue
 
                     # Calculate acceptance and correct data
-                    flux = virtual_photon_flux(w.left, q2.left) * luminosity()
+                    flux = virtual_photon_flux(w.mid, q2.mid) * luminosity()
                     denom = kin_bin_width * flux * radcor_R * binCenter(x)
                     stat_error = statistical(N_y, N_empty, denom)
 
@@ -266,6 +261,8 @@ if __name__ == "__main__":
                         default=None)
     parser.add_argument("--radcorr", dest="radcorr", type=str, help="Location of radcorr data csv", required=False,
                         default=None)
+    parser.add_argument("--highw", help="Use high W binning",
+                        required=False, action='store_true', default=False)
     args = parser.parse_args()
 
     # Start to main
@@ -281,27 +278,30 @@ if __name__ == "__main__":
     # Cut for missing mass
     rec, mc_rec, empty_target = cut_for_MM(rec, mc_rec, empty_target)
     end = time.time_ns()
+
+    if args.highw:
+        w_bins = w_bins_k
+        q2_bins = q2_bins_k
+        bins = 12
+    else:
+        w_bins = w_bins_e99
+        q2_bins = q2_bins_e99
+        bins = 12
+
+    # Make bins in the dataframes from the bins above
+    _rec = prep_for_ana(rec, w_bins, q2_bins, theta_bins)
+    _empty_target = prep_for_ana(empty_target, w_bins, q2_bins, theta_bins)
+    _mc_rec = prep_for_ana(mc_rec, w_bins, q2_bins, theta_bins)
+    _mc_thrown = prep_for_ana(mc_thrown, w_bins, q2_bins, theta_bins)
+
+    # Create dict of sorted bins
+    _binning = dict()
+    _binning["wbins"] = pd.Index.sort_values(pd.unique(_rec.w_bin))
+    _binning["q2bins"] = pd.Index.sort_values(pd.unique(_rec.q2_bin))
+    _binning["thetabins"] = pd.Index.sort_values(pd.unique(_rec.theta_bin))
     print(f"Done setup: {(end-start)/1E9:0.2f}Sec")
 
-    for i in range(2):
-        if i == 0:
-            w_bins = w_bins_e99
-            q2_bins = q2_bins_e99
-        else:
-            w_bins = w_bins_k
-            q2_bins = q2_bins_k
+    main(_rec, _mc_rec, _mc_thrown, _empty_target, _binning, bins=bins,
+         out_folder=args.out_folder, overlap=args.overlap, radcorr=args.radcorr)
 
-        # Make bins in the dataframes from the bins above
-        _rec = prep_for_ana(rec, w_bins, q2_bins, theta_bins)
-        _empty_target = prep_for_ana(empty_target, w_bins, q2_bins, theta_bins)
-        _mc_rec = prep_for_ana(mc_rec, w_bins, q2_bins, theta_bins)
-        _mc_thrown = prep_for_ana(mc_thrown, w_bins, q2_bins, theta_bins)
-
-        # Create dict of sorted bins
-        _binning = dict()
-        _binning["wbins"] = pd.Index.sort_values(pd.unique(_rec.w_bin))
-        _binning["q2bins"] = pd.Index.sort_values(pd.unique(_rec.q2_bin))
-        _binning["thetabins"] = pd.Index.sort_values(pd.unique(_rec.theta_bin))
-
-        main(_rec, _mc_rec, _mc_thrown, _empty_target, _binning, bins=12,
-             out_folder=args.out_folder, overlap=args.overlap, radcorr=args.radcorr)
+    del _rec, _mc_rec, _mc_thrown, _empty_target

@@ -13,8 +13,8 @@ ENERGY = 4.81726
 EK = 5.499
 E16 = 5.75
 
-# Q_FULL = 4348.46636E-6  # 03/04/2021
-Q_FULL = 3142.6514E-6  # 02/07/2021
+Q_FULL = 4348.46636E-6  # 03/04/2021
+# Q_FULL = 3142.6514E-6  # 02/07/2021
 # Q_FULL = 31426.514045353397E-6  # 02/07/2021
 # Q_FULL = 2822.038E-6  # Older
 Q_EMPTY = 3756.08E-6  # ????
@@ -314,7 +314,8 @@ def get_error_bars(y, mc_rec_y, thrown_y, stat_error):
     error = (thrown_y-mc_rec_y)*mc_rec_y
     error = error / (thrown_y**3)
     error = np.sqrt(error)
-    error = y*(error/F)
+    # error = y*(error/F)
+    error = (error/F)
 
     error_bar = np.sqrt(error**2 + stat_error**2)
 
@@ -356,6 +357,11 @@ def binCetnerCorrection(w, q2, theta, num_bins=10):
 
     bin_center_corr = interp1d(center, avg/ys[2], kind='cubic')
     return bin_center_corr
+
+
+@np.vectorize
+def isclose(a, b, rel_tol=1e-4, abs_tol=0.0):
+    return np.abs(a-b) <= np.maximum(rel_tol * np.maximum(np.abs(a), np.abs(b)), abs_tol)
 
 
 def A(M, B, C):
