@@ -171,21 +171,20 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                     delta_phi = __phis[1] - __phis[0]
                     kin_bin_width = delta_W * delta_Q2 * delta_Theta * delta_phi
 
-                    # Normalize with bin widths
-                    try:
-                        data_y = data_y/kin_bin_width
-                    except ValueError:
-                        continue
-
                     # Calculate acceptance and correct data
                     flux = virtual_photon_flux(w.mid, q2.mid) * luminosity()
                     denom = kin_bin_width * flux * radcor_R * binCenter(x)
                     stat_error = statistical(N_y, N_empty, denom)
 
-                    y = data_y / acceptance / flux / binCenter(x) / radcor_R
+                    # Normalize with bin widths
+                    try:
+                        y = data_y / (kin_bin_width * acceptance *
+                                      flux * binCenter(x) * radcor_R)
+                    except ValueError:
+                        continue
 
                     error_bar = get_error_bars(
-                        y, mc_rec_y, thrown_y, stat_error)
+                        data_y, mc_rec_y, thrown_y, stat_error)
 
                     ebar = ax1.errorbar(x, y, yerr=error_bar,
                                         marker=marker, linestyle="",

@@ -78,7 +78,7 @@ w_bins_k = np.array([1.605, 1.615, 1.625, 1.635, 1.645, 1.655, 1.665, 1.675, 1.6
 # q2_bins_k = np.array([1.1, 1.30, 1.56, 1.8,  2.2,  2.6,  3.15, 4.0])
 
 q2_bins_e99 = np.array([1.1, 1.33, 1.56, 1.87, 2.23, 2.66, 3.5])
-q2_bins_k = np.array([1.1, 1.45, 1.8,  2.2,  2.6,  3.15, 4.0])
+q2_bins_k = np.array([1.8,  2.2,  2.6,  3.15, 4.0])
 
 theta_bins = np.array([-1.0, -0.8, -0.6, -0.4, -0.2,
                        0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
@@ -301,9 +301,9 @@ def get_maid_values(xs, w, q2, theta):
 
 
 def statistical(DN_full, DN_empty, denom):
-    # error = (DN_full/Q_FULL)**2 + (DN_empty/Q_EMPTY)**2
-    error = (DN_full**2) + (DN_empty**2)
-    error = np.sqrt(error) / denom
+    error = (DN_full/Q_FULL)**2 + (DN_empty/Q_EMPTY)**2
+    # error = (DN_full**2) + (DN_empty**2)
+    error = np.sqrt(error)  # / denom
 
     return error
 
