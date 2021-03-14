@@ -747,7 +747,7 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins, name="reconstructed"):
     for t in theta_bins:
         ax1.axvline(t, c='w', alpha=0.5)
 
-    for phi in np.linspace(0, 2*np.pi, 24):
+    for phi in np.linspace(0, 2*np.pi, 12):
         ax1.axhline(phi, c='w', alpha=0.5)
 
     ax1.set_xlabel(r"$\cos(\theta^{*})$", fontsize=30)
