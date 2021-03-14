@@ -173,8 +173,9 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
 
                     # Calculate acceptance and correct data
                     flux = virtual_photon_flux(w.mid, q2.mid) * luminosity()
-                    denom = kin_bin_width  # * flux * radcor_R * binCenter(x)
-                    stat_error = statistical(N_y, N_empty, kin_bin_width)
+                    denom = kin_bin_width * flux * \
+                        acceptance  # * radcor_R * binCenter(x)
+                    stat_error = statistical(N_y, N_empty, denom)
 
                     # Normalize with bin widths
                     try:
