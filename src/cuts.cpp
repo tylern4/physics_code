@@ -152,7 +152,7 @@ bool Cuts::Pip(int part) {
   bool _pip = true;
   _pip &= (_data->q(part) == POSITIVE);
   _pip &= Hardon_fid_arjun(part);
-  _pip &= (physics::theta_calc(_data->cz(part)) > 10);
+  // _pip &= (physics::theta_calc(_data->cz(part)) > 10);
   _pip &= dt_Pip_cut(part);
   return _pip;
 }

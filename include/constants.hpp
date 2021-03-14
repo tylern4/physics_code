@@ -99,6 +99,7 @@ static std::unordered_map<int, std::string> particle_name = {
     {PROTON, "P"}, {-PROTON, "-P"}, {NEUTRON, "N"}, {PIP, "PIP"},    {PIM, "PIM"},    {PI0, "PI0"},
     {KP, "KP"},    {KM, "KM"},      {PHOTON, "G"},  {ELECTRON, "E"}, {-ELECTRON, "E"}};
 
+// // Arjun's
 static const float a0xh[6] = {24.0, 24.0, 23.0, 23.5, 24.5, 24.5};
 static const float a0mh[6] = {25.0, 26.0, 26.0, 25.5, 27.0, 26.0};
 static const float a1xh[6] = {0.22, 0.23, 0.20, 0.20, 0.22, 0.22};
@@ -107,6 +108,16 @@ static const float a2xh[6] = {8.0, 8.0, 8.0, 8.0, 8.0, 8.0};
 static const float a2mh[6] = {8.0, 8.0, 8.0, 8.0, 8.0, 8.0};
 static const float a3xh[6] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
 static const float a3mh[6] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+
+// // Mine
+// static const float a0xh[6] = {25.5, 24.0, 26.0, 27, 27, 24.5};
+// static const float a0mh[6] = {25.5, 26.0, 26.0, 26, 27.0, 26.0};
+// static const float a1xh[6] = {0.22, 0.23, 0.23, 0.23, 0.16, 0.22};
+// static const float a1mh[6] = {0.22, 0.22, 0.22, 0.22, 0.16, 0.16};
+// static const float a2xh[6] = {8.0, 8.0, 8.0, 8.0, 8.0, 8.0};
+// static const float a2mh[6] = {8.0, 8.0, 8.0, 8.0, 8.0, 8.0};
+// static const float a3xh[6] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+// static const float a3mh[6] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
 
 static const std::vector<double> dt_pip_const_top = {0.026476496274405754, -0.20219089310509566, 0.5065924067561807,
                                                      -0.4949841169578805, 0.5621128407552162};

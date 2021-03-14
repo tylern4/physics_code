@@ -53,6 +53,7 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                     radcorr_df.q2_left, q2.left)
 
                 if(radcorr_df[cut].R.size == 0):
+                    print(w.left, q2.left)
                     radcor_R = 1.0
                 else:
                     radcor_R = np.array(radcorr_df[cut].R)
@@ -175,6 +176,7 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                     flux = virtual_photon_flux(w.mid, q2.mid) * luminosity()
                     denom = kin_bin_width * flux * \
                         acceptance  # * radcor_R * binCenter(x)
+
                     stat_error = statistical(N_y, N_empty, denom)
 
                     # Normalize with bin widths
@@ -221,7 +223,8 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                         ct_ax[theta.left].set_ylabel(
                             r'$\frac{\mathbf{d}\sigma}{\mathbf{d} \omega} \left[\frac{\mu b}{sr}\right]$')
                         ct_ax[theta.left].set_xlabel(r'$\phi_{\pi}^{*}$')
-                        ct_ax[theta.left].legend(loc='upper right')
+                        ct_ax[theta.left].legend(
+                            loc='upper right', markerscale=0.2, numpoints=1, handlelength=0)
                         out = fit_model(ct_ax[theta.left], model_new, x, y, xs,
                                         ebar[0].get_color(), "")
 
