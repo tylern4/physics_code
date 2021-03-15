@@ -57,20 +57,20 @@ class Cuts {
   bool Hardon_fid_arjun(int part);
 
   float hardon_fid_phi(int part);
-  float hadron_fid_phi_min(float theta, int sec);
-  float hadron_fid_phi_max(float theta, int sec);
+  float hadron_fid_phi_min(float theta, short sec);
+  float hadron_fid_phi_max(float theta, short sec);
 
-  bool Pip(int part);
-  bool Pim(int part);
-  bool Prot(int part);
+  bool Pip(short part);
+  bool Pim(short part);
+  bool Prot(short part);
 
-  bool Pipish(int part);
-  bool Pimish(int part);
-  bool Protish(int part);
+  bool Pipish(short part);
+  bool Pimish(short part);
+  bool Protish(short part);
 
-  bool dt_P_cut(int i);
-  bool dt_K_cut(int i);
-  bool dt_Pip_cut(int i);
+  bool dt_P_cut(short i);
+  bool dt_K_cut(short i);
+  bool dt_Pip_cut(short i);
   bool elec_fid_cut();
   bool fid_chern_cut();
 };
@@ -85,6 +85,10 @@ class e1d_Cuts : public Cuts {
   float sf_bot_fit(float P);
   bool sf_cut(float sf, float P);
   bool Fid_cut();
+  bool Pip(short part);
+  bool dt_Pip_cut(short part);
+  bool bad_sc_cut(short part);
+  bool Pipish(short part);
 };
 
 class e1f_Cuts : public Cuts {

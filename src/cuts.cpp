@@ -100,8 +100,23 @@ bool e1d_Cuts::isElectron() {
   if (!_elec) return _elec;
   // Fid Cuts
   _elec &= fid_chern_cut();
-  // if (!_elec) return _elec;
-  // _elec &= Fid_cut();
+  short sec = _data->dc_sect(0);
+  float t = physics::theta_calc_rad(_data->cz(0));
+
+  // Hand cuts for each sector
+  if (sec == 5) {
+    if (t > 0.59 && t < 0.005 * t + 0.67) return false;
+    if (t > 0.455 && t < 0.475) return false;
+    if (t > 0.005 * t + 0.335 && t < 0.005 * t + 0.355) return false;
+  }
+
+  if (sec == 4) {
+    if (t > 0.0025 * t * t - 0.05 * t + 0.65 && t < 0.0025 * t * t - 0.05 * t + 0.68) return false;
+  }
+  // From MC
+  if (sec == 3) {
+    if (t > 0.38 && t < 0.41) return false;
+  }
 
   return _elec;
 }
@@ -128,12 +143,12 @@ bool e16_Cuts::isElectron() {
   return _elec;
 }
 
-float Cuts::hadron_fid_phi_min(float theta, int idx) {
-  return -(a0mh[idx] * (1.0 - expf(-a1mh[idx] * (theta - a2mh[idx]))) - a3mh[idx]);
+float Cuts::hadron_fid_phi_min(float theta, short sec) {
+  return -(a0mh[sec] * (1.0 - expf(-a1mh[sec] * (theta - a2mh[sec]))) - a3mh[sec]);
 }
 
-float Cuts::hadron_fid_phi_max(float theta, int idx) {
-  return (a0xh[idx] * (1.0 - expf(-a1xh[idx] * (theta - a2xh[idx]))) + a3xh[idx]);
+float Cuts::hadron_fid_phi_max(float theta, short sec) {
+  return (a0xh[sec] * (1.0 - expf(-a1xh[sec] * (theta - a2xh[sec]))) + a3xh[sec]);
 }
 
 bool Cuts::Hardon_fid_arjun(int part) {
@@ -148,7 +163,7 @@ bool Cuts::Hardon_fid_arjun(int part) {
   return false;
 }
 
-bool Cuts::Pip(int part) {
+bool Cuts::Pip(short part) {
   bool _pip = true;
   _pip &= (_data->q(part) == POSITIVE);
   _pip &= Hardon_fid_arjun(part);
@@ -156,14 +171,23 @@ bool Cuts::Pip(int part) {
   _pip &= dt_Pip_cut(part);
   return _pip;
 }
-bool Cuts::Pim(int part) {
+
+bool e1d_Cuts::Pip(short part) {
+  bool _pip = true;
+  _pip &= (_data->q(part) == POSITIVE);
+  _pip &= Hardon_fid_arjun(part);
+  // _pip &= (physics::theta_calc(_data->cz(part)) > 10);
+  _pip &= e1d_Cuts::dt_Pip_cut(part);
+  return _pip;
+}
+bool Cuts::Pim(short part) {
   bool _pim = true;
   _pim &= (_data->q(part) == NEGATIVE);
   _pim &= Hardon_fid_arjun(part);
   _pim &= dt_Pip_cut(part);
   return _pim;
 }
-bool Cuts::Prot(int part) {
+bool Cuts::Prot(short part) {
   bool _prot = true;
   _prot &= (_data->q(part) == POSITIVE);
   _prot &= Hardon_fid_arjun(part);
@@ -171,19 +195,29 @@ bool Cuts::Prot(int part) {
   return _prot;
 }
 
-bool Cuts::Pipish(int part) {
+bool Cuts::Pipish(short part) {
   bool _pip = true;
   _pip &= (_data->q(part) == POSITIVE);
+  _pip &= dt_Pip_cut(part);
   //_pip &= Hardon_fid_arjun(part);
   return _pip;
 }
-bool Cuts::Pimish(int part) {
+
+bool e1d_Cuts::Pipish(short part) {
+  bool _pip = true;
+  _pip &= (_data->q(part) == POSITIVE);
+  _pip &= e1d_Cuts::dt_Pip_cut(part);
+  //_pip &= Hardon_fid_arjun(part);
+  return _pip;
+}
+
+bool Cuts::Pimish(short part) {
   bool _pim = true;
   _pim &= (_data->q(part) == NEGATIVE);
   //_pim &= Hardon_fid_arjun(part);
   return _pim;
 }
-bool Cuts::Protish(int part) {
+bool Cuts::Protish(short part) {
   bool _prot = true;
   _prot &= (_data->q(part) == POSITIVE);
   //_prot &= Hardon_fid_arjun(part);
@@ -272,11 +306,11 @@ float e1f_Cuts::sf_bot_fit(float P) {
 
 bool e1f_Cuts::sf_cut(float sf, float P) { return ((sf > e1f_Cuts::sf_bot_fit(P)) && (sf < e1f_Cuts::sf_top_fit(P))); }
 
-bool Cuts::dt_P_cut(int i) {
-  float dt = _dt->Get_dt_P(i);
-  int sec = _data->dc_sect(i) - 1;
+bool Cuts::dt_P_cut(short part) {
+  float dt = _dt->Get_dt_P(part);
+  int sec = _data->dc_sect(part) - 1;
   if (sec == -1) return false;
-  float p = _data->p(i);
+  float p = _data->p(part);
   bool _cut = true;
   //_cut &= (dt <= func::dt_poly4(dt_P_const_top, p));
   //_cut &= (dt >= func::dt_poly4(dt_P_const_bottom, p));
@@ -290,11 +324,11 @@ bool Cuts::dt_P_cut(int i) {
   return _cut;
 }
 
-bool Cuts::dt_K_cut(int i) {
-  float dt = _dt->Get_dt_K(i);
-  int sec = _data->dc_sect(i) - 1;
+bool Cuts::dt_K_cut(short part) {
+  float dt = _dt->Get_dt_K(part);
+  int sec = _data->dc_sect(part) - 1;
   if (sec == -1) return false;
-  float p = _data->p(i);
+  float p = _data->p(part);
   bool _cut = true;
   _cut &= (dt <= func::dt_poly4(dt_pip_const_top, p));
   _cut &= (dt >= func::dt_poly4(dt_pip_const_bottom, p));
@@ -303,13 +337,14 @@ bool Cuts::dt_K_cut(int i) {
   return _cut;
 }
 
-bool Cuts::dt_Pip_cut(int i) {
+bool Cuts::dt_Pip_cut(short part) {
   bool _cut = true;
 
-  float dt = _dt->Get_dt_Pi(i);
-  short sec = _data->dc_sect(i) - 1;
-  if (sec == -1) return false;
-  float p = _data->p(i);
+  float dt = _dt->Get_dt_Pi(part);
+  short sec = _data->sc_sect(part);
+  if (sec == 0) return false;
+
+  float p = _data->p(part);
 
   //_cut &= (dt <= func::dt_poly4(dt_pip_const_top, p));
   //_cut &= (dt >= func::dt_poly4(dt_pip_const_bottom, p));
@@ -319,6 +354,14 @@ bool Cuts::dt_Pip_cut(int i) {
 
   _cut &= (dt <= func::log_pol2(dt_pip_top, p));
   _cut &= (dt >= func::log_pol2(dt_pip_bottom, p));
+
+  return _cut;
+}
+
+bool e1d_Cuts::dt_Pip_cut(short part) {
+  bool _cut = true;
+  _cut &= Cuts::dt_Pip_cut(part);
+  _cut &= bad_sc_cut(part);
 
   return _cut;
 }
@@ -374,4 +417,16 @@ bool Cuts::fid_chern_cut() {
   float _cc_x = _data->cc_r(0) * sinf(_cc_theta) * cosf(_cc_phi);
   float _cc_y = _data->cc_r(0) * sinf(_cc_theta) * sinf(_cc_phi);
   return func::fid_chern(_cc_x, _cc_y);
+}
+
+bool e1d_Cuts::bad_sc_cut(short part) {
+  short sec = _data->sc_sect(part);
+  int pad = _data->sc_pd(part);
+  if (sec == 3 && pad == 33) return false;
+  if (sec == 4 && pad == 28) return false;
+  if (sec == 5 && pad == 42) return false;
+  if (sec == 1 && pad == 43) return false;
+  if (sec == 2 && pad == 43) return false;
+
+  return true;
 }
