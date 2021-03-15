@@ -385,6 +385,11 @@ Garys binning
   TH1D_ptr energy_channel_cuts =
       std::make_shared<TH1D>("Energy_channel_cuts", "Scattered electron energy for N #pi^{+} events", 500, 0.0, 5.0);
 
+  std::vector<TH2D_ptr> electron_theta_p;
+  std::vector<TH2D_ptr> electron_theta_star_p;
+  std::vector<TH2D_ptr> pip_theta_p;
+  std::vector<TH2D_ptr> pip_theta_star_p;
+
   void makeHists_fid();
   void makeHists_deltat();
   void makeHists_CC();
@@ -470,6 +475,8 @@ Garys binning
   void Fill_electron_fid_anti(const std::shared_ptr<Branches>& _data, const std::shared_ptr<Reaction>& _r);
   void Fill_neutron_fid(float theta, float phi, int sector);
   void Fill_hadron_fid(const std::shared_ptr<Branches>& _data, int part_num, int id);
+  void Fill_hadron_fid_pip(const std::shared_ptr<Branches>& _data, const std::shared_ptr<Reaction>& _event,
+                           int part_num);
   void Fid_Write();
   void fid_canvas();
 

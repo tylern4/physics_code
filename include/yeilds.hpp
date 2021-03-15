@@ -341,6 +341,60 @@ class Yeilds {
 
     return total;
   }
+
+  template <class CutType>
+  size_t Run_fidFitsPip(const std::shared_ptr<TChain>& chain, const size_t& thread_id) {
+    auto start = std::chrono::high_resolution_clock::now();
+    auto data = std::make_shared<Branches>(chain, false);
+    size_t num_of_events = (size_t)chain->GetEntries();
+
+    _beam_energy = std::is_same<CutType, e1f_Cuts>::value ? E1F_E0 : E1D_E0;
+    size_t total = 0;
+    size_t current_event = 0;
+    for (current_event = 0; current_event < num_of_events; current_event++) {
+      if (thread_id == 0 && current_event % 100000 == 0)
+        std::cerr << "\t" << 100 * (current_event / (float)num_of_events) + 1 << "\r\r" << std::flush;
+
+      chain->GetEntry(current_event);
+
+      short pip_num = -1;
+      auto check = std::make_unique<CutType>(data);
+      if (!check->isElectron()) continue;
+      auto event = std::make_shared<Reaction>(data, _beam_energy, nullptr);
+      for (int part_num = 1; part_num < data->gpart(); part_num++) {
+        if (check->Pipish(part_num)) {
+          pip_num = part_num;
+          event->SetPip(part_num);
+          continue;
+        }
+      }
+
+      short e_sector = data->dc_sect(0);
+      if (e_sector == 0 || e_sector > NUM_SECTORS || e_sector == int(NULL)) continue;
+
+      if (pip_num == -1) continue;
+      short pip_sector = data->dc_sect(pip_num);
+      if (pip_sector == 0 || pip_sector > NUM_SECTORS || pip_sector == int(NULL)) continue;
+      if (data->p(pip_num) == 0) continue;
+
+      total++;
+      fid_data_pip csv_buffer;
+      csv_buffer.e_sector = data->dc_sect(0);
+      csv_buffer.e_p = data->p(0);
+      csv_buffer.e_theta = physics::theta_calc_rad(data->cz(0));
+      csv_buffer.e_phi = physics::phi_calc_rad(data->cx(0), data->cy(0));
+      csv_buffer.pip_sector = pip_sector;
+      csv_buffer.pip_p = data->p(pip_num);
+      csv_buffer.pip_theta = physics::theta_calc_rad(data->cz(pip_num));
+      csv_buffer.pip_phi = physics::phi_calc_rad(data->cx(pip_num), data->cy(pip_num));
+
+      _multi_threaded_csv->write(csv_buffer.print());
+    }
+
+    chain->Reset();
+
+    return total;
+  }
 };
 
 class mcYeilds : public Yeilds {

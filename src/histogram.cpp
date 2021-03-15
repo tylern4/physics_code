@@ -1247,10 +1247,24 @@ void Histogram::makeHists_fid() {
   electron_fid_sec_cut_hist.reserve(NUM_SECTORS);
   electron_fid_sec_anti_hist.reserve(NUM_SECTORS);
 
+  electron_theta_p.reserve(NUM_SECTORS);
+  electron_theta_star_p.reserve(NUM_SECTORS);
+  pip_theta_p.reserve(NUM_SECTORS);
+  pip_theta_star_p.reserve(NUM_SECTORS);
+
   fid_xy_hist = std::make_shared<TH2D>("fid_dc_xy", "fid_dc_xy", BINS, -150, 150, BINS, 0, 300);
   fid_xy_cut_hist = std::make_shared<TH2D>("fid_dc_xy_cut", "fid_dc_xy_cut", BINS, -150, 150, BINS, 0, 300);
   fid_xy_anti_hist = std::make_shared<TH2D>("fid_dc_xy_anti", "fid_dc_xy_anti", BINS, -150, 150, BINS, 0, 300);
   for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
+    electron_theta_p[sec_i] = std::make_shared<TH2D>(Form("elec_theta_p_%d", sec_i + 1),
+                                                     Form("elec_theta_p_%d", sec_i + 1), BINS, 0, 4.8, BINS, 0, 1.5);
+    electron_theta_star_p[sec_i] = std::make_shared<TH2D>(
+        Form("elec_theta_star_p_%d", sec_i + 1), Form("elec_theta_star_p_%d", sec_i + 1), BINS, 0, 4.8, BINS, 0, M_PI);
+    pip_theta_p[sec_i] = std::make_shared<TH2D>(Form("pip_theta_p_%d", sec_i + 1), Form("pip_theta_p_%d", sec_i + 1),
+                                                BINS, 0, 4.8, BINS, 0, 2.5);
+    pip_theta_star_p[sec_i] = std::make_shared<TH2D>(
+        Form("pip_theta_star_p_%d", sec_i + 1), Form("pip_theta_star_p_%d", sec_i + 1), BINS, 0, 3.8, BINS, 0, M_PI);
+
     cerenkov_fid[sec_i] = std::make_shared<TH2D>(Form("fid_cher_xy_%d", sec_i + 1), Form("fid_cher_xy_%d", sec_i + 1),
                                                  BINS, -150, 150, BINS, 0, 300);
     cerenkov_fid_cut[sec_i] = std::make_shared<TH2D>(
@@ -1380,7 +1394,43 @@ void Histogram::Fill_hadron_fid(const std::shared_ptr<Branches> &_data, int part
   }
 }
 
+void Histogram::Fill_hadron_fid_pip(const std::shared_ptr<Branches> &_data, const std::shared_ptr<Reaction> &_event,
+                                    int pip_num) {
+  short sector = _data->dc_sect(0);
+  if (sector == 0 || sector > NUM_SECTORS || sector == int(NULL)) return;
+
+  electron_theta_p[sector - 1]->Fill(_data->p(0), physics::theta_calc_rad(_data->cz(0)));
+  electron_theta_star_p[sector - 1]->Fill(_data->p(0), _event->Theta_star());
+
+  if (pip_num == -1) return;
+  sector = _data->dc_sect(pip_num);
+  if (sector == 0 || sector > NUM_SECTORS || sector == int(NULL)) return;
+  if (_data->p(pip_num) == 0) return;
+
+  pip_theta_p[sector - 1]->Fill(_data->p(pip_num), physics::theta_calc_rad(_data->cz(pip_num)));
+  pip_theta_star_p[sector - 1]->Fill(_data->p(pip_num), _event->Theta_star());
+}
+
 void Histogram::Fid_Write() {
+  for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
+    electron_theta_p[sec_i]->SetOption("COLZ");
+    electron_theta_p[sec_i]->SetXTitle("p GeV");
+    electron_theta_p[sec_i]->SetYTitle("#theta");
+    electron_theta_p[sec_i]->Write();
+    electron_theta_star_p[sec_i]->SetOption("COLZ");
+    electron_theta_star_p[sec_i]->SetXTitle("p GeV");
+    electron_theta_star_p[sec_i]->SetYTitle("#theta");
+    electron_theta_star_p[sec_i]->Write();
+    pip_theta_p[sec_i]->SetOption("COLZ");
+    pip_theta_p[sec_i]->SetXTitle("p GeV");
+    pip_theta_p[sec_i]->SetYTitle("#theta");
+    pip_theta_p[sec_i]->Write();
+    pip_theta_star_p[sec_i]->SetOption("COLZ");
+    pip_theta_star_p[sec_i]->SetXTitle("p GeV");
+    pip_theta_star_p[sec_i]->SetYTitle("#theta");
+    pip_theta_star_p[sec_i]->Write();
+  }
+
   electron_fid_hist->SetYTitle("#theta");
   electron_fid_hist->SetXTitle("#phi");
   electron_fid_hist->SetOption("COLZ");
@@ -1916,7 +1966,8 @@ void mcHistogram::Fill_WQ2_MC(const std::shared_ptr<MCReaction> &_e) {
   W_MC->Fill(_e->W_thrown());
   WvsQ2_binned_MC->Fill(_e->W_thrown(), _e->Q2_thrown());
   // for (int y = 0; y < Q2_BINS; y++) {
-  //   if (q2_binned_min + (Q2_width * y) <= _e->Q2_thrown() && q2_binned_min + (Q2_width * (y + 1)) >= _e->Q2_thrown())
+  //   if (q2_binned_min + (Q2_width * y) <= _e->Q2_thrown() && q2_binned_min + (Q2_width * (y + 1)) >=
+  //   _e->Q2_thrown())
   //   {
   //     W_binned_MC[y]->Fill(_e->W_thrown());
   //     continue;

@@ -50,6 +50,7 @@ set(PROGRAMS
       exe/deltaTFitter/deltaTFitter.cpp
       exe/deltaTFitter/deltaTFitter_e1f.cpp
       exe/fidFitter/fidFitter.cpp
+      exe/fidFitter/fidFitterPip.cpp
       )
 
 foreach(prog ${PROGRAMS} )

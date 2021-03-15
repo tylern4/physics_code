@@ -98,7 +98,7 @@ class DataHandler {
 
     _hists->Fill_Beam_Position_cut(_data);
     _hists->Fill_Target_Vertex(_data);
-
+    short pip_num = -1;
     for (int part_num = 1; part_num < _data->gpart(); part_num++) {
       theta = physics::theta_calc(_data->cz(part_num));
       phi = physics::phi_calc(_data->cx(part_num), _data->cy(part_num));
@@ -122,6 +122,7 @@ class DataHandler {
         _hists->Fill_proton_Pi_ID_P(_data->p(part_num), _data->b(part_num));
 
       if (check->Pip(part_num)) {
+        pip_num = part_num;
         event->SetPip(part_num);
         _hists->Fill_hadron_fid(_data, part_num, PIP);
         _hists->Fill_pion_WQ2(event->W(), event->Q2());
@@ -137,7 +138,7 @@ class DataHandler {
       } else
         event->SetOther(part_num);
     }
-
+    _hists->Fill_hadron_fid_pip(_data, event, pip_num);
     if (event->channel()) _hists->EC_cut_fill(_data->etot(0), _data->p(0));
     _hists->FillEvent(event);
 
