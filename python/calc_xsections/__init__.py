@@ -133,12 +133,7 @@ def read_csv(file_name: str = "", data: bool = False):
     )
 
 
-def luminosity(empty=False):
-    if not empty:
-        Q_tot = Q_FULL
-    else:
-        Q_tot = Q_EMPTY
-
+def luminosity():
     l = 5  # cm
     rho = 0.0708  # g/cm3
     Avigadro = 6.022E23  # mol^−1
@@ -313,8 +308,8 @@ def get_error_bars(y, mc_rec_y, thrown_y, stat_error):
     error = (thrown_y-mc_rec_y)*mc_rec_y
     error = error / (thrown_y**3)
     error = np.sqrt(error)
-    # error = y*(error/F)
-    error = (error/F)
+    error = y*(error/F)
+    # error = (error/F)
 
     error_bar = np.sqrt(error**2 + stat_error**2)
 

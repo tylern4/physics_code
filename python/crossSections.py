@@ -11,6 +11,7 @@ import inspect
 import os
 import time
 import matplotlib.pyplot as plt
+from scipy import stats
 
 plt.rcParams.update({'mathtext.fontset': 'stix'})
 
@@ -56,7 +57,7 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                     print(w.left, q2.left)
                     radcor_R = 1.0
                 else:
-                    radcor_R = np.array(radcorr_df[cut].R)
+                    radcor_R = np.array(radcorr_df[cut].one_over_R)
 
             for theta in binning["thetabins"]:
                 # Cut data/mc for the w/q2/theta bin we're in
@@ -175,19 +176,18 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                     # Calculate acceptance and correct data
                     flux = virtual_photon_flux(w.mid, q2.mid) * luminosity()
                     denom = kin_bin_width * flux * \
-                        acceptance  # * radcor_R * binCenter(x)
+                        acceptance * radcor_R * binCenter(x)
 
                     stat_error = statistical(N_y, N_empty, denom)
 
                     # Normalize with bin widths
                     try:
-                        y = data_y / (kin_bin_width * acceptance *
-                                      flux * binCenter(x) * radcor_R)
+                        y = data_y / denom
                     except ValueError:
                         continue
 
                     error_bar = get_error_bars(
-                        data_y, mc_rec_y, thrown_y, stat_error)
+                        y, mc_rec_y, thrown_y, stat_error)
 
                     ebar = ax1.errorbar(x, y, yerr=error_bar,
                                         marker=marker, linestyle="",

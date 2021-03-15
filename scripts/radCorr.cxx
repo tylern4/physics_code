@@ -70,17 +70,15 @@ int radCorr(const std::string &norad_root, const std::string &rad_root) {
   auto thetaPhi_norad = new TH2D("thetaPhi_norad", "thetaPhi_norad", 500, 1.1, 2.0, 500, 1.0, 3.5);
   auto thetaPhi_rad = new TH2D("thetaPhi_rad", "thetaPhi_rad", 500, 1.1, 2.0, 500, 1.0, 3.5);
 
-  size_t total = 0;
   size_t numNoRad = noradChain->GetEntries();
   for (size_t part = 0; part < numNoRad; part++) {
-    if (part % 10000 == 0) std::cout << "\t" << part << "\r\r" << std::flush;
+    if (part % 10000 == 0) std::cout << part << "\r\r" << std::flush;
     noradChain->GetEntry(part);
     TLorentzVector e_mu_prime(_pxpart[0], _pypart[0], _pzpart[0], _epart[0]);
     auto W = W_calc(e_mu, e_mu_prime);
     auto Q2 = Q2_calc(e_mu, e_mu_prime);
     wVsQ2_norad->Fill(W, Q2);
     if (std::isnan(W) || std::isnan(Q2)) continue;
-    total++;
     myfile << "norad," << W << "," << Q2 << "\n";
   }
 
@@ -95,9 +93,9 @@ int radCorr(const std::string &norad_root, const std::string &rad_root) {
     return 1;
   }
 
-  size_t radNum = 0;
   for (size_t part = 0; part < numRad; part++) {
-    if (part % 10000 == 0) std::cout << "\t" << (part / total) * 100 << "\r\r" << std::flush;
+    if (part % 10000 == 0) std::cout << part << "\r\r" << std::flush;
+    if (part > numNoRad) continue;
     radChain->GetEntry(part);
     TLorentzVector e_mu_prime(_pxpart[0], _pypart[0], _pzpart[0], _epart[0]);
     auto W = W_calc(e_mu, e_mu_prime);
@@ -105,7 +103,6 @@ int radCorr(const std::string &norad_root, const std::string &rad_root) {
     wVsQ2_rad->Fill(W, Q2);
     if (std::isnan(W) || std::isnan(Q2)) continue;
     myfile << "rad," << W << "," << Q2 << "\n";
-    if (radNum++ > total) break;
   }
 
   TCanvas *c1 = new TCanvas("c1", "c1", 800, 600);
