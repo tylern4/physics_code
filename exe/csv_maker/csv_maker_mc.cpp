@@ -71,14 +71,14 @@ int main(int argc, char **argv) {
       data_chain->Add(f.c_str());
     }
     size_t num_events = (size_t)data_chain->GetEntries();
-    total += dh->Run<e1d_Cuts>(data_chain, "mc_rec", num);
+    total += dh->Run<e1d_mcCuts>(data_chain, "mc_rec", num);
     {
       std::chrono::duration<double> elapsed = (std::chrono::high_resolution_clock::now() - start);
       std::cout << RED << elapsed.count() << " sec" << DEF << "\n";
       std::cout << BOLDYELLOW << total / elapsed.count() << " Hz" << DEF << "\n";
     }
 
-    total += dh->RunMC<e1d_Cuts>(data_chain, num);
+    total += dh->RunMC<e1d_mcCuts>(data_chain, num);
     {
       std::chrono::duration<double> elapsed = (std::chrono::high_resolution_clock::now() - start);
       std::cout << RED << elapsed.count() << " sec" << DEF << "\n";
