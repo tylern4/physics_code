@@ -161,16 +161,19 @@ float Cuts::hadron_fid_phi_max(float theta, short sec) {
 
 bool Cuts::Hardon_fid_arjun(int part) {
   float theta = physics::theta_calc(_data->cz(part));
+  float theta_rad = physics::theta_calc_rad(_data->cz(part));
 
   float phi_c = hardon_fid_phi(part);
   int sector = _data->dc_sect(part);
   if (sector == 0) return false;
 
+  if (theta_rad < 0.174533) return false;
+
   if (sector == 4 || sector == 5)
-    if (physics::theta_calc_rad(_data->cz(part)) < 0.2) return false;
+    if (theta_rad < 0.2) return false;
 
   if (sector == 3)
-    if (physics::theta_calc_rad(_data->cz(part)) < 0.314159) return false;
+    if (theta_rad < 0.314159) return false;
 
   // auto junk = physics::phi_calc(_data->cx(part), _data->cy(part));
   // if (junk > -180 && junk < -50) std::cout << sector << "\t" << sector << std::endl;

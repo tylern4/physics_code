@@ -1454,6 +1454,20 @@ void Histogram::Fid_Write() {
     pip_theta_star_p[sec_i]->Write();
   }
 
+  for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
+    for (int t = 0; t < 3; t++) {
+      hadron_fid_sec_hist[t][sec_i]->SetYTitle("#theta");
+      hadron_fid_sec_hist[t][sec_i]->SetXTitle("#phi");
+      hadron_fid_sec_hist[t][sec_i]->SetOption("COLZ");
+      hadron_fid_sec_hist[t][sec_i]->Write();
+
+      hadron_fid_xy_sec_hist[t][sec_i]->SetYTitle("#theta");
+      hadron_fid_xy_sec_hist[t][sec_i]->SetXTitle("#phi");
+      hadron_fid_xy_sec_hist[t][sec_i]->SetOption("COLZ");
+      hadron_fid_xy_sec_hist[t][sec_i]->Write();
+    }
+  }
+
   electron_fid_hist->SetYTitle("#theta");
   electron_fid_hist->SetXTitle("#phi");
   electron_fid_hist->SetOption("COLZ");
@@ -1543,17 +1557,6 @@ void Histogram::Fid_Write() {
     electron_fid_sec_cut_hist[sec_i]->SetYTitle("#theta");
     electron_fid_sec_cut_hist[sec_i]->SetOption("COLZ");
     electron_fid_sec_cut_hist[sec_i]->Write();
-    for (int t = 0; t < 3; t++) {
-      hadron_fid_sec_hist[t][sec_i]->SetYTitle("#theta");
-      hadron_fid_sec_hist[t][sec_i]->SetXTitle("#phi");
-      hadron_fid_sec_hist[t][sec_i]->SetOption("COLZ");
-      hadron_fid_sec_hist[t][sec_i]->Write();
-
-      hadron_fid_xy_sec_hist[t][sec_i]->SetYTitle("#theta");
-      hadron_fid_xy_sec_hist[t][sec_i]->SetXTitle("#phi");
-      hadron_fid_xy_sec_hist[t][sec_i]->SetOption("COLZ");
-      hadron_fid_xy_sec_hist[t][sec_i]->Write();
-    }
   }
 
   float slice_width = ((float)100 / (float)FID_SLICES);
