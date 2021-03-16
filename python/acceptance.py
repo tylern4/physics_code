@@ -705,7 +705,6 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins, name="reconstructed"):
                   bins=200,
                   range=[[np.min(w_bins), np.max(w_bins)],
                          [np.min(q2_bins), np.max(q2_bins)]],
-                  # cmin=1
                   )
 
     for w in w_bins:
@@ -890,16 +889,20 @@ if __name__ == "__main__":
         )
     rec = rec[cuts]
     mc_rec = mc_rec[mc_cuts]
-    mc_rec = mc_rec[["w", "q2", "mm2", "cos_theta",
+    mc_rec = mc_rec[["w", "q2", "mm2", "cos_theta", "theta",
                      "phi", "helicty", "electron_sector", "cut_fid"]].copy(deep=True)
-    mc_thrown = mc_thrown[["w", "q2", "mm2", "cos_theta", "phi", "helicty", "electron_sector", "cut_fid"]].copy(
+    mc_thrown = mc_thrown[["w", "q2", "mm2", "cos_theta", "theta", "phi", "helicty", "electron_sector", "cut_fid"]].copy(
         deep=True
     )
-    rec = rec[["w", "q2", "mm2", "cos_theta",
+    rec = rec[["w", "q2", "mm2", "cos_theta", "theta",
                "phi", "cut_fid", "helicty",  "electron_sector"]].copy(deep=True)
 
     w_bins = w_bins_e99
     q2_bins = q2_bins_e99
+    rec = prep_for_ana(rec, w_bins, q2_bins, theta_bins)
+    mc_rec = prep_for_ana(mc_rec, w_bins, q2_bins, theta_bins)
+    mc_thrown = prep_for_ana(mc_thrown, w_bins, q2_bins, theta_bins)
+
     if args.draw_kin:
         draw_kinematics(rec, w_bins, q2_bins, theta_bins)
         draw_kinematics(mc_rec, w_bins, q2_bins, theta_bins, "mc_rec")

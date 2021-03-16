@@ -62,7 +62,7 @@ class DataHandler {
 
     if (check->Cuts::isElectron()) _hists->EC_fill(_data->etot(0), _data->p(0));
     auto event = std::make_shared<Reaction>(_data, _beam_energy, _mom_corr);
-
+    _hists->Fill_hadron_fid_precut(_data, 0, ELECTRON);
     _hists->Fill_electron_fid(_data, event);
     bool electron_cut = (check->isElectron() && check->fid_chern_cut());
     float theta_cc = TMath::ACos(TMath::Abs(_data->p(0) * _data->cz(0)) / TMath::Abs(_data->p(0))) / DEG2RAD;

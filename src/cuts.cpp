@@ -81,7 +81,7 @@ bool Cuts::check_banks() {
 bool Cuts::isElectron() {
   bool _elec = true;
   _elec &= Cuts::check_banks();
-  _elec &= _data->nphe(0) > 5;
+  _elec &= _data->nphe(0) > 20;
 
   // Cut out low ec inner
   _elec &= (_data->ec_ei(0) >= 0.05);
@@ -162,11 +162,13 @@ float Cuts::hadron_fid_phi_max(float theta, short sec) {
 bool Cuts::Hardon_fid_arjun(int part) {
   float theta = physics::theta_calc(_data->cz(part));
   float theta_rad = physics::theta_calc_rad(_data->cz(part));
+  float pip_p = _data->p(part);
 
   float phi_c = hardon_fid_phi(part);
   int sector = _data->dc_sect(part);
   if (sector == 0) return false;
 
+  // Theta min cuts per sector
   if (theta_rad < 0.174533) return false;
 
   if (sector == 4 || sector == 5)
@@ -174,6 +176,31 @@ bool Cuts::Hardon_fid_arjun(int part) {
 
   if (sector == 3)
     if (theta_rad < 0.314159) return false;
+
+  // Theta max cuts per sector
+  if (theta_rad > 1.35) return false;
+  if (sector == 1)
+    if (theta_rad > 1.45) return false;
+
+  // min momentum pip cuts
+  if (pip_p < 0.18) return false;
+
+  // if (sector == 1) {
+  //   if (pip_p > 0.255 && pip_p < 0.285) return false;
+  //   if (pip_p > 0.378 && pip_p < 0.445) return false;
+  // }
+
+  // if (sector == 2) {
+  //   if (pip_p > 0.37 && pip_p < 0.4) return false;
+  // }
+
+  // if (sector == 3) {
+  //   if (pip_p > 0.28 && pip_p < 0.32) return false;
+  // }
+
+  // if (sector == 4) {
+  //   if (pip_p > 0.44 && pip_p < 0.47) return false;
+  // }
 
   // auto junk = physics::phi_calc(_data->cx(part), _data->cy(part));
   // if (junk > -180 && junk < -50) std::cout << sector << "\t" << sector << std::endl;
@@ -483,6 +510,8 @@ bool e1d_Cuts::bad_sc_cut(short part) {
   if (sec == 2 && pad == 48) return false;
 
   if (sec == 3 && pad == 16) return false;
+  if (sec == 3 && pad == 23) return false;
+  if (sec == 3 && pad == 24) return false;
   if (sec == 3 && pad == 33) return false;
   if (sec == 3 && pad == 35) return false;
   if (sec == 3 && pad == 42) return false;

@@ -11,6 +11,7 @@ import inspect
 import os
 import time
 import matplotlib.pyplot as plt
+from scipy import stats
 
 plt.rcParams.update({'mathtext.fontset': 'stix'})
 
@@ -53,6 +54,7 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                     radcorr_df.q2_left, q2.left)
 
                 if(radcorr_df[cut].R.size == 0):
+                    print(w.left, q2.left)
                     radcor_R = 1.0
                 else:
                     radcor_R = np.array(radcorr_df[cut].R)
@@ -79,18 +81,22 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                 gs = fig.add_gridspec(2, 1, height_ratios=[2, 1])
                 ax1 = fig.add_subplot(gs[0])
                 ax2 = fig.add_subplot(gs[1], sharex=ax1)
-                maxs = None
+                maxs = 0.0
                 if overlap is not None:
                     for k, v in overlapSettings.items():
-                        e2 = virtual_photon_flux(w.mid, q2.mid, v['energy'])
-                        e1 = virtual_photon_flux(w.mid, q2.mid)
-                        factor = (e1/e2)
+                        # e2 = virtual_photon_flux(w.mid, q2.mid, v['energy'])
+                        e1 = virtual_photon_epsilon_fn(
+                            ENERGY, w.mid, q2.mid)
+                        e2 = virtual_photon_epsilon_fn(
+                            v['energy'], w.mid, q2.mid)
+                        factor = e1/e2
 
                         old_data = overlap_df[(overlap_df.W_min == w.left)
                                               & (overlap_df.Q2_min == q2.left)
                                               & (overlap_df.cos_t == theta.left)
                                               & (overlap_df.experiment == k)]
-
+                        if len(old_data) == 0:
+                            continue
                         ebar = ax1.errorbar(old_data.phi, old_data.y * factor, yerr=old_data.yerr,
                                             marker=v['symbol'], linestyle="",
                                             zorder=1, label=f"",
@@ -102,10 +108,9 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
 
                 plot_maid_model(ax1, w, q2, theta, xs)
                 maid_top = plot_maid_model(ct_ax[theta.left], w, q2, theta, xs)
-
-                for b in [7, 10, 12]:
+                for b in [6, 7, 10, 12]:
                     binCenter = binCetnerCorrection(
-                        w, q2, theta, num_bins=b)
+                        w, q2, theta, num_bins=bins)
 
                     cut_fids = {
                         "Fiducial Cuts": 0,
@@ -140,8 +145,7 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                             _mc_rec_y, _ = hist_data(
                                 data_mc, density=False, bins=b)
 
-                        _thrown_y, _ = hist_data(
-                            thrown, density=False, bins=b)
+                        _thrown_y, _ = hist_data(thrown, density=False, bins=b)
 
                         # Get numbers for error
                         N_y = _data_y
@@ -162,18 +166,6 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                         thrown_y = np.where(thrown_y == 0, 1, thrown_y)
                         acceptance = mc_rec_y / thrown_y
 
-                        # Plot intergrated yeils to compare with/without fid cuts
-                        try:
-                            ax2.errorbar(x, acceptance, marker=marker,
-                                         linestyle="", zorder=1,
-                                         markersize=10, label=f"Acceptence", alpha=0.4)
-                            # ax2.errorbar(x, data_y, marker=marker,
-                            #              linestyle="", zorder=1,
-                            #              markersize=10, label=f"Counts: {name}", alpha=0.4)
-                            # ax2.legend(loc='upper right')
-                        except ValueError:
-                            pass
-
                         # Get bin widths
                         delta_W = (w.right-w.left)
                         delta_Q2 = (q2.right-q2.left)
@@ -182,20 +174,19 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                         delta_phi = __phis[1] - __phis[0]
                         kin_bin_width = delta_W * delta_Q2 * delta_Theta * delta_phi
 
-                        # Normalize with bin widths
-                        try:
-                            data_y = data_y/kin_bin_width
-                        except ValueError:
-                            continue
-
                         # Calculate acceptance and correct data
                         flux = virtual_photon_flux(
-                            w.left, q2.left) * luminosity()
-                        denom = kin_bin_width * flux * radcor_R * binCenter(x)
+                            w.mid, q2.mid) * luminosity()
+                        denom = kin_bin_width * flux * \
+                            acceptance * radcor_R * binCenter(x)
+
                         stat_error = statistical(N_y, N_empty, denom)
 
-                        y = data_y / acceptance / \
-                            flux / binCenter(x) / radcor_R
+                        # Normalize with bin widths
+                        try:
+                            y = data_y / denom
+                        except ValueError:
+                            continue
 
                         error_bar = get_error_bars(
                             y, mc_rec_y, thrown_y, stat_error)
@@ -204,6 +195,18 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                                             marker=marker, linestyle="",
                                             zorder=1, label=f"{b}",
                                             markersize=10, alpha=0.4)
+
+                        # Plot intergrated yeils to compare with/without fid cuts
+                        try:
+                            ax2.errorbar(x, N_y, marker=marker,
+                                         linestyle="", zorder=1,
+                                         markersize=10, label=f"Ratio", alpha=0.4)
+                            # ax2.errorbar(x, data_y, marker=marker,
+                            #              linestyle="", zorder=1,
+                            #              markersize=10, label=f"Counts: {name}", alpha=0.4)
+                            # ax2.legend(loc='upper right')
+                        except ValueError:
+                            pass
 
                         out = fit_model(ax1, model_new, x, y, xs,
                                         ebar[0].get_color(), name)
@@ -215,14 +218,15 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                         ct_ax[theta.left].errorbar(x, y, yerr=error_bar,
                                                    marker=marker, linestyle="",
                                                    zorder=1,
-                                                   label=f"{b}",
+                                                   label=f"{plot_label[theta.left]}",
                                                    markersize=5, alpha=0.8)
 
                         if cuts == 0:
                             ct_ax[theta.left].set_ylabel(
                                 r'$\frac{\mathbf{d}\sigma}{\mathbf{d} \omega} \left[\frac{\mu b}{sr}\right]$')
                             ct_ax[theta.left].set_xlabel(r'$\phi_{\pi}^{*}$')
-                            ct_ax[theta.left].legend(loc='upper right')
+                            ct_ax[theta.left].legend(
+                                loc='upper right', markerscale=0.2, numpoints=1, handlelength=0)
                             out = fit_model(ct_ax[theta.left], model_new, x, y, xs,
                                             ebar[0].get_color(), "")
 
@@ -266,6 +270,8 @@ if __name__ == "__main__":
                         default=None)
     parser.add_argument("--radcorr", dest="radcorr", type=str, help="Location of radcorr data csv", required=False,
                         default=None)
+    parser.add_argument("--highw", help="Use high W binning",
+                        required=False, action='store_true', default=False)
     args = parser.parse_args()
 
     # Start to main
@@ -281,29 +287,30 @@ if __name__ == "__main__":
     # Cut for missing mass
     rec, mc_rec, empty_target = cut_for_MM(rec, mc_rec, empty_target)
     end = time.time_ns()
+
+    if args.highw:
+        w_bins = w_bins_k
+        q2_bins = q2_bins_k
+        bins = 6
+    else:
+        w_bins = w_bins_e99
+        q2_bins = q2_bins_e99
+        bins = 12
+
+    # Make bins in the dataframes from the bins above
+    _rec = prep_for_ana(rec, w_bins, q2_bins, theta_bins)
+    _empty_target = prep_for_ana(empty_target, w_bins, q2_bins, theta_bins)
+    _mc_rec = prep_for_ana(mc_rec, w_bins, q2_bins, theta_bins)
+    _mc_thrown = prep_for_ana(mc_thrown, w_bins, q2_bins, theta_bins)
+
+    # Create dict of sorted bins
+    _binning = dict()
+    _binning["wbins"] = pd.Index.sort_values(pd.unique(_rec.w_bin))
+    _binning["q2bins"] = pd.Index.sort_values(pd.unique(_rec.q2_bin))
+    _binning["thetabins"] = pd.Index.sort_values(pd.unique(_rec.theta_bin))
     print(f"Done setup: {(end-start)/1E9:0.2f}Sec")
 
-    for i in range(2):
-        if i == 0:
-            w_bins = w_bins_k
-            q2_bins = q2_bins_k
-        else:
-            w_bins = w_bins_e99
-            q2_bins = q2_bins_e99
+    main(_rec, _mc_rec, _mc_thrown, _empty_target, _binning, bins=bins,
+         out_folder=args.out_folder, overlap=args.overlap, radcorr=args.radcorr)
 
-        # Make bins in the dataframes from the bins above
-        _rec = prep_for_ana(rec, w_bins, q2_bins, theta_bins)
-        _empty_target = prep_for_ana(empty_target, w_bins, q2_bins, theta_bins)
-        _mc_rec = prep_for_ana(mc_rec, w_bins, q2_bins, theta_bins)
-        _mc_thrown = prep_for_ana(mc_thrown, w_bins, q2_bins, theta_bins)
-
-        # Create dict of sorted bins
-        _binning = dict()
-        _binning["wbins"] = pd.Index.sort_values(pd.unique(_rec.w_bin))
-        _binning["q2bins"] = pd.Index.sort_values(pd.unique(_rec.q2_bin))
-        _binning["thetabins"] = pd.Index.sort_values(pd.unique(_rec.theta_bin))
-
-        main(_rec, _mc_rec, _mc_thrown, _empty_target, _binning, bins=12,
-             out_folder=args.out_folder, overlap=args.overlap, radcorr=args.radcorr)
-
-        del _rec, _mc_rec, _mc_thrown, _empty_target
+    del _rec, _mc_rec, _mc_thrown, _empty_target

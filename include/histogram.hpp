@@ -283,7 +283,7 @@ Garys binning
   std::array<std::array<TH2D_ptr, 3>, NUM_SECTORS> hadron_fid_xy_sec_hist;
   TH1D* hadron_fid_sec_slice[NUM_SECTORS][FID_SLICES];
   std::array<TH2D_ptr, 3> hadron_fid_hist;
-  std::array<TH2D_ptr, 3> hadron_fid_hist_nocut;
+  std::array<TH2D_ptr, 3> hadron_fid_hist_precut;
   std::array<TH2D_ptr, 3> hadron_fid_xy_hist;
 
   std::vector<TH2D_ptr> cerenkov_fid;
@@ -387,8 +387,10 @@ Garys binning
       std::make_shared<TH1D>("Energy_channel_cuts", "Scattered electron energy for N #pi^{+} events", 500, 0.0, 5.0);
 
   std::vector<TH2D_ptr> electron_theta_p;
+  std::vector<TH2D_ptr> electron_theta_p_precut;
   std::vector<TH2D_ptr> electron_theta_star_p;
   std::vector<TH2D_ptr> pip_theta_p;
+  std::vector<TH2D_ptr> pip_theta_p_precut;
   std::vector<TH2D_ptr> pip_theta_star_p;
 
   void makeHists_fid();

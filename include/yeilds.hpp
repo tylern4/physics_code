@@ -377,6 +377,10 @@ class Yeilds {
       if (pip_sector == 0 || pip_sector > NUM_SECTORS || pip_sector == int(NULL)) continue;
       if (data->p(pip_num) == 0) continue;
 
+      if (event->W() < 1.0 || event->W() > 1.8) continue;
+
+      event->boost();
+
       total++;
       fid_data_pip csv_buffer;
       csv_buffer.e_sector = data->dc_sect(0);
@@ -387,6 +391,8 @@ class Yeilds {
       csv_buffer.pip_p = data->p(pip_num);
       csv_buffer.pip_theta = physics::theta_calc_rad(data->cz(pip_num));
       csv_buffer.pip_phi = physics::phi_calc_rad(data->cx(pip_num), data->cy(pip_num));
+      csv_buffer.pip_theta_star = event->Theta_star();
+      csv_buffer.pip_phi_star = event->Phi_star();
 
       _multi_threaded_csv->write(csv_buffer.print());
     }

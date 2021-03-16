@@ -73,8 +73,12 @@ struct fid_data_pip : csv_data {
   float pip_p;
   float pip_theta;
   float pip_phi;
+  float pip_theta_star;
+  float pip_phi_star;
 
-  static std::string header() { return "e_sector,e_p,e_theta,e_phi,pip_sector,pip_p,pip_theta,pip_phi\n"; }
+  static std::string header() {
+    return "e_sector,e_p,e_theta,e_phi,pip_sector,pip_p,pip_theta,pip_phi,pip_theta_star,pip_phi_star\n";
+  }
 
   const std::string print() {
     std::string out = "";
@@ -85,7 +89,9 @@ struct fid_data_pip : csv_data {
     out += std::to_string(pip_sector) + ",";
     out += std::to_string(pip_p) + ",";
     out += std::to_string(pip_theta) + ",";
-    out += std::to_string(pip_phi) + "\n";
+    out += std::to_string(pip_phi) + ",";
+    out += std::to_string(pip_theta_star) + ",";
+    out += std::to_string(pip_phi_star) + "\n";
     return out;
   }
 };

@@ -289,7 +289,7 @@ if __name__ == "__main__":
     if args.highw:
         w_bins = w_bins_k
         q2_bins = q2_bins_k
-        bins = 12
+        bins = 6
     else:
         w_bins = w_bins_e99
         q2_bins = q2_bins_e99

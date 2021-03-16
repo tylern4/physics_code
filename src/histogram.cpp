@@ -1229,12 +1229,12 @@ void Histogram::makeHists_fid() {
   hadron_fid_hist[fid_part::pip] =
       std::make_unique<TH2D>("pip_fid", "pip_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
 
-  hadron_fid_hist_nocut[fid_part::hadron] = std::make_unique<TH2D>("hadron_fid_nocut", "hadron_fid_nocut", BINS,
-                                                                   phi_min, phi_max, BINS, theta_min, theta_max);
-  hadron_fid_hist_nocut[fid_part::proton] = std::make_unique<TH2D>("proton_fid_nocut", "proton_fid_nocut", BINS,
-                                                                   phi_min, phi_max, BINS, theta_min, theta_max);
-  hadron_fid_hist_nocut[fid_part::pip] =
-      std::make_unique<TH2D>("pip_fid_nocut", "pip_fid_nocut", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
+  hadron_fid_hist_precut[fid_part::hadron] = std::make_unique<TH2D>("hadron_fid_precut", "hadron_fid_precut", BINS,
+                                                                    phi_min, phi_max, BINS, theta_min, theta_max);
+  hadron_fid_hist_precut[fid_part::proton] = std::make_unique<TH2D>("proton_fid_precut", "proton_fid_precut", BINS,
+                                                                    phi_min, phi_max, BINS, theta_min, theta_max);
+  hadron_fid_hist_precut[fid_part::pip] =
+      std::make_unique<TH2D>("pip_fid_precut", "pip_fid_precut", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
 
   hadron_fid_xy_hist[fid_part::hadron] =
       std::make_unique<TH2D>("hadron_fid_xy", "hadron_fid_xy", BINS, -200, 200, BINS, 0, 500);
@@ -1259,6 +1259,9 @@ void Histogram::makeHists_fid() {
   pip_theta_p.reserve(NUM_SECTORS);
   pip_theta_star_p.reserve(NUM_SECTORS);
 
+  electron_theta_p_precut.reserve(NUM_SECTORS);
+  pip_theta_p_precut.reserve(NUM_SECTORS);
+
   fid_xy_hist = std::make_shared<TH2D>("fid_dc_xy", "fid_dc_xy", BINS, -150, 150, BINS, 0, 300);
   fid_xy_cut_hist = std::make_shared<TH2D>("fid_dc_xy_cut", "fid_dc_xy_cut", BINS, -150, 150, BINS, 0, 300);
   fid_xy_anti_hist = std::make_shared<TH2D>("fid_dc_xy_anti", "fid_dc_xy_anti", BINS, -150, 150, BINS, 0, 300);
@@ -1271,6 +1274,11 @@ void Histogram::makeHists_fid() {
                                                 BINS, 0, 4.8, BINS, 0, 2.5);
     pip_theta_star_p[sec_i] = std::make_shared<TH2D>(
         Form("pip_theta_star_p_%d", sec_i + 1), Form("pip_theta_star_p_%d", sec_i + 1), BINS, 0, 3.8, BINS, 0, M_PI);
+
+    electron_theta_p_precut[sec_i] = std::make_shared<TH2D>(
+        Form("elec_theta_p_nocut_%d", sec_i + 1), Form("elec_theta_p_nocut_%d", sec_i + 1), BINS, 0, 4.8, BINS, 0, 1.5);
+    pip_theta_p_precut[sec_i] = std::make_shared<TH2D>(
+        Form("pip_theta_p_nocut_%d", sec_i + 1), Form("pip_theta_p_nocut_%d", sec_i + 1), BINS, 0, 4.8, BINS, 0, 2.5);
 
     cerenkov_fid[sec_i] = std::make_shared<TH2D>(Form("fid_cher_xy_%d", sec_i + 1), Form("fid_cher_xy_%d", sec_i + 1),
                                                  BINS, -150, 150, BINS, 0, 300);
@@ -1407,13 +1415,15 @@ void Histogram::Fill_hadron_fid_precut(const std::shared_ptr<Branches> &_data, i
 
   float phi = physics::phi_calc(_data->cx(part_num), _data->cy(part_num));
   float theta = physics::theta_calc(_data->cz(part_num));
+  if (part_num == 0) electron_theta_p_precut[sector - 1]->Fill(_data->p(0), physics::theta_calc_rad(_data->cz(0)));
 
-  hadron_fid_hist_nocut[fid_part::hadron]->Fill(phi, theta);
+  hadron_fid_hist_precut[fid_part::hadron]->Fill(phi, theta);
 
   if (id == PROTON) {
-    hadron_fid_hist_nocut[fid_part::proton]->Fill(phi, theta);
+    hadron_fid_hist_precut[fid_part::proton]->Fill(phi, theta);
   } else if (id == PIP) {
-    hadron_fid_hist_nocut[fid_part::pip]->Fill(phi, theta);
+    hadron_fid_hist_precut[fid_part::pip]->Fill(phi, theta);
+    pip_theta_p_precut[sector - 1]->Fill(_data->p(part_num), physics::theta_calc_rad(_data->cz(part_num)));
   }
 }
 
@@ -1436,6 +1446,10 @@ void Histogram::Fill_hadron_fid_pip(const std::shared_ptr<Branches> &_data, cons
 
 void Histogram::Fid_Write() {
   for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
+    electron_theta_p_precut[sec_i]->SetOption("COLZ");
+    electron_theta_p_precut[sec_i]->SetXTitle("p GeV");
+    electron_theta_p_precut[sec_i]->SetYTitle("#theta");
+    electron_theta_p_precut[sec_i]->Write();
     electron_theta_p[sec_i]->SetOption("COLZ");
     electron_theta_p[sec_i]->SetXTitle("p GeV");
     electron_theta_p[sec_i]->SetYTitle("#theta");
@@ -1444,6 +1458,10 @@ void Histogram::Fid_Write() {
     electron_theta_star_p[sec_i]->SetXTitle("p GeV");
     electron_theta_star_p[sec_i]->SetYTitle("#theta");
     electron_theta_star_p[sec_i]->Write();
+    pip_theta_p_precut[sec_i]->SetOption("COLZ");
+    pip_theta_p_precut[sec_i]->SetXTitle("p GeV");
+    pip_theta_p_precut[sec_i]->SetYTitle("#theta");
+    pip_theta_p_precut[sec_i]->Write();
     pip_theta_p[sec_i]->SetOption("COLZ");
     pip_theta_p[sec_i]->SetXTitle("p GeV");
     pip_theta_p[sec_i]->SetYTitle("#theta");
@@ -1454,17 +1472,17 @@ void Histogram::Fid_Write() {
     pip_theta_star_p[sec_i]->Write();
   }
 
-  for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
-    for (int t = 0; t < 3; t++) {
+  for (int t = 0; t < 3; t++) {
+    for (int sec_i = 0; sec_i < NUM_SECTORS; sec_i++) {
       hadron_fid_sec_hist[t][sec_i]->SetYTitle("#theta");
       hadron_fid_sec_hist[t][sec_i]->SetXTitle("#phi");
       hadron_fid_sec_hist[t][sec_i]->SetOption("COLZ");
       hadron_fid_sec_hist[t][sec_i]->Write();
 
-      hadron_fid_xy_sec_hist[t][sec_i]->SetYTitle("#theta");
-      hadron_fid_xy_sec_hist[t][sec_i]->SetXTitle("#phi");
-      hadron_fid_xy_sec_hist[t][sec_i]->SetOption("COLZ");
-      hadron_fid_xy_sec_hist[t][sec_i]->Write();
+      // hadron_fid_xy_sec_hist[t][sec_i]->SetYTitle("#theta");
+      // hadron_fid_xy_sec_hist[t][sec_i]->SetXTitle("#phi");
+      // hadron_fid_xy_sec_hist[t][sec_i]->SetOption("COLZ");
+      // hadron_fid_xy_sec_hist[t][sec_i]->Write();
     }
   }
 
@@ -1489,10 +1507,10 @@ void Histogram::Fid_Write() {
     hadron_fid_hist[t]->SetOption("COLZ");
     hadron_fid_hist[t]->Write();
 
-    hadron_fid_hist_nocut[t]->SetYTitle("#theta");
-    hadron_fid_hist_nocut[t]->SetXTitle("#phi");
-    hadron_fid_hist_nocut[t]->SetOption("COLZ");
-    hadron_fid_hist_nocut[t]->Write();
+    hadron_fid_hist_precut[t]->SetYTitle("#theta");
+    hadron_fid_hist_precut[t]->SetXTitle("#phi");
+    hadron_fid_hist_precut[t]->SetOption("COLZ");
+    hadron_fid_hist_precut[t]->Write();
 
     hadron_fid_xy_hist[t]->SetYTitle("#theta");
     hadron_fid_xy_hist[t]->SetXTitle("#phi");
