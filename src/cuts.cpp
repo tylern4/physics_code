@@ -97,6 +97,7 @@ bool e1d_Cuts::isElectron() {
   _elec &= e1d_Cuts::Beam_cut();
   // Sampling fraction cut
   _elec &= e1d_Cuts::sf_cut(_data->etot(0) / _data->p(0), _data->p(0));
+  _elec &= e1d_Cuts::bad_sc_cut(0);
   if (!_elec) return _elec;
   // Fid Cuts
   _elec &= fid_chern_cut();
@@ -117,6 +118,13 @@ bool e1d_Cuts::isElectron() {
   if (sec == 3) {
     if (t > 0.38 && t < 0.41) return false;
   }
+
+  return _elec;
+}
+
+bool e1d_mcCuts::isElectron() {
+  bool _elec = true;
+  _elec &= e1d_Cuts::isElectron();
 
   return _elec;
 }
@@ -153,10 +161,19 @@ float Cuts::hadron_fid_phi_max(float theta, short sec) {
 
 bool Cuts::Hardon_fid_arjun(int part) {
   float theta = physics::theta_calc(_data->cz(part));
+
   float phi_c = hardon_fid_phi(part);
   int sector = _data->dc_sect(part);
-
   if (sector == 0) return false;
+
+  if (sector == 4 || sector == 5)
+    if (physics::theta_calc_rad(_data->cz(part)) < 0.2) return false;
+
+  if (sector == 3)
+    if (physics::theta_calc_rad(_data->cz(part)) < 0.314159) return false;
+
+  // auto junk = physics::phi_calc(_data->cx(part), _data->cy(part));
+  // if (junk > -180 && junk < -50) std::cout << sector << "\t" << sector << std::endl;
 
   if (phi_c >= hadron_fid_phi_min(theta, sector - 1) && phi_c <= hadron_fid_phi_max(theta, sector - 1)) return true;
 
@@ -232,7 +249,7 @@ bool Cuts::Fid_cut() { return true; }
 // }
 
 bool e1d_Cuts::Fid_cut() {
-  if (physics::theta_calc(_data->cz(0)) < 15) return false;
+  if (physics::theta_calc_rad(_data->cz(0)) < 0.2) return false;
   return true;
 }
 
@@ -419,14 +436,75 @@ bool Cuts::fid_chern_cut() {
   return func::fid_chern(_cc_x, _cc_y);
 }
 
+bool e1d_mcCuts::fid_chern_cut() {
+  float A = -0.000785;
+  float B = 0;
+  float C = -0.00168;
+  float D = 1;
+
+  auto p0_vec = TVector3(_data->dc_xsc(0), _data->dc_ysc(0), _data->dc_zsc(0));
+  auto n_vec = TVector3(_data->dc_cxsc(0), _data->dc_cysc(0), _data->dc_czsc(0));
+  auto S_vec = TVector3(A, B, C);
+
+  auto numer = A * _data->dc_xsc(0) + B * _data->dc_ysc(0) + C * _data->dc_zsc(0) + D;
+  auto denom = S_vec.Dot(n_vec);
+
+  auto t_vec = n_vec * abs(numer / denom);
+
+  p0_vec += t_vec;
+  float _cc_theta = acosf(p0_vec.Z() / p0_vec.Mag());
+  float _cc_phi = atanf(p0_vec.Y() / p0_vec.X());
+
+  float _cc_x = _data->cc_r(0) * sinf(_cc_theta) * cosf(_cc_phi);
+  float _cc_y = _data->cc_r(0) * sinf(_cc_theta) * sinf(_cc_phi);
+  return func::fid_chern_mc(_cc_x, _cc_y);
+}
+
 bool e1d_Cuts::bad_sc_cut(short part) {
   short sec = _data->sc_sect(part);
   int pad = _data->sc_pd(part);
-  if (sec == 3 && pad == 33) return false;
-  if (sec == 4 && pad == 28) return false;
-  if (sec == 5 && pad == 42) return false;
+
+  if (sec == 1 && pad == 29) return false;
+  if (sec == 1 && pad == 35) return false;
   if (sec == 1 && pad == 43) return false;
+  if (sec == 1 && pad == 44) return false;
+  if (sec == 1 && pad == 45) return false;
+  if (sec == 1 && pad == 46) return false;
+  if (sec == 1 && pad == 48) return false;
+
+  if (sec == 2 && pad == 30) return false;
+  if (sec == 2 && pad == 41) return false;
   if (sec == 2 && pad == 43) return false;
+  if (sec == 2 && pad == 46) return false;
+  if (sec == 2 && pad == 47) return false;
+  if (sec == 2 && pad == 48) return false;
+
+  if (sec == 3 && pad == 16) return false;
+  if (sec == 3 && pad == 33) return false;
+  if (sec == 3 && pad == 35) return false;
+  if (sec == 3 && pad == 42) return false;
+  if (sec == 3 && pad == 43) return false;
+  if (sec == 3 && pad == 45) return false;
+  if (sec == 3 && pad == 46) return false;
+
+  if (sec == 4 && pad == 28) return false;
+  if (sec == 4 && pad == 42) return false;
+  if (sec == 4 && pad == 43) return false;
+  if (sec == 4 && pad == 45) return false;
+  if (sec == 4 && pad == 46) return false;
+  if (sec == 4 && pad == 47) return false;
+
+  if (sec == 5 && pad == 40) return false;
+  if (sec == 5 && pad == 42) return false;
+  if (sec == 5 && pad == 45) return false;
+  if (sec == 5 && pad == 46) return false;
+  if (sec == 5 && pad == 47) return false;
+
+  if (sec == 6 && pad == 41) return false;
+  if (sec == 6 && pad == 42) return false;
+  if (sec == 6 && pad == 43) return false;
+  if (sec == 6 && pad == 46) return false;
+  if (sec == 6 && pad == 48) return false;
 
   return true;
 }

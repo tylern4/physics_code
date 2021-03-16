@@ -91,6 +91,14 @@ class e1d_Cuts : public Cuts {
   bool Pipish(short part);
 };
 
+class e1d_mcCuts : public e1d_Cuts {
+ public:
+  e1d_mcCuts(const std::shared_ptr<Branches>& data) : e1d_Cuts(data){};
+  e1d_mcCuts(const std::shared_ptr<Branches>& data, const std::shared_ptr<Delta_T>& dt) : e1d_Cuts(data, dt){};
+  bool isElectron();
+  bool fid_chern_cut();
+};
+
 class e1f_Cuts : public Cuts {
  public:
   e1f_Cuts(const std::shared_ptr<Branches>& data) : Cuts(data){};

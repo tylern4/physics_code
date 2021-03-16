@@ -362,7 +362,7 @@ class Yeilds {
       if (!check->isElectron()) continue;
       auto event = std::make_shared<Reaction>(data, _beam_energy, nullptr);
       for (int part_num = 1; part_num < data->gpart(); part_num++) {
-        if (check->Pipish(part_num)) {
+        if (check->Pip(part_num)) {
           pip_num = part_num;
           event->SetPip(part_num);
           continue;

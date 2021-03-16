@@ -34,7 +34,7 @@ size_t run_e1d_file(const std::vector<std::string>& in, const std::shared_ptr<mc
   dh->setLoadBar(false);
   if (thread_id == 0) dh->setLoadBar(true);
   size_t tot = 0;
-  tot += dh->Run<e1d_Cuts>();
+  tot += dh->Run<e1d_mcCuts>();
   return tot;
 }
 

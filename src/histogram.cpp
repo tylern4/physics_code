@@ -1229,6 +1229,13 @@ void Histogram::makeHists_fid() {
   hadron_fid_hist[fid_part::pip] =
       std::make_unique<TH2D>("pip_fid", "pip_fid", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
 
+  hadron_fid_hist_nocut[fid_part::hadron] = std::make_unique<TH2D>("hadron_fid_nocut", "hadron_fid_nocut", BINS,
+                                                                   phi_min, phi_max, BINS, theta_min, theta_max);
+  hadron_fid_hist_nocut[fid_part::proton] = std::make_unique<TH2D>("proton_fid_nocut", "proton_fid_nocut", BINS,
+                                                                   phi_min, phi_max, BINS, theta_min, theta_max);
+  hadron_fid_hist_nocut[fid_part::pip] =
+      std::make_unique<TH2D>("pip_fid_nocut", "pip_fid_nocut", BINS, phi_min, phi_max, BINS, theta_min, theta_max);
+
   hadron_fid_xy_hist[fid_part::hadron] =
       std::make_unique<TH2D>("hadron_fid_xy", "hadron_fid_xy", BINS, -200, 200, BINS, 0, 500);
   hadron_fid_xy_hist[fid_part::proton] =
@@ -1394,6 +1401,22 @@ void Histogram::Fill_hadron_fid(const std::shared_ptr<Branches> &_data, int part
   }
 }
 
+void Histogram::Fill_hadron_fid_precut(const std::shared_ptr<Branches> &_data, int part_num, int id) {
+  short sector = _data->dc_sect(part_num);
+  if (sector == 0 || sector > NUM_SECTORS) return;
+
+  float phi = physics::phi_calc(_data->cx(part_num), _data->cy(part_num));
+  float theta = physics::theta_calc(_data->cz(part_num));
+
+  hadron_fid_hist_nocut[fid_part::hadron]->Fill(phi, theta);
+
+  if (id == PROTON) {
+    hadron_fid_hist_nocut[fid_part::proton]->Fill(phi, theta);
+  } else if (id == PIP) {
+    hadron_fid_hist_nocut[fid_part::pip]->Fill(phi, theta);
+  }
+}
+
 void Histogram::Fill_hadron_fid_pip(const std::shared_ptr<Branches> &_data, const std::shared_ptr<Reaction> &_event,
                                     int pip_num) {
   short sector = _data->dc_sect(0);
@@ -1451,6 +1474,11 @@ void Histogram::Fid_Write() {
     hadron_fid_hist[t]->SetXTitle("#phi");
     hadron_fid_hist[t]->SetOption("COLZ");
     hadron_fid_hist[t]->Write();
+
+    hadron_fid_hist_nocut[t]->SetYTitle("#theta");
+    hadron_fid_hist_nocut[t]->SetXTitle("#phi");
+    hadron_fid_hist_nocut[t]->SetOption("COLZ");
+    hadron_fid_hist_nocut[t]->Write();
 
     hadron_fid_xy_hist[t]->SetYTitle("#theta");
     hadron_fid_xy_hist[t]->SetXTitle("#phi");

@@ -47,6 +47,7 @@ ROOT::Double_v degauss(const ROOT::Double_v *x, const double *par);
 float dt_poly4(std::vector<double> params, float p);
 
 bool fid_chern(float x, float y);
+bool fid_chern_mc(float x, float y);
 float log_sqrt_pol1(std::vector<double> params, float p);
 float log_pol2(std::vector<double> params, float p);
 

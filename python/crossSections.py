@@ -57,7 +57,7 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                     print(w.left, q2.left)
                     radcor_R = 1.0
                 else:
-                    radcor_R = np.array(radcorr_df[cut].one_over_R)
+                    radcor_R = np.array(radcorr_df[cut].R)
 
             for theta in binning["thetabins"]:
                 # Cut data/mc for the w/q2/theta bin we're in

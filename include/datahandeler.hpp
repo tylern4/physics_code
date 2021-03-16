@@ -110,6 +110,7 @@ class DataHandler {
       _hists->MomVsBeta_Fill(_data->p(part_num), _data->b(part_num));
 
       if (_data->q(part_num) == POSITIVE) {
+        _hists->Fill_hadron_fid_precut(_data, part_num, _data->id(part_num));
         _hists->MomVsBeta_Fill_pos(_data->p(part_num), _data->b(part_num));
       } else if (_data->q(part_num) == NEGATIVE) {
         _hists->MomVsBeta_Fill_neg(_data->p(part_num), _data->b(part_num));

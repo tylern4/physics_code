@@ -110,14 +110,20 @@ static std::unordered_map<int, std::string> particle_name = {
 // static const float a3mh[6] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
 
 // // Mine
-static const float a0xh[6] = {25.0, 25.0, 23.0, 23.5, 24.5, 24.5};
-static const float a0mh[6] = {25.0, 25.5, 26.0, 25.5, 27.0, 26.0};
-static const float a1xh[6] = {0.09, 0.11, 0.20, 0.20, 0.22, 0.22};
-static const float a1mh[6] = {0.15, 0.165, 0.22, 0.22, 0.16, 0.16};
-static const float a2xh[6] = {10.0, 8.0, 8.0, 8.0, 8.0, 8.0};
-static const float a2mh[6] = {7.5, 8.0, 8.0, 8.0, 8.0, 8.0};
-static const float a3xh[6] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+// left hand side ??
+static const float a0mh[6] = {25.0, 25.5, 25.5, 26, 26, 26};
+static const float a1mh[6] = {0.07, 0.14, 0.11, 0.14, 0.15, 0.07};
+static const float a2mh[6] = {8.0, 8.0, 8.0, 8.0, 8.0, 8.0};
 static const float a3mh[6] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+// static const float a1mh[6] = {0.15, 0.165, 0.11, 0.07, 0.06, 0.08};
+// static const float a1xh[6] = {0.15, 0.11, 0.15, 0.07, 0.07, 0.07};
+// static const float a1xh[6] = {0.07, 0.165, 0.11, 0.14, 0.15, 0.08};
+
+// right hand side ??
+static const float a0xh[6] = {25.0, 25.0, 26.0, 24, 25.5, 25};
+static const float a1xh[6] = {0.14, 0.11, 0.13, 0.07, 0.05, 0.07};
+static const float a2xh[6] = {8.0, 8.0, 8.0, 8.0, 8.0, 8.0};
+static const float a3xh[6] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
 
 static const std::vector<double> dt_pip_const_top = {0.026476496274405754, -0.20219089310509566, 0.5065924067561807,
                                                      -0.4949841169578805, 0.5621128407552162};

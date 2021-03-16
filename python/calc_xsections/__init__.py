@@ -296,7 +296,8 @@ def get_maid_values(xs, w, q2, theta):
 
 
 def statistical(DN_full, DN_empty, denom):
-    error = (DN_full/Q_FULL**2) + (DN_empty/Q_EMPTY**2)
+
+    error = DN_full/(Q_FULL**2) + DN_empty/(Q_EMPTY**2)
     # error = (DN_full**2) + (DN_empty**2)
     error = np.sqrt(error) / denom
 
@@ -305,11 +306,10 @@ def statistical(DN_full, DN_empty, denom):
 
 def get_error_bars(y, mc_rec_y, thrown_y, stat_error):
     F = mc_rec_y/thrown_y
-    error = (thrown_y-mc_rec_y)*mc_rec_y
-    error = error / (thrown_y**3)
-    error = np.sqrt(error)
-    error = y*(error/F)
-    # error = (error/F)
+
+    dF = ((thrown_y - mc_rec_y) * mc_rec_y) / (thrown_y**3)
+
+    error = np.sqrt(dF)/F
 
     error_bar = np.sqrt(error**2 + stat_error**2)
 

@@ -283,6 +283,7 @@ Garys binning
   std::array<std::array<TH2D_ptr, 3>, NUM_SECTORS> hadron_fid_xy_sec_hist;
   TH1D* hadron_fid_sec_slice[NUM_SECTORS][FID_SLICES];
   std::array<TH2D_ptr, 3> hadron_fid_hist;
+  std::array<TH2D_ptr, 3> hadron_fid_hist_nocut;
   std::array<TH2D_ptr, 3> hadron_fid_xy_hist;
 
   std::vector<TH2D_ptr> cerenkov_fid;
@@ -475,6 +476,7 @@ Garys binning
   void Fill_electron_fid_anti(const std::shared_ptr<Branches>& _data, const std::shared_ptr<Reaction>& _r);
   void Fill_neutron_fid(float theta, float phi, int sector);
   void Fill_hadron_fid(const std::shared_ptr<Branches>& _data, int part_num, int id);
+  void Fill_hadron_fid_precut(const std::shared_ptr<Branches>& _data, int part_num, int id);
   void Fill_hadron_fid_pip(const std::shared_ptr<Branches>& _data, const std::shared_ptr<Reaction>& _event,
                            int part_num);
   void Fid_Write();
