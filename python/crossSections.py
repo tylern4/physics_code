@@ -289,11 +289,11 @@ if __name__ == "__main__":
     if args.highw:
         w_bins = w_bins_k
         q2_bins = q2_bins_k
-        bins = 6
+        bins = 10
     else:
         w_bins = w_bins_e99
         q2_bins = q2_bins_e99
-        bins = 12
+        bins = 10
 
     # Make bins in the dataframes from the bins above
     _rec = prep_for_ana(rec, w_bins, q2_bins, theta_bins)
