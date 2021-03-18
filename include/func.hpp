@@ -51,6 +51,13 @@ bool fid_chern_mc(float x, float y);
 float log_sqrt_pol1(std::vector<double> params, float p);
 float log_pol2(std::vector<double> params, float p);
 
+bool pip_sec1_cut1(float p, float theta);
+bool pip_sec2_cut1(float p, float theta);
+bool pip_sec3_cut1(float p, float theta);
+bool pip_sec4_cut1(float p, float theta);
+bool pip_sec5_cut1(float p, float theta);
+bool pip_sec6_cut1(float p, float theta);
+
 }  // namespace func
 
 #endif

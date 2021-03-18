@@ -163,51 +163,34 @@ bool Cuts::Hardon_fid_arjun(int part) {
   float theta = physics::theta_calc(_data->cz(part));
   float theta_rad = physics::theta_calc_rad(_data->cz(part));
   float pip_p = _data->p(part);
+  bool _is_pip = true;
 
   float phi_c = hardon_fid_phi(part);
   int sector = _data->dc_sect(part);
   if (sector == 0) return false;
 
-  // Theta min cuts per sector
-  if (theta_rad < 0.174533) return false;
+  // // Theta min cuts per sector
+  // if (theta_rad < 0.174533) return false;
 
-  if (sector == 4 || sector == 5)
-    if (theta_rad < 0.2) return false;
+  // if (sector == 4 || sector == 5)
+  //   if (theta_rad < 0.2) return false;
 
-  if (sector == 3)
-    if (theta_rad < 0.314159) return false;
+  // if (sector == 3)
+  //   if (theta_rad < 0.314159) return false;
 
-  // Theta max cuts per sector
-  if (theta_rad > 1.35) return false;
-  if (sector == 1)
-    if (theta_rad > 1.45) return false;
-
-  // min momentum pip cuts
+  // Min Momentum Cut
   if (pip_p < 0.18) return false;
+  if (sector == 1) _is_pip &= func::pip_sec1_cut1(pip_p, theta);
+  if (sector == 2) _is_pip &= func::pip_sec2_cut1(pip_p, theta);
+  if (sector == 3) _is_pip &= func::pip_sec3_cut1(pip_p, theta);
+  if (sector == 4) _is_pip &= func::pip_sec4_cut1(pip_p, theta);
+  if (sector == 5) _is_pip &= func::pip_sec5_cut1(pip_p, theta);
+  if (sector == 6) _is_pip &= func::pip_sec6_cut1(pip_p, theta);
 
-  // if (sector == 1) {
-  //   if (pip_p > 0.255 && pip_p < 0.285) return false;
-  //   if (pip_p > 0.378 && pip_p < 0.445) return false;
-  // }
+  _is_pip &= phi_c >= hadron_fid_phi_min(theta, sector - 1);
+  _is_pip &= phi_c <= hadron_fid_phi_max(theta, sector - 1);
 
-  // if (sector == 2) {
-  //   if (pip_p > 0.37 && pip_p < 0.4) return false;
-  // }
-
-  // if (sector == 3) {
-  //   if (pip_p > 0.28 && pip_p < 0.32) return false;
-  // }
-
-  // if (sector == 4) {
-  //   if (pip_p > 0.44 && pip_p < 0.47) return false;
-  // }
-
-  // auto junk = physics::phi_calc(_data->cx(part), _data->cy(part));
-  // if (junk > -180 && junk < -50) std::cout << sector << "\t" << sector << std::endl;
-
-  if (phi_c >= hadron_fid_phi_min(theta, sector - 1) && phi_c <= hadron_fid_phi_max(theta, sector - 1)) return true;
-
-  return false;
+  return _is_pip;
 }
 
 bool Cuts::Pip(short part) {

@@ -79,7 +79,7 @@ int radCorr(const std::string &norad_root, const std::string &rad_root) {
     auto Q2 = Q2_calc(e_mu, e_mu_prime);
     wVsQ2_norad->Fill(W, Q2);
     if (std::isnan(W) || std::isnan(Q2)) continue;
-    myfile << "norad," << W << "," << Q2 << "\n";
+    myfile << "norad," << W << "," << Q2 << "," << e_mu_prime.Theta() << "," << e_mu_prime.Phi() << "\n";
   }
 
   auto radChain = std::make_shared<TChain>("h10");
@@ -102,7 +102,7 @@ int radCorr(const std::string &norad_root, const std::string &rad_root) {
     auto Q2 = Q2_calc(e_mu, e_mu_prime);
     wVsQ2_rad->Fill(W, Q2);
     if (std::isnan(W) || std::isnan(Q2)) continue;
-    myfile << "rad," << W << "," << Q2 << "\n";
+    myfile << "rad," << W << "," << Q2 << "," << e_mu_prime.Theta() << "," << e_mu_prime.Phi() << "\n";
   }
 
   TCanvas *c1 = new TCanvas("c1", "c1", 800, 600);

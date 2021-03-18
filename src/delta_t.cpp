@@ -44,7 +44,7 @@ float Delta_T::Get_dt_K(int part) { return _kaon_array.at(part); }
 float Delta_T::Get_vertex(int part) { return _vertex; }
 
 void Delta_T::delta_t_hists(const std::shared_ptr<Histogram> &hists) {
-  auto dt_cut = std::make_unique<Cuts>(_data);
+  auto dt_cut = std::make_unique<e1d_Cuts>(_data);
   float sct, scr, mom;
   int ID, charge, sc_paddle, sc_sector;
 

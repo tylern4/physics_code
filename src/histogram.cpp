@@ -1323,6 +1323,8 @@ void Histogram::Fill_electron_fid(const std::shared_ptr<Branches> &_data, const 
   float phi = physics::phi_calc(_data->cx(0), _data->cy(0));
   int sector = _data->dc_sect(0);
 
+  if (theta < 5) return;
+
   electron_fid_hist->Fill(phi, theta);
   fid_xy_hist->Fill(_data->dc_ysc(0), _data->dc_xsc(0));
   if (sector == 0 || sector > NUM_SECTORS) {

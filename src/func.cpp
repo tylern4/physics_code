@@ -212,3 +212,44 @@ float func::log_pol2(std::vector<double> params, float p) {
   float y = params[0] * log(params[1] * p) + params[2] * p * p + params[3] * p + params[4];
   return y;
 }
+
+bool func::pip_sec1_cut1(float p, float theta) {
+  float s = (300 * p * p * p - 300 * p * p + 497.462 * p + 15) * exp(-2.15 * p) + 14.3;
+  if (theta < s) return true;
+  return false;
+}
+
+bool func::pip_sec2_cut1(float p, float theta) {
+  float x = p + 0.1;
+  float s = (300 * x * x * x - 300 * x * x + 500 * x - 35) * exp(-2.15 * x) + 14.3;
+  if (theta < s) return true;
+  return false;
+}
+
+bool func::pip_sec3_cut1(float p, float theta) {
+  float x = p - 0.01;
+  float s = (300 * x * x * x - 300 * x * x + 500 * x - 3) * exp(-2.15 * x) + 14.3;
+  if (theta < s) return true;
+  return false;
+}
+
+bool func::pip_sec4_cut1(float p, float theta) {
+  float x = p - 0.01;
+  float s = (300 * x * x * x - 300 * x * x + 500 * x - 3) * exp(-2.15 * x) + 14.3;
+  if (theta < s) return true;
+  return false;
+}
+
+bool func::pip_sec5_cut1(float p, float theta) {
+  float x = p - 0.01;
+  float s = (300 * x * x * x - 300 * x * x + 500 * x - 34) * exp(-2.15 * x) + 14.3;
+  if (theta < s) return true;
+  return false;
+}
+
+bool func::pip_sec6_cut1(float p, float theta) {
+  float x = p + 0.03;
+  float s = (300 * x * x * x - 300 * x * x + 500 * x - 20) * exp(-2.15 * x) + 14.3;
+  if (theta < s) return true;
+  return false;
+}
