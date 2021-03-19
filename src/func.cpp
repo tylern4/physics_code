@@ -253,3 +253,12 @@ bool func::pip_sec6_cut1(float p, float theta) {
   if (theta < s) return true;
   return false;
 }
+
+bool func::thetaMin(float p, float theta) {
+  float par[4] = {2.5, 4, 0.001, 4.8};
+  float ans = par[0] + (par[1] / (p + par[2])) + par[3] * p;
+  if (ans > theta * DEG2RAD)
+    return true;
+  else
+    return false;
+}

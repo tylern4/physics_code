@@ -9,6 +9,7 @@
 #include "TMath.h"
 #include "TSpline.h"
 #include "VectorizedTMath.h"
+#include "constants.hpp"
 
 namespace func {
 ROOT::Double_v ec_fit_func(const ROOT::Double_v *x, const double *par);
@@ -57,6 +58,8 @@ bool pip_sec3_cut1(float p, float theta);
 bool pip_sec4_cut1(float p, float theta);
 bool pip_sec5_cut1(float p, float theta);
 bool pip_sec6_cut1(float p, float theta);
+
+bool thetaMin(float p, float theta);
 
 }  // namespace func
 

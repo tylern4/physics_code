@@ -187,6 +187,8 @@ bool Cuts::Hardon_fid_arjun(int part) {
   if (sector == 5) _is_pip &= func::pip_sec5_cut1(pip_p, theta);
   if (sector == 6) _is_pip &= func::pip_sec6_cut1(pip_p, theta);
 
+  _is_pip &= func::thetaMin(pip_p, theta);
+
   _is_pip &= phi_c >= hadron_fid_phi_min(theta, sector - 1);
   _is_pip &= phi_c <= hadron_fid_phi_max(theta, sector - 1);
 
