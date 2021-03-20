@@ -360,6 +360,8 @@ class Yeilds {
       short pip_num = -1;
       auto check = std::make_unique<CutType>(data);
       if (!check->isElectron()) continue;
+      if (!check->fid_chern_cut()) continue;
+
       auto event = std::make_shared<Reaction>(data, _beam_energy, nullptr);
       for (int part_num = 1; part_num < data->gpart(); part_num++) {
         if (check->Pip(part_num)) {
@@ -372,12 +374,7 @@ class Yeilds {
       short e_sector = data->dc_sect(0);
       if (e_sector == 0 || e_sector > NUM_SECTORS || e_sector == int(NULL)) continue;
 
-      if (pip_num == -1) continue;
-      short pip_sector = data->dc_sect(pip_num);
-      if (pip_sector == 0 || pip_sector > NUM_SECTORS || pip_sector == int(NULL)) continue;
-      if (data->p(pip_num) == 0) continue;
-
-      if (event->W() < 1.0 || event->W() > 1.8) continue;
+      // if (event->W() < 1.0 || event->W() > 1.8) continue;
 
       event->boost();
 
@@ -387,12 +384,24 @@ class Yeilds {
       csv_buffer.e_p = data->p(0);
       csv_buffer.e_theta = physics::theta_calc_rad(data->cz(0));
       csv_buffer.e_phi = physics::phi_calc_rad(data->cx(0), data->cy(0));
-      csv_buffer.pip_sector = pip_sector;
-      csv_buffer.pip_p = data->p(pip_num);
-      csv_buffer.pip_theta = physics::theta_calc_rad(data->cz(pip_num));
-      csv_buffer.pip_phi = physics::phi_calc_rad(data->cx(pip_num), data->cy(pip_num));
-      csv_buffer.pip_theta_star = event->Theta_star();
-      csv_buffer.pip_phi_star = event->Phi_star();
+      if (pip_num != -1) {
+        short pip_sector = data->dc_sect(pip_num);
+        if (pip_sector == 0 || pip_sector > NUM_SECTORS || pip_sector == int(NULL)) continue;
+        if (data->p(pip_num) == 0) continue;
+        csv_buffer.pip_sector = pip_sector;
+        csv_buffer.pip_p = data->p(pip_num);
+        csv_buffer.pip_theta = physics::theta_calc_rad(data->cz(pip_num));
+        csv_buffer.pip_phi = physics::phi_calc_rad(data->cx(pip_num), data->cy(pip_num));
+        csv_buffer.pip_theta_star = event->Theta_star();
+        csv_buffer.pip_phi_star = event->Phi_star();
+      } else {
+        csv_buffer.pip_sector = -1;
+        csv_buffer.pip_p = NAN;
+        csv_buffer.pip_theta = NAN;
+        csv_buffer.pip_phi = NAN;
+        csv_buffer.pip_theta_star = NAN;
+        csv_buffer.pip_phi_star = NAN;
+      }
 
       _multi_threaded_csv->write(csv_buffer.print());
     }

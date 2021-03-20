@@ -59,6 +59,7 @@ int main(int argc, char **argv) {
     }
     size_t num_events = (size_t)data_chain->GetEntries();
     total += dh->Run_fidFitsPip<e1d_Cuts>(data_chain, num);
+    // total += dh->Run_fidFitsPip<Cuts>(data_chain, num);
 
     return total;
   };

@@ -1271,14 +1271,14 @@ void Histogram::makeHists_fid() {
     electron_theta_star_p[sec_i] = std::make_shared<TH2D>(
         Form("elec_theta_star_p_%d", sec_i + 1), Form("elec_theta_star_p_%d", sec_i + 1), BINS, 0, 4.8, BINS, 0, M_PI);
     pip_theta_p[sec_i] = std::make_shared<TH2D>(Form("pip_theta_p_%d", sec_i + 1), Form("pip_theta_p_%d", sec_i + 1),
-                                                BINS, 0, 4.8, BINS, 0, 2.5);
+                                                150, 0, 3.5, 150, 0, 2.5);
     pip_theta_star_p[sec_i] = std::make_shared<TH2D>(
         Form("pip_theta_star_p_%d", sec_i + 1), Form("pip_theta_star_p_%d", sec_i + 1), BINS, 0, 3.8, BINS, 0, M_PI);
 
     electron_theta_p_precut[sec_i] = std::make_shared<TH2D>(
         Form("elec_theta_p_nocut_%d", sec_i + 1), Form("elec_theta_p_nocut_%d", sec_i + 1), BINS, 0, 4.8, BINS, 0, 1.5);
     pip_theta_p_precut[sec_i] = std::make_shared<TH2D>(
-        Form("pip_theta_p_nocut_%d", sec_i + 1), Form("pip_theta_p_nocut_%d", sec_i + 1), BINS, 0, 4.8, BINS, 0, 2.5);
+        Form("pip_theta_p_nocut_%d", sec_i + 1), Form("pip_theta_p_nocut_%d", sec_i + 1), 150, 0, 3.5, 150, 0, 2.5);
 
     cerenkov_fid[sec_i] = std::make_shared<TH2D>(Form("fid_cher_xy_%d", sec_i + 1), Form("fid_cher_xy_%d", sec_i + 1),
                                                  BINS, -150, 150, BINS, 0, 300);

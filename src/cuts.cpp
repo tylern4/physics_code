@@ -81,7 +81,7 @@ bool Cuts::check_banks() {
 bool Cuts::isElectron() {
   bool _elec = true;
   _elec &= Cuts::check_banks();
-  _elec &= _data->nphe(0) > 20;
+  _elec &= _data->nphe(0) > 10;
 
   // Cut out low ec inner
   _elec &= (_data->ec_ei(0) >= 0.05);
@@ -93,6 +93,7 @@ bool Cuts::isElectron() {
 
 bool e1d_Cuts::isElectron() {
   bool _elec = true;
+  Set_elec_fid();
   _elec &= Cuts::isElectron();
   _elec &= e1d_Cuts::Beam_cut();
   // Sampling fraction cut
@@ -104,19 +105,32 @@ bool e1d_Cuts::isElectron() {
   short sec = _data->dc_sect(0);
   float t = physics::theta_calc_rad(_data->cz(0));
 
-  // Hand cuts for each sector
+  // // Hand cuts for each sector
   if (sec == 5) {
-    if (t > 0.59 && t < 0.005 * t + 0.67) return false;
-    if (t > 0.455 && t < 0.475) return false;
-    if (t > 0.005 * t + 0.335 && t < 0.005 * t + 0.355) return false;
+    _elec &= !(t >= 0.00006 * _phi_cent * _phi_cent + 0.0005 * _phi_cent + 0.59 &&
+               t <= 0.00005 * _phi_cent * _phi_cent + 0.0006 * _phi_cent + 0.65);
+
+    _elec &= !(t >= 0.00008 * _phi_cent * _phi_cent + 0.0005 * _phi_cent + 0.456 &&
+               t <= 0.00008 * _phi_cent * _phi_cent + 0.0005 * _phi_cent + 0.48);
+
+    _elec &= !(t >= 0.00005 * _phi_cent * _phi_cent + 0.0 * _phi_cent + 0.36 &&
+               t <= 0.00005 * _phi_cent * _phi_cent + 0.0 * _phi_cent + 0.375);
   }
 
-  if (sec == 4) {
-    if (t > 0.0025 * t * t - 0.05 * t + 0.65 && t < 0.0025 * t * t - 0.05 * t + 0.68) return false;
-  }
+  // if (sec == 4) {
+  //   if (t > 0.0025 * t * t - 0.05 * t + 0.65 && t < 0.0025 * t * t - 0.05 * t + 0.68) return false;
+  // }
+
+  // Bottom cut
+  // _elec &= (t > 0.0005 * _phi_cent * _phi_cent + 0.285);
+
   // From MC
   if (sec == 3) {
-    if (t > 0.38 && t < 0.41) return false;
+    _elec &= !(t >= -0.00002 * _phi_cent * _phi_cent + 0.0003 * _phi_cent + 0.38 &&
+               t <= 0.000045 * _phi_cent * _phi_cent + 0.395);
+  }
+  if (sec == 1) {
+    _elec &= !(t >= -0.000045 * _phi_cent * _phi_cent + 0.345 && t <= 0.000045 * _phi_cent * _phi_cent + 0.355);
   }
 
   return _elec;
@@ -170,24 +184,35 @@ bool Cuts::Hardon_fid_arjun(int part) {
   if (sector == 0) return false;
 
   // // Theta min cuts per sector
-  // if (theta_rad < 0.174533) return false;
+  if (theta_rad < 0.174533) return false;
 
-  // if (sector == 4 || sector == 5)
-  //   if (theta_rad < 0.2) return false;
+  if (sector == 3)
+    if (theta_rad < 0.314159) return false;
 
-  // if (sector == 3)
-  //   if (theta_rad < 0.314159) return false;
+  // // Top line cut
+  if (pip_p > 0.25) {
+    float x = (pip_p - 0.2);
+    float s = (pow(x, 0.02) * 210 - 100) * exp(-0.5 * x) - 10;
+    _is_pip &= (theta < s);
+  }
 
   // Min Momentum Cut
   if (pip_p < 0.18) return false;
-  if (sector == 1) _is_pip &= func::pip_sec1_cut1(pip_p, theta);
-  if (sector == 2) _is_pip &= func::pip_sec2_cut1(pip_p, theta);
-  if (sector == 3) _is_pip &= func::pip_sec3_cut1(pip_p, theta);
-  if (sector == 4) _is_pip &= func::pip_sec4_cut1(pip_p, theta);
-  if (sector == 5) _is_pip &= func::pip_sec5_cut1(pip_p, theta);
-  if (sector == 6) _is_pip &= func::pip_sec6_cut1(pip_p, theta);
 
-  _is_pip &= func::thetaMin(pip_p, theta);
+  if (sector == 1)
+    _is_pip &= func::pip_sec1_cut1(pip_p, theta);
+  else if (sector == 2)
+    _is_pip &= func::pip_sec2_cut1(pip_p, theta);
+  else if (sector == 3)
+    _is_pip &= func::pip_sec3_cut1(pip_p, theta);
+  else if (sector == 4)
+    _is_pip &= func::pip_sec4_cut1(pip_p, theta);
+  else if (sector == 5)
+    _is_pip &= func::pip_sec5_cut1(pip_p, theta);
+  else if (sector == 6)
+    _is_pip &= func::pip_sec6_cut1(pip_p, theta);
+
+  _is_pip &= func::thetaMin(pip_p, theta_rad);
 
   _is_pip &= phi_c >= hadron_fid_phi_min(theta, sector - 1);
   _is_pip &= phi_c <= hadron_fid_phi_max(theta, sector - 1);
