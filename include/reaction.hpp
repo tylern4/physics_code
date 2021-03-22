@@ -119,7 +119,9 @@ class Reaction {
   inline float Q2() { return _Q2; }
   inline float xb() { return _xb; }
 
-  inline float photon_flux() { return _photon_flux->GetVirtualPhotonFlux(); }
+  inline float photon_flux() {
+    return NAN;  //_photon_flux->GetVirtualPhotonFlux();
+  }
 
   inline float Theta_star() {
     if (!_boosted) boost();

@@ -236,64 +236,43 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
         ax[a][b].errorbar(
             x, y, yerr=stats.sem(y), fmt=".", zorder=1)
 
-        if lmfit_fitter:
-            peak = PseudoVoigtModel(prefix="peak_")
-            pars = peak.guess(y, x=x)
-            background = GaussianModel(prefix="back_")
-            pars.update(background.make_params())
-            model = peak + background
+        peak = PseudoVoigtModel(prefix="peak_")
+        pars = peak.guess(y, x=x)
+        background = GaussianModel(prefix="back_")
+        pars.update(background.make_params())
+        model = peak + background
 
-            out = model.fit(y, pars, x=x)
-            xs = np.linspace(0.3, 1.5, 1000)
-            comps = out.eval_components(x=xs)
-            out.params.pretty_print()
-            ys = out.eval(params=out.params, x=xs)
+        out = model.fit(y, pars, x=x)
+        xs = np.linspace(0.3, 1.5, 1000)
+        comps = out.eval_components(x=xs)
+        out.params.pretty_print()
+        ys = out.eval(params=out.params, x=xs)
 
-            plt.plot(xs, comps['peak_'],
-                     'r-', label='Peak Component')
-            plt.plot(xs, comps['back_'],
-                     'k--', label='Background Component')
+        plt.plot(xs, comps['peak_'],
+                 'r-', label='Peak Component')
+        plt.plot(xs, comps['back_'],
+                 'k--', label='Background Component')
+        plt.plot(xs, ys, 'r-', linewidth=2.0, alpha=0.4,
+                 label=f"Peak Center: {out.params['peak_center'].value:0.4f}")
 
-            plt.plot(xs, ys, 'r-', linewidth=2.0, alpha=0.4,
-                     label=f"Peak Center: {out.params['peak_center'].value:0.4f}")
-            plt.axvline(out.params['peak_center']+sigma *
-                        out.params['peak_fwhm'] / 2.355, c='r', alpha=0.4)
-            plt.axvline(out.params['peak_center']-sigma *
-                        out.params['peak_fwhm'] / 2.355, c='r', alpha=0.4)
-            ax[a][b].plot(xs, ys, 'r-', linewidth=2.0,
-                          alpha=0.6, label=f"Sector {sec}")
-            ax[a][b].axvline(out.params['peak_center']+sigma *
-                             out.params['peak_fwhm'] / 2.355, c='r', alpha=0.6)
-            ax[a][b].axvline(out.params['peak_center']-sigma *
-                             out.params['peak_fwhm'] / 2.355, c='r', alpha=0.6)
-            data[sec] = (out.params['peak_center']-sigma*out.params['peak_fwhm'] / 2.355,
-                         out.params['peak_center']+sigma*out.params['peak_fwhm'] / 2.355)
-        else:
-            popt_g, pcov_g = curve_fit(gauss, x, y, maxfev=8000)
-            plt.plot(x, gauss(x, *popt_g), linewidth=2.0, alpha=0.4)
+        min_cut = out.params['peak_center'] - \
+            sigma * out.params['peak_fwhm'] / 2.355
+        max_cut = out.params['peak_center'] + \
+            sigma * out.params['peak_fwhm'] / 2.355
+        max_cut = max_cut if max_cut <= 1 else 1.0
 
-            p0 = [popt_g[0], popt_g[1], popt_g[2], 1.0, 1.0]
-            popt, pcov = curve_fit(degauss, x, y, maxfev=8000)
+        plt.axvline(max_cut, c='r', alpha=0.4)
+        plt.axvline(min_cut, c='r', alpha=0.4)
 
-            plt.plot(x, degauss(x, *popt), c="#9467bd",
-                     linewidth=2.0, alpha=0.4)
-
-            ax[a][b].plot(x, degauss(
-                x, *popt), c="#9467bd", linewidth=3.0, label=f"Sector {sec}")
-
-            # find the FWHM
-            xs = np.linspace(0.7, 1.5, 100000)
-            hmx = half_max_x(xs, degauss(xs, *popt))
-            fwhm = hmx[1] - hmx[0]
-            plt.axvline(popt[1] + sigma * fwhm / 2.355, c="#9467bd")
-            plt.axvline(popt[1] - sigma * fwhm / 2.355, c="#9467bd")
-
-            ax[a][b].axvline(
-                popt[1] + sigma * fwhm / 2.355, c="#9467bd", linewidth=3.0)
-            ax[a][b].axvline(
-                popt[1] - sigma * fwhm / 2.355, c="#9467bd", linewidth=3.0)
-            data[sec] = (popt[1] - sigma * fwhm / 2.355,
-                         popt[1] + sigma * fwhm / 2.355)
+        ax[a][b].plot(xs, comps['peak_'],
+                      'r-', label='Peak Component')
+        ax[a][b].plot(xs, comps['back_'],
+                      'k--', label='Background Component')
+        ax[a][b].plot(xs, ys, 'r-', linewidth=2.0,
+                      alpha=0.6, label=f"Sector {sec}")
+        ax[a][b].axvline(max_cut, c='r', alpha=0.6)
+        ax[a][b].axvline(min_cut, c='r', alpha=0.6)
+        data[sec] = (min_cut, max_cut)
 
         ax[a][b].legend(loc='upper right')
         ax[a][b].set_xlabel(f"Mass $[GeV^2]$")
@@ -899,6 +878,7 @@ if __name__ == "__main__":
 
     w_bins = w_bins_e99
     q2_bins = q2_bins_e99
+
     rec = prep_for_ana(rec, w_bins, q2_bins, theta_bins)
     mc_rec = prep_for_ana(mc_rec, w_bins, q2_bins, theta_bins)
     mc_thrown = prep_for_ana(mc_thrown, w_bins, q2_bins, theta_bins)

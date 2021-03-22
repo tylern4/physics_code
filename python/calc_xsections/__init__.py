@@ -211,6 +211,8 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4):
     data = {}
 
     for sec in range(1, 7):
+        if np.sum(df.electron_sector == sec) == 0:
+            continue
         y, x = bh.numpy.histogram(
             df[df.electron_sector == sec].mm2, bins=500, density=True
         )
@@ -223,8 +225,12 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4):
         model = peak * background
         out = model.fit(y, pars, x=x)
         xs = np.linspace(0.3, 1.5, 1000)
-        data[sec] = (out.params['peak_center']-sigma*out.params['peak_fwhm'] / 2.355,
-                     out.params['peak_center']+sigma*out.params['peak_fwhm'] / 2.355)
+        min_cut = out.params['peak_center'] - \
+            sigma*out.params['peak_fwhm'] / 2.355
+        max_cut = out.params['peak_center'] + \
+            sigma*out.params['peak_fwhm'] / 2.355
+        data[sec] = (min_cut,
+                     max_cut if max_cut <= 1.0 else 1.0)
 
     return data
 

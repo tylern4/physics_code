@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
   for (int i = 2; i < argc; i++) infilenames[i % NUM_THREADS].push_back(argv[i]);
 
   std::future<size_t> mom_corrections[NUM_THREADS];
-  auto mom_corr = std::make_shared<MomCorr>();
+  auto mom_corr = nullptr;  // std::make_shared<MomCorr>();
   int i = 0;
   for (auto &fils : infilenames) mom_corrections[i++] = std::async(mom_correction_csv, fils, syncFile, mom_corr);
   size_t total = 0;

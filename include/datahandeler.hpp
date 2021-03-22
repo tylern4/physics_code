@@ -59,7 +59,8 @@ class DataHandler {
     if (check->Cuts::isElectron()) _hists->EC_fill(_data->etot(0), _data->p(0));
 
     auto event = std::make_shared<Reaction>(_data, _beam_energy, _mom_corr);
-    // if (!(event->W() >= 1.1 && event->W() < 1.85)) return;
+    if (!(event->W() >= 1.0 && event->W() < 1.85)) return;
+    if (!(event->Q2() >= 1.0 && event->Q2() < 3.55)) return;
     _hists->Fill_Beam_Position(_data);
     // if (check->Cuts::check_banks()) _hists->EC_inout(_data->ec_ei(0), _data->ec_eo(0));
 

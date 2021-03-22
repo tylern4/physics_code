@@ -218,7 +218,7 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                         ct_ax[theta.left].errorbar(x, y, yerr=error_bar,
                                                    marker=marker, linestyle="",
                                                    zorder=1,
-                                                   label=f"{plot_label[theta.left]}",
+                                                   label=f"{b}",
                                                    markersize=5, alpha=0.8)
 
                         if cuts == 0:
