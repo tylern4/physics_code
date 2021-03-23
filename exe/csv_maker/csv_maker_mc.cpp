@@ -60,9 +60,11 @@ int main(int argc, char **argv) {
   // PRINT_TIMEING(start, "Read in files: ");
   std::string name = outputfile + "_e1d.csv";  //+ "_" + to_string(num)
   auto csv_file = std::make_shared<SyncFile>(name);
+  // load mometntum corrections
+  auto mom_corr = nullptr;  // std::make_shared<MomCorr>();
 
-  auto e1dworker = [&csv_file, &start](auto &&fls, auto &&num) mutable {
-    auto dh = std::make_shared<mcYeilds>(csv_file);
+  auto e1dworker = [&csv_file, &start, &mom_corr](auto &&fls, auto &&num) mutable {
+    auto dh = std::make_shared<mcYeilds>(csv_file, mom_corr);
     size_t total = 0;
 
     auto data_chain = std::make_shared<TChain>("h10");

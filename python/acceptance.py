@@ -26,6 +26,7 @@ import matplotlib.pyplot as plt
 from lmfit import Model, Parameters
 from lmfit.models import *
 from calc_xsections import *
+from nicks_plot_utils import *
 
 plt.rcParams.update({'mathtext.fontset': 'stix'})
 
@@ -224,11 +225,13 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
         6: [1, 2],
     }
     for sec in range(1, 7):
+        if np.sum(df.electron_sector == sec) == 0:
+            continue
         a = which_plot[sec][0]
         b = which_plot[sec][1]
         plt.figure(figsize=(12, 9))
         y, x = bh.numpy.histogram(
-            df[df.electron_sector == sec].mm2, bins=500, density=True
+            df[df.electron_sector == sec].mm2, bins=150, density=True
         )
         x = (x[1:] + x[:-1]) / 2
 
@@ -249,9 +252,9 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
         ys = out.eval(params=out.params, x=xs)
 
         plt.plot(xs, comps['peak_'],
-                 'r-', label='Peak Component')
+                 '-', label='Peak Component')
         plt.plot(xs, comps['back_'],
-                 'k--', label='Background Component')
+                 '--', label='Background Component')
         plt.plot(xs, ys, 'r-', linewidth=2.0, alpha=0.4,
                  label=f"Peak Center: {out.params['peak_center'].value:0.4f}")
 
@@ -264,12 +267,13 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
         plt.axvline(max_cut, c='r', alpha=0.4)
         plt.axvline(min_cut, c='r', alpha=0.4)
 
-        ax[a][b].plot(xs, comps['peak_'],
-                      'r-', label='Peak Component')
-        ax[a][b].plot(xs, comps['back_'],
-                      'k--', label='Background Component')
-        ax[a][b].plot(xs, ys, 'r-', linewidth=2.0,
+        ax[a][b].plot(xs, ys, '-', linewidth=2.0,
                       alpha=0.6, label=f"Sector {sec}")
+        ax[a][b].plot(xs, comps['peak_'],
+                      '-', label='')
+        ax[a][b].plot(xs, comps['back_'],
+                      '--', label='')
+
         ax[a][b].axvline(max_cut, c='r', alpha=0.6)
         ax[a][b].axvline(min_cut, c='r', alpha=0.6)
         data[sec] = (min_cut, max_cut)
@@ -283,13 +287,13 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
         plt.xlabel(f"Mass $[GeV^2]$")
         plt.legend(loc='upper right')
         plt.title(
-            r"Missing Mass Squared $e ( p, \pi^{+} X ) e^{\prime}$ in sector "+str(sec))
+            r"Missing Mass Squared $e~( p, \pi^{+} X )~e^{\prime}$ in sector "+str(sec))
 
         plt.savefig(f"{out_folder}/cuts/MM2_cut_{sec}.png",
                     bbox_inches='tight')
 
     fig.suptitle(
-        r"Missing Mass Squared $e ( p, \pi^{+} X ) e^{\prime}$", fontsize=20)
+        r"Missing Mass Squared $e~( p, \pi^{+} X )~e^{\prime}$", fontsize=20)
     fig.savefig(f"{out_folder}/cuts/MM2_cut_all.png",
                 bbox_inches='tight')
     return data

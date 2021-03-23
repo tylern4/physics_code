@@ -214,7 +214,7 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4):
         if np.sum(df.electron_sector == sec) == 0:
             continue
         y, x = bh.numpy.histogram(
-            df[df.electron_sector == sec].mm2, bins=500, density=True
+            df[df.electron_sector == sec].mm2, bins=150, density=True
         )
         x = (x[1:] + x[:-1]) / 2
 
