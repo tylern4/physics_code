@@ -194,6 +194,15 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                                         zorder=1, label=f"{name}",
                                         markersize=10, alpha=0.4)
 
+                    for phi, cross, err in zip(x, y, error_bar):
+                        print(w.left, "&",
+                              w.right, "&",
+                              q2.left, "&",
+                              q2.right, "&",
+                              np.round(phi, 3), "&",
+                              np.round(cross, 5), "&",
+                              np.round(err, 5), "\\\\")
+
                     # Plot intergrated yeils to compare with/without fid cuts
                     try:
                         ax2.errorbar(x, (old_data.y * factor)/y, marker=marker,
