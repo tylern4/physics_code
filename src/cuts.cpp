@@ -103,7 +103,7 @@ bool e1d_Cuts::isElectron() {
   // Fid Cuts
   _elec &= fid_chern_cut();
   short sec = _data->dc_sect(0);
-  if (sec == 5) return false;
+  // if (sec == 5) return false;
   float t = physics::theta_calc_rad(_data->cz(0));
 
   // // Hand cuts for each sector
@@ -183,7 +183,7 @@ bool Cuts::Hardon_fid_arjun(int part) {
   float phi_c = hardon_fid_phi(part);
   int sector = _data->dc_sect(part);
   if (sector == 0) return false;
-  if (sector == 3) return false;
+  // if (sector == 3) return false;
 
   // // Theta min cuts per sector
   if (theta_rad < 0.174533) return false;
