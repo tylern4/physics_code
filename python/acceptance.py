@@ -685,7 +685,7 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins, name="reconstructed"):
 
     fig, ax = plt.subplots(figsize=(12, 9))
     h = ax.hist2d(rec.w.to_numpy(), rec.q2.to_numpy(),
-                  bins=200,
+                  bins=100,
                   range=[[np.min(w_bins), np.max(w_bins)],
                          [np.min(q2_bins), np.max(q2_bins)]],
                   )
@@ -745,7 +745,7 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins, name="reconstructed"):
     fig3, ax3 = plt.subplots(ncols=1, nrows=2, figsize=(
         16, 16), sharex=True, gridspec_kw={'hspace': 0.05})
     h = ax3[0].hist2d(rec.w.to_numpy(), rec.q2.to_numpy(),
-                      bins=200, range=[[np.min(w_bins), np.max(w_bins)], [np.min(q2_bins), np.max(q2_bins)]])
+                      bins=100, range=[[np.min(w_bins), np.max(w_bins)], [np.min(q2_bins), np.max(q2_bins)]])
 
     ax3[1].errorbar(x, y, yerr=stats.sem(y), linestyle="", marker=".", ms=10)
     ax3[1].set_xlabel(r"$W~[GeV]$", fontsize=30)
@@ -778,7 +778,7 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins, name="reconstructed"):
         H, xedges, yedges = bh.numpy.histogram2d(
             rec.cos_theta.to_numpy(),
             rec.phi.to_numpy(),
-            bins=(10, 24))
+            bins=(10, 12))
     except ValueError as ve:
         print(rec.cos_theta.to_numpy().size)
         print(rec.phi.to_numpy().size)

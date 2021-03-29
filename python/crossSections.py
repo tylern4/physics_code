@@ -192,6 +192,11 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                     error_bar = get_error_bars(
                         y, mc_rec_y, thrown_y, stat_error)
 
+                    errorCut = (error_bar > np.quantile(error_bar, 0.9))
+                    x = x[~errorCut]
+                    y = y[~errorCut]
+                    error_bar = error_bar[~errorCut]
+
                     ebar = ax.errorbar(x, y, yerr=error_bar,
                                        marker=marker, linestyle="",
                                        zorder=1, label=f"{name}",
