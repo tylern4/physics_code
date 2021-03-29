@@ -76,11 +76,14 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                 # Passes the plot section  at least once
                 pass_plotting = True
 
-                fig = plt.figure(
-                    figsize=(12, 9), constrained_layout=True)
-                gs = fig.add_gridspec(2, 1, height_ratios=[2, 1])
-                ax1 = fig.add_subplot(gs[0])
-                ax2 = fig.add_subplot(gs[1], sharex=ax1)
+                # fig = plt.figure(
+                #     figsize=(12, 9), constrained_layout=True)
+                # gs = fig.add_gridspec(2, 1, height_ratios=[2, 1])
+                # ax1 = fig.add_subplot(gs[0])
+                # ax2 = fig.add_subplot(gs[1], sharex=ax1)
+
+                fig, ax = plt.subplots(figsize=[8, 5])
+
                 maxs = 0.0
                 if overlap is not None:
                     for k, v in overlapSettings.items():
@@ -97,22 +100,22 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                                               & (overlap_df.experiment == k)]
                         if len(old_data) == 0:
                             continue
-                        ebar = ax1.errorbar(old_data.phi, old_data.y * factor, yerr=old_data.yerr,
-                                            marker=v['symbol'], linestyle="",
-                                            zorder=1, label=f"",
-                                            markersize=10, alpha=0.4, c=v['color'])
+                        ebar = ax.errorbar(old_data.phi, old_data.y * factor, yerr=old_data.yerr,
+                                           marker=v['symbol'], linestyle="",
+                                           zorder=1, label=f"{k}",
+                                           markersize=10, alpha=0.4, c=v['color'])
                         maxs = np.max(old_data.y * factor)*1.5
                         ct_ax[theta.left].errorbar(old_data.phi, old_data.y * factor, yerr=old_data.yerr,
                                                    marker=v['symbol'], linestyle="",
                                                    markersize=5, alpha=0.4, c=v['color'])
 
-                plot_maid_model(ax1, w, q2, theta, xs)
+                plot_maid_model(ax, w, q2, theta, xs, "MAID 2007")
                 maid_top = plot_maid_model(ct_ax[theta.left], w, q2, theta, xs)
 
                 binCenter = binCetnerCorrection(w, q2, theta, num_bins=bins)
 
                 cut_fids = {
-                    "Fiducial Cuts": 0,
+                    "E1D Data": 0,
                     # "All Data": 2,
                     # "Fid cuts False": 1,
                 }
@@ -189,38 +192,38 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                     error_bar = get_error_bars(
                         y, mc_rec_y, thrown_y, stat_error)
 
-                    ebar = ax1.errorbar(x, y, yerr=error_bar,
-                                        marker=marker, linestyle="",
-                                        zorder=1, label=f"{name}",
-                                        markersize=10, alpha=0.4)
+                    ebar = ax.errorbar(x, y, yerr=error_bar,
+                                       marker=marker, linestyle="",
+                                       zorder=1, label=f"{name}",
+                                       markersize=10, alpha=0.4)
 
-                    for phi, cross, err in zip(x, y, error_bar):
-                        print(w.left, "&",
-                              w.right, "&",
-                              q2.left, "&",
-                              q2.right, "&",
-                              np.round(phi, 3), "&",
-                              np.round(cross, 5), "&",
-                              np.round(err, 5), "\\\\")
+                    # for phi, cross, err in zip(x, y, error_bar):
+                    #     print(w.left, "&",
+                    #           w.right, "&",
+                    #           q2.left, "&",
+                    #           q2.right, "&",
+                    #           np.round(phi, 3), "&",
+                    #           np.round(cross, 5), "&",
+                    #           np.round(err, 5), "\\\\")
 
                     # Plot intergrated yeils to compare with/without fid cuts
-                    try:
-                        ax2.errorbar(x, (old_data.y * factor)/y, marker=marker,
-                                     linestyle="", zorder=1,
-                                     markersize=10, label=f"Ratio", alpha=0.4)
-                        # ax2.errorbar(x, data_y, marker=marker,
-                        #              linestyle="", zorder=1,
-                        #              markersize=10, label=f"Counts: {name}", alpha=0.4)
-                        # ax2.legend(loc='upper right')
-                    except ValueError:
-                        pass
+                    # try:
+                    #     ax2.errorbar(x, (old_data.y * factor)/y, marker=marker,
+                    #                  linestyle="", zorder=1,
+                    #                  markersize=10, label=f"Ratio", alpha=0.4)
+                    #     # ax2.errorbar(x, data_y, marker=marker,
+                    #     #              linestyle="", zorder=1,
+                    #     #              markersize=10, label=f"Counts: {name}", alpha=0.4)
+                    #     # ax2.legend(loc='upper right')
+                    # except ValueError:
+                    #     pass
 
-                    out = fit_model(ax1, model_new, x, y, xs,
-                                    ebar[0].get_color(), name)
-                    ax1.legend(loc='upper right')
-                    ax1.set_ylabel(
+                    out = fit_model(ax, model_new, x, y, xs,
+                                    ebar[0].get_color(), "")
+                    ax.legend(loc='upper right')
+                    ax.set_ylabel(
                         r'$\frac{\mathbf{d}\sigma}{\mathbf{d} \omega} \left[\frac{\mu b}{sr}\right]$')
-                    ax1.set_xlabel(r'$\phi_{\pi}^{*}$')
+                    ax.set_xlabel(r'$\phi_{\pi}^{*}$')
 
                     ct_ax[theta.left].errorbar(x, y, yerr=error_bar,
                                                marker=marker, linestyle="",
@@ -243,17 +246,18 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                             top = np.nan
 
                         if np.isnan(top) or np.isinf(top):
-                            ax1.set_ylim(bottom=0, top=1.0)
+                            ax.set_ylim(bottom=0, top=1.0)
                         else:
-                            ax1.set_ylim(bottom=0,
-                                         top=max(max(top, maid_top), maxs))
+                            ax.set_ylim(bottom=0,
+                                        top=max(max(top, maid_top), maxs))
                             ct_ax[theta.left].set_ylim(
                                 bottom=0.0,
                                 top=max(max(top, maid_top), maxs))
 
-                ax1.set_title(f"$W$ : {w} , $Q^2$ : {q2} $\\theta$ : {theta}")
+                ax.set_title(
+                    f"$W$ : {w} $~GeV~$, $Q^2$ : {q2} $~GeV^2~$, $\\theta$ : {theta}")
                 fig.savefig(f"{out_folder}/crossSections/w_{w.left:0.3f}_q2_{q2.left:0.3f}_theta_{theta.left}.png",
-                            bbox_inches='tight')
+                            bbox_inches='tight', dpi=400)
 
             if pass_plotting:
                 CosTfig.suptitle(

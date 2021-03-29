@@ -1,13 +1,17 @@
 from maid_interface import maid_2007_Npi as maid
 import numpy as np
 import pandas as pd
-from pyarrow import csv
+
 import time
 from lmfit import Model
 from lmfit.models import *
 from scipy.special import erfc
 from scipy.interpolate import interp1d
 import boost_histogram as bh
+
+from pyarrow import csv
+import pyarrow as pa
+pa.set_cpu_count(8)
 
 ENERGY = 4.81726
 EK = 5.499
@@ -24,10 +28,10 @@ overlapSettings = {"E99-107": {"name": "",
                                "color": 'r',
                                "symbol": '*',
                                "energy": E16},
-                   "kijun": {"name": "",
-                             "color": 'g',
-                             "symbol": 'd',
-                             "energy": EK, },
+                   "K. Park 2014": {"name": "",
+                                    "color": 'g',
+                                    "symbol": 'd',
+                                    "energy": EK, },
                    }
 
 which_plot = {
@@ -322,7 +326,7 @@ def get_error_bars(y, mc_rec_y, thrown_y, stat_error):
     return error_bar
 
 
-def plot_maid_model(ax, w, q2, theta, xs):
+def plot_maid_model(ax, w, q2, theta, xs, name=""):
     # Get bin centers
     _w = (w.left + w.right) / 2.0
     _q2 = (q2.left + q2.right) / 2.0
@@ -330,7 +334,7 @@ def plot_maid_model(ax, w, q2, theta, xs):
     # Get the cross section values from maid
     crossSections = get_maid_values(xs, _w, _q2, _theta)
     # _ax = ax.twinx()
-    ax.plot(xs, crossSections, c='r', linestyle='dotted')
+    ax.plot(xs, crossSections, c='r', linestyle='dotted', label=f"{name}")
     # ax.set_ylim(bottom=0, top=np.max(crossSections)*1.5)
 
     return np.max(crossSections)*1.8

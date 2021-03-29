@@ -58,7 +58,7 @@ struct fid_data : csv_data {
     out += std::to_string(phi) + ",";
     out += std::to_string(x) + ",";
     out += std::to_string(y) + ",";
-    out += type + "\n ";
+    out += type + "\n";
     return out;
   }
 };

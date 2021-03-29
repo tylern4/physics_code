@@ -185,6 +185,7 @@ class Reaction {
     } else {
       elastic = false;
     }
+    elastic &= !PPi0();
     return elastic;
   }
 

@@ -302,7 +302,7 @@ class Yeilds {
 
       chain->GetEntry(current_event);
       if (std::isnan(data->p(0))) continue;
-      auto event = std::make_shared<Reaction>(data, _beam_energy, nullptr);
+      auto event = std::make_shared<Reaction>(data, _beam_energy, _mom_corr);
       if (event->cc_x() == 0 || event->cc_y() == 0) continue;
       auto check = std::make_unique<CutType>(data);
 
@@ -318,8 +318,12 @@ class Yeilds {
       }
 
       std::string type = "other";
+
+      if (!event->elastic()) continue;
+
       if (event->channel()) type = "channel";
       if (event->PPi0()) type = "PPi0";
+      if (event->elastic()) type = "elastic";
 
       total++;
       fid_data csv_buffer;
@@ -362,7 +366,7 @@ class Yeilds {
       if (!check->isElectron()) continue;
       if (!check->fid_chern_cut()) continue;
 
-      auto event = std::make_shared<Reaction>(data, _beam_energy, nullptr);
+      auto event = std::make_shared<Reaction>(data, _beam_energy, _mom_corr);
       for (int part_num = 1; part_num < data->gpart(); part_num++) {
         if (check->Pip(part_num)) {
           pip_num = part_num;

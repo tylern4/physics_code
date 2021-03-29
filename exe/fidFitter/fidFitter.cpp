@@ -49,16 +49,18 @@ int main(int argc, char **argv) {
   std::string name = outputfile;  //+ "_" + to_string(num)
   auto csv_file = std::make_shared<SyncFile>(name);
   csv_file->write(fid_data::header());
+  auto mom_corr = std::make_shared<MomCorr>();
+
   // Worker function
-  auto e1dworker = [&csv_file](auto &&fls, auto &&num) mutable {
-    auto dh = std::make_shared<Yeilds>(csv_file);
+  auto e1dworker = [&csv_file, &mom_corr](auto &&fls, auto &&num) mutable {
+    auto dh = std::make_shared<Yeilds>(csv_file, mom_corr);
     size_t total = 0;
     auto data_chain = std::make_shared<TChain>("h10");
     for (auto &&f : fls) {
       data_chain->Add(f.c_str());
     }
     size_t num_events = (size_t)data_chain->GetEntries();
-    total += dh->Run_fidFits<e1d_Cuts>(data_chain, num);
+    total += dh->Run_fidFits<Cuts>(data_chain, num);
 
     return total;
   };
