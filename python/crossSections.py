@@ -198,22 +198,22 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                     #y = y[~errorCut]
                     #error_bar = error_bar[~errorCut]
 
-                    ebar = ax.errorbar(x[~errorCut], y[~errorCut], yerr=error_bar[~errorCut],
+                    ebar = ax.errorbar(x, y, yerr=error_bar,
                                        marker=marker, linestyle="",
                                        zorder=1, label=f"{name}",
                                        markersize=10, alpha=0.4)
 
-                    ax.errorbar(x[errorCut], y[errorCut], yerr=error_bar[errorCut],
-                                marker=marker, linestyle="",
-                                zorder=1, label=f"",
-                                markersize=10, alpha=0.5)
+                    # ax.errorbar(x[errorCut], y[errorCut], yerr=error_bar[errorCut],
+                    #             marker=marker, linestyle="",
+                    #             zorder=1, label=f"",
+                    #             markersize=10, alpha=0.5)
 
                     for phi, cross, err in zip(x, y, error_bar):
                         results.append({"w_left": w.left,
                                         "w_right": w.right,
                                         "q2_left": q2.left,
                                         "q2_right": q2.right,
-                                        "cos": theta.left,
+                                        "cos_theta": theta.left,
                                         "x": np.round(phi, 3),
                                         "y": np.round(cross, 5),
                                         "err": np.round(err, 5)})
