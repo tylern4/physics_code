@@ -17,6 +17,7 @@ plt.rcParams.update({'mathtext.fontset': 'stix'})
 
 
 def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, overlap=None, radcorr=None):
+    results = []
     if not os.path.exists(f'{out_folder}/crossSections'):
         os.makedirs(f'{out_folder}/crossSections')
     # Make a set of values from 0 to 2Pi for plotting
@@ -192,24 +193,30 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                     error_bar = get_error_bars(
                         y, mc_rec_y, thrown_y, stat_error)
 
-                    errorCut = (error_bar > np.quantile(error_bar, 0.9))
-                    x = x[~errorCut]
-                    y = y[~errorCut]
-                    error_bar = error_bar[~errorCut]
+                    errorCut = (error_bar > np.quantile(error_bar, 0.85))
+                    #x = x[~errorCut]
+                    #y = y[~errorCut]
+                    #error_bar = error_bar[~errorCut]
 
-                    ebar = ax.errorbar(x, y, yerr=error_bar,
+                    ebar = ax.errorbar(x[~errorCut], y[~errorCut], yerr=error_bar[~errorCut],
                                        marker=marker, linestyle="",
                                        zorder=1, label=f"{name}",
                                        markersize=10, alpha=0.4)
 
-                    # for phi, cross, err in zip(x, y, error_bar):
-                    #     print(w.left, "&",
-                    #           w.right, "&",
-                    #           q2.left, "&",
-                    #           q2.right, "&",
-                    #           np.round(phi, 3), "&",
-                    #           np.round(cross, 5), "&",
-                    #           np.round(err, 5), "\\\\")
+                    ax.errorbar(x[errorCut], y[errorCut], yerr=error_bar[errorCut],
+                                marker=marker, linestyle="",
+                                zorder=1, label=f"",
+                                markersize=10, alpha=0.5)
+
+                    for phi, cross, err in zip(x, y, error_bar):
+                        results.append({"w_left": w.left,
+                                        "w_right": w.right,
+                                        "q2_left": q2.left,
+                                        "q2_right": q2.right,
+                                        "cos": theta.left,
+                                        "x": np.round(phi, 3),
+                                        "y": np.round(cross, 5),
+                                        "err": np.round(err, 5)})
 
                     # Plot intergrated yeils to compare with/without fid cuts
                     # try:
@@ -271,6 +278,10 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                 CosTfig.savefig(f"{out_folder}/crossSections/cost_w_{w.left:0.3f}_q2_{q2.left:0.3f}.png",
                                 bbox_inches='tight', dpi=250)
 
+    output = pd.DataFrame(results)
+    print(output.head())
+    output.to_csv(f"{out_folder}/crossSections/results.csv")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Make Cross Sections")
@@ -292,7 +303,7 @@ if __name__ == "__main__":
 
     # Start to main
 
-    print("Start setup")
+    # print("Start setup")
     start = time.time_ns()
     # Load mc file
     mc_rec, mc_thrown = read_csv(args.mc_data_file_path)

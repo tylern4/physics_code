@@ -251,12 +251,15 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
         out.params.pretty_print()
         ys = out.eval(params=out.params, x=xs)
 
+        plt.plot(xs, ys, '-', linewidth=2.0,
+                 label="Total Fit",
+                 #  label=f"Peak Center: {out.params['peak_center'].value:0.4f}"
+                 )
+
         plt.plot(xs, comps['peak_'],
-                 '-', label='Peak Component')
+                 '--', label='Peak Component', linewidth=2.0, alpha=0.5)
         plt.plot(xs, comps['back_'],
-                 '--', label='Background Component')
-        plt.plot(xs, ys, 'r-', linewidth=2.0, alpha=0.4,
-                 label=f"Peak Center: {out.params['peak_center'].value:0.4f}")
+                 '--', label='Background Component', linewidth=2.0, alpha=0.5)
 
         min_cut = out.params['peak_center'] - \
             sigma * out.params['peak_fwhm'] / 2.355
@@ -290,12 +293,12 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
             r"Missing Mass Squared $e~( p, \pi^{+} X )~e^{\prime}$ in sector "+str(sec))
 
         plt.savefig(f"{out_folder}/cuts/MM2_cut_{sec}.png",
-                    bbox_inches='tight')
+                    bbox_inches='tight', transparent=True)
 
     fig.suptitle(
         r"Missing Mass Squared $e~( p, \pi^{+} X )~e^{\prime}$", fontsize=20)
     fig.savefig(f"{out_folder}/cuts/MM2_cut_all.png",
-                bbox_inches='tight')
+                bbox_inches='tight', transparent=True)
     return data
 
 
