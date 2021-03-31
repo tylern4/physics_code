@@ -269,7 +269,7 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                                 top=max(max(top, maid_top), maxs))
 
                 ax.set_title(
-                    f"$W$ : {w} $~GeV~$, $Q^2$ : {q2} $~GeV^2~$, $\cos(\\theta)$ : {theta}")
+                    f"$W~[{w.left:0.3f},{w.right:0.3f})~GeV~~Q^2~[{q2.left:0.3f}, {q2.right:0.3f})~GeV^2$, $\cos(\\theta)$ : [{theta.left:0.1f}, {theta.right:0.1f})")
                 fig.savefig(f"{out_folder}/crossSections/w_{w.left:0.3f}_q2_{q2.left:0.3f}_theta_{theta.left}.png",
                             bbox_inches='tight', dpi=400)
 
