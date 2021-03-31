@@ -293,7 +293,10 @@ def prep_for_ana(dataframe, w_bins, q2_bins, theta_bins):
 
 
 def make_cuts(dataframe, w, q2, theta):
-    return (dataframe.w_bin == w) & (dataframe.q2_bin == q2) & (dataframe.theta_bin == theta)
+    df = dataframe[dataframe.w_bin == w].copy()
+    df = df[df.q2_bin == q2]
+    df = df[df.theta_bin == theta]
+    return df
 
 
 def get_maid_values(xs, w, q2, theta):
@@ -334,7 +337,8 @@ def plot_maid_model(ax, w, q2, theta, xs, name=""):
     # Get the cross section values from maid
     crossSections = get_maid_values(xs, _w, _q2, _theta)
     # _ax = ax.twinx()
-    ax.plot(xs, crossSections, c='r', linestyle='dotted', label=f"{name}")
+    ax.plot(xs, crossSections, c='r',
+            linestyle='dotted', label=f"{name}")
     # ax.set_ylim(bottom=0, top=np.max(crossSections)*1.5)
 
     return np.max(crossSections)*1.8
@@ -363,7 +367,7 @@ def binCetnerCorrection(w, q2, theta, num_bins=10):
     return bin_center_corr
 
 
-@np.vectorize
+@ np.vectorize
 def isclose(a, b, rel_tol=1e-4, abs_tol=0.0):
     return np.abs(a-b) <= np.maximum(rel_tol * np.maximum(np.abs(a), np.abs(b)), abs_tol)
 
