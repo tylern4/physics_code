@@ -293,10 +293,12 @@ def prep_for_ana(dataframe, w_bins, q2_bins, theta_bins):
 
 
 def make_cuts(dataframe, w, q2, theta):
-    df = dataframe[dataframe.w_bin == w].copy()
-    df = df[df.q2_bin == q2]
-    df = df[df.theta_bin == theta]
-    return df
+    df1 = dataframe[dataframe.w_bin == w].copy()
+    df2 = df1[df1.q2_bin == q2].copy()
+    del df1
+    df3 = df2[df2.theta_bin == theta].copy()
+    del df2
+    return df3
 
 
 def get_maid_values(xs, w, q2, theta):
