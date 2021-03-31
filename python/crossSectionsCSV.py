@@ -19,7 +19,17 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ra
         radcorr_df = pd.read_csv(radcorr)
 
     for w in tqdm(binning["wbins"]):
+        rec_w = rec[rec.w_bin == w].copy()
+        empty_w = empty[empty.w_bin == w].copy()
+        mc_rec_w = mc_rec[mc_rec.w_bin == w].copy()
+        mc_thrown_w = mc_thrown[mc_thrown.w_bin == w].copy()
+
         for q2 in binning["q2bins"]:
+            rec_wq2 = rec_w[rec_w.q2_bin == q2].copy()
+            empty_wq2 = empty_w[empty_w.q2_bin == q2].copy()
+            mc_rec_wq2 = mc_rec_w[mc_rec_w.q2_bin == q2].copy()
+            mc_thrown_wq2 = mc_thrown_w[mc_thrown_w.q2_bin == q2].copy()
+
             radcor_R = 1.0
             if radcorr is not None:
                 cut = isclose(radcorr_df.w_left, w.left) & isclose(
@@ -33,11 +43,11 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ra
 
             for theta in binning["thetabins"]:
                 # Cut data/mc for the w/q2/theta bin we're in
-                data = make_cuts(rec, w, q2, theta)  # rec[].copy()
-                data_e = make_cuts(empty, w, q2, theta)  # empty[].copy()
-                data_mc = make_cuts(mc_rec, w, q2, theta)  # mc_rec[].copy()
-                # mc_thrown[].copy()
-                thrown = make_cuts(mc_thrown, w, q2, theta)
+                data = rec_wq2[rec_wq2.theta_bin == theta].copy()
+                data_e = empty_wq2[empty_wq2.theta_bin == theta].copy()
+                data_mc = mc_rec_wq2[mc_rec_wq2.theta_bin == theta].copy()
+                thrown = mc_thrown_wq2[mc_thrown_wq2.theta_bin == theta].copy()
+
                 num_good = np.sum(data.cut_fid)
 
                 binCenter = binCetnerCorrection(w, q2, theta, num_bins=bins)
