@@ -31,5 +31,5 @@ cd /home/tylerns/physics_code/build
 export NUM_THREADS=$SLURM_JOB_CPUS_PER_NODE 
 echo $SLURM_JOB_CPUS_PER_NODE
 
-./e1d_mc -o /work/tylerns/e1d/outputs/e1d_sim.root -i /work/gothelab/clas6/e1d/sim/npip
+./e1d_mc -o /work/tylerns/e1d/outputs/e1d_sim.root -i /work/gothelab/clas6/e1d/sim/npip_test
 

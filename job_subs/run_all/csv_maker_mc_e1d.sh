@@ -3,7 +3,8 @@
 #INPUT Sequences file
 
 #SBATCH -J e1d_csv_maker
-#SBATCH -n 16
+##SBATCH -n 16
+#SBATCH -n 24
 #SBATCH -N 1
 #SBATCH -p defq-48core,gpu-v100-16gb
 ##SBATCH -p defq-48core,gpu-v100-16gb,gpu-v100-32gb,msmoms,defq,gpu

@@ -22,10 +22,12 @@ RES_E1D_MC=$(sbatch csv_maker_mc_e1d_testing.sh);
 echo ${RES_E1D_DATA}
 echo ${RES_E1D_MC}
 
-sbatch job_e1d_mc.sh
+# sbatch job_e1d_mc.sh
 
-sbatch --dependency=afterok:${RES_E1D_DATA##* },${RES_E1D_MC##* } plots_e1d.sh
+# sbatch --dependency=afterok:${RES_E1D_DATA##* },${RES_E1D_MC##* } plots_e1d.sh
 # sbatch --dependency=afterok:${RES_E1D_DATA##* },${RES_E1D_MC##* } yeilds_e1d.sh
-sbatch --dependency=afterok:${RES_E1D_DATA##* },${RES_E1D_MC##* } cross_sections_e1d.sh
+# sbatch --dependency=afterok:${RES_E1D_DATA##* },${RES_E1D_MC##* } cross_sections_e1d.sh
+sbatch --dependency=afterok:${RES_E1D_DATA##* },${RES_E1D_MC##* } cross_sections_csv.sh
+# sbatch --dependency=afterok:${RES_E1D_DATA##* },${RES_E1D_MC##* } cross_sections_highw.sh
 
 
