@@ -156,8 +156,20 @@ if __name__ == "__main__":
                         default=None)
     parser.add_argument("--highw", help="Use high W binning",
                         required=False, action='store_true', default=False)
+    parser.add_argument("--phibins", help="Number of phi bins", dest="phibins",
+                        required=False, default=10, type=int)
     args = parser.parse_args()
+    bins = args.phibins
 
+    if args.highw:
+        w_bins = w_bins_k
+        q2_bins = q2_bins_k
+        csvName = f"results_highw_{bins}"
+    else:
+        w_bins = w_bins_e99
+        q2_bins = q2_bins_e99
+        csvName = f"full_results_{bins}"
+    print(csvName)
     # Start to main
 
     # print("Start setup")
@@ -171,17 +183,6 @@ if __name__ == "__main__":
     # Cut for missing mass
     rec, mc_rec, empty_target = cut_for_MM(rec, mc_rec, empty_target)
     end = time.time_ns()
-
-    if args.highw:
-        w_bins = w_bins_k
-        q2_bins = q2_bins_k
-        bins = 10
-        csvName = "results_highw"
-    else:
-        w_bins = w_bins_e99
-        q2_bins = q2_bins_e99
-        bins = 10
-        csvName = "full_results"
 
     # Make bins in the dataframes from the bins above
     _rec = prep_for_ana(rec, w_bins, q2_bins, theta_bins)

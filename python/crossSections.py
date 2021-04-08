@@ -28,7 +28,16 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
         radcorr_df = pd.read_csv(radcorr)
 
     for w in tqdm(binning["wbins"]):
+        rec_w = rec[rec.w_bin == w].copy()
+        empty_w = empty[empty.w_bin == w].copy()
+        mc_rec_w = mc_rec[mc_rec.w_bin == w].copy()
+        mc_thrown_w = mc_thrown[mc_thrown.w_bin == w].copy()
+
         for q2 in binning["q2bins"]:
+            rec_wq2 = rec_w[rec_w.q2_bin == q2].copy()
+            empty_wq2 = empty_w[empty_w.q2_bin == q2].copy()
+            mc_rec_wq2 = mc_rec_w[mc_rec_w.q2_bin == q2].copy()
+            mc_thrown_wq2 = mc_thrown_w[mc_thrown_w.q2_bin == q2].copy()
 
             CosTfig = plt.figure(
                 figsize=(12, 9), constrained_layout=True)
@@ -62,12 +71,11 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
 
             for theta in binning["thetabins"]:
                 # Cut data/mc for the w/q2/theta bin we're in
-                # Cut data/mc for the w/q2/theta bin we're in
-                data = make_cuts(rec, w, q2, theta)  # rec[].copy()
-                data_e = make_cuts(empty, w, q2, theta)  # empty[].copy()
-                data_mc = make_cuts(mc_rec, w, q2, theta)  # mc_rec[].copy()
-                # mc_thrown[].copy()
-                thrown = make_cuts(mc_thrown, w, q2, theta)
+                data = rec_wq2[rec_wq2.theta_bin == theta].copy()
+                data_e = empty_wq2[empty_wq2.theta_bin == theta].copy()
+                data_mc = mc_rec_wq2[mc_rec_wq2.theta_bin == theta].copy()
+                thrown = mc_thrown_wq2[mc_thrown_wq2.theta_bin == theta].copy()
+
                 num_good = np.sum(data.cut_fid)
                 if num_good < 6:
                     continue
@@ -236,7 +244,7 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                                     ebar[0].get_color(), "")
                     ax.legend(loc='upper right')
                     ax.set_ylabel(
-                        r'$\frac{\mathbf{d}\sigma}{\mathbf{d} \omega} \left[\frac{\mu b}{sr}\right]$')
+                        r'$\frac{\mathbf{d}\sigma}{\mathbf{d} \Omega} \left[\frac{\mu b}{sr}\right]$')
                     ax.set_xlabel(r'$\phi_{\pi}^{*}$')
 
                     ct_ax[theta.left].errorbar(x, y, yerr=error_bar,
@@ -247,7 +255,7 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
 
                     if cuts == 0:
                         ct_ax[theta.left].set_ylabel(
-                            r'$\frac{\mathbf{d}\sigma}{\mathbf{d} \omega} \left[\frac{\mu b}{sr}\right]$')
+                            r'$\frac{\mathbf{d}\sigma}{\mathbf{d} \Omega} \left[\frac{\mu b}{sr}\right]$')
                         ct_ax[theta.left].set_xlabel(r'$\phi_{\pi}^{*}$')
                         ct_ax[theta.left].legend(
                             loc='upper right', markerscale=0.2, numpoints=1, handlelength=0)

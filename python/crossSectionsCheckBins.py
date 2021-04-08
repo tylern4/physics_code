@@ -212,7 +212,7 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                                         ebar[0].get_color(), name)
                         ax1.legend(loc='upper right')
                         ax1.set_ylabel(
-                            r'$\frac{\mathbf{d}\sigma}{\mathbf{d} \omega} \left[\frac{\mu b}{sr}\right]$')
+                            r'$\frac{\mathbf{d}\sigma}{\mathbf{d} \Omega} \left[\frac{\mu b}{sr}\right]$')
                         ax1.set_xlabel(r'$\phi_{\pi}^{*}$')
 
                         ct_ax[theta.left].errorbar(x, y, yerr=error_bar,
@@ -223,7 +223,7 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
 
                         if cuts == 0:
                             ct_ax[theta.left].set_ylabel(
-                                r'$\frac{\mathbf{d}\sigma}{\mathbf{d} \omega} \left[\frac{\mu b}{sr}\right]$')
+                                r'$\frac{\mathbf{d}\sigma}{\mathbf{d} \Omega} \left[\frac{\mu b}{sr}\right]$')
                             ct_ax[theta.left].set_xlabel(r'$\phi_{\pi}^{*}$')
                             ct_ax[theta.left].legend(
                                 loc='upper right', markerscale=0.2, numpoints=1, handlelength=0)

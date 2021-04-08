@@ -243,7 +243,7 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
         pars = peak.guess(y, x=x)
         background = GaussianModel(prefix="back_")
         pars.update(background.make_params())
-        model = peak + background
+        model = peak * background
 
         out = model.fit(y, pars, x=x)
         xs = np.linspace(0.3, 1.5, 1000)
@@ -255,6 +255,18 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
                  label="Total Fit",
                  #  label=f"Peak Center: {out.params['peak_center'].value:0.4f}"
                  )
+
+        peak = PseudoVoigtModel(prefix="peak_")
+        pars = peak.guess(y, x=x)
+        background = GaussianModel(prefix="back_")
+        pars.update(background.make_params())
+        model = peak + background
+
+        out = model.fit(y, pars, x=x)
+        xs = np.linspace(0.3, 1.5, 1000)
+        comps = out.eval_components(x=xs)
+        out.params.pretty_print()
+        ys = out.eval(params=out.params, x=xs)
 
         plt.plot(xs, comps['peak_'],
                  '--', label='Peak Component', linewidth=2.0, alpha=0.5)
