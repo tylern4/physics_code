@@ -358,14 +358,18 @@ def binCetnerCorrection(w, q2, theta, num_bins=10):
 
     center = (left+right)/2.0
     ys = []
-    for xs in [left, right, center]:
-        # Get the cross section values from maid
-        crossSections = get_maid_values(xs, _w, _q2, _theta)
-        ys.append(crossSections)
+    for _w_ in [w.left, w.right]:
+        for _q2_ in [q2.left, q2.right]:
+            for xs in [left, right]:
+                # Get the cross section values from maid
+                crossSections = get_maid_values(xs, _w_, _q2_, _theta)
+                ys.append(crossSections)
 
-    avg = (ys[0]+ys[1])/2
+    crossSections_center = get_maid_values(xs, _w, _q2, _theta)
 
-    bin_center_corr = interp1d(center, avg/ys[2], kind='cubic')
+    avg = (ys[0]+ys[1]+ys[2]+ys[3]+ys[4]+ys[5])/6
+
+    bin_center_corr = interp1d(center, avg/crossSections_center, kind='cubic')
     return bin_center_corr
 
 

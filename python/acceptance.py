@@ -215,7 +215,7 @@ def virtual_photon_flux(w: float, q2: float, beam_energy: float = 4.81726, targe
 def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict:
     data = {}
     fig, ax = plt.subplots(2, 3, figsize=(
-        12, 9), sharex=True, sharey=True, gridspec_kw={'hspace': 0.0, 'wspace': 0.0})
+        20, 10), sharex=True, sharey=True, gridspec_kw={'hspace': 0.0, 'wspace': 0.0})
     which_plot = {
         1: [0, 0],
         2: [0, 1],
@@ -229,7 +229,7 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
             continue
         a = which_plot[sec][0]
         b = which_plot[sec][1]
-        plt.figure(figsize=(12, 9))
+        plt.figure(figsize=(16, 8))
         y, x = bh.numpy.histogram(
             df[df.electron_sector == sec].mm2, bins=150, density=True
         )
@@ -283,26 +283,27 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
         plt.axvline(min_cut, c='r', alpha=0.4)
 
         ax[a][b].plot(xs, ys, '-', linewidth=2.0,
-                      alpha=0.6, label=f"Sector {sec}")
+                      alpha=0.6, label=f"Sec. {sec}")
         ax[a][b].plot(xs, comps['peak_'],
-                      '-', label='')
+                      '-', label='', alpha=0.4)
         ax[a][b].plot(xs, comps['back_'],
-                      '--', label='')
+                      '--', label='', alpha=0.4)
 
         ax[a][b].axvline(max_cut, c='r', alpha=0.6)
         ax[a][b].axvline(min_cut, c='r', alpha=0.6)
         data[sec] = (min_cut, max_cut)
 
         ax[a][b].legend(loc='upper right')
-        ax[a][b].set_xlabel(f"Mass $[GeV^2]$")
+        if a == 1:
+            ax[a][b].set_xlabel(f"Mass Mass Squared $[GeV^2]$")
 
         if not os.path.exists(f'{out_folder}/cuts'):
             os.makedirs(f'{out_folder}/cuts')
 
-        plt.xlabel(f"Mass $[GeV^2]$")
+        plt.xlabel(f"Mass Mass Squared $[GeV^2]$")
         plt.legend(loc='upper right')
         plt.title(
-            r"Missing Mass Squared $e~( p, \pi^{+} X )~e^{\prime}$ in sector "+str(sec))
+            r"Missing Mass Squared $e~( p, \pi^{+} X )~e^{\prime}$ in Sector "+str(sec))
 
         plt.savefig(f"{out_folder}/cuts/MM2_cut_{sec}.png",
                     bbox_inches='tight', transparent=True)
@@ -310,7 +311,7 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
     fig.suptitle(
         r"Missing Mass Squared $e~( p, \pi^{+} X )~e^{\prime}$", fontsize=20)
     fig.savefig(f"{out_folder}/cuts/MM2_cut_all.png",
-                bbox_inches='tight', transparent=True)
+                bbox_inches='tight', transparent=False)
     return data
 
 
