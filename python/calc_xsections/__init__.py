@@ -366,8 +366,7 @@ def binCetnerCorrection(w, q2, theta, num_bins=10):
                 ys.append(crossSections)
 
     crossSections_center = get_maid_values(xs, _w, _q2, _theta)
-
-    avg = (ys[0]+ys[1]+ys[2]+ys[3]+ys[4]+ys[5])/6
+    avg = np.sum(ys, axis=0)/8
 
     bin_center_corr = interp1d(center, avg/crossSections_center, kind='cubic')
     return bin_center_corr
