@@ -346,7 +346,7 @@ def plot_maid_model(ax, w, q2, theta, xs, name=""):
     return np.max(crossSections)*1.8
 
 
-def binCetnerCorrection(w, q2, theta, num_bins=10, INTEGRATION=6):
+def binCetnerCorrection(w, q2, theta, num_bins=10):
     # Get bin centers
     _w = (w.left + w.right) / 2.0
     _q2 = (q2.left + q2.right) / 2.0
@@ -361,19 +361,15 @@ def binCetnerCorrection(w, q2, theta, num_bins=10, INTEGRATION=6):
 
     center = (left+right)/2.0
     ys = []
-    # for _w_ in [w.left, w.right]:
-    #     for _q2_ in [q2.left, q2.right]:
-    #         for _theta_ in [theta_left, theta_right]:
-
-    for _w_ in np.linspace(w.left, w.right, INTEGRATION, endpoint=True):
-        for _q2_ in np.linspace(q2.left, q2.right, INTEGRATION, endpoint=True):
-            for _theta_ in np.linspace(theta_left, theta_right, INTEGRATION, endpoint=True):
+    for _w_ in [w.left, w.right]:
+        for _q2_ in [q2.left, q2.right]:
+            for _theta_ in [theta_left, theta_right]:
                 for xs in [left, right]:
                     # Get the cross section values from maid
                     crossSections = get_maid_values(xs, _w_, _q2_, _theta_)
                     ys.append(crossSections)
 
-    crossSections_center = get_maid_values(xs, _w, _q2, _theta)
+    crossSections_center = get_maid_values(center, _w, _q2, _theta)
     ys = np.array(ys)
     avg = np.sum(ys, axis=0)/ys.shape[0]
 
