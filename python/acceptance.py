@@ -870,7 +870,7 @@ if __name__ == "__main__":
     # rec = rec[(rec.w > 0) & (rec.mm2 > 0.5) & (rec.mm2 < 1.5)]
     rec["cos_theta"] = np.cos(rec.theta).astype(np.float32)
 
-    sector_cuts = mm_cut(rec, sigma=10, lmfit_fitter=True)
+    sector_cuts = mm_cut(rec, sigma=3, lmfit_fitter=True)
 
     cuts = False
     mc_cuts = False

@@ -211,7 +211,7 @@ def half_max_x(x, y):
             lin_interp(x, y, zero_crossings_i[1], half)]
 
 
-def mm_cut(df: pd.DataFrame, sigma: int = 4):
+def mm_cut(df: pd.DataFrame, sigma: int = 3):
     data = {}
 
     for sec in range(1, 7):
@@ -233,14 +233,13 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4):
             sigma*out.params['peak_fwhm'] / 2.355
         max_cut = out.params['peak_center'] + \
             sigma*out.params['peak_fwhm'] / 2.355
-        data[sec] = (min_cut,
-                     max_cut if max_cut <= 1.0 else 1.0)
+        data[sec] = (min_cut, max_cut if max_cut <= 1.0 else 1.0)
 
     return data
 
 
 def cut_for_MM(rec, mc_rec, empty=None):
-    sector_cuts = mm_cut(rec, sigma=10)
+    sector_cuts = mm_cut(rec, sigma=3)
 
     cuts = False
     mc_cuts = False
@@ -377,7 +376,7 @@ def binCetnerCorrection(w, q2, theta, num_bins=10):
     return bin_center_corr
 
 
-@ np.vectorize
+@np.vectorize
 def isclose(a, b, rel_tol=1e-4, abs_tol=0.0):
     return np.abs(a-b) <= np.maximum(rel_tol * np.maximum(np.abs(a), np.abs(b)), abs_tol)
 
