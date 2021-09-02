@@ -12,38 +12,38 @@
 #include "constants.hpp"
 
 namespace func {
-ROOT::Double_v ec_fit_func(const ROOT::Double_v *x, const double *par);
-ROOT::Double_v ec_fit_func_arjun(const ROOT::Double_v *x, const double *par);
-ROOT::Double_v ec_fit_func_invert(const ROOT::Double_v *x, const double *par);
-ROOT::Double_v genNormal(const ROOT::Double_v *x, const double *par);
-ROOT::Double_v breit_wigner(const ROOT::Double_v *x, const double *par);
-ROOT::Double_v fiducial_phi(double theta, double e_p);
-ROOT::Double_v fiducial_phi(const ROOT::Double_v *x, const double *par);
-ROOT::Double_v fiducial(const ROOT::Double_v *x, const double *par);
+double ec_fit_func(const double *x, const double *par);
+double ec_fit_func_arjun(const double *x, const double *par);
+double ec_fit_func_invert(const double *x, const double *par);
+double genNormal(const double *x, const double *par);
+double breit_wigner(const double *x, const double *par);
+//double fiducial_phi(double theta, double e_p);
+double fiducial_phi(const double *x, const double *par);
+double fiducial(const double *x, const double *par);
 
-ROOT::Double_v gausian(const ROOT::Double_v *x, const double *par);
-ROOT::Double_v gausian2(const ROOT::Double_v *x, const double *par);
-ROOT::Double_v landau(const ROOT::Double_v *x, const double *par);
-ROOT::Double_v peak(const ROOT::Double_v *x, const double *par);
+double gausian(const double *x, const double *par);
+double gausian2(const double *x, const double *par);
+double landau(const double *x, const double *par);
+double peak(const double *x, const double *par);
 
-ROOT::Double_v horizontal(const ROOT::Double_v *x, const double *par);
-ROOT::Double_v line(const ROOT::Double_v *x, const double *par);
-ROOT::Double_v quad(const ROOT::Double_v *x, const double *par);
+double horizontal(const double *x, const double *par);
+double line(const double *x, const double *par);
+double quad(const double *x, const double *par);
 
-ROOT::Double_v pol0(const ROOT::Double_v *x, const double *par);
-ROOT::Double_v pol1(const ROOT::Double_v *x, const double *par);
-ROOT::Double_v pol2(const ROOT::Double_v *x, const double *par);
-ROOT::Double_v pol3(const ROOT::Double_v *x, const double *par);
-ROOT::Double_v pol4(const ROOT::Double_v *x, const double *par);
-ROOT::Double_v pol5(const ROOT::Double_v *x, const double *par);
-ROOT::Double_v fid(const ROOT::Double_v *x, const double *par);
-ROOT::Double_v dt_fit(const ROOT::Double_v *x, const double *par);
-ROOT::Double_v theta_cc_fit(const ROOT::Double_v *x, const double *par);
+double pol0(const double *x, const double *par);
+double pol1(const double *x, const double *par);
+double pol2(const double *x, const double *par);
+double pol3(const double *x, const double *par);
+double pol4(const double *x, const double *par);
+double pol5(const double *x, const double *par);
+double fid(const double *x, const double *par);
+double dt_fit(const double *x, const double *par);
+double theta_cc_fit(const double *x, const double *par);
 
-ROOT::Double_v missMasspeak(const ROOT::Double_v *x, const double *par);
-ROOT::Double_v missMassbackground(const ROOT::Double_v *x, const double *par);
-ROOT::Double_v missMassfitFunction(const ROOT::Double_v *x, const double *par);
-ROOT::Double_v degauss(const ROOT::Double_v *x, const double *par);
+double missMasspeak(const double *x, const double *par);
+double missMassbackground(const double *x, const double *par);
+double missMassfitFunction(const double *x, const double *par);
+double degauss(const double *x, const double *par);
 
 float dt_poly4(std::vector<double> params, float p);
 

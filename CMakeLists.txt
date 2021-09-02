@@ -49,8 +49,8 @@ set(PROGRAMS
       exe/peakFitMomCorr/peakFitMomCorr.cpp
       exe/deltaTFitter/deltaTFitter.cpp
       exe/deltaTFitter/deltaTFitter_e1f.cpp
-      exe/fidFitter/fidFitter.cpp
-      exe/fidFitter/fidFitterPip.cpp
+      #exe/fidFitter/fidFitter.cpp
+      #exe/fidFitter/fidFitterPip.cpp
       )
 
 foreach(prog ${PROGRAMS} )
@@ -62,32 +62,33 @@ foreach(prog ${PROGRAMS} )
     install(TARGETS ${progname} EXPORT ${PROJECT_NAME}Targets RUNTIME DESTINATION bin)
 endforeach( prog ${PROGRAMS} )
 
-find_package(Cython)
-IF(Cython_FOUND)
-  find_package(Python3 REQUIRED)
-  find_package(NumPy REQUIRED)
-  set(CMAKE_CXX_STANDARD 17)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+#find_package(Cython)
+#IF(Cython_FOUND)
+#IF(0)
+#  find_package(Python3 COMPONENTS NumPy REQUIRED)
+  # find_package(PythonLibs 3.5 REQUIRED)
+  #  set(CMAKE_CXX_STANDARD 17)
+  #set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-  include_directories(${PYTHON_INCLUDE_DIRS} ${NumPy_INCLUDE_DIR})
+  #include_directories(${PYTHON_INCLUDE_DIRS} ${NumPy_INCLUDE_DIR})
 
-  set(EXTRA_FLAGS "${EXTRA_FLAGS} -pthread -Wno-deprecated-register")
-  set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${EXTRA_FLAGS}" )
-  include_directories(${PYTHON_INCLUDE_DIRS} ${PYTHON_NUMPY_INCLUDE_DIR} ${NumPy_INCLUDE_DIR})
+  #set(EXTRA_FLAGS "${EXTRA_FLAGS} -pthread -Wno-deprecated-register")
+  #set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${EXTRA_FLAGS}" )
+  #include_directories(${PYTHON_INCLUDE_DIRS} ${PYTHON_NUMPY_INCLUDE_DIR} ${NumPy_INCLUDE_DIR})
 
-  file(GLOB CYTHON_TARGETS src/*.pyx )
-  foreach(pyx ${CYTHON_TARGETS} )
-    get_filename_component(pyxname ${pyx} NAME)
-    string( REPLACE ".pyx" "" pyxname ${pyxname} )
-      add_cython_target(${pyxname} ${pyx} CXX PY3 OUTPUT_VAR _pyxname)
-      add_library(${pyxname} MODULE ${_pyxname})
-      python_extension_module(${pyxname})
-      set_target_properties(${pyxname} PROPERTIES CXX_STANDARD 17)
-      target_link_libraries(${pyxname} physics ${PYTHON_LIBRARIES} ${ROOT_LIBRARIES})
-      install(TARGETS ${pyxname} LIBRARY DESTINATION lib)
-  endforeach( pyx ${CYTHON_TARGETS} )
-  SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-ENDIF()
+  #file(GLOB CYTHON_TARGETS src/*.pyx )
+  #foreach(pyx ${CYTHON_TARGETS} )
+  #  get_filename_component(pyxname ${pyx} NAME)
+  #  string( REPLACE ".pyx" "" pyxname ${pyxname} )
+  #    add_cython_target(${pyxname} ${pyx} CXX PY3 OUTPUT_VAR _pyxname)
+  #    add_library(${pyxname} MODULE ${_pyxname})
+  #    python_extension_module(${pyxname})
+  #    set_target_properties(${pyxname} PROPERTIES CXX_STANDARD 17)
+  #    target_link_libraries(${pyxname} physics ${PYTHON_LIBRARIES} ${ROOT_LIBRARIES})
+  #    install(TARGETS ${pyxname} LIBRARY DESTINATION lib)
+  #endforeach( pyx ${CYTHON_TARGETS} )
+  #SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+  #ENDIF()
 
 
 file(GLOB EXAMPLES scripts/*.cxx )
