@@ -4,7 +4,7 @@ set(VERSION 1.0.0)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/external/aao_rad_lund)
+# add_subdirectory(${CMAKE_SOURCE_DIR}/external/aao_rad_lund)
 
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
@@ -16,7 +16,7 @@ set(CMAKE_MODULE_PATH
    ${PROJECT_SOURCE_DIR}/cmake
    ${PROJECT_SOURCE_DIR}/cmake/modules)
 
-include_directories(${CMAKE_SOURCE_DIR}/external/zstr/src)
+# include_directories(${CMAKE_SOURCE_DIR}/external/zstr/src)
 include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_SOURCE_DIR}/include)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)
