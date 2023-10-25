@@ -11,9 +11,9 @@
 
 
 export NUM_THREADS=$SLURM_CPUS_PER_TASK
-export NUM_THREADS=2
+# export NUM_THREADS=2
 
-export INPUT_FOLDER=/volatile/clas/clase1/tylern/bos_files
+export INPUT_FOLDER=/cache/clas/e1d/production/pass2/v2/data
 export OUTPUT_FOLDER=/work/clas/clase1/tylern/e1d/data/golden_run
 
 mkdir -p $OUTPUT_FOLDER
@@ -24,12 +24,12 @@ lscpu
 
 echo "STARTING RUN"
 
-START=`date +%s`
+STARTTIME=$(date +%s)
 
-cat golden_run.list | parallel --dry-run -j$NUM_THREADS singularity exec /cvmfs/singularity.opensciencegrid.org/tylern4/clas6:latest h10maker -r $INPUT_FOLDER/{} $OUTPUT_FOLDER/h10_gr_{.}.root
+cat all.list | parallel -j$NUM_THREADS singularity exec -B /cache:/cache -B /volatile:/volatile -B /work:/work /cvmfs/singularity.opensciencegrid.org/tylern4/clas6:latest h10maker -r $INPUT_FOLDER/{} $OUTPUT_FOLDER/h10_{.}.root
 
-END=`date +%s`
-echo Execution time was `expr $end - $start` seconds.
-
+ENDTIME=$(date +%s)
+echo "Hostname: $HOSTNAME"
+echo "Total runtime: $(($ENDTIME-$STARTTIME))"
 
 echo "DONE!!"

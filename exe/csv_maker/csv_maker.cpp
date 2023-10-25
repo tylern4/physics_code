@@ -56,7 +56,7 @@ int main(int argc, char **argv) {
   size_t events = 0;
 
   // load mometntum corrections
-  auto mom_corr = std::make_shared<MomCorr>();
+  auto mom_corr = nullptr; // std::make_shared<MomCorr>();
 
   // Make outputfile name and outpout CSV file
   std::string csv_name = outputfile + "_e1d.csv";

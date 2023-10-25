@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
 
   // Create the shared objects for hists and momentum corrections
   auto hist = std::make_shared<Histogram>();
-  auto mom_corr = std::make_shared<MomCorr>();
+  auto mom_corr = nullptr; // std::make_shared<MomCorr>();
 
   std::cout.imbue(std::locale(""));
   size_t events = 0;
