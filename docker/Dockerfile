@@ -13,7 +13,7 @@ COPY . /usr/local/src/physics_code
 RUN mkdir compile \
     && cd compile \
     && cmake /usr/local/src/physics_code -DCMAKE_INSTALL_PREFIX=/usr/local/physics \
-    && make -j2 \
+    && make -j \
     && make install
 
 WORKDIR /data
