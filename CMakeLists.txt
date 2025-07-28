@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.11)
 project(DataHandler C CXX Fortran)
 set(VERSION 1.0.0)
 
@@ -30,28 +30,32 @@ set(CMAKE_CXX_FLAGS "-Ofast ${ROOT_CXX_FLAGS}")
 set(CMAKE_C_FLAGS "-Ofast ${ROOT_CXX_FLAGS}")
 
 set(PROGRAMS
-      exe/cpp/e1d.cpp
-      exe/cpp/e1f.cpp
-      exe/cpp/e16.cpp
-      #exe/cpp/analysis.cpp
-      exe/monteCarlo/e1d_mc.cpp
-      exe/monteCarlo/e1f_mc.cpp
-      exe/monteCarlo/analysis_mc.cpp
-      exe/skim/e1d_skim.cpp
-      exe/skim/e1f_skim.cpp
-      exe/skim/skim_one_check_banks.cpp
-      exe/csv_maker/csv_maker.cpp
-      exe/csv_maker/csv_maker_PPi0.cpp
-      exe/csv_maker/csv_maker_mc.cpp
-      exe/ntuple_maker/ntuple_maker.cpp
-      exe/golden_run/golden_run.cpp
-      exe/momentumCorrections/momemtumCorrections.cpp
-      exe/peakFitMomCorr/peakFitMomCorr.cpp
-      exe/deltaTFitter/deltaTFitter.cpp
-      exe/deltaTFitter/deltaTFitter_e1f.cpp
-      #exe/fidFitter/fidFitter.cpp
-      #exe/fidFitter/fidFitterPip.cpp
-      )
+  exe/cpp/e1d.cpp
+  exe/cpp/e1f.cpp
+  exe/cpp/e16.cpp
+
+  # exe/cpp/analysis.cpp
+  exe/monteCarlo/e1d_mc.cpp
+  exe/monteCarlo/e1f_mc.cpp
+  exe/monteCarlo/analysis_mc.cpp
+  exe/skim/e1d_skim.cpp
+  exe/skim/e1f_skim.cpp
+  exe/skim/skim_one_check_banks.cpp
+  exe/csv_maker/csv_maker.cpp
+  exe/csv_maker/csv_maker_PPi0.cpp
+  exe/csv_maker/csv_maker_mc.cpp
+  exe/ntuple_maker/ntuple_maker.cpp
+  exe/golden_run/golden_run.cpp
+  exe/momentumCorrections/momemtumCorrections.cpp
+  exe/peakFitMomCorr/peakFitMomCorr.cpp
+  exe/deltaTFitter/deltaTFitter.cpp
+  exe/deltaTFitter/deltaTFitter_e1f.cpp
+
+  # exe/fidFitter/fidFitter.cpp
+  # exe/fidFitter/fidFitterPip.cpp
+  511-lab/511_lab.cpp
+  511-lab/make_electron_csv.cpp
+)
 
 foreach(prog ${PROGRAMS} )
     get_filename_component(progname ${prog} NAME)
