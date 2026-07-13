@@ -1,19 +1,15 @@
 #!/usr/bin/env python
 
 import matplotlib  # noqa
-matplotlib.use('agg')  # noqa
 import warnings  # noqa
-warnings.filterwarnings("ignore")  # noqa
-
 from typing import Dict
-import lmfit
+
 # from loky import get_reusable_executor
-import multiprocessing
 import os
 from maid_interface import maid_2007_Npi as maid
 import datetime
 import boost_histogram as bh
-from pyarrow import csv, feather
+from pyarrow import csv
 import time
 import argparse
 from scipy.optimize import curve_fit
@@ -23,12 +19,15 @@ from tqdm import tqdm
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from lmfit import Model, Parameters
-from lmfit.models import *
+from lmfit import Model
+
+# from lmfit.models import *
 from calc_xsections import *
 from nicks_plot_utils import *
 
-plt.rcParams.update({'mathtext.fontset': 'stix'})
+plt.rcParams.update({"mathtext.fontset": "stix"})
+warnings.filterwarnings("ignore")  # noqa
+matplotlib.use("agg")  # noqa
 
 
 ENERGY = 4.81726
@@ -44,7 +43,7 @@ def read_csv(file_name: str = "", data: bool = False):
         "mm2",
         "cut_fid",
         "helicty",
-        "type"
+        "type",
     ]
     dtype = {
         "electron_sector": "int8",
@@ -62,8 +61,7 @@ def read_csv(file_name: str = "", data: bool = False):
     # Load file into pyTable before changing to pandas
     pyTable = csv.read_csv(
         file_name,
-        read_options=csv.ReadOptions(
-            use_threads=True, column_names=names),
+        read_options=csv.ReadOptions(use_threads=True, column_names=names),
         convert_options=csv.ConvertOptions(column_types=dtype),
     )
     df = pyTable.to_pandas(strings_to_categorical=True)
@@ -94,8 +92,8 @@ def read_csv(file_name: str = "", data: bool = False):
 
 
 def A(M, B, C):
-    if (C > 0 and np.abs(B) <= 4*C):
-        return M**2 + B**2/(8*C) + C
+    if C > 0 and np.abs(B) <= 4 * C:
+        return M**2 + B**2 / (8 * C) + C
     else:
         return M**2 + np.abs(B) - C
 
@@ -106,7 +104,7 @@ def model_new(x, M, b, c):
     b => epsilon*sigma_tt
     c => Sqrt(2epsilon(1+epsilon))* sigma_lt
     """
-    f = A(M, b, c) + b * np.cos(2*x) + c * np.cos(x)
+    f = A(M, b, c) + b * np.cos(2 * x) + c * np.cos(x)
     return f
 
 
@@ -156,19 +154,21 @@ def virtual_photon(W: float, Q2: float, beam_energy: float) -> float:
     target_mass = 0.93827203
     FS_ALPHA = 0.007297352570866302
 
-    one = FS_ALPHA/(4 * np.pi)
-    two = W/(beam_energy**2 * target_mass**2 * Q2)
-    three = (W**2 - target_mass**2)
+    one = FS_ALPHA / (4 * np.pi)
+    two = W / (beam_energy**2 * target_mass**2 * Q2)
+    three = W**2 - target_mass**2
 
     beam_momentum = np.sqrt(beam_energy**2 - MASS_E**2)
     nu = (((W**2 + Q2) / target_mass) - target_mass) / 2  # Photon Energy
-    scattered_energy = (beam_energy - nu)
+    scattered_energy = beam_energy - nu
     scattered_momentum = np.sqrt(scattered_energy**2 - MASS_E**2)
-    theta = np.arccos((beam_energy * scattered_energy - Q2 / 2.0 - MASS_E**2) /
-                      (beam_momentum * scattered_momentum))
-    epsilon = 1/(1 + (2 * (1 + ((nu**2) / Q2)) * np.tan(theta / 2)**2))
+    theta = np.arccos(
+        (beam_energy * scattered_energy - Q2 / 2.0 - MASS_E**2)
+        / (beam_momentum * scattered_momentum)
+    )
+    epsilon = 1 / (1 + (2 * (1 + ((nu**2) / Q2)) * np.tan(theta / 2) ** 2))
 
-    four = 1/(1 - epsilon)
+    four = 1 / (1 - epsilon)
 
     # This makes it look closer? Where am I off?
     flux = one * two * three * four * 10**3
@@ -178,7 +178,8 @@ def virtual_photon(W: float, Q2: float, beam_energy: float) -> float:
 
 def hist_data(data, density=True, bins=10):
     data_y, data_x = bh.numpy.histogram(
-        data.phi.to_numpy(), bins=bins, range=(0, 2 * np.pi), density=density, threads=4)
+        data.phi.to_numpy(), bins=bins, range=(0, 2 * np.pi), density=density, threads=4
+    )
     x = (data_x[1:] + data_x[:-1]) / 2.0
     return data_y, x
 
@@ -194,10 +195,12 @@ def virtual_photon_energy_fn(target_mass, w, q2):
 def costheta_e_fn(beam_energy, target_mass, w, q2):
     electron_mass = 5.109989433549345e-4
     nu = virtual_photon_energy_fn(target_mass, w, q2)
-    scattered_energy = ((beam_energy) - (nu))
+    scattered_energy = (beam_energy) - (nu)
     beam_momentum = momentum_fn(beam_energy, electron_mass)
     scattered_momentum = momentum_fn(scattered_energy, electron_mass)
-    return (beam_energy * scattered_energy - q2 / 2.0 - electron_mass**2) / (beam_momentum * scattered_momentum)
+    return (beam_energy * scattered_energy - q2 / 2.0 - electron_mass**2) / (
+        beam_momentum * scattered_momentum
+    )
 
 
 def virtual_photon_epsilon_fn(beam_energy, target_mass, w, q2):
@@ -206,16 +209,31 @@ def virtual_photon_epsilon_fn(beam_energy, target_mass, w, q2):
     return np.power(1 + 2 * (1 + nu**2 / q2) * np.power(np.tan(theta_e / 2), 2), -1)
 
 
-def virtual_photon_flux(w: float, q2: float, beam_energy: float = 4.81726, target_mass: float = 0.93827203) -> float:
+def virtual_photon_flux(
+    w: float, q2: float, beam_energy: float = 4.81726, target_mass: float = 0.93827203
+) -> float:
     alpha = 0.007297352570866302
     epsilon = virtual_photon_epsilon_fn(beam_energy, target_mass, w, q2)
-    return alpha / (4 * np.pi * q2) * w / (beam_energy**2 * target_mass**2) * (w**2 - target_mass**2) / (1 - epsilon)
+    return (
+        alpha
+        / (4 * np.pi * q2)
+        * w
+        / (beam_energy**2 * target_mass**2)
+        * (w**2 - target_mass**2)
+        / (1 - epsilon)
+    )
 
 
 def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict:
     data = {}
-    fig, ax = plt.subplots(2, 3, figsize=(
-        20, 10), sharex=True, sharey=True, gridspec_kw={'hspace': 0.0, 'wspace': 0.0})
+    fig, ax = plt.subplots(
+        2,
+        3,
+        figsize=(20, 10),
+        sharex=True,
+        sharey=True,
+        gridspec_kw={"hspace": 0.0, "wspace": 0.0},
+    )
     which_plot = {
         1: [0, 0],
         2: [0, 1],
@@ -236,8 +254,7 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
         x = (x[1:] + x[:-1]) / 2
 
         plt.errorbar(x, y, yerr=stats.sem(y), fmt=".", zorder=1)
-        ax[a][b].errorbar(
-            x, y, yerr=stats.sem(y), fmt=".", zorder=1)
+        ax[a][b].errorbar(x, y, yerr=stats.sem(y), fmt=".", zorder=1)
 
         peak = PseudoVoigtModel(prefix="peak_")
         pars = peak.guess(y, x=x)
@@ -251,10 +268,14 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
         out.params.pretty_print()
         ys = out.eval(params=out.params, x=xs)
 
-        plt.plot(xs, ys, '-', linewidth=2.0,
-                 label="Total Fit",
-                 #  label=f"Peak Center: {out.params['peak_center'].value:0.4f}"
-                 )
+        plt.plot(
+            xs,
+            ys,
+            "-",
+            linewidth=2.0,
+            label="Total Fit",
+            #  label=f"Peak Center: {out.params['peak_center'].value:0.4f}"
+        )
 
         peak = PseudoVoigtModel(prefix="peak_")
         pars = peak.guess(y, x=x)
@@ -268,54 +289,71 @@ def mm_cut(df: pd.DataFrame, sigma: int = 4, lmfit_fitter: bool = False) -> Dict
         out.params.pretty_print()
         ys = out.eval(params=out.params, x=xs)
 
-        plt.plot(xs, comps['peak_'],
-                 '--', label='Peak Component', linewidth=2.0, alpha=0.5)
-        plt.plot(xs, comps['back_'],
-                 '--', label='Background Component', linewidth=2.0, alpha=0.5)
+        plt.plot(
+            xs, comps["peak_"], "--", label="Peak Component", linewidth=2.0, alpha=0.5
+        )
+        plt.plot(
+            xs,
+            comps["back_"],
+            "--",
+            label="Background Component",
+            linewidth=2.0,
+            alpha=0.5,
+        )
 
-        min_cut = out.params['peak_center'] - \
-            sigma * out.params['peak_fwhm'] / 2.355
-        max_cut = out.params['peak_center'] + \
-            sigma * out.params['peak_fwhm'] / 2.355
+        min_cut = out.params["peak_center"] - sigma * out.params["peak_fwhm"] / 2.355
+        max_cut = out.params["peak_center"] + sigma * out.params["peak_fwhm"] / 2.355
         max_cut = max_cut if max_cut <= 1 else 1.0
 
-        plt.axvline(max_cut, c='r', alpha=0.4)
-        plt.axvline(min_cut, c='r', alpha=0.4)
+        plt.axvline(max_cut, c="r", alpha=0.4)
+        plt.axvline(min_cut, c="r", alpha=0.4)
 
-        ax[a][b].plot(xs, ys, '-', linewidth=2.0,
-                      alpha=0.6, label=f"Sec. {sec}")
-        ax[a][b].plot(xs, comps['peak_'],
-                      '-', label='', alpha=0.4)
-        ax[a][b].plot(xs, comps['back_'],
-                      '--', label='', alpha=0.4)
+        ax[a][b].plot(xs, ys, "-", linewidth=2.0, alpha=0.6, label=f"Sec. {sec}")
+        ax[a][b].plot(xs, comps["peak_"], "-", label="", alpha=0.4)
+        ax[a][b].plot(xs, comps["back_"], "--", label="", alpha=0.4)
 
-        ax[a][b].axvline(max_cut, c='r', alpha=0.6)
-        ax[a][b].axvline(min_cut, c='r', alpha=0.6)
+        ax[a][b].axvline(max_cut, c="r", alpha=0.6)
+        ax[a][b].axvline(min_cut, c="r", alpha=0.6)
         data[sec] = (min_cut, max_cut)
 
-        ax[a][b].legend(loc='upper right')
+        ax[a][b].legend(loc="upper right")
         if a == 1:
             ax[a][b].set_xlabel(f"Mass Mass Squared $[GeV^2]$")
 
-        if not os.path.exists(f'{out_folder}/cuts'):
-            os.makedirs(f'{out_folder}/cuts')
+        if not os.path.exists(f"{out_folder}/cuts"):
+            os.makedirs(f"{out_folder}/cuts")
 
         plt.xlabel(f"Mass Mass Squared $[GeV^2]$")
-        plt.legend(loc='upper right')
+        plt.legend(loc="upper right")
         plt.title(
-            r"Missing Mass Squared $e~( p, \pi^{+} X )~e^{\prime}$ in Sector "+str(sec))
+            r"Missing Mass Squared $e~( p, \pi^{+} X )~e^{\prime}$ in Sector "
+            + str(sec)
+        )
 
-        plt.savefig(f"{out_folder}/cuts/MM2_cut_{sec}.png",
-                    bbox_inches='tight', transparent=True)
+        plt.savefig(
+            f"{out_folder}/cuts/MM2_cut_{sec}.png",
+            bbox_inches="tight",
+            transparent=True,
+        )
 
-    fig.suptitle(
-        r"Missing Mass Squared $e~( p, \pi^{+} X )~e^{\prime}$", fontsize=20)
-    fig.savefig(f"{out_folder}/cuts/MM2_cut_all.png",
-                bbox_inches='tight', transparent=False)
+    fig.suptitle(r"Missing Mass Squared $e~( p, \pi^{+} X )~e^{\prime}$", fontsize=20)
+    fig.savefig(
+        f"{out_folder}/cuts/MM2_cut_all.png", bbox_inches="tight", transparent=False
+    )
     return data
 
 
-def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, bins, models_fits={"model": model_new}):
+def draw_cos_bin(
+    data,
+    mc_rec_data,
+    thrown_data,
+    w,
+    q2,
+    cos_t_bins,
+    out_folder,
+    bins,
+    models_fits={"model": model_new},
+):
     which_plot = {
         -1.0: [0, 0],
         -0.8: [0, 1],
@@ -326,7 +364,7 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
         0.2: [3, 0],
         0.4: [3, 1],
         0.6: [4, 0],
-        0.8: [4, 1]
+        0.8: [4, 1],
     }
     plot_label = {
         -1.0: "$\cos(\\theta^{*})=(-1.0,-0.8]$",
@@ -338,27 +376,38 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
         0.2: "$\cos(\\theta^{*})=(0.2,0.4]$",
         0.4: "$\cos(\\theta^{*})=(0.4,0.6]$",
         0.6: "$\cos(\\theta^{*})=(0.6,0.8]$",
-        0.8: "$\cos(\\theta^{*})=(0.8,1.0]$"
+        0.8: "$\cos(\\theta^{*})=(0.8,1.0]$",
     }
     if str(np.round(q2.left, 3)) == "0.999":
         q2_left = 1.0
     else:
         q2_left = np.round(q2.left, 3)
 
-    fig, ax = plt.subplots(5, 2, figsize=(
-        12, 9), sharex=True, gridspec_kw={'hspace': 0.1})
+    fig, ax = plt.subplots(
+        5, 2, figsize=(12, 9), sharex=True, gridspec_kw={"hspace": 0.1}
+    )
     # subplot_kw={'projection': 'polar'}
 
     fig.suptitle(
-        f"W=({np.round(w.left,3)}, {np.round(w.right,3)}],\t$Q^2$=({q2_left}, {np.round(q2.right,3)}]", fontsize=20
+        f"W=({np.round(w.left, 3)}, {np.round(w.right, 3)}],\t$Q^2$=({q2_left}, {np.round(q2.right, 3)}]",
+        fontsize=20,
     )
-    color = '0.5'
+    color = "0.5"
     alpha = 0.3
     sizes = fig.get_size_inches()
-    size = 8.0 * np.sqrt(sizes[0]**2.0 + sizes[1]**2.0)
-    fig.text(0.5, 0.5, 'Preliminary',
-             fontsize=size, color=color,
-             ha='center', va='center', alpha=alpha, rotation=45, zorder=0)
+    size = 8.0 * np.sqrt(sizes[0] ** 2.0 + sizes[1] ** 2.0)
+    fig.text(
+        0.5,
+        0.5,
+        "Preliminary",
+        fontsize=size,
+        color=color,
+        ha="center",
+        va="center",
+        alpha=alpha,
+        rotation=45,
+        zorder=0,
+    )
 
     phi_bins = np.linspace(0, 2 * np.pi, 200)
     thetabins = pd.unique(cos_t_bins)
@@ -375,8 +424,7 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
         crossSections = []
         phis = []
         for phi in phi_bins:
-            crossSections.append(
-                maid(ENERGY, _w, _q2, _cos_t, np.degrees(phi)))
+            crossSections.append(maid(ENERGY, _w, _q2, _cos_t, np.degrees(phi)))
             phis.append(phi)
 
         crossSections = np.array(crossSections)
@@ -395,19 +443,18 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
         for name, cuts in cut_fids.items():
             if cuts:
                 # Histogram the data for plotting
-                data_y, x = hist_data(
-                    _data[_data.cut_fid], density=True, bins=bins)
+                data_y, x = hist_data(_data[_data.cut_fid], density=True, bins=bins)
                 mc_rec_y, _ = hist_data(
-                    _mc_rec_data[_mc_rec_data.cut_fid], density=True, bins=bins)
+                    _mc_rec_data[_mc_rec_data.cut_fid], density=True, bins=bins
+                )
             else:
                 # Histogram the data for plotting
                 data_y, x = hist_data(data, density=True, bins=bins)
-                mc_rec_y, _ = hist_data(
-                    _mc_rec_data, density=True, bins=bins)
+                mc_rec_y, _ = hist_data(_mc_rec_data, density=True, bins=bins)
                 _ax = ax[a][b].twinx()
-                _ax.plot(phis, crossSections, c='r', linestyle='dotted')
-                _ax.set_ylim(bottom=0, top=np.max(crossSections)*1.5)
-                _ax.text(0.0, 1.2*np.max(crossSections), cos_label)
+                _ax.plot(phis, crossSections, c="r", linestyle="dotted")
+                _ax.set_ylim(bottom=0, top=np.max(crossSections) * 1.5)
+                _ax.text(0.0, 1.2 * np.max(crossSections), cos_label)
 
             thrown_y, _ = hist_data(_thrown_data, density=True, bins=bins)
 
@@ -430,20 +477,20 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
                 print(e)
                 continue
 
-            y = (data_y * acceptance)  # * flux
+            y = data_y * acceptance  # * flux
 
             # error_bar = np.ones_like(y) * 0.1
 
-            F = (mc_rec_y/thrown_y)
-            error = np.sqrt(((thrown_y-mc_rec_y)*mc_rec_y) /
-                            np.power(thrown_y, 3))/F
-            error_bar = np.sqrt(
-                np.power((y*error), 2) + np.power(stats.sem(y), 2))
+            F = mc_rec_y / thrown_y
+            error = (
+                np.sqrt(((thrown_y - mc_rec_y) * mc_rec_y) / np.power(thrown_y, 3)) / F
+            )
+            error_bar = np.sqrt(np.power((y * error), 2) + np.power(stats.sem(y), 2))
 
             error_bar = stats.sem(acceptance)
 
             try:
-                ax[a][b].set_ylim(bottom=0, top=np.max(y)*1.5)
+                ax[a][b].set_ylim(bottom=0, top=np.max(y) * 1.5)
             except ValueError as e:
                 print(e)
 
@@ -474,8 +521,12 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
                 # Fit the model
                 try:
                     out = model.fit(y, params, x=x)
-                    ax[a][b].plot(xs, out.eval(params=out.params, x=xs),
-                                  linewidth=2.0, c=ebar[0].get_color())
+                    ax[a][b].plot(
+                        xs,
+                        out.eval(params=out.params, x=xs),
+                        linewidth=2.0,
+                        c=ebar[0].get_color(),
+                    )
                 except ValueError as e:
                     print(e)
                 # Plot the fitted model with output parameters and same x's as model
@@ -488,11 +539,12 @@ def draw_cos_bin(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder, 
                 #     color=ebar[0].get_color(), alpha=0.1,
                 #     label='2-$\sigma$ uncertainty band')
 
-    if not os.path.exists(f'{out_folder}/CosT'):
-        os.makedirs(f'{out_folder}/CosT')
+    if not os.path.exists(f"{out_folder}/CosT"):
+        os.makedirs(f"{out_folder}/CosT")
     fig.legend(loc="upper right")
     fig.savefig(
-        f"{out_folder}/CosT/W[{np.round(w.left,3)},{np.round(w.right,3)}]_Q2[{np.round(q2.left,3)},{np.round(q2.right,3)}]_{bins}_CosT.png", bbox_inches='tight'
+        f"{out_folder}/CosT/W[{np.round(w.left, 3)},{np.round(w.right, 3)}]_Q2[{np.round(q2.left, 3)},{np.round(q2.right, 3)}]_{bins}_CosT.png",
+        bbox_inches="tight",
     )
 
 
@@ -504,21 +556,33 @@ def draw_cos_plots(data, mc_rec_data, thrown_data, w, q2, cos_t_bins, out_folder
     #                        w, q2, cos_t_bins, out_folder, bins))
     #     pool.starmap(draw_cos_bin, inputs)
     for bins in range(10, 26, 2):
-        draw_cos_bin(data, mc_rec_data, thrown_data,
-                     w, q2, cos_t_bins, out_folder, bins, models_fits={"new": model_new})
+        draw_cos_bin(
+            data,
+            mc_rec_data,
+            thrown_data,
+            w,
+            q2,
+            cos_t_bins,
+            out_folder,
+            bins,
+            models_fits={"new": model_new},
+        )
 
     # draw_cos_bin(data, mc_rec_data, thrown_data,
     #              w, q2, cos_t_bins, out_folder, 10, models_fits={"new": model_new})
 
 
-def draw_xsec_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder, bins):
+def draw_xsec_plots(
+    func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder, bins
+):
     fig, ax = plt.subplots(2, 2, figsize=(12, 9))
     fig.suptitle(
         f"W={w},\t$Q^2$={q2},\tcos($\\theta^{{{'*'}}}$)={cos_t} \n{bins} bins in $\phi$"
     )
     xs = np.linspace(0, 2 * np.pi, 100)
     data_y, data_x = bh.numpy.histogram(
-        data.phi, bins=bins, range=(0, 2 * np.pi), threads=4)
+        data.phi, bins=bins, range=(0, 2 * np.pi), threads=4
+    )
     x = (data_x[1:] + data_x[:-1]) / 2.0
     mc_rec_y, _ = bh.numpy.histogram(
         mc_rec_data.phi, bins=bins, range=(0, 2 * np.pi), threads=4
@@ -552,13 +616,18 @@ def draw_xsec_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_fold
         label="mc_rec",
     )
     ax[0][1].errorbar(
-        x, data_y, yerr=stats.sem(data_y), marker=".", linestyle="", label="data",
+        x,
+        data_y,
+        yerr=stats.sem(data_y),
+        marker=".",
+        linestyle="",
+        label="data",
     )
 
     acceptance = np.nan_to_num(thrown_y / mc_rec_y)
     ax[1][0].errorbar(
         x,
-        1/acceptance,
+        1 / acceptance,
         yerr=0,
         marker=".",
         c="g",
@@ -571,11 +640,9 @@ def draw_xsec_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_fold
 
     error_bar = np.ones_like(y)
 
-    F = mc_rec_y/thrown_y
-    error = np.sqrt(((thrown_y-mc_rec_y)*mc_rec_y) /
-                    np.power(thrown_y, 3))/F
-    error_bar = np.sqrt(
-        np.power((y*error), 2) + np.power(stats.sem(y), 2))
+    F = mc_rec_y / thrown_y
+    error = np.sqrt(((thrown_y - mc_rec_y) * mc_rec_y) / np.power(thrown_y, 3)) / F
+    error_bar = np.sqrt(np.power((y * error), 2) + np.power(stats.sem(y), 2))
 
     ax[1][1].errorbar(
         x,
@@ -587,7 +654,7 @@ def draw_xsec_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_fold
         zorder=1,
         label="corrected",
     )
-    ax[1][1].set_ylim(bottom=0, top=np.max(y)*1.5)
+    ax[1][1].set_ylim(bottom=0, top=np.max(y) * 1.5)
 
     phi_bins = np.linspace(0, 2 * np.pi, 200)
     crossSections = []
@@ -598,28 +665,25 @@ def draw_xsec_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_fold
     _cos_t = (cos_t.left + cos_t.right) / 2.0
 
     for phi in phi_bins:
-        crossSections.append(
-            maid(ENERGY, _w, _q2, _cos_t, np.degrees(phi)))
+        crossSections.append(maid(ENERGY, _w, _q2, _cos_t, np.degrees(phi)))
         phis.append(phi)
 
     crossSections = np.array(crossSections)
     phis = np.array(phis)
     _ax = ax[1][1].twinx()
-    _ax.plot(phis, crossSections, c='r',
-             label='maid2007', linestyle='dotted')
+    _ax.plot(phis, crossSections, c="r", label="maid2007", linestyle="dotted")
 
-    _ax.set_ylim(bottom=0, top=np.max(crossSections)*1.5)
+    _ax.set_ylim(bottom=0, top=np.max(crossSections) * 1.5)
 
     popt, pcov = curve_fit(func, x, y, maxfev=8000)
     # To compute one standard deviation errors on the parameters use
     # https://stackoverflow.com/questions/49130343/is-there-a-way-to-get-the-error-in-fitting-parameters-from-scipy-stats-norm-fit
     perr = np.sqrt(np.diag(pcov))
-    ax[1][1].plot(xs, func(xs, *popt), c="#9467bd",
-                  linewidth=2.0)
+    ax[1][1].plot(xs, func(xs, *popt), c="#9467bd", linewidth=2.0)
 
     fig.legend()
-    if not os.path.exists(f'{out_folder}/acc'):
-        os.makedirs(f'{out_folder}/acc')
+    if not os.path.exists(f"{out_folder}/acc"):
+        os.makedirs(f"{out_folder}/acc")
 
     plt.savefig(
         f"{out_folder}/acc/W[{w.left},{w.right}]_Q2[{q2.left},{q2.right}]_cos(theta)[{cos_t.left},{cos_t.right}]_{bins}.png"
@@ -634,39 +698,35 @@ def draw_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder):
     #                        w, q2, cos_t, out_folder, bins))
     #     pool.starmap(draw_xsec_plots, inputs)
 
-    draw_xsec_plots(func, data, mc_rec_data, thrown_data,
-                    w, q2, cos_t, out_folder, 10)
+    draw_xsec_plots(func, data, mc_rec_data, thrown_data, w, q2, cos_t, out_folder, 10)
 
 
-def draw_xsection(rec: pd.DataFrame, mc_rec: pd.DataFrame, thrown: pd.DataFrame, func, out_folder: str, binning: Dict):
+def draw_xsection(
+    rec: pd.DataFrame,
+    mc_rec: pd.DataFrame,
+    thrown: pd.DataFrame,
+    func,
+    out_folder: str,
+    binning: Dict,
+):
     # executor = get_reusable_executor(max_workers=len(np.unique(rec.theta_bin)))
-    total_num = (
-        len(binning["wbins"])
-        * len(binning["q2bins"])
-    )
+    total_num = len(binning["wbins"]) * len(binning["q2bins"])
 
     pbar = tqdm(total=total_num)
 
     for w in binning["wbins"]:
         for q2 in binning["q2bins"]:
             #################################################
-            rec_cut = (
-                (w == rec.w_bin) & (q2 == rec.q2_bin)
-            )
-            mc_rec_cut = (
-                (w == mc_rec.w_bin)
-                & (q2 == mc_rec.q2_bin)
-            )
-            thrown_cut = (
-                (w == thrown.w_bin)
-                & (q2 == thrown.q2_bin)
-            )
+            rec_cut = (w == rec.w_bin) & (q2 == rec.q2_bin)
+            mc_rec_cut = (w == mc_rec.w_bin) & (q2 == mc_rec.q2_bin)
+            thrown_cut = (w == thrown.w_bin) & (q2 == thrown.q2_bin)
 
             data = rec[rec_cut]
             mc_rec_data = mc_rec[mc_rec_cut]
             thrown_data = thrown[thrown_cut]
-            draw_cos_plots(data, mc_rec_data,
-                           thrown_data, w, q2, rec.theta_bin, out_folder)
+            draw_cos_plots(
+                data, mc_rec_data, thrown_data, w, q2, rec.theta_bin, out_folder
+            )
             #################################################
             # for cos_t in thetabins:
             #     rec_cut = (
@@ -700,85 +760,90 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins, name="reconstructed"):
     rec = rec.dropna()
 
     fig, ax = plt.subplots(figsize=(12, 9))
-    h = ax.hist2d(rec.w.to_numpy(), rec.q2.to_numpy(),
-                  bins=100,
-                  range=[[np.min(w_bins), np.max(w_bins)],
-                         [np.min(q2_bins), np.max(q2_bins)]],
-                  )
+    h = ax.hist2d(
+        rec.w.to_numpy(),
+        rec.q2.to_numpy(),
+        bins=100,
+        range=[[np.min(w_bins), np.max(w_bins)], [np.min(q2_bins), np.max(q2_bins)]],
+    )
 
     for w in w_bins:
-        ax.axvline(w, c='w', alpha=0.5)
+        ax.axvline(w, c="w", alpha=0.5)
     for q2 in q2_bins:
-        ax.axhline(q2, c='w', alpha=0.5)
+        ax.axhline(q2, c="w", alpha=0.5)
 
     ax.set_xlabel(r"$W~[GeV]$", fontsize=30)
     ax.set_ylabel(r"$Q^2~[GeV^2]$", fontsize=30)
-    ax.tick_params(axis='both', which='major', labelsize=15)
+    ax.tick_params(axis="both", which="major", labelsize=15)
     fig.suptitle(r"$W$ vs $Q^2$", fontsize=30)
     fig.colorbar(h[3], ax=ax)
 
-    if not os.path.exists(f'{out_folder}/kinematics'):
-        os.makedirs(f'{out_folder}/kinematics')
+    if not os.path.exists(f"{out_folder}/kinematics"):
+        os.makedirs(f"{out_folder}/kinematics")
 
-    fig.savefig(f"{out_folder}/kinematics/W_vs_Q2_{name}.png",
-                bbox_inches='tight')
+    fig.savefig(f"{out_folder}/kinematics/W_vs_Q2_{name}.png", bbox_inches="tight")
 
     #########################################
     fig2, ax2 = plt.subplots(figsize=(12, 9))
-    y, x = bh.numpy.histogram(rec.w.to_numpy(), bins=250, range=[
-        np.min(w_bins), np.max(w_bins)])
-    x = (x[1:] + x[:-1])/2.0
+    y, x = bh.numpy.histogram(
+        rec.w.to_numpy(), bins=250, range=[np.min(w_bins), np.max(w_bins)]
+    )
+    x = (x[1:] + x[:-1]) / 2.0
 
     ax2.errorbar(x, y, yerr=stats.sem(y), linestyle="", marker=".")
     ax2.set_xlabel(r"$W~[GeV]$", fontsize=30)
-    ax2.tick_params(axis='both', which='major', labelsize=15)
+    ax2.tick_params(axis="both", which="major", labelsize=15)
     ax2.set_xlim(np.min(w_bins), np.max(w_bins))
     ax2.set_ylim(bottom=0)
 
     fig2.suptitle(r"$W~(n\pi^+)$", fontsize=30)
-    fig2.savefig(f"{out_folder}/kinematics/W_{name}.png", bbox_inches='tight')
+    fig2.savefig(f"{out_folder}/kinematics/W_{name}.png", bbox_inches="tight")
     #########################################
 
     fig1, ax1 = plt.subplots(figsize=(12, 9))
-    h = ax1.hist2d(rec.cos_theta.to_numpy(),
-                   rec.phi.to_numpy(), bins=100)
+    h = ax1.hist2d(rec.cos_theta.to_numpy(), rec.phi.to_numpy(), bins=100)
     for t in theta_bins:
-        ax1.axvline(t, c='w', alpha=0.5)
+        ax1.axvline(t, c="w", alpha=0.5)
 
-    for phi in np.linspace(0, 2*np.pi, 12):
-        ax1.axhline(phi, c='w', alpha=0.5)
+    for phi in np.linspace(0, 2 * np.pi, 12):
+        ax1.axhline(phi, c="w", alpha=0.5)
 
     ax1.set_xlabel(r"$\cos(\theta^{*})$", fontsize=30)
     ax1.set_ylabel(r"$\phi^{*}$", fontsize=30)
-    ax1.tick_params(axis='both', which='major', labelsize=15)
-    fig1.suptitle(
-        r"$\cos(\theta^{*})$ vs $\phi^{*} n\pi^{+}$", fontsize=30)
+    ax1.tick_params(axis="both", which="major", labelsize=15)
+    fig1.suptitle(r"$\cos(\theta^{*})$ vs $\phi^{*} n\pi^{+}$", fontsize=30)
     fig1.colorbar(h[3], ax=ax1)
 
-    fig1.savefig(f"{out_folder}/kinematics/theta_vs_phi_{name}.png",
-                 bbox_inches='tight')
+    fig1.savefig(
+        f"{out_folder}/kinematics/theta_vs_phi_{name}.png", bbox_inches="tight"
+    )
     #########################################
-    fig3, ax3 = plt.subplots(ncols=1, nrows=2, figsize=(
-        16, 16), sharex=True, gridspec_kw={'hspace': 0.05})
-    h = ax3[0].hist2d(rec.w.to_numpy(), rec.q2.to_numpy(),
-                      bins=100, range=[[np.min(w_bins), np.max(w_bins)], [np.min(q2_bins), np.max(q2_bins)]])
+    fig3, ax3 = plt.subplots(
+        ncols=1, nrows=2, figsize=(16, 16), sharex=True, gridspec_kw={"hspace": 0.05}
+    )
+    h = ax3[0].hist2d(
+        rec.w.to_numpy(),
+        rec.q2.to_numpy(),
+        bins=100,
+        range=[[np.min(w_bins), np.max(w_bins)], [np.min(q2_bins), np.max(q2_bins)]],
+    )
 
     ax3[1].errorbar(x, y, yerr=stats.sem(y), linestyle="", marker=".", ms=10)
     ax3[1].set_xlabel(r"$W~[GeV]$", fontsize=30)
     ax3[0].set_ylabel(r"$Q^2~[GeV^2]$", fontsize=30)
-    ax3[0].tick_params(axis='y', which='major', labelsize=25)
-    ax3[0].tick_params(axis='x', which='major', labelsize=0)
-    ax3[1].tick_params(axis='both', which='major', labelsize=25)
+    ax3[0].tick_params(axis="y", which="major", labelsize=25)
+    ax3[0].tick_params(axis="x", which="major", labelsize=0)
+    ax3[1].tick_params(axis="both", which="major", labelsize=25)
     ax3[1].set_xlim(np.min(w_bins), np.max(w_bins))
     for axxx in ax3:
         axxx.label_outer()
     ax3[0].set_title(r"$W$ vs $Q^2$", fontsize=30)
-    fig3.savefig(f"{out_folder}/kinematics/wq2_{name}.png",
-                 bbox_inches='tight')
+    fig3.savefig(f"{out_folder}/kinematics/wq2_{name}.png", bbox_inches="tight")
 
     fig4, ax4 = plt.subplots(figsize=(12, 9))
     H, xedges, yedges = bh.numpy.histogram2d(
-        rec.w.to_numpy(), rec.q2.to_numpy(), bins=(w_bins, q2_bins))
+        rec.w.to_numpy(), rec.q2.to_numpy(), bins=(w_bins, q2_bins)
+    )
     H = H.T  # Let each row list bins with common y range.
     X, Y = np.meshgrid(xedges, yedges)
     im = ax4.pcolormesh(X, Y, H)
@@ -786,15 +851,13 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins, name="reconstructed"):
     ax4.set_title(r"$W$ vs $Q^2$", fontsize=30)
     ax4.set_xlabel(r"$W~[GeV]$", fontsize=30)
     ax4.set_ylabel(r"$Q^2~[GeV^2]$", fontsize=30)
-    fig4.savefig(f"{out_folder}/kinematics/wq2_binned_{name}.png",
-                 bbox_inches='tight')
+    fig4.savefig(f"{out_folder}/kinematics/wq2_binned_{name}.png", bbox_inches="tight")
 
     fig4, ax4 = plt.subplots(figsize=(12, 9))
     try:
         H, xedges, yedges = bh.numpy.histogram2d(
-            rec.cos_theta.to_numpy(),
-            rec.phi.to_numpy(),
-            bins=(10, 12))
+            rec.cos_theta.to_numpy(), rec.phi.to_numpy(), bins=(10, 12)
+        )
     except ValueError as ve:
         print(rec.cos_theta.to_numpy().size)
         print(rec.phi.to_numpy().size)
@@ -806,10 +869,11 @@ def draw_kinematics(rec, w_bins, q2_bins, theta_bins, name="reconstructed"):
     fig4.colorbar(im, ax=ax4)
     ax4.set_xlabel(r"$\cos(\theta^{*})$", fontsize=30)
     ax4.set_ylabel(r"$\phi^{*}$", fontsize=30)
-    ax4.tick_params(axis='both', which='major', labelsize=15)
+    ax4.tick_params(axis="both", which="major", labelsize=15)
     fig1.suptitle(r"$\cos(\theta^{*})$ vs $\phi^{*}$", fontsize=30)
-    fig4.savefig(f"{out_folder}/kinematics/cos_phi_binned_{name}.png",
-                 bbox_inches='tight')
+    fig4.savefig(
+        f"{out_folder}/kinematics/cos_phi_binned_{name}.png", bbox_inches="tight"
+    )
 
 
 if __name__ == "__main__":
@@ -832,14 +896,8 @@ if __name__ == "__main__":
         required=False,
         default="plots",
     )
-    parser.add_argument(
-        "--draw_kin",
-        action='store_true'
-    )
-    parser.add_argument(
-        "--e1f",
-        action='store_true'
-    )
+    parser.add_argument("--draw_kin", action="store_true")
+    parser.add_argument("--e1f", action="store_true")
 
     args = parser.parse_args()
     if args.e1f:
@@ -888,13 +946,45 @@ if __name__ == "__main__":
         )
     rec = rec[cuts]
     mc_rec = mc_rec[mc_cuts]
-    mc_rec = mc_rec[["w", "q2", "mm2", "cos_theta", "theta",
-                     "phi", "helicty", "electron_sector", "cut_fid"]].copy(deep=True)
-    mc_thrown = mc_thrown[["w", "q2", "mm2", "cos_theta", "theta", "phi", "helicty", "electron_sector", "cut_fid"]].copy(
-        deep=True
-    )
-    rec = rec[["w", "q2", "mm2", "cos_theta", "theta",
-               "phi", "cut_fid", "helicty",  "electron_sector"]].copy(deep=True)
+    mc_rec = mc_rec[
+        [
+            "w",
+            "q2",
+            "mm2",
+            "cos_theta",
+            "theta",
+            "phi",
+            "helicty",
+            "electron_sector",
+            "cut_fid",
+        ]
+    ].copy(deep=True)
+    mc_thrown = mc_thrown[
+        [
+            "w",
+            "q2",
+            "mm2",
+            "cos_theta",
+            "theta",
+            "phi",
+            "helicty",
+            "electron_sector",
+            "cut_fid",
+        ]
+    ].copy(deep=True)
+    rec = rec[
+        [
+            "w",
+            "q2",
+            "mm2",
+            "cos_theta",
+            "theta",
+            "phi",
+            "cut_fid",
+            "helicty",
+            "electron_sector",
+        ]
+    ].copy(deep=True)
 
     w_bins = w_bins_e99
     q2_bins = q2_bins_e99
@@ -910,16 +1000,13 @@ if __name__ == "__main__":
 
         for sec in range(1, 7):
             sec_data = rec[rec.electron_sector == sec]
-            draw_kinematics(sec_data, w_bins, q2_bins,
-                            theta_bins, f"rec_{sec}")
+            draw_kinematics(sec_data, w_bins, q2_bins, theta_bins, f"rec_{sec}")
 
             sec_mc_rec = mc_rec[mc_rec.electron_sector == sec]
-            draw_kinematics(sec_mc_rec, w_bins, q2_bins,
-                            theta_bins, f"mc_rec_{sec}")
+            draw_kinematics(sec_mc_rec, w_bins, q2_bins, theta_bins, f"mc_rec_{sec}")
 
             sec_mc_thrown = mc_thrown[mc_thrown.electron_sector == sec]
-            draw_kinematics(sec_mc_thrown, w_bins, q2_bins,
-                            theta_bins, f"thrown_{sec}")
+            draw_kinematics(sec_mc_thrown, w_bins, q2_bins, theta_bins, f"thrown_{sec}")
 
     # mc_rec["w_bin"] = pd.cut(mc_rec["w"], bins=w_bins, include_lowest=False)
     # mc_rec["q2_bin"] = pd.cut(mc_rec["q2"], bins=q2_bins, include_lowest=False)

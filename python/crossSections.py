@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 import matplotlib  # noqa
-matplotlib.use('agg')  # noqa
+
+matplotlib.use("agg")  # noqa
 import warnings  # noqa
+
 warnings.filterwarnings("ignore")  # noqa
 
 from calc_xsections import *
@@ -13,13 +15,23 @@ import time
 import matplotlib.pyplot as plt
 from scipy import stats
 
-plt.rcParams.update({'mathtext.fontset': 'stix'})
+plt.rcParams.update({"mathtext.fontset": "stix"})
 
 
-def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, overlap=None, radcorr=None):
+def main(
+    rec,
+    mc_rec,
+    mc_thrown,
+    empty,
+    binning,
+    out_folder="plots",
+    bins=12,
+    overlap=None,
+    radcorr=None,
+):
     results = []
-    if not os.path.exists(f'{out_folder}/crossSections'):
-        os.makedirs(f'{out_folder}/crossSections')
+    if not os.path.exists(f"{out_folder}/crossSections"):
+        os.makedirs(f"{out_folder}/crossSections")
     # Make a set of values from 0 to 2Pi for plotting
     xs = np.linspace(0, 2 * np.pi, 250)
     if overlap is not None:
@@ -39,8 +51,7 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
             mc_rec_wq2 = mc_rec_w[mc_rec_w.q2_bin == q2].copy()
             mc_thrown_wq2 = mc_thrown_w[mc_thrown_w.q2_bin == q2].copy()
 
-            CosTfig = plt.figure(
-                figsize=(12, 9), constrained_layout=True)
+            CosTfig = plt.figure(figsize=(12, 9), constrained_layout=True)
             ct_gs = CosTfig.add_gridspec(5, 2, hspace=0.1)
             _left_ax = CosTfig.add_subplot(ct_gs[0, 0])
             _right_ax = CosTfig.add_subplot(ct_gs[0, 1])
@@ -61,9 +72,10 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
             radcor_R = 1.0
             if radcorr is not None:
                 cut = isclose(radcorr_df.w_left, w.left) & isclose(
-                    radcorr_df.q2_left, q2.left)
+                    radcorr_df.q2_left, q2.left
+                )
 
-                if(radcorr_df[cut].R.size == 0):
+                if radcorr_df[cut].R.size == 0:
                     print(w.left, q2.left)
                     radcor_R = 1.0
                 else:
@@ -99,26 +111,41 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                 if overlap is not None:
                     for k, v in overlapSettings.items():
                         # e2 = virtual_photon_flux(w.mid, q2.mid, v['energy'])
-                        e1 = virtual_photon_epsilon_fn(
-                            ENERGY, w.mid, q2.mid)
-                        e2 = virtual_photon_epsilon_fn(
-                            v['energy'], w.mid, q2.mid)
-                        factor = e1/e2
+                        e1 = virtual_photon_epsilon_fn(ENERGY, w.mid, q2.mid)
+                        e2 = virtual_photon_epsilon_fn(v["energy"], w.mid, q2.mid)
+                        factor = e1 / e2
 
-                        old_data = overlap_df[(overlap_df.W_min == w.left)
-                                              & (overlap_df.Q2_min == q2.left)
-                                              & (overlap_df.cos_t == theta.left)
-                                              & (overlap_df.experiment == k)]
+                        old_data = overlap_df[
+                            (overlap_df.W_min == w.left)
+                            & (overlap_df.Q2_min == q2.left)
+                            & (overlap_df.cos_t == theta.left)
+                            & (overlap_df.experiment == k)
+                        ]
                         if len(old_data) == 0:
                             continue
-                        ebar = ax.errorbar(old_data.phi, old_data.y * factor, yerr=old_data.yerr,
-                                           marker=v['symbol'], linestyle="",
-                                           zorder=1, label=f"{k}",
-                                           markersize=10, alpha=0.4, c=v['color'])
-                        maxs = np.max(old_data.y * factor)*1.5
-                        ct_ax[theta.left].errorbar(old_data.phi, old_data.y * factor, yerr=old_data.yerr,
-                                                   marker=v['symbol'], linestyle="",
-                                                   markersize=5, alpha=0.4, c=v['color'])
+                        ebar = ax.errorbar(
+                            old_data.phi,
+                            old_data.y * factor,
+                            yerr=old_data.yerr,
+                            marker=v["symbol"],
+                            linestyle="",
+                            zorder=1,
+                            label=f"{k}",
+                            markersize=10,
+                            alpha=0.4,
+                            c=v["color"],
+                        )
+                        maxs = np.max(old_data.y * factor) * 1.5
+                        ct_ax[theta.left].errorbar(
+                            old_data.phi,
+                            old_data.y * factor,
+                            yerr=old_data.yerr,
+                            marker=v["symbol"],
+                            linestyle="",
+                            markersize=5,
+                            alpha=0.4,
+                            c=v["color"],
+                        )
 
                 plot_maid_model(ax, w, q2, theta, xs, "MAID 2007")
                 maid_top = plot_maid_model(ct_ax[theta.left], w, q2, theta, xs)
@@ -133,30 +160,33 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                 for name, cuts in cut_fids.items():
                     if cuts == 0:
                         # Histogram the data for plotting
-                        marker = 'o'
+                        marker = "o"
                         _data_y, _x = hist_data(
-                            data[data.cut_fid], density=False, bins=bins)
+                            data[data.cut_fid], density=False, bins=bins
+                        )
                         _empty_y, _ = hist_data(
-                            data_e[data_e.cut_fid], density=False, bins=bins)
+                            data_e[data_e.cut_fid], density=False, bins=bins
+                        )
                         _mc_rec_y, _ = hist_data(
-                            data_mc[data_mc.cut_fid], density=False, bins=bins)
+                            data_mc[data_mc.cut_fid], density=False, bins=bins
+                        )
                     elif cuts == 1:
                         # Histogram the data for plotting
                         marker = "^"
                         _data_y, _x = hist_data(
-                            data[~data.cut_fid], density=False, bins=bins)
+                            data[~data.cut_fid], density=False, bins=bins
+                        )
                         _empty_y, _ = hist_data(
-                            data_e[~data_e.cut_fid], density=False, bins=bins)
+                            data_e[~data_e.cut_fid], density=False, bins=bins
+                        )
                         _mc_rec_y, _ = hist_data(
-                            data_mc[~data_mc.cut_fid], density=False, bins=bins)
+                            data_mc[~data_mc.cut_fid], density=False, bins=bins
+                        )
                     else:
-                        marker = 'd'
-                        _data_y, _x = hist_data(
-                            data, density=False, bins=bins)
-                        _empty_y, _ = hist_data(
-                            data_e, density=False, bins=bins)
-                        _mc_rec_y, _ = hist_data(
-                            data_mc, density=False, bins=bins)
+                        marker = "d"
+                        _data_y, _x = hist_data(data, density=False, bins=bins)
+                        _empty_y, _ = hist_data(data_e, density=False, bins=bins)
+                        _mc_rec_y, _ = hist_data(data_mc, density=False, bins=bins)
 
                     _thrown_y, _ = hist_data(thrown, density=False, bins=bins)
 
@@ -164,7 +194,7 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                     N_y = _data_y
                     N_empty = _empty_y
                     # Empty target subtraction
-                    _data_y = (_data_y/Q_FULL - _empty_y/Q_EMPTY)
+                    _data_y = _data_y / Q_FULL - _empty_y / Q_EMPTY
                     # Remove points with 0 data count
                     cut = ~(_data_y == 0)
                     x = _x[cut]
@@ -180,17 +210,16 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                     acceptance = mc_rec_y / thrown_y
 
                     # Get bin widths
-                    delta_W = (w.right-w.left)
-                    delta_Q2 = (q2.right-q2.left)
-                    delta_Theta = np.abs(theta.right-theta.left)
+                    delta_W = w.right - w.left
+                    delta_Q2 = q2.right - q2.left
+                    delta_Theta = np.abs(theta.right - theta.left)
                     __phis = np.linspace(0, 2 * np.pi, bins)
                     delta_phi = __phis[1] - __phis[0]
                     kin_bin_width = delta_W * delta_Q2 * delta_Theta * delta_phi
 
                     # Calculate acceptance and correct data
                     flux = virtual_photon_flux(w.mid, q2.mid) * luminosity()
-                    denom = kin_bin_width * flux * \
-                        acceptance * radcor_R * binCenter(x)
+                    denom = kin_bin_width * flux * acceptance * radcor_R * binCenter(x)
 
                     stat_error = statistical(N_y, N_empty, denom)
 
@@ -200,18 +229,24 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                     except ValueError:
                         continue
 
-                    error_bar = get_error_bars(
-                        y, mc_rec_y, thrown_y, stat_error)
+                    error_bar = get_error_bars(y, mc_rec_y, thrown_y, stat_error)
 
-                    errorCut = (error_bar > np.quantile(error_bar, 0.85))
-                    #x = x[~errorCut]
-                    #y = y[~errorCut]
-                    #error_bar = error_bar[~errorCut]
+                    errorCut = error_bar > np.quantile(error_bar, 0.85)
+                    # x = x[~errorCut]
+                    # y = y[~errorCut]
+                    # error_bar = error_bar[~errorCut]
 
-                    ebar = ax.errorbar(x, y, yerr=error_bar,
-                                       marker=marker, linestyle="",
-                                       zorder=1, label=f"{name}",
-                                       markersize=10, alpha=0.4)
+                    ebar = ax.errorbar(
+                        x,
+                        y,
+                        yerr=error_bar,
+                        marker=marker,
+                        linestyle="",
+                        zorder=1,
+                        label=f"{name}",
+                        markersize=10,
+                        alpha=0.4,
+                    )
 
                     # ax.errorbar(x[errorCut], y[errorCut], yerr=error_bar[errorCut],
                     #             marker=marker, linestyle="",
@@ -219,14 +254,18 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                     #             markersize=10, alpha=0.5)
 
                     for phi, cross, err in zip(x, y, error_bar):
-                        results.append({"w_left": w.left,
-                                        "w_right": w.right,
-                                        "q2_left": q2.left,
-                                        "q2_right": q2.right,
-                                        "cos_theta": theta.left,
-                                        "x": np.round(phi, 3),
-                                        "y": np.round(cross, 5),
-                                        "err": np.round(err, 5)})
+                        results.append(
+                            {
+                                "w_left": w.left,
+                                "w_right": w.right,
+                                "q2_left": q2.left,
+                                "q2_right": q2.right,
+                                "cos_theta": theta.left,
+                                "x": np.round(phi, 3),
+                                "y": np.round(cross, 5),
+                                "err": np.round(err, 5),
+                            }
+                        )
 
                     # Plot intergrated yeils to compare with/without fid cuts
                     # try:
@@ -240,53 +279,79 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
                     # except ValueError:
                     #     pass
 
-                    out = fit_model(ax, model_new, x, y, xs,
-                                    ebar[0].get_color(), "")
-                    ax.legend(loc='upper right')
+                    out = fit_model(ax, model_new, x, y, xs, ebar[0].get_color(), "")
+                    ax.legend(loc="upper right")
                     ax.set_ylabel(
-                        r'$\frac{\mathbf{d}\sigma}{\mathbf{d} \Omega} \left[\frac{\mu b}{sr}\right]$')
-                    ax.set_xlabel(r'$\phi_{\pi}^{*}$')
+                        r"$\frac{\mathbf{d}\sigma}{\mathbf{d} \Omega} \left[\frac{\mu b}{sr}\right]$"
+                    )
+                    ax.set_xlabel(r"$\phi_{\pi}^{*}$")
 
-                    ct_ax[theta.left].errorbar(x, y, yerr=error_bar,
-                                               marker=marker, linestyle="",
-                                               zorder=1,
-                                               label=f"{plot_label[theta.left]}",
-                                               markersize=5, alpha=0.8)
+                    ct_ax[theta.left].errorbar(
+                        x,
+                        y,
+                        yerr=error_bar,
+                        marker=marker,
+                        linestyle="",
+                        zorder=1,
+                        label=f"{plot_label[theta.left]}",
+                        markersize=5,
+                        alpha=0.8,
+                    )
 
                     if cuts == 0:
                         ct_ax[theta.left].set_ylabel(
-                            r'$\frac{\mathbf{d}\sigma}{\mathbf{d} \Omega} \left[\frac{\mu b}{sr}\right]$')
-                        ct_ax[theta.left].set_xlabel(r'$\phi_{\pi}^{*}$')
+                            r"$\frac{\mathbf{d}\sigma}{\mathbf{d} \Omega} \left[\frac{\mu b}{sr}\right]$"
+                        )
+                        ct_ax[theta.left].set_xlabel(r"$\phi_{\pi}^{*}$")
                         ct_ax[theta.left].legend(
-                            loc='upper right', markerscale=0.2, numpoints=1, handlelength=0)
-                        out = fit_model(ct_ax[theta.left], model_new, x, y, xs,
-                                        ebar[0].get_color(), "")
+                            loc="upper right",
+                            markerscale=0.2,
+                            numpoints=1,
+                            handlelength=0,
+                        )
+                        out = fit_model(
+                            ct_ax[theta.left],
+                            model_new,
+                            x,
+                            y,
+                            xs,
+                            ebar[0].get_color(),
+                            "",
+                        )
 
                         try:
-                            top = np.max(y)*1.5
+                            top = np.max(y) * 1.5
                         except ValueError:
                             top = np.nan
 
                         if np.isnan(top) or np.isinf(top):
                             ax.set_ylim(bottom=0, top=1.0)
                         else:
-                            ax.set_ylim(bottom=0,
-                                        top=max(max(top, maid_top), maxs))
+                            ax.set_ylim(bottom=0, top=max(max(top, maid_top), maxs))
                             ct_ax[theta.left].set_ylim(
-                                bottom=0.0,
-                                top=max(max(top, maid_top), maxs))
+                                bottom=0.0, top=max(max(top, maid_top), maxs)
+                            )
 
                 ax.set_title(
-                    f"$W~[{w.left:0.3f},{w.right:0.3f})~GeV~~Q^2~[{q2.left:0.3f}, {q2.right:0.3f})~GeV^2$, $\cos(\\theta)$ : [{theta.left:0.1f}, {theta.right:0.1f})")
-                fig.savefig(f"{out_folder}/crossSections/w_{w.left:0.3f}_q2_{q2.left:0.3f}_theta_{theta.left}.png",
-                            bbox_inches='tight', dpi=400)
+                    f"$W~[{w.left:0.3f},{w.right:0.3f})~GeV~~Q^2~[{q2.left:0.3f}, {q2.right:0.3f})~GeV^2$, $\cos(\\theta)$ : [{theta.left:0.1f}, {theta.right:0.1f})"
+                )
+                fig.savefig(
+                    f"{out_folder}/crossSections/w_{w.left:0.3f}_q2_{q2.left:0.3f}_theta_{theta.left}.png",
+                    bbox_inches="tight",
+                    dpi=400,
+                )
 
             if pass_plotting:
                 CosTfig.suptitle(
-                    f'$W~~[{w.left:0.3f},{w.right:0.3f})~~~~Q^2~~[{q2.left:0.3f}, {q2.right:0.3f})$', fontsize=16)
+                    f"$W~~[{w.left:0.3f},{w.right:0.3f})~~~~Q^2~~[{q2.left:0.3f}, {q2.right:0.3f})$",
+                    fontsize=16,
+                )
                 CosTfig.align_ylabels()
-                CosTfig.savefig(f"{out_folder}/crossSections/cost_w_{w.left:0.3f}_q2_{q2.left:0.3f}.png",
-                                bbox_inches='tight', dpi=250)
+                CosTfig.savefig(
+                    f"{out_folder}/crossSections/cost_w_{w.left:0.3f}_q2_{q2.left:0.3f}.png",
+                    bbox_inches="tight",
+                    dpi=250,
+                )
 
     output = pd.DataFrame(results)
     print(output.head())
@@ -295,20 +360,54 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ov
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Make Cross Sections")
-    parser.add_argument("--mc", dest="mc_data_file_path",
-                        type=str, help="MC csv file", required=True)
-    parser.add_argument("--data", dest="rec_data_file_path",
-                        type=str, help="Data csv file", required=True)
-    parser.add_argument("--empty", dest="empty_file_path",
-                        type=str, help="Empty run csv file", required=True)
-    parser.add_argument("--folder", dest="out_folder", type=str,
-                        help="Folder for plots", required=False, default="plots")
-    parser.add_argument("--overlap", dest="overlap", type=str, help="Location of overlap data csv", required=False,
-                        default=None)
-    parser.add_argument("--radcorr", dest="radcorr", type=str, help="Location of radcorr data csv", required=False,
-                        default=None)
-    parser.add_argument("--highw", help="Use high W binning",
-                        required=False, action='store_true', default=False)
+    parser.add_argument(
+        "--mc", dest="mc_data_file_path", type=str, help="MC csv file", required=True
+    )
+    parser.add_argument(
+        "--data",
+        dest="rec_data_file_path",
+        type=str,
+        help="Data csv file",
+        required=True,
+    )
+    parser.add_argument(
+        "--empty",
+        dest="empty_file_path",
+        type=str,
+        help="Empty run csv file",
+        required=True,
+    )
+    parser.add_argument(
+        "--folder",
+        dest="out_folder",
+        type=str,
+        help="Folder for plots",
+        required=False,
+        default="plots",
+    )
+    parser.add_argument(
+        "--overlap",
+        dest="overlap",
+        type=str,
+        help="Location of overlap data csv",
+        required=False,
+        default=None,
+    )
+    parser.add_argument(
+        "--radcorr",
+        dest="radcorr",
+        type=str,
+        help="Location of radcorr data csv",
+        required=False,
+        default=None,
+    )
+    parser.add_argument(
+        "--highw",
+        help="Use high W binning",
+        required=False,
+        action="store_true",
+        default=False,
+    )
     args = parser.parse_args()
 
     # Start to main
@@ -345,9 +444,18 @@ if __name__ == "__main__":
     _binning["wbins"] = pd.Index.sort_values(pd.unique(_rec.w_bin))
     _binning["q2bins"] = pd.Index.sort_values(pd.unique(_rec.q2_bin))
     _binning["thetabins"] = pd.Index.sort_values(pd.unique(_rec.theta_bin))
-    print(f"Done setup: {(end-start)/1E9:0.2f}Sec")
+    print(f"Done setup: {(end - start) / 1e9:0.2f}Sec")
 
-    main(_rec, _mc_rec, _mc_thrown, _empty_target, _binning, bins=bins,
-         out_folder=args.out_folder, overlap=args.overlap, radcorr=args.radcorr)
+    main(
+        _rec,
+        _mc_rec,
+        _mc_thrown,
+        _empty_target,
+        _binning,
+        bins=bins,
+        out_folder=args.out_folder,
+        overlap=args.overlap,
+        radcorr=args.radcorr,
+    )
 
     del _rec, _mc_rec, _mc_thrown, _empty_target

@@ -4,35 +4,36 @@ import pandas as pd
 
 import time
 from lmfit import Model
-from lmfit.models import *
+from lmfit.models import PseudoVoigtModel, GaussianModel
 from scipy.special import erfc
 from scipy.interpolate import interp1d
 import boost_histogram as bh
 
 from pyarrow import csv
 import pyarrow as pa
+
 pa.set_cpu_count(8)
 
 ENERGY = 4.81726
 EK = 5.499
 E16 = 5.75
 
-Q_FULL = 4348.46636E-6  # 03/04/2021
+Q_FULL = 4348.46636e-6  # 03/04/2021
 # Q_FULL = 3142.6514E-6  # 02/07/2021
 # Q_FULL = 31426.514045353397E-6  # 02/07/2021
 # Q_FULL = 2822.038E-6  # Older
 # Q_EMPTY = 3756.08E-6  # ????
-Q_EMPTY = 1211.06E-6
+Q_EMPTY = 1211.06e-6
 
-overlapSettings = {"E99-107": {"name": "",
-                               "color": 'r',
-                               "symbol": '*',
-                               "energy": E16},
-                   "K. Park 2014": {"name": "",
-                                    "color": 'g',
-                                    "symbol": 'd',
-                                    "energy": EK, },
-                   }
+overlapSettings = {
+    "E99-107": {"name": "", "color": "r", "symbol": "*", "energy": E16},
+    "K. Park 2014": {
+        "name": "",
+        "color": "g",
+        "symbol": "d",
+        "energy": EK,
+    },
+}
 
 which_plot = {
     -1.0: [0, 0],
@@ -44,7 +45,7 @@ which_plot = {
     0.2: [3, 0],
     0.4: [3, 1],
     0.6: [4, 0],
-    0.8: [4, 1]
+    0.8: [4, 1],
 }
 plot_label = {
     -1.0: "$\cos(\\theta)=[-1.0,-0.8)$",
@@ -56,7 +57,7 @@ plot_label = {
     0.2: "$\cos(\\theta)=[0.2,0.4)$",
     0.4: "$\cos(\\theta)=[0.4,0.6)$",
     0.6: "$\cos(\\theta)=[0.6,0.8)$",
-    0.8: "$\cos(\\theta)=[0.8,1.0)$"
+    0.8: "$\cos(\\theta)=[0.8,1.0)$",
 }
 
 # w_bins = np.array([1.1, 1.12, 1.14, 1.16, 1.18, 1.2, 1.22, 1.24, 1.26, 1.28, 1.3,
@@ -71,21 +72,81 @@ plot_label = {
 #                    1.705, 1.715, 1.725, 1.735, 1.745, 1.755, 1.765, 1.775, 1.78,  1.83,  1.89,  1.95,  2.01])
 
 
-w_bins_e99 = np.array([1.1, 1.12, 1.14, 1.16, 1.18, 1.2, 1.22, 1.24, 1.26, 1.28, 1.3,
-                       1.32, 1.34, 1.36, 1.38, 1.4, 1.42, 1.44, 1.46, 1.48, 1.5, 1.52,
-                       1.54, 1.56, 1.58, 1.6, 1.62, 1.64, 1.66, 1.68, 1.7, 1.72, 1.74, 1.76, 1.78, 1.8, 1.82])
+w_bins_e99 = np.array(
+    [
+        1.1,
+        1.12,
+        1.14,
+        1.16,
+        1.18,
+        1.2,
+        1.22,
+        1.24,
+        1.26,
+        1.28,
+        1.3,
+        1.32,
+        1.34,
+        1.36,
+        1.38,
+        1.4,
+        1.42,
+        1.44,
+        1.46,
+        1.48,
+        1.5,
+        1.52,
+        1.54,
+        1.56,
+        1.58,
+        1.6,
+        1.62,
+        1.64,
+        1.66,
+        1.68,
+        1.7,
+        1.72,
+        1.74,
+        1.76,
+        1.78,
+        1.8,
+        1.82,
+    ]
+)
 
-w_bins_k = np.array([1.605, 1.615, 1.625, 1.635, 1.645, 1.655, 1.665, 1.675, 1.685, 1.695,
-                     1.705, 1.715, 1.725, 1.735, 1.745, 1.755, 1.765, 1.775, 1.785, 1.795, 1.805])
+w_bins_k = np.array(
+    [
+        1.605,
+        1.615,
+        1.625,
+        1.635,
+        1.645,
+        1.655,
+        1.665,
+        1.675,
+        1.685,
+        1.695,
+        1.705,
+        1.715,
+        1.725,
+        1.735,
+        1.745,
+        1.755,
+        1.765,
+        1.775,
+        1.785,
+        1.795,
+        1.805,
+    ]
+)
 
 # q2_bins_e99 = np.array([1.1, 1.30, 1.56, 1.87, 2.23, 2.66, 3.5])
 # q2_bins_k = np.array([1.1, 1.30, 1.56, 1.8,  2.2,  2.6,  3.15, 4.0])
 
 q2_bins_e99 = np.array([1.1, 1.33, 1.56, 1.87, 2.23, 2.66, 3.5])
-q2_bins_k = np.array([1.8,  2.2,  2.6,  3.15, 4.0])
+q2_bins_k = np.array([1.8, 2.2, 2.6, 3.15, 4.0])
 
-theta_bins = np.array([-1.0, -0.8, -0.6, -0.4, -0.2,
-                       0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
+theta_bins = np.array([-1.0, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
 
 
 def read_csv(file_name: str = "", data: bool = False):
@@ -98,7 +159,7 @@ def read_csv(file_name: str = "", data: bool = False):
         "mm2",
         "cut_fid",
         "helicty",
-        "type"
+        "type",
     ]
     dtype = {
         "electron_sector": "int8",
@@ -116,8 +177,7 @@ def read_csv(file_name: str = "", data: bool = False):
     # Load file into pyTable before changing to pandas
     pyTable = csv.read_csv(
         file_name,
-        read_options=csv.ReadOptions(
-            use_threads=True, column_names=names),
+        read_options=csv.ReadOptions(use_threads=True, column_names=names),
         convert_options=csv.ConvertOptions(column_types=dtype),
     )
     df = pyTable.to_pandas(strings_to_categorical=True)
@@ -140,14 +200,14 @@ def read_csv(file_name: str = "", data: bool = False):
 def luminosity():
     l = 5  # cm
     rho = 0.0708  # g/cm3
-    Avigadro = 6.022E23  # mol^−1
-    qe = 1.602E-19  # C
+    Avigadro = 6.022e23  # mol^−1
+    qe = 1.602e-19  # C
     MH = 1.007  # g/mol
-    conv_cm2_to_fm2 = 1E-39  # From wolfram alpha
-    conv_cm2_to_mubarn = 1E-30  # From wolfram alpha
+    conv_cm2_to_fm2 = 1e-39  # From wolfram alpha
+    conv_cm2_to_mubarn = 1e-30  # From wolfram alpha
 
     # * conv_cm2_to_fm2
-    return (l*rho*Avigadro)/(qe*MH) * conv_cm2_to_mubarn
+    return (l * rho * Avigadro) / (qe * MH) * conv_cm2_to_mubarn
 
 
 def momentum_fn(energy, mass):
@@ -161,10 +221,12 @@ def virtual_photon_energy_fn(target_mass, w, q2):
 def costheta_e_fn(beam_energy, target_mass, w, q2):
     electron_mass = 5.109989433549345e-4
     nu = virtual_photon_energy_fn(target_mass, w, q2)
-    scattered_energy = ((beam_energy) - (nu))
+    scattered_energy = (beam_energy) - (nu)
     beam_momentum = momentum_fn(beam_energy, electron_mass)
     scattered_momentum = momentum_fn(scattered_energy, electron_mass)
-    return (beam_energy * scattered_energy - q2 / 2.0 - electron_mass**2) / (beam_momentum * scattered_momentum)
+    return (beam_energy * scattered_energy - q2 / 2.0 - electron_mass**2) / (
+        beam_momentum * scattered_momentum
+    )
 
 
 def virtual_photon_epsilon_fn(beam_energy, w, q2, target_mass: float = 0.93827203):
@@ -173,25 +235,42 @@ def virtual_photon_epsilon_fn(beam_energy, w, q2, target_mass: float = 0.9382720
     return np.power(1 + 2 * (1 + nu**2 / q2) * np.power(np.tan(theta_e / 2), 2), -1)
 
 
-def virtual_photon_flux(w: float, q2: float, beam_energy: float = 4.81726, target_mass: float = 0.93827203) -> float:
+def virtual_photon_flux(
+    w: float, q2: float, beam_energy: float = 4.81726, target_mass: float = 0.93827203
+) -> float:
     alpha = 0.007297352570866302
     epsilon = virtual_photon_epsilon_fn(beam_energy, w, q2, target_mass)
-    return alpha / (4 * np.pi * q2) * w / (beam_energy**2 * target_mass**2) * (w**2 - target_mass**2) / (1 - epsilon)
+    return (
+        alpha
+        / (4 * np.pi * q2)
+        * w
+        / (beam_energy**2 * target_mass**2)
+        * (w**2 - target_mass**2)
+        / (1 - epsilon)
+    )
 
 
 def degauss(x, A, mu, sigma, lambda1, lambda2):
     mu1 = sigma * sigma * lambda1 + x - mu
     mu2 = -sigma * sigma * lambda2 + x - mu
-    ret = A * 0.5 / (1.0 / lambda1 + 1.0 / lambda2) * \
-        (np.exp(0.5 * np.power(sigma * lambda1, 2) + lambda1 * (x - mu)) * erfc(mu1 / (sigma * np.sqrt(2.0)))
-         + np.exp(0.5 * np.power(sigma * lambda2, 2) - lambda2 * (x - mu)) * erfc(-mu2 / (sigma * np.sqrt(2.0))))
+    ret = (
+        A
+        * 0.5
+        / (1.0 / lambda1 + 1.0 / lambda2)
+        * (
+            np.exp(0.5 * np.power(sigma * lambda1, 2) + lambda1 * (x - mu))
+            * erfc(mu1 / (sigma * np.sqrt(2.0)))
+            + np.exp(0.5 * np.power(sigma * lambda2, 2) - lambda2 * (x - mu))
+            * erfc(-mu2 / (sigma * np.sqrt(2.0)))
+        )
+    )
 
     return ret
 
 
 def gauss(x, A, mu, sig):
-    ret = np.exp(-np.power(x - mu, 2.) / (2 * np.power(sig, 2.)))
-    return A*ret
+    ret = np.exp(-np.power(x - mu, 2.0) / (2 * np.power(sig, 2.0)))
+    return A * ret
 
 
 def peak(x, c):
@@ -199,16 +278,18 @@ def peak(x, c):
 
 
 def lin_interp(x, y, i, half):
-    return x[i] + (x[i+1] - x[i]) * ((half - y[i]) / (y[i+1] - y[i]))
+    return x[i] + (x[i + 1] - x[i]) * ((half - y[i]) / (y[i + 1] - y[i]))
 
 
 def half_max_x(x, y):
-    half = np.max(y)/2.0
+    half = np.max(y) / 2.0
     signs = np.sign(np.add(y, -half))
-    zero_crossings = (signs[0:-2] != signs[1:-1])
+    zero_crossings = signs[0:-2] != signs[1:-1]
     zero_crossings_i = np.where(zero_crossings)[0]
-    return [lin_interp(x, y, zero_crossings_i[0], half),
-            lin_interp(x, y, zero_crossings_i[1], half)]
+    return [
+        lin_interp(x, y, zero_crossings_i[0], half),
+        lin_interp(x, y, zero_crossings_i[1], half),
+    ]
 
 
 def mm_cut(df: pd.DataFrame, sigma: int = 3):
@@ -229,10 +310,8 @@ def mm_cut(df: pd.DataFrame, sigma: int = 3):
         model = peak * background
         out = model.fit(y, pars, x=x)
         xs = np.linspace(0.3, 1.5, 1000)
-        min_cut = out.params['peak_center'] - \
-            sigma*out.params['peak_fwhm'] / 2.355
-        max_cut = out.params['peak_center'] + \
-            sigma*out.params['peak_fwhm'] / 2.355
+        min_cut = out.params["peak_center"] - sigma * out.params["peak_fwhm"] / 2.355
+        max_cut = out.params["peak_center"] + sigma * out.params["peak_fwhm"] / 2.355
         data[sec] = (min_cut, max_cut if max_cut <= 1.0 else 1.0)
 
     return data
@@ -272,7 +351,8 @@ def cut_for_MM(rec, mc_rec, empty=None):
 
 def hist_data(data, density=True, bins=10):
     data_y, data_x = bh.numpy.histogram(
-        data.phi.to_numpy(), bins=bins, range=(0, 2 * np.pi), density=density, threads=4)
+        data.phi.to_numpy(), bins=bins, range=(0, 2 * np.pi), density=density, threads=4
+    )
     x = (data_x[1:] + data_x[:-1]) / 2.0
     return data_y, x
 
@@ -280,12 +360,11 @@ def hist_data(data, density=True, bins=10):
 def prep_for_ana(dataframe, w_bins, q2_bins, theta_bins):
     dataframe.dropna(inplace=True)
     dataframe["cos_theta"] = np.cos(dataframe.theta).astype(np.float32)
-    dataframe["w_bin"] = pd.cut(
-        dataframe["w"], bins=w_bins, include_lowest=False)
-    dataframe["q2_bin"] = pd.cut(
-        dataframe["q2"], bins=q2_bins, include_lowest=False)
+    dataframe["w_bin"] = pd.cut(dataframe["w"], bins=w_bins, include_lowest=False)
+    dataframe["q2_bin"] = pd.cut(dataframe["q2"], bins=q2_bins, include_lowest=False)
     dataframe["theta_bin"] = pd.cut(
-        dataframe["cos_theta"], bins=theta_bins, include_lowest=False)
+        dataframe["cos_theta"], bins=theta_bins, include_lowest=False
+    )
     dataframe.dropna(inplace=True)
 
     return dataframe
@@ -310,8 +389,7 @@ def get_maid_values(xs, w, q2, theta):
 
 
 def statistical(DN_full, DN_empty, denom):
-
-    error = DN_full/(Q_FULL**2) + DN_empty/(Q_EMPTY**2)
+    error = DN_full / (Q_FULL**2) + DN_empty / (Q_EMPTY**2)
     # error = (DN_full**2) + (DN_empty**2)
     error = np.sqrt(error) / denom
 
@@ -319,11 +397,11 @@ def statistical(DN_full, DN_empty, denom):
 
 
 def get_error_bars(y, mc_rec_y, thrown_y, stat_error):
-    F = mc_rec_y/thrown_y
+    F = mc_rec_y / thrown_y
 
     dF = ((thrown_y - mc_rec_y) * mc_rec_y) / (thrown_y**3)
 
-    error = np.sqrt(dF)/F
+    error = np.sqrt(dF) / F
 
     error_bar = np.sqrt(error**2 + stat_error**2)
 
@@ -338,11 +416,10 @@ def plot_maid_model(ax, w, q2, theta, xs, name=""):
     # Get the cross section values from maid
     crossSections = get_maid_values(xs, _w, _q2, _theta)
     # _ax = ax.twinx()
-    ax.plot(xs, crossSections, c='r',
-            linestyle='dotted', label=f"{name}")
+    ax.plot(xs, crossSections, c="r", linestyle="dotted", label=f"{name}")
     # ax.set_ylim(bottom=0, top=np.max(crossSections)*1.5)
 
-    return np.max(crossSections)*1.8
+    return np.max(crossSections) * 1.8
 
 
 def binCetnerCorrection(w, q2, theta, num_bins=10):
@@ -354,11 +431,11 @@ def binCetnerCorrection(w, q2, theta, num_bins=10):
     theta_left = theta.left if theta.left != -1.0 else -0.99
     theta_right = theta.right if theta.right != 1.0 else 0.99
     # make a huge space of phis
-    width = np.linspace(0,  2*np.pi, num_bins, endpoint=True)[1]
-    left = np.array([i*width for i in range(num_bins+2)])
-    right = np.array([(i-1)*width for i in range(num_bins+2)])
+    width = np.linspace(0, 2 * np.pi, num_bins, endpoint=True)[1]
+    left = np.array([i * width for i in range(num_bins + 2)])
+    right = np.array([(i - 1) * width for i in range(num_bins + 2)])
 
-    center = (left+right)/2.0
+    center = (left + right) / 2.0
     ys = []
     for _w_ in [w.left, w.right]:
         for _q2_ in [q2.left, q2.right]:
@@ -370,20 +447,22 @@ def binCetnerCorrection(w, q2, theta, num_bins=10):
 
     crossSections_center = get_maid_values(center, _w, _q2, _theta)
     ys = np.array(ys)
-    avg = np.sum(ys, axis=0)/ys.shape[0]
+    avg = np.sum(ys, axis=0) / ys.shape[0]
 
-    bin_center_corr = interp1d(center, avg/crossSections_center, kind='cubic')
+    bin_center_corr = interp1d(center, avg / crossSections_center, kind="cubic")
     return bin_center_corr
 
 
 @np.vectorize
 def isclose(a, b, rel_tol=1e-4, abs_tol=0.0):
-    return np.abs(a-b) <= np.maximum(rel_tol * np.maximum(np.abs(a), np.abs(b)), abs_tol)
+    return np.abs(a - b) <= np.maximum(
+        rel_tol * np.maximum(np.abs(a), np.abs(b)), abs_tol
+    )
 
 
 def A(M, B, C):
-    if (C > 0 and np.abs(B) <= 4*C):
-        return M**2 + B**2/(8*C) + C
+    if C > 0 and np.abs(B) <= 4 * C:
+        return M**2 + B**2 / (8 * C) + C
     else:
         return M**2 + np.abs(B) - C
 
@@ -394,7 +473,7 @@ def model_new(x, M, b, c):
     b => epsilon*sigma_tt
     c => Sqrt(2epsilon(1+epsilon))* sigma_lt
     """
-    f = A(M, b, c) + b * np.cos(2*x) + c * np.cos(x)
+    f = A(M, b, c) + b * np.cos(2 * x) + c * np.cos(x)
     return f
 
 
@@ -419,8 +498,14 @@ def fit_model(ax, func, x, y, xs, color, name):
         return None
 
     # Plot the fitted model with output parameters and same x's as model
-    ax.plot(xs, out.eval(params=out.params, x=xs),
-            linewidth=2.0, c=color, label=f'{name}', alpha=0.2)
+    ax.plot(
+        xs,
+        out.eval(params=out.params, x=xs),
+        linewidth=2.0,
+        c=color,
+        label=f"{name}",
+        alpha=0.2,
+    )
 
     # Get uncertinty and plot between 2 sigmas
     # dely = out.eval_uncertainty(sigma=3, x=xs)
