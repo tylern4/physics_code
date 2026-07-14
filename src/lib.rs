@@ -278,34 +278,33 @@ fn process_files_to_parquet(
         info!("Processing files with {} worker threads", num_threads);
 
         let experiment_clone = experiment.clone();
-        let batch_size = num_threads;
 
+        // Process files in small batches. Each batch reads AND processes files
+        // in parallel across rayon threads, overlapping I/O and compute.
+        // Batches are sequential so files close before the next batch opens new ones.
+        // Batch size of 2 keeps total open file descriptors well under the
+        // default macOS limit of 256 (accounting for Python runtime overhead).
+        let batch_size = 2;
         let mut final_result = AnalysisResult::new();
 
-        // Process in batches: read files sequentially, then process events in parallel
         for batch in filenames.chunks(batch_size) {
-            // Phase 1: Read files sequentially (one FD at a time)
-            let mut batch_events: Vec<(String, Vec<reader::event::Event>)> = Vec::new();
-            for filename in batch {
-                match root_reader::read_root_file(filename) {
-                    Ok(events) => {
-                        debug!("Read {} events from {}", events.len(), filename);
-                        batch_events.push((filename.clone(), events));
-                    }
-                    Err(e) => {
-                        warn!("Failed to read {}: {}", filename, e);
-                    }
-                }
-                pb.inc(1);
-            }
-
-            // Phase 2: Process all events in this batch in parallel
             let batch_results: Vec<AnalysisResult> = pool.install(|| {
-                batch_events.par_iter().map(|(filename, events)| {
-                    debug!("Processing {} events from {} on {:?}", events.len(), filename, std::thread::current().id());
-                    let result = process_chunk(events, &experiment_clone, beam_energy, mc);
-                    info!("{}: {} events, {} passed cuts", filename, events.len(), result.n_events);
-                    result
+                batch.par_iter().filter_map(|filename| {
+                    let events = match root_reader::read_root_file(filename) {
+                        Ok(events) => events,
+                        Err(e) => {
+                            warn!("Failed to read {}: {}", filename, e);
+                            pb.inc(1);
+                            return None;
+                        }
+                    };
+                    let n_events = events.len();
+                    debug!("Read {} events from {} on {:?}", n_events, filename, std::thread::current().id());
+                    pb.inc(1);
+
+                    let result = process_chunk(&events, &experiment_clone, beam_energy, mc);
+                    info!("{}: {} events, {} passed cuts on {:?}", filename, n_events, result.n_events, std::thread::current().id());
+                    Some(result)
                 }).collect()
             });
 
