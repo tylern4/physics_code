@@ -1,6 +1,10 @@
 use anyhow::Result;
+use arrow::array::{Float32Array, Int32Array, RecordBatch};
+use arrow::datatypes::{DataType, Field, Schema};
+use parquet::arrow::ArrowWriter;
 use std::fs::File;
 use std::io::{BufWriter, Write};
+use std::sync::Arc;
 
 /// Analysis result for a single event
 #[derive(Debug, Clone)]
@@ -166,6 +170,55 @@ pub fn write_csv(result: &AnalysisResult, filename: &str) -> Result<()> {
             result.mm2_thrown[i],
         )?;
     }
+
+    Ok(())
+}
+
+/// Write analysis results to a Parquet file
+pub fn write_parquet(result: &AnalysisResult, filename: &str) -> Result<()> {
+    let schema = Arc::new(Schema::new(vec![
+        Field::new("w", DataType::Float32, false),
+        Field::new("q2", DataType::Float32, false),
+        Field::new("xb", DataType::Float32, false),
+        Field::new("theta_star", DataType::Float32, false),
+        Field::new("phi_star", DataType::Float32, false),
+        Field::new("mm", DataType::Float32, false),
+        Field::new("mm2", DataType::Float32, false),
+        Field::new("sector", DataType::Int32, false),
+        Field::new("event_type", DataType::Int32, false),
+        Field::new("beam_energy", DataType::Float32, false),
+        Field::new("e_prime", DataType::Float32, false),
+        Field::new("w_thrown", DataType::Float32, false),
+        Field::new("q2_thrown", DataType::Float32, false),
+        Field::new("mm_thrown", DataType::Float32, false),
+        Field::new("mm2_thrown", DataType::Float32, false),
+    ]));
+
+    let batch = RecordBatch::try_new(
+        schema.clone(),
+        vec![
+            Arc::new(Float32Array::from(result.w.clone())),
+            Arc::new(Float32Array::from(result.q2.clone())),
+            Arc::new(Float32Array::from(result.xb.clone())),
+            Arc::new(Float32Array::from(result.theta_star.clone())),
+            Arc::new(Float32Array::from(result.phi_star.clone())),
+            Arc::new(Float32Array::from(result.mm.clone())),
+            Arc::new(Float32Array::from(result.mm2.clone())),
+            Arc::new(Int32Array::from(result.sector.clone())),
+            Arc::new(Int32Array::from(result.event_type.clone())),
+            Arc::new(Float32Array::from(result.beam_energy.clone())),
+            Arc::new(Float32Array::from(result.e_prime.clone())),
+            Arc::new(Float32Array::from(result.w_thrown.clone())),
+            Arc::new(Float32Array::from(result.q2_thrown.clone())),
+            Arc::new(Float32Array::from(result.mm_thrown.clone())),
+            Arc::new(Float32Array::from(result.mm2_thrown.clone())),
+        ],
+    )?;
+
+    let file = File::create(filename)?;
+    let mut writer = ArrowWriter::try_new(file, schema, None)?;
+    writer.write(&batch)?;
+    writer.close()?;
 
     Ok(())
 }

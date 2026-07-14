@@ -12,7 +12,7 @@ use std::sync::OnceLock;
 
 use analysis::cuts::{Cuts, E1dCuts, E1fCuts, E16Cuts};
 use analysis::reaction::{Reaction, MCReaction};
-use output::parquet_writer::{write_csv, AnalysisResult};
+use output::parquet_writer::{write_csv, write_parquet, AnalysisResult};
 use physics::constants;
 use physics::four_momentum::FourMomentum;
 use physics::kinematics;
@@ -250,7 +250,7 @@ fn process_file(
 
 /// Process multiple ROOT files and write results to CSV
 #[pyfunction]
-#[pyo3(signature = (filenames, experiment, beam_energy, output, mc, num_threads=0, batch_size=16))]
+#[pyo3(signature = (filenames, experiment, beam_energy, output, mc, num_threads=0, batch_size=16, output_format="parquet"))]
 fn process_files_to_parquet(
     py: Python,
     filenames: Vec<String>,
@@ -260,6 +260,7 @@ fn process_files_to_parquet(
     mc: bool,
     num_threads: usize,
     batch_size: usize,
+    output_format: &str,
 ) -> PyResult<usize> {
     init_logging();
     info!("Processing {} files with {} cuts (E_beam = {} GeV){}",
@@ -321,8 +322,12 @@ fn process_files_to_parquet(
     pb.finish_with_message("done");
     info!("Total events passing cuts: {}", result.n_events);
 
-    write_csv(&result, &output)
-        .map_err(|e| pyo3::exceptions::PyIOError::new_err(e.to_string()))?;
+    match output_format {
+        "csv" => write_csv(&result, &output)
+            .map_err(|e| pyo3::exceptions::PyIOError::new_err(e.to_string()))?,
+        _ => write_parquet(&result, &output)
+            .map_err(|e| pyo3::exceptions::PyIOError::new_err(e.to_string()))?,
+    }
 
     Ok(result.n_events)
 }

@@ -3,3 +3,7 @@ target
 data
 *.so
 __pycache__
+*.csv
+*.parquet
+plots
+.DS_Store
