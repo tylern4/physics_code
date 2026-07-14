@@ -250,6 +250,7 @@ fn process_file(
 
 /// Process multiple ROOT files and write results to CSV
 #[pyfunction]
+#[pyo3(signature = (filenames, experiment, beam_energy, output, mc, num_threads=0, batch_size=16))]
 fn process_files_to_parquet(
     py: Python,
     filenames: Vec<String>,
@@ -257,6 +258,8 @@ fn process_files_to_parquet(
     beam_energy: f32,
     output: String,
     mc: bool,
+    num_threads: usize,
+    batch_size: usize,
 ) -> PyResult<usize> {
     init_logging();
     info!("Processing {} files with {} cuts (E_beam = {} GeV){}",
@@ -273,18 +276,17 @@ fn process_files_to_parquet(
 
     // Release the GIL for parallel processing
     let result = py.allow_threads(|| {
-        let pool = get_thread_pool();
-        let num_threads = pool.current_num_threads();
-        info!("Processing files with {} worker threads", num_threads);
+        let effective_threads = if num_threads > 0 { num_threads } else {
+            std::thread::available_parallelism().map(|n| n.get()).unwrap_or(4)
+        };
+        info!("Creating rayon thread pool with {} worker threads, batch_size={}", effective_threads, batch_size);
+        let pool = rayon::ThreadPoolBuilder::new()
+            .num_threads(effective_threads)
+            .build()
+            .unwrap();
 
         let experiment_clone = experiment.clone();
 
-        // Process files in small batches. Each batch reads AND processes files
-        // in parallel across rayon threads, overlapping I/O and compute.
-        // Batches are sequential so files close before the next batch opens new ones.
-        // Batch size of 2 keeps total open file descriptors well under the
-        // default macOS limit of 256 (accounting for Python runtime overhead).
-        let batch_size = 2;
         let mut final_result = AnalysisResult::new();
 
         for batch in filenames.chunks(batch_size) {

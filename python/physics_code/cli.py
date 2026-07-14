@@ -25,6 +25,8 @@ def analyze(
     output: str = typer.Option("output.csv", help="Output CSV file"),
     beam_energy: Optional[float] = typer.Option(None, help="Beam energy in GeV (overrides experiment default)"),
     mc: bool = typer.Option(False, "--mc", help="Enable MC (thrown kinematics)"),
+    num_threads: int = typer.Option(0, help="Number of worker threads (0 = auto-detect)"),
+    batch_size: int = typer.Option(16, help="Number of files to process concurrently"),
 ):
     """Analyze ROOT files and produce a CSV file with event data."""
     from physics_code._lib import process_files_to_parquet
@@ -48,9 +50,10 @@ def analyze(
         console.print(f"[red]Path not found: {input_path}[/red]")
         raise typer.Exit(1)
 
-    console.print(f"[green]Processing {len(input_files)} files with {experiment} cuts (E_beam = {beam_energy} GeV){' [MC]' if mc else ''}[/green]")
+    threads_info = f"threads={num_threads}" if num_threads > 0 else "threads=auto"
+    console.print(f"[green]Processing {len(input_files)} files with {experiment} cuts (E_beam = {beam_energy} GeV){' [MC]' if mc else ''} ({threads_info}, batch_size={batch_size})[/green]")
 
-    n_events = process_files_to_parquet(input_files, experiment.lower(), beam_energy, output, mc)
+    n_events = process_files_to_parquet(input_files, experiment.lower(), beam_energy, output, mc, num_threads, batch_size)
 
     console.print(f"[green]Wrote {n_events} events to {output}[/green]")
 
