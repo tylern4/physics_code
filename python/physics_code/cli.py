@@ -149,5 +149,68 @@ def plot_sector(
     console.print(f"[green]Saved {outfile}[/green]")
 
 
+@app.command()
+def plot_all(
+    input_file: str = typer.Argument(..., help="Input Parquet file"),
+    output_dir: str = typer.Option("plots", help="Output directory for plots"),
+    plots: Optional[str] = typer.Option(None, help="Comma-separated list of specific plots (default: all)"),
+):
+    """Generate all histograms matching the C++ physics_code analysis.
+
+    Produces ~78 plot types covering W/Q², missing mass, PID, delta-t,
+    CC, fiducial, EC, beam position, angular, and MC histograms.
+    """
+    from physics_code.plotting import load_data, plot_all as do_plot_all, ALL_PLOTS
+
+    df = load_data(input_file)
+
+    plot_names = None
+    if plots:
+        plot_names = [p.strip() for p in plots.split(",")]
+        unknown = [p for p in plot_names if p not in ALL_PLOTS]
+        if unknown:
+            console.print(f"[yellow]Unknown plots: {unknown}[/yellow]")
+            console.print(f"Available: {sorted(ALL_PLOTS.keys())}")
+            raise typer.Exit(1)
+
+    console.print(f"[green]Generating plots from {input_file} to {output_dir}/[/green]")
+    console.print(f"  Data: {len(df)} particle rows")
+
+    do_plot_all(df, output_dir=output_dir, plot_names=plot_names)
+
+    console.print(f"[green]Done![/green]")
+
+
+@app.command()
+def list_plots():
+    """List all available plot names."""
+    from physics_code.plotting import ALL_PLOTS
+
+    table = Table(title="Available Plots")
+    table.add_column("Name", style="cyan")
+    table.add_column("Description")
+
+    descriptions = {
+        "w": "W distribution (all events)",
+        "q2": "Q² distribution",
+        "w_q2": "W vs Q² 2D",
+        "w_by_sector": "W per sector",
+        "missing_mass": "Missing mass (π⁺)",
+        "mom_vs_beta": "Momentum vs β (all)",
+        "dt_proton": "Δt vs P (proton mass)",
+        "electron_fid": "Electron fiducial φ vs θ",
+        "cc_nphe": "CC photoelectrons",
+        "ec_sampling_fraction": "EC sampling fraction",
+        "beam_position": "Beam position xy",
+        "w_q2_mc": "MC thrown W vs Q²",
+    }
+
+    for name in sorted(ALL_PLOTS.keys()):
+        desc = descriptions.get(name, "")
+        table.add_row(name, desc)
+
+    console.print(table)
+
+
 if __name__ == "__main__":
     app()

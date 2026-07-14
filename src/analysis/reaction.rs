@@ -296,6 +296,14 @@ impl Reaction {
         self.pi0_mass
     }
 
+    /// Get pi0 mass squared (lazy calculation)
+    pub fn pi0_mass2(&mut self) -> f32 {
+        if !self.mm_calc {
+            self.calc_missing_mass();
+        }
+        self.pi0_mass2
+    }
+
     /// Calculate mass pairs from photons
     pub fn calc_mass_pairs(&mut self) {
         if self.photons.len() < 2 {

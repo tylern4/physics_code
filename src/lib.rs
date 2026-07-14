@@ -11,8 +11,9 @@ use tracing_subscriber::EnvFilter;
 use std::sync::OnceLock;
 
 use analysis::cuts::{Cuts, E1dCuts, E1fCuts, E16Cuts};
+use analysis::delta_t;
 use analysis::reaction::{Reaction, MCReaction};
-use output::parquet_writer::{write_csv, write_parquet, AnalysisResult};
+use output::parquet_writer::{write_csv, write_parquet, AnalysisResult, ParticleRow};
 use physics::constants;
 use physics::four_momentum::FourMomentum;
 use physics::kinematics;
@@ -42,13 +43,73 @@ fn init_logging() {
         .try_init();
 }
 
+/// Compute per-particle row data
+fn make_particle_row(
+    event: &reader::event::Event,
+    part_num: usize,
+    cuts: &Cuts,
+    dt: &delta_t::DeltaT,
+    is_electron: bool,
+    is_pip: bool,
+    is_prot: bool,
+    is_pim: bool,
+    fid_chern: bool,
+    elec_fid: bool,
+    hadron_fid: bool,
+) -> ParticleRow {
+    let p = event.p(part_num);
+    let beta = event.b(part_num);
+    let theta = kinematics::theta_calc(event.cz(part_num));
+    let phi = kinematics::phi_calc(event.cx(part_num), event.cy(part_num));
+    let sector = event.dc_sect(part_num);
+    let sc_sector = event.sc_sect(part_num);
+
+    ParticleRow {
+        part_index: part_num as i32,
+        part_id: event.id(part_num),
+        part_q: event.q(part_num),
+        part_p: p,
+        part_beta: beta,
+        part_theta: theta,
+        part_phi: phi,
+        part_sector: sector,
+        part_sc_sector: sc_sector,
+        part_sc_pd: event.sc_pd(part_num),
+        part_delta_t_p: dt.get_dt_p(part_num),
+        part_delta_t_pip: dt.get_dt_pi(part_num),
+        part_delta_t_e: dt.get_dt_e(part_num),
+        part_delta_t_k: dt.get_dt_k(part_num),
+        part_nphe: event.nphe(part_num),
+        part_cc_segm: event.cc_segm(part_num),
+        part_etot: event.etot(part_num),
+        part_ec_ei: event.ec_ei(part_num),
+        part_ec_eo: event.ec_eo(part_num),
+        part_dc_xsc: event.dc_xsc(part_num),
+        part_dc_ysc: event.dc_ysc(part_num),
+        part_dc_zsc: event.dc_zsc(part_num),
+        part_edep: event.edep(part_num),
+        part_vx: event.vx(part_num),
+        part_vy: event.vy(part_num),
+        part_vz: event.vz(part_num),
+        part_fid_chern: fid_chern,
+        part_elec_fid: elec_fid,
+        part_hadron_fid: hadron_fid,
+        part_dt_p_pass: cuts.dt_p_cut(part_num),
+        part_dt_pip_pass: cuts.dt_pip_cut(part_num),
+        part_is_pip: is_pip,
+        part_is_prot: is_prot,
+        part_is_pim: is_pim,
+        part_is_electron: is_electron,
+    }
+}
+
 /// Process a single event and return an AnalysisResult entry
 fn process_event(
     event: &reader::event::Event,
     experiment: &str,
     beam_energy: f32,
     mc: bool,
-) -> Option<(Reaction, Option<MCReaction>)> {
+) -> Option<(Reaction, Option<MCReaction>, Vec<ParticleRow>)> {
     if event.gpart < 1 {
         return None;
     }
@@ -77,6 +138,11 @@ fn process_event(
         return None;
     }
 
+    // Compute electron-level quantities for cuts
+    let cuts_base = Cuts::new(event);
+    let fid_chern_elec = cuts_base.fid_chern_cut();
+    let elec_fid = cuts_base.elec_fid_cut();
+
     // Create reaction and apply hadron cuts
     let mut reaction = if mc {
         MCReaction::new(event, beam_energy).base
@@ -84,19 +150,31 @@ fn process_event(
         Reaction::new(event, beam_energy)
     };
 
-    // Create cuts once per event, not per particle
-    let cuts = Cuts::new(event);
+    // Build per-particle rows
+    let mut particles = Vec::new();
+
+    // Particle 0 is always the electron
+    particles.push(make_particle_row(
+        event, 0, &cuts_base, &cuts_base.dt,
+        true, false, false, false,
+        fid_chern_elec, elec_fid, false,
+    ));
 
     for part_num in 1..event.gpart as usize {
         if part_num >= event.p.len() {
             break;
         }
 
-        if cuts.pip(part_num) {
+        let is_pip = cuts_base.pip(part_num);
+        let is_prot = cuts_base.prot(part_num);
+        let is_pim = cuts_base.pim(part_num);
+        let hadron_fid = cuts_base.hadron_fid_arjun(part_num);
+
+        if is_pip {
             reaction.set_pip(event.px(part_num), event.py(part_num), event.pz(part_num));
-        } else if cuts.prot(part_num) {
+        } else if is_prot {
             reaction.set_proton(event.px(part_num), event.py(part_num), event.pz(part_num));
-        } else if cuts.pim(part_num) {
+        } else if is_pim {
             reaction.set_pim(event.px(part_num), event.py(part_num), event.pz(part_num));
         } else {
             reaction.set_other(
@@ -106,6 +184,12 @@ fn process_event(
                 event.pz(part_num),
             );
         }
+
+        particles.push(make_particle_row(
+            event, part_num, &cuts_base, &cuts_base.dt,
+            false, is_pip, is_prot, is_pim,
+            false, false, hadron_fid,
+        ));
     }
 
     // Only keep events that pass the channel selection
@@ -119,7 +203,7 @@ fn process_event(
         None
     };
 
-    Some((reaction, mc_react))
+    Some((reaction, mc_react, particles))
 }
 
 /// Process a chunk of events and return an AnalysisResult
@@ -132,46 +216,49 @@ fn process_chunk(
     trace!("processing chunk of {} events on {:?}", events.len(), std::thread::current().id());
     let mut result = AnalysisResult::new();
     for event in events {
-        if let Some((mut reaction, mc_react)) = process_event(event, experiment, beam_energy, mc) {
-            let sector = event.dc_sect(0);
+        if let Some((mut reaction, mc_react, particles)) = process_event(event, experiment, beam_energy, mc) {
+            let e_sector = event.dc_sect(0);
             let event_type = reaction.event_type();
             let theta_star = reaction.theta_star();
             let phi_star = reaction.phi_star();
 
-            if mc {
+            let (w_thrown, q2_thrown, mm_thrown, mm2_thrown) = if mc {
                 let mc_r = mc_react.unwrap();
-                result.push_mc(
-                    reaction.w(),
-                    reaction.q2(),
-                    reaction.xb(),
-                    theta_star,
-                    phi_star,
-                    reaction.mm(),
-                    reaction.mm2(),
-                    sector,
-                    event_type,
-                    beam_energy,
-                    reaction.e_prime(),
-                    mc_r.w_thrown(),
-                    mc_r.q2_thrown(),
-                    mc_r.mm_thrown(),
-                    mc_r.mm2_thrown(),
-                );
+                (mc_r.w_thrown(), mc_r.q2_thrown(), mc_r.mm_thrown(), mc_r.mm2_thrown())
             } else {
-                result.push(
-                    reaction.w(),
-                    reaction.q2(),
-                    reaction.xb(),
-                    theta_star,
-                    phi_star,
-                    reaction.mm(),
-                    reaction.mm2(),
-                    sector,
-                    event_type,
-                    beam_energy,
-                    reaction.e_prime(),
-                );
-            }
+                (f32::NAN, f32::NAN, f32::NAN, f32::NAN)
+            };
+
+            result.push_event(
+                reaction.w(),
+                reaction.q2(),
+                reaction.xb(),
+                theta_star,
+                phi_star,
+                reaction.mm(),
+                reaction.mm2(),
+                e_sector,
+                event_type,
+                beam_energy,
+                reaction.e_prime(),
+                w_thrown,
+                q2_thrown,
+                mm_thrown,
+                mm2_thrown,
+                event.dc_vx(0),
+                event.dc_vy(0),
+                event.dc_vz(0),
+                reaction.num_pip,
+                reaction.num_prot,
+                reaction.num_pim,
+                reaction.num_pos,
+                reaction.num_neg,
+                reaction.num_neutral,
+                reaction.num_photons,
+                reaction.pi0_mass(),
+                reaction.pi0_mass2(),
+                &particles,
+            );
         }
     }
     result
@@ -224,11 +311,13 @@ fn process_file(
     }
 
     pb.finish_with_message("done");
-    info!("Processed {} events, {} passed cuts", total_events, result.n_events);
+    info!("Processed {} events, {} passed cuts ({} particles)",
+          total_events, result.n_events, result.n_particles);
 
     // Convert to Python dict
     let dict = pyo3::types::PyDict::new_bound(py);
     dict.set_item("n_events", result.n_events)?;
+    dict.set_item("n_particles", result.n_particles)?;
     dict.set_item("w", &result.w)?;
     dict.set_item("q2", &result.q2)?;
     dict.set_item("xb", &result.xb)?;
@@ -236,7 +325,7 @@ fn process_file(
     dict.set_item("phi_star", &result.phi_star)?;
     dict.set_item("mm", &result.mm)?;
     dict.set_item("mm2", &result.mm2)?;
-    dict.set_item("sector", &result.sector)?;
+    dict.set_item("e_sector", &result.e_sector)?;
     dict.set_item("event_type", &result.event_type)?;
     dict.set_item("beam_energy", &result.beam_energy)?;
     dict.set_item("e_prime", &result.e_prime)?;
@@ -244,6 +333,8 @@ fn process_file(
     dict.set_item("q2_thrown", &result.q2_thrown)?;
     dict.set_item("mm_thrown", &result.mm_thrown)?;
     dict.set_item("mm2_thrown", &result.mm2_thrown)?;
+    dict.set_item("pi0_mass", &result.pi0_mass)?;
+    dict.set_item("pi0_mass2", &result.pi0_mass2)?;
 
     Ok(dict.into())
 }
@@ -306,7 +397,8 @@ fn process_files_to_parquet(
                     pb.inc(1);
 
                     let result = process_chunk(&events, &experiment_clone, beam_energy, mc);
-                    info!("{}: {} events, {} passed cuts on {:?}", filename, n_events, result.n_events, std::thread::current().id());
+                    info!("{}: {} events, {} passed cuts ({} particles) on {:?}",
+                          filename, n_events, result.n_events, result.n_particles, std::thread::current().id());
                     Some(result)
                 }).collect()
             });
@@ -320,7 +412,7 @@ fn process_files_to_parquet(
     });
 
     pb.finish_with_message("done");
-    info!("Total events passing cuts: {}", result.n_events);
+    info!("Total events passing cuts: {}, total particles: {}", result.n_events, result.n_particles);
 
     match output_format {
         "csv" => write_csv(&result, &output)
