@@ -1,0 +1,30 @@
+[package]
+name = "physics_code"
+version = "0.1.0"
+edition = "2021"
+description = "CLAS12 electron-scattering analysis framework in Rust"
+authors = ["Nick Tyler"]
+
+[lib]
+name = "physics_code"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.22", features = ["extension-module"] }
+numpy = "0.22"
+ndarray = { version = "0.16", features = ["serde"] }
+oxyroot = "0.1"
+rayon = "1.10"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+anyhow = "1"
+thiserror = "2"
+glob = "0.3"
+indicatif = "0.17"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+[build-dependencies]
+
+[features]
+default = ["pyo3/extension-module"]

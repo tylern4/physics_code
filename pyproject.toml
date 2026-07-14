@@ -1,0 +1,27 @@
+[build-system]
+requires = ["maturin>=1.7,<2"]
+build-backend = "maturin"
+
+[project]
+name = "physics_code"
+version = "0.1.0"
+description = "CLAS12 electron-scattering analysis framework"
+requires-python = ">=3.10"
+dependencies = [
+    "matplotlib>=3.7",
+    "numpy>=1.24",
+    "pandas>=2.0",
+    "polars>=0.20",
+    "typer>=0.9",
+    "rich>=13.0",
+    "hist>=2.8",
+    "mplhep>=0.3",
+]
+
+[tool.maturin]
+features = ["pyo3/extension-module"]
+python-source = "python"
+module-name = "physics_code._lib"
+
+[project.scripts]
+physics-code = "physics_code.cli:app"
