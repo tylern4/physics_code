@@ -19,7 +19,6 @@ Delta_T::Delta_T(const std::shared_ptr<Branches> &data) : _data(data) {
 Delta_T::~Delta_T() {}
 
 std::ostream &operator<<(std::ostream &os, Delta_T const &dt) {
-  auto dt_cut = std::make_unique<Cuts>(dt._data);
   for (int event_number = 1; event_number < dt._data->gpart(); event_number++) {
     if (!std::isnan(dt._vertex))
       os << dt._data->dc_sect(event_number) << "," << physics::theta_rad(dt._data->cz(event_number)) << ","
@@ -43,8 +42,13 @@ float Delta_T::Get_dt_Pi(int part) { return _pion_array.at(part); }
 float Delta_T::Get_dt_K(int part) { return _kaon_array.at(part); }
 float Delta_T::Get_vertex(int part) { return _vertex; }
 
-void Delta_T::delta_t_hists(const std::shared_ptr<Histogram> &hists) {
-  auto dt_cut = std::make_unique<e1d_Cuts>(_data);
+void Delta_T::delta_t_hists(const std::shared_ptr<Histogram> &hists, const std::shared_ptr<Delta_T> &dt) {
+  // Reuse the caller's Delta_T rather than letting e1d_Cuts build its own: the
+  // two are bit-identical (both are a pure function of _data), and building a
+  // second one costs four more std::vector<float> plus four more passes over the
+  // particles in the event. e1d_Cuts is used here unconditionally, regardless of
+  // which beam energy the caller is running, so keep that behaviour.
+  e1d_Cuts dt_cut(_data, dt);
   float sct, scr, mom;
   int ID, charge, sc_paddle, sc_sector;
 
@@ -61,16 +65,16 @@ void Delta_T::delta_t_hists(const std::shared_ptr<Histogram> &hists) {
       hists->Fill_deltat_P(mom, _proton_array.at(event_number));
       hists->Fill_deltat_PIP(mom, _pion_array.at(event_number));
       hists->Fill_deltat_kp(mom, _kaon_array.at(event_number));
-      if (dt_cut->dt_Pip_cut(event_number))
+      if (dt_cut.dt_Pip_cut(event_number))
         hists->Fill_deltat_PIP_PID(mom, _pion_array.at(event_number));
-      else if (dt_cut->dt_P_cut(event_number))
+      else if (dt_cut.dt_P_cut(event_number))
         hists->Fill_deltat_P_PID(mom, _proton_array.at(event_number));
-      else if (dt_cut->dt_K_cut(event_number))
+      else if (dt_cut.dt_K_cut(event_number))
         hists->Fill_deltat_kp_PID(mom, _kaon_array.at(event_number));
     } else {
       hists->Fill_deltat_electron(mom, _elec_array.at(event_number));
       hists->Fill_deltat_PIM(mom, _pion_array.at(event_number));
-      if (dt_cut->dt_Pip_cut(event_number)) hists->Fill_deltat_PIM_PID(mom, _pion_array.at(event_number));
+      if (dt_cut.dt_Pip_cut(event_number)) hists->Fill_deltat_PIM_PID(mom, _pion_array.at(event_number));
     }
 
     hists->delta_t_Fill(mom, charge, _proton_array.at(event_number), _pion_array.at(event_number),

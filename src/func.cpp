@@ -172,7 +172,7 @@ double func::degauss(const double *x, const double *par) {
   return ret;
 }
 
-float func::dt_poly4(std::vector<double> params, float p) {
+float func::dt_poly4(const std::vector<double>& params, float p) {
   float y = 0;
   y += params[0] * p * p * p * p;
   y += params[1] * p * p * p;
@@ -203,12 +203,12 @@ bool func::fid_chern_mc(float x, float y) {
   return ((x > P0 - P1 * y) && (x > P0 + P1 * y));
 }
 
-float func::log_sqrt_pol1(std::vector<double> params, float p) {
+float func::log_sqrt_pol1(const std::vector<double>& params, float p) {
   float y = params[0] * logf(params[1] * p) + params[2] * p * sqrtf(params[3] * p) + params[4] * p + params[5];
   return y;
 }
 
-float func::log_pol2(std::vector<double> params, float p) {
+float func::log_pol2(const std::vector<double>& params, float p) {
   float y = params[0] * log(params[1] * p) + params[2] * p * p + params[3] * p + params[4];
   return y;
 }

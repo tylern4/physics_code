@@ -93,7 +93,7 @@ class DataHandler {
     _hists->WvsQ2_Fill(event->W(), event->Q2(), _data->dc_sect(0));
 
     auto dt = check->share_dt();  // std::make_unique<Delta_T>(_data);
-    dt->delta_t_hists(_hists);
+    dt->delta_t_hists(_hists, dt);
 
     float theta = physics::theta_calc(_data->cz(0));
     float phi = physics::phi_calc(_data->cx(0), _data->cy(0));

@@ -36,6 +36,9 @@ class Delta_T {
   float Get_dt_K(int part);
   float Get_vertex(int part);
 
-  void delta_t_hists(const std::shared_ptr<Histogram> &hists);
+  // `dt` must be a Delta_T built from the same Branches as this one; it is only
+  // used for the dt_*_cut PID decisions, and is passed in so that the caller can
+  // reuse its existing object instead of forcing a second, identical build.
+  void delta_t_hists(const std::shared_ptr<Histogram> &hists, const std::shared_ptr<Delta_T> &dt);
 };
 #endif

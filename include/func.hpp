@@ -45,12 +45,12 @@ double missMassbackground(const double *x, const double *par);
 double missMassfitFunction(const double *x, const double *par);
 double degauss(const double *x, const double *par);
 
-float dt_poly4(std::vector<double> params, float p);
+float dt_poly4(const std::vector<double>& params, float p);
 
 bool fid_chern(float x, float y);
 bool fid_chern_mc(float x, float y);
-float log_sqrt_pol1(std::vector<double> params, float p);
-float log_pol2(std::vector<double> params, float p);
+float log_sqrt_pol1(const std::vector<double>& params, float p);
+float log_pol2(const std::vector<double>& params, float p);
 
 bool pip_sec1_cut1(float p, float theta);
 bool pip_sec2_cut1(float p, float theta);
