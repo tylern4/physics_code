@@ -18,15 +18,17 @@ class Reaction {
  protected:
   float _beam_energy = NAN;
   std::shared_ptr<LorentzVector> _beam;  // = physics::fourVec(0.0, 0.0, _beam_energy, MASS_E);
-  std::shared_ptr<LorentzVector> _target = physics::fourVec(0.0, 0.0, 0.0, MASS_P);
   std::shared_ptr<LorentzVector> _gamma = physics::fourVec(0, 0, 0, 0);
+
+  // The target is the same at-rest proton for every event, so share one instance
+  // instead of heap-allocating an identical copy inside every Reaction.
+  static const std::shared_ptr<LorentzVector>& _target;
 
   std::shared_ptr<LorentzVector> _elec = nullptr;
   std::shared_ptr<LorentzVector> _prot = nullptr;
   std::shared_ptr<LorentzVector> _pip = nullptr;
   std::shared_ptr<LorentzVector> _pim = nullptr;
   std::shared_ptr<LorentzVector> _neutron = nullptr;
-  std::shared_ptr<PhotonFlux> _photon_flux = nullptr;
   std::vector<std::shared_ptr<LorentzVector>> _photons;
 
   std::vector<float> _pair_mass;
@@ -120,7 +122,12 @@ class Reaction {
   inline float xb() { return _xb; }
 
   inline float photon_flux() {
-    return NAN;  //_photon_flux->GetVirtualPhotonFlux();
+    // Note: this is deliberately NaN. The virtual-photon-flux calculation is not
+    // wired up (see PhotonFlux in src/photon_flux.cpp), so a PhotonFlux object is
+    // no longer built per Reaction. Until the calculation is restored, every
+    // Photon_flux_Fill() below writes a NaN, and ROOT's bin selection for NaN is
+    // unspecified -- so this histogram's contents are not meaningful.
+    return NAN;
   }
 
   inline float Theta_star() {

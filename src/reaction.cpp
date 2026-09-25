@@ -10,6 +10,9 @@
 #include "TRandom.h"
 #include "TVector3.h"
 
+// Shared, immutable: the target never changes between events.
+const std::shared_ptr<LorentzVector>& Reaction::_target = physics::fourVec(0.0, 0.0, 0.0, MASS_P);
+
 Reaction::Reaction(const std::shared_ptr<Branches>& data) : Reaction(data, E1D_E0) {}
 Reaction::Reaction(const std::shared_ptr<Branches>& data, const std::shared_ptr<MomCorr>& mom_corr)
     : Reaction(data, E1D_E0, mom_corr) {}
@@ -24,7 +27,6 @@ Reaction::Reaction(const std::shared_ptr<Branches>& data, const float beam_energ
   *_gamma = *_beam - *_elec;
   _W = physics::W_calc(*_gamma);
   _Q2 = physics::Q2_calc(*_gamma);
-  _photon_flux = std::make_shared<PhotonFlux>(_W, _Q2, _beam_energy);
 
   _xb = physics::xb_calc(*_gamma);
 }
@@ -45,7 +47,6 @@ Reaction::Reaction(const std::shared_ptr<Branches>& data, const float beam_energ
   *_gamma = *_beam - *_elec;
   _W = physics::W_calc(*_gamma);
   _Q2 = physics::Q2_calc(*_gamma);
-  _photon_flux = std::make_shared<PhotonFlux>(_W, _Q2, _beam_energy);
   _xb = physics::xb_calc(*_gamma);
 }
 
