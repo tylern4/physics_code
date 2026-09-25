@@ -301,7 +301,7 @@ class Yeilds {
         std::cerr << "\t" << 100 * (current_event / (float)num_of_events) + 1 << "\r\r" << std::flush;
 
       chain->GetEntry(current_event);
-      if (std::isnan(data->p(0))) continue;
+      if (physics::is_nan_or_inf(data->p(0))) continue;
       auto event = std::make_shared<Reaction>(data, _beam_energy, _mom_corr);
       if (event->cc_x() == 0 || event->cc_y() == 0) continue;
       auto check = std::make_unique<CutType>(data);
@@ -448,7 +448,7 @@ class mcYeilds : public Yeilds {
       short electron_sector = data->dc_sect(0);
       if (electron_sector < 0 || electron_sector > 6) electron_sector = 0;
 
-      if (!std::isnan(mc_event->W_thrown()) && !std::isnan(mc_event->Q2_thrown())) {
+      if (physics::is_finite(mc_event->W_thrown()) && physics::is_finite(mc_event->Q2_thrown())) {
         total++;
         csv_data csv_buffer;
         csv_buffer.electron_sector = electron_sector;

@@ -329,7 +329,7 @@ std::shared_ptr<LorentzVector> MomCorrEvan::CorrectedVector(float px, float py, 
 
   // if anything is bad then just return an uncorrected vector and let ROOT handle it
   // Only really effects MC events
-  if (sect == 0 || sect > NUM_SECTORS || std::isnan(theta) || std::isnan(phi))
+  if (sect == 0 || sect > NUM_SECTORS || physics::is_nan_or_inf(theta) || physics::is_nan_or_inf(phi))
     return std::make_shared<LorentzVector>(px, py, pz, mass_map[particle_type]);
 
   float theta_c = theta_corr(theta, phi, sect);

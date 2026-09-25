@@ -100,6 +100,9 @@ bool Reaction::Reset() {
     _phi_star = NAN;
     _cc_theta = NAN;
     _cc_phi = NAN;
+    _cc_angles_calc = false;
+    _cc_theta = NAN;
+    _cc_phi = NAN;
 
     _type = "NAN";
 
@@ -111,21 +114,21 @@ bool Reaction::Reset() {
 }
 
 float Reaction::cc_theta() {
-  if (std::isnan(_cc_theta)) Reaction::calc_cc_angles();
+  if (!_cc_angles_calc) Reaction::calc_cc_angles();
   return _cc_theta;
 }
 float Reaction::cc_phi() {
-  if (std::isnan(_cc_phi)) Reaction::calc_cc_angles();
+  if (!_cc_angles_calc) Reaction::calc_cc_angles();
   return _cc_phi;
 }
 
 float Reaction::cc_x() {
-  if (std::isnan(_cc_theta) || std::isnan(_cc_phi)) Reaction::calc_cc_angles();
+  if (!_cc_angles_calc) Reaction::calc_cc_angles();
   return _data->cc_r(0) * sinf(_cc_theta) * cosf(_cc_phi);
 }
 
 float Reaction::cc_y() {
-  if (std::isnan(_cc_theta) || std::isnan(_cc_phi)) Reaction::calc_cc_angles();
+  if (!_cc_angles_calc) Reaction::calc_cc_angles();
   return _data->cc_r(0) * sinf(_cc_theta) * sinf(_cc_phi);
 }
 
@@ -147,6 +150,7 @@ void Reaction::calc_cc_angles() {
   p0_vec += t_vec;
   _cc_theta = acosf(p0_vec.Z() / p0_vec.Mag());
   _cc_phi = atanf(p0_vec.Y() / p0_vec.X());
+  _cc_angles_calc = true;
 }
 
 void Reaction::SetProton(int i) {
@@ -319,6 +323,9 @@ void Reaction::boost() {
     _theta_e = NAN;
     _theta_star = NAN;
     _phi_star = NAN;
+    _cc_theta = NAN;
+    _cc_phi = NAN;
+    _cc_angles_calc = false;
   }
 }
 

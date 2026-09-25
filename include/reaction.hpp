@@ -74,6 +74,11 @@ class Reaction {
   float _phi_star = NAN;
   float _cc_theta = NAN;
   float _cc_phi = NAN;
+  // Explicit "have I been computed yet" flag. This used to be inferred by
+  // testing _cc_theta for NaN, which -Ofast's -ffinite-math-only is allowed to
+  // fold to false, leaving calc_cc_angles() uncalled and every cc_* accessor
+  // returning NaN.
+  bool _cc_angles_calc = false;
 
   std::string _type = "NAN";
 

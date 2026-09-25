@@ -20,7 +20,7 @@ Delta_T::~Delta_T() {}
 
 std::ostream &operator<<(std::ostream &os, Delta_T const &dt) {
   for (int event_number = 1; event_number < dt._data->gpart(); event_number++) {
-    if (!std::isnan(dt._vertex))
+    if (physics::is_finite(dt._vertex))
       os << dt._data->dc_sect(event_number) << "," << physics::theta_rad(dt._data->cz(event_number)) << ","
          << physics::phi_rad(dt._data->cx(event_number), dt._data->cy(event_number)) << "," << dt._data->q(event_number)
          << "," << dt._vertex << "," << dt._data->p(event_number) << "," << dt._data->sc_t(event_number) << ","

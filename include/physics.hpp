@@ -6,6 +6,7 @@
 
 #ifndef PHYSICS_H_GUARD
 #define PHYSICS_H_GUARD
+#include <cstdint>
 #include <memory>
 #include "Math/VectorUtil.h"
 #include "constants.hpp"
@@ -40,6 +41,25 @@ std::shared_ptr<LorentzVector> fourVec(double px, double py, double pz, int pid)
 std::shared_ptr<LorentzVector> fourVec(double p, double cx, double cy, double cz, int pid);
 float invTan(const float& y, const float& x);
 float phi_boosted(const std::shared_ptr<LorentzVector>& vec);
+
+// True when `x` is a NaN or an infinity.
+//
+// These deliberately inspect the bit pattern instead of calling std::isnan /
+// std::isinf. The build enables -Ofast (CMakeLists.txt), whose implied
+// -ffinite-math-only lets the compiler assume no NaN or Inf is ever produced,
+// so it is free to constant-fold those predicates to `false`. That silently
+// disabled every NaN guard in the analysis: 51 of the 1524 output histograms
+// were nondeterministic run to run, because NaN values were being binned into
+// arbitrary bins (ROOT's bin selection for a NaN is unspecified), and a
+// further 3 changed bin assignment on any recompile. A bit test is opaque to
+// that optimisation, so these are always evaluated as written.
+inline bool is_nan_or_inf(float x) {
+  uint32_t bits;
+  __builtin_memcpy(&bits, &x, sizeof(bits));
+  return (bits & 0x7F800000u) == 0x7F800000u;  // exponent field all ones
+}
+
+inline bool is_finite(float x) { return !is_nan_or_inf(x); }
 
 }  // namespace physics
 #endif

@@ -35,8 +35,13 @@ Histogram::~Histogram() {}
 void Histogram::FillEvent(const std::shared_ptr<Reaction> &event) {
   this->Fill_ND(event);
   this->Fill_Mass_photons(event);
-  ThetaVsPhi_hist->Fill(event->Theta_star(), event->Phi_star());
-  CosThetaVsPhi_hist->Fill(cosf(event->Theta_star()), event->Phi_star());
+  // Theta_star()/Phi_star() are NaN unless boost() could identify the channel.
+  // Binning a NaN is meaningless -- ROOT picks an arbitrary bin for it -- so
+  // leave those events out of the phi/theta distributions.
+  if (physics::is_finite(event->Theta_star()) && physics::is_finite(event->Phi_star())) {
+    ThetaVsPhi_hist->Fill(event->Theta_star(), event->Phi_star());
+    CosThetaVsPhi_hist->Fill(cosf(event->Theta_star()), event->Phi_star());
+  }
 
   if (event->SinglePip()) {
     this->Fill_Missing_Mass(event);
@@ -76,13 +81,13 @@ void Histogram::FillEvent(const std::shared_ptr<Reaction> &event) {
 void Histogram::Fill_ND(const std::shared_ptr<Reaction> &event) {
   std::lock_guard<std::mutex> lk(mutex);
   bool _good = true;
-  _good &= !std::isnan(event->W());
+  _good &= physics::is_finite(event->W());
   if (!_good) return;
-  _good &= !std::isnan(event->Q2());
+  _good &= physics::is_finite(event->Q2());
   if (!_good) return;
-  _good &= !std::isnan(event->Theta_star());
+  _good &= physics::is_finite(event->Theta_star());
   if (!_good) return;
-  _good &= !std::isnan(event->Phi_star());
+  _good &= physics::is_finite(event->Phi_star());
   if (!_good) return;
 
   std::array<double, DIMENSIONS> to_fill = {event->W(), event->Q2(), cos(event->Theta_star()), event->Phi_star()};
@@ -579,7 +584,13 @@ void Histogram::MomVsBeta_Fill(float P, float Beta) {
   Mom->Fill(P);
 }
 
-void Histogram::Photon_flux_Fill(float photon_flux) { photon_flux_hist->Fill(photon_flux); }
+void Histogram::Photon_flux_Fill(float photon_flux) {
+  // Reaction::photon_flux() currently returns NaN unconditionally, because the
+  // virtual-photon-flux calculation was never wired up. Binning it only
+  // scattered entries into arbitrary bins, so the entries carried no physics at
+  // all; skip the fill until the calculation is restored.
+  if (physics::is_finite(photon_flux)) photon_flux_hist->Fill(photon_flux);
+}
 
 void Histogram::MomVsBeta_Write() {
   MomVsBeta_hist->SetXTitle("Momentum (GeV)");
@@ -965,7 +976,7 @@ void Histogram::delta_t_Fill(float momentum, int charge, float delta_t_proton, f
                              float delta_t_electron) {
   const int jj = momentum_bin(momentum);
   if (jj < 0) return;
-  if (charge == 1 && !std::isnan(delta_t_proton) && !std::isnan(delta_t_pip)) {
+  if (charge == 1 && physics::is_finite(delta_t_proton) && physics::is_finite(delta_t_pip)) {
     delta_t_hist[0][jj]->Fill(delta_t_proton);
     delta_t_hist[1][jj]->Fill(delta_t_pip);
   }
@@ -991,9 +1002,9 @@ void Histogram::delta_t_slices_Write() {
 
 void Histogram::delta_t_sec_pad(float momentum, int charge, float delta_t_proton, float delta_t_pip,
                                 float delta_t_electron, int sc_sector, int sc_paddle) {
-  if (std::isinf(delta_t_proton) || std::isnan(delta_t_proton)) return;
-  if (std::isinf(delta_t_pip) || std::isnan(delta_t_pip)) return;
-  if (std::isinf(delta_t_electron) || std::isnan(delta_t_electron)) return;
+  if (physics::is_nan_or_inf(delta_t_proton)) return;
+  if (physics::is_nan_or_inf(delta_t_pip)) return;
+  if (physics::is_nan_or_inf(delta_t_electron)) return;
   if (sc_sector == 0 || sc_sector > NUM_SECTORS || sc_sector < 0) return;
   if (sc_paddle == 0 || sc_paddle > SC_PADDLE_NUM || sc_paddle < 0) return;
 
