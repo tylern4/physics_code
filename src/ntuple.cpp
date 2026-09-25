@@ -59,8 +59,6 @@ size_t Ntuple::Run(const std::shared_ptr<TChain> &chain) {
 
     if (!check->isElectron()) continue;
 
-    auto dt = std::make_unique<Delta_T>(data);
-
     for (int part_num = 1; part_num < data->gpart(); part_num++) {
       if (check->Pip(part_num))
         event->SetPip(part_num);

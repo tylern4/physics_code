@@ -963,15 +963,13 @@ void Histogram::delta_t_Write() {
 
 void Histogram::delta_t_Fill(float momentum, int charge, float delta_t_proton, float delta_t_pip,
                              float delta_t_electron) {
-  for (int jj = 0; jj < NUM_POINTS; jj++) {
-    if (momentum > jj * bin_width && momentum <= (jj + 1) * bin_width) {
-      if (charge == 1 && !std::isnan(delta_t_proton) && !std::isnan(delta_t_pip)) {
-        delta_t_hist[0][jj]->Fill(delta_t_proton);
-        delta_t_hist[1][jj]->Fill(delta_t_pip);
-      }
-      if (charge == -1) delta_t_hist[2][jj]->Fill(delta_t_electron);
-    }
+  const int jj = momentum_bin(momentum);
+  if (jj < 0) return;
+  if (charge == 1 && !std::isnan(delta_t_proton) && !std::isnan(delta_t_pip)) {
+    delta_t_hist[0][jj]->Fill(delta_t_proton);
+    delta_t_hist[1][jj]->Fill(delta_t_pip);
   }
+  if (charge == -1) delta_t_hist[2][jj]->Fill(delta_t_electron);
 }
 
 void Histogram::delta_t_slices_Write() {
@@ -1672,11 +1670,8 @@ void Histogram::EC_fill(float etot, float momentum) {
 
   EC_tot_energy->Fill(etot);
 
-  for (int n = 0; n < NUM_POINTS; n++) {
-    if (momentum > n * bin_width && momentum <= (n + 1) * bin_width) {
-      EC_hist[n]->Fill(sampling_frac);
-    }
-  }
+  const int n = momentum_bin(momentum);
+  if (n >= 0) EC_hist[n]->Fill(sampling_frac);
 }
 
 void Histogram::EC_inout(float Ein, float Eout) {
@@ -1695,11 +1690,8 @@ void Histogram::EC_cut_fill(float etot, float momentum) {
   float sampling_frac = etot / momentum;
   EC_sampling_fraction_cut->Fill(momentum, sampling_frac);
 
-  for (int n = 0; n < NUM_POINTS; n++) {
-    if (momentum > n * bin_width && momentum <= (n + 1) * bin_width) {
-      EC_hist_cut[n]->Fill(sampling_frac);
-    }
-  }
+  const int n = momentum_bin(momentum);
+  if (n >= 0) EC_hist_cut[n]->Fill(sampling_frac);
 }
 
 void Histogram::EC_slice_fit() {

@@ -22,8 +22,6 @@ std::shared_ptr<TTree> Skim::Final() {
 
     auto event = std::make_unique<Reaction>(data);
 
-    auto dt = std::make_unique<Delta_T>(data);
-
     for (int part_num = 1; part_num < data->gpart(); part_num++) {
       if (data->q(part_num) == POSITIVE) {
         if (check->dt_Pip_cut(part_num)) {

@@ -455,6 +455,7 @@ bool Cuts::Electron_fid_arjun() {
 }
 
 bool Cuts::fid_chern_cut() {
+  if (_cc_cut_cached) return _cc_cut_value;
   float A = -0.000785;
   float B = 0;
   float C = -0.00168;
@@ -475,7 +476,9 @@ bool Cuts::fid_chern_cut() {
 
   float _cc_x = _data->cc_r(0) * sinf(_cc_theta) * cosf(_cc_phi);
   float _cc_y = _data->cc_r(0) * sinf(_cc_theta) * sinf(_cc_phi);
-  return func::fid_chern(_cc_x, _cc_y);
+  _cc_cut_value = func::fid_chern(_cc_x, _cc_y);
+  _cc_cut_cached = true;
+  return _cc_cut_value;
 }
 
 bool e1d_mcCuts::fid_chern_cut() {

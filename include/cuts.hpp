@@ -40,6 +40,13 @@ class Cuts {
 
   bool samp_frac_cut = false;
 
+  // fid_chern_cut() depends only on the electron (index 0), but the e1d event loop
+  // asks for it up to three times per event and a Cuts object lives for exactly
+  // one event, so the answer can be computed once. Guarded by an explicit flag
+  // rather than a NaN sentinel so that -ffinite-math-only cannot fold it away.
+  bool _cc_cut_cached = false;
+  bool _cc_cut_value = false;
+
  public:
   Cuts(const std::shared_ptr<Branches>& data);
   Cuts(const std::shared_ptr<Branches>& data, const std::shared_ptr<Delta_T>& dt);

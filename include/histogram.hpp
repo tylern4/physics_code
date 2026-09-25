@@ -200,6 +200,20 @@ Garys binning
   TH1D* delta_t_hist[3][NUM_POINTS];
   float bin_width = (p_max - p_min) / NUM_POINTS;
 
+  // Momentum bin for `momentum`, or -1 if it falls outside the [p_min, p_max]
+  // grid. Equivalent to scanning for the jj satisfying
+  //     jj * bin_width < momentum <= (jj + 1) * bin_width
+  // but in constant time instead of NUM_POINTS comparisons. The range test is
+  // done first so the index can only ever be built from a finite quotient.
+  inline int momentum_bin(float momentum) const {
+    if (!(momentum > 0.0f)) return -1;                                  // also rejects NaN
+    if (!(momentum <= bin_width * NUM_POINTS)) return -1;               // also rejects NaN
+    int bin = static_cast<int>(std::ceil(momentum / bin_width)) - 1;     // exact: bin_width is a power of two
+    if (bin < 0) bin = 0;
+    if (bin >= NUM_POINTS) bin = NUM_POINTS - 1;
+    return bin;
+  }
+
   TH2D* delta_t_sec_pad_hist[3][NUM_SECTORS][SC_PADDLE_NUM];
   TH2D_ptr delta_t_mass_P = std::make_shared<TH2D>("delta_t_mass_P", "#Deltat assuming mass of proton", BINS, p_min,
                                                    p_max, BINS, Dt_min, Dt_max);
