@@ -16,12 +16,12 @@
 
 int main(int argc, char** argv) {
   ROOT::EnableThreadSafety();
-  std::vector<std::vector<std::string>> infilenames(NUM_THREADS);
+  std::vector<std::vector<std::string>> infilenames;
   std::string outfilename;
 
   if (argc >= 2) {
     outfilename = argv[1];
-    for (size_t i = 2; i < argc; i++) infilenames[i % NUM_THREADS].push_back(argv[i]);
+    infilenames = DataHandler::DistributeFiles(std::vector<std::string>(argv + 2, argv + argc), NUM_THREADS);
   } else {
     return 1;
   }

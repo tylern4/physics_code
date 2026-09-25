@@ -11,6 +11,7 @@
 #include <future>
 #include <iostream>
 #include <string>
+#include <sys/stat.h>
 #include <thread>
 #include <vector>
 #include "TChain.h"
@@ -36,6 +37,29 @@ class DataHandler {
   float _beam_energy = NAN;
 
  public:
+  // Split `files` over `nthreads` worker threads, giving each thread a
+  // comparable share of the input bytes.
+  //
+  // Handing out files round-robin by argument position is not good enough here:
+  // H10 runs vary by two orders of magnitude in size (a few hundred kB to ~90 MB
+  // per file), so round-robin over 476 files leaves the busiest thread ~12% more
+  // work than the mean, and the whole run then waits on that one thread. This
+  // is longest-processing-time-first: sort by size descending and give each file
+  // to whichever thread currently has the least. That brings the spread to
+  // within a fraction of a percent.
+  //
+  // Only which thread reads which file changes; the per-thread work and the
+  // aggregated histograms are unaffected.
+  static std::vector<std::vector<std::string>> DistributeFiles(const std::vector<std::string>& files,
+                                                              size_t nthreads);
+
+  // Size of `path` in bytes, or 0 if it cannot be stat'd.
+  static unsigned long long FileSize(const std::string& path) {
+    struct stat st;
+    if (::stat(path.c_str(), &st) != 0) return 0;
+    return static_cast<unsigned long long>(st.st_size);
+  }
+
   DataHandler();
   DataHandler(const std::vector<std::string>& fin, const std::shared_ptr<Histogram>& hists,
               const std::shared_ptr<MomCorr>& mom_corr);

@@ -3,6 +3,34 @@
 /*	University Of South Carolina*/
 /************************************************************************/
 #include "datahandeler.hpp"
+#include <algorithm>
+
+std::vector<std::vector<std::string>> DataHandler::DistributeFiles(const std::vector<std::string>& files,
+                                                                   size_t nthreads) {
+  std::vector<std::vector<std::string>> out(nthreads);
+  if (nthreads == 0) return out;
+  if (nthreads == 1) {
+    out[0] = files;
+    return out;
+  }
+
+  // Longest-processing-time-first: biggest file to the least loaded thread.
+  std::vector<size_t> order(files.size());
+  for (size_t i = 0; i < order.size(); i++) order[i] = i;
+  std::stable_sort(order.begin(), order.end(), [&files](size_t a, size_t b) {
+    return FileSize(files[a]) > FileSize(files[b]);
+  });
+
+  std::vector<unsigned long long> load(nthreads, 0);
+  for (size_t idx : order) {
+    size_t least = 0;
+    for (size_t t = 1; t < nthreads; t++)
+      if (load[t] < load[least]) least = t;
+    out[least].push_back(files[idx]);
+    load[least] += FileSize(files[idx]);
+  }
+  return out;
+}
 
 DataHandler::DataHandler() = default;
 
