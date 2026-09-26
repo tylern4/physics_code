@@ -24,15 +24,24 @@ set(CMAKE_MODULE_PATH
 # below add_subdirectory(), so the library silently ignored the project's
 # flags while the executables (added later) picked them up.
 #
-# The flags are -O3 with -ffp-contract=fast and NOT -Ofast. -Ofast implies
-# -ffinite-math-only, which lets the compiler assume no NaN or Inf is ever
-# produced and so constant-folds std::isnan/std::isinf to false. This code uses
-# NaN both as a "not computed yet" sentinel and as a value to be rejected
-# before binning, and NaNs do reach ROOT's TH1::Fill, whose bin selection for a
-# NaN is unspecified. Dropping -Ofast keeps those guards and costs little.
-# (Note that with CMAKE_BUILD_TYPE=Release a later bare -O3 would override
-# -Ofast anyway on the command line, so the previous setting was partly inert.)
-set(OPT_FLAGS "-O3 -ffp-contract=fast")
+# The flags are plain -O3, deliberately with no fast-math.
+#
+# -Ofast implies -ffinite-math-only, which lets the compiler assume no NaN or Inf
+# is ever produced and so constant-folds std::isnan/std::isinf to false. This
+# code uses NaN both as a "not computed yet" sentinel and as a value to be
+# rejected before binning, and NaNs do reach ROOT's TH1::Fill, whose bin
+# selection for NaN is unspecified. Dropping -Ofast keeps those guards.
+#
+# -ffp-contract=fast was tried here and reverted. It is worth nothing measurable
+# (the event loop is ~94% ROOT decompression) and it changes the last digits of
+# every kinematic variable: with the csv_maker e1d output, -ffp-contract=fast
+# altered theta and mm2 at the ~1e-7 level in 750 of 877 rows relative to plain
+# -O3. Cross sections should not depend on whether the compiler fused a
+# multiply-add, so the numerics are left exactly as -O3 produces them.
+#
+# (With CMAKE_BUILD_TYPE=Release a later bare -O3 also overrode -Ofast on the
+# command line, so the old setting was doubly inert.)
+set(OPT_FLAGS "-O3")
 set(CMAKE_CXX_FLAGS "${OPT_FLAGS} ${ROOT_CXX_FLAGS}")
 set(CMAKE_C_FLAGS "${OPT_FLAGS} ${ROOT_CXX_FLAGS}")
 

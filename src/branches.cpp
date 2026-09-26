@@ -24,13 +24,16 @@
 // differently on different runs of the same binary on the same input, with
 // electron_fid alone swinging between 703462 and 1052589 entries. The condition
 // now range-checks the hit number as well, which is the only thing that actually
-// bounds the read. In-range hits behave exactly as before.
+// bounds the read.
 //
-// Left alone deliberately: the old `i < _<det>_part` clause is still there, and
-// it is still the wrong test -- a particle whose index exceeds the detector's hit
-// count is rejected even when it has a perfectly good hit. Removing it would
-// change which events are selected, which is a physics decision rather than a
-// bug fix, so it is flagged here instead. Worth revisiting.
+// The particle index is now checked against _gpart, which is what every
+// directly-indexed accessor here already did (see p(), id(), cx(), q(), b()).
+// The old `i < _<det>_part` compared a particle index against a hit count, so it
+// rejected any particle whose index exceeded the number of detector hits even
+// when that particle carried a perfectly good hit number -- and it was the only
+// thing standing between the caller and the OOB read. Both halves are needed:
+// _gpart bounds the read of the hit number itself, and the hit range bounds the
+// read of the value.
 
 Branches::Branches(std::shared_ptr<TChain> tree) {
   _tree = tree;
@@ -335,28 +338,28 @@ float Branches::vz(int i) {
 }  // [gpart]
 
 int Branches::dc_sect(int i) {
-  if (i < _dc_part && (unsigned)(_dc[i] - 1) < (unsigned)_dc_part) {
+  if (i < _gpart && (unsigned)(_dc[i] - 1) < (unsigned)_dc_part) {
     return _dc_sect[_dc[i] - 1];
   } else {
     return int(NULL);
   }
 }  //[dc_part]
 int Branches::dc_trk(int i) {
-  if (i < _dc_part && (unsigned)(_dc[i] - 1) < (unsigned)_dc_part) {
+  if (i < _gpart && (unsigned)(_dc[i] - 1) < (unsigned)_dc_part) {
     return _dc_trk[_dc[i] - 1];
   } else {
     return int(NULL);
   }
 }  //[dc_part]
 int Branches::dc_stat(int i) {
-  if (i < _dc_part && (unsigned)(_dc[i] - 1) < (unsigned)_dc_part) {
+  if (i < _gpart && (unsigned)(_dc[i] - 1) < (unsigned)_dc_part) {
     return _dc_stat[_dc[i] - 1];
   } else {
     return int(NULL);
   }
 }  //[dc_part]
 float Branches::dc_vx(int i) {
-  if (i < _dc_part && (unsigned)(_dc[i] - 1) < (unsigned)_dc_part) {
+  if (i < _gpart && (unsigned)(_dc[i] - 1) < (unsigned)_dc_part) {
     if (_dc_vx[_dc[i] - 1] != 0)
       return _dc_vx[_dc[i] - 1];
     else
@@ -366,7 +369,7 @@ float Branches::dc_vx(int i) {
   }
 }  //[dc_part]
 float Branches::dc_vy(int i) {
-  if (i < _dc_part && (unsigned)(_dc[i] - 1) < (unsigned)_dc_part) {
+  if (i < _gpart && (unsigned)(_dc[i] - 1) < (unsigned)_dc_part) {
     if (_dc_vy[_dc[i] - 1] != 0)
       return _dc_vy[_dc[i] - 1];
     else
@@ -376,7 +379,7 @@ float Branches::dc_vy(int i) {
   }
 }  //[dc_part]
 float Branches::dc_vz(int i) {
-  if (i < _dc_part && (unsigned)(_dc[i] - 1) < (unsigned)_dc_part) {
+  if (i < _gpart && (unsigned)(_dc[i] - 1) < (unsigned)_dc_part) {
     if (_dc_vz[_dc[i] - 1] != 0)
       return _dc_vz[_dc[i] - 1];
     else
@@ -386,7 +389,7 @@ float Branches::dc_vz(int i) {
   }
 }  //[dc_part]
 float Branches::dc_vr(int i) {
-  if (i < _dc_part && (unsigned)(_dc[i] - 1) < (unsigned)_dc_part) {
+  if (i < _gpart && (unsigned)(_dc[i] - 1) < (unsigned)_dc_part) {
     if (_dc_vr[_dc[i] - 1] != 0)
       return _dc_vr[_dc[i] - 1];
     else
@@ -396,49 +399,49 @@ float Branches::dc_vr(int i) {
   }
 }  //[dc_part]
 float Branches::dc_xsc(int i) {
-  if (i < _dc_part && (unsigned)(_dc[i] - 1) < (unsigned)_dc_part) {
+  if (i < _gpart && (unsigned)(_dc[i] - 1) < (unsigned)_dc_part) {
     return _dc_xsc[_dc[i] - 1];
   } else {
     return NAN;
   }
 }  //[dc_part]
 float Branches::dc_ysc(int i) {
-  if (i < _dc_part && (unsigned)(_dc[i] - 1) < (unsigned)_dc_part) {
+  if (i < _gpart && (unsigned)(_dc[i] - 1) < (unsigned)_dc_part) {
     return _dc_ysc[_dc[i] - 1];
   } else {
     return NAN;
   }
 }  //[dc_part]
 float Branches::dc_zsc(int i) {
-  if (i < _dc_part && (unsigned)(_dc[i] - 1) < (unsigned)_dc_part) {
+  if (i < _gpart && (unsigned)(_dc[i] - 1) < (unsigned)_dc_part) {
     return _dc_zsc[_dc[i] - 1];
   } else {
     return NAN;
   }
 }  //[dc_part]
 float Branches::dc_cxsc(int i) {
-  if (i < _dc_part && (unsigned)(_dc[i] - 1) < (unsigned)_dc_part) {
+  if (i < _gpart && (unsigned)(_dc[i] - 1) < (unsigned)_dc_part) {
     return _dc_cxsc[_dc[i] - 1];
   } else {
     return NAN;
   }
 }  //[dc_part]
 float Branches::dc_cysc(int i) {
-  if (i < _dc_part && (unsigned)(_dc[i] - 1) < (unsigned)_dc_part) {
+  if (i < _gpart && (unsigned)(_dc[i] - 1) < (unsigned)_dc_part) {
     return _dc_cysc[_dc[i] - 1];
   } else {
     return NAN;
   }
 }  //[dc_part]
 float Branches::dc_czsc(int i) {
-  if (i < _dc_part && (unsigned)(_dc[i] - 1) < (unsigned)_dc_part) {
+  if (i < _gpart && (unsigned)(_dc[i] - 1) < (unsigned)_dc_part) {
     return _dc_czsc[_dc[i] - 1];
   } else {
     return NAN;
   }
 }  //[dc_part]
 float Branches::dc_c2(int i) {
-  if (i < _dc_part && (unsigned)(_dc[i] - 1) < (unsigned)_dc_part) {
+  if (i < _gpart && (unsigned)(_dc[i] - 1) < (unsigned)_dc_part) {
     return _dc_c2[_dc[i] - 1];
   } else {
     return NAN;
@@ -446,119 +449,119 @@ float Branches::dc_c2(int i) {
 }  //[dc_part]
 
 int Branches::ec_stat(int i) {
-  if (i < _ec_part && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
+  if (i < _gpart && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
     return _ec_stat[_ec[i] - 1];
   } else {
     return int(NULL);
   }
 }  //[ec_part]
 int Branches::ec_sect(int i) {
-  if (i < _ec_part && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
+  if (i < _gpart && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
     return _ec_sect[_ec[i] - 1];
   } else {
     return int(NULL);
   }
 }  //[ec_part]
 int Branches::ec_whol(int i) {
-  if (i < _ec_part && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
+  if (i < _gpart && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
     return _ec_whol[_ec[i] - 1];
   } else {
     return int(NULL);
   }
 }  //[ec_part]
 int Branches::ec_inst(int i) {
-  if (i < _ec_part && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
+  if (i < _gpart && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
     return _ec_inst[_ec[i] - 1];
   } else {
     return int(NULL);
   }
 }  //[ec_part]
 int Branches::ec_oust(int i) {
-  if (i < _ec_part && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
+  if (i < _gpart && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
     return _ec_oust[_ec[i] - 1];
   } else {
     return int(NULL);
   }
 }  //[ec_part]
 float Branches::etot(int i) {
-  if (i < _ec_part && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
+  if (i < _gpart && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
     return _etot[_ec[i] - 1];
   } else {
     return NAN;
   }
 }  //[ec_part]
 float Branches::ec_ei(int i) {
-  if (i < _ec_part && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
+  if (i < _gpart && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
     return _ec_ei[_ec[i] - 1];
   } else {
     return NAN;
   }
 }  //[ec_part]
 float Branches::ec_eo(int i) {
-  if (i < _ec_part && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
+  if (i < _gpart && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
     return _ec_eo[_ec[i] - 1];
   } else {
     return NAN;
   }
 }  //[ec_part]
 float Branches::ec_t(int i) {
-  if (i < _ec_part && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
+  if (i < _gpart && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
     return _ec_t[_ec[i] - 1];
   } else {
     return NAN;
   }
 }  //[ec_part]
 float Branches::ec_r(int i) {
-  if (i < _ec_part && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
+  if (i < _gpart && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
     return _ec_r[_ec[i] - 1];
   } else {
     return NAN;
   }
 }  //[ec_part]
 float Branches::ech_x(int i) {
-  if (i < _ec_part && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
+  if (i < _gpart && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
     return _ech_x[_ec[i] - 1];
   } else {
     return NAN;
   }
 }  //[ec_part]
 float Branches::ech_y(int i) {
-  if (i < _ec_part && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
+  if (i < _gpart && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
     return _ech_y[_ec[i] - 1];
   } else {
     return NAN;
   }
 }  //[ec_part]
 float Branches::ech_z(int i) {
-  if (i < _ec_part && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
+  if (i < _gpart && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
     return _ech_z[_ec[i] - 1];
   } else {
     return NAN;
   }
 }  //[ec_part]
 float Branches::ec_m2(int i) {
-  if (i < _ec_part && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
+  if (i < _gpart && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
     return _ec_m2[_ec[i] - 1];
   } else {
     return NAN;
   }
 }  //[ec_part]
 float Branches::ec_m3(int i) {
-  if (i < _ec_part && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
+  if (i < _gpart && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
     return _ec_m3[_ec[i] - 1];
   } else {
     return NAN;
   }
 }  //[ec_part]
 float Branches::ec_m4(int i) {
-  if (i < _ec_part && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
+  if (i < _gpart && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
     return _ec_m4[_ec[i] - 1];
   } else {
     return NAN;
   }
 }  //[ec_part]
 float Branches::ec_c2(int i) {
-  if (i < _ec_part && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
+  if (i < _gpart && (unsigned)(_ec[i] - 1) < (unsigned)_ec_part) {
     return _ec_c2[_ec[i] - 1];
   } else {
     return NAN;
@@ -566,56 +569,56 @@ float Branches::ec_c2(int i) {
 }  //[ec_part]
 
 int Branches::sc_sect(int i) {
-  if (i < _sc_part && (unsigned)(_sc[i] - 1) < (unsigned)_sc_part) {
+  if (i < _gpart && (unsigned)(_sc[i] - 1) < (unsigned)_sc_part) {
     return _sc_sect[_sc[i] - 1];
   } else {
     return int(NULL);
   }
 }  //[sc_part]
 int Branches::sc_hit(int i) {
-  if (i < _sc_part && (unsigned)(_sc[i] - 1) < (unsigned)_sc_part) {
+  if (i < _gpart && (unsigned)(_sc[i] - 1) < (unsigned)_sc_part) {
     return _sc_hit[_sc[i] - 1];
   } else {
     return int(NULL);
   }
 }  //[sc_part]
 int Branches::sc_pd(int i) {
-  if (i < _sc_part && (unsigned)(_sc[i] - 1) < (unsigned)_sc_part) {
+  if (i < _gpart && (unsigned)(_sc[i] - 1) < (unsigned)_sc_part) {
     return _sc_pd[_sc[i] - 1];
   } else {
     return int(NULL);
   }
 }  //[sc_part]
 int Branches::sc_stat(int i) {
-  if (i < _sc_part && (unsigned)(_sc[i] - 1) < (unsigned)_sc_part) {
+  if (i < _gpart && (unsigned)(_sc[i] - 1) < (unsigned)_sc_part) {
     return _sc_stat[_sc[i] - 1];
   } else {
     return int(NULL);
   }
 }  //[sc_part]
 float Branches::edep(int i) {
-  if (i < _sc_part && (unsigned)(_sc[i] - 1) < (unsigned)_sc_part) {
+  if (i < _gpart && (unsigned)(_sc[i] - 1) < (unsigned)_sc_part) {
     return _edep[_sc[i] - 1];
   } else {
     return NAN;
   }
 }  //[sc_part]
 float Branches::sc_t(int i) {
-  if (i < _sc_part && (unsigned)(_sc[i] - 1) < (unsigned)_sc_part) {
+  if (i < _gpart && (unsigned)(_sc[i] - 1) < (unsigned)_sc_part) {
     return _sc_t[_sc[i] - 1];
   } else {
     return NAN;
   }
 }  //[sc_part]
 float Branches::sc_r(int i) {
-  if (i < _sc_part && (unsigned)(_sc[i] - 1) < (unsigned)_sc_part) {
+  if (i < _gpart && (unsigned)(_sc[i] - 1) < (unsigned)_sc_part) {
     return _sc_r[_sc[i] - 1];
   } else {
     return NAN;
   }
 }  //[sc_part]
 float Branches::sc_c2(int i) {
-  if (i < _sc_part && (unsigned)(_sc[i] - 1) < (unsigned)_sc_part) {
+  if (i < _gpart && (unsigned)(_sc[i] - 1) < (unsigned)_sc_part) {
     return _sc_c2[_sc[i] - 1];
   } else {
     return NAN;
@@ -623,49 +626,49 @@ float Branches::sc_c2(int i) {
 }  //[sc_part]
 
 int Branches::cc_sect(int i) {
-  if (i < _cc_part && (unsigned)(_cc[i] - 1) < (unsigned)_cc_part) {
+  if (i < _gpart && (unsigned)(_cc[i] - 1) < (unsigned)_cc_part) {
     return _cc_sect[_cc[i] - 1];
   } else {
     return int(NULL);
   }
 }  //[cc_part]
 int Branches::cc_hit(int i) {
-  if (i < _cc_part && (unsigned)(_cc[i] - 1) < (unsigned)_cc_part) {
+  if (i < _gpart && (unsigned)(_cc[i] - 1) < (unsigned)_cc_part) {
     return _cc_hit[_cc[i] - 1];
   } else {
     return int(NULL);
   }
 }  //[cc_part]
 int Branches::cc_segm(int i) {
-  if (i < _cc_part && (unsigned)(_cc[i] - 1) < (unsigned)_cc_part) {
+  if (i < _gpart && (unsigned)(_cc[i] - 1) < (unsigned)_cc_part) {
     return _cc_segm[_cc[i] - 1];
   } else {
     return int(NULL);
   }
 }  //[cc_part]
 int Branches::nphe(int i) {
-  if (i < _cc_part && (unsigned)(_cc[i] - 1) < (unsigned)_cc_part) {
+  if (i < _gpart && (unsigned)(_cc[i] - 1) < (unsigned)_cc_part) {
     return _nphe[_cc[i] - 1];
   } else {
     return int(NULL);
   }
 }  //[cc_part]
 float Branches::cc_t(int i) {
-  if (i < _cc_part && (unsigned)(_cc[i] - 1) < (unsigned)_cc_part) {
+  if (i < _gpart && (unsigned)(_cc[i] - 1) < (unsigned)_cc_part) {
     return _cc_t[_cc[i] - 1];
   } else {
     return NAN;
   }
 }  //[cc_part]
 float Branches::cc_r(int i) {
-  if (i < _cc_part && (unsigned)(_cc[i] - 1) < (unsigned)_cc_part) {
+  if (i < _gpart && (unsigned)(_cc[i] - 1) < (unsigned)_cc_part) {
     return _cc_r[_cc[i] - 1];
   } else {
     return NAN;
   }
 }  //[cc_part]
 float Branches::cc_c2(int i) {
-  if (i < _cc_part && (unsigned)(_cc[i] - 1) < (unsigned)_cc_part) {
+  if (i < _gpart && (unsigned)(_cc[i] - 1) < (unsigned)_cc_part) {
     return _cc_c2[_cc[i] - 1];
   } else {
     return NAN;
