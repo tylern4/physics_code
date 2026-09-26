@@ -1,4 +1,3 @@
-from maid_interface import maid_2007_Npi as maid
 import numpy as np
 import pandas as pd
 
@@ -11,6 +10,16 @@ import boost_histogram as bh
 
 from pyarrow import csv
 import pyarrow as pa
+
+# maid_interface is not part of this repository and is only needed to overlay the
+# published MAID 2007 curve on the plots. Import it lazily so that the
+# cross-section calculation itself runs without it.
+try:
+    from maid_interface import maid_2007_Npi as maid
+except ImportError:  # pragma: no cover
+    maid = None
+
+_bin_center_warned = False
 
 pa.set_cpu_count(8)
 
@@ -346,7 +355,9 @@ def cut_for_MM(rec, mc_rec, empty=None):
     if not empty.empty:
         empty = empty[empty_cuts]
 
-    return (rec, mc_rec) if empty.empty else (rec, mc_rec, empty)
+    # Always return three frames. Previously an empty `empty` input returned only
+    # two, which broke callers that legitimately have no empty-target run.
+    return rec, mc_rec, empty
 
 
 def hist_data(data, density=True, bins=10):
@@ -380,6 +391,11 @@ def make_cuts(dataframe, w, q2, theta):
 
 
 def get_maid_values(xs, w, q2, theta):
+    if maid is None:
+        raise ImportError(
+            "maid_interface is not installed; it is only needed for the MAID "
+            "comparison plots, not for computing cross sections"
+        )
     ENERGY = 4.81726
     crossSections = []
     for phi in xs:
@@ -427,6 +443,21 @@ def binCetnerCorrection(w, q2, theta, num_bins=10):
     _w = (w.left + w.right) / 2.0
     _q2 = (q2.left + q2.right) / 2.0
     _theta = (theta.left + theta.right) / 2.0
+
+    if maid is None:
+        # The bin-centering correction weights each phi bin by the MAID cross
+        # section evaluated at the bin edges, which needs maid_interface AND the
+        # spp_tbl/*.tbl parameter tables (absent from this repository). Fall back
+        # to a correction of 1, i.e. assume the cross section is constant across
+        # a phi bin. The bins are narrow, so this is a small effect, but it is an
+        # approximation and should be restored when MAID is available.
+        global _bin_center_warned
+        if not _bin_center_warned:
+            print("WARNING: maid_interface unavailable, so the phi bin-centering "
+                  "correction is being set to 1.0 (cross section assumed "
+                  "constant across a phi bin).")
+            _bin_center_warned = True
+        return lambda x: np.ones_like(np.asarray(x, dtype=float))
 
     theta_left = theta.left if theta.left != -1.0 else -0.99
     theta_right = theta.right if theta.right != 1.0 else 0.99

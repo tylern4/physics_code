@@ -9,7 +9,7 @@ import os
 import time
 
 
-def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, radcorr=None, csvName="results"):
+def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, radcorr=None, csvName="results", subtract_empty=True):
     results = []
     if not os.path.exists(f'{out_folder}/crossSections'):
         os.makedirs(f'{out_folder}/crossSections')
@@ -87,8 +87,11 @@ def main(rec, mc_rec, mc_thrown, empty, binning, out_folder="plots", bins=12, ra
                     # Get numbers for error
                     N_y = _data_y
                     N_empty = _empty_y
-                    # Empty target subtraction
-                    _data_y = (_data_y/Q_FULL - _empty_y/Q_EMPTY)
+                    # Empty target subtraction. Without an empty-target run the
+                    # target-contamination term is simply zero, and the counting
+                    # statistics are those of the deuterated run alone.
+                    if subtract_empty:
+                        _data_y = (_data_y/Q_FULL - _empty_y/Q_EMPTY)
                     # Remove points with 0 data count
                     cut = ~(_data_y == 0)
                     x = _x[cut]
@@ -149,7 +152,9 @@ if __name__ == "__main__":
     parser.add_argument("--data", dest="rec_data_file_path",
                         type=str, help="Data csv file", required=True)
     parser.add_argument("--empty", dest="empty_file_path",
-                        type=str, help="Empty run csv file", required=True)
+                        type=str, help="Empty run csv file. Optional: if omitted the "
+                        "target-contamination subtraction is skipped.",
+                        required=False, default=None)
     parser.add_argument("--folder", dest="out_folder", type=str,
                         help="Folder for plots", required=False, default="plots")
     parser.add_argument("--radcorr", dest="radcorr", type=str, help="Location of radcorr data csv", required=False,
@@ -178,7 +183,15 @@ if __name__ == "__main__":
     mc_rec, mc_thrown = read_csv(args.mc_data_file_path)
     # Load reconstructed file
     rec = read_csv(args.rec_data_file_path, True)
-    empty_target = read_csv(args.empty_file_path, True)
+    if args.empty_file_path:
+        empty_target = read_csv(args.empty_file_path, True)
+    else:
+        # No empty-target run available: carry an empty frame so the code paths
+        # stay the same, and skip the contamination subtraction.
+        empty_target = rec.iloc[0:0]
+        print("WARNING: no --empty file given; the target-contamination "
+              "subtraction is being SKIPPED. Cross sections will be an "
+              "overestimate by roughly the empty-target contribution.")
 
     # Cut for missing mass
     rec, mc_rec, empty_target = cut_for_MM(rec, mc_rec, empty_target)
@@ -190,14 +203,18 @@ if __name__ == "__main__":
     _mc_rec = prep_for_ana(mc_rec, w_bins, q2_bins, theta_bins)
     _mc_thrown = prep_for_ana(mc_thrown, w_bins, q2_bins, theta_bins)
 
-    # Create dict of sorted bins
+    # Create dict of sorted bins.
+    # pd.unique() on a categorical column returns a Categorical, which
+    # pd.Index.sort_values() no longer accepts, so sort the intervals directly.
+    # They must stay Interval objects: the loop below uses w.left / w.right.
     _binning = dict()
-    _binning["wbins"] = pd.Index.sort_values(pd.unique(_rec.w_bin))
-    _binning["q2bins"] = pd.Index.sort_values(pd.unique(_rec.q2_bin))
-    _binning["thetabins"] = pd.Index.sort_values(pd.unique(_rec.theta_bin))
+    _binning["wbins"] = sorted(pd.unique(_rec.w_bin).dropna())
+    _binning["q2bins"] = sorted(pd.unique(_rec.q2_bin).dropna())
+    _binning["thetabins"] = sorted(pd.unique(_rec.theta_bin).dropna())
     print(f"Done setup: {(end-start)/1E9:0.2f}Sec")
 
     main(_rec, _mc_rec, _mc_thrown, _empty_target, _binning, bins=bins,
-         out_folder=args.out_folder, radcorr=args.radcorr, csvName=csvName)
+         out_folder=args.out_folder, radcorr=args.radcorr, csvName=csvName,
+         subtract_empty=args.empty_file_path is not None)
 
     del _rec, _mc_rec, _mc_thrown, _empty_target
