@@ -16,6 +16,26 @@ set(CMAKE_MODULE_PATH
    ${PROJECT_SOURCE_DIR}/cmake
    ${PROJECT_SOURCE_DIR}/cmake/modules)
 
+# Optimisation flags.
+#
+# These must be set BEFORE add_subdirectory() below, otherwise the `physics`
+# library -- which is where essentially all of the analysis code lives -- is
+# configured with the CMake defaults instead of these. The set() used to sit
+# below add_subdirectory(), so the library silently ignored the project's
+# flags while the executables (added later) picked them up.
+#
+# The flags are -O3 with -ffp-contract=fast and NOT -Ofast. -Ofast implies
+# -ffinite-math-only, which lets the compiler assume no NaN or Inf is ever
+# produced and so constant-folds std::isnan/std::isinf to false. This code uses
+# NaN both as a "not computed yet" sentinel and as a value to be rejected
+# before binning, and NaNs do reach ROOT's TH1::Fill, whose bin selection for a
+# NaN is unspecified. Dropping -Ofast keeps those guards and costs little.
+# (Note that with CMAKE_BUILD_TYPE=Release a later bare -O3 would override
+# -Ofast anyway on the command line, so the previous setting was partly inert.)
+set(OPT_FLAGS "-O3 -ffp-contract=fast")
+set(CMAKE_CXX_FLAGS "${OPT_FLAGS} ${ROOT_CXX_FLAGS}")
+set(CMAKE_C_FLAGS "${OPT_FLAGS} ${ROOT_CXX_FLAGS}")
+
 # include_directories(${CMAKE_SOURCE_DIR}/external/zstr/src)
 include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_SOURCE_DIR}/include)
@@ -25,9 +45,6 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src)
 # include_directories(${CMAKE_SOURCE_DIR}/external/lz4xx/include)
 # add_subdirectory(${CMAKE_SOURCE_DIR}/external/lz4xx)
 # set_target_properties(lz4xx PROPERTIES CXX_STANDARD 11)
-
-set(CMAKE_CXX_FLAGS "-Ofast ${ROOT_CXX_FLAGS}")
-set(CMAKE_C_FLAGS "-Ofast ${ROOT_CXX_FLAGS}")
 
 set(PROGRAMS
   exe/cpp/e1d.cpp
