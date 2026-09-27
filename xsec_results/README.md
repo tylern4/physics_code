@@ -1,4 +1,6 @@
-# p(π⁺) exclusive cross section — CLAS E1D, deuterium target
+# p(π⁺) exclusive cross section — CLAS E1D, proton target
+
+Reaction: **e p → e n π⁺**, i.e. MAID's (π⁺, n) channel.
 
 Final result from the fixed reconstruction code (`287c056`) on all 480
 experimental runs and all 987 simulation files.
@@ -43,38 +45,70 @@ Going from 579 to 987 MC files changed the cross section by only 1.001 median
 The binning is 0.02 GeV in W by ~0.23 GeV² in Q², integrated over all cosθ\* and
 all φ.
 
-## MAID2007 is now working, for the correct reaction
+## MAID2007 is now building, used as a black box
 
-`maid_interface` is a Cython extension wrapping the bundled MAID2007 Fortran. It
-is required for the φ bin-centering correction, not just for plotting.
+`maid_interface` is a Cython extension wrapping the bundled MAID2007 Fortran,
+and it is required for the φ bin-centering correction, not just for plotting.
+No Fortran or Cython source was changed to get it working — the only edit is to
+the Cython block of `aao_rad_lund/CMakeLists.txt`.
 
-Getting it running took four fixes, all of which had silently broken it:
+The module was never built anywhere. This repo's `CMakeLists.txt:96` is `#IF(0)`
+with the whole `.pyx` block commented out, and the submodule's own CMake could
+not configure under CMake 4.3: it called `find_package(PythonLibs)` and
+`FindPythonExtensions.cmake`, both removed in CMake 4, which left
+`PYTHON_INCLUDE_DIRS` empty and aborted with "list GET given empty list".
+Replacing those with `find_package(Python3 COMPONENTS Interpreter
+Development.Module NumPy)` fixes it. The Fortran runtime also has to be linked
+explicitly, since a C++-linked MODULE library does not pull in `libgfortran` and
+the module otherwise builds but fails to `dlopen`.
 
-1. **The extension was never built.** `CMakeLists.txt:96` is `#IF(0)` with the
-   whole `.pyx` block commented out, and `aao_rad_lund`'s own CMake cannot
-   configure under CMake ≥ 4.0 (`FindPythonLibs` was removed). Built via
-   `external/aao_rad_lund/build_m/setup_maid.py`, which leaves the submodule
-   untouched.
-2. **The table filename was a MAID2000 leftover.** `maid_lee` asked for
-   `maid2000-NPpi.tbl`, which is not shipped, so the read always failed.
-3. **The reaction was wrong.** `maid_2007_Npi` hardcoded `channel_opt=3`, which
-   reads `maid07-PNpi.tbl` = p→nπ⁰. It computed π⁰ production, not π⁺.
-4. **The tables were in the tarball all along.** `maid07-NPpi.tbl` is the
-   p→nπ⁺ channel (MAID writes the target nucleon first, so NPpi is n→pπ⁰, which
-   by charge symmetry is p→nπ⁺). There is no p→π⁺p table because MAID2007's
-   published channel set is (π⁰p), (π⁰n), (π⁺n), (π⁻p) — p→π⁺p is I₃=+3/2 and
-   is not an independent channel.
+```bash
+cmake -S external/aao_rad_lund -B external/aao_rad_lund/build \
+      -DPython3_EXECUTABLE=$PWD/.venv/bin/python \
+      -DCYTHON_EXECUTABLE=$PWD/.venv/bin/cython
+cmake --build external/aao_rad_lund/build
+```
 
-Verified by the Δ++ peak: σ rises to 16.9 at W = 1.23 GeV and falls to ~1 beyond
-W = 1.4, which is the expected p→nπ⁺ shape. The table grid (W 1.08–2.00,
-Q² 0–5.0) covers the full analysis range.
+`CYTHON_EXECUTABLE` must be passed explicitly when Cython is in a venv, or
+`find_package(Cython)` reports not-found and the `.pyx` files are skipped with no
+error at all.
 
-The magnitude of the correction is **not** small: factors of ~1.0–1.8 across a
-10-bin φ binning. `binCetnerCorrection` now raises rather than silently
-returning 1.0, since that fallback was hiding an ~80% effect on some φ bins.
-Applied to the φ-resolved output it shifts bin values by 0.915 median
-(0.69–1.16). It does not affect the coarse numbers here, which integrate over
-all φ.
+Verified unchanged: `maid_2007_Npi(4.81726, 1.23, 0.5, 0.0, 90.0)` = 18.71912
+before and after the build fix.
+
+It reads `spp_tbl/maid07-PNpi.tbl`, which is the correct table for this
+reaction. MAID writes the target nucleon first, so `PN` is proton target with a
+neutron in the final state, and with `m_pi = m_pip` assigned at
+`maid_lee.f90:20` that is the π⁺ channel. There is no `maid07-PPpi.tbl` and
+there never was one — MAID2007's published channels are (π⁰p), (π⁰n), (π⁺n),
+(π⁻p), and a proton target can only reach (π⁺n) and (π⁰p) by charge and I₃
+conservation. The table's grid (W 1.08–2.00, Q² 0–5.0) covers the whole analysis
+range, and the Δ++ shape is right: σ peaks at W = 1.23 GeV and falls away above
+W = 1.4.
+
+## What the correction actually does
+
+The bin-centering correction is **not** a small effect. Switching it on, over
+all 14,385 φ-resolved bins, the ratio to the uncorrected value has median 0.978
+but spans **0.15 to 2.43** — it is a large per-bin reshuffling, not a uniform
+shift. The spread is roughly flat in Q² (median ratio 0.99 at Q² = 1.1 down to
+0.94 at Q² = 2.7).
+
+Two things about the interface are worth knowing before trusting it:
+
+- `maid_lee.f90` reads its parameter table **once per process** (the `n_call`
+  guard at line 29), so a second call with a different `channel_opt` silently
+  reuses the first table. Channel comparisons must be run in separate processes.
+- `maid_dsigma_all` cannot be called from ctypes: the `extern "C"` block in
+  `maidinterface.cpp` is never closed (stray brace at line 88), so that symbol is
+  C++-mangled while `maid_dsigma`, defined after the brace, is correctly
+  C-linkage. Calling the raw Fortran entry point `maid_` with `byref` scalars
+  works. Also, `helicity=0` returns the *unpolarised* cross section
+  (`xsection.f90:58`, `sigma_0 = sigma_u + e_hel*sigma_p`) and forces
+  `asym_p` to 0 (`maid_lee.f90:370`), so the beam-spin asymmetry is not
+  available from this interface.
+
+None of this affects the coarse numbers below, which integrate over all φ.
 
 ## Two things still missing
 
@@ -97,8 +131,11 @@ export MOM_CORR=$PWD/data/MomCorr NUM_THREADS=8
 ./build/csv_maker     -e1d data/exp -o xsec_work/data     # 121,924 rows
 ./build/csv_maker_mc  -e1d data/sim -o xsec_work/mc       # 987 files, 4.6 GB
 
-# one-time: build the MAID Cython extension
-cd external/aao_rad_lund/build_m && ../../../../.venv/bin/python setup_maid.py
+# one-time: build the MAID Cython extension (see the section above)
+cmake -S external/aao_rad_lund -B external/aao_rad_lund/build \
+      -DPython3_EXECUTABLE=$PWD/.venv/bin/python \
+      -DCYTHON_EXECUTABLE=$PWD/.venv/bin/cython
+cmake --build external/aao_rad_lund/build
 
 cd python && ../.venv/bin/python crossSectionsCSV.py \
     --mc ../xsec_work/mc_e1d.csv --data ../xsec_work/data_e1d.csv \
