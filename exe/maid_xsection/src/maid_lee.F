@@ -233,8 +233,11 @@ c
         endif
         if (channel_opt.eq.2) then
           if (resonance_opt.eq.0) then
+c         Only the MAID2007 NPpi table set is distributed (maid07-NPpi*.tbl,
+c         the p -> n pi+ channel). This name was a MAID2000 leftover, so the
+c         read always failed. See aao_rad_lund/src/maid_lee.f90.
             call revinm('CLAS_PARMS',
-     1      'spp_tbl/maid2000-NPpi.tbl',data_file)
+     1      'spp_tbl/maid07-NPpi.tbl',data_file)
           elseif (resonance_opt.eq.1) then
             call revinm('CLAS_PARMS',
      1      'spp_tbl/maid2000_p33_on-NPpi.tbl',data_file)

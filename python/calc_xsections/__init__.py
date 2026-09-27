@@ -11,13 +11,45 @@ import boost_histogram as bh
 from pyarrow import csv
 import pyarrow as pa
 
-# maid_interface is not part of this repository and is only needed to overlay the
-# published MAID 2007 curve on the plots. Import it lazily so that the
-# cross-section calculation itself runs without it.
+# maid_interface is a Cython extension built from
+# external/aao_rad_lund/src/maid_interface.pyx, which wraps the bundled MAID2007
+# Fortran. It is required for the phi bin-centering correction, not just for
+# plotting the published curve, so import it eagerly and report clearly if the
+# extension has not been built.
+#
+# The Fortran locates its parameter tables through revinm(), which resolves
+# $CLAS_PARMS/<file> when CLAS_PARMS is set and otherwise falls back to treating
+# the filename as relative to the process CWD. Set CLAS_PARMS to the directory
+# that contains spp_tbl/ so the tables are found no matter where the analysis
+# is launched from -- changing directory instead would silently break any
+# relative paths the caller is using.
+import os
+import sys
+
+_MAID_BUILD = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+    "external", "aao_rad_lund", "build_m",
+)
+_SPP_TBL_PARENT = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+    "exe", "maid_xsection",
+)
+
+if _MAID_BUILD not in sys.path:
+    sys.path.insert(0, _MAID_BUILD)
+
+if "CLAS_PARMS" not in os.environ and os.path.isdir(
+    os.path.join(_SPP_TBL_PARENT, "spp_tbl")
+):
+    os.environ["CLAS_PARMS"] = _SPP_TBL_PARENT
+
 try:
     from maid_interface import maid_2007_Npi as maid
-except ImportError:  # pragma: no cover
+except ImportError as _exc:  # pragma: no cover
     maid = None
+    _maid_import_error = _exc
+else:
+    _maid_import_error = None
 
 _bin_center_warned = False
 
@@ -393,8 +425,11 @@ def make_cuts(dataframe, w, q2, theta):
 def get_maid_values(xs, w, q2, theta):
     if maid is None:
         raise ImportError(
-            "maid_interface is not installed; it is only needed for the MAID "
-            "comparison plots, not for computing cross sections"
+            "maid_interface is not available, so MAID2007 cannot be evaluated. "
+            "Build it with external/aao_rad_lund/build_m/setup_maid.py. This is "
+            "required for the phi bin-centering correction, not just for the "
+            "comparison plots. Original import error: "
+            f"{_maid_import_error}"
         )
     ENERGY = 4.81726
     crossSections = []
@@ -438,24 +473,33 @@ def plot_maid_model(ax, w, q2, theta, xs, name=""):
     return np.max(crossSections) * 1.8
 
 
-def binCetnerCorrection(w, q2, theta, num_bins=10):
+def binCetnerCorrection(w, q2, theta, num_bins=10, allow_missing_maid=False):
     # Get bin centers
     _w = (w.left + w.right) / 2.0
     _q2 = (q2.left + q2.right) / 2.0
     _theta = (theta.left + theta.right) / 2.0
 
     if maid is None:
-        # The bin-centering correction weights each phi bin by the MAID cross
-        # section evaluated at the bin edges, which needs maid_interface AND the
-        # spp_tbl/*.tbl parameter tables (absent from this repository). Fall back
-        # to a correction of 1, i.e. assume the cross section is constant across
-        # a phi bin. The bins are narrow, so this is a small effect, but it is an
-        # approximation and should be restored when MAID is available.
+        # The correction weights each phi bin by the MAID cross section
+        # evaluated at the bin edges. Measured against maid07-NPpi.tbl this is
+        # a factor of roughly 1.0-1.8 depending on phi, so it is a first-order
+        # effect and NOT safe to skip silently. Default to raising; pass
+        # allow_missing_maid=True to accept the 1.0 approximation deliberately.
         global _bin_center_warned
+        if not allow_missing_maid:
+            raise ImportError(
+                "maid_interface is unavailable, so the phi bin-centering "
+                "correction cannot be computed. This correction reaches ~1.8x on "
+                "individual phi bins, so it is not safe to assume 1.0. Build the "
+                "extension (external/aao_rad_lund/build_m/setup_maid.py) or pass "
+                "allow_missing_maid=True to accept the approximation. Original "
+                f"import error: {_maid_import_error}"
+            )
         if not _bin_center_warned:
             print("WARNING: maid_interface unavailable, so the phi bin-centering "
                   "correction is being set to 1.0 (cross section assumed "
-                  "constant across a phi bin).")
+                  "constant across a phi bin). This is a ~1.8x effect on some "
+                  "phi bins.")
             _bin_center_warned = True
         return lambda x: np.ones_like(np.asarray(x, dtype=float))
 

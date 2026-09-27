@@ -53,3 +53,15 @@ current/crossSection/experimental_data
 *.pkl
 .dccache
 python/prof.prof
+
+# MAID2007 parameter tables (~118 MB). Not redistributable from here; fetch with:
+#   curl -L -o exe/maid_xsection/spp_tbl.tar.gz \
+#     https://github.com/tylern4/onepigen/raw/7ad5c99aa5b526dd73311500d680458efb793494/spp_tbl.tar.gz
+#   tar xzf exe/maid_xsection/spp_tbl.tar.gz -C exe/maid_xsection
+exe/maid_xsection/spp_tbl/
+exe/maid_xsection/spp_tbl.tar.gz
+
+# scratch output from the cross-section work
+xsec_work/
+analysis_tools/
+original_vs_fixed/
