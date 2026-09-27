@@ -17,25 +17,27 @@ import pyarrow as pa
 # plotting the published curve, so import it eagerly and report clearly if the
 # extension has not been built.
 #
-# The Fortran locates its parameter tables through revinm(), which resolves
-# $CLAS_PARMS/<file> when CLAS_PARMS is set and otherwise falls back to treating
-# the filename as relative to the process CWD. Set CLAS_PARMS to the directory
-# that contains spp_tbl/ so the tables are found no matter where the analysis
-# is launched from -- changing directory instead would silently break any
-# relative paths the caller is using.
+# Build it with the submodule's own CMakeLists (it is unmodified except for the
+# Cython block, which had to drop the CMake-4-removed FindPythonLibs):
+#
+#   cmake -S external/aao_rad_lund -B external/aao_rad_lund/build \
+#         -DPython3_EXECUTABLE=$PWD/.venv/bin/python \
+#         -DCYTHON_EXECUTABLE=$PWD/.venv/bin/cython
+#   cmake --build external/aao_rad_lund/build
+#
+# The Fortran finds its parameter tables through revinm(), which resolves
+# $CLAS_PARMS/<file> when CLAS_PARMS is set and otherwise treats the filename as
+# relative to the process CWD. Point CLAS_PARMS at the directory holding
+# spp_tbl/ so the tables resolve regardless of where the analysis is launched
+# from; changing directory instead would break relative paths in the caller.
 import os
 import sys
 
-_MAID_BUILD = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-    "external", "aao_rad_lund", "build_m",
-)
-_SPP_TBL_PARENT = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-    "exe", "maid_xsection",
-)
+_REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+_MAID_BUILD = os.path.join(_REPO, "external", "aao_rad_lund", "build")
+_SPP_TBL_PARENT = os.path.join(_REPO, "exe", "maid_xsection")
 
-if _MAID_BUILD not in sys.path:
+if os.path.isdir(_MAID_BUILD) and _MAID_BUILD not in sys.path:
     sys.path.insert(0, _MAID_BUILD)
 
 if "CLAS_PARMS" not in os.environ and os.path.isdir(
@@ -426,10 +428,10 @@ def get_maid_values(xs, w, q2, theta):
     if maid is None:
         raise ImportError(
             "maid_interface is not available, so MAID2007 cannot be evaluated. "
-            "Build it with external/aao_rad_lund/build_m/setup_maid.py. This is "
-            "required for the phi bin-centering correction, not just for the "
-            "comparison plots. Original import error: "
-            f"{_maid_import_error}"
+            "Build it with the aao_rad_lund submodule's CMakeLists (see the "
+            "import block at the top of this file). This is required for the "
+            "phi bin-centering correction, not just for the comparison plots. "
+            f"Original import error: {_maid_import_error}"
         )
     ENERGY = 4.81726
     crossSections = []
@@ -473,33 +475,24 @@ def plot_maid_model(ax, w, q2, theta, xs, name=""):
     return np.max(crossSections) * 1.8
 
 
-def binCetnerCorrection(w, q2, theta, num_bins=10, allow_missing_maid=False):
+def binCetnerCorrection(w, q2, theta, num_bins=10):
     # Get bin centers
     _w = (w.left + w.right) / 2.0
     _q2 = (q2.left + q2.right) / 2.0
     _theta = (theta.left + theta.right) / 2.0
 
     if maid is None:
-        # The correction weights each phi bin by the MAID cross section
-        # evaluated at the bin edges. Measured against maid07-NPpi.tbl this is
-        # a factor of roughly 1.0-1.8 depending on phi, so it is a first-order
-        # effect and NOT safe to skip silently. Default to raising; pass
-        # allow_missing_maid=True to accept the 1.0 approximation deliberately.
+        # The bin-centering correction weights each phi bin by the MAID cross
+        # section evaluated at the bin edges. Without maid_interface, fall back
+        # to a correction of 1.0, i.e. assume the cross section is constant
+        # across a phi bin. This is not a small effect (it reaches ~1.8x on
+        # individual phi bins), so warn loudly rather than silently.
         global _bin_center_warned
-        if not allow_missing_maid:
-            raise ImportError(
-                "maid_interface is unavailable, so the phi bin-centering "
-                "correction cannot be computed. This correction reaches ~1.8x on "
-                "individual phi bins, so it is not safe to assume 1.0. Build the "
-                "extension (external/aao_rad_lund/build_m/setup_maid.py) or pass "
-                "allow_missing_maid=True to accept the approximation. Original "
-                f"import error: {_maid_import_error}"
-            )
         if not _bin_center_warned:
             print("WARNING: maid_interface unavailable, so the phi bin-centering "
                   "correction is being set to 1.0 (cross section assumed "
                   "constant across a phi bin). This is a ~1.8x effect on some "
-                  "phi bins.")
+                  f"phi bins. Import error: {_maid_import_error}")
             _bin_center_warned = True
         return lambda x: np.ones_like(np.asarray(x, dtype=float))
 

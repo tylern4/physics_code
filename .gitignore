@@ -65,3 +65,6 @@ exe/maid_xsection/spp_tbl.tar.gz
 xsec_work/
 analysis_tools/
 original_vs_fixed/
+
+# CMake build of the aao_rad_lund submodule (produces maid_interface.so)
+external/aao_rad_lund/build/
